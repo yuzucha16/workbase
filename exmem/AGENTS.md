@@ -14,6 +14,10 @@ Claude / Codex / Copilot など、どのエージェントも同じルールで�
 - `resources/` は「共有（Git管理）」、それ以外の PARA 区分はローカル専用。共有するかどうかは名前ではなく `.gitignore` で決まる。
 - 共有側（`resources/`）のノートから、ローカル側（`areas/` など）へ `[[リンク]]` を張らない。他のPCでリンク切れになる。
 - `contexts/` は exmem のプロジェクト状態の置き場で、Vault 直下の `projects/` とは別物。
+- `resources/` の中でもローカル専用にしたいもの（会社固有・個人的な内容）は、`_local/` に置く。名前が `_local` のディレクトリは、どの階層にあっても中身がGitに載らない（`.gitignore` の `**/_local/*`。`.gitkeep` だけ追跡して、clone でディレクトリが出来る）。`resources/_local/`、`resources/exmem/_local/` などがある。
+  - `resources/` 直下の他のものは既定で共有になる。ローカル専用のものを `_local/` の外に置かない。
+  - 共有側のノートから `_local/` のノートへ `[[リンク]]` を張らない。
+  - `_` で始まるディレクトリはトピックではない管理用で、共有かどうかは別。`_archive/` は共有、`_local/` はローカル専用。
 
 ## 読む順番
 
