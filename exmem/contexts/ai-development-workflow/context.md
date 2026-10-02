@@ -8,7 +8,7 @@ tags:
 aliases:
   - AI開発ワークフロー Project Context
 created: 2026-09-26
-updated: 2026-10-02
+updated: 2026-10-03
 ---
 
 # AI開発ワークフロー Project Context
@@ -40,6 +40,7 @@ updated: 2026-10-02
 - 2026-10-02 に、Claudeの自走期間を伸ばす権限制御のメモを統合した（5回目）。共通の許可ルールをdotfilesの `claude/user/settings.json` に置き、WSLにはリンク済み。Windowsは同じ内容の実ファイルがあるだけで、リンクは未適用（[[claude-code-permissions]]）。サンドボックス運用と `deny` は未決。
 - プロジェクトの `.claude/` は、`settings.local.json` だけをignoreし、`settings.json` / `skills/` は育ったら管理下に置く方針にした（[[claude-code-project-settings]]）。リポジトリのルートに `.gitignore` を追加した。
 - 2026-10-02 に、Vaultの構造を見直した（[[obsidian-vault]] Decisions）。`notes` 自体を1つのGitリポジトリにし、共有は `resources/` だけ（`.gitignore` のホワイトリスト）にする。`areas_shared` の中身は `resources/` 配下へ移した（`exmem` `cheatsheets` `handson` `office` と、`obsolete` → `_archive/obsolete`）。`exmem/projects/` は Vaultの `projects/` と衝突するため `contexts/` に改名した。リポジトリ内の配置換えとドキュメント更新までは済み、実機の配置換えは未実施。
+- 2026-10-03 に、実機の移行を進め、inbox のメモ（ディレクトリ構造の見直し）を統合した（6回目）。`C:\vault\notes` は実体へのジャンクションになり、`.obsidian` と Office テンプレは dotfiles から移管済み。`resources/` 内のローカル専用は `_local/` に置く規約を追加した（[[obsidian-vault]]）。実物との照合では、`notes.lnk` が既に無いこと、`_local/` コミットが未 push であること、旧クローンと `notes_old` が残っていることを確認した。
 
 ## Next Actions
 
@@ -48,7 +49,8 @@ updated: 2026-10-02
   2. 済み（2026-10-03）: `C:\vault\notes` を実体 `C:\vault\repos\github.com\yuzucha16\notes` へのジャンクションにした（それまでは `notes.lnk` というショートカットで、パスとして使えなかった）。`.obsidian` の取り込み、dotfiles 側の `windows/office` `windows/obsidian` の削除、`links.map` の書き換え、Office のリンク張り直しも済み（[[obsidian-vault]]）。
   3. Obsidian で `C:\vault\notes` を Vault として開き直す。`knowledge.base` の一覧が表示されるか確認する。
   4. 旧 `exmem/`（`areas_shared` クローン側）は削除してよい。Claude Code の履歴とメモリを新しい作業パス（`C:\vault\notes\resources\exmem`）のフォルダへコピーし直す（[[claude-code-storage]]）。Zed のプロジェクトも開き直す。
-  5. `C:\vault\notes_old`、`C:\vault\notes.lnk`、旧クローン `C:\vault\repos\github.com\yuzucha16\areas_shared` を削除する。
+  5. `C:\vault\notes_old` と旧クローン `C:\vault\repos\github.com\yuzucha16\areas_shared` を削除する（`notes.lnk` は削除済み。旧クローン内の `exmem\.claude\settings.local.json` は残す価値がない）。
+  - `_local/` コミット（`27d1d08`）を push する（`origin/main` より1つ先、2026-10-03 確認）。
   6. `resources/fonts/` に HackGen Console NF Regular とライセンス文書を置いてコミットする（Git LFS、`README.md` の「版」を記入）。
   7. 済み（2026-10-03）: `resources/` 内のローカル専用データは `_local/`（どの階層でも）に置くと決めた。`resources/` `exmem/` `cheatsheets/` `handson/` `office/` に作成済み。残りは、`areas/` との使い分け基準だけ（[[obsidian-vault]]）。
 - Zedで exmem をプロジェクトとして開き、Claude Agentが exmem の `AGENTS.md` を読んでいるか確認する（「exmemって何？」と聞く）。
@@ -99,5 +101,6 @@ AIサービスのチャット履歴ではなく、Markdownで管理するプロ�
 
 ## Open Questions
 
-- GitとObsidian Syncをどう使い分けるか。exmemは `areas_shared` リポジトリでGit管理され、VaultではObsidian Syncも有効になっている。
+- GitとObsidian Syncをどう使い分けるか。exmemは `notes` リポジトリでGit管理され、VaultではObsidian Syncも有効になっている（`_local/` もSyncされるかは未検証）。
+- Vault移行まわりの未決（`areas/` と `_local/` の基準、`notes` の公開範囲、バックアップ対象、`w2a` / `w4` の扱い）は [[obsidian-vault]] の Open Questions を見る。
 - プロジェクトコンテキストをどこまで自動生成するか
