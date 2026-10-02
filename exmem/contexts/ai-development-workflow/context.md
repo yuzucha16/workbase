@@ -50,7 +50,7 @@ updated: 2026-10-02
   4. 旧 `exmem/`（`areas_shared` クローン側）は削除してよい。Claude Code の履歴とメモリを新しい作業パス（`C:\vault\notes\resources\exmem`）のフォルダへコピーし直す（[[claude-code-storage]]）。Zed のプロジェクトも開き直す。
   5. `C:\vault\notes_old`、`C:\vault\notes.lnk`、旧クローン `C:\vault\repos\github.com\yuzucha16\areas_shared` を削除する。
   6. `resources/fonts/` に HackGen Console NF Regular とライセンス文書を置いてコミットする（Git LFS、`README.md` の「版」を記入）。
-  7. ローカル専用の置き場（`projects/` `areas/` `archives/`）の使い分けを決める。
+  7. 済み（2026-10-03）: `resources/` 内のローカル専用データは `_local/`（どの階層でも）に置くと決めた。`resources/` `exmem/` `cheatsheets/` `handson/` `office/` に作成済み。残りは、`areas/` との使い分け基準だけ（[[obsidian-vault]]）。
 - Zedで exmem をプロジェクトとして開き、Claude Agentが exmem の `AGENTS.md` を読んでいるか確認する（「exmemって何？」と聞く）。
 - ターミナルで exmem に移動して `claude --resume` を実行し、コピーした履歴とメモリが引き継がれているか確認する（[[claude-code-storage]]）。
 - `knowledge.base` をObsidianで開き、一覧が表示されるか確認する。
