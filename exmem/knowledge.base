@@ -1,0 +1,36 @@
+filters:
+  and:
+    - file.inFolder("resources/exmem")
+    - file.ext == "md"
+views:
+  - type: table
+    name: Knowledge
+    filters:
+      and:
+        - type == "knowledge"
+    order:
+      - file.name
+      - title
+      - status
+      - tags
+      - updated
+  - type: table
+    name: Projects
+    filters:
+      and:
+        - type == "project"
+    order:
+      - file.folder
+      - title
+      - status
+      - updated
+  - type: table
+    name: Inbox
+    filters:
+      and:
+        - type == "inbox"
+    order:
+      - file.name
+      - title
+      - tags
+      - created
