@@ -44,11 +44,11 @@ updated: 2026-10-02
 ## Next Actions
 
 - **Vault構造の移行を完了する**（[[obsidian-vault]] 移行の状況）。順序の制約: GitHub rename → 配置換え。
-  1. GitHub で `areas_shared` を `notes` に rename し、このリポジトリをコミット・push する。
-  2. Claude Code / Zed / Obsidian を閉じ、`C:\vault\notes` を退避する。`C:\vault\repos\github.com\yuzucha16\areas_shared` を `notes` に改名し、`C:\vault\notes` として配置する（`areas` など空の PARA ディレクトリを作り直す）。`git remote set-url` で新URLにする。
-  3. `.obsidian` を dotfiles から `notes` 直下へ取り込む（履歴なし）。`workspace*.json` は `.gitignore` 済み。
-  4. dotfiles 側: `windows/office` を削除し、`manifests/links.map` のリンク元を `notes\resources\office\...` に書き換えてリンクを張り直す。`windows/obsidian` も削除する。README の記述（移管予定）を更新する。dotfiles のセットアップ順序は「`notes` を先にclone」になる。
-  5. 空になった旧 `exmem/`（`.claude/settings.local.json` だけが残っている）を、新しい `resources/exmem/.claude/` へ移して削除する。Claude Code の履歴とメモリを新パスのフォルダへコピーし直す（[[claude-code-storage]]）。Zed のプロジェクトも開き直す。
+  1. 済み（2026-10-02）: GitHub で `notes` に rename、リポジトリ内の配置換え。
+  2. 済み（2026-10-03）: `C:\vault\notes` を実体 `C:\vault\repos\github.com\yuzucha16\notes` へのジャンクションにした（それまでは `notes.lnk` というショートカットで、パスとして使えなかった）。`.obsidian` の取り込み、dotfiles 側の `windows/office` `windows/obsidian` の削除、`links.map` の書き換え、Office のリンク張り直しも済み（[[obsidian-vault]]）。
+  3. Obsidian で `C:\vault\notes` を Vault として開き直す。`knowledge.base` の一覧が表示されるか確認する。
+  4. 旧 `exmem/`（`areas_shared` クローン側）は削除してよい。Claude Code の履歴とメモリを新しい作業パス（`C:\vault\notes\resources\exmem`）のフォルダへコピーし直す（[[claude-code-storage]]）。Zed のプロジェクトも開き直す。
+  5. `C:\vault\notes_old`、`C:\vault\notes.lnk`、旧クローン `C:\vault\repos\github.com\yuzucha16\areas_shared` を削除する。
   6. `resources/fonts/` に HackGen Console NF Regular とライセンス文書を置いてコミットする（Git LFS、`README.md` の「版」を記入）。
   7. ローカル専用の置き場（`projects/` `areas/` `archives/`）の使い分けを決める。
 - Zedで exmem をプロジェクトとして開き、Claude Agentが exmem の `AGENTS.md` を読んでいるか確認する（「exmemって何？」と聞く）。
