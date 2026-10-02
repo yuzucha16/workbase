@@ -51,11 +51,18 @@ notes/                 # Git root
 ├── projects/  areas/  archives/   # ローカル専用
 ```
 
-### 移行の状況（2026-10-02 時点）
+### 移行の状況（2026-10-03 時点）
 
-- 済み: `areas_shared` リポジトリ内の配置換え（`exmem` `cheatsheets` `handson` を `resources/` 配下へ、`obsolete` を `resources/_archive/obsolete` へ）、`.gitignore` / `.gitattributes` の作成、`office` の dotfiles からのコピー、ドキュメントの更新。
-- 未実施: GitHub 側の `areas_shared` → `notes` の rename、`C:\vault\notes` へのリポジトリの配置（ジャンクションの解消）、`.obsidian` の dotfiles からの取り込み、dotfiles 側の `windows/office` の削除と `links.map` の書き換え。
-- このため、実機の `C:\vault\notes\areas_shared` ジャンクションは移行が終わるまで残る。
+- 済み（2026-10-02）: `areas_shared` リポジトリ内の配置換え（`exmem` `cheatsheets` `handson` を `resources/` 配下へ、`obsolete` を `resources/_archive/obsolete` へ）、`.gitignore` / `.gitattributes` の作成、`office` の dotfiles からのコピー、ドキュメントの更新。GitHub 側の `areas_shared` → `notes` の rename。
+- 済み（2026-10-03）: 実体は `C:\vault\repos\github.com\yuzucha16\notes`（ghq 管理）。`C:\vault\notes` はその実体へのジャンクション。`.obsidian` を dotfiles から取り込み（`workspace.json` は除外）。dotfiles 側の `windows/office` と `windows/obsidian` を削除し、`links.map` のリンク元を `..\notes\resources\office\...` に変更。`%APPDATA%` 側の Office のリンク7本を新しい実体へ張り直した。
+- 注意: `C:\vault` に置かれていた `notes.lnk` は Windows のショートカットで、パスとして辿れない（ジャンクション / シンボリックリンクとは別物）。`C:\vault\notes` は 2026-10-03 にジャンクションとして作り直した。
+- 未実施: 旧 `areas_shared` クローン（`C:\vault\repos\github.com\yuzucha16\areas_shared`）、`C:\vault\notes_old`、`C:\vault\notes.lnk` の削除。Obsidian で `C:\vault\notes` を Vault として開き直す確認。
+
+### dotfiles との関係（2026-10-03 時点）
+
+- `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）と、`..\notes\resources\office\*`（Office のテンプレ・リボン設定）を張る。
+- セットアップの順序は「`notes` を先に clone → `w2a`」。`w0_xdg_setup.bat` は `NOTES_DIR` を作らなくなった（リンクで作られる）。
+- ローカル専用の `projects/` `areas/` `archives/` は gitignore のため、clone 直後には存在しない。必要に応じて手で作る。
 
 ### 移行前の構造（2026-10-01 時点）
 
