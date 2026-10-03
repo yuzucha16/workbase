@@ -62,18 +62,18 @@ notes/                 # Git root
 
 ### dotfiles との関係（2026-10-03 時点）
 
-- `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）と、`..\notes\resources\office\*`（Office のテンプレ・リボン設定）を張る。
-- セットアップの順序は「`notes` を先に clone → `w2a`」。`w0_xdg_setup.bat` は `NOTES_DIR` を作らなくなった（リンクで作られる）。
+- `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）を張る。Office のテンプレ・リボン設定は、その後の dotfiles の見直しで `links.map` から外れ、初回に手で配置する運用になった（[[dotfiles]]）。
+- セットアップの順序は「`notes` を先に clone → `30_link.bat`」（旧 `w2a`。スクリプトは2026-10-03 に `NN_<内容>` へ改名された）。`NOTES_DIR` はリンクで作られる。
 - ローカル専用の `projects/` `areas/` `archives/` は gitignore のため、clone 直後には存在しない。必要に応じて手で作る。
 
 ### 移行前の構造（2026-10-01 時点）
 
 一部のフォルダはGitリポジトリへのジャンクションになっていた。
 
-| Vault内のパス | 実体 | Gitリモート |
-|---|---|---|
-| `.obsidian` | `C:\vault\repos\github.com\yuzucha16\dotfiles\windows\obsidian\.obsidian` | dotfiles |
-| `areas_shared` | `C:\vault\repos\github.com\yuzucha16\areas_shared` | `https://github.com/yuzucha16/areas_shared` |
+| Vault内のパス      | 実体                                                                        | Gitリモート                                     |
+| -------------- | ------------------------------------------------------------------------- | ------------------------------------------- |
+| `.obsidian`    | `C:\vault\repos\github.com\yuzucha16\dotfiles\windows\obsidian\.obsidian` | dotfiles                                    |
+| `areas_shared` | `C:\vault\repos\github.com\yuzucha16\areas_shared`                        | `https://github.com/yuzucha16/areas_shared` |
 
 Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3つに分かれていた。
 
@@ -177,8 +177,8 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 - バックアップ対象: ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
 - `notes` リポジトリが公開か非公開か（未確認。`gh` が無い）。公開なら `.obsidian` と `_local/` 以外が全部見える。
-- `w2a_copy_dotfiles.bat` を通しで実行したとき、`..\notes|%NOTES_DIR%` のリンクが期待どおりに張られるか（今の `C:\vault\notes` は手で作ったジャンクション。未検証）。
-- `w4_get_repos.bat` は `dotfiles` しか clone しない。`notes` の clone を足すか、README の手動手順のままにするか。
+- `30_link.bat`（旧 `w2a`）を通しで実行したとき、`..\notes|%NOTES_DIR%` のリンクが期待どおりに張られるか（今の `C:\vault\notes` は手で作ったジャンクション。未検証）。
+- `50_repos.bat`（旧 `w4`）に `notes` の clone を足すか、README の手動手順のままにするか（現状は取得対象が例のコメント行のみ）。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
 - 仮説（未検証）: `.claude/settings.local.json` は、Claude Code を起動したディレクトリの `.claude/` から読まれる。
 - dotfiles の `notepadpp\config.xml` に、古い `areas_shared\exmem\inbox` のパスが残っている（ユーザーの未コミット変更）。

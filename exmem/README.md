@@ -10,7 +10,7 @@ aliases:
   - external memory
   - 外部メモリ
 created: 2026-09-26
-updated: 2026-10-02
+updated: 2026-10-03
 ---
 
 # exmem
@@ -52,6 +52,8 @@ exmem/                 # resources/exmem/
 │   ├── claude-code-project-settings.md  # .claude/ の管理方針
 │   ├── claude-code-storage.md
 │   ├── claude-code-vs-cowork.md
+│   ├── dotfiles.md                      # dotfilesの構成・スクリプト規約・判断の根拠
+│   ├── fonts.md                         # メインフォントの選定と導入
 │   ├── human-ai-decision-loop.md
 │   ├── keyboard-switches.md
 │   ├── linux-distro-selection.md
@@ -59,6 +61,7 @@ exmem/                 # resources/exmem/
 │   ├── modern-cli-tools.md
 │   ├── obsidian-vault.md
 │   ├── office-ai-workspace.md
+│   ├── pc-setup-manuals.md              # Win11 / Debian系の環境セットアップ手順書
 │   ├── power-automate-office-automation.md
 │   ├── vscode-workspace.md
 │   ├── wsl-file-placement.md
@@ -69,6 +72,8 @@ exmem/                 # resources/exmem/
     ├── ai-business-adoption/
     │   └── context.md
     ├── ai-development-workflow/
+    │   └── context.md
+    ├── dotfiles/
     │   └── context.md
     ├── linux-home-pc/
     │   └── context.md
