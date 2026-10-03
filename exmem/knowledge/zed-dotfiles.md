@@ -11,7 +11,7 @@ aliases:
   - Zedのdotfiles管理
   - Zedの設定の再現
 created: 2026-10-01
-updated: 2026-10-02
+updated: 2026-10-03
 sources:
   - Claude (Claude Code via Zed ACP) conversation "Zedのextension/ACPエージェントのdotfiles管理" (2026-10-01)
   - "%APPDATA%\\Zed / %LOCALAPPDATA%\\Zed / dotfilesリポジトリ（2026-10-01 に確認）"
@@ -35,7 +35,9 @@ Zedの設定・extension・ACPエージェントをdotfilesリポジトリで管
 
 `%APPDATA%\Zed\` の設定ファイルは、dotfilesリポジトリ（`C:\vault\repos\github.com\yuzucha16\dotfiles`）へのシンボリックリンクになっている。
 
-| ファイル | リンク先 |
+> 2026-10-03 の dotfiles 再編で、正本は `home/.config/zed/` に移った（`manifests/links.map` で `%APPDATA%\zed\` へリンク。[[dotfiles]]）。下の表は2026-10-01 時点のパス。フォント設定（`ui_font_*` `buffer_font_*`、`terminal.shell` の削除）も追加されている（[[fonts]]）。
+
+| ファイル | リンク先（2026-10-01 時点） |
 |---|---|
 | `%APPDATA%\Zed\settings.json` | `dotfiles\zed\settings.json` |
 | `%APPDATA%\Zed\keymap.json` | `dotfiles\zed\keymap.json` |
@@ -62,7 +64,7 @@ PowerShellのプロファイルも同じ方式で管理されている（2026-10
 
 | ファイル | リンク先 |
 |---|---|
-| `%USERPROFILE%\Documents\PowerShell\profile.ps1` | `dotfiles\profile.ps1`（シンボリックリンク） |
+| `%USERPROFILE%\Documents\PowerShell\profile.ps1` | `dotfiles\profile.ps1`（シンボリックリンク。2026-10-03 以降の正本は `windows\powershell\profile.ps1`） |
 
 プロファイルの先頭には、非対話起動なら抜けるガードがあり、ZedのClaude Agent起動に必要（[[zed-acp]]）。dotfilesのGit追跡ファイルの一覧には `Microsoft.PowerShell_profile.ps1` があるが、リンク先の `profile.ps1` が追跡されているかは今回確認していない。
 
@@ -113,5 +115,7 @@ PowerShellのプロファイルも同じ方式で管理されている（2026-10
 
 - [[zed-acp]]
 - [[zed-vim]]
+- [[dotfiles]]
+- [[fonts]]
 - [[claude-code-storage]]
 - [[vscode-workspace]]
