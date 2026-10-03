@@ -157,7 +157,7 @@ sudo apt update && sudo apt upgrade
 
 ## 6. 日本語入力とフォント
 
-入力メソッドは **fcitx5 + Mozc**。
+入力メソッドは **fcitx5 + Mozc**。パッケージの導入は dotfiles の `23_ja.sh`（章8）がやる。dotfiles を取得する前に使いたい場合は、次を手動で実行する（スクリプトと同じ内容）。
 
 ```shell
 sudo apt install fcitx5 fcitx5-mozc fcitx5-config-qt   # 設定ツール名は下の差分表
@@ -181,7 +181,7 @@ sudo apt install fonts-noto-cjk fonts-ipafont
 | 項目 | MX Linux | Ubuntu | Linux Mint |
 |---|---|---|---|
 | 日本語化 | 言語は **MX Package Installer → Popular Apps → Language** の「Japanese」系（名称は **要確認**）。入力は上の `apt` でもよい | `sudo apt install language-pack-ja language-pack-gnome-ja`（または設定 → システム → 地域と言語） | 言語設定（Language Settings）で日本語を追加 |
-| 設定ツール | `fcitx5-config-qt`（Xfce） | `fcitx5-configtool`（`kde-config-fcitx5` と別名のことがある。**要確認**） | `fcitx5-configtool` |
+| 設定ツール | `fcitx5-config-qt` | `fcitx5-config-qt`（無ければ `fcitx5-configtool`。`23_ja.sh` は、あるほうを入れる。**要確認**） | 同左 |
 | 環境変数 | `im-config` が設定する | **Wayland が既定**。`~/.xprofile` は読まれない。必要なら `~/.config/environment.d/` に書く | X11 / Cinnamon。`im-config` で足りる |
 | 備考 | MX のフォーラムなどでは古い `fcitx`（v4）の手順がある。Debian 13 は **fcitx5** を使う | 一部のアプリ（Chrome など）で二重入力になる場合がある。設定で調整 | — |
 
@@ -207,28 +207,28 @@ git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha
 
 ## 8. スクリプト実行
 
-> **現状の注意**: dotfiles の `scripts/` には、**ネイティブ Linux 用のスクリプトがない**。`scripts/wsl/` のうち、WSL に依存しない `10` / `20` / `30` を流用する。専用の `scripts/linux/` を作る提案は、付録に書いた。
-
-`dotfiles` で次の順に実行する。
+`scripts/linux/` は WSL とネイティブ Linux 共通のスクリプト群。`dotfiles` で次の順に実行する。
 
 | 順 | スクリプト | 内容 | 注意 |
 |---|---|---|---|
-| 10 | `scripts/wsl/10_dirs.sh` | XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る | |
-| 20 | `scripts/wsl/20_packages.sh` | apt の更新、基本ツール（zsh、vim、fzf、ripgrep など）、starship、ghq、`bat` / `fd` のリンクを入れる | `sudo` が必要。ネット接続が必要 |
-| 30 | `scripts/wsl/30_link.sh --src ~/vault/repos/github.com/yuzucha16/dotfiles -n` | stow で `home/` を `~` に展開する | 初回は **`-n`（ドライラン）**で確認する。**`--src` が必須**（既定値は WSL 用の `/mnt/c/...`）。`-n` を外して実行 |
+| 10 | `10_dirs.sh` | XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る | |
+| 20 | `20_packages.sh desktop` | apt の更新、`manifests/apt.txt` + `apt.desktop.txt` のパッケージ、starship、ghq、`bat` / `fd` のリンクを入れる | `sudo` とネット接続が必要。パッケージの一覧はスクリプトでなく `manifests/` を直す |
+| 23 | `23_ja.sh` | fcitx5 + Mozc、日本語フォントを入れ、`im-config -n fcitx5` を実行する。Ubuntu 系は言語パックも入れる | **再ログイン**後に、Fcitx 5 設定で Mozc を追加する（手動、「6. 日本語入力」） |
+| 30 | `30_link.sh -n` → `30_link.sh` | stow で `home/` を `~` に展開する | 初回は **`-n`（ドライラン）**で確認する。リポジトリの場所は自動で判定される |
 
 ```shell
-cd ~/vault/repos/github.com/yuzucha16/dotfiles/scripts/wsl
+cd ~/vault/repos/github.com/yuzucha16/dotfiles/scripts/linux
 bash 10_dirs.sh
-bash 20_packages.sh
-bash 30_link.sh --src ~/vault/repos/github.com/yuzucha16/dotfiles -n   # 確認
-bash 30_link.sh --src ~/vault/repos/github.com/yuzucha16/dotfiles      # 実行
+bash 20_packages.sh desktop
+bash 23_ja.sh
+bash 30_link.sh -n      # 確認
+bash 30_link.sh         # 実行
 chsh -s /usr/bin/zsh
 ```
 
 - 展開先に実ファイル（初期の `.bashrc` や `.profile` など）があると `[ERR]` で止まる。**自動退避はしない**。中身を確認して、手で退避（`mv ~/.bashrc ~/.bashrc.orig`）してから再実行する。
 - `chsh` の後は、**再ログイン**で zsh が有効になる。初回の zsh 起動時にプラグインの導入が走ることがある。
-- `21_vscode.sh` は **使わない**（WSL の VS Code Server 用）。
+- `21_vscode.sh` は、VS Code を入れた場合だけ使う（`manifests/vscode-extensions.wsl.txt` の拡張を入れる）。ゴールには不要。
 
 ## 9. 動作確認
 
@@ -292,10 +292,14 @@ git -C ~/vault/repos/github.com/yuzucha16/dotfiles remote set-url origin git@git
 
 手順書を書くうえで見つけた、dotfiles 側との食い違い。手順書の内容とは別に、直す候補。
 
-- **`scripts/linux/` の新設**: ネイティブ Linux 用の `10_dirs.sh` / `20_packages.sh` / `30_link.sh` が無い。現状は `scripts/wsl/` を流用しており、`30_link.sh` は `--src` が必須（既定値が `/mnt/c/...`）。
-  - 案: `scripts/wsl/` と `scripts/linux/` で共通部分を共有する（`scripts/lib/` など）。または、`SRC_DIR` を `$0` の位置から推測して、WSL でも Linux でも既定値で動くようにする。
-  - ディストロ差分（`bat` / `fd` のリンク、日本語入力）は `/etc/os-release` で分岐する。
-- **パッケージ一覧の外出し**: `20_packages.sh` に直書きされている一覧を、`manifests/apt.txt` に出すと、手順書とスクリプトの両方が一覧を読める（Windows の `apps.txt` と対称）。
-- **日本語入力のスクリプト化**: `fcitx5` + `fcitx5-mozc` + `im-config -n fcitx5` + フォントは、ディストロ差分を `os-release` で分岐すれば、`scripts/linux/23_ja.sh` のように 1 本にできる。
+- **解消済み**（この手順書の作成後、dotfiles 側で対応した）:
+  - `scripts/wsl/` を `scripts/linux/` に改名し、WSL とネイティブ Linux で共通にした（`lib.sh` の `is_wsl` / `distro_is` で分岐）
+  - `30_link.sh` の `--src` を、スクリプトの位置から自動判定にした
+  - パッケージ一覧を `manifests/apt.txt` / `apt.desktop.txt` に出した
+  - 日本語入力とフォントを `23_ja.sh` にした
+- **未対応**:
+  - `chsh` 後の再ログインの案内が、`30_link.sh` の出力に無い
+  - `50_repos.sh` は `source ~/.profile` と、`ghq` が PATH にあることが前提（手順書の範囲外）
+  - MX Linux の実機で `20_packages.sh` / `23_ja.sh` を通した確認が未了（WSL の Ubuntu 24.04 では構文チェックと `30_link.sh -n` までを確認）
 - **`chsh` の案内**: `30_link.sh` の最後に `Enter chsh -s /usr/bin/zsh` と出るだけ。`chsh` 後の再ログインの案内があるとよい。
 - **`50_repos.sh` の前提**: `source ~/.profile` が必要で、`ghq` が PATH にある前提。Linux でも使えるが、手順書の範囲外。
