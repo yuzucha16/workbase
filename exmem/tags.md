@@ -7,7 +7,7 @@ tags:
 aliases:
   - Tags
 created: 2026-09-26
-updated: 2026-10-02
+updated: 2026-10-03
 ---
 
 # タグ一覧
@@ -68,3 +68,4 @@ updated: 2026-10-02
 | `cli` | コマンドラインツール |
 | `linux` | Linuxディストリビューション・導入 |
 | `hardware` | 物理デバイス（キーボードなど） |
+| `font` | フォントの選定・導入・設定 |
