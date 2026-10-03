@@ -9,7 +9,7 @@ aliases:
   - dotfiles Project Context
   - PC環境の再現
 created: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-04
 ---
 
 # dotfiles・PC環境の再現 Project Context
@@ -25,7 +25,18 @@ updated: 2026-10-03
   - 食い違い・未反映: `git bundle` のバックアップがメモのパスに無い。`.wslconfig` はこのPCに未リンク。dotfiles README に `areas_shared` の記載は無い（解消済み）。`gh` は scoop に入っている。
   - 未 push: dotfiles は `origin/main`（`e1e4ac7`）より3コミット先（`8f1f885` `dda8e75` `b9af34a`）。リモートには `main` と `202509` が両方ある。
 
+- 2026-10-04: zsh/bash の fzf キーバインド・補完を外し、pwsh と履歴検索をそろえた（`common.sh`、未コミット。[[dotfiles]] の Decisions）。目的はコマンド履歴のベースを dotfiles 側で管理して、PC 移行時の調べ直しを減らすこと。履歴本体の管理はまだ未着手。
+
 ## Next Actions
+
+- dotfiles の `common.sh` / `.bashrc` / `.zshrc` / `README.md` の fzf 変更をコミットする（`home/.config/zed/settings.json` の別変更が未コミットで残っている。混ぜない）。
+- シェルの3シェル共通化（fzf とキーバインドの現仕様の表は [[dotfiles]] の Facts）:
+  - `zfz`: `Ctrl+g` の割り当てを zsh/bash にも入れる（現状は pwsh のみ）。
+  - `cdg`: キーバインドを割り当てる（3シェル共通。キーは未定）。
+  - ListView 相当の履歴予測表示を zsh/bash で疑似実装する（難易度によっては見送り）。
+  - その他、3シェルの差を洗い出して共通化する。
+- このPCの `psfzf` を `scoop uninstall psfzf` で外す（`apps.txt` からは削除済み）。
+- コマンド履歴の管理を設計する: 重複排除、`ls`/`cd` など短い行の除外、秘匿パターンと会社固有・ユーザー名入りパスの除外、共有（Git）とローカル専用（`_local/`）の分け方。参照用の他PC生ヒストリは `resources/_local/ConsoleHost_history.txt` に退避済み（Git 対象外。使い終わったら削除）。
 
 - dotfiles の未 push 3コミットを push する。`notes` 側のコミットも push する。
 - GitHub の既定ブランチを `main` にし、問題が無ければ `202509` をリモート・ローカルで削除する（ユーザーの確認待ち）。

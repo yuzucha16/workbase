@@ -13,7 +13,7 @@ aliases:
   - PC環境の再現
   - dotfilesの構成
 created: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-04
 sources:
   - Claude Code conversation "dotfiles の整理・構造再編・最適化" (2026-10-02〜2026-10-03)
   - Claude Code conversation "dotfiles の複雑度削減" (2026-10-03)
@@ -105,6 +105,16 @@ dotfiles/
 - git: `~/.config/git/config` は git が自動で読むので、`~/.gitconfig` の `include` は削除した。共通設定の `[user]` 仮値は残し、実際の名前・メールは `~/.gitconfig_local`（PCごと）。
 - PowerShell プロファイルのラッパー（`Microsoft.PowerShell_profile.ps1`）は削除。全ホスト共通の `profile.ps1` が自動で読まれる。
 
+### fzf は移動用に限定し、履歴検索は標準機能にそろえた（2026-10-04）
+
+- 決めたこと: fzf は `zfz`（zoxide）と `cdg`（ghq）の選択にだけ使う。履歴検索は pwsh / zsh / bash とも標準機能（↑↓・`Ctrl+P`/`Ctrl+N` の前方一致、標準の `Ctrl+R`）。pwsh だけ `PredictionViewStyle ListView` を足している。
+- 変更: `common.sh` から fzf の `key-bindings` / `completion` の読み込みと `FZF_*` 環境変数を削除した。これで zsh/bash の `Ctrl+R`/`Ctrl+T`/`Alt+C` は標準に戻り、pwsh（PSFzf を持たない）とそろった。
+- 根拠: ターミナル起点から Zed（エディタ起点）へ移行中で、ターミナル側は軽くシンプルにしたい。fzf は目的ではなく手段。
+- 経緯: 修正前は pwsh だけ fzf を外していて、zsh/bash は apt 版 fzf のキーバインドが残っていた（適用漏れ。実機の `bindkey` / `bind -X` で確認）。以前に fzf を止めた理由の元記録は見つからなかった（履歴は 2026-10-02 に作り直し済み）。理由は上のとおり。
+- 却下案: ListView 相当のプラグイン（zsh-autosuggestions、ble.sh）、PSFzf の導入。
+- 確認済み（2026-10-04）: zsh の `^R` は `history-incremental-search-backward`、bash の `\C-r` は `reverse-search-history`。`zfz`/`cdg` は定義されたまま。zsh/bash とも起動の終了コードは 0。
+- 影響: `Ctrl+T` を外したので、`fd` / `bat` はシェル内で使う箇所がなくなった（`apps.txt`・`apt.txt`・`20_packages.sh` には残してある）。
+
 ### インストール経路（2026-10-03）
 
 - Go と Docker は `20_packages.sh` から外し、README の「必要なときだけ入れるもの」に移した。ghq は GitHub Releases のビルド済みバイナリ（`ghq_linux_<arch>.zip`、v1.11.2 で確認）を `~/.local/bin` に置く（apt に `ghq` は無い）。`fdfind` → `fd`、`batcat` → `bat` のリンクを張る。
@@ -128,6 +138,30 @@ dotfiles/
 - VS Code 拡張を削減した（Windows: remote 系・テーマ、WSL: cpptools 系・todo-tree など）。
 
 ## Facts
+
+- fzf とキーバインドの現仕様（2026-10-04 に実機の `bindkey` / `bind -X` / `Get-PSReadLineKeyHandler` と `profile.ps1`・`common.sh` で確認。決定の経緯は「fzf は移動用に限定し…」）。
+
+  ツールの導入と読み込み:
+
+  | | fzf 本体 | PSFzf | fzf 付属の `key-bindings` / `completion` |
+  |---|---|---|---|
+  | pwsh | 導入済み（scoop 0.74.4） | 読み込まない（`apps.txt` からも削除） | 該当なし |
+  | zsh（WSL） | 導入済み（apt 0.44.1） | 該当なし | 読み込まない |
+  | bash（WSL） | 導入済み（apt 0.44.1） | 該当なし | 読み込まない |
+
+  キーバインドと機能:
+
+  | 機能 | pwsh | zsh | bash |
+  |---|---|---|---|
+  | `Ctrl+R`（履歴検索） | PSReadLine 標準（`ReverseSearchHistory`） | 標準（`history-incremental-search-backward`） | 標準（`reverse-search-history`） |
+  | ↑↓、`Ctrl+P`/`Ctrl+N`（前方一致の履歴検索） | あり | あり | あり |
+  | 履歴の予測表示 | `PredictionSource History` + `ListView`（10件固定のはず） | なし | なし |
+  | `Ctrl+T` / `Alt+C` | 未設定 | 標準（`transpose-chars` / `capitalize-word`） | 標準 |
+  | Tab 補完 | `MenuComplete` | `menu-select` | 標準 |
+  | `zfz`（zoxide を fzf で選んで移動） | あり（`Ctrl+g` 割り当て） | 関数のみ | 関数のみ |
+  | `cdg`（ghq のリポジトリを fzf で選んで移動） | 関数のみ | 関数のみ | 関数のみ |
+
+  読み取れること: fzf を使うのは `zfz` と `cdg` だけ（3シェル共通。パイプで呼ぶだけで、キーバインドや補完には関与しない）。履歴検索は3シェルとも標準機能。`Ctrl+g` の割り当ては pwsh 固有。
 
 - 複雑度の順位（分岐・重複・同期義務で評価）: 1 シェル設定の3重実装、2 ツール不在時の代替、3 XDG の4重定義、4 apt スクリプト、5 アプリが書き換える設定の symlink 管理、6 `.vimrc`、7 `starship.toml`、8 インストーラー系、9 Claude 権限設定、10 git 設定。
 - Zed の `auto_install_extensions` の既定は `{ "html": true }`。`false` は「入れない」で、アンインストールはしない。
@@ -165,6 +199,8 @@ dotfiles/
 - 古いコミットが GitHub に SHA 指定で一定期間残る可能性がある（HackGen は OFL、機密無し）。完全に消すには GitHub サポートへの依頼が必要。
 - `stylers.xml` の Gruvbox 以外の独自カスタマイズの有無（`git show` で履歴から復元できる）。`NppExec.ini` の `pandoc_preview` 登録は失われた。
 - pwsh の `PSReadLine`（`ListView` 予測表示）のコストは未計測。
+- 「`ListView` は重い可能性があるが見送り」（シェルの Decisions）と、現在の `profile.ps1:19` が `ListView` を設定していることが食い違う。見送りを撤回したのか未確認。`ListView` の件数は PSReadLine 2.4.5 で設定項目が無く、10件固定のはず（ソース未確認、記憶による）。
+- `fd` / `bat` を、シェルで使わなくなった今もインストール対象に残すか（`fd` は `FZF_DEFAULT_COMMAND` のためだった）。（`apps.txt` の `psfzf` は 2026-10-04 に削除した。入っている環境では `scoop uninstall psfzf` が別途要る）。
 - WSL の VS Code Server 側の C++ メモリ上限は、リポジトリ管理外（`~/.vscode-server/data/Machine/settings.json`）で未設定。
 - `templates/claude/settings.sandbox.json` の用途（使い捨ての検証環境に手でコピーする）は README に書いたが推測。
 - 他PCに残る旧構成のリンクやファイル（`setx` で作った旧環境変数、旧 Go、旧 vim プラグインなど）の整理。
