@@ -171,6 +171,5 @@ vim README.md
 
 手順書を書くうえで見つけた、dotfiles 側との食い違い。手順書の内容とは別に、直す候補。
 
-- `manifests/apps.txt` / `apps.home.txt` のコメントが、旧スクリプト名（`w1a_scoop_install.bat`）を指している。現在は `20_apps.bat`
-- `manifests/links.map` のコメントが、旧スクリプト名（`w2a_link_dotfiles.bat`）を指している。現在は `30_link.bat`
+- **解消済み**: `manifests/apps*.txt` / `links.map` のコメントが旧スクリプト名（`w1a_scoop_install.bat`、`w2a_link_dotfiles.bat`）を指していた。現在の `20_apps.bat` / `30_link.bat` に直した
 - `winget install Git.Git` と、`20_apps.bat` が scoop で入れる git が二重になる。手順書では clone のために winget 版を先に入れる前提にしたが、scoop 版を使うなら winget を省ける（鶏と卵の問題）
