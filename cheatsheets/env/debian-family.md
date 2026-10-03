@@ -20,15 +20,15 @@ apt を使うディストロ（MX Linux、Ubuntu、Linux Mint）を1本にまと
 
 バージョン依存の情報はこの表だけに書く。新しい版が出たら、ここを更新して手順を再確認する。
 
-| 項目 | MX Linux | Ubuntu | Linux Mint |
-|---|---|---|---|
-| 対象 | **25.3 "Infinity"**（Xfce / KDE / Fluxbox） | **26.04 LTS** "Resolute Raccoon"（GNOME） | **22.3**（Cinnamon） |
-| ベース | Debian 13.7 "trixie" | （Ubuntu 自身） | Ubuntu 24.04 |
-| 公開 | 2026-09-20 | 2026-04 | （Mint 23 は 2026-12 予定。未公開） |
-| init | **systemd**（既定。SysVinit 版は選ばない） | systemd | systemd |
-| 入手元 | [mxlinux.org/download-links](https://mxlinux.org/download-links/) | [ubuntu.com/download](https://ubuntu.com/download/desktop) | [linuxmint.com/download.php](https://linuxmint.com/download.php) |
-| 確認日 | 2026-10-03 | 2026-10-03 | 2026-10-03（Mint は **要確認** が多い） |
-| 実機での確認 | 未 | 未 | 未 |
+| 項目     | MX Linux                                                          | Ubuntu                                                     | Linux Mint                                                       |
+| ------ | ----------------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| 対象     | **25.3 "Infinity"**（Xfce / KDE / Fluxbox）                         | **26.04 LTS** "Resolute Raccoon"（GNOME）                    | **22.3**（Cinnamon）                                               |
+| ベース    | Debian 13.7 "trixie"                                              | （Ubuntu 自身）                                                | Ubuntu 24.04                                                     |
+| 公開     | 2026-09-20                                                        | 2026-04                                                    | （Mint 23 は 2026-12 予定。未公開）                                       |
+| init   | **systemd**（既定。SysVinit 版は選ばない）                                   | systemd                                                    | systemd                                                          |
+| 入手元    | [mxlinux.org/download-links](https://mxlinux.org/download-links/) | [ubuntu.com/download](https://ubuntu.com/download/desktop) | [linuxmint.com/download.php](https://linuxmint.com/download.php) |
+| 確認日    | 2026-10-03                                                        | 2026-10-03                                                 | 2026-10-03（Mint は **要確認** が多い）                                   |
+| 実機での確認 | 未                                                                 | 未                                                          | 未                                                                |
 
 - MX は Xfce / KDE / Fluxbox のほか、新しいハードウェア向けの **AHS**、Raspberry Pi 版がある。ここでは通常版の Xfce を想定する。AHS は別カーネルなので、使う場合は **要確認**。
 - 参考: [MX Linux 25.3 (9to5Linux)](https://9to5linux.com/mx-linux-25-3-infinity-is-out-with-linux-kernel-7-2-based-on-debian-13-7)、[Ubuntu release cycle](https://ubuntu.com/about/release-cycle)、[Linux Mint 23 (Phoronix)](https://www.phoronix.com/news/Mint-23-Alfa)
