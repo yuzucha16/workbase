@@ -133,6 +133,7 @@ git config --file ~/.gitconfig_local user.email "<email>"
 | 20 | `20_apps.bat [home]` | scoop と bucket を導入し、`manifests\apps.txt` のアプリを入れる。家 PC は `home` を付ける（`apps.home.txt` も入る） | 管理者権限は不要。ネット接続が必要 |
 | 21 | `21_vscode.bat` | VS Code 拡張を入れる | 20 の後 |
 | 22 | `22_python.bat` | winget で uv を入れ、Python 3.13 を導入する | |
+| 24 | `24_fonts.bat [--dry-run]` | PlemolJP NF / MoralerspaceHW を `gh` で `~\download` に取得する。インストールは手動（`fonts.md`） | `gh auth login` が必要（dry-run は不要） |
 | 30 | `30_link.bat [-n]` | `links.map` に従って設定ファイルのリンクを張る | 先に **`-n`（ドライラン）**で確認する。配置先に実ファイルがあると `[ERR]`。**自動退避はしない**ので、手で退避してから再実行 |
 
 - 管理者権限が必要なのは、任意の `.reg`（任意設定）と WSL 有効化（`40_wsl_enable.bat`、WSL を使う場合のみ）だけ。
