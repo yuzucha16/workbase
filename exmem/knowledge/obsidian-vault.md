@@ -141,7 +141,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 | Bases | `knowledge.base` で知識・プロジェクト・inboxの一覧表を表示する（表示は未確認） |
 | 階層タグ + `colored-tags` | `tags.md` の統制語彙（[[tags]]） |
 | `aliases` | 英語ファイル名のノートを日本語でリンク補完・検索する |
-| Backlinks / Graph | `## Related` の `[[リンク]]` でノート間のつながりを見る |
+| Backlinks | `## Related` の `[[リンク]]` でノート間のつながりを見る（Graph は 2026-10-03 に無効にした） |
 
 ## Vaultの置き場所とバックアップ
 
@@ -223,7 +223,6 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - 本文幅 58em は、1週間の試用で十分か（2026-10-04 に試用開始）。
 - Obsidian Sync を使うか（モバイルから inbox に送る運用をするか。未検証）。
 - Linter など、書式を整えるプラグインを入れるか。AI が整形する仕組みと競合しうる。
-- 2025-09-22 に追加して翌日に取り消した9つのプラグインの、取り消した理由（履歴から不明）。
 - 設定を記述するナレッジを、実物とずれないように保つ手段（設定ファイルから自動で確認するか）。
 
 ### Next Actions
@@ -254,7 +253,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 ## Proposals
 
-Vault全体に影響し、Syncで他の端末にも伝わるため、まだ適用していない。
+Vault全体に影響し、Syncで他の端末にも伝わる。2026-10-03 時点の扱いを、項目ごとに書く（適用済み・却下・見送り）。
 
 - 新規ノートの保存先を `resources/exmem/inbox` にする。モバイルで新規ノートを作るだけで inbox に入る。**2026-10-03 に、現在のフォルダにする（`newFileLocation: current`）と決めた**（`exmem/inbox` は AI 出力をナレッジ化する入口で、新規ノートとは別の用途のため。却下）。
 - `created` / `updated` のプロパティ型を「日付」にする。**採用済み**（2026-10-03、`types.json`）。
