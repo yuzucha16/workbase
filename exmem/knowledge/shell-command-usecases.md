@@ -345,6 +345,9 @@ vim ~/.vimrc
 - このPCの履歴には、`git config --global user.email "<実際のアドレス>"` の行がある。種ではプレースホルダーに置き換えた。
 - PowerShell では `[xxx]` はプレースホルダーにならない（`Write-Output [tag]` は成功して出力する）。`<xxx>` も、引用符の中や語の途中だと実行される（最初の版の種に `git config --global user.email "<メールアドレス>"` などが6行あり、パーサーで検出して直した）。語の先頭に置く。
 
+- 2026-10-04 に、`ListView`（予測表示）と fzf の履歴検索の食い違いを確認した: 同日の前半は fzf を移動用に限定していたが、後半で `Ctrl+R` / `Ctrl+T` に戻し、pwsh の `ListView` は残した（`profile.ps1` に `PredictionViewStyle ListView` がある）。キー割り当てと測定値は [[shell-fzf-keybindings]]。
+- zsh の履歴サイズが `HISTSIZE` の既定（30）のままだと `fc -l` の件数が少なく見える（`zsh -f` で試験するときの罠。rc では 50000）。
+
 ## Open Questions
 
 - 種の件数は多すぎないか。ListView は10件固定のはずなので、先頭数文字で絞れる行が多いほど使いやすい。数週間使ってから間引く。
@@ -356,4 +359,5 @@ vim ~/.vimrc
 ## Related
 
 - [[modern-cli-tools]] — CLI ツールの役割整理
+- [[shell-fzf-keybindings]] — fzf とキー割り当て
 - dotfiles リポジトリ（`docs/decisions.md`: シェル設定の根拠、fzf とキーバインドの現仕様。`docs/log.md`: 次にやること）。リンクではなく参照のみ
