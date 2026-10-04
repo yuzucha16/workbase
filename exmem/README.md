@@ -10,7 +10,7 @@ aliases:
   - external memory
   - 外部メモリ
 created: 2026-09-26
-updated: 2026-10-03
+updated: 2026-10-04
 ---
 
 # exmem

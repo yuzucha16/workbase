@@ -12,7 +12,7 @@ aliases:
   - PlemolJP
   - メインフォント
 created: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-04
 sources:
   - Claude conversation "Win11メインフォントの採用基準と選定" (2026-10-03)
   - Claude Code conversation "フォント導入 (PlemolJP / Moralerspace) と Zed・Terminal・Notepad++ のフォント統一" (2026-10-03)
