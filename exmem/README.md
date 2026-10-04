@@ -63,9 +63,13 @@ exmem/                 # resources/exmem/
 │   ├── obsidian-vault.md
 │   ├── office-ai-workspace.md
 │   ├── pc-setup-manuals.md              # Win11 / Debian系の環境セットアップ手順書
+│   ├── notepad-plus-plus.md             # Notepad++（scoop版）の設定管理（config.xmlの雛形方式）
 │   ├── power-automate-office-automation.md
-│   ├── vscode-workspace.md
+│   ├── scoop-app-management.md          # scoopを正本にしたアプリ管理と管理外の最小化
 │   ├── shell-command-usecases.md        # コマンド利用傾向とヒストリの種（dotfilesの種ファイルの正本）
+│   ├── shell-fzf-keybindings.md         # fzfとキー割り当て（pwsh/zsh/bash）
+│   ├── terminal-cursor-blink.md         # カーソル点滅を止める（DECSCUSR）
+│   ├── vscode-workspace.md
 │   ├── wsl-file-placement.md
 │   ├── zed-acp.md
 │   ├── zed-dotfiles.md

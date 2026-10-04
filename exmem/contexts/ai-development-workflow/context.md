@@ -43,9 +43,11 @@ updated: 2026-10-04
 - 2026-10-03 に、実機の移行を進め、inbox のメモ（ディレクトリ構造の見直し）を統合した（6回目）。`C:\vault\notes` は実体へのジャンクションになり、`.obsidian` と Office テンプレは dotfiles から移管済み。`resources/` 内のローカル専用は `_local/` に置く規約を追加した（[[obsidian-vault]]）。実物との照合では、`notes.lnk` が既に無いこと、`_local/` コミットが未 push であること、旧クローンと `notes_old` が残っていることを確認した。
 
 - 2026-10-03 に、dotfiles と手順書・フォントのメモ6件を統合した（7回目）。新しい知識は [[pc-setup-manuals]]、[[fonts]]。dotfiles 固有の記録は、2026-10-04 に dotfiles リポジトリの `docs/` へ移した（exmem は作業ログを持たない）。
+- 2026-10-04 に、inbox のメモ7件（exmem と他リポジトリの役割分離、Zed の設定、カーソル点滅、Notepad++、scoop、シェル履歴と fzf）を統合した（8回目）。作業ログと知識を分ける方針に沿い、再利用できる知識だけを取り込んだ（新規は [[terminal-cursor-blink]]、[[notepad-plus-plus]]、[[scoop-app-management]]、[[shell-fzf-keybindings]]。追記は [[ai-development-workflow]]、[[zed-dotfiles]]、[[zed-acp]]、[[zed-vim]]、[[shell-command-usecases]]）。個別の経緯・Next Actions は dotfiles リポジトリの `docs/` に任せた。実物との照合では、Zed の `settings.json`、カーソル点滅の3シェルの記述、fzf のキー、Notepad++ の雛形方式、`%APPDATA%\zed\themes` のジャンクションがメモと一致した。
 
 ## Next Actions
 
+- 他のプロジェクト（`ai-business-adoption`、`linux-home-pc`、`zed-vim-migration`）の `contexts/` を、リポジトリ側に持つ形へ寄せるか、exmem 内で完結するものは残すかを決める（[[ai-development-workflow]] の「他リポジトリとの関係」）。
 - **Vault構造の移行を完了する**（[[obsidian-vault]] 移行の状況）。順序の制約: GitHub rename → 配置換え。
   1. 済み（2026-10-02）: GitHub で `notes` に rename、リポジトリ内の配置換え。
   2. 済み（2026-10-03）: `C:\vault\notes` を実体 `C:\vault\repos\github.com\yuzucha16\notes` へのジャンクションにした（それまでは `notes.lnk` というショートカットで、パスとして使えなかった）。`.obsidian` の取り込み、dotfiles 側の `windows/office` `windows/obsidian` の削除、`links.map` の書き換え、Office のリンク張り直しも済み（[[obsidian-vault]]）。
