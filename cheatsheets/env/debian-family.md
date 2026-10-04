@@ -215,6 +215,7 @@ git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha
 | 20 | `20_packages.sh desktop` | apt の更新、`manifests/apt.txt` + `apt.desktop.txt` のパッケージ、starship、ghq、`bat` / `fd` のリンクを入れる | `sudo` とネット接続が必要。パッケージの一覧はスクリプトでなく `manifests/` を直す |
 | 23 | `23_ja.sh` | fcitx5 + Mozc、日本語フォントを入れ、`im-config -n fcitx5` を実行する。Ubuntu 系は言語パックも入れる | **再ログイン**後に、Fcitx 5 設定で Mozc を追加する（手動、「6. 日本語入力」） |
 | 30 | `30_link.sh -n` → `30_link.sh` | stow で `home/` を `~` に展開する | 初回は **`-n`（ドライラン）**で確認する。リポジトリの場所は自動で判定される |
+| 31 | `31_history_seed.sh [-n]` | zsh/bash の履歴に、定型コマンドの種（`manifests/history.seed.sh.txt`）を入れる | 履歴が無い/空のときだけ。既存の履歴は上書きしない。**最初のシェルを開く前に**実行する |
 
 ```shell
 cd ~/vault/repos/github.com/yuzucha16/dotfiles/scripts/linux
