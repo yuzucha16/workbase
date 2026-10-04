@@ -29,6 +29,8 @@ AIサービスの会話履歴やメモリに知識を閉じ込めず、Markdown�
 - `knowledge/`: AIをまたいで再利用する知識。1ファイル1トピック
 - `contexts/`: 個別プロジェクトの現在状態と次にやること（Vault の PARA の `projects/` とは別物）
 
+exmem はナレッジの置き場で、他リポジトリの作業ログは置かない。dotfiles は exmem を読み取り専用で参照するだけで、dotfiles の作業の経緯・決定・次にやることは dotfiles リポジトリの `docs/` が持つ（2026-10-04 に `knowledge/dotfiles.md` と `contexts/dotfiles/` を移して削除した）。
+
 ## ディレクトリ構造
 
 場所は `C:\vault\notes\resources\exmem`（Obsidian Vault `C:\vault\notes` の中）。`C:\vault\notes` 全体が `notes` リポジトリで、共有対象は `resources/` だけ（[[obsidian-vault]]）。
@@ -52,7 +54,6 @@ exmem/                 # resources/exmem/
 │   ├── claude-code-project-settings.md  # .claude/ の管理方針
 │   ├── claude-code-storage.md
 │   ├── claude-code-vs-cowork.md
-│   ├── dotfiles.md                      # dotfilesの構成・スクリプト規約・判断の根拠
 │   ├── fonts.md                         # メインフォントの選定と導入
 │   ├── human-ai-decision-loop.md
 │   ├── keyboard-switches.md
@@ -73,8 +74,6 @@ exmem/                 # resources/exmem/
     ├── ai-business-adoption/
     │   └── context.md
     ├── ai-development-workflow/
-    │   └── context.md
-    ├── dotfiles/
     │   └── context.md
     ├── linux-home-pc/
     │   └── context.md

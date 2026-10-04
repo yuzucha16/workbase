@@ -182,7 +182,7 @@ Get-PSReadLineOption | Select-Object EditMode, PredictionSource, PredictionViewS
 vim ~/.vimrc
 ```
 
-- 元の履歴は `notepad $PROFILE` と `. $PROFILE.CurrentUserCurrentHost` だった。いまの構成では `Microsoft.PowerShell_profile.ps1` を廃止して `profile.ps1`（全ホスト共通）だけにしたので、`CurrentUserAllHosts` に直した。`$PROFILE` は `CurrentUserCurrentHost`（存在しないファイル）を指す（[[dotfiles]]）。
+- 元の履歴は `notepad $PROFILE` と `. $PROFILE.CurrentUserCurrentHost` だった。いまの構成では `Microsoft.PowerShell_profile.ps1` を廃止して `profile.ps1`（全ホスト共通）だけにしたので、`CurrentUserAllHosts` に直した。`$PROFILE` は `CurrentUserCurrentHost`（存在しないファイル）を指す。
 
 ## 履歴の種（zsh/bash・素案）
 
@@ -313,10 +313,10 @@ vim ~/.vimrc
 1. **2〜3文字の前方一致で、履歴検索から呼べるか。** 呼べるなら何も足さない。種を入れることが、エイリアスを増やさない手段になる。
 2. **固定の文字列で、頻度が高く、前方一致では区別しにくいか。** エイリアスの候補。
 3. **変わる部分（タグ名、版数、日付）があるか。** エイリアスではなく、引数を取る関数か `<…名>` 入りのひな形にする。
-4. **「選ぶ」操作か。** キーバインド（`Alt+j` の `zfz`、`Alt+k` の `cdg` など。空きキーは [[dotfiles]] の Facts）。固定コマンドの実行には使わない。
+4. **「選ぶ」操作か。** キーバインド（`Alt+j` の `zfz`、`Alt+k` の `cdg` など。空きキーは dotfiles リポジトリの `docs/decisions.md` の Facts）。固定コマンドの実行には使わない。
 
 制約:
-- 追加するものは `profile.ps1` と `common.sh` の両方に要る（3シェルの同期義務。[[dotfiles]]）。「基本エイリアスのみ」「標準コマンドの置換エイリアスは追加しない」の方針があるので、数は絞る。
+- 追加するものは `profile.ps1` と `common.sh` の両方に要る（3シェルの同期義務。dotfiles リポジトリの `docs/decisions.md`）。「基本エイリアスのみ」「標準コマンドの置換エイリアスは追加しない」の方針があるので、数は絞る。
 - `sl`（`scoop list` の短縮）は PowerShell の `Set-Location` と衝突するので使えない。
 - 頻度の数字には限界がある。PSReadLine の履歴にはタイムスタンプも終了コードも無いため、「同じ日に連続した試行錯誤」と「毎日使う定型」を区別できない。
 
@@ -328,7 +328,7 @@ vim ~/.vimrc
 | `git tag -a`/`-d`、`git push -d` | ひな形（種）。関数化は使い方が固まってから |
 | `vim ~/.vimrc`（99） | 他PCの旧構成の回数かもしれない。種を入れて数週間使ってから見る |
 | `cd ../`（97）、`cd -`（28） | `..`・`b` が既にある |
-| `cdg`、`zfz` | 関数はある。キーバインドは3シェル共通で割り当てる（[[dotfiles]] の Next Actions） |
+| `cdg`、`zfz` | 関数はある。キーバインドは3シェル共通で割り当てる（dotfiles リポジトリの `docs/log.md` の Next Actions） |
 
 ## 種ファイルの作り方
 
@@ -355,6 +355,5 @@ vim ~/.vimrc
 
 ## Related
 
-- [[dotfiles]] — シェル設定の構成、fzf とキーバインドの現仕様
 - [[modern-cli-tools]] — CLI ツールの役割整理
-- [[dotfiles/context]] — 次にやること
+- dotfiles リポジトリ（`docs/decisions.md`: シェル設定の根拠、fzf とキーバインドの現仕様。`docs/log.md`: 次にやること）。リンクではなく参照のみ

@@ -62,7 +62,7 @@ notes/                 # Git root
 
 ### dotfiles との関係（2026-10-03 時点）
 
-- `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）を張る。Office のテンプレ・リボン設定は、その後の dotfiles の見直しで `links.map` から外れ、初回に手で配置する運用になった（[[dotfiles]]）。
+- `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）を張る。Office のテンプレ・リボン設定は、その後の dotfiles の見直しで `links.map` から外れ、初回に手で配置する運用になった。
 - セットアップの順序は「`notes` を先に clone → `30_link.bat`」（旧 `w2a`。スクリプトは2026-10-03 に `NN_<内容>` へ改名された）。`NOTES_DIR` はリンクで作られる。
 - ローカル専用の `projects/` `areas/` `archives/` は gitignore のため、clone 直後には存在しない。必要に応じて手で作る。
 
