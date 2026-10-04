@@ -20,6 +20,7 @@ sources:
   - Claude conversation "vaultの置き場所とバックアップ方針" (2026-10-02)
   - "C:\\vault の構成とタスクスケジューラ（2026-10-02 に確認）"
   - "C:\\vault\\notes\\.obsidian の設定ファイル（2026-10-01 に確認）"
+  - "C:\\vault\\notes\\.obsidian の設定ファイルと `git log -- .obsidian`（2026-10-04 に確認。「設定」節を更新）"
 ---
 
 # Obsidian Vault
@@ -63,6 +64,7 @@ notes/                 # Git root
 ### dotfiles との関係（2026-10-03 時点）
 
 - `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）を張る。Office のテンプレ・リボン設定は、その後の dotfiles の見直しで `links.map` から外れ、初回に手で配置する運用になった。
+- `.obsidian` は `notes` に置き続け、dotfiles には戻さない（2026-10-04 決定）。根拠: Obsidian は Vault 直下の `.obsidian` を読む（dotfiles に置くとジャンクションが必須）、設定の中身が Vault と連動する、dotfiles → `notes` の片方向の依存を保てる、プラグインで dotfiles の履歴が重くなるのを避ける。dotfiles に置いてリンクすると、clone 順の循環、リンク前に Obsidian を開いたときの衝突、コミット先の分離が起きる。設定を変える作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない。判断基準の全体は、inbox の `2026-10-04-config-dir-placement-criteria.md`（統合待ち）。
 - セットアップの順序は「`notes` を先に clone → `30_link.bat`」（旧 `w2a`。スクリプトは2026-10-03 に `NN_<内容>` へ改名された）。`NOTES_DIR` はリンクで作られる。
 - ローカル専用の `projects/` `areas/` `archives/` は gitignore のため、clone 直後には存在しない。必要に応じて手で作る。
 
@@ -79,23 +81,33 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 ## 設定
 
-2026-10-01 時点で `.obsidian` の設定ファイルから確認した内容（2026-09-26 時点と同じ）。
+2026-10-04 時点で `.obsidian` の設定ファイルから確認した内容。2026-10-01 時点の記述から、2026-10-03 の整理（`notes` の `git log -- .obsidian` の `82953b7` ほか）で大きく変わった。変更の理由は、履歴から読み取れないものが多い（下に「不明」と書く）。
 
 ### コアプラグイン
 
-- 有効: Sync、Bases、Templates、Backlinks、Graph、Tag pane、Daily notes、Canvas など
-- 無効: Properties view
+- 有効: `file-explorer`、`global-search`、`switcher`、`backlink`、`outgoing-link`、`tag-pane`、`properties`、`page-preview`、`command-palette`、`editor-status`、`bookmarks`、`outline`、`word-count`、`file-recovery`、`sync`、`bases`
+- 無効: `graph`、`canvas`、`daily-notes`、`templates`、`note-composer`、`footnotes`、`slash-command`、`markdown-importer`、`zk-prefixer`、`random-note`、`slides`、`audio-recorder`、`workspaces`、`publish`、`webviewer`
+- 2026-10-01 時点では `graph`、`canvas`、`daily-notes`、`templates`、`note-composer` が有効で、`properties` が無効だった。2026-10-03 の `82953b7`（コミットメッセージは「使っていないプラグインと古い設定を削除」）で逆になった。
 
 ### コミュニティプラグイン
 
-- `calendar`
-- `obsidian-icon-folder`
-- `colored-tags`（タグを色分けする。階層タグの親ごとに色が変わる）
+- `colored-tags`（タグを色分けする。階層タグの親ごとに色が変わる）だけ。
+- 2026-10-01 時点で入っていた `calendar` と `obsidian-icon-folder` は、2026-10-03 に削除した（`82953b7`）。
+- `plugins/colored-tags/data.json`（タグの色の設定）は、2026-10-03 に追跡をやめ（`22b9fc0`。端末ごとのキャッシュとコミットメッセージにある）、約1.5時間後に再び追跡した（`76d3fec`）。反転の理由は不明。2026-10-04 時点で、Obsidian が書き換えたとみられる未コミットの変更が残っている。
+
+### テーマ・フォント・スニペット
+
+- テーマ: Material Gruvbox（`themes/` には `Typora-Vue` も入っている）。2026-10-03 の `78e3975` で、Obsidian gruvbox と Everforest から変更した。理由は不明。
+- フォント: UI・本文・等幅とも `PlemolJP Console NF`（次候補 `Moralerspace Neon HW`、`Meiryo UI`）、基本のフォントサイズ 14。2026-10-03 の `1d75fce` で、Noto Sans JP などから変更した。理由は不明。
+- 有効なスニペット: `material-gruvbox-bold`、`file-explorer-compact`、`readable-width`。`readable-width` は、`--file-line-width: 58em` で本文の幅をフォントサイズに比例させる（拡大しても1行の文字数が保たれる。既定は固定 700px）。`readableLineLength` を有効にしている（2026-10-04、`0fdd679`）。
 
 ### その他
 
-- 新規ノートの保存先 `newFileFolderPath`: `0_inbox`（このフォルダはVaultに存在しない）
-- 添付ファイルの保存先 `attachmentFolderPath`: `0_inbox`
+- 新規ノートの保存先 `newFileLocation`: `current`（現在のフォルダ）。2026-10-01 時点では、`newFileFolderPath: 0_inbox`（Vault に存在しないフォルダ）だった。
+- 添付ファイルの保存先 `attachmentFolderPath`: `./`（ノートと同じフォルダ）。以前は `0_inbox`。
+- 行番号を表示、削除の確認あり、タブ幅 2、検索から除外するフィルターは `.tmp.`、`_archive/`、`.claude/`。
+- `types.json`: `created` と `updated` は `date` 型（2026-10-03、`e81182c`）。`aliases`、`cssclasses`（複数テキスト）、`tags` は既定。
+- 改行コード: `notes` の `.gitattributes` が `* text=auto eol=lf` で LF に統一している。Obsidian が実際に書く改行コードは未確認。
 
 ## ナレッジベースから使っている機能
 
