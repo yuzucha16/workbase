@@ -39,6 +39,7 @@
 - `<topic>`: テーマを表す英単語2〜5語の kebab-case（例: `terminal-cursor-blink-decscusr`）。
 - `title`: 日本語の名詞句（例: `ターミナルのカーソル点滅を止める`）。
 - 日付: 今日の日付（`YYYY-MM-DD`）。
+- `kit`: このメモを作った時点の workflow-kit の版。`README.md` の「版」の値を、そのまま書く。統合のとき、`knowledge/` の frontmatter には写さない（版ごとの出力を比べるための記録）。
 - `sources`: `<実行中のAI名> conversation "<テーマ>"`（例: `Claude Code conversation "fzf のキーバインド整理"`）。
 - `tags`: 英小文字の kebab-case で3〜6個。`exmem/tags.md` の語彙から選び、語彙に無いものは書いてよい（統合のときに exmem 側で正規化する）。ソフトウェアは `tool/<名前>`、AIサービスは `ai/<名前>`。`type` や `status` の値（`inbox`、`knowledge` など）はタグにしない。
 
@@ -97,6 +98,7 @@ Gotchas の項目（原因が分からなければ「不明」）:
 - [ ] 「何をいつやったか」の作業ログが混ざっていない
 - [ ] `tags` が3〜6個で、kebab-case、`type`/`status` の値を含まない
 - [ ] 日付が今日で、`sources` が定形
+- [ ] `kit` が、`README.md` の「版」と一致している
 
 ## 形式
 
@@ -109,6 +111,7 @@ title: <テーマ>
 tags:
   - <タグ>
 created: <今日の日付 YYYY-MM-DD>
+kit: <README.md の「版」>
 sources:
   - <このAIサービス名> conversation "<テーマ>"
 ---
