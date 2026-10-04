@@ -11,7 +11,7 @@ aliases:
   - Claude Codeの履歴の保存場所
   - Claudeチャット履歴の移行
 created: 2026-10-01
-updated: 2026-10-01
+updated: 2026-10-04
 sources:
   - Claude (Claude Code via Zed ACP) conversation "Claudeチャット履歴の保存場所" (2026-10-01)
   - "C:\\Users\\ck\\.claude\\projects（2026-10-01 に確認）"
@@ -88,7 +88,7 @@ Claude Codeを起動して `projects\` に別の名前のフォルダができ�
 
 ## Open Questions
 
-- `~/.claude` の手書き設定のうち、`settings.json` は管理済み（dotfilesの `claude/user/settings.json` へリンク。WSLは適用済み、Windowsは未適用。[[claude-code-permissions]]）。`CLAUDE.md` と `projects\<プロジェクト名>\memory\` をdotfilesで管理するかは未決。
+- `~/.claude` の手書き設定のうち、`settings.json` は管理済み（dotfilesの `home/.claude/settings.json` へリンク。WSL・Windowsとも適用済み、2026-10-04 に確認。[[claude-code-permissions]]）。`CLAUDE.md` と `projects\<プロジェクト名>\memory\` をdotfilesで管理するかは未決。
 - Claude Desktop の Code 機能から、ローカルの履歴が見えるか。
 
 ## Next Actions
