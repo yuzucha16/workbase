@@ -184,6 +184,128 @@ vim ~/.vimrc
 
 - 元の履歴は `notepad $PROFILE` と `. $PROFILE.CurrentUserCurrentHost` だった。いまの構成では `Microsoft.PowerShell_profile.ps1` を廃止して `profile.ps1`（全ホスト共通）だけにしたので、`CurrentUserAllHosts` に直した。`$PROFILE` は `CurrentUserCurrentHost`（存在しないファイル）を指す（[[dotfiles]]）。
 
+## 履歴の種（zsh/bash・素案）
+
+Windows の種を zsh/bash 向けに置き換えた素案（2026-10-04、試験用）。コードブロックは `bash`（Windows 側の `powershell` ブロックとは別扱い）。履歴ファイルは zsh・bash とも1行1コマンドの平文でよい（zsh は拡張形式でなくても読める。実機で `fc -R` / `history -r` に読み込めることを確認）。
+
+置き換えの判定（Windows → zsh/bash）:
+
+| Windows の行 | 判定 | zsh/bash |
+|---|---|---|
+| `wsl ...`、`Set-ExecutionPolicy` / `Get-ExecutionPolicy` | 削除 | 対応するものが無い（`wsl` は Windows 側のコマンド） |
+| `winget ...`、`scoop ...` | 置換 | `apt`（`manifests/apt.txt` と `20_packages.sh` が apt）。`scoop bucket add` は対応無しで削除、`winget list` は `apt list --installed` と重なるので削除 |
+| `where <コマンド>` | 置換 | `type -a <コマンド>` |
+| `setx <変数名> "<値>"` | 削除 | Linux では `~/.config/profile.local` に書く運用で、1行では表せない |
+| `Get-Content ... ForEach-Object { code --install-extension $_ }` | 置換 | `xargs -n 1 code --install-extension < extensions.txt` |
+| `gh release download ... -D "$HOME\Downloads"` | 置換 | `-D ~/download`（`24_fonts.sh` と同じ置き場） |
+| `notepad $PROFILE...`、`. $PROFILE...` | 置換 | `vim ~/.zshrc` / `vim ~/.bashrc` / `vim ~/.config/shell/common.sh`、`source ~/.zshrc` / `source ~/.bashrc` |
+| `Get-PSReadLineOption` 系 | 削除（`HistorySavePath` だけ置換） | `echo $HISTFILE` |
+| `git ...`、`uv ...`、`cargo ...`、`rustup ...`、`ghq ...`、`code --list-extensions`、`which`、`vim ~/.vimrc` | 流用 | そのまま |
+
+- 置換した apt の行や `vim ~/.zshrc` は、Windows の行を機械的に置き換えたもので、実際の履歴にあった行ではない（このPCの WSL 履歴にあるのは `sudo apt install zsh` と `source ~/.zshrc` のみ）。
+- プレースホルダーは Windows 側と同じ規則（引用符なし・語の先頭）。bash/zsh では、先頭の `<…>` が入力リダイレクトとして失敗して、コマンド本体が実行されない。
+
+### 1. 環境・初回セットアップ（zsh/bash）
+
+```bash
+ghq root
+ghq get <owner名>/<repo名>
+git config --global ghq.root <パス>
+git config --global user.name <ユーザー名>
+git config --global user.email <メールアドレス>
+git config --global core.autocrlf <値>
+git config --global core.symlinks
+git config --list
+git submodule sync
+git submodule update --init --recursive
+uv tool install <ツール名>
+uv tool update-shell
+uv python install <バージョン>
+uv python list
+uv python pin <バージョン>
+gh release download -R <owner名>/<repo名> -p "<ファイルパターン>" -D ~/download
+code --list-extensions > extensions.txt
+xargs -n 1 code --install-extension < extensions.txt
+```
+
+### 2. パッケージの調査と導入（zsh/bash）
+
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt autoremove
+apt search <名前>
+apt show <名前>
+sudo apt install <パッケージ名>
+sudo apt remove <パッケージ名>
+apt list --installed
+apt list --installed | grep <パターン>
+cargo install <クレート名>
+cargo install --locked <クレート名>
+rustup update
+type -a <コマンド>
+which <コマンド>
+<コマンド> --version
+```
+
+### 3. git の日常とリリース（zsh/bash）
+
+Windows 側の 3 と同一（コマンド仕様が同じなので流用）。
+
+```bash
+git status
+git fetch
+git pull
+git pull origin main
+git branch
+git branch -a
+git branch -r
+git branch -a --no-merged
+git checkout main
+git switch main
+git switch -c <ブランチ名>
+git push origin main
+git push origin <ブランチ名>
+git push --tag
+git push origin main --tag
+git push -d origin <tag名>
+git tag
+git tag -a <tag名> -m "<メッセージ>"
+git tag -d <tag名>
+git rebase main
+git rebase main <ブランチ名>
+git rebase <ブランチ名>
+git rebase --continue
+git rebase --abort
+git rebase -i main
+git merge <ブランチ名>
+git merge --squash <ブランチ名>
+git merge --abort
+git branch -d <ブランチ名>
+git branch -D <ブランチ名>
+git log --oneline --graph
+git add .
+git commit -m <メッセージ>
+git reset --hard <リモート名>/<ブランチ名>
+git switch -C main origin/main
+git gc --prune=now
+git archive --format=zip <tag名> <パス> -o <出力ファイル名>.zip
+```
+
+### 4. 設定の編集と再読み込み（zsh/bash）
+
+```bash
+vim ~/.zshrc
+vim ~/.bashrc
+vim ~/.config/shell/common.sh
+source ~/.zshrc
+source ~/.bashrc
+echo $HISTFILE
+vim ~/.vimrc
+```
+
+- 検証（2026-10-04）: プレースホルダーを含む34行を、スタブコマンドを置いた空のディレクトリで bash と zsh の両方で実行した。コマンド本体は0回しか実行されず、余計なファイルも作られなかった。`xargs ... < extensions.txt` は `extensions.txt` があれば実際にインストールする（意図どおり）。
+
 ## エイリアス・キーバインド化の考え方
 
 次の順に判断する。
@@ -213,7 +335,7 @@ vim ~/.vimrc
 - 種ファイル: dotfiles の `windows/powershell/history.seed.txt`（PSReadLine の履歴ファイルと同じ形式。1行1コマンド、LF）。
 - 作り方: このノートの「履歴の種」にある ` ```powershell ` ブロックを、上から順に連結する。コードブロックの外の説明は含めない。
 - 初回セットアップでの使い方: `scripts\windows\31_history_seed.bat [-n]`（層 30 の固有ツール枠。`30_link.bat` の後）。履歴ファイルが無い、または空のときだけコピーする。既存の履歴は上書きしない（`-n` は確認のみ）。新しい pwsh を開く前に実行する。シンボリックリンクにしない（PSReadLine が実行のたびに追記するので、作業ツリーが毎回汚れる）。
-- zsh/bash への展開: Windows の種を、コマンドをそろえて適用する（後回し。zsh の履歴は拡張形式 `: 時刻:0;コマンド` で別形式）。
+- zsh/bash の種（素案）: 「履歴の種（zsh/bash・素案）」の ` ```bash ` ブロックを同様に連結して、dotfiles の `manifests/history.seed.sh.txt` に置く（仮の置き場。未コミット）。履歴ファイルは `~/.local/state/{zsh,bash}/history`（1行1コマンドの平文。zsh も読める）。配置スクリプト（`31_history_seed.sh`）は未実装で、試験は手で履歴ファイルへコピーして行う。
 
 ## Gotchas
 
