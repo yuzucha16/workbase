@@ -32,8 +32,7 @@ updated: 2026-10-04
 
 - dotfiles の `common.sh` / `.bashrc` / `.zshrc` / `README.md` の fzf 変更をコミットする（`home/.config/zed/settings.json` の別変更が未コミットで残っている。混ぜない）。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は [[dotfiles]] の Facts）:
-  - `zfz`: `Ctrl+g` の割り当てを zsh/bash にも入れる（現状は pwsh のみ）。
-  - `cdg`: キーバインドを割り当てる（3シェル共通。キーは未定）。
+  - （済・未コミット）`zfz` = `Alt+j`、`cdg` = `Alt+k` を3シェル共通で割り当てた（2026-10-04）。pwsh の実際の押下は未確認。使ってみて、WSL に `ghq` を入れたら `cdg` も実機で確認する。
   - ListView 相当の履歴予測表示を zsh/bash で疑似実装する（難易度によっては見送り）。
   - その他、3シェルの差を洗い出して共通化する。
 - このPCの `psfzf` を `scoop uninstall psfzf` で外す（`apps.txt` からは削除済み）。
