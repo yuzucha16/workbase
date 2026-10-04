@@ -64,6 +64,7 @@ exmem/                 # resources/exmem/
 │   ├── pc-setup-manuals.md              # Win11 / Debian系の環境セットアップ手順書
 │   ├── power-automate-office-automation.md
 │   ├── vscode-workspace.md
+│   ├── shell-command-usecases.md        # コマンド利用傾向とヒストリの種（dotfilesの種ファイルの正本）
 │   ├── wsl-file-placement.md
 │   ├── zed-acp.md
 │   ├── zed-dotfiles.md

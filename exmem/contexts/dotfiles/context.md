@@ -25,6 +25,7 @@ updated: 2026-10-04
   - 食い違い・未反映: `git bundle` のバックアップがメモのパスに無い。`.wslconfig` はこのPCに未リンク。dotfiles README に `areas_shared` の記載は無い（解消済み）。`gh` は scoop に入っている。
   - 未 push: dotfiles は `origin/main`（`e1e4ac7`）より3コミット先（`8f1f885` `dda8e75` `b9af34a`）。リモートには `main` と `202509` が両方ある。
 
+- 2026-10-04: 両PCの履歴を分析してユースケースを整理し、「履歴の種」の方針を決めた（exmem に傾向と種の本文、dotfiles に種ファイル。[[shell-command-usecases]]）。
 - 2026-10-04: zsh/bash の fzf キーバインド・補完を外し、pwsh と履歴検索をそろえた（`common.sh`、未コミット。[[dotfiles]] の Decisions）。目的はコマンド履歴のベースを dotfiles 側で管理して、PC 移行時の調べ直しを減らすこと。履歴本体の管理はまだ未着手。
 
 ## Next Actions
@@ -36,7 +37,8 @@ updated: 2026-10-04
   - ListView 相当の履歴予測表示を zsh/bash で疑似実装する（難易度によっては見送り）。
   - その他、3シェルの差を洗い出して共通化する。
 - このPCの `psfzf` を `scoop uninstall psfzf` で外す（`apps.txt` からは削除済み）。
-- コマンド履歴の管理を設計する: 重複排除、`ls`/`cd` など短い行の除外、秘匿パターンと会社固有・ユーザー名入りパスの除外、共有（Git）とローカル専用（`_local/`）の分け方。参照用の他PC生ヒストリは `resources/_local/ConsoleHost_history.txt` に退避済み（Git 対象外。使い終わったら削除）。
+- ヒストリの種（案a）を進める。方針と種の本文は [[shell-command-usecases]]。種ファイル `windows/powershell/history.seed.txt`（92行）と、配置スクリプト `scripts/windows/31_history_seed.bat`（履歴が無い/空のときだけコピー）は作成・検証済み。残り: 新しいPCで通し実行、数週間使って間引き、zsh/bash 向けにコマンドをそろえて展開（`31_history_seed.sh` は欠番）。
+- （旧）コマンド履歴の管理を設計する: 重複排除、`ls`/`cd` など短い行の除外、秘匿パターンと会社固有・ユーザー名入りパスの除外、共有（Git）とローカル専用（`_local/`）の分け方。参照用の他PC生ヒストリは `resources/_local/ConsoleHost_history.txt` に退避済み（Git 対象外。使い終わったら削除）。
 
 - dotfiles の未 push 3コミットを push する。`notes` 側のコミットも push する。
 - GitHub の既定ブランチを `main` にし、問題が無ければ `202509` をリモート・ローカルで削除する（ユーザーの確認待ち）。
