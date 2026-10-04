@@ -7,7 +7,7 @@ tags:
 aliases:
   - Tags
 created: 2026-09-26
-updated: 2026-10-03
+updated: 2026-10-04
 ---
 
 # タグ一覧
@@ -37,6 +37,10 @@ updated: 2026-10-03
 | `tool/powershell` | PowerShell（プロファイル含む） |
 | `tool/excel` | Excel（Office Scripts含む） |
 | `tool/power-automate` | Power Automate |
+| `tool/notepadpp` | Notepad++ |
+| `tool/scoop` | scoop（Windows のパッケージマネージャー） |
+| `tool/winget` | winget |
+| `tool/windows-terminal` | Windows Terminal |
 
 ### `ai/` — AIサービス・エージェント
 
@@ -69,3 +73,4 @@ updated: 2026-10-03
 | `linux` | Linuxディストリビューション・導入 |
 | `hardware` | 物理デバイス（キーボードなど） |
 | `font` | フォントの選定・導入・設定 |
+| `accessibility` | 目の負担・光の点滅など、身体の特性に合わせた環境設定 |
