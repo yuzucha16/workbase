@@ -100,3 +100,5 @@ sources:
 
 `contexts/<project>/context.md` の `Current State` と `Next Actions` を更新する。
 次に作業するAI・端末は、ここから再開する。
+
+exmem には他リポジトリ（dotfiles など）の作業ログを置かない。そうしたプロジェクトの経緯・決定・次にやることは、各リポジトリの `docs/` が持つ。他リポジトリは exmem を読み取り専用で参照するだけで、exmem へは書き込まない。

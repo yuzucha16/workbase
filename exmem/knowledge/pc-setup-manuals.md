@@ -22,7 +22,7 @@ sources:
 
 ## Purpose
 
-PCを入れ替えても、手順書とスクリプトで同じ環境を再現できるようにする。手順書は `resources/cheatsheets/env/` にあり、スクリプトは dotfiles（[[dotfiles]]）が正。範囲は「インストール準備」から「エディタでテキストが見られる」まで。
+PCを入れ替えても、手順書とスクリプトで同じ環境を再現できるようにする。手順書は `resources/cheatsheets/env/` にあり、スクリプトは dotfiles リポジトリが正。範囲は「インストール準備」から「エディタでテキストが見られる」まで。
 
 ## 場所
 
@@ -100,7 +100,6 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 
 ## Related
 
-- [[dotfiles]]
 - [[fonts]]
 - [[linux-multiboot-setup]]
 - [[linux-distro-selection]]
