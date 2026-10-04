@@ -51,6 +51,7 @@ sources:
 ```
 
 - `type` / `title` / `status` / `tags` / `created` / `updated` は必須。
+- inbox のメモには、任意の `kit:`（メモを作った時点の `resources/workflow-kit` の版）がある。`knowledge/` には写さない。
 - `aliases` には日本語名や別名を入れる。Obsidianのリンク補完・検索で使われる。
 - 日付は `YYYY-MM-DD`。知識ファイルを変更したら `updated` を今日の日付にする。
 
