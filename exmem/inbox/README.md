@@ -38,7 +38,7 @@ Obsidianのモバイルアプリで inbox に新規ノートを作って貼り�
 - title は日本語の名詞句。tags は英小文字の kebab-case で3〜6個。ソフトウェアは tool/<名前>、AIサービスは ai/<名前> の形にする（例: tool/zed, ai/claude, keymap, setup）。type や status の値（inbox など）はタグにしない。
 - 項目の型:
   - Principles: 「- <原則>。理由: <1文>」
-  - Decisions: 「- **<決めたこと>**（YYYY-MM-DD）」の下に「  - 根拠: …」「  - 却下案: <案>（<理由>）」。根拠や却下案が無い決定は Facts に書く。
+  - Decisions: 「- **<決めたこと>**（YYYY-MM-DD）」の下に「  - 根拠: …」「  - 却下案: <案>（<理由>）」。根拠や却下案が無い決定は Facts に書く。ユーザーが承認していない提案は、Decisions に書かず、Open Questions に「提案」と書く。
   - Facts: 「- <事実>（確認: …、根拠: …）」または「（仮説）」
   - Gotchas: 実際に遭遇した詰まりだけ。「- 状況: …」の下に「  - 原因: …（不明なら「不明」）」「  - 解決: …」。方針や一般的な注意点は Principles に書く。
 - `kit:` の行は、形式の中の値のまま書き写す（このプロンプトを作った時点の workflow-kit の版の記録）。
@@ -53,7 +53,7 @@ title: <テーマ>
 tags:
   - <タグ>
 created: <今日の日付 YYYY-MM-DD。分からなければ YYYY-MM-DD のまま>
-kit: 2026-10-04.1
+kit: 2026-10-04.2
 sources:
   - <このAIサービス名> conversation "<テーマ>"
 ---
