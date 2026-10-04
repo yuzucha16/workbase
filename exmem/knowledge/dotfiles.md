@@ -105,15 +105,28 @@ dotfiles/
 - git: `~/.config/git/config` は git が自動で読むので、`~/.gitconfig` の `include` は削除した。共通設定の `[user]` 仮値は残し、実際の名前・メールは `~/.gitconfig_local`（PCごと）。
 - PowerShell プロファイルのラッパー（`Microsoft.PowerShell_profile.ps1`）は削除。全ホスト共通の `profile.ps1` が自動で読まれる。
 
-### fzf は移動用に限定し、履歴検索は標準機能にそろえた（2026-10-04）
+### fzf は移動用に限定し、履歴検索は標準機能にそろえた（2026-10-04。同日に一部撤回: 次の Decisions を参照）
 
-- 決めたこと: fzf は `zfz`（zoxide）と `cdg`（ghq）の選択にだけ使う。履歴検索は pwsh / zsh / bash とも標準機能（↑↓・`Ctrl+P`/`Ctrl+N` の前方一致、標準の `Ctrl+R`）。pwsh だけ `PredictionViewStyle ListView` を足している。
+- （撤回済み）決めたこと: fzf は `zfz`（zoxide）と `cdg`（ghq）の選択にだけ使う。履歴検索は pwsh / zsh / bash とも標準機能（↑↓・`Ctrl+P`/`Ctrl+N` の前方一致、標準の `Ctrl+R`）。pwsh だけ `PredictionViewStyle ListView` を足している。
 - 変更: `common.sh` から fzf の `key-bindings` / `completion` の読み込みと `FZF_*` 環境変数を削除した。これで zsh/bash の `Ctrl+R`/`Ctrl+T`/`Alt+C` は標準に戻り、pwsh（PSFzf を持たない）とそろった。
 - 根拠: ターミナル起点から Zed（エディタ起点）へ移行中で、ターミナル側は軽くシンプルにしたい。fzf は目的ではなく手段。
 - 経緯: 修正前は pwsh だけ fzf を外していて、zsh/bash は apt 版 fzf のキーバインドが残っていた（適用漏れ。実機の `bindkey` / `bind -X` で確認）。以前に fzf を止めた理由の元記録は見つからなかった（履歴は 2026-10-02 に作り直し済み）。理由は上のとおり。
-- 却下案: ListView 相当のプラグイン（zsh-autosuggestions、ble.sh）、PSFzf の導入。
+- 却下案: ListView 相当を足すための追加プラグイン（ble.sh など）、PSFzf の導入。（`zsh-autosuggestions` は zsh で既に使っている。インラインの薄い候補のみ。）
 - 確認済み（2026-10-04）: zsh の `^R` は `history-incremental-search-backward`、bash の `\C-r` は `reverse-search-history`。`zfz`/`cdg` は定義されたまま。zsh/bash とも起動の終了コードは 0。
-- 影響: `Ctrl+T` を外したので、`fd` / `bat` はシェル内で使う箇所がなくなった（`apps.txt`・`apt.txt`・`20_packages.sh` には残してある）。
+- 影響: `Ctrl+T` を外したので、`fd` / `bat` はシェル内で使う箇所がなくなった（→ 撤回後は再び使う）。
+
+### zsh/bash の Ctrl+R / Ctrl+T を fzf に戻した。zsh/bash の ListView 相当は作らない（2026-10-04）
+
+- 決めたこと: zsh/bash は、fzf の `key-bindings`（apt 版 `/usr/share/doc/fzf/examples/key-bindings.{zsh,bash}`）で `Ctrl+R`（履歴検索）と `Ctrl+T`（ファイル検索）を使う。補完（`completion.*`）は読まない。`Alt+C`（cd）は使わず、標準の `capitalize-word` に戻す。`Ctrl+T` のファイル一覧は `fd --hidden --follow --exclude .git`、プレビューは `bat`（`FZF_CTRL_T_COMMAND` / `FZF_CTRL_T_OPTS`）。UI は `FZF_DEFAULT_OPTS='--height=40% --reverse'`（軽く）。pwsh の `ListView` はそのまま残す。
+- 経緯: 同日の前半は「fzf は移動用に限定、履歴検索は標準機能」と決めて zsh/bash の fzf キーバインドを外した。その後、zsh で ListView 相当の候補一覧を自作して試した（`zle-line-pre-redraw` + `zle -M`。前方一致・新しい順・最大10件）。一覧（10件）は出たが、試した結果 zsh/bash の ListView 相当は作らず（omit）、fzf に切り替えることにした（自作はコミット前に削除）。bash は ListView 相当の標準機能が無いので最初から見送り（ble.sh は大きい依存）。
+- 根拠: 以前 fzf を外した理由は「重い」「便利で色々作ってしまう」「あまり使わない」。ただ、全体の一貫性を考えると fzf のほうがよい、と判断した（ユーザー判断）。「色々作る」への歯止めとして、まずヒストリ検索（`Ctrl+R`）とファイル検索（`Ctrl+T`）に絞り、`Alt+C` と補完は使わない。
+- 自作 ListView の測定値（参考。採用しなかった）: 履歴を毎キー走査するループは、50,000件で一致なしだと 3.5 秒。履歴を `"${(@v)history}"` で配列化（新しい順。約29 ms）して絞り込めば、1キーあたり、履歴10件程度で 1〜4 ms、50,000件で約30 ms。起動時間への影響は誤差。
+- 起動時間への影響（fzf のキーバインド）: `XDG_CONFIG_HOME` を切り替えて「ある/なし」を交互に7回測り、zsh で約 +8 ms、bash で約 +9 ms。
+- 確認済み（2026-10-04、pty）: zsh/bash とも、`Ctrl+R` で履歴の一覧から選んだコマンドがプロンプトに入る。`Ctrl+T` でファイルを選ぶとパスが入る。`Alt+c` は `capitalize-word`。`Alt+j`/`Alt+k` は従来どおり。
+- 注意: bash は `.bashrc` の末尾の `cd ~` で、起動時のカレントディレクトリが常に `~` になる（`Ctrl+T` は `~` から探す）。
+- pwsh にも同じキーで入れた（同日）: PSFzf は使わず、`profile.ps1` の自前ハンドラ（`Invoke-FzfHistory` / `Invoke-FzfFile`、`Set-PSReadLineKeyHandler -Chord Ctrl+r / Ctrl+t`）で `fzf` を直接呼ぶ。履歴は PSReadLine の履歴ファイルを新しい順・重複なしで読む（`Get-FzfHistory`）。ファイル検索は `fd` + `bat` プレビュー、`FZF_DEFAULT_OPTS` も zsh/bash と同じ `--height=40% --reverse`。`ListView`（予測表示）は残す。
+- `Ctrl+R` / `Ctrl+T` のキー選定の見直し（2026-10-04）: どちらも fzf の標準キーなので、そのまま採用した。`Ctrl+R` は readline・zsh・PSReadLine で履歴検索の標準。`Ctrl+T` は `transpose-chars`（pwsh は `SwapCharacters`。打った直後の2文字の入れ替え）を上書きするが、使用頻度が低く、`Alt+t`（語の入れ替え）は残る。`Ctrl+英字` に空きはほぼ無く、標準から外すと他の fzf 解説とも食い違う。ルール: fzf の標準機能は標準キー、自作（`zfz`/`cdg`）は全シェルで空いている `Alt+j`/`Alt+k`。
+- pwsh の確認範囲: `profile.ps1` の構文、`Get-FzfHistory`（新しい順・重複なし・件数一致）、パスのクォート処理、`Ctrl+r`/`Ctrl+t` のハンドラ登録、`fzf` へのパイプまで確認。実際のキー押下は未確認（非対話では PSReadLine が動かない）。
 
 ### PSReadLine 履歴の種を dotfiles で配る（2026-10-04）
 
@@ -153,24 +166,25 @@ dotfiles/
 
   | | fzf 本体 | PSFzf | fzf 付属の `key-bindings` / `completion` |
   |---|---|---|---|
-  | pwsh | 導入済み（scoop 0.74.4） | 読み込まない（`apps.txt` からも削除） | 該当なし |
-  | zsh（WSL） | 導入済み（apt 0.44.1） | 該当なし | 読み込まない |
-  | bash（WSL） | 導入済み（apt 0.44.1） | 該当なし | 読み込まない |
+  | pwsh | 導入済み（scoop 0.74.4） | 使わない（`apps.txt` からも削除。キーは `profile.ps1` の自前ハンドラ） | 該当なし |
+  | zsh（WSL） | 導入済み（apt 0.44.1） | 該当なし | `key-bindings` だけ読み込む（`completion` は読まない。`Alt+C` は標準に戻す） |
+  | bash（WSL） | 導入済み（apt 0.44.1） | 該当なし | 同上 |
 
   キーバインドと機能:
 
   | 機能 | pwsh | zsh | bash |
   |---|---|---|---|
-  | `Ctrl+R`（履歴検索） | PSReadLine 標準（`ReverseSearchHistory`） | 標準（`history-incremental-search-backward`） | 標準（`reverse-search-history`） |
+  | `Ctrl+R`（履歴検索） | **fzf**（自前 `Invoke-FzfHistory`） | **fzf**（`fzf-history-widget`） | **fzf**（`__fzf_history__`） |
+  | `Ctrl+T`（ファイル検索） | **fzf**（自前 `Invoke-FzfFile`。`fd` + `bat` プレビュー） | **fzf**（`fzf-file-widget`。`fd` + `bat` プレビュー） | **fzf**（`fzf-file-widget`） |
+  | `Alt+C` | 未設定 | 標準（`capitalize-word`） | 標準 |
   | ↑↓、`Ctrl+P`/`Ctrl+N`（前方一致の履歴検索） | あり | あり | あり |
-  | 履歴の予測表示 | `PredictionSource History` + `ListView`（10件固定のはず） | なし | なし |
-  | `Ctrl+T` / `Alt+C` | 未設定 | 標準（`transpose-chars` / `capitalize-word`） | 標準 |
+  | 履歴の予測表示 | `PredictionSource History` + `ListView`（10件固定のはず） | `zsh-autosuggestions`（インラインのみ） | なし |
   | Tab 補完 | `MenuComplete` | `menu-select` | 標準 |
   | `zfz`（zoxide を fzf で選んで移動） | `Alt+j` | `Alt+j` | `Alt+j` |
   | `cdg`（ghq のリポジトリを fzf で選んで移動） | `Alt+k` | `Alt+k` | `Alt+k` |
   | `Ctrl+g` | 標準（`Abort`） | 標準（`send-break`） | 標準（`abort`） |
 
-  読み取れること: fzf を使うのは `zfz`（`Alt+j`）と `cdg`（`Alt+k`）だけで、3シェル共通。パイプで呼ぶだけで、fzf のキーバインドや補完には関与しない。履歴検索は3シェルとも標準機能。
+  読み取れること: fzf は3シェルとも `Ctrl+R`・`Ctrl+T`・`zfz`（`Alt+j`）・`cdg`（`Alt+k`）に使う。補完には関与しない。pwsh だけ予測表示の `ListView` を残している。
 
   `Alt+j` / `Alt+k` を選んだ理由（2026-10-04）: pwsh（Emacs モード）・zsh・bash の3つとも、デフォルトで未使用の `Alt+英字` が `e i j k m o v` だけだったため。`Ctrl+英字` はほぼ全部使用済み。j = jump（zoxide）、k は j の隣（Vim の j/k）。`Ctrl+g` は以前 pwsh の `zfz` に割り当てていたが、`Abort` を上書きしていたので戻した。
   - 実装: pwsh は `profile.ps1`（実行後に `InvokePrompt()` でプロンプトを描き直す）、bash/zsh は `common.sh`。zsh は widget（入力中の行を残す。`zle reset-prompt`）、bash は `"\ej": "\C-u zfz\C-m"` のマクロ（コマンドとして実行してプロンプトを更新。先頭の空白で履歴に残らず、入力中の行は kill ring へ退避されるので `Ctrl+y` で戻せる）。
@@ -213,7 +227,8 @@ dotfiles/
 - `stylers.xml` の Gruvbox 以外の独自カスタマイズの有無（`git show` で履歴から復元できる）。`NppExec.ini` の `pandoc_preview` 登録は失われた。
 - pwsh の `PSReadLine`（`ListView` 予測表示）のコストは未計測。
 - 「`ListView` は重い可能性があるが見送り」（シェルの Decisions）と、現在の `profile.ps1:19` が `ListView` を設定していることが食い違う。見送りを撤回したのか未確認。`ListView` の件数は PSReadLine 2.4.5 で設定項目が無く、10件固定のはず（ソース未確認、記憶による）。
-- `fd` / `bat` を、シェルで使わなくなった今もインストール対象に残すか（`fd` は `FZF_DEFAULT_COMMAND` のためだった）。（`apps.txt` の `psfzf` は 2026-10-04 に削除した。入っている環境では `scoop uninstall psfzf` が別途要る）。
+- pwsh の `Ctrl+R`/`Ctrl+T`（自前ハンドラ）の実際の押下は未確認（`fzf` の `--height` 表示後の画面の崩れ、`InvokePrompt()` の効き方、履歴の長い複数行コマンドの扱い）。複数行のコマンドは履歴ファイルでは行ごとに分かれているので、`Ctrl+R` の候補も行ごとになる。
+- `.bashrc` 末尾の `cd ~` が、bash の `Ctrl+T`（カレントからのファイル検索）と相性が悪い（起動時のディレクトリが常に `~`）。zsh は影響なし。
 - WSL の VS Code Server 側の C++ メモリ上限は、リポジトリ管理外（`~/.vscode-server/data/Machine/settings.json`）で未設定。
 - `templates/claude/settings.sandbox.json` の用途（使い捨ての検証環境に手でコピーする）は README に書いたが推測。
 - 他PCに残る旧構成のリンクやファイル（`setx` で作った旧環境変数、旧 Go、旧 vim プラグインなど）の整理。
