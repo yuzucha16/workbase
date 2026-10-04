@@ -58,7 +58,7 @@ sources:
 
 ## 権限の土台との関係
 
-権限の共通ルールは、プロジェクトの `.claude/` ではなく**ユーザー階層**（`~/.claude/settings.json`、実体はdotfilesの `claude/user/settings.json`）に置いている（[[claude-code-permissions]]）。プロジェクト側の `settings.json` を使うのは、壊してよい「サンドボックス」リポジトリで権限を緩めるときが最初の想定。したがって、exmemの `.claude/settings.json` を管理下に置くのは、読み取り専用の許可が土台に入ってもなお足りない場合に限る。
+権限の共通ルールは、プロジェクトの `.claude/` ではなく**ユーザー階層**（`~/.claude/settings.json`、実体はdotfilesの `home/.claude/settings.json`）に置いている（[[claude-code-permissions]]）。プロジェクト側の `settings.json` を使うのは、壊してよい「サンドボックス」リポジトリで権限を緩めるときが最初の想定。したがって、exmemの `.claude/settings.json` を管理下に置くのは、読み取り専用の許可が土台に入ってもなお足りない場合に限る。
 
 ## Facts
 
