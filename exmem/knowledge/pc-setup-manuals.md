@@ -12,7 +12,7 @@ aliases:
   - cheatsheets/env
   - PC再セットアップ
 created: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-04
 sources:
   - Claude Code conversation "環境セットアップ手順書(Win11 / Debian系)の整備と scripts/linux の統合" (2026-10-03)
   - "resources/cheatsheets/env/ と dotfiles scripts/linux/（2026-10-03 に確認）"

@@ -13,7 +13,7 @@ aliases:
   - Obsidianの設定
   - vaultのバックアップ
 created: 2026-10-01
-updated: 2026-10-03
+updated: 2026-10-04
 sources:
   - Claude Code conversation "exmemの整理" (2026-09-26〜2026-10-01)
   - Claude Code conversation "ディレクトリ構造の見直し" (2026-10-02〜2026-10-03)

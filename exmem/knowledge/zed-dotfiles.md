@@ -11,7 +11,7 @@ aliases:
   - Zedのdotfiles管理
   - Zedの設定の再現
 created: 2026-10-01
-updated: 2026-10-03
+updated: 2026-10-04
 sources:
   - Claude (Claude Code via Zed ACP) conversation "Zedのextension/ACPエージェントのdotfiles管理" (2026-10-01)
   - "%APPDATA%\\Zed / %LOCALAPPDATA%\\Zed / dotfilesリポジトリ（2026-10-01 に確認）"
