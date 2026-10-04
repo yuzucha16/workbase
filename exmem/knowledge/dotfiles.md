@@ -115,6 +115,14 @@ dotfiles/
 - 確認済み（2026-10-04）: zsh の `^R` は `history-incremental-search-backward`、bash の `\C-r` は `reverse-search-history`。`zfz`/`cdg` は定義されたまま。zsh/bash とも起動の終了コードは 0。
 - 影響: `Ctrl+T` を外したので、`fd` / `bat` はシェル内で使う箇所がなくなった（`apps.txt`・`apt.txt`・`20_packages.sh` には残してある）。
 
+### PSReadLine 履歴の種を dotfiles で配る（2026-10-04）
+
+- 決めたこと: 手で選んだ定型コマンド（環境構築・パッケージ・git・設定編集）だけを `windows/powershell/history.seed.txt` に置き、初回に `scripts/windows/31_history_seed.bat` が履歴ファイルへコピーする。個人・機密値は `<…名>` に置換し、そのままでは実行されない形にする。
+- 正本は exmem の [[shell-command-usecases]]（種のコードブロック）。種ファイルはそこから連結して作る。傾向・判断基準・Gotchas もそこに書く。
+- 根拠: PC 移行時に定型コマンドを調べ直す時間を減らす。生の履歴は会社名・ユーザー名・Webhook URL を含むので共有しない（`_local/` に退避）。
+- 却下案: 履歴全体を整形して共有する（秘匿・案件固有の流出リスクと量）。種ファイルへのシンボリックリンク（PSReadLine が追記して作業ツリーが汚れる）。上書きコピー（既存の履歴を壊す）。
+- スクリプト番号: `31`（層 30 の固有ツール枠）。Linux 側は欠番（zsh/bash は後回し）。
+
 ### インストール経路（2026-10-03）
 
 - Go と Docker は `20_packages.sh` から外し、README の「必要なときだけ入れるもの」に移した。ghq は GitHub Releases のビルド済みバイナリ（`ghq_linux_<arch>.zip`、v1.11.2 で確認）を `~/.local/bin` に置く（apt に `ghq` は無い）。`fdfind` → `fd`、`batcat` → `bat` のリンクを張る。
@@ -218,5 +226,6 @@ dotfiles/
 - [[claude-code-permissions]]
 - [[wsl-file-placement]]
 - [[modern-cli-tools]]
+- [[shell-command-usecases]]
 - [[obsidian-vault]]
 - [[dotfiles/context]]
