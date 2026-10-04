@@ -98,7 +98,7 @@ dotfiles/
 
 ### シェル（2026-10-02〜03）
 
-- bash/zsh の共通部は `home/.config/shell/common.sh`（正本は bash/zsh）。pwsh（`windows/powershell/profile.ps1`）と同じコマンド体系にそろえた: `ls`=lsd、`l`=`ls -l`、`lt`=`ls --tree --depth 2`、`cdg`、`zfz`（Ctrl+g は pwsh のみ）、`z`、`b`、`..`、`pd`/`po`/`dl`。
+- bash/zsh の共通部は `home/.config/shell/common.sh`（正本は bash/zsh）。pwsh（`windows/powershell/profile.ps1`）と同じコマンド体系にそろえた: `ls`=lsd、`l`=`ls -l`、`lt`=`ls --tree --depth 2`、`cdg`、`zfz`（`Alt+j`。3シェル共通）、`z`、`b`、`..`、`pd`/`po`/`dl`。
 - 3か所（`profile.ps1` / `common.sh` / `.zshrc`・`.bashrc`）の同期義務が最大の複雑さだったため、次を削除した: `cd` 後の自動 `ll`（`/mnt/c` で 9p 経由が遅い）、`cdf`/`cdu`/`up`/`zlist`、`PSFzf`/`scoop-completion`、ツール不在時の代替（`fd`→`rg`→`find`、`bat`→`head`、`lsd` の分岐、`dircolors`）、zsh の `_correct`/`_approximate`。ツールは `apps.txt` と `20_packages.sh` で必ず入る前提。
 - 却下案: `cat`→`bat` などの標準コマンド置換エイリアス（ユーザーが「追加しない」と決定）。`PredictionViewStyle ListView` は重い可能性があるが見送り。
 - XDG の export は `.profile` だけ。`.zshrc`/`.bashrc` は使う箇所のインライン既定値（`${XDG_STATE_HOME:-$HOME/.local/state}`）にした。`.zprofile` は `.profile` を読むだけ。`.profile` のローカル上書きは `~/.config/profile.local`。
@@ -166,10 +166,15 @@ dotfiles/
   | 履歴の予測表示 | `PredictionSource History` + `ListView`（10件固定のはず） | なし | なし |
   | `Ctrl+T` / `Alt+C` | 未設定 | 標準（`transpose-chars` / `capitalize-word`） | 標準 |
   | Tab 補完 | `MenuComplete` | `menu-select` | 標準 |
-  | `zfz`（zoxide を fzf で選んで移動） | あり（`Ctrl+g` 割り当て） | 関数のみ | 関数のみ |
-  | `cdg`（ghq のリポジトリを fzf で選んで移動） | 関数のみ | 関数のみ | 関数のみ |
+  | `zfz`（zoxide を fzf で選んで移動） | `Alt+j` | `Alt+j` | `Alt+j` |
+  | `cdg`（ghq のリポジトリを fzf で選んで移動） | `Alt+k` | `Alt+k` | `Alt+k` |
+  | `Ctrl+g` | 標準（`Abort`） | 標準（`send-break`） | 標準（`abort`） |
 
-  読み取れること: fzf を使うのは `zfz` と `cdg` だけ（3シェル共通。パイプで呼ぶだけで、キーバインドや補完には関与しない）。履歴検索は3シェルとも標準機能。`Ctrl+g` の割り当ては pwsh 固有。
+  読み取れること: fzf を使うのは `zfz`（`Alt+j`）と `cdg`（`Alt+k`）だけで、3シェル共通。パイプで呼ぶだけで、fzf のキーバインドや補完には関与しない。履歴検索は3シェルとも標準機能。
+
+  `Alt+j` / `Alt+k` を選んだ理由（2026-10-04）: pwsh（Emacs モード）・zsh・bash の3つとも、デフォルトで未使用の `Alt+英字` が `e i j k m o v` だけだったため。`Ctrl+英字` はほぼ全部使用済み。j = jump（zoxide）、k は j の隣（Vim の j/k）。`Ctrl+g` は以前 pwsh の `zfz` に割り当てていたが、`Abort` を上書きしていたので戻した。
+  - 実装: pwsh は `profile.ps1`（実行後に `InvokePrompt()` でプロンプトを描き直す）、bash/zsh は `common.sh`。zsh は widget（入力中の行を残す。`zle reset-prompt`）、bash は `"\ej": "\C-u zfz\C-m"` のマクロ（コマンドとして実行してプロンプトを更新。先頭の空白で履歴に残らず、入力中の行は kill ring へ退避されるので `Ctrl+y` で戻せる）。
+  - 確認済み（2026-10-04）: zsh/bash は pty（擬似端末）で `Alt+j`/`Alt+k` を送り、fzf の選択後にカレントディレクトリとプロンプトが変わることを確認した（`ghq` は WSL に無いのでスタブで確認）。pwsh は `Alt+j`/`Alt+k` が登録され `Ctrl+g` が `Abort` に戻ったことまで確認し、実際の押下は未確認（非対話では PSReadLine が動かない）。
 
 - 複雑度の順位（分岐・重複・同期義務で評価）: 1 シェル設定の3重実装、2 ツール不在時の代替、3 XDG の4重定義、4 apt スクリプト、5 アプリが書き換える設定の symlink 管理、6 `.vimrc`、7 `starship.toml`、8 インストーラー系、9 Claude 権限設定、10 git 設定。
 - Zed の `auto_install_extensions` の既定は `{ "html": true }`。`false` は「入れない」で、アンインストールはしない。
