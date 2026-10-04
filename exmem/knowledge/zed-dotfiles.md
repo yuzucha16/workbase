@@ -35,7 +35,7 @@ Zedの設定・extension・ACPエージェントをdotfilesリポジトリで管
 
 `%APPDATA%\Zed\` の設定ファイルは、dotfilesリポジトリ（`C:\vault\repos\github.com\yuzucha16\dotfiles`）へのシンボリックリンクになっている。
 
-> 2026-10-03 の dotfiles 再編で、正本は `home/.config/zed/` に移った（`manifests/links.map` で `%APPDATA%\zed\` へリンク。[[dotfiles]]）。下の表は2026-10-01 時点のパス。フォント設定（`ui_font_*` `buffer_font_*`、`terminal.shell` の削除）も追加されている（[[fonts]]）。
+> 2026-10-03 の dotfiles 再編で、正本は `home/.config/zed/` に移った（`manifests/links.map` で `%APPDATA%\zed\` へリンク。詳細は dotfiles リポジトリ）。下の表は2026-10-01 時点のパス。フォント設定（`ui_font_*` `buffer_font_*`、`terminal.shell` の削除）も追加されている（[[fonts]]）。
 
 | ファイル | リンク先（2026-10-01 時点） |
 |---|---|
@@ -115,7 +115,6 @@ PowerShellのプロファイルも同じ方式で管理されている（2026-10
 
 - [[zed-acp]]
 - [[zed-vim]]
-- [[dotfiles]]
 - [[fonts]]
 - [[claude-code-storage]]
 - [[vscode-workspace]]

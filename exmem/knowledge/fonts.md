@@ -23,7 +23,7 @@ sources:
 
 ## Purpose
 
-Win11 のメインフォントを、目の負担を最優先に選び、Zed / Windows Terminal / Notepad++ で揃える。フォントの取得スクリプトは dotfiles にある（[[dotfiles]]）。手順書は `resources/cheatsheets/env/fonts.md`（[[pc-setup-manuals]]）。
+Win11 のメインフォントを、目の負担を最優先に選び、Zed / Windows Terminal / Notepad++ で揃える。フォントの取得スクリプトは dotfiles リポジトリにある。手順書は `resources/cheatsheets/env/fonts.md`（[[pc-setup-manuals]]）。
 
 ## Principles
 
@@ -93,7 +93,6 @@ Win11 のメインフォントを、目の負担を最優先に選び、Zed / Wi
 
 ## Related
 
-- [[dotfiles]]
 - [[pc-setup-manuals]]
 - [[zed-dotfiles]]
 - [[obsidian-vault]]

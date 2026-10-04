@@ -42,7 +42,7 @@ updated: 2026-10-03
 - 2026-10-02 に、Vaultの構造を見直した（[[obsidian-vault]] Decisions）。`notes` 自体を1つのGitリポジトリにし、共有は `resources/` だけ（`.gitignore` のホワイトリスト）にする。`areas_shared` の中身は `resources/` 配下へ移した（`exmem` `cheatsheets` `handson` `office` と、`obsolete` → `_archive/obsolete`）。`exmem/projects/` は Vaultの `projects/` と衝突するため `contexts/` に改名した。リポジトリ内の配置換えとドキュメント更新までは済み、実機の配置換えは未実施。
 - 2026-10-03 に、実機の移行を進め、inbox のメモ（ディレクトリ構造の見直し）を統合した（6回目）。`C:\vault\notes` は実体へのジャンクションになり、`.obsidian` と Office テンプレは dotfiles から移管済み。`resources/` 内のローカル専用は `_local/` に置く規約を追加した（[[obsidian-vault]]）。実物との照合では、`notes.lnk` が既に無いこと、`_local/` コミットが未 push であること、旧クローンと `notes_old` が残っていることを確認した。
 
-- 2026-10-03 に、dotfiles と手順書・フォントのメモ6件を統合した（7回目）。新しい知識は [[dotfiles]]、[[pc-setup-manuals]]、[[fonts]]、プロジェクトは [[dotfiles/context]]。
+- 2026-10-03 に、dotfiles と手順書・フォントのメモ6件を統合した（7回目）。新しい知識は [[pc-setup-manuals]]、[[fonts]]。dotfiles 固有の記録は、2026-10-04 に dotfiles リポジトリの `docs/` へ移した（exmem は作業ログを持たない）。
 
 ## Next Actions
 
