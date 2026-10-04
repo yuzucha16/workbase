@@ -64,7 +64,7 @@ notes/                 # Git root
 ### dotfiles との関係（2026-10-03 時点）
 
 - `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）を張る。Office のテンプレ・リボン設定は、その後の dotfiles の見直しで `links.map` から外れ、初回に手で配置する運用になった。
-- `.obsidian` は `notes` に置き続け、dotfiles には戻さない（2026-10-04 決定）。根拠: Obsidian は Vault 直下の `.obsidian` を読む（dotfiles に置くとジャンクションが必須）、設定の中身が Vault と連動する、dotfiles → `notes` の片方向の依存を保てる、プラグインで dotfiles の履歴が重くなるのを避ける。dotfiles に置いてリンクすると、clone 順の循環、リンク前に Obsidian を開いたときの衝突、コミット先の分離が起きる。設定を変える作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない。判断基準の全体は、inbox の `2026-10-04-config-dir-placement-criteria.md`（統合待ち）。
+- `.obsidian` は `notes` に置き続け、dotfiles には戻さない（2026-10-04 決定）。根拠: Obsidian は Vault 直下の `.obsidian` を読む（dotfiles に置くとジャンクションが必須）、設定の中身が Vault と連動する、dotfiles → `notes` の片方向の依存を保てる、プラグインで dotfiles の履歴が重くなるのを避ける。dotfiles に置いてリンクすると、clone 順の循環、リンク前に Obsidian を開いたときの衝突、コミット先の分離が起きる。設定を変える作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない。判断基準の全体は [[app-config-placement]]。
 - セットアップの順序は「`notes` を先に clone → `30_link.bat`」（旧 `w2a`。スクリプトは2026-10-03 に `NN_<内容>` へ改名された）。`NOTES_DIR` はリンクで作られる。
 - ローカル専用の `projects/` `areas/` `archives/` は gitignore のため、clone 直後には存在しない。必要に応じて手で作る。
 
@@ -83,6 +83,28 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 2026-10-04 時点で `.obsidian` の設定ファイルから確認した内容。2026-10-01 時点の記述から、2026-10-03 の整理（`notes` の `git log -- .obsidian` の `82953b7` ほか）で大きく変わった。変更の理由は、履歴から読み取れないものが多い（下に「不明」と書く）。
 
+### Principles（設定）
+
+- **Obsidian は参照専用にする。** 新規ノートの作成や、日付・テンプレート系の機能を持たない。ノートの読み書きは AI がファイルを直接行い、人間は閲覧と軽い編集だけをする。
+- **Obsidian の中で AI を呼ぶプラグイン（意味検索、文章生成、REST API 経由の連携など）は入れない。** AI（Claude Code）はファイルを直接読めるので役割が重なり、ノートを外部に送る経路や API キーの管理が増える。
+- **コミュニティプラグインは、使うものだけに絞る。** 導入と取り消しが繰り返されている（2025-09-22 に9つを追加して翌日に取り消し、2026-10-03 に `calendar` と `obsidian-icon-folder` を削除）。
+- **設定の方針は、ツールの実際の出力を確認してから決める。** Obsidian が書く改行コードを確かめずに CRLF へ揃え、すぐ LF に直すことになった。
+- **アプリが起動中は、そのアプリの設定ファイルを編集しない。** 起動中のアプリが、メモリ上の状態で設定を上書きして、編集が消える（`notes/AGENTS.md` にも同じ規則がある）。
+- **設定を記述するナレッジには「いつ時点か」を書き、設定ファイルから再確認できる形にする。** 2026-10-01 時点の記述が、2日後には実物と食い違っていた。
+- 端末ごとの状態や、アプリが自動で書き換えるファイルは追跡しない（`workspace.json`）。
+
+### Decisions（設定。2026-10-03〜04）
+
+- プラグインの削除と `properties` の有効化: 使っていないコア・コミュニティプラグインを外した（`calendar`、`obsidian-icon-folder`、`graph`、`canvas`、`daily-notes`、`templates`、`note-composer`）。`properties` は frontmatter の確認に使う。却下案: 念のため残す（用途が参照専用になり、起動や設定画面の負担だけが増える）。
+- テーマ Typora-Vue は、未使用でも残す。ライトテーマが必要になったときのサブ。却下案: 削除。
+- `colored-tags` を残し、`data.json` を追跡して色の割り当てを固定する。色はタグを見つけた順の連番で決まるので、追跡すると別の端末でも同じ色になる（diff が出るのは新しいタグが増えたときだけ）。却下案: 追跡しない（clone 後に色が変わる）、CSS スニペットで色を固定する（タグが増えて必要になったら移る）。
+- ファイル一覧は、行の余白を詰め、フォントサイズをエディタと同じにし、アイコンを CSS の `mask` だけで付ける（Lucide と同じ形）。プラグインを読み込まないので起動が重くならない。却下案: Iconize プラグイン（JS を読み込むため起動が重くなる可能性）。
+- 改行コードは `.gitattributes` の `* text=auto eol=lf` で LF に統一する。Obsidian が `app.json` と `appearance.json` を LF で書き戻した（2026-10-03、CRLF で書いたファイルが数分後に LF になっていた）。AI と WSL/Linux の出力も LF。却下案: CRLF に統一する（一度実施したが、Obsidian が保存するたびに全行が変更扱いになる）。
+- 本文の幅は、フォントサイズに比例させる（`--file-line-width: 58em`）。既定の固定 700px は、拡大しても幅が変わらず1行の文字数だけが減る。却下案: 幅の制限をなくす、64em（試して 58em にした。1週間の試用で確定する）。
+- 新規ノートの保存先は現在のフォルダにし、`_local/` は検索対象のままにする。新規作成はほぼしない。`exmem/inbox` は AI 出力をナレッジ化する入口で別の用途。`_local/` は PC ローカルのデータなので検索できる必要がある。
+- 検索から除外するフィルターは `.tmp.`、`_archive/`、`.claude/`。AI が書き込み途中に作る一時ファイル、古い資料、エージェントの設定を検索やリンク補完に出さない。
+- Vault のルートに共有の `AGENTS.md` と `CLAUDE.md`（`@AGENTS.md`）を置く。ルートで起動した AI に、共有とローカルの境界、`_local/`、リンクの規則、`.obsidian` の編集時の注意、書式を伝える。内容に機密が無いので共有する。却下案: ローカル専用にする。
+
 ### コアプラグイン
 
 - 有効: `file-explorer`、`global-search`、`switcher`、`backlink`、`outgoing-link`、`tag-pane`、`properties`、`page-preview`、`command-palette`、`editor-status`、`bookmarks`、`outline`、`word-count`、`file-recovery`、`sync`、`bases`
@@ -93,7 +115,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 - `colored-tags`（タグを色分けする。階層タグの親ごとに色が変わる）だけ。
 - 2026-10-01 時点で入っていた `calendar` と `obsidian-icon-folder` は、2026-10-03 に削除した（`82953b7`）。
-- `plugins/colored-tags/data.json`（タグの色の設定）は、2026-10-03 に追跡をやめ（`22b9fc0`。端末ごとのキャッシュとコミットメッセージにある）、約1.5時間後に再び追跡した（`76d3fec`）。反転の理由は不明。2026-10-04 時点で、Obsidian が書き換えたとみられる未コミットの変更が残っている。
+- `plugins/colored-tags/data.json`（タグの色の設定）は、2026-10-03 に追跡をやめ（`22b9fc0`。端末ごとのキャッシュとコミットメッセージにある）、約1.5時間後に再び追跡した（`76d3fec`）。履歴からは反転の理由が読み取れなかったが、追跡して色を固定する方針に決まった（上の Decisions）。実物（2026-10-04）: `data.json` は追跡されている。新しいタグが増えると、Obsidian が書き換えた変更が未コミットで出る。
 
 ### テーマ・フォント・スニペット
 
@@ -107,7 +129,9 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - 添付ファイルの保存先 `attachmentFolderPath`: `./`（ノートと同じフォルダ）。以前は `0_inbox`。
 - 行番号を表示、削除の確認あり、タブ幅 2、検索から除外するフィルターは `.tmp.`、`_archive/`、`.claude/`。
 - `types.json`: `created` と `updated` は `date` 型（2026-10-03、`e81182c`）。`aliases`、`cssclasses`（複数テキスト）、`tags` は既定。
-- 改行コード: `notes` の `.gitattributes` が `* text=auto eol=lf` で LF に統一している。Obsidian が実際に書く改行コードは未確認。
+- 改行コード: `notes` の `.gitattributes` が `* text=auto eol=lf` で LF に統一している（2026-10-04 に実物で確認）。Obsidian が設定ファイルを LF で書くことは、2026-10-03 に確認した（上の Decisions）。
+- `readable-width` スニペットの `--file-line-width: 58em`、`app.json` の `readableLineLength: true`、`types.json` の `date` 型は、2026-10-04 に実物で確認した。ルートの `AGENTS.md` / `CLAUDE.md` も存在する。
+- 未検証: フォントの指定は `PlemolJP Console NF, Moralerspace Neon HW, Meiryo UI` の順で、未インストールの端末では Meiryo UI に落ちる（実機での表示は未確認）。
 
 ## ナレッジベースから使っている機能
 
@@ -188,7 +212,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 ### Open Questions
 
 - バックアップ対象: ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
-- `notes` リポジトリが公開か非公開か（未確認。`gh` が無い）。公開なら `.obsidian` と `_local/` 以外が全部見える。
+- `notes` リポジトリが公開か非公開か（未確認。`gh` は scoop に入っているので、`gh repo view` で確認できる）。公開なら `.obsidian` と `_local/` 以外が全部見える。
 - `30_link.bat`（旧 `w2a`）を通しで実行したとき、`..\notes|%NOTES_DIR%` のリンクが期待どおりに張られるか（今の `C:\vault\notes` は手で作ったジャンクション。未検証）。
 - `50_repos.bat`（旧 `w4`）に `notes` の clone を足すか、README の手動手順のままにするか（現状は取得対象が例のコメント行のみ）。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
@@ -196,6 +220,11 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - dotfiles の `notepadpp\config.xml` に、古い `areas_shared\exmem\inbox` のパスが残っている（ユーザーの未コミット変更）。
 - 使っているPCが会社PCか（C直下の制約やバックアップポリシーに影響）。
 - robocopyで足りるか、世代管理が必要になってresticへ移行するか。
+- 本文幅 58em は、1週間の試用で十分か（2026-10-04 に試用開始）。
+- Obsidian Sync を使うか（モバイルから inbox に送る運用をするか。未検証）。
+- Linter など、書式を整えるプラグインを入れるか。AI が整形する仕組みと競合しうる。
+- 2025-09-22 に追加して翌日に取り消した9つのプラグインの、取り消した理由（履歴から不明）。
+- 設定を記述するナレッジを、実物とずれないように保つ手段（設定ファイルから自動で確認するか）。
 
 ### Next Actions
 
@@ -212,6 +241,12 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - **`.gitignore` の途中に `/` を含むパターンはルート基準になる**: `_local/*` は深い階層の `_local/` に効かない。`**/_local/*` と `!**/_local/.gitkeep` にして `check-ignore` で確認した。
 - **ファイルを書き込めなかった（一時的）**: PowerShell の `Set-Content` が「別のプロセスが使用中」で失敗した（原因は不明。Obsidian か Sync が掴んでいた可能性、未確認）。Edit ツールでの置換は成功した。
 
+### 2026-10-03〜04 の設定整理で遭遇したもの
+
+- **Obsidian の起動中に `appearance.json` を編集して、有効にしたスニペットを追記したら消えた**: Obsidian が追記前の内容で設定を上書きしたため（仮説）。追記し直してコミットし、設定画面でスニペットがオンか確認した。
+- **`git commit` が `.git/index.lock` の存在で失敗した**: Git の GUI（Fork）が動いていて、リポジトリを更新していた（仮説。確認時にはロックが消えていた）。数秒後の再実行で成功した。
+- **`obsidian-vault.md` の編集がロックで失敗することがある**: 2026-10-04 に Edit ツールで `EPERM`（アトミック書き込みの rename 失敗）が出た。Obsidian が開いているファイルで起きるとみられ、再実行で成功した。
+
 ### Vaultを移したあと、古い場所を編集していた
 
 - 状況: 2026-10-01 にナレッジベースを `C:\Users\ck\vault\notes` 配下から `C:\vault\notes\areas_shared\exmem` へ移したが、AIエージェントは古い場所を作業ディレクトリとして開いたまま編集を続けた。
@@ -221,12 +256,13 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 Vault全体に影響し、Syncで他の端末にも伝わるため、まだ適用していない。
 
-- 新規ノートの保存先を `resources/exmem/inbox` にする。モバイルで新規ノートを作るだけで inbox に入る。
-- `created` / `updated` のプロパティ型を「日付」にする。Basesでの並べ替えや日付フィルタが正しく動く。
-- Templatesで知識ノート用のテンプレートを作る。PCで直接書くときにfrontmatterを毎回手で打たずに済む。
+- 新規ノートの保存先を `resources/exmem/inbox` にする。モバイルで新規ノートを作るだけで inbox に入る。**2026-10-03 に、現在のフォルダにする（`newFileLocation: current`）と決めた**（`exmem/inbox` は AI 出力をナレッジ化する入口で、新規ノートとは別の用途のため。却下）。
+- `created` / `updated` のプロパティ型を「日付」にする。**採用済み**（2026-10-03、`types.json`）。
+- Templatesで知識ノート用のテンプレートを作る。Templates は参照専用の方針で無効にした（2026-10-03）ので、見送り。
 
 ## Related
 
 - [[ai-development-workflow]]
 - [[ai-development-workflow/context]]
+- [[app-config-placement]]
 - [[tags]]

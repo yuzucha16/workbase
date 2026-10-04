@@ -50,10 +50,10 @@ Win11 のメインフォントを、目の負担を最優先に選び、Zed / Wi
 ### フォントの取得はスクリプト、インストールは手動（2026-10-03）
 
 - `scripts/windows/24_fonts.bat` と `scripts/linux/24_fonts.sh`、一覧は `manifests/fonts.txt`（`owner/repo:asset glob`）。取得は `gh release download`、保存先は `~/download`（WSL は WSL 側）。番号 24 は、23 が Linux 専用の日本語入力のため。
-- `--dry-run` は `gh` の認証不要で、コマンドと保存先を表示するだけ（API は呼ばない）。
+- 2026-10-04 に、`--dry-run` と `gh auth status` の確認はスクリプトから削除した（未ログインでも `gh release download` が通り、`--dry-run` は1行の表示にすぎないため。[[gh-release-download]]）。2026-10-03 時点では `--dry-run` が `gh` の認証不要で動いていた。
 - 取得対象: `yuru7/PlemolJP:PlemolJP_NF_v*.zip`、`yuru7/moralerspace:MoralerspaceHW_v*.zip`（v2.0.0 から NF のグリフが全バリエーションに入り、NF 専用 zip はない。1:2幅は HW 版）。
 - `gh` は `manifests/apps.txt`（scoop）と `manifests/apt.txt` に追加した。
-- 却下案: dry-run でも `gh` で asset 名を解決する（事前に `gh auth login` が必要）。
+- 却下案: `gh` で asset 名を事前に解決する（`gh release list` などは未ログインだと失敗する。[[gh-release-download]]）。
 
 ## Facts
 
@@ -65,7 +65,7 @@ Win11 のメインフォントを、目の負担を最優先に選び、Zed / Wi
 - Windows 上のファミリー名（WPF の `GlyphTypeface` で確認）: `PlemolJP Console NF`（Light = ウェイト Light、Text = 450）、`Moralerspace Neon HW`、`Moralerspace Neon`、`HackGen Console NF`、`UDEV Gothic NF`、`UDEV Gothic 35NF`、`MyricaMMonospace Nerd Font`。2026-10-03 に実物でも、`PlemolJP Console NF`、`Moralerspace Neon HW`、`Moralerspace Neon`、`HackGen Console NF` がインストール済みであることを確認した。
 - Windows Terminal のフォントフェイス欄にウェイト違いは出ない。ファミリー名を選び、「フォントの太さ」で細字を指定する。
 - 仮説（未確認）: Zed の `terminal.font_weight` と `font_fallbacks` の設定名。`agent_buffer_font_size` と `agent_ui_font_size` のどちらが claude-acp のチャット入力欄に効くか。Notepad++ の `fontName="PlemolJP Console NF Light"` が旧来の描画（GDI 系）で通るか。Zed のターミナルは `font_size` 未指定ならエディタのサイズに従う。
-- `gh` は scoop に入っている（2026-10-03 確認）。ログイン状態は、会話の時点では未ログインだった。
+- `gh` は scoop に入っている（2026-10-03 確認。2026-10-04 に 2.102.0）。公開リリースの取得は未ログインでも通る（2026-10-04、実機で PlemolJP の NF 版約153MBと Moralerspace の HW 版約102MBを取得）。
 
 ## Gotchas
 
@@ -88,11 +88,12 @@ Win11 のメインフォントを、目の負担を最優先に選び、Zed / Wi
 - サイズがアプリ間で揃っていない（Zed 15 / Notepad++ 12 / Windows Terminal 既定の 12。単位が違うので見え方も違う）。
 - Obsidian のフォント（CSS スニペットで `font-family` と `font-weight: 300`）は未設定。
 - 背景色（オフホワイト、ダークグレー）を変えたときの太さの感じ方。Moralerspace の他のスタイル（Argon 等）を試すか。
-- `gh auth login` を済ませたうえでの実ダウンロード（`24_fonts.*` は dry-run のみ確認）。
+- `24_fonts.*` スクリプト自体の通し実行（`gh release download` のコマンド単体は、2026-10-04 に実機で成功を確認）。インストールは手動。
 - `resources/fonts/` への HackGen 配置の予定（[[obsidian-vault]]）は、メインが PlemolJP に変わる見込みなので、置くフォントを見直すか（未決）。
 
 ## Related
 
+- [[gh-release-download]]
 - [[pc-setup-manuals]]
 - [[zed-dotfiles]]
 - [[obsidian-vault]]

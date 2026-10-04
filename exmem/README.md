@@ -48,13 +48,16 @@ exmem/                 # resources/exmem/
 ├── knowledge/
 │   ├── ai-business-adoption.md          # AI活用の業務適用（ROI・習得工程）
 │   ├── ai-development-workflow.md       # exmem自体の設計
+│   ├── ai-output-consistency.md         # AIの出力のブレを抑える設計と校正の進め方
 │   ├── ai-handson-framework.md          # ハンズオン設計・情報ダイジェスト
 │   ├── ai-harness-concepts.md           # モデルとハーネス
+│   ├── app-config-placement.md          # アプリの設定ディレクトリを置くリポジトリの判断基準
 │   ├── claude-code-permissions.md       # 権限制御と共通土台（自走期間）
 │   ├── claude-code-project-settings.md  # .claude/ の管理方針
 │   ├── claude-code-storage.md
 │   ├── claude-code-vs-cowork.md
 │   ├── fonts.md                         # メインフォントの選定と導入
+│   ├── gh-release-download.md           # gh release download は未ログインでも使える
 │   ├── human-ai-decision-loop.md
 │   ├── keyboard-switches.md
 │   ├── linux-distro-selection.md
@@ -70,6 +73,7 @@ exmem/                 # resources/exmem/
 │   ├── shell-fzf-keybindings.md         # fzfとキー割り当て（pwsh/zsh/bash）
 │   ├── terminal-cursor-blink.md         # カーソル点滅を止める（DECSCUSR）
 │   ├── vscode-workspace.md
+│   ├── workflow-kit.md                  # 作業ログとナレッジ化フックの共通機能の設計
 │   ├── wsl-file-placement.md
 │   ├── zed-acp.md
 │   ├── zed-dotfiles.md

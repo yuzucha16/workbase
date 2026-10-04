@@ -44,6 +44,7 @@ updated: 2026-10-04
 
 - 2026-10-03 に、dotfiles と手順書・フォントのメモ6件を統合した（7回目）。新しい知識は [[pc-setup-manuals]]、[[fonts]]。dotfiles 固有の記録は、2026-10-04 に dotfiles リポジトリの `docs/` へ移した（exmem は作業ログを持たない）。
 - 2026-10-04 に、inbox のメモ7件（exmem と他リポジトリの役割分離、Zed の設定、カーソル点滅、Notepad++、scoop、シェル履歴と fzf）を統合した（8回目）。作業ログと知識を分ける方針に沿い、再利用できる知識だけを取り込んだ（新規は [[terminal-cursor-blink]]、[[notepad-plus-plus]]、[[scoop-app-management]]、[[shell-fzf-keybindings]]。追記は [[ai-development-workflow]]、[[zed-dotfiles]]、[[zed-acp]]、[[zed-vim]]、[[shell-command-usecases]]）。個別の経緯・Next Actions は dotfiles リポジトリの `docs/` に任せた。実物との照合では、Zed の `settings.json`、カーソル点滅の3シェルの記述、fzf のキー、Notepad++ の雛形方式、`%APPDATA%\zed\themes` のジャンクションがメモと一致した。
+- 2026-10-04 に、inbox のメモ9件（共通機能 workflow-kit の設計と改善の受け皿、出力のブレ対策、提案と決定の区別、履歴からの作業ログの復元、設定の置き場の判断基準、Obsidian の設定、`gh release download`）を統合した（9回目）。新規は [[workflow-kit]]、[[ai-output-consistency]]、[[app-config-placement]]、[[gh-release-download]]。追記は [[obsidian-vault]]（設定の方針・Decisions・Gotchas）、[[human-ai-decision-loop]]、[[ai-development-workflow]]、[[fonts]]（`--dry-run` の記述を現状に直した）。実物との照合では、`.obsidian` の設定ファイル、`.gitattributes`、workflow-kit の構成、`24_fonts.*` に `--dry-run` / `gh auth` が無いことがメモと一致した。食い違いは、揺れの原因の数（8点と7点）で、数え方の違いとみられる（[[ai-output-consistency]]）。`contexts/` の位置づけが「`notes` から見えない場所の作業を引き継ぐコンテキスト」になった。
 
 ## Next Actions
 
