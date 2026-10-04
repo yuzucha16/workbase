@@ -123,18 +123,18 @@ dotfiles/
 - 自作 ListView の測定値（参考。採用しなかった）: 履歴を毎キー走査するループは、50,000件で一致なしだと 3.5 秒。履歴を `"${(@v)history}"` で配列化（新しい順。約29 ms）して絞り込めば、1キーあたり、履歴10件程度で 1〜4 ms、50,000件で約30 ms。起動時間への影響は誤差。
 - 起動時間への影響（fzf のキーバインド）: `XDG_CONFIG_HOME` を切り替えて「ある/なし」を交互に7回測り、zsh で約 +8 ms、bash で約 +9 ms。
 - 確認済み（2026-10-04、pty）: zsh/bash とも、`Ctrl+R` で履歴の一覧から選んだコマンドがプロンプトに入る。`Ctrl+T` でファイルを選ぶとパスが入る。`Alt+c` は `capitalize-word`。`Alt+j`/`Alt+k` は従来どおり。
-- 注意: bash は `.bashrc` の末尾の `cd ~` で、起動時のカレントディレクトリが常に `~` になる（`Ctrl+T` は `~` から探す）。
+- 注意: bash は `.bashrc` の末尾の `cd ~` で、起動時のカレントディレクトリが常に `~` になり、`Ctrl+T` が `~` から探していた。この `cd ~` は削除した（同日。`bash -ic pwd` で起動時のディレクトリが保たれることを確認）。
 - pwsh にも同じキーで入れた（同日）: PSFzf は使わず、`profile.ps1` の自前ハンドラ（`Invoke-FzfHistory` / `Invoke-FzfFile`、`Set-PSReadLineKeyHandler -Chord Ctrl+r / Ctrl+t`）で `fzf` を直接呼ぶ。履歴は PSReadLine の履歴ファイルを新しい順・重複なしで読む（`Get-FzfHistory`）。ファイル検索は `fd` + `bat` プレビュー、`FZF_DEFAULT_OPTS` も zsh/bash と同じ `--height=40% --reverse`。`ListView`（予測表示）は残す。
 - `Ctrl+R` / `Ctrl+T` のキー選定の見直し（2026-10-04）: どちらも fzf の標準キーなので、そのまま採用した。`Ctrl+R` は readline・zsh・PSReadLine で履歴検索の標準。`Ctrl+T` は `transpose-chars`（pwsh は `SwapCharacters`。打った直後の2文字の入れ替え）を上書きするが、使用頻度が低く、`Alt+t`（語の入れ替え）は残る。`Ctrl+英字` に空きはほぼ無く、標準から外すと他の fzf 解説とも食い違う。ルール: fzf の標準機能は標準キー、自作（`zfz`/`cdg`）は全シェルで空いている `Alt+j`/`Alt+k`。
-- pwsh の確認範囲: `profile.ps1` の構文、`Get-FzfHistory`（新しい順・重複なし・件数一致）、パスのクォート処理、`Ctrl+r`/`Ctrl+t` のハンドラ登録、`fzf` へのパイプまで確認。実際のキー押下は未確認（非対話では PSReadLine が動かない）。
+- pwsh の確認範囲: `profile.ps1` の構文、`Get-FzfHistory`（新しい順・重複なし・件数一致）、パスのクォート処理、`Ctrl+r`/`Ctrl+t` のハンドラ登録、`fzf` へのパイプを確認。実際のキー押下は、ユーザーが実機で動作確認した（2026-10-04）。
 
 ### PSReadLine 履歴の種を dotfiles で配る（2026-10-04）
 
-- 決めたこと: 手で選んだ定型コマンド（環境構築・パッケージ・git・設定編集）だけを `windows/powershell/history.seed.txt` に置き、初回に `scripts/windows/31_history_seed.bat` が履歴ファイルへコピーする。個人・機密値は `<…名>` に置換し、そのままでは実行されない形にする。
+- 決めたこと: 手で選んだ定型コマンド（環境構築・パッケージ・git・設定編集）だけを `windows/powershell/history.seed.txt` に置き、初回に `scripts/windows/31_history_seed.bat` が履歴ファイルへコピーする。zsh/bash は `manifests/history.seed.sh.txt` を `scripts/linux/31_history_seed.sh` がコピーする（同じ方針）。個人・機密値は `<…名>` に置換し、そのままでは実行されない形にする。
 - 正本は exmem の [[shell-command-usecases]]（種のコードブロック）。種ファイルはそこから連結して作る。傾向・判断基準・Gotchas もそこに書く。
 - 根拠: PC 移行時に定型コマンドを調べ直す時間を減らす。生の履歴は会社名・ユーザー名・Webhook URL を含むので共有しない（`_local/` に退避）。
 - 却下案: 履歴全体を整形して共有する（秘匿・案件固有の流出リスクと量）。種ファイルへのシンボリックリンク（PSReadLine が追記して作業ツリーが汚れる）。上書きコピー（既存の履歴を壊す）。
-- スクリプト番号: `31`（層 30 の固有ツール枠）。Linux 側は欠番（zsh/bash は後回し）。
+- スクリプト番号: `31`（層 30 の固有ツール枠）。Windows（`.bat`）と Linux（`.sh`）で同じ番号。
 
 ### インストール経路（2026-10-03）
 
@@ -227,13 +227,12 @@ dotfiles/
 - `stylers.xml` の Gruvbox 以外の独自カスタマイズの有無（`git show` で履歴から復元できる）。`NppExec.ini` の `pandoc_preview` 登録は失われた。
 - pwsh の `PSReadLine`（`ListView` 予測表示）のコストは未計測。
 - 「`ListView` は重い可能性があるが見送り」（シェルの Decisions）と、現在の `profile.ps1:19` が `ListView` を設定していることが食い違う。見送りを撤回したのか未確認。`ListView` の件数は PSReadLine 2.4.5 で設定項目が無く、10件固定のはず（ソース未確認、記憶による）。
-- pwsh の `Ctrl+R`/`Ctrl+T`（自前ハンドラ）の実際の押下は未確認（`fzf` の `--height` 表示後の画面の崩れ、`InvokePrompt()` の効き方、履歴の長い複数行コマンドの扱い）。複数行のコマンドは履歴ファイルでは行ごとに分かれているので、`Ctrl+R` の候補も行ごとになる。
-- `.bashrc` 末尾の `cd ~` が、bash の `Ctrl+T`（カレントからのファイル検索）と相性が悪い（起動時のディレクトリが常に `~`）。zsh は影響なし。
+- pwsh の `Ctrl+R` の候補は、履歴ファイルの行ごとになる。複数行のコマンドは履歴ファイルでは行ごとに分かれているため、複数行コマンドの全体は選べない。
 - WSL の VS Code Server 側の C++ メモリ上限は、リポジトリ管理外（`~/.vscode-server/data/Machine/settings.json`）で未設定。
 - `templates/claude/settings.sandbox.json` の用途（使い捨ての検証環境に手でコピーする）は README に書いたが推測。
 - 他PCに残る旧構成のリンクやファイル（`setx` で作った旧環境変数、旧 Go、旧 vim プラグインなど）の整理。
 - 固有ツールが増えたときの一の位の割り当て順（23, 24…）。Linux にも Python（uv）が要るか（要れば `22_python.sh`）。
-- `.bashrc` 末尾の `cd ~`（普段使いが zsh なら不要な可能性）。`w0` 系に残る日本語コメント。
+- `w0` 系に残る日本語コメント。
 - `windows/` 配下のアプリ状態ファイル（Notepad++ のテーマなど）の追跡範囲は、今回は見直していない。
 - Zed の Linux デスクトップ導入時の `links.map` 側の対応。
 

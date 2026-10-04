@@ -335,7 +335,8 @@ vim ~/.vimrc
 - 種ファイル: dotfiles の `windows/powershell/history.seed.txt`（PSReadLine の履歴ファイルと同じ形式。1行1コマンド、LF）。
 - 作り方: このノートの「履歴の種」にある ` ```powershell ` ブロックを、上から順に連結する。コードブロックの外の説明は含めない。
 - 初回セットアップでの使い方: `scripts\windows\31_history_seed.bat [-n]`（層 30 の固有ツール枠。`30_link.bat` の後）。履歴ファイルが無い、または空のときだけコピーする。既存の履歴は上書きしない（`-n` は確認のみ）。新しい pwsh を開く前に実行する。シンボリックリンクにしない（PSReadLine が実行のたびに追記するので、作業ツリーが毎回汚れる）。
-- zsh/bash の種（素案）: 「履歴の種（zsh/bash・素案）」の ` ```bash ` ブロックを同様に連結して、dotfiles の `manifests/history.seed.sh.txt` に置く（仮の置き場。未コミット）。履歴ファイルは `~/.local/state/{zsh,bash}/history`（1行1コマンドの平文。zsh も読める）。配置スクリプト（`31_history_seed.sh`）は未実装で、試験は手で履歴ファイルへコピーして行う。
+- zsh/bash の種: 「履歴の種（zsh/bash・素案）」の ` ```bash ` ブロックを同様に連結して、dotfiles の `manifests/history.seed.sh.txt` に置く。履歴ファイルは `~/.local/state/{zsh,bash}/history`（`XDG_STATE_HOME` があればその下。1行1コマンドの平文。zsh も読める）。
+- zsh/bash の配置: `scripts/linux/31_history_seed.sh [-n]`（Windows の `31_history_seed.bat` と同じ番号・同じ方針）。zsh と bash の履歴を別々に見て、無い/空のものだけコピーする（権限は 600）。既存の履歴は上書きしない。最初のシェルを開く前に実行する。
 
 ## Gotchas
 
@@ -347,7 +348,8 @@ vim ~/.vimrc
 ## Open Questions
 
 - 種の件数は多すぎないか。ListView は10件固定のはずなので、先頭数文字で絞れる行が多いほど使いやすい。数週間使ってから間引く。
-- Linux 側（zsh/bash）の `31_history_seed.sh` は欠番。zsh の履歴は拡張形式で、Windows の種からコマンドをそろえて作る（後回し）。
+- 種の間引き（後日）。zsh/bash の種（`manifests/history.seed.sh.txt`）は素案のまま運用に入れた。置換した `apt` や `vim ~/.zshrc` の行は、実際の履歴にあった行ではないので、使わないものを間引く。
+- 新しいPC（または VM）での `31_history_seed.sh` の通し実行は未確認（このPCは既に履歴があるので、ドライランと、一時ディレクトリでのコピー・スキップ・空ファイル・不正引数のテストまで）。
 - 履歴ファイルの場所は既定の `%APPDATA%\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt` を前提にしている（このPCで一致を確認）。`Set-PSReadLineOption -HistorySavePath` で変えた環境では合わない。
 - このPCの履歴の中で、2 のパッケージのうち実際に残っているもの（`scoop list` の結果）と、種の記述の食い違い。
 
