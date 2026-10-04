@@ -135,6 +135,7 @@ git config --file ~/.gitconfig_local user.email "<email>"
 | 22 | `22_python.bat` | winget で uv を入れ、Python 3.13 を導入する | |
 | 24 | `24_fonts.bat [--dry-run]` | PlemolJP NF / MoralerspaceHW を `gh` で `~\download` に取得する。インストールは手動（`fonts.md`） | `gh auth login` が必要（dry-run は不要） |
 | 30 | `30_link.bat [-n]` | `links.map` に従って設定ファイルのリンクを張る | 先に **`-n`（ドライラン）**で確認する。配置先に実ファイルがあると `[ERR]`。**自動退避はしない**ので、手で退避してから再実行 |
+| 31 | `31_history_seed.bat [-n]` | PSReadLine の履歴に、定型コマンドの種（`windows\powershell\history.seed.txt`）を入れる | 履歴が無い/空のときだけ。既存の履歴は上書きしない。**最初の pwsh を開く前に**実行する |
 
 - 管理者権限が必要なのは、任意の `.reg`（任意設定）と WSL 有効化（`40_wsl_enable.bat`、WSL を使う場合のみ）だけ。
 - `50_repos.bat` は、ghq で必要なリポジトリを取るためのもの。この手順書の範囲外。

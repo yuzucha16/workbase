@@ -26,20 +26,16 @@ updated: 2026-10-04
   - 未 push: dotfiles は `origin/main`（`e1e4ac7`）より3コミット先（`8f1f885` `dda8e75` `b9af34a`）。リモートには `main` と `202509` が両方ある。
 
 - 2026-10-04: 両PCの履歴を分析してユースケースを整理し、「履歴の種」の方針を決めた（exmem に傾向と種の本文、dotfiles に種ファイル。[[shell-command-usecases]]）。
-- 2026-10-04: zfz/cdg を `Alt+j`/`Alt+k` で3シェル共通にした（コミット済み）。zsh で ListView 相当の自作一覧を試し、zsh/bash の ListView 相当は作らず、fzf の `Ctrl+R`（履歴）・`Ctrl+T`（ファイル）に切り替えた（`common.sh`、未コミット。[[dotfiles]] の Decisions）。pwsh にも同じキーで fzf を入れ（`ListView` は残す）。目的はコマンド履歴のベースを dotfiles 側で管理して、PC 移行時の調べ直しを減らすこと。
+- 2026-10-04: zfz/cdg を `Alt+j`/`Alt+k` で3シェル共通にした（コミット済み）。zsh で ListView 相当の自作一覧を試し、zsh/bash の ListView 相当は作らず、fzf の `Ctrl+R`（履歴）・`Ctrl+T`（ファイル）に切り替えた（コミット・push 済み。[[dotfiles]] の Decisions）。pwsh にも同じキーで fzf を入れ（`ListView` は残す。実機で動作確認済み）、bash の `.bashrc` 末尾の `cd ~` を削除した。zsh/bash 向けの履歴の種と配置スクリプトも作った。目的はコマンド履歴のベースを dotfiles 側で管理して、PC 移行時の調べ直しを減らすこと。
 
 ## Next Actions
 
-- zsh/bash の fzf（`Ctrl+R`/`Ctrl+T`）の変更をコミットする（`common.sh`）。実際に使って、`Ctrl+T` の `fd`/`bat` プレビューと `--height=40%` の見た目を確認する。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は [[dotfiles]] の Facts）:
-  - `zfz` = `Alt+j`、`cdg` = `Alt+k`（済）。pwsh の実際の押下は未確認。WSL に `ghq` を入れたら `cdg` も実機で確認する。
-  - pwsh にも `Ctrl+R`/`Ctrl+T` を fzf で入れた（自前ハンドラ、未コミット。`ListView` は残す）。実際に押して、画面の崩れやプロンプトの描き直しを確認する。
-  - bash の `.bashrc` 末尾の `cd ~` を外すか決める（`Ctrl+T` が `~` から探してしまう）。
+  - 済: `zfz` = `Alt+j`、`cdg` = `Alt+k`、3シェルの `Ctrl+R`/`Ctrl+T`（fzf）、bash の `cd ~` の削除。pwsh の `Ctrl+R`/`Ctrl+T` は実機で動作確認済み。WSL に `ghq` を入れたら `cdg`（zsh/bash）も実機で確認する。
   - その他、3シェルの差を洗い出して共通化する。
-- ヒストリの種（案a）を進める。方針と種の本文は [[shell-command-usecases]]。種ファイル `windows/powershell/history.seed.txt`（92行）と、配置スクリプト `scripts/windows/31_history_seed.bat`（履歴が無い/空のときだけコピー）は作成・検証済み。残り: 新しいPCで通し実行、数週間使って間引き、zsh/bash 向けにコマンドをそろえて展開（`31_history_seed.sh` は欠番）。
+- ヒストリの種（案a）を進める。方針と種の本文は [[shell-command-usecases]]。種ファイル `windows/powershell/history.seed.txt`（92行）と、配置スクリプト `scripts/windows/31_history_seed.bat`（履歴が無い/空のときだけコピー）は作成・検証済み。zsh/bash 向けは `manifests/history.seed.sh.txt`（77行）と `scripts/linux/31_history_seed.sh` を作成・テスト済み（未コミット）。残り: 新しいPCで通し実行、数週間使って間引き（後日。置換した apt などの行を優先して見直す）。
 - （旧）コマンド履歴の管理を設計する: 重複排除、`ls`/`cd` など短い行の除外、秘匿パターンと会社固有・ユーザー名入りパスの除外、共有（Git）とローカル専用（`_local/`）の分け方。参照用の他PC生ヒストリは `resources/_local/ConsoleHost_history.txt` に退避済み（Git 対象外。使い終わったら削除）。
 
-- dotfiles の未 push 3コミットを push する。`notes` 側のコミットも push する。
 - GitHub の既定ブランチを `main` にし、問題が無ければ `202509` をリモート・ローカルで削除する（ユーザーの確認待ち）。
 - 各PC（家・会社）で `git pull` → Windows は `30_link.bat`（家は `link home`）、Linux/WSL は `30_link.sh` を再実行する。新しいシェルで zsh の `lt` / `ll` / `l`、`cdg` を確認する。
 - このPCで `.wslconfig` を反映する: `30_link.bat` → `wsl --shutdown` → 開き直して `vmmemWSL` を観察する。
