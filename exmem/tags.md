@@ -40,6 +40,7 @@ updated: 2026-10-04
 | `tool/notepadpp` | Notepad++ |
 | `tool/scoop` | scoop（Windows のパッケージマネージャー） |
 | `tool/winget` | winget |
+| `tool/gh` | GitHub CLI（`gh`） |
 | `tool/windows-terminal` | Windows Terminal |
 
 ### `ai/` — AIサービス・エージェント
