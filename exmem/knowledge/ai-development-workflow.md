@@ -12,8 +12,9 @@ tags:
 aliases:
   - AI開発ワークフロー
 created: 2026-09-26
-updated: 2026-10-02
+updated: 2026-10-04
 sources:
+  - Claude Code conversation "dotfiles と exmem の関係整理" (2026-10-04)
   - ChatGPT conversation "AI開発ワークフロー検討" (2026-09-26)
   - ChatGPT conversation "Zed ACPとAI横断ナレッジワークフロー" (2026-10-02)
   - Claude Code conversation "exmemの整理" (2026-09-26〜2026-10-01)
@@ -244,6 +245,46 @@ AIのコンテキスト
 
 - 状況: 2026-10-02 にinboxへ届いたメモ「Zed ACPとAI横断ナレッジワークフロー」は、`inbox/`・`knowledge/`・`projects/<project>/context.md` に加えて `conversations/` を置く最小構造と、「会話ログと知識を分離する」考えを書いていた。これは2026-09-26 の初期案で、D2で廃止済み。
 - 解決: 実物（`inbox/` → `knowledge/` → `projects/`）を正とした。メモの Next Actions にあった `conversations/` の作成は行わない。
+
+## 他リポジトリとの関係（2026-10-04）
+
+プロジェクトのリポジトリ（dotfiles など）と exmem は、「作業ログはリポジトリ側、知識は exmem」と分ける。実際の整理は dotfiles で行い、ルールは `AGENTS.md` の末尾にも書いてある（2026-10-04 に確認済み）。
+
+### Principles
+
+- 作業ログ（経緯・次にやること）と知識は分ける。ログは各リポジトリの `docs/`、知識は exmem に置く。
+- 既存の運用を直す提案をするときは、その運用が設計意図なのか成り行きなのかを、先にユーザーに確認する。現状＝欠陥とは限らない。
+- ノートの削除・移行では、移行元の全行を移行先と突き合わせてから消す。見出し数の比較だけでは欠落を見逃す。
+- 古い記録を直すときは、実機で現状を確認して現行の記述にし、旧方式は日付つきの記録として残す。
+
+### Decisions
+
+- **プロジェクトのリポジトリは exmem を基本は読み取り専用で参照する。作業ログ（経緯・決定・次にやること）は各リポジトリの `docs/`（`log.md` と `decisions.md`）に持ち、exmem はナレッジだけを持つ。**
+  - 根拠: exmem は AI をまたいで再利用する知識の置き場で、プロジェクトの進行状況は性質が違う。混ぜると、exmem の1ファイル（dotfiles で 250 行）が作業ログ兼設計書に肥大した。
+  - 却下案: exmem の `contexts/<project>/context.md` に各プロジェクトの状態を置く（dotfiles については、設計意図が「リポジトリ内に育成ログを持つ」だったので不採用）。
+- **育成ログの形は、時系列の `docs/log.md`（Next Actions を先頭、Open Questions、Log）と、根拠・却下案・Gotchas の `docs/decisions.md` の2本。** 時系列の記録と判断の記録は性質が違い、1本にすると肥大する。却下案: `CHANGELOG` 1本。
+- **書き込みの唯一の例外は、ユーザーが「ナレッジ化して」と指示したとき、`exmem/inbox/YYYY-MM-DD-<topic>.md` に新規ファイルを1つ置くこと。** inbox のメモは、実物との照合とタグの正規化を含む統合の手順に乗る。却下案: `knowledge/` へ直接書く（統合時の照合と正規化を飛ばす）、作業終了ごとの自動書き込み（作業ログが流れ込む）。
+- 手順の指示文はリポジトリ側の `AGENTS.md` に置き、実行のたびに改善案を出させて育てる。承認なしに書き換えない。
+
+### Facts
+
+- exmem は独立リポジトリではなく、`notes` リポジトリ（Obsidian Vault）の `resources/exmem/`。コミットはプロジェクト側と `notes` 側で別になる（[[obsidian-vault]]）。
+- 2026-10-04 に、dotfiles の記録2件（`knowledge/dotfiles.md`、`contexts/dotfiles/context.md`）を dotfiles の `docs/` へ移して削除した（`cb06090`）。他のノート6件のリンクを直した。
+- Claude Code のプランモードは本体の機能で、プランファイルを `~/.claude/plans/` に書き、`ExitPlanMode` で承認ダイアログを出す。プランモード中はプランファイル以外は編集できない。
+- 2026-10-04 に確認: Windows と WSL のどちらも `~/.claude/settings.json` は、dotfiles の `home/.claude/settings.json` へのシンボリックリンク（[[claude-code-permissions]]）。
+
+### Gotchas
+
+- **現状の運用を設計意図と誤認した**: dotfiles の作業記録が exmem に書かれているのを見て「ルールが無い欠陥」と判断し、記録を exmem に書かせる計画を立てた。実際は「リポジトリ内に持つ」が意図で、運用が結果的にずれていただけだった。ユーザーの訂正で、計画を逆向きに作り直した。
+- **ノートの削除・移行の確認が、見出し数の比較だけでは足りなかった**: 目的文、ある決定の「影響」の行、使い終わったら削除するファイルのタスクの3点を見逃した。削除前のファイルを `git show <親コミット>:<パス>` で取り出し、空でない全行を、リンク表記・空白・箇条書き記号を正規化したうえで移行先に部分一致で突き合わせ、一致しなかった行を目視で確認した。
+- **削除でリンクが切れる**: `[[ノート名]]` を全体検索して書き換えた。文章で足りる参照は、プレーンテキスト（「dotfiles リポジトリの `docs/decisions.md`」）にして、リンクの維持を不要にした。
+- **古い記録は、現状と突き合わせないと、旧パスや「未適用」といった状態が残る**: 旧パス（`claude/user/settings.json`）、旧スクリプト名（`w2a_copy_dotfiles.bat`）、「Windows は未リンク」が残っていた。
+- コミットは、`git add` をパス指定で行い、無関係の変更を混ぜない。
+
+### Open Questions
+
+- 他のプロジェクト（`ai-business-adoption`、`linux-home-pc`、`zed-vim-migration`）の `contexts/` も、リポジトリ側に持つ形へ寄せるか。exmem 内で完結するプロジェクトは `contexts/` のままでよいか。
+- プランの承認の使い方と、プラン自体の構成を、別の場で議論したい（ユーザーの要望）。プランを `~/.claude/plans/` 以外にも残す方法。
 
 ## 8. 未決事項
 

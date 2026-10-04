@@ -12,8 +12,9 @@ aliases:
   - Zed Vim環境
   - ZedへのVim環境移行
 created: 2026-09-26
-updated: 2026-10-02
+updated: 2026-10-04
 sources:
+  - Claude Code conversation "Zed の設定を最適化する（目の負担軽減・claude-acp・Obsidian 併用）" (2026-10-04)
   - ChatGPT conversation "ZedへのVim環境移行" (2026-09-26)
   - "%APPDATA%\\Zed\\settings.json / keymap.json（2026-09-26 に内容を確認、2026-10-02 に再確認）"
 ---
@@ -115,6 +116,13 @@ Vim modeにはVimの基本操作に加えて、ZedのPane（`Ctrl-W h/j/k/l`）�
   1. キーボード側で `Ctrl+Shift` を1キー化する
   2. Zed側でleaderを変更する
   3. Neovimとの親和性を考え `Space` をleaderにし、一部を共通キーバインドにする
+
+### Vim mode を1週間オフにして試す（2026-10-04）
+
+- 決めたこと: `vim_mode: false`（2026-10-04 の `settings.json` で確認）。2026-10-11 頃に戻すか判断する。
+- 根拠: エージェント画面は Ctrl+C でコピーなので、エディタもヤンクでなく Ctrl+C にそろえると操作が対称になる。操作が非対称になる設定は、無理に合わせるより片方を標準に寄せて試す。
+- 戻す場合: `vim_mode: true` と `vim.use_system_clipboard: "always"`。必要な Vim 風キーは keymap で足す案もある（未実施）。
+- 上の「Current Settings」の `vim_mode: true`、`tab_size: 4`、テーマ、ターミナルのシェルは 2026-10-02 時点の値。2026-10-04 時点では `vim_mode` がオフ、`tab_size` が 2（Notepad++ にそろえた。[[notepad-plus-plus]]）、テーマが自作の Material Gruvbox Dark、`terminal.shell` は削除済み（OS 既定。[[zed-dotfiles]]）。
 
 ## Related
 

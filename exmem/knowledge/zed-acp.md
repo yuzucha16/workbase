@@ -12,8 +12,9 @@ tags:
 aliases:
   - Zed ACP
 created: 2026-09-26
-updated: 2026-10-02
+updated: 2026-10-04
 sources:
+  - Claude Code conversation "Zed の設定を最適化する（目の負担軽減・claude-acp・Obsidian 併用）" (2026-10-04)
   - ChatGPT conversation "Zed ACP ハンズオン" (2026-09-26)
   - ChatGPT conversation "Zed ACPとAI横断ナレッジワークフロー" (2026-10-02)
   - Claude conversation "ZedのACP経由でClaudeが起動しない問題(PowerShellプロファイルが原因)" (2026-10-02)
@@ -132,6 +133,19 @@ Zed Thread History
 
 - 根拠: 定額のClaude契約を使うため。
 - 却下案: Anthropic Console（API従量課金）。
+
+### 承認は Claude Code に一本化し、Zed 側は安全網だけ持つ（2026-10-04）
+
+- 決めたこと: `agent.tool_permissions.default` を `allow` にする。Zed 側には `always_deny`（`.env`、`secrets/`、`*.pem`、`*.key` の編集）と `always_confirm`（`git reset --hard`、`git push --force`）だけ残す。
+- 根拠: Zed の `default.json` の `tool_permissions` のコメントに「外部エージェント（独自の権限モードを持つもの）では、Zed の `deny` と `confirm` が優先され、エージェント側の権限は Zed が許可するときだけ使われる」とある（2026-10-04 に確認）。既定の `confirm` のままだと二重確認になる。
+- 却下案: `confirm` のまま運用する。
+- 未確認: `always_deny` / `always_confirm` のパターンが claude-acp のツール名と一致して実際に効くか。
+
+### 送信は Ctrl+Enter、起動モードと既定モデルは設定で決める（2026-10-04）
+
+- `agent.use_modifier_to_send: true`: IME の変換確定の Enter で送信されるのを防ぐ。
+- claude-acp のモデルと起動モードは `agent_servers.claude-acp.default_config_options`（`model`、`mode`）で決める。`mode: "plan"` を入れると、新しいセッションがプランモードで始まる。`model` は `sonnet` 固定（トークン量を優先）。
+- 設定の全体は [[zed-dotfiles]]。
 
 ## Gotchas
 
