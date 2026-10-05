@@ -69,7 +69,15 @@ sources:
 
 ## Decisions
 
-### `.obsidian` は `notes` に置き続け、dotfiles には戻さない（2026-10-04）
+### `.obsidian` を dotfiles へ戻す（2026-10-05。2026-10-04 の決定「`notes` に置き続ける」を撤回）
+
+- 決めたこと（ユーザー）: `.obsidian` の実体を dotfiles（`windows/obsidian/.obsidian`）に置き、Vault のトップ（`NOTES_DIR`）の `.obsidian` へジャンクションで張る。
+- 撤回の理由: Vault のトップを、PC ごとのローカルなリポジトリ（会社 PC は remote なし）にして、共有の部分を別リポジトリ `workbase`（`resources/` に clone）に分けた。トップは PC 間で共有されないので、`.obsidian` をトップに置くと、設定が PC ごとに別管理になる。dotfiles は全 PC に clone するので、設定を共有できる（判断基準の ③ 依存の向きと ④ 全 PC への到達性が、前提から変わった）。
+- 経緯: 提案の時点で、2026-10-04 の決定を示せていなかった。ユーザーに、10-04 の決定と根拠を示した上で、改めて確認して決めた。
+- 引き受ける負担（下の撤回済みの決定の根拠と同じもの）: ジャンクション越しの運用。リンクの前に Obsidian を開くと、実ディレクトリが先にできて `30_link.bat` が止まる。設定の変更が dotfiles のコミットになる（`[obsidian]` の接頭辞は dotfiles 側で使う）。`workspace*.json` の除外が dotfiles の `.gitignore` に要る。
+- 却下案: トップのリポジトリで管理する（PC 間で共有されない）。
+
+### （撤回済み 2026-10-05）`.obsidian` は `notes` に置き続け、dotfiles には戻さない（2026-10-04）
 
 - 根拠: Obsidian は Vault 直下の `.obsidian` を読む（dotfiles に置くとジャンクションが必須）。設定の中身は Vault と連動する。dotfiles → `notes` の片方向の依存を保てる。プラグインで dotfiles の履歴が重くなるのを避けられる。Zed とテーマ・フォントをそろえる意図は無い（ユーザーの発言）。
 - 却下案: dotfiles に戻して `notes/.obsidian` へリンクする（上の負担が増え、得られるのは Zed との統一だけで、その意図が無い）。
