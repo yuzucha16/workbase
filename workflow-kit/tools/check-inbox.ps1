@@ -125,7 +125,8 @@ foreach ($p in $Path) {
   Report ($raw -notmatch '(?i)(token|secret|password|bearer)\s*[:=]\s*\S') '秘匿値らしき行（token / secret / password / bearer の値）が無い'
   $lines = ($raw -split "`n").Count
   Report ($lines -le 150) 'ファイル全体が150行以内（目安）' 'WARN' "$lines 行"
-  Report ((Count $raw '<[^>\n]+>') -eq 0) '`<…>` が残っていない（コマンドの書式なら問題無い）' 'WARN' "$(Count $raw '<[^>\n]+>') 件"
+  $noCode = [regex]::Replace($raw, '`[^`\n]*`', '')   # インラインコード内の <…> はコマンドの書式なので除く
+  Report ((Count $noCode '<[^>\n]+>') -eq 0) '`<…>` が残っていない（インラインコード内は除く）' 'WARN' "$(Count $noCode '<[^>\n]+>') 件"
 }
 
 Write-Host ''
