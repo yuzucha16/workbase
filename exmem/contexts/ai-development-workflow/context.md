@@ -8,7 +8,7 @@ tags:
 aliases:
   - AI開発ワークフロー Project Context
 created: 2026-09-26
-updated: 2026-10-04
+updated: 2026-10-06
 ---
 
 # AI開発ワークフロー Project Context
@@ -46,8 +46,13 @@ updated: 2026-10-04
 - 2026-10-04 に、inbox のメモ7件（exmem と他リポジトリの役割分離、Zed の設定、カーソル点滅、Notepad++、scoop、シェル履歴と fzf）を統合した（8回目）。作業ログと知識を分ける方針に沿い、再利用できる知識だけを取り込んだ（新規は [[terminal-cursor-blink]]、[[notepad-plus-plus]]、[[scoop-app-management]]、[[shell-fzf-keybindings]]。追記は [[ai-development-workflow]]、[[zed-dotfiles]]、[[zed-acp]]、[[zed-vim]]、[[shell-command-usecases]]）。個別の経緯・Next Actions は dotfiles リポジトリの `docs/` に任せた。実物との照合では、Zed の `settings.json`、カーソル点滅の3シェルの記述、fzf のキー、Notepad++ の雛形方式、`%APPDATA%\zed\themes` のジャンクションがメモと一致した。
 - 2026-10-04 に、inbox のメモ9件（共通機能 workflow-kit の設計と改善の受け皿、出力のブレ対策、提案と決定の区別、履歴からの作業ログの復元、設定の置き場の判断基準、Obsidian の設定、`gh release download`）を統合した（9回目）。新規は [[workflow-kit]]、[[ai-output-consistency]]、[[app-config-placement]]、[[gh-release-download]]。追記は [[obsidian-vault]]（設定の方針・Decisions・Gotchas）、[[human-ai-decision-loop]]、[[ai-development-workflow]]、[[fonts]]（`--dry-run` の記述を現状に直した）。実物との照合では、`.obsidian` の設定ファイル、`.gitattributes`、workflow-kit の構成、`24_fonts.*` に `--dry-run` / `gh auth` が無いことがメモと一致した。食い違いは、揺れの原因の数（8点と7点）で、数え方の違いとみられる（[[ai-output-consistency]]）。`contexts/` の位置づけが「`notes` から見えない場所の作業を引き継ぐコンテキスト」になった。
 - 2026-10-04 に、inbox のメモ2件（アプリが自動で書き換えるファイルの追跡の判断基準、並行セッションと統合時の整合）を統合した（10回目）。前者は [[app-config-placement]] に5項目の基準として、後者は [[ai-development-workflow]] の新章に入れた。メモの Open Questions を作業ログ（`notes/docs/`）と照合し、「追記分を新しいタグのコミットに含める運用」が決定済みであることを確認した。`colored-tags` の `data.json` の78タグ・追跡状態・LF は実物と一致した。統合手順に照合の工程を足すかは、ユーザーの判断待ち（[[ai-development-workflow]] の Open Questions）。
+- 2026-10-06 に、inbox のメモ3件（WSL でのシェルスクリプト試験、エージェントのコミットの身元とトレーラー、改行コードと `.gitattributes`）を統合した（11回目）。新規は [[shell-script-testing-wsl]]、[[git-line-endings]]。追記は [[workflow-kit]]（コミットの身元の Decisions、Gotchas、Open Questions）と [[pc-setup-manuals]]（`lib.sh` の関数が7つに増えた旨）。実物との照合では、kit の `docs-rules.md` のトレーラー規則と版 `2026-10-06.1`、`core.autocrlf` の設定（システム `true`、ユーザー `false`）がメモと一致した。dotfiles の実物は見つからず、試験メモの内容は未再確認（仮説扱いで記録）。
 
 ## Next Actions
+
+- ユーザーが `git config --global user.name` / `user.email` を設定し、その後、作者 agent・コミッター人間の分離を採用するか決める（[[workflow-kit]]）。
+- 他の PC で `git pull` したあと `git ls-files --eol` を確認する。clone 前の git 設定の順序を手順書に書くか判断する（[[git-line-endings]]）。
+- シェルスクリプトの試験の置き場（dotfiles の `tests/` など）と `PROC_VERSION_FILE` の扱いを決める。ネイティブ Linux 実機で確認する（[[shell-script-testing-wsl]]）。
 
 - 他のプロジェクト（`ai-business-adoption`、`linux-home-pc`、`zed-vim-migration`）の `contexts/` を、リポジトリ側に持つ形へ寄せるか、exmem 内で完結するものは残すかを決める（[[ai-development-workflow]] の「他リポジトリとの関係」）。
 - **Vault構造の移行を完了する**（[[obsidian-vault]] 移行の状況）。順序の制約: GitHub rename → 配置換え。
