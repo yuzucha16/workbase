@@ -13,7 +13,7 @@ aliases:
   - ナレッジ化して
   - 改善の受け皿
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-05
 sources:
   - Claude Code conversation "docs/ とナレッジ化フックの共通機能化" (2026-10-04)
   - Claude Code conversation "共通機能の育成と改善の仕組み" (2026-10-04)
@@ -77,7 +77,7 @@ sources:
 
 ### `notes/docs/` はローカル専用のままにする（2026-10-04。ユーザーの承認）
 
-- 根拠: 作業ログに、会社固有の情報が入る可能性がある。`notes` リポジトリが公開か非公開かは未確認（[[obsidian-vault]]）。`.gitignore` のホワイトリスト（`/*`）の既定でローカル専用になり、変更しなくてよい。
+- 根拠: 作業ログに、会社固有の情報が入る可能性がある。`notes` リポジトリが公開か非公開かは未確認（[[obsidian-vault]]）。`.gitignore` のホワイトリスト（`/*`）の既定でローカル専用になり、変更しなくてよい（2026-10-05 以降: `docs/` は、PC ローカルな Vault のトップのリポジトリで追跡し、共有の `workbase` には載らない。ホワイトリストは無くなった）。
 - 却下案: `.gitignore` に `!/docs/` を足して共有する（会社固有の情報が共有側に出るリスク）。
 - 影響: `docs/` は他のPCに届かない。日報などの入力にするのは、そのPCの中になる。導入フックは、`docs/` がローカル専用と分かったとき、共有するかをユーザーに質問する（既定はローカル専用）。
 
@@ -112,7 +112,7 @@ sources:
 - 復元の手順（2026-10-04、実際に実行）: 一覧は `git log --format='%h %ad %s' --date=short -- <パス>`、変更範囲は `git show --stat <ハッシュ> -- <パス>`、設定値の変化は `git show <ハッシュ> -- <ファイル>` の差分。差分から正確に分かるのは、ファイルの追加・削除と設定値の変化。多くのコミットメッセージは、変更内容だけで理由が書かれていない（11コミットで確認）。理由の手掛かりは、`.gitattributes` や CSS のコメント、既存ナレッジの Proposals など。
 - 履歴を作り直した（単一コミットにした）リポジトリでは、それより前の履歴が残っていない（移管元で `git log --all -- <パス>` が初期コミットと移管コミットしか返さなかった）。
 - 実物（2026-10-04）: `resources/workflow-kit/` に `AGENTS.md`、`README.md`、`docs-rules.md`、`knowledge-hook.md`、`setup-hook.md`、`improvements.md`、`examples/`、`templates/` がある。`notes/AGENTS.md` が共通ルールの参照先と読む時機を持ち、`notes/docs/` に `log.md` と `decisions.md` がある（`notes/docs/` はローカル専用）。`improvements.md` には採用済みの提案が大半で、「提案」の状態が3件ある（Claude 用スキル、`contexts/` を消化する手段、実際のメモでの校正。kit の版の記録は採用済み）。
-- `notes` では `resources/` だけが Git 共有で、`projects/` `areas/` `archives/` はローカル専用。そこに置いた `docs/` はそのPC内に留まる。
+- （2026-10-05 以前の記述）`notes` では `resources/` だけが Git 共有で、`projects/` `areas/` `archives/` はローカル専用だった。2026-10-05 以降は、`workbase`（`resources/`）が共有で、Vault のトップ（`projects/` `areas/` `archives/` `docs/`）は PC ごとのローカルなリポジトリ。そこに置いた `docs/` は、共有の `workbase` には載らない。
 - Windows からは `C:\vault\notes\resources\workflow-kit\` 以下を読める。WSL の `/mnt/c/vault/notes/...` で読めるかは未確認（仮説）。作業ディレクトリの外のファイルを `@` で取り込むと、初回に承認が要る可能性がある（仮説）。
 - 今後、`docs/` の作業ログを日報・週報・仕様書の入力にし、ナレッジのマージ・見直しも行う予定（未実施）。改善の受け皿は、その見直しにも使える見込み（仮説）。
 

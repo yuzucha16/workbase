@@ -4,20 +4,17 @@
 Claude / Codex / Copilot など、どのエージェントも同じルールで読み書きする。
 人間はObsidianで閲覧・編集する。
 
-- 場所: `C:\vault\notes\resources\exmem`（Obsidian Vault `C:\vault\notes` の中）
-- `C:\vault\notes` 自体が Gitリポジトリ（GitHub: `yuzucha16/notes`）のルート。変更は `git diff` で確認できる。共有するのは `resources/` と `.obsidian/` だけで、それ以外（`projects/` `areas/` `archives/`）は `.gitignore` によりローカル専用。
+- 場所: `C:\vault\notes\resources\exmem`（Obsidian Vault `C:\vault\notes` の `resources/` に clone した、共有リポジトリ `workbase`（GitHub: `yuzucha16/workbase`）の一部）
+- `workbase` のルートは `resources/` で、`C:\vault\notes`（Vault のトップ）は別の、PC ローカルのリポジトリ。変更は `resources/` の中で `git diff` で確認できる。
 - エージェントはこのディレクトリを作業ディレクトリとして起動する。
-- 2026-10-02 に `areas_shared` リポジトリ（ジャンクション経由）から `notes` リポジトリ直下へ移した。旧 `exmem/projects/` は、Vault の PARA の `projects/` と区別するため `contexts/` に改名した。
+- 履歴: 2026-10-02 に `areas_shared` リポジトリから `notes` リポジトリへ移し、2026-10-05 に `notes` から `workbase` として切り出した。旧 `exmem/projects/` は、Vault の PARA の `projects/` と区別するため `contexts/` に改名した。
 
 ## Vault での位置づけ
 
-- `resources/` は「共有（Git管理）」、それ以外の PARA 区分はローカル専用。共有するかどうかは名前ではなく `.gitignore` で決まる。
-- 共有側（`resources/`）のノートから、ローカル側（`areas/` など）へ `[[リンク]]` を張らない。他のPCでリンク切れになる。
+- `workbase`（`resources/`）の内容は、すべて共有（Git管理）する。機密、会社固有の情報、PC ごとのデータを入れない。ローカルのデータ（PARA の `areas/` `projects/` `archives/`）は、Vault のトップのリポジトリにあり、`workbase` の外にある。
+- 共有側（`workbase`）のノートから、ローカル側（`areas/` など）へ `[[リンク]]` を張らない。他のPCでリンク切れになる。
 - `contexts/` は exmem のプロジェクト状態の置き場で、Vault 直下の `projects/` とは別物。
-- `resources/` の中でもローカル専用にしたいもの（会社固有・個人的な内容）は、`_local/` に置く。名前が `_local` のディレクトリは、どの階層にあっても中身がGitに載らない（`.gitignore` の `**/_local/*`。`.gitkeep` だけ追跡して、clone でディレクトリが出来る）。`resources/_local/`、`resources/exmem/_local/` などがある。
-  - `resources/` 直下の他のものは既定で共有になる。ローカル専用のものを `_local/` の外に置かない。
-  - 共有側のノートから `_local/` のノートへ `[[リンク]]` を張らない。
-  - `_` で始まるディレクトリはトピックではない管理用で、共有かどうかは別。`_archive/` は共有、`_local/` はローカル専用。
+- ローカル専用の置き場（旧 `_local/`）は、2026-10-05 に廃止した。ローカルのデータは、`workbase` の外（Vault のトップの PARA）に置く。
 
 ## 読む順番
 

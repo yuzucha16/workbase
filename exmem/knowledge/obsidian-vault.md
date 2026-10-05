@@ -31,7 +31,28 @@ sources:
 
 ## Vault
 
-### 目標の構造（2026-10-02 決定）
+### 現在の構造（2026-10-05）
+
+2026-10-05 に、下の「目標の構造（2026-10-02 決定）」から変更した。経緯は、その節と、Decisions の「撤回済み」の注記に残す。
+
+```text
+C:\vault\notes\        # PC ごとのローカルなリポジトリ（実ディレクトリ。ジャンクションではない）
+├── .gitignore / .ignore / AGENTS.md / CLAUDE.md / docs/
+├── .obsidian/         # dotfiles へのジャンクション（実体は dotfiles の windows\obsidian\.obsidian）
+├── projects/  areas/  archives/   # ローカルの PARA
+└── resources/         # 共有リポジトリ workbase の clone（別リポジトリ）
+    ├── exmem/  workflow-kit/  cheatsheets/  handson/
+```
+
+- Vault のトップは、PC ごとのローカルなリポジトリ（業務用 PC は remote なし、個人用 PC は非公開 remote を使える）。`areas/` `projects/` `archives/`、`docs/`（作業ログ）、PC 用の `AGENTS.md` を持つ。作り方は、`workflow-kit` の導入フック（項目 5「ワークスペースの生成」）。
+- `resources/` は、共有リポジトリ `workbase`（GitHub: `yuzucha16/workbase`、非公開。公開範囲は未定）を、**直接 `git clone` したもの**（ghq の管理外。ジャンクションにしない）。トップの `.gitignore` が除外する。`workbase` は、単独で clone しても自己完結する（Vault のローカル側を知らない）。
+- `.obsidian/` の実体は dotfiles。トップへジャンクションで張る（`links.map`）。`workspace*.json` は追跡しない。
+- 変更の理由: 業務用 PC で、ローカルの作業もコミットしたい。共有（GitHub）とローカルを、1つの作業ツリーに混ぜられない。1つのリポジトリの作業ツリーは連続している必要があり、入れ子の `.git` の中は、外側のリポジトリから追跡できない。共有側がローカルの存在を知らない構成にして、共有側を汎用ナレッジとして育てられるようにした。境界の数は、公開範囲の種類（共有 / PC ローカル / 設定）に合わせた。
+- 却下案: 1つの作業ツリーに2つの git を重ねる（ルートの `.gitignore` が両方に効き、片方は `git add -f` 前提になる）、共有リポジトリをトップに置いて `company/` を入れ子にする（共有側がローカルの存在を知る）、トップをリポジトリにしない（`AGENTS.md` と `docs/` の持ち主がいない）、`resources/` を ghq の位置に置いてジャンクションで出す（下の検索の項）。
+- 検索（確認: 2026-10-05）: ripgrep（Claude Code の Grep を含む）は `.gitignore` を尊重するので、トップの `.gitignore` が除外する `resources/` は、検索から黙って外れる。トップの `.ignore` に `!/resources/` を置くと含まれる。ジャンクション越しのディレクトリは、Grep / Glob / `rg`（既定）が辿らない（`rg --follow` なら辿る）。
+- `fonts/` `wallpapers/` `_archive/` は、履歴ごと削除した（LFS も不要になった）。`office/` は dotfiles（`windows/office/`）へ移した。ローカル専用の `_local/` は廃止した。
+
+### 目標の構造（2026-10-02 決定。2026-10-05 に変更。上の「現在の構造」を参照）
 
 - Vaultのルート: `C:\vault\notes`。ここがそのまま Gitリポジトリ（GitHub: `yuzucha16/notes`）のルートになる。
 - 直下はPARA形式: `projects/` / `areas/` / `resources/` / `archives/`
@@ -53,7 +74,7 @@ notes/                 # Git root
 ├── projects/  areas/  archives/   # ローカル専用
 ```
 
-### 移行の状況（2026-10-03 時点）
+### 移行の状況（2026-10-03 時点。履歴）
 
 - 済み（2026-10-02）: `areas_shared` リポジトリ内の配置換え（`exmem` `cheatsheets` `handson` を `resources/` 配下へ、`obsolete` を `resources/_archive/obsolete` へ）、`.gitignore` / `.gitattributes` の作成、`office` の dotfiles からのコピー、ドキュメントの更新。GitHub 側の `areas_shared` → `notes` の rename。
 - 済み（2026-10-03）: 実体は `C:\vault\repos\github.com\yuzucha16\notes`（ghq 管理）。`C:\vault\notes` はその実体へのジャンクション。`.obsidian` を dotfiles から取り込み（`workspace.json` は除外）。dotfiles 側の `windows/office` と `windows/obsidian` を削除し、`links.map` のリンク元を `..\notes\resources\office\...` に変更。`%APPDATA%` 側の Office のリンク7本を新しい実体へ張り直した。
@@ -61,7 +82,9 @@ notes/                 # Git root
 - 済み（2026-10-03 確認）: `C:\vault\notes` は実体 `repos\...\notes` へのジャンクション。`C:\vault\notes.lnk` は無くなっている。`_local/` のコミット（`27d1d08`）は `origin/main` より1つ先で、未 push。
 - 未実施: 旧 `areas_shared` クローン（`C:\vault\repos\github.com\yuzucha16\areas_shared`）と `C:\vault\notes_old` の削除（2026-10-03 時点でどちらも残っている。旧クローンは clean で未 push の変更なし）。Obsidian で `C:\vault\notes` を Vault として開き直す確認。`resources/fonts/` には `README.md` だけで、HackGen はまだ無い。
 
-### dotfiles との関係（2026-10-03 時点）
+### dotfiles との関係（2026-10-03 時点。2026-10-05 に変更）
+
+2026-10-05 の変更: `links.map` の `..\notes|%NOTES_DIR%` は無くなり、`windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` になった。`notes` は clone しない。`workbase` は `50_repos.bat` が `NOTES_DIR\resources` に clone する。`office/` は dotfiles の `windows/office/` に戻った（配置は手動のまま）。以下は、2026-10-03〜04 時点の記述。
 
 - `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）を張る。Office のテンプレ・リボン設定は、その後の dotfiles の見直しで `links.map` から外れ、初回に手で配置する運用になった。
 - **撤回済み（2026-10-05。dotfiles へ戻す。理由は [[app-config-placement]] の Decisions）**: `.obsidian` は `notes` に置き続け、dotfiles には戻さない（2026-10-04 決定）。根拠: Obsidian は Vault 直下の `.obsidian` を読む（dotfiles に置くとジャンクションが必須）、設定の中身が Vault と連動する、dotfiles → `notes` の片方向の依存を保てる、プラグインで dotfiles の履歴が重くなるのを避ける。dotfiles に置いてリンクすると、clone 順の循環、リンク前に Obsidian を開いたときの衝突、コミット先の分離が起きる。設定を変える作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない。判断基準の全体は [[app-config-placement]]。
@@ -103,7 +126,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - 本文の幅は、フォントサイズに比例させる（`--file-line-width: 58em`）。既定の固定 700px は、拡大しても幅が変わらず1行の文字数だけが減る。却下案: 幅の制限をなくす、64em（試して 58em にした。1週間の試用で確定する）。
 - 新規ノートの保存先は現在のフォルダにし、`_local/` は検索対象のままにする。新規作成はほぼしない。`exmem/inbox` は AI 出力をナレッジ化する入口で別の用途。`_local/` は PC ローカルのデータなので検索できる必要がある。
 - 検索から除外するフィルターは `.tmp.`、`_archive/`、`.claude/`。AI が書き込み途中に作る一時ファイル、古い資料、エージェントの設定を検索やリンク補完に出さない。
-- Vault のルートに共有の `AGENTS.md` と `CLAUDE.md`（`@AGENTS.md`）を置く。ルートで起動した AI に、共有とローカルの境界、`_local/`、リンクの規則、`.obsidian` の編集時の注意、書式を伝える。内容に機密が無いので共有する。却下案: ローカル専用にする。
+- （2026-10-05 に変更: トップの `AGENTS.md` は PC ごとのローカルなファイルになり、Vault 全体の規約は `workbase` のルートの `AGENTS.md` に移った。以下は当時の記述）Vault のルートに共有の `AGENTS.md` と `CLAUDE.md`（`@AGENTS.md`）を置く。ルートで起動した AI に、共有とローカルの境界、`_local/`、リンクの規則、`.obsidian` の編集時の注意、書式を伝える。内容に機密が無いので共有する。却下案: ローカル専用にする。
 
 ### コアプラグイン
 
@@ -154,7 +177,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 ### Decisions
 
-#### Vaultを1つのGitリポジトリにして、共有は `resources/` だけにする（2026-10-02）
+#### Vaultを1つのGitリポジトリにして、共有は `resources/` だけにする（2026-10-02。2026-10-05 に撤回: 「現在の構造」を参照。以下は履歴）
 
 - 決めたこと: `areas_shared` ジャンクションをやめ、`notes` 自体をリポジトリにする。共有は `resources/` と `.obsidian/` だけ。共有かローカルかは、名前（`_shared`）ではなく `.gitignore` のホワイトリスト（`/*` を除外して `resources/` などだけ許可）で決める。
 - 根拠: Gitの管理境界を減らしたい。`areas_shared` の中身は実質 resource で、area ではなかった。共有を `resources/` の1つに決めれば、サフィックスで区別する必要がない。ホワイトリスト方式なら、新しく作ったディレクトリは既定でローカル扱いになり、会社固有の情報を誤って共有しにくい。
@@ -167,13 +190,13 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - 作成済みの `_local/`（2026-10-03 確認）: `resources/`、`resources/exmem/`、`resources/cheatsheets/`、`resources/handson/`、`resources/office/`。いずれも `.gitkeep` あり。
 - 未決: トップレベルの `projects/` `areas/` `archives/`（全体がローカル）と `resources/_local/` の使い分けの基準。目安は、責任領域や業務の継続的な管理なら `areas/`、資料・知識なら `_local/`。
 
-#### `.gitignore` はホワイトリスト、バイナリは Git LFS（2026-10-03）
+#### `.gitignore` はホワイトリスト、バイナリは Git LFS（2026-10-03。2026-10-05 に撤回: ホワイトリストは無くなり、LFS は不要になった。以下は履歴）
 
 - `.gitignore` は `/*` で全部除外し、`!/.obsidian/` `!/resources/` などだけ許可する（2026-10-03 に実物で確認）。`workspace*.json`（端末ごとの状態）と `**/.claude/settings.local.json` も除外。
 - `resources/fonts/**` と `resources/wallpapers/**` は Git LFS。`*.md` `*.txt` `.gitkeep` は LFS の対象外。フォントは HackGen Console NF Regular だけ置く予定で、ライセンス文書も同じ場所に置く。Office のテンプレは小さいので LFS にしない。
 - 履歴: `areas_shared` → `notes` は GitHub の rename と `git mv` で履歴を保つ。dotfiles からの `.obsidian` と Office テンプレの移管は履歴なしのコピー。
 
-#### Office テンプレは `resources/office/`、リンクの仕組みは dotfiles
+#### Office テンプレは `resources/office/`、リンクの仕組みは dotfiles（2026-10-05 に dotfiles の `windows/office/` へ戻した。以下は履歴）
 
 - 配置対象の7ファイル（`Blank.potx` `Book.xltx` `Sheet.xltx` `Normal.dotm` と `*.exportedUI` 3つ）と参照用の残りを `resources/office/` に置く。dotfiles の `links.map` のリンク元は `..\notes\resources\office\...`。
 - 順序の制約（`notes` を先に clone してから `w2a`）は受け入れた。実機のリンク7本は張り直して確認済み（2026-10-03）。
@@ -212,9 +235,9 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 ### Open Questions
 
 - バックアップ対象: ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
-- `notes` リポジトリが公開か非公開か（未確認。`gh` は scoop に入っているので、`gh repo view` で確認できる）。公開なら `.obsidian` と `_local/` 以外が全部見える。
-- `30_link.bat`（旧 `w2a`）を通しで実行したとき、`..\notes|%NOTES_DIR%` のリンクが期待どおりに張られるか（今の `C:\vault\notes` は手で作ったジャンクション。未検証）。
-- `50_repos.bat`（旧 `w4`）に `notes` の clone を足すか、README の手動手順のままにするか（現状は取得対象が例のコメント行のみ）。
+- 解決（2026-10-05）: 旧 `notes` の公開範囲の問いは、`workbase` を非公開で新設したので、`workbase` の公開範囲の問い（公開するなら、先に exmem に会社固有の情報が無いか確認する）に置き換わった。
+- 解決（2026-10-05）: `links.map` から `..\notes|%NOTES_DIR%` を外した。`30_link.bat link -n`（ドライラン）で、`windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` が解決されることを確認し、同じ内容の `mklink /J` で `.obsidian` のジャンクションを張った（通しの実行は未確認）。
+- 解決（2026-10-05、Windows のみ）: `50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、既にあれば skip）を足した。Linux は未対応（TODO）。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
 - 仮説（未検証）: `.claude/settings.local.json` は、Claude Code を起動したディレクトリの `.claude/` から読まれる。
 - dotfiles の `notepadpp\config.xml` に、古い `areas_shared\exmem\inbox` のパスが残っている（ユーザーの未コミット変更）。

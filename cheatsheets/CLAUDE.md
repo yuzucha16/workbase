@@ -7,7 +7,6 @@ Claudeは、以下のルールに従って作業する。コマンド集は既�
 
 - `*.md`: コマンド集。frontmatter に `title` と `tags` を付ける
 - `env/`: OS・環境のセットアップ手順書。1ファイル=1系統(`win11.md`、`debian-family.md`)
-- `_local/`: ローカル専用のデータ(追跡しない)
 
 ## 手順書(env/)の作り方
 

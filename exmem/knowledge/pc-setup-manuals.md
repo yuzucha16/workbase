@@ -12,7 +12,7 @@ aliases:
   - cheatsheets/env
   - PC再セットアップ
 created: 2026-10-03
-updated: 2026-10-04
+updated: 2026-10-05
 sources:
   - Claude Code conversation "環境セットアップ手順書(Win11 / Debian系)の整備と scripts/linux の統合" (2026-10-03)
   - "resources/cheatsheets/env/ と dotfiles scripts/linux/（2026-10-03 に確認）"
@@ -95,7 +95,7 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 - Win11 の OOBE 手順（Rufus のオプション）が実機で動くか。
 - Mint を Ubuntu 列に含めるか、Mint 23 の公開後に独立させるか。
 - Fedora を足すときの構成（`lib.sh` に `pkg_install` を包むか、`manifests/dnf.txt` を別に持つか）。足す場合は `env/fedora.md` を新設する。
-- `env/` の手順書に、`notes` リポジトリが公開だった場合に支障のある記述がないか（公開範囲は [[obsidian-vault]] の Open Questions）。
+- `env/` の手順書に、`workbase`（旧 `notes`）が公開になった場合に支障のある記述がないか（公開範囲は未定。[[obsidian-vault]] の Open Questions）。
 - GRUB のメニューを持つディストロをどれにするか（最後に入れた1台か、固定か）。
 
 ## Related

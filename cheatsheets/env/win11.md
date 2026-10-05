@@ -31,7 +31,7 @@ tags:
 | 2 | インストール | 手動 | デスクトップまで進む |
 | 3 | OOBE（ネット無し） | 手動 | ローカルアカウントで入れた |
 | 4 | 初回設定 | 手動 | ネット接続・更新・開発者モード ON |
-| 5 | リポジトリ取得 | 手動 | `dotfiles` と `notes` が所定の場所にある |
+| 5 | リポジトリ取得 | 手動 | `dotfiles` が所定の場所にある |
 | 6 | スクリプト実行 | スクリプト | `10` → `20` → `21` `22` → `30` が通る |
 | 7 | 動作確認 | 手動 | エディタで `README.md` が見える |
 | 8 | 任意設定 | 手動 / 任意 | 必要なものだけ |
@@ -105,17 +105,16 @@ OOBE（初回セットアップ画面）で、Microsoft アカウントとネッ
 
 ## 5. リポジトリ取得
 
-`dotfiles` と `notes` を、**所定のパスに**clone する（このパス構成が前提）。**`notes` を先に**取得する（`30_link.bat` が `dotfiles` の隣にある `notes` へのリンクを張るため）。
+`dotfiles` を、**所定のパスに**clone する（このパス構成が前提）。
 
 ```powershell
 winget install Git.Git
 # 新しい PowerShell を開く（PATH の反映）
-git clone https://github.com/yuzucha16/notes C:\vault\repos\github.com\yuzucha16\notes
 git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
 ```
 
 - `winget` が使えない場合は、[Git for Windows](https://git-scm.com/download/win) を手動でインストールする。
-- `notes` の `resources/fonts` などは Git LFS。`git lfs install` を済ませてから clone する。
+- Vault（`C:\vault\notes`）は clone しない。共有リポジトリ `workbase`（この手順書を含む）は、dotfiles の `50_repos.bat` が `C:\vault\notes\resources` に clone する。Vault のトップ（PARA、`AGENTS.md`）は、`workbase` の `workflow-kit` の「workflowを導入して」で作る。`.obsidian` は `30_link.bat` が張る。これらはこの手順書の範囲外（dotfiles の `README.md` を参照）。
 - git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。
 
 ```powershell

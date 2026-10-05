@@ -106,7 +106,7 @@ sources:
 - Obsidian のコアプラグイン `sync` や、WSL（`/mnt/c`）からのリンクの見え方は不明。
 - Obsidian の「設定フォルダを上書き」機能で `.obsidian` を別の場所に置けるか（端末ごとの設定のはずで、採用しても脆い）。
 
-実物（2026-10-04）: `.obsidian/` は `notes` で追跡されている。
+実物（2026-10-04）: `.obsidian/` は `notes` で追跡されている（2026-10-05 以降は、dotfiles が実体を持つ）。
 
 ## Gotchas
 
