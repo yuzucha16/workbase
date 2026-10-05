@@ -69,6 +69,7 @@
 生成物:
 
 - `.gitignore`: `templates/workspace/gitignore.template` のまま。
+- `.ignore`: `templates/workspace/ignore.template` のまま（`!/resources/`）。
 - `AGENTS.md`: `templates/workspace/AGENTS.md` の `< >` を埋めたもの。冒頭は「業務用 PC の作業場。…」、remote は「なし」、固有ルールの1項目目は「このリポジトリに remote を足さない。push しない（…`.git/hooks/pre-push` で止めてある）」。「共通ルール」の節は雛形のまま。固有ルールの最後は「なし」。
 - `CLAUDE.md`（`@AGENTS.md`）、`docs/log.md`、`docs/decisions.md`、`areas/.gitkeep`、`projects/.gitkeep`、`archives/.gitkeep`。
 - `git init` 済み。`git remote -v` は空。`.git/hooks/pre-push` がある。
