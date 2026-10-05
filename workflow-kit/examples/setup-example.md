@@ -64,7 +64,7 @@
 
 **内容は架空。** 業務用 PC で、Vault のトップを新しく作る場合。`resources/`（`workbase` の clone）は、dotfiles の `50_repos` が作成済みで、`workbase` の中でフックを呼んでいる。
 
-入力: 1. 対象ディレクトリ `C:\vault\notes`。2. 目的: 業務用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジを参照する。3. 読む順番の固有項目: なし。4. 固有ルール: なし。5. PC の役割: 業務用。6. remote の方針: なし。
+入力: 1. 対象ディレクトリ `C:\vault\notes`。2. 目的: 業務用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジを参照する。3. 読む順番の固有項目: なし。4. 固有ルール: なし。5. PC の役割: 業務用。6. remote の方針: なし。7. 初回コミット: する。
 
 生成物:
 
@@ -73,12 +73,12 @@
 - `.gitattributes`: `templates/workspace/gitattributes.template` のまま（LF 統一）。
 - `AGENTS.md`: `templates/workspace/AGENTS.md` の `< >` を埋めたもの。冒頭は「業務用 PC の作業場。…」、remote は「なし」、固有ルールの1項目目は「このリポジトリに remote を足さない。push しない（…`.git/hooks/pre-push` で止めてある）」。「共通ルール」の節は雛形のまま。固有ルールの最後は「なし」。
 - `CLAUDE.md`（`@AGENTS.md`）、`docs/log.md`、`docs/decisions.md`、`areas/.gitkeep`、`projects/.gitkeep`、`archives/.gitkeep`。
-- `git init` 済み。`git remote -v` は空。`.git/hooks/pre-push` がある。
+- `git init` 済み。`git remote -v` は空。`.git/hooks/pre-push` がある。初回コミット済み（生成物の10ファイルだけ（`docs/` の2ファイルを含む）。`areas/` `projects/` `archives/` の既存の中身は追跡していない）。
 
 報告の例:
 
 1. **対象**: `C:\vault\notes`
 2. **変更したファイル**: 新規に上記のファイルと `.git/` を作った。`resources/` と `.obsidian/` は触っていない。
 3. **追跡状況**: この PC だけのローカルなリポジトリ（remote なし）。`resources/` は別リポジトリ（`workbase`）なので除外した。
-4. **承認が必要なこと**: 初回コミットはユーザーが行う。`.obsidian` は未リンク（dotfiles の `30_link.bat` を実行する。実ディレクトリがあれば先に退避する）。
+4. **承認が必要なこと**: 初回コミットは行った（`[vault] initial commit: …`）。remote が無いので push の案内は無い（remote があるときは、`git push -u origin main` と、既存のコミットがあるときの `git pull --rebase origin main` を書く）。未追跡の既存ファイルは、あれば一覧する（今回は無し）。`.obsidian` は未リンク（dotfiles の `30_link.bat` を実行する。実ディレクトリがあれば先に退避する）。
 5. **改善案**: 改善案なし。

@@ -9,7 +9,7 @@
 - exmem: `C:\vault\notes\resources\exmem`（WSL: `/mnt/c/vault/notes/resources/exmem`）
 - 書き込みは `exmem/inbox/` の**新規ファイルだけ**（話題ごとに1ファイル）。`knowledge/` `contexts/` など inbox 以外は編集しない。
 - inbox のメモを `knowledge/` へ統合するのは exmem 側の運用（`exmem/AGENTS.md` の「inbox を整理するとき」）。ここでは行わない。
-- `notes` のコミット・push はしない（ユーザーが行う）。
+- コミットは `docs-rules.md` の「コミットと push」に従う。push はしない（ユーザーが行う）。
 
 ## 手順
 

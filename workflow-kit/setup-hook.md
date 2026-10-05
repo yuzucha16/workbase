@@ -28,7 +28,7 @@
 
 - 書き込み先は、対象ディレクトリの中の `AGENTS.md`、`CLAUDE.md`、`docs/` だけ。`exmem` やその他は触らない。
 - **既存のファイルは、上書きしない。** 既存があれば、差分の案を示して承認を得る。承認の前に変更しない。
-- コミット・push はしない（ユーザーが行う）。
+- コミットは `docs-rules.md` の「コミットと push」に従う（項目 5 の初回コミットは、「ワークスペースの生成」の手順 3）。push はしない（ユーザーが行う）。
 - 対象の `docs/` が、`.gitignore` の既定でローカル専用になる場合は、その旨を報告に書く（確認: `git check-ignore -v <パス>`）。ローカル専用の `docs/` は、他のPCに届かない。
 - 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`.gitattributes`、`areas/` `projects/` `archives/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
 - このフックが呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（共有リポジトリ `workbase` の中と、ワークスペースの中）と、ユーザーがこのファイルのパスを指示したとき。新しい PC でワークスペースを作るときは、`workbase` の clone の中で呼ぶ。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
@@ -42,10 +42,11 @@
 3. 読む順番の、固有の項目（`README.md` など。無ければ「なし」）
 4. 固有ルール（編集の注意、コミットの規則など。無ければ「なし」）
 
-項目 5（ワークスペースの生成）のときは、上の4項目（対象ディレクトリは、ワークスペースのルート。通常は Vault のトップ）に加えて、次の2項目を受け取る。
+項目 5（ワークスペースの生成）のときは、上の4項目（対象ディレクトリは、ワークスペースのルート。通常は Vault のトップ）に加えて、次の3項目を受け取る。
 
 5. PC の役割（例: 業務用 / 個人用）
 6. remote の方針（なし / 非公開リポジトリの URL）。業務用の既定は「なし」
+7. 初回コミット（する / しない。既定: する）
 
 ## 手順
 
@@ -71,9 +72,13 @@ Vault のトップを、この PC だけのローカルなリポジトリとし�
    - `.ignore`: `templates/workspace/ignore.template` を、そのまま置く。ripgrep（Claude Code の Grep / Glob を含む）は `.gitignore` を尊重するので、`.gitignore` が除外する `resources/` が、検索から黙って外れる。`.ignore` の `!/resources/` で打ち消す（実測: 2026-10-05）。
    - `.gitattributes`: `templates/workspace/gitattributes.template` を、そのまま置く（改行コードを LF に統一する。Obsidian・AI・WSL/Linux の出力が LF のため）。
    - `AGENTS.md`: `templates/workspace/AGENTS.md` を埋める（役割、remote、固有ルール）。「共通ルール」の節は、雛形のまま変えない。`CLAUDE.md`、`docs/` は、項目 1 と 2 のとおり。
-   - `areas/` `projects/` `archives/`: 空のディレクトリ（`.gitkeep` を置く）。
+   - `areas/` `projects/` `archives/`: `.gitkeep` を置く（既存の中身があっても。中身は追跡しない）。
    - `git init`。remote は、方針が「なし」なら足さず、`.git/hooks/pre-push`（常に失敗して止める）を置く。URL があれば `origin` を足す（push はしない）。
-3. **初回コミットはしない**（ユーザーが行う）。
+3. **初回コミットをする**（入力 7 が「する」のとき。`docs-rules.md` の「コミットと push」に従う）。コミットが1つもないときだけ行う（`git rev-parse --verify HEAD` が失敗する）。既にコミットがあれば、何もコミットせず、報告に書く。
+   - 追加するのは、このフックが生成した次のファイルだけ（パス指定）: `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`、`CLAUDE.md`、`docs/`、`areas/.gitkeep`、`projects/.gitkeep`、`archives/.gitkeep`。PARA の既存の中身は、追跡しない（未追跡のまま、報告に一覧する）。
+   - コミットの前の確認（`docs-rules.md` の ① 〜 ③）に加えて、`resources/` と `.obsidian` がステージされていないこと。外れたら、ステージを戻して（`git reset -q -- <パス>`）、コミットせずに報告する。
+   - メッセージ: `[vault] initial commit: PC-local vault top (PARA, docs, AGENTS.md, ignore rules)`。
+   - push はしない。remote があるときは、報告に push のコマンド（`git push -u origin main`）を書き、リモートに既存のコミットがあると拒否されるので、その場合は先に `git pull --rebase origin main` が要る旨を添える。
 
 ## 履歴からの復元（任意）
 
@@ -99,16 +104,16 @@ Vault のトップを、この PC だけのローカルなリポジトリとし�
 - [ ] 共有したくない値が無い
 - [ ] 追跡状況（共有かローカル専用か）を報告に書いた
 - [ ] 復元した場合は、出典・範囲・「不明」の明記がある
-- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットをしていない
+- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。`user.email` が仮値（未設定、または `example.com` を含むもの）でない。push していない
 
 ## 報告の型
 
 次の順で報告する。
 
 1. **対象**: ディレクトリのパス。
-2. **変更したファイル**: 新規に作ったファイルと、差分案を示した既存ファイル（承認待ち）。
+2. **変更したファイル**: 新規に作ったファイルと、差分案を示した既存ファイル（承認待ち）。コミットしたときは、ハッシュと内容、含めなかったファイル（未追跡の既存ファイル）。
 3. **追跡状況**: 共有（Git 管理）かローカル専用か。
-4. **承認が必要なこと**: 既存ファイルの差分案、`docs/` を共有するか（ローカル専用だったとき）、導入する単位（サブディレクトリで、親への導入を提案するとき）、ワークスペースの生成のとき（項目 5）は、手作業が要ること（`resources/` の clone、実ディレクトリの `.obsidian` の退避、初回コミット）など。
+4. **承認が必要なこと**: 既存ファイルの差分案、`docs/` を共有するか（ローカル専用だったとき）、導入する単位（サブディレクトリで、親への導入を提案するとき）、ワークスペースの生成のとき（項目 5）は、手作業が要ること（`resources/` の clone、実ディレクトリの `.obsidian` の退避、push、未追跡の既存ファイルの扱い）など。
 5. **改善案**: 下の「このフックの改善」に従う。
 
 ## このフックの改善
