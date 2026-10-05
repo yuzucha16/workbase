@@ -14,7 +14,7 @@
 | 2 | 作業ログと判断ログ | `docs/log.md`、`docs/decisions.md` | 必須 | `docs-rules.md` |
 | 3 | 「ナレッジ化して」 | なし（`AGENTS.md` の共通ルールに参照を入れる） | 必須 | `knowledge-hook.md` |
 | 4 | 履歴からの復元 | `docs/` の Log と判断記録の補完 | 任意 | 下の「履歴からの復元」 |
-| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、下の「ワークスペースの生成」 |
+| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、下の「ワークスペースの生成」 |
 
 ### 導入項目を足すとき
 
@@ -30,7 +30,7 @@
 - **既存のファイルは、上書きしない。** 既存があれば、差分の案を示して承認を得る。承認の前に変更しない。
 - コミット・push はしない（ユーザーが行う）。
 - 対象の `docs/` が、`.gitignore` の既定でローカル専用になる場合は、その旨を報告に書く（確認: `git check-ignore -v <パス>`）。ローカル専用の `docs/` は、他のPCに届かない。
-- 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`areas/` `projects/` `archives/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
+- 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`areas/` `projects/` `archives/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
 - このフックが呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（共有リポジトリ `workbase` の中と、ワークスペースの中）と、ユーザーがこのファイルのパスを指示したとき。新しい PC でワークスペースを作るときは、`workbase` の clone の中で呼ぶ。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
 
 ## 入力
@@ -68,6 +68,7 @@ Vault のトップを、この PC だけのローカルなリポジトリとし�
 1. **確認する**（変更しない）: 対象の中身（空か、既存のファイルがあるか）、`.git` の有無、`resources/.git` の有無と、その `origin` が `workbase` か、`.obsidian` が実ディレクトリかジャンクションか。`resources/` が無いときは、clone を案内して止まる（このフックは clone しない）。`.obsidian` が実ディレクトリのときは、dotfiles の `30_link` が `[ERR]` で止まるので、手で退避する旨を報告に書く。
 2. **生成する**（既存は上書きしない）:
    - `.gitignore`: `templates/workspace/gitignore.template` を、そのまま置く。
+   - `.ignore`: `templates/workspace/ignore.template` を、そのまま置く。ripgrep（Claude Code の Grep / Glob を含む）は `.gitignore` を尊重するので、`.gitignore` が除外する `resources/` が、検索から黙って外れる。`.ignore` の `!/resources/` で打ち消す（実測: 2026-10-05）。
    - `AGENTS.md`: `templates/workspace/AGENTS.md` を埋める（役割、remote、固有ルール）。「共通ルール」の節は、雛形のまま変えない。`CLAUDE.md`、`docs/` は、項目 1 と 2 のとおり。
    - `areas/` `projects/` `archives/`: 空のディレクトリ（`.gitkeep` を置く）。
    - `git init`。remote は、方針が「なし」なら足さず、`.git/hooks/pre-push`（常に失敗して止める）を置く。URL があれば `origin` を足す（push はしない）。
@@ -97,7 +98,7 @@ Vault のトップを、この PC だけのローカルなリポジトリとし�
 - [ ] 共有したくない値が無い
 - [ ] 追跡状況（共有かローカル専用か）を報告に書いた
 - [ ] 復元した場合は、出典・範囲・「不明」の明記がある
-- [ ] ワークスペースを生成した場合（項目 5）: `.gitignore` に `/resources/` と `/.obsidian` がある。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットをしていない
+- [ ] ワークスペースを生成した場合（項目 5）: `.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットをしていない
 
 ## 報告の型
 

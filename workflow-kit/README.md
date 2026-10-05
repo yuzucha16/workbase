@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-05.1`
+版: `2026-10-05.2`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -30,7 +30,7 @@
 
 ### ワークスペース（Vault のトップ）を作る
 
-新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。追加の入力は、PC の役割と remote の方針。生成物は、`.gitignore`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
+新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。追加の入力は、PC の役割と remote の方針。生成物は、`.gitignore`、`.ignore`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
 
 呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（`workbase` の中と、ワークスペースの中）と、ユーザーがパスを指示したとき。他の場所からの入口は、Claude 用スキル（TODO）。
 
@@ -45,7 +45,7 @@
 | `knowledge-hook.md` | 「ナレッジ化して」の手順・書き方・形式、改善フック |
 | `setup-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
 | `improvements.md` | 改善提案の記録 |
-| `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` はワークスペース（Vault のトップ）用（`AGENTS.md`、`gitignore.template`） |
+| `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` はワークスペース（Vault のトップ）用（`AGENTS.md`、`gitignore.template`、`ignore.template`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
 | `AGENTS.md` | このディレクトリ自体を編集するときのルール |
 
@@ -55,6 +55,7 @@
 
 ## 変更履歴
 
+- 2026-10-05（版 `2026-10-05.2`）: ワークスペースの生成に `.ignore`（`templates/workspace/ignore.template`）を足した。トップの `.gitignore` が `resources/` を除外すると、ripgrep（Claude Code の Grep）が `resources/` の中を黙って飛ばすため（実測。`!/resources/` で解消）。手順 6 と自己点検を合わせた。モバイル用プロンプトと見本の `kit:` を合わせた。
 - 2026-10-05（版 `2026-10-05.1`）: 導入項目 5「ワークスペース（Vault のトップ）の生成」を足した（ユーザーの承認）。入力に PC の役割と remote の方針、手順 6、自己点検、報告の型、書き込み先の例外を足した。雛形 `templates/workspace/`（`AGENTS.md`、`gitignore.template`）と、見本の節を足した。背景: Vault を、PC ローカルのトップのリポジトリと、共有の `workbase`（`resources/` に clone）に分けた（`notes` の `docs/decisions.md`）。モバイル用プロンプトと見本の `kit:` を合わせた。`workflow-kit/AGENTS.md` の `_local/` の記述を、廃止に合わせて直した。
 - 2026-10-04（版 `2026-10-04.2`）: 「ナレッジ化して」の改善2点を反映（承認済み）。Decisions には、ユーザーが明示または承認した決定だけを書き、AI の提案は Open Questions に「提案」と書く（型、自己点検、モバイル用プロンプト）。同じ会話で複数回実行したときは、前回の実行以降の内容だけを対象にする（手順 2）。見本とモバイル用プロンプトの `kit:` を合わせた。
 - 2026-10-04（版 `2026-10-04.1`）: 版の記録を始めた（ユーザーの承認）。`inbox` のメモに `kit: <版>` を書く（`knowledge-hook.md` の形式、見本、モバイル用プロンプト、`exmem/AGENTS.md` を合わせた）。導入フックに「導入する単位」の注意を足した（`setup-hook.md` の手順 2、自己点検、報告の型）。
