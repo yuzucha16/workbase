@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-06.2`
+版: `2026-10-06.3`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -46,6 +46,7 @@
 | `setup-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
 | `improvements.md` | 改善提案の記録 |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`knowledge-hook.md` の自己点検のうち、機械で確認できる項目。PowerShell 7） |
+| `tools/find-knowledge.ps1` | `knowledge-hook.md` 手順 5 の既存知識の検索（ファイル名・見出し・tags・aliases をキーワード検索。読み取り専用。PowerShell 7） |
 | `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` はワークスペース（Vault のトップ）用（`AGENTS.md`、`gitignore.template`、`ignore.template`、`gitattributes.template`、`pre-push.template`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
 | `AGENTS.md` | このディレクトリ自体を編集するときのルール |
@@ -56,6 +57,7 @@
 
 ## 変更履歴
 
+- 2026-10-06（版 `2026-10-06.3`）: 「ナレッジ化して」の改善2点を反映した（ユーザーの承認）。① 点検スクリプト `tools/check-inbox.ps1` の `<…>` 検出（WARN）から、インラインコード（バッククォートで囲んだ範囲）を除いた。コマンドの書式（`<パス>` など）が WARN になっていた。コードの外の `<ここ>` は WARN のまま。② 手順 5-2 の検索を `tools/find-knowledge.ps1` にした（ファイル名・見出し・tags・aliases。ヒットしたキーワードの種類が多い順に最大3件）。試験: 実メモの点検（WARN 0）、コード外の `<ここ>` を足したメモ（WARN 1）、検索の3ケース（`git 改行 gitattributes autocrlf`、`カーソル DECSCUSR blink`、ヒット無し）と引数なし（終了コード 1）。部分一致のため `git` が `GitHub` にもヒットする。モバイル用プロンプト（検索しないので手順の変更なし）と見本の `kit:` を合わせた。
 - 2026-10-06（版 `2026-10-06.2`）: 「ナレッジ化して」の改善1点を反映した（ユーザーの承認）。点検スクリプト `tools/check-inbox.ps1` のメールアドレス検出から、例示用ドメイン（`example.com` `example.org` `example.net` `*.local` `*.invalid` `*.test` `*.example`）を除いた。実在のアドレスと、例示ドメインを頭に含む別ドメイン（`example.com.evil.jp` など）は FAIL のまま。一時ディレクトリで13ケース（許可6、FAIL 7）を試験し、最初の版の `\b` が `example.com.evil.jp` を通す誤りを直した。`knowledge-hook.md` の書き方に明記した。モバイル用プロンプトと見本の `kit:` を合わせた。
 - 2026-10-06（版 `2026-10-06.1`）: エージェントのコミットの身元とトレーラーを決めた（ユーザーの決定）。① 身元は `git config` でなく、コミット1回ごとの `-c` で渡す（名前 `agent`、メール `agent@agent.local`、作者とコミッターの両方）。② トレーラー3行（`Agent` `Workflow-Kit` `Kit-Rev`）を毎回付ける（`docs-rules.md` の「コミットと push」）。③ 旧い確認項目②（`user.email` が仮値でない）を、身元の規則に差し替えた。④ 「workflowを導入して」（項目 5）の報告に、ユーザー自身の `git config` の設定を促す一文を必須にした（設定が無くても導入は止まらない）。見本と自己点検を合わせた。モバイル用プロンプトと見本の `kit:` を合わせた。
 - 2026-10-05（版 `2026-10-05.8`）: 「ナレッジ化して」の改善2点を反映した（ユーザーの承認）。① 同じスレッドで `knowledge/` を直接編集済みのときは、Open Questions に「統合時の重複」を書く（手順 5-6）。② 自己点検のうち機械で確認できる項目を、点検スクリプト `tools/check-inbox.ps1` にした（手順 7、自己点検、報告の型）。スクリプトは、一時ディレクトリで、正常なメモ1件と、わざと壊したメモ11種（見出しの順番、Goal の候補行、却下案、Facts の根拠、会話依存の表現、メールアドレス、tags の数、Gotchas の3行、秘匿値、kit の形、ファイル名）で試験した。`kit` の現在の版との不一致は、作成後に版が上がると正常なので WARN にした。モバイル用プロンプトと見本の `kit:` を合わせた。
