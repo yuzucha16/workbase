@@ -1,0 +1,3 @@
+# ripgrep（Claude Code の Grep / Glob を含む）は .gitignore を尊重する。
+# resources/ は git の管理外（別リポジトリ）だが、検索の対象には含めたいので打ち消す。
+!/resources/
