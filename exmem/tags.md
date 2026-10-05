@@ -7,7 +7,7 @@ tags:
 aliases:
   - Tags
 created: 2026-09-26
-updated: 2026-10-04
+updated: 2026-10-06
 ---
 
 # タグ一覧
@@ -42,6 +42,8 @@ updated: 2026-10-04
 | `tool/winget` | winget |
 | `tool/gh` | GitHub CLI（`gh`） |
 | `tool/windows-terminal` | Windows Terminal |
+| `tool/git` | Git（コミット規則・改行・設定） |
+| `tool/stow` | GNU Stow（symlink 配置） |
 
 ### `ai/` — AIサービス・エージェント
 
@@ -75,3 +77,7 @@ updated: 2026-10-04
 | `hardware` | 物理デバイス（キーボードなど） |
 | `font` | フォントの選定・導入・設定 |
 | `accessibility` | 目の負担・光の点滅など、身体の特性に合わせた環境設定 |
+| `line-endings` | 改行コード（LF / CRLF） |
+| `shell` | シェルスクリプト |
+| `testing` | 試験の方法 |
+| `traceability` | 誰が・どの規則で行ったかを後から追えること |

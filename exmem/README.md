@@ -58,6 +58,7 @@ exmem/                 # resources/exmem/
 │   ├── claude-code-vs-cowork.md
 │   ├── fonts.md                         # メインフォントの選定と導入
 │   ├── gh-release-download.md           # gh release download は未ログインでも使える
+│   ├── git-line-endings.md              # 改行コードを .gitattributes で決める
 │   ├── human-ai-decision-loop.md
 │   ├── keyboard-switches.md
 │   ├── linux-distro-selection.md
@@ -71,6 +72,7 @@ exmem/                 # resources/exmem/
 │   ├── scoop-app-management.md          # scoopを正本にしたアプリ管理と管理外の最小化
 │   ├── shell-command-usecases.md        # コマンド利用傾向とヒストリの種（dotfilesの種ファイルの正本）
 │   ├── shell-fzf-keybindings.md         # fzfとキー割り当て（pwsh/zsh/bash）
+│   ├── shell-script-testing-wsl.md      # WSLでシェルスクリプトを試験する（偽のHOME・環境判定の差し替え）
 │   ├── terminal-cursor-blink.md         # カーソル点滅を止める（DECSCUSR）
 │   ├── vscode-workspace.md
 │   ├── workflow-kit.md                  # 作業ログとナレッジ化フックの共通機能の設計
