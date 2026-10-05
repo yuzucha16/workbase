@@ -1,0 +1,14 @@
+# ワークスペース（Vault のトップ）の .gitignore の雛形。導入時に、ワークスペースのルートへ `.gitignore` として置く。
+
+# 共有ナレッジは別リポジトリ（workbase）の clone。このリポジトリでは追跡しない
+/resources/
+
+# Obsidian の設定は dotfiles からのジャンクション（実体は dotfiles が持つ）
+/.obsidian
+
+# Claude Code のローカル専用の許可設定（端末ごと・個人用）
+**/.claude/settings.local.json
+
+### Windows
+Thumbs.db
+[Dd]esktop.ini
