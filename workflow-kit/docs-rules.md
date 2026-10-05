@@ -66,8 +66,15 @@
 コミットは、エージェントが行ってよい（ユーザーの許可: 2026-10-05。すべての作業ディレクトリに適用）。push は、ユーザーが行う。
 
 - **範囲**: その作業で自分が変更・生成したファイルだけを、パスを指定して `git add` する（`git add -A` と `git add .` は使わない）。ユーザーの未コミットの変更、並行セッションの変更、内容を確認していない既存ファイル、機密の可能性があるものは、含めない。含めなかったものは、報告に書く。
-- **コミットの前に確認する**: ① `git add` の直後に `git diff --cached --stat` で、意図したファイルだけか。② `git config user.name` と `user.email` が設定済みで、仮値（未設定、または `example.com` を含むもの）でない。③ トークン、秘匿値、業務固有の情報が入っていない（`git diff --cached` を、`token` `secret` `password` `bearer` `webhook` で検索する。語だけでは漏れるので、URL 中の長い ID も見る）。外れたら、`git reset -q -- <パス>` でステージを戻して、コミットせずに報告する。
+- **コミットの前に確認する**: ① `git add` の直後に `git diff --cached --stat` で、意図したファイルだけか。② 身元が下の「コミットの身元とトレーラー」どおり。③ トークン、秘匿値、業務固有の情報が入っていない（`git diff --cached` を、`token` `secret` `password` `bearer` `webhook` で検索する。語だけでは漏れるので、URL 中の長い ID も見る）。外れたら、`git reset -q -- <パス>` でステージを戻して、コミットせずに報告する。
 - **メッセージ**は `[領域] 変更内容`（そのリポジトリの `AGENTS.md` に固有の規則があれば、それを優先する）。
+- **コミットの身元とトレーラー**（2026-10-06 ユーザーの決定）: エージェントのコミットは、人間のコミットと区別できるようにする。remote なしのローカルリポジトリでも、`git log` で「誰の行動か」と「どの版の規則か」が分かるようにするため。
+  - 身元は、コミット1回ごとの `-c` で渡す。`git config`（グローバルも `.git/config`）は書き換えない（後で人間が手動でコミットしたときまで agent 名義になるため）。作者とコミッターは、どちらも agent にする。
+  - 名前は `agent`、メールは `agent@agent.local`。道具やモデルは、名前でなくトレーラーに書く。
+  - トレーラーは3行を毎回付ける（`git commit --trailer "<キー: 値>"`）。`Agent: <道具> <モデルID>`（例: `Agent: claude-code claude-sonnet-5-5`）、`Workflow-Kit: <版>`（`workflow-kit/README.md` の「版」）、`Kit-Rev: <ハッシュ>`（`resources/` の `git rev-parse --short HEAD`。`resources/` に未コミットの変更があれば末尾に `-dirty`）。
+  - 例: `git -c user.name=agent -c user.email=agent@agent.local commit -m "[vault] ..." --trailer "Agent: claude-code claude-sonnet-5-5" --trailer "Workflow-Kit: 2026-10-06.1" --trailer "Kit-Rev: 3daeff6"`
+  - 人間の名義でコミットしたい（ユーザーが言葉で指示した）ときだけ、`git config` の身元を使う。未設定、または `example.com` を含む仮値なら、コミットせずに設定を促して止まる。
+  - 過去のコミットは書き換えない（`workbase` の既存コミットは `user` 名義のまま。移行日以降が agent 名義）。
 - **コミットしないもの**: 「ナレッジ化して」で `exmem/inbox/` に作ったメモ（ユーザーの指示、2026-10-05）。inbox のメモは、解釈して `knowledge/` に統合した後に削除する運用なので、未追跡のまま残す。
 - **しないこと**: push、`git add -f`、`--amend`、`reset --hard`、`rebase`、`--force`、`--no-verify`、他のコミットの書き換え（ステージを戻すだけの `git reset -q -- <パス>` は、してよい）。ユーザーが「コミットしないで」と言ったときも、しない。
 - **push** は、報告にコマンドを書いて案内する。ユーザーに頼まれたときは、実行の直前に、remote、ブランチ、公開範囲を示して確認する。
