@@ -13,7 +13,7 @@ aliases:
   - シェル履歴のユースケース
   - history seed
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-05
 sources:
   - PSReadLine の履歴 2か所の分析（このPC 629行、他PC 5,436行。2026-10-04）
 ---
@@ -340,7 +340,7 @@ vim ~/.vimrc
 
 ## Gotchas
 
-- **秘匿情報の検出漏れ。** 2026-10-04 に、他PCの履歴を `token`/`secret`/`password` などの語で検索して「秘匿情報なし」と報告したが誤りだった。Teams の Webhook URL（IDが URL に埋め込まれている）を含む行が約50行あった。語ではなく、URL 中の長いID（`/[0-9a-f-]{20,}`）や `webhook` でも検索する。生の履歴は `resources/_local/` に置いた（Git 対象外）。
+- **秘匿情報の検出漏れ。** 2026-10-04 に、他PCの履歴を `token`/`secret`/`password` などの語で検索して「秘匿情報なし」と報告したが誤りだった。Teams の Webhook URL（IDが URL に埋め込まれている）を含む行が約50行あった。語ではなく、URL 中の長いID（`/[0-9a-f-]{20,}`）や `webhook` でも検索する。生の履歴は `resources/_local/` に置いた（Git 対象外。2026-10-05 に `_local/` を廃止し、このファイルは削除した）。
 - 他PCの生履歴には、会社のユーザー名（Windows のアカウント名）入りの絶対パスと、案件固有のリポジトリ名・タグ名がある。種には載せない。
 - このPCの履歴には、`git config --global user.email "<実際のアドレス>"` の行がある。種ではプレースホルダーに置き換えた。
 - PowerShell では `[xxx]` はプレースホルダーにならない（`Write-Output [tag]` は成功して出力する）。`<xxx>` も、引用符の中や語の途中だと実行される（最初の版の種に `git config --global user.email "<メールアドレス>"` などが6行あり、パーサーで検出して直した）。語の先頭に置く。

@@ -12,7 +12,7 @@ aliases:
   - PlemolJP
   - メインフォント
 created: 2026-10-03
-updated: 2026-10-04
+updated: 2026-10-05
 sources:
   - Claude conversation "Win11メインフォントの採用基準と選定" (2026-10-03)
   - Claude Code conversation "フォント導入 (PlemolJP / Moralerspace) と Zed・Terminal・Notepad++ のフォント統一" (2026-10-03)
@@ -89,7 +89,7 @@ Win11 のメインフォントを、目の負担を最優先に選び、Zed / Wi
 - Obsidian のフォント（CSS スニペットで `font-family` と `font-weight: 300`）は未設定。
 - 背景色（オフホワイト、ダークグレー）を変えたときの太さの感じ方。Moralerspace の他のスタイル（Argon 等）を試すか。
 - `24_fonts.*` スクリプト自体の通し実行（`gh release download` のコマンド単体は、2026-10-04 に実機で成功を確認）。インストールは手動。
-- `resources/fonts/` への HackGen 配置の予定（[[obsidian-vault]]）は、メインが PlemolJP に変わる見込みなので、置くフォントを見直すか（未決）。
+- `resources/fonts/` への HackGen 配置の予定（[[obsidian-vault]]）は、メインが PlemolJP に変わる見込みなので、置くフォントを見直すか（未決）。2026-10-05 に、`fonts/` は履歴ごと削除した（フォントは Vault に置かない。取得は dotfiles の `24_fonts`）。
 
 ## Related
 
