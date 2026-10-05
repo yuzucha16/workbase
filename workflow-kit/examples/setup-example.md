@@ -62,7 +62,7 @@
 
 ## ワークスペースの生成（項目 5）の例
 
-**内容は架空。** 業務用 PC で、Vault のトップを新しく作る場合。`resources/`（`workbase` の clone）は、dotfiles の `50_repos` が作成済みで、`workbase` の中で、「workflowを導入して」とだけ言った（対象の指定なし）ので、入力はすべて既定値になった。
+**内容は架空。** 業務用 PC で、Vault のトップを新しく作る場合。`resources/`（`workbase` の clone）は、dotfiles の `50_repos` が作成済みで、Claude を `C:\vault\notes`（直下に `resources/` の clone がある）で開き、「workflowを導入して」とだけ言った（対象の指定なし）ので、対象は cwd になり、ほかの入力もすべて既定値になった。
 
 入力: 1. 対象ディレクトリ `C:\vault\notes`。2. 目的: 業務用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジを参照する。3. 読む順番の固有項目: なし。4. 固有ルール: なし。5. PC の役割: 業務用。6. remote の方針: なし。7. 初回コミット: する。
 
@@ -78,7 +78,7 @@
 報告の例:
 
 1. **対象**: `C:\vault\notes`
-2. **条件**: 対象 `C:\vault\notes`（既定値）。目的「業務用 PC の作業場。…」（既定値）。PC の役割: 業務用（既定値）。remote: なし（既定値）。初回コミット: する（既定値）。変えたいとき: 役割と目的は `AGENTS.md` の冒頭を直す。remote を足すときは `git remote add origin <URL>` と、`.git/hooks/pre-push` の削除。
+2. **条件**: 対象 `C:\vault\notes`（既定値: Claude を開いたディレクトリ）。目的「業務用 PC の作業場。…」（既定値）。PC の役割: 業務用（既定値）。remote: なし（既定値）。初回コミット: する（既定値）。変えたいとき: 役割と目的は `AGENTS.md` の冒頭を直す。remote を足すときは `git remote add origin <URL>` と、`.git/hooks/pre-push` の削除。
 3. **変更したファイル**: 新規に上記のファイルと `.git/` を作った。`resources/` と `.obsidian/` は触っていない。
 4. **追跡状況**: この PC だけのローカルなリポジトリ（remote なし）。`resources/` は別リポジトリ（`workbase`）なので除外した。
 5. **承認が必要なこと**: 初回コミットは行った（`[vault] initial commit: …`）。remote が無いので push の案内は無い（remote があるときは、`git push -u origin main` と、既存のコミットがあるときの `git pull --rebase origin main` を書く）。未追跡の既存ファイルは、あれば一覧する（今回は無し）。`.obsidian` は未リンク（dotfiles の `30_link.bat` を実行する。実ディレクトリがあれば先に退避する）。
