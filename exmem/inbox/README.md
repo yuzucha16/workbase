@@ -53,7 +53,7 @@ title: <テーマ>
 tags:
   - <タグ>
 created: <今日の日付 YYYY-MM-DD。分からなければ YYYY-MM-DD のまま>
-kit: 2026-10-05.7
+kit: 2026-10-05.8
 sources:
   - <このAIサービス名> conversation "<テーマ>"
 ---
