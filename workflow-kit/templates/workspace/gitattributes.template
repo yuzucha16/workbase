@@ -1,0 +1,2 @@
+# 改行コードはLFに統一（Obsidian・AI・WSL/Linuxの出力がLFのため）。バイナリはgitが自動判定。
+* text=auto eol=lf
