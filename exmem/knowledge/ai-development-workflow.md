@@ -12,7 +12,7 @@ tags:
 aliases:
   - AI開発ワークフロー
 created: 2026-09-26
-updated: 2026-10-04
+updated: 2026-10-05
 sources:
   - Claude Code conversation "dotfiles と exmem の関係整理" (2026-10-04)
   - Claude Code conversation "残件の整理と、統合後の修正" (2026-10-04)
@@ -269,7 +269,7 @@ AIのコンテキスト
 
 ### Facts
 
-- exmem は独立リポジトリではなく、`notes` リポジトリ（Obsidian Vault）の `resources/exmem/`。コミットはプロジェクト側と `notes` 側で別になる（[[obsidian-vault]]）。
+- exmem は独立リポジトリではなく、共有リポジトリ `workbase`（Obsidian Vault の `resources/` に clone。2026-10-05 以前は `notes` リポジトリの `resources/exmem/`）の一部。コミットはプロジェクト側と `workbase` 側で別になる（[[obsidian-vault]]）。
 - 2026-10-04 に、dotfiles の記録2件（`knowledge/dotfiles.md`、`contexts/dotfiles/context.md`）を dotfiles の `docs/` へ移して削除した（`cb06090`）。他のノート6件のリンクを直した。
 - Claude Code のプランモードは本体の機能で、プランファイルを `~/.claude/plans/` に書き、`ExitPlanMode` で承認ダイアログを出す。プランモード中はプランファイル以外は編集できない。
 - 2026-10-04 に確認: Windows と WSL のどちらも `~/.claude/settings.json` は、dotfiles の `home/.claude/settings.json` へのシンボリックリンク（[[claude-code-permissions]]）。

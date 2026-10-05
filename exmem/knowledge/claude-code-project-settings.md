@@ -11,7 +11,7 @@ aliases:
   - settings.local.json
   - Claude Codeのプロジェクト設定
 created: 2026-10-02
-updated: 2026-10-04
+updated: 2026-10-05
 sources:
   - Claude Code conversation "inbox整理と.claude/の扱い" (2026-10-02)
   - "exmem/.claude/ の中身（2026-10-02 に確認）"
@@ -21,7 +21,7 @@ sources:
 
 ## Purpose
 
-プロジェクト直下の `.claude/` を、Gitで管理するものと管理しないものに分ける方針をまとめる。対象は exmem（`notes` リポジトリ内。2026-10-02 まで `areas_shared` リポジトリ）。履歴とメモリの保存場所は別で、[[claude-code-storage]] にある。
+プロジェクト直下の `.claude/` を、Gitで管理するものと管理しないものに分ける方針をまとめる。対象は exmem（共有リポジトリ `workbase` 内。2026-10-05 まで `notes` リポジトリ内、2026-10-02 まで `areas_shared` リポジトリ）。履歴とメモリの保存場所は別で、[[claude-code-storage]] にある。
 
 ## Principles
 
@@ -43,7 +43,7 @@ sources:
 
 - 決定: 今回は `settings.local.json` をignoreするだけにする。`settings.json` と `skills/` は、もう少し運用が育ってから管理下に置く。
 - 根拠: exmem の `.claude/` にあるのは `settings.local.json` だけで、中身はこの作業中に許可した一回限りのコマンド2つ（実在の確認用）だった。再利用できる設定ではなく、残す価値がない。
-- ignoreの書き方: リポジトリのルート（`notes`、旧 `areas_shared`）の `.gitignore` に `**/.claude/settings.local.json` を書く（exmem 配下の `.claude/` に限らず効く）。
+- ignoreの書き方: リポジトリのルート（`workbase`、旧 `notes`、旧 `areas_shared`）の `.gitignore` に `**/.claude/settings.local.json` を書く（exmem 配下の `.claude/` に限らず効く）。
 
 ### `settings.json` は今は作らない
 
