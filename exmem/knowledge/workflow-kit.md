@@ -13,8 +13,9 @@ aliases:
   - ナレッジ化して
   - 改善の受け皿
 created: 2026-10-04
-updated: 2026-10-05
+updated: 2026-10-06
 sources:
+  - Claude Code conversation "エージェントのコミットの身元とトレーラー" (2026-10-06)
   - Claude Code conversation "docs/ とナレッジ化フックの共通機能化" (2026-10-04)
   - Claude Code conversation "共通機能の育成と改善の仕組み" (2026-10-04)
   - Claude Code conversation "Obsidian設定の履歴の復元" (2026-10-04)
@@ -107,6 +108,13 @@ sources:
 - 根拠: Decisions は根拠と却下案が必須という書式なので、推測を混ぜずに済む。対象のディレクトリが別のリポジトリから移ってきた場合、移管前の履歴は元のリポジトリにある。
 - 却下案: 理由を推測で補って Decisions に書く（推測が根拠として残る）、現在のリポジトリの履歴だけを調べる（移管前の変更が分からない）。
 
+### エージェントのコミットは、身元 `agent <agent@agent.local>` とトレーラー3行で区別する（2026-10-06。ユーザーの決定。kit 版 `2026-10-06.1`）
+
+- 決めたこと: 身元は `git config` に書かず、コミット1回ごとの `-c user.name=agent -c user.email=agent@agent.local` で渡し、作者とコミッターの両方に使う。トレーラーは毎回3行: `Agent: <道具> <モデルID>`、`Workflow-Kit: <版>`、`Kit-Rev: <`resources/` の短縮ハッシュ>`（未コミットの変更・未追跡・ステージ済みがあれば末尾に `-dirty`。判定は `git status --porcelain` が空でないこと）。正本は kit の `docs-rules.md`。
+- 根拠: remote なしのローカルでは `git log` が唯一の履歴で、誰の行動か・どの規則かを追えるようにする。人間の `git config` が仮値で初回コミットが止まったので、人間の設定に依存させない。`git config` に書くと人間の手動コミットまで agent 名義になる。作者名は道具に依存させず（Claude / Codex / Copilot が同じ規則）、道具とモデルはトレーラーへ。版は意味、ハッシュは再現性を担うので両方要る。
+- 却下案: 人間の `git config` に頼る（仮値で止まる）、`.git/config` に agent を設定する（手動コミットも agent 名義）、作者 agent・コミッター人間（人間側が仮値のため見送り）、メールを `.invalid` にする（ユーザーが `.local` を選んだ）、トレーラーを1行に絞る（意味か再現性が失われる）、過去のコミットの作者を書き換える（履歴の改変）、エージェントが人間の `git config` を設定する（人間の設定を勝手に変える）。
+- 付随: 導入フックの報告で、ユーザー自身の `git config`（`user.name` `user.email`）の設定を促す（無くても導入は止まらない）。
+
 ## Facts
 
 - 復元の手順（2026-10-04、実際に実行）: 一覧は `git log --format='%h %ad %s' --date=short -- <パス>`、変更範囲は `git show --stat <ハッシュ> -- <パス>`、設定値の変化は `git show <ハッシュ> -- <ファイル>` の差分。差分から正確に分かるのは、ファイルの追加・削除と設定値の変化。多くのコミットメッセージは、変更内容だけで理由が書かれていない（11コミットで確認）。理由の手掛かりは、`.gitattributes` や CSS のコメント、既存ナレッジの Proposals など。
@@ -114,6 +122,7 @@ sources:
 - 実物（2026-10-04）: `resources/workflow-kit/` に `AGENTS.md`、`README.md`、`docs-rules.md`、`knowledge-hook.md`、`setup-hook.md`、`improvements.md`、`examples/`、`templates/` がある。`notes/AGENTS.md` が共通ルールの参照先と読む時機を持ち、`notes/docs/` に `log.md` と `decisions.md` がある（`notes/docs/` はローカル専用）。`improvements.md` には採用済みの提案が大半で、「提案」の状態が3件ある（Claude 用スキル、`contexts/` を消化する手段、実際のメモでの校正。kit の版の記録は採用済み）。
 - （2026-10-05 以前の記述）`notes` では `resources/` だけが Git 共有で、`projects/` `areas/` `archives/` はローカル専用だった。2026-10-05 以降は、`workbase`（`resources/`）が共有で、Vault のトップ（`projects/` `areas/` `archives/` `docs/`）は PC ごとのローカルなリポジトリ。そこに置いた `docs/` は、共有の `workbase` には載らない。
 - Windows からは `C:\vault\notes\resources\workflow-kit\` 以下を読める。WSL の `/mnt/c/vault/notes/...` で読めるかは未確認（仮説）。作業ディレクトリの外のファイルを `@` で取り込むと、初回に承認が要る可能性がある（仮説）。
+- コミットの身元とトレーラー（2026-10-06 に実物と照合）: `docs-rules.md` と `improvements.md`、`README.md` の版 `2026-10-06.1` の記述が、決定の内容と一致した。`git commit --trailer` で付け、`git log -1 --format='%(trailers:key=Kit-Rev,valueonly)'` で取り出せる（git 2.56.0 Windows で確認）。`-dirty` は、クリーン=なし、変更=あり、変更を戻した=なし、未追跡=あり、ステージのみ=あり、`.gitignore` 除外=なし（一時ディレクトリで確認）。kit 自身のコミットは、コミット前に未コミットの変更があるため `Kit-Rev` が `<親のハッシュ>-dirty` になる。
 - 今後、`docs/` の作業ログを日報・週報・仕様書の入力にし、ナレッジのマージ・見直しも行う予定（未実施）。改善の受け皿は、その見直しにも使える見込み（仮説）。
 
 ## Gotchas
@@ -123,8 +132,14 @@ sources:
 - **Claude Code の `Write` で既存ファイルの上書きが失敗した**: そのファイルを、その会話で先に読んでいなかったため。先に `Read` してから上書きする。
 - **追跡の有無が切り替わったファイルの理由を履歴から探したが、コミットメッセージに一言（端末ごとのキャッシュ）しか無かった**: 理由は「不明」と明記し、Open Questions に残した。
 
+- **PowerShell で `git log --format=%(trailers:...)` を引用符なしで書くと構文エラーになった**: `%(` が PowerShell の構文として解釈され、コマンド全体が実行されなかった。書式を変数に入れ、`"--format=$fmt"` で渡した。
+- **PowerShell から `[IO.File]::ReadAllText("相対パス")` を呼ぶと、存在しないパスを指した**: .NET の相対パスは、PowerShell の現在位置ではなくプロセスの作業ディレクトリで解決される。`Join-Path` で絶対パスにする。
+- **初回コミットが、人間の `git config user.email` の仮値（`example.com`）で止まった**: 確認項目が「仮値でないこと」だったため。確認を「身元が規則どおり」に差し替え、agent の身元を `-c` で渡した。
+
 ## Open Questions
 
+- 提案（AI の提案。未承認）: 人間の `git config` が設定済みになったら、作者を agent、コミッターを人間にする（「人間の環境で agent が作った」ことを表せる）。ユーザーが `git config --global user.name` / `user.email` を設定するのが先。
+- `Kit-Rev` が `-dirty` のコミットは、後から規則の実体を再現できない。コミット前に共有リポジトリをコミットする順序を、規則として強制するか。
 - 実際の inbox メモ数件で手順を校正すると、出力の揺れは減るか。
 - ネイティブ Linux で、`notes` がどこにあるか。参照パスをどう書くか。Claude 用スキルを作る場合、WSL とのパスの違いをどう吸収するか。
 - `docs/log.md` の1項目の書式（何を・なぜ・結果）で、日報・週報・仕様書の入力として足りるか。ナレッジの見直し・マージの契機をどう仕込むか。
