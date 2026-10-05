@@ -13,7 +13,7 @@ aliases:
   - 自動で書き換わるファイルの追跡
   - data.jsonの追跡
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-05
 sources:
   - Claude Code conversation ".obsidian の置き場の判断基準" (2026-10-04)
   - Claude Code conversation "colored-tags の data.json の追跡判断" (2026-10-04)
