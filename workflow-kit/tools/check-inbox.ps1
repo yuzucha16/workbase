@@ -121,7 +121,7 @@ foreach ($p in $Path) {
 
   # 文章の規則
   Report ($raw -notmatch 'この会話|上記|さっき|先ほど|前述') '会話に依存する表現（この会話、上記、さっき、先ほど、前述）が無い'
-  Report (($raw -notmatch '(?i)[A-Za-z]:\\Users\\(?![<%$])[^\\\s`]+') -and ($raw -notmatch '[\w.+-]+@[\w-]+\.[\w.]+')) '共有したくない値（ユーザー名を含むパス、メールアドレス）が無い'
+  Report (($raw -notmatch '(?i)[A-Za-z]:\\Users\\(?![<%$])[^\\\s`]+') -and ($raw -notmatch '[\w.+-]+@(?!(?:[\w-]+\.)*(?:example\.(?:com|org|net)|local|invalid|test|example)(?![\w-]|\.\w))[\w-]+\.[\w.]+')) '共有したくない値（ユーザー名を含むパス、メールアドレス。example.com / *.local / *.invalid / *.test は例示用なので除く）が無い'
   Report ($raw -notmatch '(?i)(token|secret|password|bearer)\s*[:=]\s*\S') '秘匿値らしき行（token / secret / password / bearer の値）が無い'
   $lines = ($raw -split "`n").Count
   Report ($lines -le 150) 'ファイル全体が150行以内（目安）' 'WARN' "$lines 行"
