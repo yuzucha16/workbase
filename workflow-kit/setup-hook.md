@@ -31,7 +31,7 @@
 - コミットは `docs-rules.md` の「コミットと push」に従う（項目 5 の初回コミットは、「ワークスペースの生成」の手順 3）。push はしない（ユーザーが行う）。
 - 対象の `docs/` が、`.gitignore` の既定でローカル専用になる場合は、その旨を報告に書く（確認: `git check-ignore -v <パス>`）。ローカル専用の `docs/` は、他のPCに届かない。
 - 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`.gitattributes`、`areas/` `projects/` `archives/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
-- このフックが呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（共有リポジトリ `workbase` の中と、ワークスペースの中）と、ユーザーがこのファイルのパスを指示したとき。**新しい PC のトップ（`resources/` を clone した直後）には `AGENTS.md` が無いので、「workflowを導入して」と言うだけでは、このファイルに行き着けない。入口は未決（`README.md` の TODO）。** それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
+- このフックが呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（共有リポジトリ `workbase` の中と、ワークスペースの中）と、ユーザーがこのファイルのパスを指示したとき。新しい PC でワークスペースを作るときは、`workbase` の clone の中で呼ぶ。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
 
 ## 入力
 
@@ -44,11 +44,11 @@
 
 ### 既定値（項目 5）
 
-「workflowを導入して」が、**Claude を開いたディレクトリ（cwd）の直下に `resources/`（`.git` があり、`origin` が `workbase`）がある**状態で、**対象のパスを指定されずに**言われたときは、項目 5（ワークスペースの生成）とみなし、**cwd を対象にする**。質問せずに、次の既定値で行う。ユーザーが言葉で指定した項目は、それを優先する（対象のパスも指定できる）。
+「workflowを導入して」が、**`workbase` の clone の中**（`resources/.git` があり、`origin` が `workbase`）で、**対象のパスを指定されずに**言われたときは、項目 5（ワークスペースの生成）とみなす。質問せずに、次の既定値で行う。ユーザーが言葉で指定した項目は、それを優先する。
 
 | 入力 | 既定値 |
 |---|---|
-| 対象ディレクトリ | Claude を開いたディレクトリ（cwd）。通常は Vault のトップ（Windows の標準の場所は `C:\vault\notes`） |
+| 対象ディレクトリ | `C:\vault\notes` |
 | 目的 | 業務用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジ（`resources/`）を参照する。 |
 | 読む順番の固有項目 | なし |
 | 固有ルール | なし |
@@ -56,7 +56,7 @@
 | remote の方針 | なし |
 | 初回コミット | する |
 
-cwd の直下に `resources/`（`workbase` の clone）が無いときは、従来どおり、cwd に項目 1〜3 を導入する。対象が既にワークスペース（`.git` があり、コミットがある）なら、生成せず、その旨を報告する。**cwd が `workbase` の clone そのもの**（`origin` が `workbase`）のときは、その中にワークスペースを作らず、「`resources/` の親（Vault のトップ）で Claude を開いて、もう一度言う」と報告して止まる。
+`workbase` の外（作業ディレクトリの中）で言われたときは、従来どおり、その作業ディレクトリに項目 1〜3 を導入する。対象が既にワークスペース（`.git` があり、コミットがある）なら、生成せず、その旨を報告する。
 
 項目 5（ワークスペースの生成）のときは、上の4項目（対象ディレクトリは、ワークスペースのルート。通常は Vault のトップ）に加えて、次の3項目を受け取る。
 
@@ -120,7 +120,7 @@ Vault のトップを、この PC だけのローカルなリポジトリとし�
 - [ ] 共有したくない値が無い
 - [ ] 追跡状況（共有かローカル専用か）を報告に書いた
 - [ ] 復元した場合は、出典・範囲・「不明」の明記がある
-- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。`user.email` が仮値（未設定、または `example.com` を含むもの）でない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した。対象が cwd（または指定されたパス）で、`workbase` の中ではない
+- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。`user.email` が仮値（未設定、または `example.com` を含むもの）でない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
 
 ## 報告の型
 
