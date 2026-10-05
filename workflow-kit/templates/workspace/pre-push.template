@@ -1,0 +1,5 @@
+#!/bin/sh
+# remote なし（ローカル専用）の方針のリポジトリ。誤って remote を足しても push できないようにする。
+# push を許可するときは、方針を見直してから、このファイル（.git/hooks/pre-push）を削除する。
+echo "pre-push: blocked. This repository is local-only by policy. Delete .git/hooks/pre-push to allow push." >&2
+exit 1
