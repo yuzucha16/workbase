@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-05.3`
+版: `2026-10-05.4`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -30,7 +30,7 @@
 
 ### ワークスペース（Vault のトップ）を作る
 
-新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。追加の入力は、PC の役割と remote の方針。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
+新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。追加の入力は、PC の役割と remote の方針。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
 
 呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（`workbase` の中と、ワークスペースの中）と、ユーザーがパスを指示したとき。他の場所からの入口は、Claude 用スキル（TODO）。
 
@@ -41,7 +41,7 @@
 
 | ファイル | 役割 |
 |---|---|
-| `docs-rules.md` | `docs/` の運用規則 |
+| `docs-rules.md` | `docs/` の運用規則と、コミットと push の規則 |
 | `knowledge-hook.md` | 「ナレッジ化して」の手順・書き方・形式、改善フック |
 | `setup-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
 | `improvements.md` | 改善提案の記録 |
@@ -55,6 +55,7 @@
 
 ## 変更履歴
 
+- 2026-10-05（版 `2026-10-05.4`）: コミットの権限をエージェントに移した（ユーザーの許可。すべての作業ディレクトリに適用）。共通ルール `docs-rules.md` に「コミットと push」の節を足した（範囲はパス指定、事前の確認、しないこと、push はユーザー）。`setup-hook.md`（書き込みの制約、入力 7、手順 6 の3「初回コミット」、自己点検、報告の型）、`knowledge-hook.md`、`AGENTS.md`（kit）の「ユーザーが行う」を、この節を指す形に直した。見本とモバイル用プロンプトの `kit:` を合わせた。
 - 2026-10-05（版 `2026-10-05.3`）: ワークスペースの生成に `.gitattributes`（`templates/workspace/gitattributes.template`。`* text=auto eol=lf`）を足した。旧 `notes` のルートにあった LF 統一の設定が、新しいトップに引き継がれていなかったため（切り替えの後の点検で発見）。手順 6 と自己点検を合わせた。モバイル用プロンプトと見本の `kit:` を合わせた。
 - 2026-10-05（版 `2026-10-05.2`）: ワークスペースの生成に `.ignore`（`templates/workspace/ignore.template`）を足した。トップの `.gitignore` が `resources/` を除外すると、ripgrep（Claude Code の Grep）が `resources/` の中を黙って飛ばすため（実測。`!/resources/` で解消）。手順 6 と自己点検を合わせた。モバイル用プロンプトと見本の `kit:` を合わせた。
 - 2026-10-05（版 `2026-10-05.1`）: 導入項目 5「ワークスペース（Vault のトップ）の生成」を足した（ユーザーの承認）。入力に PC の役割と remote の方針、手順 6、自己点検、報告の型、書き込み先の例外を足した。雛形 `templates/workspace/`（`AGENTS.md`、`gitignore.template`）と、見本の節を足した。背景: Vault を、PC ローカルのトップのリポジトリと、共有の `workbase`（`resources/` に clone）に分けた（`notes` の `docs/decisions.md`）。モバイル用プロンプトと見本の `kit:` を合わせた。`workflow-kit/AGENTS.md` の `_local/` の記述を、廃止に合わせて直した。
