@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-05.5`
+版: `2026-10-05.6`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -30,7 +30,7 @@
 
 ### ワークスペース（Vault のトップ）を作る
 
-新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。`workbase` の中で、対象を指定せずに言うと、項目 5 とみなして、既定値（対象 `C:\vault\notes`、業務用、remote なし、初回コミットする）で作る。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
+新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、Vault のトップ（`resources/` の親）でエージェントを開いて「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。エージェントを開いたディレクトリの直下に `resources/`（`workbase` の clone）があり、対象を指定せずに言うと、項目 5 とみなして、そのディレクトリを対象に、既定値（業務用、remote なし、初回コミットする）で作る。`workbase` の中には作らない。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
 
 呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（`workbase` の中と、ワークスペースの中）と、ユーザーがパスを指示したとき。他の場所からの入口は、Claude 用スキル（TODO）。
 
@@ -51,10 +51,12 @@
 
 ## TODO（次回以降）
 
+- 新しい PC のトップには `AGENTS.md` が無いので、「workflowを導入して」と言うだけでは `setup-hook.md` に行き着けない。入口を決める（候補: Claude 用スキル、ユーザーの `CLAUDE.md`、dotfiles が `NOTES_DIR` に置くブートストラップ用の `AGENTS.md`）。
 - Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「workflowを導入して」と「ナレッジ化して」の入口にする。スキルは kit のファイルを読むだけにして、手順を重複させない。
 
 ## 変更履歴
 
+- 2026-10-05（版 `2026-10-05.6`）: 項目 5 の既定の対象を、固定パス `C:\vault\notes` から、Claude を開いたディレクトリ（cwd）に変えた（ユーザーの指示）。cwd の直下に `workbase` の clone（`resources/`）があるときだけ項目 5 とみなす。cwd が `workbase` の clone そのものなら、作らずに止まる。雛形 `templates/workspace/AGENTS.md` の共通ルールの置き場を、固定パスから、ワークスペースの `resources/workflow-kit/` にした。新しい PC のトップに `AGENTS.md` が無く、入口がない問題を、未決として TODO に書いた。見本とモバイル用プロンプトの `kit:` を合わせた。
 - 2026-10-05（版 `2026-10-05.5`）: 「workflowを導入して」だけで項目 5 になるようにした（ユーザーの指示）。`workbase` の中で、対象を指定せずに言われたときは、既定値（`C:\vault\notes`、業務用、remote なし、初回コミットする）で作る。報告の型に「条件」（既定値か指定か、変えたいときの方法）を足した（2番目。以降の番号を繰り下げた）。remote なしのときの `pre-push` を雛形 `templates/workspace/pre-push.template` にした（試験で、内容が未定義だったことに気づいた）。見本と、モバイル用プロンプトの `kit:` を合わせた。
 - 2026-10-05（版 `2026-10-05.4`）: コミットの権限をエージェントに移した（ユーザーの許可。すべての作業ディレクトリに適用）。共通ルール `docs-rules.md` に「コミットと push」の節を足した（範囲はパス指定、事前の確認、しないこと、push はユーザー）。`setup-hook.md`（書き込みの制約、入力 7、手順 6 の3「初回コミット」、自己点検、報告の型）、`knowledge-hook.md`、`AGENTS.md`（kit）の「ユーザーが行う」を、この節を指す形に直した。見本とモバイル用プロンプトの `kit:` を合わせた。
 - 2026-10-05（版 `2026-10-05.3`）: ワークスペースの生成に `.gitattributes`（`templates/workspace/gitattributes.template`。`* text=auto eol=lf`）を足した。旧 `notes` のルートにあった LF 統一の設定が、新しいトップに引き継がれていなかったため（切り替えの後の点検で発見）。手順 6 と自己点検を合わせた。モバイル用プロンプトと見本の `kit:` を合わせた。
