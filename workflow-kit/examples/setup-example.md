@@ -73,7 +73,7 @@
 - `.gitattributes`: `templates/workspace/gitattributes.template` のまま（LF 統一）。
 - `AGENTS.md`: `templates/workspace/AGENTS.md` の `< >` を埋めたもの。冒頭は「業務用 PC の作業場。…」、remote は「なし」、固有ルールの1項目目は「このリポジトリに remote を足さない。push しない（…`.git/hooks/pre-push` で止めてある）」。「共通ルール」の節は雛形のまま。固有ルールの最後は「なし」。
 - `CLAUDE.md`（`@AGENTS.md`）、`docs/log.md`、`docs/decisions.md`、`areas/.gitkeep`、`projects/.gitkeep`、`archives/.gitkeep`。
-- `git init` 済み。`git remote -v` は空。`.git/hooks/pre-push` がある。初回コミット済み（生成物の10ファイルだけ（`docs/` の2ファイルを含む）。`areas/` `projects/` `archives/` の既存の中身は追跡していない）。
+- `git init` 済み。`git remote -v` は空。`.git/hooks/pre-push` がある。初回コミット済み（agent の身元とトレーラー3行つき。生成物の10ファイルだけ（`docs/` の2ファイルを含む）。`areas/` `projects/` `archives/` の既存の中身は追跡していない）。
 
 報告の例:
 
@@ -81,5 +81,5 @@
 2. **条件**: 対象 `C:\vault\notes`（既定値）。目的「業務用 PC の作業場。…」（既定値）。PC の役割: 業務用（既定値）。remote: なし（既定値）。初回コミット: する（既定値）。変えたいとき: 役割と目的は `AGENTS.md` の冒頭を直す。remote を足すときは `git remote add origin <URL>` と、`.git/hooks/pre-push` の削除。
 3. **変更したファイル**: 新規に上記のファイルと `.git/` を作った。`resources/` と `.obsidian/` は触っていない。
 4. **追跡状況**: この PC だけのローカルなリポジトリ（remote なし）。`resources/` は別リポジトリ（`workbase`）なので除外した。
-5. **承認が必要なこと**: 初回コミットは行った（`[vault] initial commit: …`）。remote が無いので push の案内は無い（remote があるときは、`git push -u origin main` と、既存のコミットがあるときの `git pull --rebase origin main` を書く）。未追跡の既存ファイルは、あれば一覧する（今回は無し）。`.obsidian` は未リンク（dotfiles の `30_link.bat` を実行する。実ディレクトリがあれば先に退避する）。
+5. **承認が必要なこと**: 初回コミットは行った（`[vault] initial commit: …`。作者は `agent <agent@agent.local>`）。git の身元の設定を促す: `git config --global --get user.name` と `user.email` が未設定（または `example.com` を含む仮値）なら、現在値を示して設定を促す（エージェントのコミットには要らない。ユーザー自身の手動のコミット用）。remote が無いので push の案内は無い（remote があるときは、`git push -u origin main` と、既存のコミットがあるときの `git pull --rebase origin main` を書く）。未追跡の既存ファイルは、あれば一覧する（今回は無し）。`.obsidian` は未リンク（dotfiles の `30_link.bat` を実行する。実ディレクトリがあれば先に退避する）。
 6. **改善案**: 改善案なし。

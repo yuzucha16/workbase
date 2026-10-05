@@ -93,6 +93,7 @@ Vault のトップを、この PC だけのローカルなリポジトリとし�
 3. **初回コミットをする**（入力 7 が「する」のとき。`docs-rules.md` の「コミットと push」に従う）。コミットが1つもないときだけ行う（`git rev-parse --verify HEAD` が失敗する）。既にコミットがあれば、何もコミットせず、報告に書く。
    - 追加するのは、このフックが生成した次のファイルだけ（パス指定）: `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`、`CLAUDE.md`、`docs/`、`areas/.gitkeep`、`projects/.gitkeep`、`archives/.gitkeep`。PARA の既存の中身は、追跡しない（未追跡のまま、報告に一覧する）。
    - コミットの前の確認（`docs-rules.md` の ① 〜 ③）に加えて、`resources/` と `.obsidian` がステージされていないこと。外れたら、ステージを戻して（`git reset -q -- <パス>`）、コミットせずに報告する。
+   - 身元とトレーラーは、`docs-rules.md` の「コミットの身元とトレーラー」に従う（agent の身元を `-c` で渡す。`git config` は変えない）。
    - メッセージ: `[vault] initial commit: PC-local vault top (PARA, docs, AGENTS.md, ignore rules)`。
    - push はしない。remote があるときは、報告に push のコマンド（`git push -u origin main`）を書き、リモートに既存のコミットがあると拒否されるので、その場合は先に `git pull --rebase origin main` が要る旨を添える。
 
@@ -120,7 +121,7 @@ Vault のトップを、この PC だけのローカルなリポジトリとし�
 - [ ] 共有したくない値が無い
 - [ ] 追跡状況（共有かローカル専用か）を報告に書いた
 - [ ] 復元した場合は、出典・範囲・「不明」の明記がある
-- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。`user.email` が仮値（未設定、または `example.com` を含むもの）でない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
+- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー3行（`Agent` `Workflow-Kit` `Kit-Rev`）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
 
 ## 報告の型
 
@@ -131,6 +132,7 @@ Vault のトップを、この PC だけのローカルなリポジトリとし�
 3. **変更したファイル**: 新規に作ったファイルと、差分案を示した既存ファイル（承認待ち）。コミットしたときは、ハッシュと内容、含めなかったファイル（未追跡の既存ファイル）。
 4. **追跡状況**: 共有（Git 管理）かローカル専用か。
 5. **承認が必要なこと**: 既存ファイルの差分案、`docs/` を共有するか（ローカル専用だったとき）、導入する単位（サブディレクトリで、親への導入を提案するとき）、ワークスペースの生成のとき（項目 5）は、手作業が要ること（`resources/` の clone、実ディレクトリの `.obsidian` の退避、push、未追跡の既存ファイルの扱い）など。
+   - **git の身元の設定をユーザーに促す**（項目 5 のとき、必ず書く）。`git config --global --get user.name` と `user.email` を確認し、未設定または仮値（`example.com` を含むもの）なら、現在値を示して設定を促す。設定済みなら、その旨を1行書く。エージェントのコミットは agent の身元を使うので、この設定が無くても導入は止まらない。ユーザー自身が、この PC で手動のコミットをするときに要る。設定は、ユーザーが行う（エージェントは `git config` を書き換えない）。コマンド例: `git config --global user.name "<名前>"`、`git config --global user.email "<メール>"`（会社の PC では、会社で使うアドレスの扱いを確認する）。
 6. **改善案**: 下の「このフックの改善」に従う。
 
 ## このフックの改善
