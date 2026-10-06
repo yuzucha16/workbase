@@ -24,6 +24,7 @@ sources:
   - Claude Code conversation "Vault の構造変更（共有とローカルのリポジトリ分離）と workflow の拡張" (2026-10-05。「設計の原則」「構造変更で遭遇したもの」)
   - Claude Code conversation "workflow の導入フックで作るリポジトリ構成の見直し" (2026-10-06。トップの `notes` → `works` の rename と `certs` の移動)
   - Claude Code conversation "Vault のトップの rename と certs の移動" / "Vault のトップの rename の完了確認と旧パスの整理" (2026-10-06。「rename と旧名の扱い」)
+  - Claude Code conversation "Vault を $HOME\works へ移し、Linux 側の並びをそろえる" (2026-10-06。現在形のパスを `$HOME\works` に直した)
 ---
 
 # Obsidian Vault
@@ -38,11 +39,13 @@ sources:
 
 2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた（同日のうちに、置き場を `$HOME\.certs` に変更した。下の「rename と旧名の扱い」の Decisions）。以下の図は `works` に直した。本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。
 
-**作業の完了（確認: 2026-10-06）**: 移行は完了した。環境変数は `WORKS_DIR=C:\vault\works` と `CERTS_DIR=C:\vault\works\areas\dev-env\certs`（`NOTES_DIR` は未設定）。`%APPDATA%\obsidian\obsidian.json` の Vault は `C:\vault\works`。`C:\vault\works\.obsidian` は dotfiles へのジャンクション。WSL（`/mnt/c/vault/works/resources/.git`）から読める。dotfiles の Linux テストは 36/36 合格（実 WSL の項目を含む）。旧パスは、日付つきの履歴を除いて残っていない。唯一の未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。rename の判断・原則・遭遇したことは、下の「rename と旧名の扱い」にまとめた。
+2026-10-06 の第2の変更（同日の夕方）: トップを `C:\vault\works` から `$HOME\works`（Windows は `%USERPROFILE%\works`）へ移し、ghq の root を `$HOME\works\repos` にした。置き場は1つだけなので、親の `C:\vault` を畳んだ（ユーザーの決定）。以下の現在形の記述（図、環境変数、場所）は `$HOME\works` に直した。`C:\vault\works` と書かれた日付つきの履歴は、当時のパスのまま残す。Linux 側（WSL・ネイティブ）も `~/works`、`~/works/repos` にそろえた。この移動の原則・決定・事実は、統合待ちの inbox のメモ（Windows と WSL・Linux で作業ディレクトリの並びをそろえる）に書かれていて、統合のときにこの節へ入る。
+
+**現在の状態（確認: 2026-10-06、根拠: ユーザーの確認、起動したセッション、dotfiles の試験）**: 環境変数は `WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` は `%USERPROFILE%\.certs`（`VAULT_HOME` は廃止。`NOTES_DIR` は未設定）。Obsidian と Claude Code は、新しい場所で動いた。`.obsidian` は dotfiles へのジャンクション。WSL へは `WSLENV` の `WORKS_DIR/p` で渡す設計で、実機の WSL での受け渡しは未確認（仮説）。dotfiles の Linux の試験は 51/51 合格。未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。旧 `C:\vault`（旧 clone とバックアップ）は、この `--resume` の試験のために、削除せずに残している（ユーザーの指示）。rename の判断・原則・遭遇したことは、下の「rename と旧名の扱い」にまとめた。
 2026-10-05 に、下の「目標の構造（2026-10-02 決定）」から変更した。経緯は、その節と、Decisions の「撤回済み」の注記に残す。
 
 ```text
-C:\vault\works\        # PC ごとのローカルなリポジトリ（実ディレクトリ。ジャンクションではない）
+$HOME\works\           # PC ごとのローカルなリポジトリ（実ディレクトリ。ジャンクションではない）
 ├── .gitignore / .ignore / AGENTS.md / CLAUDE.md / docs/
 ├── .obsidian/         # dotfiles へのジャンクション（実体は dotfiles の windows\obsidian\.obsidian）
 ├── projects/  areas/  archives/   # ローカルの PARA
@@ -304,7 +307,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 ### Open Questions
 
-- バックアップ対象: （2026-10-03 時点の記述。2026-10-05 にトップは実ディレクトリ `C:\vault\works`（旧 `notes`）になり、ジャンクションではなくなった。見直しが必要）ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
+- バックアップ対象: （2026-10-03 時点の記述。2026-10-05 にトップは実ディレクトリ `C:\vault\works`（旧 `notes`）になり、ジャンクションではなくなった。2026-10-06 にさらに `$HOME\works` へ移った。見直しが必要）ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
 - 解決（2026-10-05）: 旧 `notes` の公開範囲の問いは、`workbase` を非公開で新設したので、`workbase` の公開範囲の問い（公開するなら、先に exmem に会社固有の情報が無いか確認する）に置き換わった。
 - 解決（2026-10-05）: `links.map` から `..\notes|%NOTES_DIR%` を外した。`30_link.bat link -n`（ドライラン）で、`windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` が解決されることを確認し、同じ内容の `mklink /J` で `.obsidian` のジャンクションを張った（通しの実行は未確認）。
 - 解決（2026-10-05、Windows のみ）: `50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、既にあれば skip）を足した。Linux は未対応（TODO）。
