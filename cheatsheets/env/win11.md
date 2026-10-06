@@ -113,14 +113,14 @@ git は **scoop のもの1種類だけ**にする（winget の git は使わな�
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
 scoop install git
-git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
+git clone https://github.com/yuzucha16/dotfiles $HOME\works\repos\github.com\yuzucha16\dotfiles
 ```
 
 - **非公開の場合**: `git clone` で GitHub のサインイン画面（Git Credential Manager。scoop の git に同梱）が開く。ブラウザでサインインする。
 - **公開の場合**: サインインは出ない。同じ4行でよい。
 - `scoop install git` のあとに `git` が見つからなければ、新しい PowerShell を開き直してから3行目以降を実行する。
 - すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す（システムの PATH が先に見つかり、scoop の git より優先されるため）。
-- Vault（`C:\vault\works`）は clone しない。共有リポジトリ `workbase`（この手順書を含む）は、dotfiles の `50_repos.bat` が `C:\vault\works\resources` に clone する。Vault のトップ（PARA、`AGENTS.md`）は、`workbase` の `workflow-kit` の「workflowを導入して」で作る。`.obsidian` は `30_link.bat` が張る。これらはこの手順書の範囲外（dotfiles の `README.md` を参照）。
+- Vault（`$HOME\works`）は clone しない。共有リポジトリ `workbase`（この手順書を含む）は、dotfiles の `50_repos.bat` が `$HOME\works\resources` に clone する。Vault のトップ（PARA、`AGENTS.md`）は、`workbase` の `workflow-kit` の「workflowを導入して」で作る。`.obsidian` は `30_link.bat` が張る。これらはこの手順書の範囲外（dotfiles の `README.md` を参照）。
 - git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。対話で作るスクリプトが `11_git_identity.bat`（次の章。`30_link.bat` の前に実行する）。手で書くなら:
 
 ```powershell
@@ -130,11 +130,11 @@ git config --file ~/.gitconfig_local user.email "<email>"
 
 ## 6. スクリプト実行
 
-`C:\vault\repos\github.com\yuzucha16\dotfiles\scripts\windows\` で、**番号順に**実行する。エクスプローラーからのダブルクリックでよい。
+`$HOME\works\repos\github.com\yuzucha16\dotfiles\scripts\windows\` で、**番号順に**実行する。エクスプローラーからのダブルクリックでよい。
 
 | 順 | スクリプト | 内容 | 注意 |
 |---|---|---|---|
-| 10 | `10_env.bat` | `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault` など）を設定し、ディレクトリを作る | **実行後は新しいターミナルを開く**（現在のセッションには反映されない） |
+| 10 | `10_env.bat` | `setx` で環境変数（`XDG_*`、`WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos` など）を設定し、ディレクトリを作る | **実行後は新しいターミナルを開く**（現在のセッションには反映されない） |
 | 11 | `11_git_identity.bat` | `~\.gitconfig_local` が無いときだけ、git の名前・メールを対話で聞いて作る | 既にあれば触らない。**30 の前**に実行する（git が必要。5 で入れた scoop の git でよい） |
 | 20 | `20_apps.bat [home]` | scoop（5 で入れていれば skip）と bucket を導入し、`manifests\apps.txt` のアプリを入れる。家 PC は `home` を付ける（`apps.home.txt` も入る） | 管理者権限は不要。ネット接続が必要。最後に **オレンジ色**で VC++ ランタイムの `[Installed]` / `[WARN]` が出る（`[WARN]` で、実際にアプリが起動しないときだけ `scoop install extras/vcredist2022`。UAC が出る） |
 | 24 | `24_fonts.bat` | PlemolJP NF を `gh` で `~\download` に取得する。インストールは手動（`fonts.md`） | `gh` のログインは不要。出力は `tmp\24_fonts.log` にも残り、最後に `pause` で止まる。1件でも失敗したら終了コード 1 |
@@ -157,7 +157,7 @@ Get-Item $HOME\.gitconfig  # リンク（LinkType: SymbolicLink）になって�
 エディタで `README.md` を開く。どれか 1 つで文字化けなく見えれば完了。
 
 ```powershell
-cd C:\vault\repos\github.com\yuzucha16\dotfiles
+cd $HOME\works\repos\github.com\yuzucha16\dotfiles
 notepad++ README.md
 zed README.md
 vim README.md
