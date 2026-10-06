@@ -301,7 +301,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 ### Open Questions
 
-- バックアップ対象: ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
+- バックアップ対象: （2026-10-03 時点の記述。2026-10-05 にトップは実ディレクトリ `C:\vault\works`（旧 `notes`）になり、ジャンクションではなくなった。見直しが必要）ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
 - 解決（2026-10-05）: 旧 `notes` の公開範囲の問いは、`workbase` を非公開で新設したので、`workbase` の公開範囲の問い（公開するなら、先に exmem に会社固有の情報が無いか確認する）に置き換わった。
 - 解決（2026-10-05）: `links.map` から `..\notes|%NOTES_DIR%` を外した。`30_link.bat link -n`（ドライラン）で、`windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` が解決されることを確認し、同じ内容の `mklink /J` で `.obsidian` のジャンクションを張った（通しの実行は未確認）。
 - 解決（2026-10-05、Windows のみ）: `50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、既にあれば skip）を足した。Linux は未対応（TODO）。
