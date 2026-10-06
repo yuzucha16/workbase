@@ -109,7 +109,7 @@ Claude Codeを起動して `projects\` に別の名前のフォルダができ�
 ## Next Actions
 
 - `--resume` が通らない原因を調べる（任意）。調べないなら、移動後は新規のセッションを始める運用にする。調べるなら、失敗時のエラー文面を取り、コピーした一時キーで、構造的な旧パス（`attachment` の約6件）だけを書き換えて試す（2026-10-06 時点）。
-- ターミナルで `C:\vault\works\resources\exmem` に移動して `claude --resume` を実行し、コピーした履歴が表示されるか確認する。あわせて、`projects\` のどちらのフォルダに書き込まれるかを確認し、使われなかった方を削除する。
+- ターミナルで `$HOME\works\resources\exmem`（2026-10-06 以前は `C:\vault\works\resources\exmem`）に移動して `claude --resume` を実行し、コピーした履歴が表示されるか確認する。あわせて、`projects\` のどちらのフォルダに書き込まれるかを確認し、使われなかった方を削除する。
 
 ## Related
 

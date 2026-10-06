@@ -209,7 +209,7 @@ git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha
 
 - B は、SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git ~/works/repos/github.com/yuzucha16/dotfiles`。鍵の登録は「10. SSH と GitHub」）。
 - B の `gh auth login` から clone までは、新しい Linux の実機では未確認（Ubuntu 24.04 の apt に `gh` 2.45.0 があることだけ確認済み）。
-- `ghq` のルート（`GHQ_ROOT`）は、ネイティブ Linux では `~/works/repos`（`home/.profile` の既定。Windows の `%USERPROFILE%\works\repos` に対応する）。WSL では、WSL 自身の `~/vault/repos`
+- `ghq` のルート（`GHQ_ROOT`）は、ネイティブ Linux では `~/works/repos`（`home/.profile` の既定。Windows の `%USERPROFILE%\works\repos` に対応する）。WSL では、WSL 自身の `~/works/repos`（Windows 側を共有せず、`/mnt/c` の上に置かない）
 - git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。対話で作るスクリプトが `scripts/linux/11_git_identity.sh`（次の章）。手で書くなら:
 
   ```shell
@@ -223,7 +223,7 @@ git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha
 
 | 順 | スクリプト | 内容 | 注意 |
 |---|---|---|---|
-| 10 | `10_dirs.sh` | XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る | |
+| 10 | `10_dirs.sh` | XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/works/{build,tools}` を作る | |
 | 11 | `11_git_identity.sh` | `~/.gitconfig_local` が無いときだけ、git の名前・メールを対話で聞いて作る | 既にあれば触らない。**30 の前**に実行する（git が必要） |
 | 20 | `20_packages.sh desktop` | apt の更新、`manifests/apt.txt` + `apt.desktop.txt` のパッケージ、starship、ghq、`bat` / `fd` のリンクを入れる | `sudo` とネット接続が必要。パッケージの一覧はスクリプトでなく `manifests/` を直す |
 | 23 | `23_ja.sh` | fcitx5 + Mozc、日本語フォントを入れ、`im-config -n fcitx5` を実行する。Ubuntu 系は言語パックも入れる | **再ログイン**後に、Fcitx 5 設定で Mozc を追加する（手動、「6. 日本語入力」） |
