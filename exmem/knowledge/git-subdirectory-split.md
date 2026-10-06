@@ -11,7 +11,7 @@ aliases:
   - リポジトリの切り出し
   - サブディレクトリの分離
 created: 2026-10-05
-updated: 2026-10-05
+updated: 2026-10-06
 sources:
   - Claude Code conversation "Vault の構造変更（共有とローカルのリポジトリ分離）と workflow の拡張" (2026-10-05)
   - "scoop の shim `git-filter-repo.cmd` の存在（2026-10-05 に確認）"
@@ -28,6 +28,7 @@ sources:
 - 切り出しは、元のリポジトリを壊さないよう、新しい clone に対して行う。元はアーカイブとして残す。履歴を書き換えるので、元には戻せない。
 - 履歴から不要なパス（使っていない大きなバイナリ、LFS の対象）を消すなら、切り出しと一緒に、2回に分けて行う。① 除外（`--invert-paths`）、② ルート化（`--subdirectory-filter`）。後から消すと、履歴をもう一度書き換えることになる。
 - 切り出した後は、除外したパスの履歴の漏れ、LFS の参照、remote、単独 clone でのリンク切れを確認する。書き換えの成功は、コマンドの終了だけでは分からない。
+- 切り出し元は、完全な履歴の保管場所として扱う（切り出し先は、除外したパスの履歴を持たない）。元の GitHub リポジトリを削除する前に、削除に依存しない形（`git bundle create <名前>.bundle --all`、`git bundle verify`）で、別の媒体にも複製して検証する。アーカイブは戻せるが、削除は戻せない（または期間に限りがある）ので、削除は急がず、前提の確認が済んでから、期限を決めて行う（2026-10-06）。
 - ルート化すると、元のルート直下のファイル（`.gitattributes`、`.gitignore`、`AGENTS.md` など）は、新しいリポジトリに含まれない。新しいルート用に作り直す。
 
 ## Decisions
@@ -53,6 +54,7 @@ sources:
 ## Open Questions
 
 - `--force` が要る条件（clone の状態）。
+- 切り出し元（旧 `notes`）の GitHub リポジトリを削除する時期と、`git bundle` の保存先・世代管理（[[obsidian-vault]] の「旧 GitHub リポジトリ（`notes`）の削除」）。
 
 ## Related
 

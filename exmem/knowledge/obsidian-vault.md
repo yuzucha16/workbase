@@ -23,6 +23,7 @@ sources:
   - "C:\\vault\\notes\\.obsidian の設定ファイルと `git log -- .obsidian`（2026-10-04 に確認。「設定」節を更新）"
   - Claude Code conversation "Vault の構造変更（共有とローカルのリポジトリ分離）と workflow の拡張" (2026-10-05。「設計の原則」「構造変更で遭遇したもの」)
   - Claude Code conversation "workflow の導入フックで作るリポジトリ構成の見直し" (2026-10-06。トップの `notes` → `works` の rename と `certs` の移動)
+  - Claude Code conversation "Vault のトップの rename と certs の移動" / "Vault のトップの rename の完了確認と旧パスの整理" (2026-10-06。「rename と旧名の扱い」)
 ---
 
 # Obsidian Vault
@@ -37,7 +38,7 @@ sources:
 
 2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた。以下の図は `works` に直した。本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。
 
-**作業の完了（確認: 2026-10-06）**: 移行は完了した。環境変数は `WORKS_DIR=C:\vault\works` と `CERTS_DIR=C:\vault\works\areas\dev-env\certs`（`NOTES_DIR` は未設定）。`%APPDATA%\obsidian\obsidian.json` の Vault は `C:\vault\works`。`C:\vault\works\.obsidian` は dotfiles へのジャンクション。WSL（`/mnt/c/vault/works/resources/.git`）から読める。dotfiles の Linux テストは 36/36 合格（実 WSL の項目を含む）。旧パスは、日付つきの履歴を除いて残っていない。唯一の未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。[[claude-code-storage]]）。
+**作業の完了（確認: 2026-10-06）**: 移行は完了した。環境変数は `WORKS_DIR=C:\vault\works` と `CERTS_DIR=C:\vault\works\areas\dev-env\certs`（`NOTES_DIR` は未設定）。`%APPDATA%\obsidian\obsidian.json` の Vault は `C:\vault\works`。`C:\vault\works\.obsidian` は dotfiles へのジャンクション。WSL（`/mnt/c/vault/works/resources/.git`）から読める。dotfiles の Linux テストは 36/36 合格（実 WSL の項目を含む）。旧パスは、日付つきの履歴を除いて残っていない。唯一の未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。rename の判断・原則・遭遇したことは、下の「rename と旧名の扱い」にまとめた。
 2026-10-05 に、下の「目標の構造（2026-10-02 決定）」から変更した。経緯は、その節と、Decisions の「撤回済み」の注記に残す。
 
 ```text
@@ -70,6 +71,53 @@ C:\vault\works\        # PC ごとのローカルなリポジトリ（実ディ�
 - 共有側は、ローカル側の存在を知らない（一方向の依存）。検査は「共有側を単独で clone して、リンク切れや参照切れが無いか」。共有側を汎用の知識として育てるとき、ローカルの事情が混ざらない。
 - 誤 push の防止は、ルール（ignore の書き方）でなく、構造で保証する。remote を持たないリポジトリには push できない。ignore の1行の間違いで、共有側に漏れる設計を避ける。
 - 構造を変えるときは、旧環境の全ファイルを棚卸しして、引き継ぐか捨てるかを1つずつ決める。新しい構成を雛形から作ると、旧環境が暗黙に持っていた設定（改行コードの設定など）が落ちる（下の Gotchas）。
+
+#### rename と旧名の扱い（2026-10-06）
+
+トップの `notes` → `works` の rename と、`certs` の移動から得た教訓。名前そのものより、進め方を残す。
+
+**Principles**
+
+- ディレクトリの rename は、リポジトリの中の文字列と、パスをキーや登録に持つ外の状態（アプリの Vault 登録、Claude Code の履歴、環境変数）を分けて棚卸しする。前者は置換で済むが、後者は壊れても気づきにくい。
+- 旧名は、記述の時制で扱いを分ける。現在形の記述（いまの置き場、既定値、構造の図、Next Actions）は新名に直し、日付つきの履歴は書き換えない。AI は現在形の記述を事実として読んで動くので、そこに残る旧名が最も害になる。履歴の旧名は「いつの時点の何か」の目印で、消すと記録が壊れる。
+- 旧名の全面置換はしない。旧名が別のもの（アーカイブ済みの GitHub リポジトリ、旧 clone、バックアップ）の名前も兼ねていて、機械置換すると存在しない名前が生まれる。`notes` は 28 ファイルで 205 件ヒットし、機械置換はできなかった。
+- ナレッジに残すのは名前ではなく教訓。rename の経緯は日付つきの短い1行にとどめる。次の rename でナレッジを書き換えずに済む。
+- 認証系ファイルの置き場は、「どの経路に乗るか」（push、バックアップ、AI の検索、同期）で選ぶ。公開情報の CA 証明書は置けても、秘密鍵は経路のどれかで漏れ得るので、Vault に入れない。
+- ツールが固定パスで読む資産は、環境変数越しに参照する。置き場を変えても、直す箇所が変数の定義だけになる。
+- アプリの履歴を新パスのキーへ移すときは、旧キーを消さず、コピーで行う。再開できる保証がなく、旧キーが唯一の確実な履歴になる。
+- 作業ディレクトリの rename は、そのディレクトリを cwd にするアプリとセッションをすべて閉じた、別のシェルから行う。使用中のディレクトリは、Windows が名前変更を拒否する。
+- 共有リポジトリの固定パスを変える変更は、他の PC に波及する（未移行の PC では、共有側の `AGENTS.md` のパスが存在しなくなる）。展開の方針（この PC だけ、橋渡しのジャンクション、全 PC 同時）を、実施の前に決める。
+
+**Decisions**（すべて 2026-10-06）
+
+- **トップを `notes` から `works` に rename する**。根拠: 役割が、ノートではなく、業務と個人開発のデータ構造（PARA）になっていて、名前が体を表していなかった。却下案: `notes` のまま。
+- **環境変数 `NOTES_DIR` を `WORKS_DIR` に改名する**。根拠: rename の目的と合わせる。却下案: `NOTES_DIR` のまま（名前だけが古く残る）。
+- **`certs` を `works\areas\dev-env\certs\` に移す。置くのは CA 証明書だけ**。根拠: 会社固有の CA 証明書はローカルの情報で、共有の `resources/` には置けない。継続して維持するものは `areas/` が合い、Area は責任領域の名前にするので `areas/dev-env/` の下にした。却下案: `areas/certs/`（環境の設定が増えると名前が合わなくなる）、`areas/` に SSH の秘密鍵まで集約、`C:\vault\certs` のまま。
+- **展開はこの PC だけ。他の PC は導入前なので、新規扱いで始める**。却下案: 橋渡しのジャンクション（`works` → `notes`）、全 PC の同時移行（どちらも、移行済みの PC が無いので不要）。
+- **旧名の扱いは時制で分ける**（上の Principles）。ユーザーは「rename 自体は重要でないので全削除でもよい」と考えていたが、整合が取れなくなる懸念も挙げ、現在形だけ直す折衷を選んだ。
+
+**Facts**
+
+- この Vault の `areas/` と `resources/` の区別は、PARA の意味（責任領域か参考資料か）ではなく、共有かローカルかで決まっている（確認: 2026-10-06、根拠: トップの `AGENTS.md` の構成の表）。
+- 旧 `C:\vault\certs` は空で、参照は PowerShell のプロファイルが `CERTS_DIR` 経由、WSL 側の `common.sh` が絶対パスの直書きだった。
+- Obsidian のレジストリ（`%APPDATA%\obsidian\obsidian.json`）は、Vault のパスをそのまま持つ。Obsidian Sync の紐付けと `workspace.json` が、パスが変わっても保たれるかは未確認。
+- 旧 `notes` の完全な履歴（58 コミット）は、GitHub、旧ローカル clone、バックアップ（`.git` を含む）の3か所にある。`workbase` は切り出し時に 30 コミットで、`.obsidian`、`_archive`、`office`、`fonts`、`wallpapers` の履歴を持たない（切り出しは [[git-subdirectory-split]]）。
+- 旧ローカル clone は、未 push 0、stash 0、未追跡ファイルは inbox のメモ1件。このメモの内容は統合先に入っているように見える（仮説。全文の突き合わせは未実施）。
+- dotfiles のコードと共有リポジトリのノートに、旧 GitHub リポジトリの URL への依存は無い（URL は日付つきの記述だけ）。
+- Vault のバックアップを定期実行するタスクは、タスクスケジューラに見当たらない（2026-10-06 に再確認。`Backup` などは Windows 標準のもの）。手でコピーしたバックアップが、同じディスク上に1つあるだけ。
+- rename の確認に使ったスクリプトの事前確認は、`git status --short --untracked-files=no`。未追跡の inbox のメモ（規則でコミットしない）で止まらないため。
+
+**Gotchas**
+
+- 履歴が再開できず、ディレクトリ名だけを元に戻したら、環境変数と Obsidian のレジストリが `works` のままで食い違った。環境変数とレジストリは、ディレクトリの名前を戻しても戻らない（別の状態）。仕上げのスクリプトで、ディレクトリを `works` に rename し直して揃えた。
+- Claude Code の履歴をコピーして `--resume` が通らなかった件は [[claude-code-storage]] の Gotchas。
+
+**旧 GitHub リポジトリ（`notes`）の削除（未決）**
+
+- 切り出し元は、完全な履歴の保管場所として扱う。削除の前に、削除に依存しない形（`git bundle create <名前>.bundle --all`、`git bundle verify`）で、Vault のディスクの外にも複製する。切り出し先は、除外したパスの履歴を持たない。
+- アーカイブは費用がかからず戻せる。削除は戻せない（GitHub が復元できる期間は、設定画面で確認する。仮説）。削除は急がず、前提の確認が済んでから、期限を決めて行う。
+- 削除すると決めたら、順は「GitHub 側 → 復元期間が過ぎてから旧 clone → バックアップは最後」。削除したら、「旧 `notes` はアーカイブにした」の決定を撤回済みにして、旧 URL が無効になったことを1行足す（履歴の URL は書き換えない）。
+- 旧 clone のディレクトリを消すと、そこを cwd にした `--resume` ができなくなる。Claude Code の旧キー（`…-yuzucha16-notes` 系統の4つ）は、GitHub 側の削除では影響を受けない。
 
 ### 目標の構造（2026-10-02 決定。2026-10-05 に変更。上の「現在の構造」を参照）
 
@@ -257,7 +305,8 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - 解決（2026-10-05）: 旧 `notes` の公開範囲の問いは、`workbase` を非公開で新設したので、`workbase` の公開範囲の問い（公開するなら、先に exmem に会社固有の情報が無いか確認する）に置き換わった。
 - 解決（2026-10-05）: `links.map` から `..\notes|%NOTES_DIR%` を外した。`30_link.bat link -n`（ドライラン）で、`windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` が解決されることを確認し、同じ内容の `mklink /J` で `.obsidian` のジャンクションを張った（通しの実行は未確認）。
 - 解決（2026-10-05、Windows のみ）: `50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、既にあれば skip）を足した。Linux は未対応（TODO）。
-- 旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか（2026-10-05 時点で未決）。
+- 旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか（2026-10-05 時点で未決）。あわせて、旧 GitHub リポジトリを削除する時期（残し続けるか）、`git bundle` の保存先（Vault のディスクの外）と世代管理、旧 clone を消すときに Claude の履歴キー4つを残すか、バックアップを定期実行する仕組みを入れるか（2026-10-06 に追加）。
+- 他の PC で新規にトップを作るとき、`certs` の置き場（`areas/dev-env/certs`）を、「workflowを導入して」の生成に含めるか（雛形の `.gitignore` への追記は済み。2026-10-06）。
 - 新しい業務用 PC で、dotfiles の `50_repos` から「workflowを導入して」までの順で、この構造を再現して確認する。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
 - 仮説（未検証）: `.claude/settings.local.json` は、Claude Code を起動したディレクトリの `.claude/` から読まれる。
@@ -273,6 +322,9 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 - `vault-backup.bat` を作り、ジャンクションの扱いを決めて `schtasks` に登録する（取りこぼし防止設定をオン）。
 - 別フォルダへ復元し、Obsidianで開けるか確認する。
+- 旧 clone で `git bundle create <名前>.bundle --all` を作り、`git bundle verify` で検証して、Vault のディスクの外にも置く（2026-10-06 時点）。
+- 旧 clone の未追跡のメモを、統合先のノートと突き合わせる。統合済みなら捨てる。
+- 他の PC に旧リポジトリの clone が無いことを確認する（2026-10-06 時点のユーザーの発言では、他の PC にはまだ環境を作っていない）。
 
 ## Gotchas
 
