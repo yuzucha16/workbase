@@ -105,17 +105,23 @@ OOBE（初回セットアップ画面）で、Microsoft アカウントとネッ
 
 ## 5. リポジトリ取得
 
-`dotfiles` を、**所定のパスに**clone する（このパス構成が前提）。
+`dotfiles` を、**所定のパスに**clone する（このパス構成が前提）。**リポジトリの公開・非公開は未定**（2026-10-06 時点は非公開）。コマンドは公開でも非公開でも同じで、違いはサインインだけ。運用が決まったら、使わない方の記述を削除する。
+
+git は **scoop のもの1種類だけ**にする（winget の git は使わない）。dotfiles の `README.md` の冒頭「クイックスタート」と同じ4行を、PowerShell に貼る。
 
 ```powershell
-winget install Git.Git
-# 新しい PowerShell を開く（PATH の反映）
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
+scoop install git
 git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
 ```
 
-- `winget` が使えない場合は、[Git for Windows](https://git-scm.com/download/win) を手動でインストールする。
+- **非公開の場合**: `git clone` で GitHub のサインイン画面（Git Credential Manager。scoop の git に同梱）が開く。ブラウザでサインインする。
+- **公開の場合**: サインインは出ない。同じ4行でよい。
+- `scoop install git` のあとに `git` が見つからなければ、新しい PowerShell を開き直してから3行目以降を実行する。
+- すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す（システムの PATH が先に見つかり、scoop の git より優先されるため）。
 - Vault（`C:\vault\works`）は clone しない。共有リポジトリ `workbase`（この手順書を含む）は、dotfiles の `50_repos.bat` が `C:\vault\works\resources` に clone する。Vault のトップ（PARA、`AGENTS.md`）は、`workbase` の `workflow-kit` の「workflowを導入して」で作る。`.obsidian` は `30_link.bat` が張る。これらはこの手順書の範囲外（dotfiles の `README.md` を参照）。
-- git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。
+- git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。対話で作るスクリプトが `11_git_identity.bat`（次の章。`30_link.bat` の前に実行する）。手で書くなら:
 
 ```powershell
 git config --file ~/.gitconfig_local user.name "<name>"
@@ -129,6 +135,7 @@ git config --file ~/.gitconfig_local user.email "<email>"
 | 順 | スクリプト | 内容 | 注意 |
 |---|---|---|---|
 | 10 | `10_env.bat` | `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault` など）を設定し、ディレクトリを作る | **実行後は新しいターミナルを開く**（現在のセッションには反映されない） |
+| 11 | `11_git_identity.bat` | `~\.gitconfig_local` が無いときだけ、git の名前・メールを対話で聞いて作る | 既にあれば触らない。**30 の前**に実行する（git が必要。5 で入れた scoop の git でよい） |
 | 20 | `20_apps.bat [home]` | scoop と bucket を導入し、`manifests\apps.txt` のアプリを入れる。家 PC は `home` を付ける（`apps.home.txt` も入る） | 管理者権限は不要。ネット接続が必要 |
 | 21 | `21_vscode.bat` | VS Code 拡張を入れる | 20 の後 |
 | 22 | `22_python.bat` | winget で uv を入れ、Python 3.13 を導入する | |
@@ -173,4 +180,4 @@ vim README.md
 手順書を書くうえで見つけた、dotfiles 側との食い違い。手順書の内容とは別に、直す候補。
 
 - **解消済み**: `manifests/apps*.txt` / `links.map` のコメントが旧スクリプト名（`w1a_scoop_install.bat`、`w2a_link_dotfiles.bat`）を指していた。現在の `20_apps.bat` / `30_link.bat` に直した
-- `winget install Git.Git` と、`20_apps.bat` が scoop で入れる git が二重になる。手順書では clone のために winget 版を先に入れる前提にしたが、scoop 版を使うなら winget を省ける（鶏と卵の問題）
+- **解消済み（2026-10-06）**: `winget install Git.Git` と、`20_apps.bat` が scoop で入れる git が二重になる件。clone の前に scoop と git を入れる（5 の4行）ことにして、winget の git は使わないことにした
