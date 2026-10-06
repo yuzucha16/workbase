@@ -42,8 +42,9 @@ updated: 2026-10-06
 | `tool/winget` | winget |
 | `tool/gh` | GitHub CLI（`gh`） |
 | `tool/windows-terminal` | Windows Terminal |
-| `tool/git` | Git（コミット規則・改行・設定） |
+| `tool/git` | Git（コミット規則・改行・設定、`git filter-repo` などの周辺ツール含む） |
 | `tool/stow` | GNU Stow（symlink 配置） |
+| `tool/ripgrep` | ripgrep（`rg`。Claude Code の Grep の実体） |
 
 ### `ai/` — AIサービス・エージェント
 
@@ -79,5 +80,7 @@ updated: 2026-10-06
 | `accessibility` | 目の負担・光の点滅など、身体の特性に合わせた環境設定 |
 | `line-endings` | 改行コード（LF / CRLF） |
 | `shell` | シェルスクリプト |
-| `testing` | 試験の方法 |
+| `testing` | スクリプトや仕組みの試験の進め方 |
 | `traceability` | 誰が・どの規則で行ったかを後から追えること |
+| `repository-design` | リポジトリの分け方・境界・切り出し |
+| `theming` | アプリの見た目（配色・CSS）の調整 |

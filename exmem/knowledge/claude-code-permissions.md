@@ -16,7 +16,7 @@ aliases:
   - サンドボックス運用
   - 自走期間
 created: 2026-10-02
-updated: 2026-10-04
+updated: 2026-10-05
 sources:
   - Claude Code conversation "Claude Code 権限制御の設計と dotfiles への共通土台の配備" (2026-10-02)
   - "dotfiles（claude/、_scripts/links.map、l1_copy_dotfiles.sh、コミット d4878a5 / b0cca61）、%USERPROFILE%\\.claude\\settings.json、WSLの ~/.claude/settings.json（2026-10-02 に確認）"
@@ -71,6 +71,13 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 - 取返し可write: `git add`、`git commit`（`git -C` 付きを含む）。
 - `PowerShell(...)` と `Bash(...)`（bash / zsh共通）の両方を書く。Bash側は `git -C` と add / commit のみ（`ls` / `cat` / `grep` / `find` などはClaude Codeが標準で自動許可するため不要）。
 - 却下案: `ForEach-Object` / `Where-Object` のallow（スクリプトブロック内に `Remove-Item` などを包めば素通りする恐れがあり、判定の挙動が未確認）。タスクランナー・インタプリタのワイルドカード。
+
+### コミットの権限をエージェントに委譲する。範囲・事前確認・禁止事項は共通ルールに書く（2026-10-05）
+
+- 決めたこと: コミットは、すべての作業ディレクトリで、エージェントに任せる。push と GitHub 側のリポジトリ作成は委譲せず、コマンドを案内する。許可の範囲は、自分が変更・生成したファイルだけをパス指定で追加すること。事前に、意図したファイルだけか、`user.email` が仮値でないか、機密が混ざっていないかを確認する。禁止は `--amend`、`reset --hard`、`rebase`、`--force`、`--no-verify`、`git add -f`、push。
+- 根拠: 上の方針（取返し可は allow、不可は確認）と同じ。コミットはローカルで戻せ、機密や確認していない既存ファイルを巻き込まない範囲に絞れる。allow は既にある（`git add *`、`git commit *`。2026-10-05 に設定ファイルで確認）。
+- 却下案: 委譲しない（従来）、push も委譲する（外向きで、毎回の確認が要る）。
+- 運用の詳細（ワークスペースの初回コミット、inbox のメモはコミットしない）は [[workflow-kit]]。
 
 ### 配備方法
 
