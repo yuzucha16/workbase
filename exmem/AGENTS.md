@@ -4,8 +4,8 @@
 Claude / Codex / Copilot など、どのエージェントも同じルールで読み書きする。
 人間はObsidianで閲覧・編集する。
 
-- 場所: `C:\vault\notes\resources\exmem`（Obsidian Vault `C:\vault\notes` の `resources/` に clone した、共有リポジトリ `workbase`（GitHub: `yuzucha16/workbase`）の一部）
-- `workbase` のルートは `resources/` で、`C:\vault\notes`（Vault のトップ）は別の、PC ローカルのリポジトリ。変更は `resources/` の中で `git diff` で確認できる。
+- 場所: `C:\vault\works\resources\exmem`（Obsidian Vault `C:\vault\works` の `resources/` に clone した、共有リポジトリ `workbase`（GitHub: `yuzucha16/workbase`）の一部）
+- `workbase` のルートは `resources/` で、`C:\vault\works`（Vault のトップ）は別の、PC ローカルのリポジトリ。変更は `resources/` の中で `git diff` で確認できる。
 - エージェントはこのディレクトリを作業ディレクトリとして起動する。
 - 履歴: 2026-10-02 に `areas_shared` リポジトリから `notes` リポジトリへ移し、2026-10-05 に `notes` から `workbase` として切り出した。旧 `exmem/projects/` は、Vault の PARA の `projects/` と区別するため `contexts/` に改名した。
 
@@ -99,6 +99,6 @@ sources:
 `contexts/<project>/context.md` の `Current State` と `Next Actions` を更新する。
 次に作業するAI・端末は、ここから再開する。
 
-exmem には、作業ディレクトリ（dotfiles など）の作業ログを置かない。作業ディレクトリの経緯・決定・次にやることは、各ディレクトリの `docs/` が持つ（運用は `resources/workflow-kit/docs-rules.md`）。`contexts/<名前>/context.md` は、`notes` から見えない場所（モバイルや他環境での壁打ちなど）の作業を引き継ぐためのコンテキストで、作業ログの置き場ではない。`inbox/` のメモの Open Questions と Next Actions を、統合の手順で反映する。この引継ぎコンテキストを消化する手段は未定（`resources/workflow-kit/improvements.md`）。
+exmem には、作業ディレクトリ（dotfiles など）の作業ログを置かない。作業ディレクトリの経緯・決定・次にやることは、各ディレクトリの `docs/` が持つ（運用は `resources/workflow-kit/docs-rules.md`）。`contexts/<名前>/context.md` は、`works` から見えない場所（モバイルや他環境での壁打ちなど）の作業を引き継ぐためのコンテキストで、作業ログの置き場ではない。`inbox/` のメモの Open Questions と Next Actions を、統合の手順で反映する。この引継ぎコンテキストを消化する手段は未定（`resources/workflow-kit/improvements.md`）。
 
 作業ディレクトリは exmem を基本は読み取り専用で参照するだけで、書き込みの例外は、ユーザーが「ナレッジ化して」と指示したときに `inbox/` へ新規メモを1つ置くことだけ（手順と形式の正本は `resources/workflow-kit/knowledge-hook.md`。`inbox/README.md` のプロンプトはその写し。`tags` は語彙外のものが入ることがあるので、統合のときに正規化する）。`inbox/` のメモは、上の「inbox を整理するとき」の手順で `knowledge/` へ統合する。
