@@ -115,7 +115,7 @@ PC1・PC2 は、ユーザーの呼び名（PC1 = 会社 PC、PC2 = 個人 PC。2
   - 身元は、コミット1回ごとの `-c` で渡す。`git config`（グローバルも `.git/config`）は書き換えない（後で人間が手動でコミットしたときまで agent 名義になるため）。作者とコミッターは、どちらも agent にする。
   - 名前は `agent`、メールは `agent@agent.local`。道具やモデルは、名前でなくトレーラーに書く。
   - トレーラーは3行を毎回付ける（`git commit --trailer "<キー: 値>"`）。`Agent: <道具> <モデルID>`（例: `Agent: claude-code claude-sonnet-5-5`）、`Workflow-Kit: <版>`（`workflow-kit/README.md` の「版」）、`Kit-Rev: <ハッシュ>`（`resources/` の `git rev-parse --short HEAD`。`resources/` に未コミットの変更（未追跡ファイルとステージ済みを含む。`.gitignore` で除外されたものは含まない）があれば末尾に `-dirty`。判定: `git status --porcelain` が空でない）。
-  - 例: `git -c user.name=agent -c user.email=agent@agent.local commit -m "[vault] ..." --trailer "Agent: claude-code claude-sonnet-5-5" --trailer "Workflow-Kit: 2026-10-06.1" --trailer "Kit-Rev: 3daeff6"`
+  - 例: `git -c user.name=agent -c user.email=agent@agent.local commit -m "[works] ..." --trailer "Agent: claude-code claude-sonnet-5-5" --trailer "Workflow-Kit: 2026-10-06.1" --trailer "Kit-Rev: 3daeff6"`
   - 人間の名義でコミットしたい（ユーザーが言葉で指示した）ときだけ、`git config` の身元を使う。未設定、または `example.com` を含む仮値なら、コミットせずに設定を促して止まる。
   - 過去のコミットは書き換えない（`workbase` の既存コミットは `user` 名義のまま。移行日以降が agent 名義）。
 - **コミットしないもの**: 「ナレッジ化して」で `exmem/inbox/` に作ったメモ（ユーザーの指示、2026-10-05）。inbox のメモは、解釈して `knowledge/` に統合した後に削除する運用なので、未追跡のまま残す。**対象は、フックが作ったメモのファイルだけ。** 同じリポジトリのほかの変更（kit、`knowledge/`、`tags.md`、`inbox/README.md`、手順書など）は対象外で、コミットしてよい。報告では「メモはコミットしていない」と範囲を限定して書き、「変更全体がコミット対象外」と読める書き方をしない。コミットを人に頼まない（人が行うのは push だけ）。
@@ -126,5 +126,6 @@ PC1・PC2 は、ユーザーの呼び名（PC1 = 会社 PC、PC2 = 個人 PC。2
 ## 書き方の共通ルール
 
 - 日付、バージョン、OS を明記する。確認していないことは「仮説」「未確認」と書く。確認した事実には、根拠（実行したコマンド、見たファイル）を1語添える。
+- 長い Markdown（`docs/log.md` など）の書き換えは、Edit ツールで行う。スクリプトで全文を読み書きすると、1か所のミスで文書全体を失う（2026-10-06 に、二重と空の事故があった）。やむを得ずスクリプトで書くときは、書き込みの直前に、内容が空でないことと行数を確認し、書く前に `git` でコミット済み（または退避済み）であることを確かめる。
 - 機密（トークン、秘匿値）は書かない。
 - リスクや制約が生まれる変更は、事前にユーザーへ確認する。
