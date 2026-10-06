@@ -59,11 +59,14 @@ exmem/                 # resources/exmem/
 │   ├── fonts.md                         # メインフォントの選定と導入
 │   ├── gh-release-download.md           # gh release download は未ログインでも使える
 │   ├── git-line-endings.md              # 改行コードを .gitattributes で決める
+│   ├── git-rebase-chronology.md         # rebase の前にコミットの時系列を確認する
+│   ├── git-subdirectory-split.md        # 履歴を保ってサブディレクトリを別リポジトリに切り出す（git filter-repo）
 │   ├── human-ai-decision-loop.md
 │   ├── keyboard-switches.md
 │   ├── linux-distro-selection.md
 │   ├── linux-multiboot-setup.md
 │   ├── modern-cli-tools.md
+│   ├── obsidian-appearance.md           # ファイル一覧の色分けと、CSS で変えられない範囲
 │   ├── obsidian-vault.md
 │   ├── office-ai-workspace.md
 │   ├── pc-setup-manuals.md              # Win11 / Debian系の環境セットアップ手順書
@@ -72,7 +75,7 @@ exmem/                 # resources/exmem/
 │   ├── scoop-app-management.md          # scoopを正本にしたアプリ管理と管理外の最小化
 │   ├── shell-command-usecases.md        # コマンド利用傾向とヒストリの種（dotfilesの種ファイルの正本）
 │   ├── shell-fzf-keybindings.md         # fzfとキー割り当て（pwsh/zsh/bash）
-│   ├── shell-script-testing-wsl.md      # WSLでシェルスクリプトを試験する（偽のHOME・環境判定の差し替え）
+│   ├── shell-script-testing-wsl.md      # WSL・Windowsバッチのスクリプトを試験する（偽のHOME・環境判定の差し替え・dry-run）
 │   ├── terminal-cursor-blink.md         # カーソル点滅を止める（DECSCUSR）
 │   ├── vscode-workspace.md
 │   ├── workflow-kit.md                  # 作業ログとナレッジ化フックの共通機能の設計
