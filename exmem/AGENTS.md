@@ -13,7 +13,7 @@ Claude / Codex / Copilot など、どのエージェントも同じルールで�
 
 - `workbase`（`resources/`）の内容は、すべて共有（Git管理）する。機密、会社固有の情報、PC ごとのデータを入れない。ローカルのデータ（PARA の `areas/` `projects/` `archives/`）は、Vault のトップのリポジトリにあり、`workbase` の外にある。
 - 共有側（`workbase`）のノートから、ローカル側（`areas/` など）へ `[[リンク]]` を張らない。他のPCでリンク切れになる。
-- `contexts/` は exmem のプロジェクト状態の置き場で、Vault 直下の `projects/` とは別物。
+- `contexts/` は、`works` から見えない場所の作業の引継ぎコンテキストの置き場で、Vault 直下の `projects/` とは別物。
 - ローカル専用の置き場（旧 `_local/`）は、2026-10-05 に廃止した。ローカルのデータは、`workbase` の外（Vault のトップの PARA）に置く。
 
 ## 読む順番
@@ -26,7 +26,7 @@ Claude / Codex / Copilot など、どのエージェントも同じルールで�
 
 - `inbox/`: 未整理の会話メモの一時置き場。知識へ統合したら削除する（`inbox/README.md` は除く）。
 - `knowledge/`: AIをまたいで再利用する知識。1ファイル1トピック。
-- `contexts/<project>/context.md`: プロジェクトの現在状態と次にやること（旧 `projects/`）。
+- `contexts/<project>/context.md`: `works` から見えない場所の作業の、現在状態と次にやること（引継ぎ用。旧 `projects/`。作業ログの置き場ではない）。
 
 ## Frontmatter
 

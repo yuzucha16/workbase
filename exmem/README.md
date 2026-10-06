@@ -27,7 +27,7 @@ AIサービスの会話履歴やメモリに知識を閉じ込めず、Markdown�
 
 - `inbox/`: 未整理の会話メモの一時置き場。知識へ統合したら削除する
 - `knowledge/`: AIをまたいで再利用する知識。1ファイル1トピック
-- `contexts/`: 個別プロジェクトの現在状態と次にやること（Vault の PARA の `projects/` とは別物）
+- `contexts/`: Vault のトップ（`works`）から見えない場所（モバイルや他環境での壁打ちなど）の作業を引き継ぐためのコンテキスト。作業ログの置き場ではない（Vault の PARA の `projects/` とは別物）
 
 exmem はナレッジの置き場で、他リポジトリの作業ログは置かない。dotfiles は exmem を基本は読み取り専用で参照するだけ（例外は、ユーザーの指示で `inbox/` に知識メモを置くことだけ）で、dotfiles の作業の経緯・決定・次にやることは dotfiles リポジトリの `docs/` が持つ（2026-10-04 に `knowledge/dotfiles.md` と `contexts/dotfiles/` を移して削除した）。
 
@@ -114,7 +114,7 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 
 1. 壁打ちの最後に `inbox/README.md` のプロンプトで要点をまとめさせ、Obsidianモバイルアプリで `inbox/` に保存する。
 2. inbox のメモから決定・根拠・ハマりどころ・未決事項を `knowledge/` に統合し、メモは削除する。
-3. プロジェクト固有の現在状態は `contexts/<project>/context.md` に集約する。
+3. `works` から見えない場所の作業の引継ぎは、`contexts/<project>/context.md` に集約する（作業ディレクトリの作業ログは、各ディレクトリの `docs/` が持つ）。
 4. 作業の終わりに `context.md` の `Current State` と `Next Actions` を更新する。
 5. AIを変更しても読めるよう、Markdown + YAML frontmatter + 通常の見出しを基本とする。
 
