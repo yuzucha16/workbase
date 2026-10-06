@@ -8,6 +8,8 @@ tags:
   - setup
   - backup
   - windows
+  - tool/wsl
+  - dotfiles
 aliases:
   - Obsidian Vault
   - Obsidianの設定
@@ -39,9 +41,9 @@ sources:
 
 2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた（同日のうちに、置き場を `$HOME\.certs` に変更した。下の「rename と旧名の扱い」の Decisions）。以下の図は `works` に直した。本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。
 
-2026-10-06 の第2の変更（同日の夕方）: トップを `C:\vault\works` から `$HOME\works`（Windows は `%USERPROFILE%\works`）へ移し、ghq の root を `$HOME\works\repos` にした。置き場は1つだけなので、親の `C:\vault` を畳んだ（ユーザーの決定）。以下の現在形の記述（図、環境変数、場所）は `$HOME\works` に直した。`C:\vault\works` と書かれた日付つきの履歴は、当時のパスのまま残す。Linux 側（WSL・ネイティブ）も `~/works`、`~/works/repos` にそろえた。この移動の原則・決定・事実は、統合待ちの inbox のメモ（Windows と WSL・Linux で作業ディレクトリの並びをそろえる）に書かれていて、統合のときにこの節へ入る。
+2026-10-06 の第2の変更（同日の夕方）: トップを `C:\vault\works` から `$HOME\works`（Windows は `%USERPROFILE%\works`）へ移し、ghq の root を `$HOME\works\repos` にした。置き場は1つだけなので、親の `C:\vault` を畳んだ（ユーザーの決定）。以下の現在形の記述（図、環境変数、場所）は `$HOME\works` に直した。`C:\vault\works` と書かれた日付つきの履歴は、当時のパスのまま残す。Linux 側（WSL・ネイティブ）も `~/works`、`~/works/repos` にそろえた。この移動の原則・決定・事実・遭遇したことは、下の「置き場を `$HOME\works` へ移す」にまとめた。
 
-**現在の状態（確認: 2026-10-06、根拠: ユーザーの確認、起動したセッション、dotfiles の試験）**: 環境変数は `WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` は `%USERPROFILE%\.certs`（`VAULT_HOME` は廃止。`NOTES_DIR` は未設定）。Obsidian と Claude Code は、新しい場所で動いた。`.obsidian` は dotfiles へのジャンクション。WSL へは `WSLENV` の `WORKS_DIR/p` で渡す設計で、実機の WSL での受け渡しは未確認（仮説）。dotfiles の Linux の試験は 51/51 合格。未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。旧 `C:\vault`（旧 clone とバックアップ）は、この `--resume` の試験のために、削除せずに残している（ユーザーの指示）。rename の判断・原則・遭遇したことは、下の「rename と旧名の扱い」にまとめた。
+**現在の状態（確認: 2026-10-06、根拠: ユーザーの確認、起動したセッション、dotfiles の試験）**: 環境変数は `WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` は `%USERPROFILE%\.certs`（`VAULT_HOME` は廃止。`NOTES_DIR` は未設定）。Obsidian と Claude Code は、新しい場所で動いた。`.obsidian` は dotfiles へのジャンクション。WSL へは `WSLENV` の `WORKS_DIR/p` で渡す設計だが、実機の WSL では渡っていなかった（確認: 2026-10-06、下の「置き場を `$HOME\works` へ移す」の Facts）。dotfiles の Linux の試験は 51/51 合格（再実行で再確認: 2026-10-06）。未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。旧 `C:\vault`（旧 clone とバックアップ）は、この `--resume` の試験のために、削除せずに残している（ユーザーの指示）。rename の判断・原則・遭遇したことは、下の「rename と旧名の扱い」にまとめた。
 2026-10-05 に、下の「目標の構造（2026-10-02 決定）」から変更した。経緯は、その節と、Decisions の「撤回済み」の注記に残す。
 
 ```text
@@ -117,6 +119,33 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 
 - 履歴が再開できず、ディレクトリ名だけを元に戻したら、環境変数と Obsidian のレジストリが `works` のままで食い違った。環境変数とレジストリは、ディレクトリの名前を戻しても戻らない（別の状態）。仕上げのスクリプトで、ディレクトリを `works` に rename し直して揃えた。
 - Claude Code の履歴をコピーして `--resume` が通らなかった件は [[claude-code-storage]] の Gotchas。
+
+#### 置き場を `$HOME\works` へ移す（2026-10-06）
+
+`C:\vault\works` から `%USERPROFILE%\works` へ移し、Windows・WSL・ネイティブ Linux で並び（`works/` と `works/repos/`）をそろえた。
+
+**Principles**
+
+- 作業の置き場は、固定の絶対パスではなく、ホーム基準（`%USERPROFILE%` / `$HOME`）にする。理由: 置き場を1つしか持たないなら、固定の親ディレクトリは要らず、ユーザー名を含むパスを文書やスクリプトに直書きせずに済む。
+- OS ごとに置き場の名前と並びをそろえる（`works/`、その下に `repos/`）。理由: 手順書とスクリプトの分岐が減り、どの OS でも同じ言い方で説明できる。
+- Windows のパスを WSL に渡すときは、パスを組み立てずに、環境変数を `WSLENV` の `/p` 付きで渡す（上の「rename と旧名の扱い」の Principles と同じ。理由: WSL のユーザー名は Windows と違うことがある。この PC は Windows `ck`、WSL `yy` で、実際に違った）。
+
+**Decisions**（すべて 2026-10-06）
+
+- **作業の置き場（Vault のトップ）を `C:\vault\works` から `%USERPROFILE%\works` に移し、ghq の root を `%USERPROFILE%\works\repos` にする**。根拠: 置き場は1つだけで、親の `C:\vault` が要らない（ユーザーの決定）。却下案: 未検討（承認のみ）。
+- **Linux 側も `~/works`、ghq の root を `~/works/repos` にする。WSL の ghq の root は、Windows 側を共有せず、WSL 自身の `~/works/repos` に置く**。根拠: 対称性のため（ユーザーの指示）。WSL の git を `/mnt/c` に置かないのは、`.profile` の既存の設計（遅いため）をそのまま維持した。却下案: 未検討（承認のみ）。
+- **旧 `C:\vault` は、削除せずに残す**。根拠: `claude --resume` で旧セッションを復活できるかの試験に、旧パスの実体と履歴を使うため（ユーザーの指示。過去に成功した例が無い）。却下案: 未検討（承認のみ）。
+
+**Facts**
+
+- dotfiles の Linux 側の試験（`tests/linux/test_scripts.sh`）は、変更後に 51/51 合格した（確認: 2026-10-06、根拠: WSL で試験スクリプトを実行した結果。統合時にも再実行して 51/51）。
+- `WORKS_DIR` を `WSLENV` の `WORKS_DIR/p` で WSL に渡す実装は、一時ディレクトリと偽の HOME の試験でだけ確認していた。**実機では渡っていなかった**（確認: 2026-10-06、根拠: Windows 側で `WORKS_DIR=C:\Users\ck\works`、`WSLENV=CERTS_DIR/p;WORKS_DIR/p` を確認したうえで、`wsl -e bash -c 'printenv WORKS_DIR CERTS_DIR'` が何も出さず rc=1。WSL 側の `WSLENV` は同じ値で見えている。原因は未特定。エージェントのツール経由で起動した PowerShell からの確認で、ユーザーの通常のターミナルでは未確認）。
+- 渡らないときの `~/.profile` の既定値 `/mnt/c/Users/$USER/works` は外れる（確認: 2026-10-06、根拠: Ubuntu-24.04 のログインシェルが `WORKS_DIR=/mnt/c/Users/yy/works` を返した。Windows のユーザーは `ck`）。
+- この PC の WSL（Ubuntu-24.04）は、未移行（確認: 2026-10-06、根拠: `~/works` は無く、`GHQ_ROOT=/home/yy/vault/repos`。`~/.profile` などは旧 `/mnt/c/vault/repos/…/dotfiles/home/` へのシンボリックリンク。`C:\vault` を残しているので、リンクは切れていない）。
+
+**Gotchas**
+
+- 状況: スクリプトの `ghq get` をコメントアウトしたあと、試験が `ghq` のスタブの呼び出しを期待したままで、2件失敗した。原因: スクリプトの変更時に、試験を回していなかった。解決: 試験を現状の仕様（`ghq` を呼ばない）に合わせて直した。
 
 **旧 GitHub リポジトリ（`notes`）の削除（未決）**
 
@@ -313,7 +342,8 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - 解決（2026-10-05、Windows のみ）: `50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、既にあれば skip）を足した。Linux は未対応（TODO）。
 - 旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか（2026-10-05 時点で未決）。あわせて、旧 GitHub リポジトリを削除する時期（残し続けるか）、`git bundle` の保存先（Vault のディスクの外）と世代管理、旧 clone を消すときに Claude の履歴キー4つを残すか、バックアップを定期実行する仕組みを入れるか（2026-10-06 に追加）。
 - 解決（2026-10-06）: 他の PC で新規にトップを作るときの `certs` の置き場は、`$HOME\.certs` に変えたので、「workflowを導入して」の生成に含めない（作成は dotfiles の `10_env.bat`）。
-- `WSLENV` の `名前/p` は、Windows のパスを WSL のパスに変換して渡す指定（仮説）。別の Windows アカウントや複数ディストリビューションでも同じように働くかは未確認。
+- `WSLENV` の `名前/p` は、Windows のパスを WSL のパスに変換して渡す指定（仮説）。2026-10-06 の実機では、`WSLENV=CERTS_DIR/p;WORKS_DIR/p` が WSL に見えるのに、`WORKS_DIR` も `CERTS_DIR` も渡っていなかった（上の「置き場を `$HOME\works` へ移す」の Facts）。原因の切り分け（ユーザーの通常のターミナルから渡るか、WSL の再起動で変わるか）は未実施。
+- 既存の WSL の `~/vault`（旧 `GHQ_ROOT`。`ghq` の clone を含む）の中身を、`~/works` へ移すか。WSL の dotfiles のリンク（旧 `/mnt/c/vault/repos/…` を指す）を張り直すか。`C:\vault` を消す前に決める。
 - 新しい業務用 PC で、dotfiles の `50_repos` から「workflowを導入して」までの順で、この構造を再現して確認する。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
 - 仮説（未検証）: `.claude/settings.local.json` は、Claude Code を起動したディレクトリの `.claude/` から読まれる。
@@ -330,6 +360,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - `vault-backup.bat` を作り、ジャンクションの扱いを決めて `schtasks` に登録する（取りこぼし防止設定をオン）。
 - 別フォルダへ復元し、Obsidianで開けるか確認する。
 - `10_env.bat` を再実行し、新しいターミナルと WSL の新しいセッションで、`CERTS_DIR`（`%USERPROFILE%\.certs`）と `WSLENV` が期待どおりになることを確認する。2026-10-06 時点のこの PC は未移行で、`CERTS_DIR` は旧置き場を指し、`WSLENV` は空、`~\.certs` は無い（確認: 2026-10-06、根拠: 環境変数の取得と `Test-Path`）。
+- ユーザーの通常のターミナルを開き直して、WSL で `echo $WORKS_DIR $GHQ_ROOT` を確認する。渡っていなければ、`WSLENV` の `/p` 指定の原因を調べる。WSL の dotfiles を新パスで張り直す（2026-10-06 時点）。
 - 旧 clone で `git bundle create <名前>.bundle --all` を作り、`git bundle verify` で検証して、Vault のディスクの外にも置く（2026-10-06 時点）。
 - 旧 clone の未追跡のメモを、統合先のノートと突き合わせる。統合済みなら捨てる。
 - 他の PC に旧リポジトリの clone が無いことを確認する（2026-10-06 時点のユーザーの発言では、他の PC にはまだ環境を作っていない）。
