@@ -243,7 +243,6 @@ chsh -s /usr/bin/zsh
 
 - 展開先に実ファイル（初期の `.bashrc` や `.profile` など）があると `[ERR]` で止まる。**自動退避はしない**。中身を確認して、手で退避（`mv ~/.bashrc ~/.bashrc.orig`）してから再実行する。
 - `chsh` の後は、**再ログイン**で zsh が有効になる。初回の zsh 起動時にプラグインの導入が走ることがある。
-- `21_vscode.sh` は、VS Code を入れた場合だけ使う（`manifests/vscode-extensions.wsl.txt` の拡張を入れる）。ゴールには不要。
 
 ## 9. 動作確認
 

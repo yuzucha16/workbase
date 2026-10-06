@@ -18,7 +18,7 @@ tags:
 | 項目 | 内容 |
 |---|---|
 | 対象 | Windows 11 Home / Pro 25H2（ビルド 26200 系） |
-| 手順の確認日 | 2026-10-03（OOBE 回避は Web 上の情報で確認。実機での再確認は **要確認**） |
+| 手順の確認日 | 2026-10-06（5 のリポジトリ取得から 7 の動作確認までは、実機の Windows で通した（ユーザー報告）。2026-10-03 に書いた 1〜4 の OOBE 回避は Web 上の情報で確認したもので、実機での再確認は **要確認**） |
 | ISO / 書き込み | [Microsoft 公式のダウンロード](https://www.microsoft.com/software-download/windows11) / [Rufus](https://rufus.ie) |
 | オフライン OOBE | 下の「OOBE」。方法は版で変わる |
 | 次の章 | Linux とデュアルブートする場合は `debian-family.md` |
@@ -32,7 +32,7 @@ tags:
 | 3 | OOBE（ネット無し） | 手動 | ローカルアカウントで入れた |
 | 4 | 初回設定 | 手動 | ネット接続・更新・開発者モード ON |
 | 5 | リポジトリ取得 | 手動 | `dotfiles` が所定の場所にある |
-| 6 | スクリプト実行 | スクリプト | `10` → `20` → `21` `22` → `30` が通る |
+| 6 | スクリプト実行 | スクリプト | `10` → `11` → `20` → `30` が通る |
 | 7 | 動作確認 | 手動 | エディタで `README.md` が見える |
 | 8 | 任意設定 | 手動 / 任意 | 必要なものだけ |
 
@@ -136,12 +136,10 @@ git config --file ~/.gitconfig_local user.email "<email>"
 |---|---|---|---|
 | 10 | `10_env.bat` | `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault` など）を設定し、ディレクトリを作る | **実行後は新しいターミナルを開く**（現在のセッションには反映されない） |
 | 11 | `11_git_identity.bat` | `~\.gitconfig_local` が無いときだけ、git の名前・メールを対話で聞いて作る | 既にあれば触らない。**30 の前**に実行する（git が必要。5 で入れた scoop の git でよい） |
-| 20 | `20_apps.bat [home]` | scoop と bucket を導入し、`manifests\apps.txt` のアプリを入れる。家 PC は `home` を付ける（`apps.home.txt` も入る） | 管理者権限は不要。ネット接続が必要 |
-| 21 | `21_vscode.bat` | VS Code 拡張を入れる | 20 の後 |
-| 22 | `22_python.bat` | winget で uv を入れ、Python 3.13 を導入する | |
-| 24 | `24_fonts.bat [--dry-run]` | PlemolJP NF / MoralerspaceHW を `gh` で `~\download` に取得する。インストールは手動（`fonts.md`） | `gh auth login` が必要（dry-run は不要） |
+| 20 | `20_apps.bat [home]` | scoop（5 で入れていれば skip）と bucket を導入し、`manifests\apps.txt` のアプリを入れる。家 PC は `home` を付ける（`apps.home.txt` も入る） | 管理者権限は不要。ネット接続が必要。最後に **オレンジ色**で VC++ ランタイムの `[Installed]` / `[WARN]` が出る（`[WARN]` で、実際にアプリが起動しないときだけ `scoop install extras/vcredist2022`。UAC が出る） |
+| 24 | `24_fonts.bat` | PlemolJP NF を `gh` で `~\download` に取得する。インストールは手動（`fonts.md`） | `gh` のログインは不要。出力は `tmp\24_fonts.log` にも残り、最後に `pause` で止まる。1件でも失敗したら終了コード 1 |
 | 30 | `30_link.bat [-n]` | `links.map` に従って設定ファイルのリンクを張る | 先に **`-n`（ドライラン）**で確認する。配置先に実ファイルがあると `[ERR]`。**自動退避はしない**ので、手で退避してから再実行 |
-| 31 | `31_history_seed.bat [-n]` | PSReadLine の履歴に、定型コマンドの種（`windows\powershell\history.seed.txt`）を入れる | 履歴が無い/空のときだけ。既存の履歴は上書きしない。**最初の pwsh を開く前に**実行する |
+| 31 | `31_history_seed.bat [-n]` | PSReadLine の履歴に、定型コマンドの種（`windows\powershell\history.seed.txt`）を入れる | 履歴が無い/空のときだけ。既存の履歴は上書きしない。**最初の pwsh を開く前に**実行する。出力は `tmp\31_history_seed.log` にも残り、最後に `pause` で止まる |
 
 - 管理者権限が必要なのは、任意の `.reg`（任意設定）と WSL 有効化（`40_wsl_enable.bat`、WSL を使う場合のみ）だけ。
 - `50_repos.bat` は、ghq で必要なリポジトリを取るためのもの。この手順書の範囲外。
@@ -161,7 +159,6 @@ Get-Item $HOME\.gitconfig  # リンク（LinkType: SymbolicLink）になって�
 ```powershell
 cd C:\vault\repos\github.com\yuzucha16\dotfiles
 notepad++ README.md
-code README.md
 zed README.md
 vim README.md
 ```
