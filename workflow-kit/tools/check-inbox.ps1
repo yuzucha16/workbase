@@ -56,6 +56,7 @@ function Section([string]$text, [string]$name, [string]$next) {
 function Count([string]$text, [string]$pattern) { return ([regex]::Matches($text, $pattern)).Count }
 
 $order = 'Goal', 'Principles', 'Decisions', 'Facts', 'Gotchas', 'Open Questions', 'Next Actions'
+$script:spans = @{}   # インラインコード（8文字以上）→ それを Facts / Gotchas に含むメモ。メモをまたぐ重複の候補を見つける
 
 foreach ($p in $Path) {
   $file = Get-Item -LiteralPath $p
@@ -94,9 +95,19 @@ foreach ($p in $Path) {
   $lastLine = ($goal -split "`n")[-1]
   Report ($lastLine -match '^統合先の候補: .*(knowledge/\S+?\.md|新規トピック)（キーワード: .+）') 'Goal の末尾が「統合先の候補: …（キーワード: …）」の行' 'FAIL' $lastLine
 
+  # 「なし」は、見出しの直後に1語だけの行にする。補足が付くと、項目ありとみなされ、後続の点検（3行セットなど）が意味を成さない
+  $badNone = @{}
+  foreach ($pair in @(@('Principles', 'Decisions'), @('Decisions', 'Facts'), @('Facts', 'Gotchas'), @('Gotchas', 'Open Questions'), @('Open Questions', 'Next Actions'), @('Next Actions', ''))) {
+    if ((Section $raw $pair[0] $pair[1]) -match '(?s)^なし.+') {
+      $badNone[$pair[0]] = $true
+      Report $false "$($pair[0]) の「なし」が単独の行になっている" 'FAIL' '「なし」は見出しの直後に1語だけで書く。補足は別の見出しか別のファイルに書く'
+    }
+  }
+  if ($badNone.Count -eq 0) { Report $true '「なし」と書いた見出しは、単独の行になっている' }
+
   # Decisions
   $dec = Section $raw 'Decisions' 'Facts'
-  if ($dec -ne 'なし') {
+  if (($dec -ne 'なし') -and -not $badNone['Decisions']) {
     $n = Count $dec '(?m)^- \*\*'
     Report ($n -ge 1) 'Decisions が「なし」でなければ、項目がある'
     Report ((Count $dec '(?m)^- \*\*.+\*\*（\d{4}-\d{2}-\d{2}') -eq $n) 'Decisions の全項目に日付がある'
@@ -107,16 +118,24 @@ foreach ($p in $Path) {
 
   # Facts
   $facts = Section $raw 'Facts' 'Gotchas'
-  if ($facts -ne 'なし') {
+  if (($facts -ne 'なし') -and -not $badNone['Facts']) {
     $bad = [regex]::Matches($facts, '(?m)^- .+$') | ForEach-Object Value | Where-Object { $_ -notmatch '（確認: .+、根拠: .+）|（仮説' }
     Report (-not $bad) 'Facts の全項目に「（確認: …、根拠: …）」か「（仮説）」がある' 'FAIL' (($bad | Select-Object -First 1) -replace '^(.{40}).*$', '$1…')
   }
 
   # Gotchas
   $got = Section $raw 'Gotchas' 'Open Questions'
-  if ($got -ne 'なし') {
+  if (($got -ne 'なし') -and -not $badNone['Gotchas']) {
     $s = Count $got '(?m)^- 状況:'; $c = Count $got '(?m)^  - 原因:'; $r = Count $got '(?m)^  - 解決:'
     Report (($s -ge 1) -and ($s -eq $c) -and ($s -eq $r)) 'Gotchas の全項目が「状況・原因・解決」の3行セット' 'FAIL' "状況$s、原因$c、解決$r"
+  }
+
+  # メモをまたぐ重複の候補を集める（Facts / Gotchas のインラインコード。判定は、ループの後）
+  foreach ($m in [regex]::Matches($facts + "`n" + $got, '`([^`\n]+)`')) {   # 長さで絞る前に全部取る（先に絞ると、バッククォートの対応がずれる）
+    $s = $m.Groups[1].Value
+    if ($s.Length -lt 8) { continue }
+    if (-not $script:spans.ContainsKey($s)) { $script:spans[$s] = [System.Collections.Generic.HashSet[string]]::new() }
+    [void]$script:spans[$s].Add($file.Name)
   }
 
   # 文章の規則
@@ -127,6 +146,13 @@ foreach ($p in $Path) {
   Report ($lines -le 150) 'ファイル全体が150行以内（目安）' 'WARN' "$lines 行"
   $noCode = [regex]::Replace($raw, '`[^`\n]*`', '')   # インラインコード内の <…> はコマンドの書式なので除く
   Report ((Count $noCode '<[^>\n]+>') -eq 0) '`<…>` が残っていない（インラインコード内は除く）' 'WARN' "$(Count $noCode '<[^>\n]+>') 件"
+}
+
+# メモをまたぐ重複（2件以上のメモを点検するときだけ）。同じ事実・落とし穴を、分けたメモの両方に書いていないか、手で確認する
+if ($Path.Count -ge 2) {
+  Write-Host '== メモの間'
+  $dups = @($script:spans.GetEnumerator() | Where-Object { $_.Value.Count -ge 2 } | Sort-Object Name)
+  Report ($dups.Count -eq 0) '同じインラインコードが、複数のメモの Facts / Gotchas に重複していない（候補があれば、同じ事実・落とし穴を重複して書いていないか確認する）' 'WARN' ((@($dups | Select-Object -First 5 | ForEach-Object { '`' + $_.Key + '`（' + (($_.Value | Sort-Object) -join ', ') + '）' }) -join '、') + $(if ($dups.Count -gt 5) { " ほか$($dups.Count - 5)件" } else { '' }))
 }
 
 Write-Host ''
