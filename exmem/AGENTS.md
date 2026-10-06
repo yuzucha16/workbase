@@ -4,8 +4,8 @@
 Claude / Codex / Copilot など、どのエージェントも同じルールで読み書きする。
 人間はObsidianで閲覧・編集する。
 
-- 場所: `C:\vault\works\resources\exmem`（Obsidian Vault `C:\vault\works` の `resources/` に clone した、共有リポジトリ `workbase`（GitHub: `yuzucha16/workbase`）の一部）
-- `workbase` のルートは `resources/` で、`C:\vault\works`（Vault のトップ）は別の、PC ローカルのリポジトリ。変更は `resources/` の中で `git diff` で確認できる。
+- 場所: `$HOME\works\resources\exmem`（Obsidian Vault `$HOME\works` の `resources/` に clone した、共有リポジトリ `workbase`（GitHub: `yuzucha16/workbase`）の一部）
+- `workbase` のルートは `resources/` で、`$HOME\works`（Vault のトップ）は別の、PC ローカルのリポジトリ。変更は `resources/` の中で `git diff` で確認できる。
 - エージェントはこのディレクトリを作業ディレクトリとして起動する。
 - 履歴: 2026-10-02 に `areas_shared` リポジトリから `notes` リポジトリへ移し、2026-10-05 に `notes` から `workbase` として切り出した。旧 `exmem/projects/` は、Vault の PARA の `projects/` と区別するため `contexts/` に改名した。
 
