@@ -6,7 +6,7 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 
 ## 共通ルール
 
-共通ルールの置き場は `C:\vault\notes\resources\workflow-kit`（WSL: `/mnt/c/vault/notes/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
+共通ルールの置き場は `C:\vault\works\resources\workflow-kit`（WSL: `/mnt/c/vault/works/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
 
 - `docs-rules.md`: 作業を始める前と、`docs/` を更新するときに読む。`docs/` の運用。作業の終わりに `docs/log.md` と `docs/decisions.md` を更新する。
 - `knowledge-hook.md`: ユーザーが「ナレッジ化して」と言ったときに読み、実行する（言われたときだけ）。書き込みは `exmem/inbox/` の新規ファイルだけ。
