@@ -57,7 +57,9 @@ exmem/                 # resources/exmem/
 │   ├── claude-code-storage.md
 │   ├── claude-code-vs-cowork.md
 │   ├── fonts.md                         # メインフォントの選定と導入
+│   ├── ai-work-metrics.md               # AI 活用の指標を会話履歴から測る
 │   ├── dotfiles-shell-tuning.md         # シェルの起動時間・WSL の配色とメモリ・設定の追跡方針
+│   ├── embedded-c-constraint-checks.md  # 組込み C の制約を nm と呼び出しグラフで機械検査する
 │   ├── gh-release-download.md           # gh release download は未ログインでも使える
 │   ├── git-line-endings.md              # 改行コードを .gitattributes で決める
 │   ├── git-rebase-chronology.md         # rebase の前にコミットの時系列を確認する
@@ -70,6 +72,7 @@ exmem/                 # resources/exmem/
 │   ├── obsidian-appearance.md           # ファイル一覧の色分けと、CSS で変えられない範囲
 │   ├── obsidian-vault.md
 │   ├── office-ai-workspace.md
+│   ├── para-operations.md               # PARA の運用と、AI の質問・提案の指標
 │   ├── pc-setup-manuals.md              # Win11 / Debian系の環境セットアップ手順書
 │   ├── notepad-plus-plus.md             # Notepad++（scoop版）の設定管理（config.xmlの雛形方式）
 │   ├── power-automate-office-automation.md

@@ -42,6 +42,7 @@ Claude Code（ZedのACP経由を含む）のチャット履歴とメモリがど
 - プロジェクト直下の `.claude\` にあるのは `settings.local.json` だけで、履歴は入っていない。
 - ZedのACP経由のチャットも、Zedの `threads.db` ではなくここに保存される（[[zed-dotfiles]]）。
 - Claude Desktop の Projects はクラウド（アカウント側）に保存され、`~/.claude` のローカル履歴とは独立している。
+- `.jsonl` の構造（1応答が複数行に分かれ、同じ `message.id` と `usage` が繰り返される、など）と、履歴から作業の指標を取る方法は [[ai-work-metrics]]。
 
 ## プロジェクトを移動したとき
 
@@ -116,3 +117,4 @@ Claude Codeを起動して `projects\` に別の名前のフォルダができ�
 - [[zed-acp]]
 - [[obsidian-vault]]
 - [[claude-code-project-settings]]
+- [[ai-work-metrics]]
