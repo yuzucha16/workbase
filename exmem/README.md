@@ -33,7 +33,7 @@ exmem はナレッジの置き場で、他リポジトリの作業ログは置�
 
 ## ディレクトリ構造
 
-場所は `C:\vault\works\resources\exmem`（Obsidian Vault `C:\vault\works` の `resources/` に clone した、共有リポジトリ `workbase` の一部）。`C:\vault\works`（Vault のトップ）は別の、PC ローカルのリポジトリ（[[obsidian-vault]]）。
+場所は `$HOME\works\resources\exmem`（Obsidian Vault `$HOME\works` の `resources/` に clone した、共有リポジトリ `workbase` の一部）。`$HOME\works`（Vault のトップ）は別の、PC ローカルのリポジトリ（[[obsidian-vault]]）。
 AIエージェントはこのディレクトリを作業ディレクトリとして起動する。
 
 ```text
