@@ -101,4 +101,4 @@ sources:
 
 exmem には、作業ディレクトリ（dotfiles など）の作業ログを置かない。作業ディレクトリの経緯・決定・次にやることは、各ディレクトリの `docs/` が持つ（運用は `resources/workflow-kit/docs-rules.md`）。`contexts/<名前>/context.md` は、`works` から見えない場所（モバイルや他環境での壁打ちなど）の作業を引き継ぐためのコンテキストで、作業ログの置き場ではない。`inbox/` のメモの Open Questions と Next Actions を、統合の手順で反映する。この引継ぎコンテキストを消化する手段は未定（`resources/workflow-kit/improvements.md`）。
 
-作業ディレクトリは exmem を基本は読み取り専用で参照するだけで、書き込みの例外は、ユーザーが「ナレッジ化して」と指示したときに `inbox/` へ新規メモを1つ置くことだけ（手順と形式の正本は `resources/workflow-kit/knowledge-hook.md`。`inbox/README.md` のプロンプトはその写し。`tags` は語彙外のものが入ることがあるので、統合のときに正規化する）。`inbox/` のメモは、上の「inbox を整理するとき」の手順で `knowledge/` へ統合する。
+作業ディレクトリは exmem を基本は読み取り専用で参照するだけで、書き込みの例外は、ユーザーが「ナレッジ化して」と指示したときに `inbox/` へ新規メモを1つ置くことだけ（手順と形式の正本は `resources/workflow-kit/knowledge-hook.md`。`inbox/README.md` のプロンプトはその写し。`tags` は語彙外のものが入ることがあるので、統合のときに正規化する）。`inbox/` のメモは、上の「inbox を整理するとき」の手順で `knowledge/` へ統合する。ユーザーが「inboxを整理して」と言ったときは、この手順に、統合したメモを指す作業ディレクトリの `docs/` の `転記待ち` を `転記済` に進める案の作成（承認制）を足した `resources/workflow-kit/integrate-hook.md` に従う。ソース側の「終了処理して」（`closing-hook.md`）は、未統合のメモの件数を報告して、この統合を勧める。
