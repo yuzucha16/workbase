@@ -9,9 +9,6 @@
 # Claude Code のローカル専用の許可設定（端末ごと・個人用）
 **/.claude/settings.local.json
 
-# 認証系（CA 証明書など）。誤って共有・push しない
-/areas/dev-env/certs/
-
 ### Windows
 Thumbs.db
 [Dd]esktop.ini
