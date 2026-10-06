@@ -16,6 +16,7 @@ created: 2026-10-06
 updated: 2026-10-06
 sources:
   - Claude Code conversation "dotfiles の Linux 対応と WSL での試験" (2026-10-05)
+  - "dotfiles の scripts/linux/lib.sh（2026-10-05 に確認）"
 ---
 
 # WSL でシェルスクリプトを試験する

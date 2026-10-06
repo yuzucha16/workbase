@@ -73,7 +73,7 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 - MX のインストーラーは、指定のない ESP を触らない。ESP は FAT32 で、フラグは `boot` と `esp`。
 - dotfiles の `GHQ_ROOT` の既定値は、Linux で `~/vault/repos`。
 
-実行して確認したこと（WSL Ubuntu 24.04）: `scripts/linux/` の全 `.sh` の構文チェック、`lib.sh` の関数4つ（`dots_dir` / `is_wsl` / `distro_is` / `read_list`。2026-10-05 以降は `notes_dir` / `clone_workbase` / `link_obsidian` が増えて7つ。2026-10-06 の統合時は dotfiles の実物が見つからず未再確認。試験は [[shell-script-testing-wsl]]）、`23_ja.sh` が WSL で何もせず終了、`30_link.sh -n` が `--src` なしで正しいリポジトリを指す、`apt.txt` と `apt.desktop.txt` が19パッケージの配列にまとまる。
+実行して確認したこと（WSL Ubuntu 24.04）: `scripts/linux/` の全 `.sh` の構文チェック、`lib.sh` の関数4つ（`dots_dir` / `is_wsl` / `distro_is` / `read_list`。2026-10-05 時点では8つ: `notes_dir` / `clone_workbase` / `link_obsidian` / `distro_ids` が加わった。確認: dotfiles の `lib.sh`。試験の方法は [[shell-script-testing-wsl]]）、`23_ja.sh` が WSL で何もせず終了、`30_link.sh -n` が `--src` なしで正しいリポジトリを指す、`apt.txt` と `apt.desktop.txt` が19パッケージの配列にまとまる。
 
 仮説（未確認）: MX で Secure Boot を有効のまま入れられるか。各インストーラーのメニュー名（「カスタム」「Something else」など）。Debian 13 / MX で `os-prober` が既定で無効か。Rufus で MX を書き込むとき ISO モードで起動するか（DD モードが要るか）。`fcitx5-config-qt` が MX と Ubuntu にあるか（`23_ja.sh` はあるほうを選ぶ）。MX の Package Installer の日本語化の項目名。Mint の差分全般。
 
@@ -103,4 +103,5 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 - [[fonts]]
 - [[linux-multiboot-setup]]
 - [[linux-distro-selection]]
+- [[shell-script-testing-wsl]]
 - [[obsidian-vault]]
