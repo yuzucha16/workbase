@@ -114,7 +114,7 @@ git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzuch
 ```
 
 - `winget` が使えない場合は、[Git for Windows](https://git-scm.com/download/win) を手動でインストールする。
-- Vault（`C:\vault\notes`）は clone しない。共有リポジトリ `workbase`（この手順書を含む）は、dotfiles の `50_repos.bat` が `C:\vault\notes\resources` に clone する。Vault のトップ（PARA、`AGENTS.md`）は、`workbase` の `workflow-kit` の「workflowを導入して」で作る。`.obsidian` は `30_link.bat` が張る。これらはこの手順書の範囲外（dotfiles の `README.md` を参照）。
+- Vault（`C:\vault\works`）は clone しない。共有リポジトリ `workbase`（この手順書を含む）は、dotfiles の `50_repos.bat` が `C:\vault\works\resources` に clone する。Vault のトップ（PARA、`AGENTS.md`）は、`workbase` の `workflow-kit` の「workflowを導入して」で作る。`.obsidian` は `30_link.bat` が張る。これらはこの手順書の範囲外（dotfiles の `README.md` を参照）。
 - git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。
 
 ```powershell
