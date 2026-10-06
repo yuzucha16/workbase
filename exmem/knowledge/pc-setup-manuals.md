@@ -124,6 +124,40 @@ dotfiles を、新しい PC で最初にどう取得し、git の名前・メー
 - Linux で、非公開リポジトリを `gh auth login`（HTTPS、ブラウザ）と `gh auth setup-git` で clone する手順が通る（仮説）。新しい Linux の実機では未実行。
 - 非公開から公開にしても、Windows の4行は変わらない。違いはサインイン画面が出るかどうかだけ（仮説）。
 
+## git の設定の置き場（SSL バックエンドと credential。2026-10-06）
+
+Windows の git で、SSL バックエンドを schannel に切り替えるかを PC ごとに選べるようにし、credential の設定をどのファイルに持たせるかを決めた。
+
+### Principles（git の設定）
+
+- リポジトリ管理で全 PC に配られる設定ファイルには、全 PC で同じ値だけを書く。PC ごとに選ぶ値は、リポジトリ外の PC ローカルのファイルに置く。共通ファイルに選択肢の既定値を書くと、ローカル側で「何も書かない」を選んでも共通側の値が効き、選択が意味を失う。
+- 選択肢が1つしかない値は、質問せずに固定値として共通ファイルに持たせる。PC ローカルのファイルは「既にあれば触らない」運用だと、既存の PC に新しい値が届かない。共通ファイルなら `git pull` だけで届く。
+- 「使わない」の動作は、何かを書くのではなく、何も書かないことで既定値に落とす。既定値が変わっても、スクリプトを直さずに追随できる。
+
+### Decisions（git の設定。すべて 2026-10-06）
+
+- **SSL バックエンド（schannel）は、`11_git_identity.bat` が `[y/N]` で聞き、`y` のときだけ PC ローカルの `.gitconfig_local` に `http.sslBackend = schannel` と `http.sslVerify = true` を書く。`n`・空は何も書かない**。根拠: ユーザーの依頼。schannel を使うかは PC ごとに選ぶものなので、PC ローカルに置く。何も書かなければ、暗黙に OpenSSL になる。却下案: 共通ファイル `home/.gitconfig` に直書き（`n` を選んでも schannel になり、Linux にも配られる）。
+- **`credential.helperselector.selected = manager` は、共通ファイル `home/.gitconfig` に静的に持たせ、スクリプトからは書かない**。根拠: ユーザーの判断。Windows の全 PC で `manager`（Git Credential Manager）に固定で、選択肢が無い。却下案: `y/N` で聞く（選択肢が無い）、共通ファイルとスクリプトの両方に書く（どちらが効くか分かりにくい）。
+- **設定キーは `https.sslVerify` ではなく `http.sslVerify` にする**。根拠: ユーザーの承認。`git help --config` に `https.sslVerify` は無い。却下案: 当初の指定どおり `[https] sslVerify`（効かない）。
+
+### Facts（git の設定）
+
+- `git help --config` の一覧に `http.sslBackend` と `http.sslVerify` はあるが、`https.sslVerify` は無い（確認: 2026-10-06、根拠: git 2.56.0.windows.1 で実行）。
+- `git config --file <ファイル> https.sslVerify true` は、未知のキーでもエラーにならず `[https]` セクションに書き込む（確認: 2026-10-06、根拠: 当初の指定でスクリプトの試験が通った）。
+- dotfiles に `scripts/windows/11_git_identity.bat` があり、共通の `home/.gitconfig` に `[credential "helperselector"]` の `selected = manager` がある（確認: 2026-10-06、根拠: ファイルの存在と内容）。この PC の `~/.gitconfig_local` に、SSL の設定はまだ無い。
+- scoop の git の system gitconfig は、Git Credential Manager を `credential.helper` にしている（確認: 2026-10-06、根拠: `git config --system --list --show-origin`）。
+- `http.sslVerify` の既定は true なので、`y` のときに明示しても挙動は変わらず、設定の意図を残す効果だけがある（仮説）。
+- `credential.helperselector.selected` は、Git for Windows の credential helper 選択ツールが記録する選択結果で、`manager` は Git Credential Manager を指す（仮説）。共通ファイルにあっても、Linux の git は未知のセクションとして無視するはず（仮説）。
+
+### Gotchas（git の設定）
+
+- **SSL の検証設定として `https.sslVerify true` を指定した**: git に `https.sslVerify` というキーは無く、`git config` は未知のキーも受け付けるため、エラーも警告も出ずに無効な設定が残る。`git help --config` で本物のキー（`http.sslVerify`）を確認して直した。設定キーは、書く前に `git help --config` で確認する。
+
+### Open Questions（git の設定）
+
+- 既に PC ローカルのファイルがある PC では、スクリプトが何も書かないため、schannel を使いたい場合は手で追記が要る。スクリプトで追記する仕組みにするか。
+- 実機で schannel に切り替えたときの通信（clone、証明書の検証）は未確認。schannel を使う PC で、`.gitconfig_local` に追記して `git ls-remote` が通ることを確認する（2026-10-06 時点）。
+
 ## Open Questions
 
 - MX Linux 25.3 の実機または VM で、`10 → 20 → 23 → 30` が通るか。Secure Boot、`os-prober`、インストーラーの名称が合っているか。

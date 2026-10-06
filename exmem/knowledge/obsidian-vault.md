@@ -36,7 +36,7 @@ sources:
 
 ### 現在の構造（2026-10-05）
 
-2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた。以下の図は `works` に直した。本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。
+2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた（同日のうちに、置き場を `$HOME\.certs` に変更した。下の「rename と旧名の扱い」の Decisions）。以下の図は `works` に直した。本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。
 
 **作業の完了（確認: 2026-10-06）**: 移行は完了した。環境変数は `WORKS_DIR=C:\vault\works` と `CERTS_DIR=C:\vault\works\areas\dev-env\certs`（`NOTES_DIR` は未設定）。`%APPDATA%\obsidian\obsidian.json` の Vault は `C:\vault\works`。`C:\vault\works\.obsidian` は dotfiles へのジャンクション。WSL（`/mnt/c/vault/works/resources/.git`）から読める。dotfiles の Linux テストは 36/36 合格（実 WSL の項目を含む）。旧パスは、日付つきの履歴を除いて残っていない。唯一の未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。rename の判断・原則・遭遇したことは、下の「rename と旧名の扱い」にまとめた。
 2026-10-05 に、下の「目標の構造（2026-10-02 決定）」から変更した。経緯は、その節と、Decisions の「撤回済み」の注記に残す。
@@ -84,6 +84,8 @@ C:\vault\works\        # PC ごとのローカルなリポジトリ（実ディ�
 - ナレッジに残すのは名前ではなく教訓。rename の経緯は日付つきの短い1行にとどめる。次の rename でナレッジを書き換えずに済む。
 - 認証系ファイルの置き場は、「どの経路に乗るか」（push、バックアップ、AI の検索、同期）で選ぶ。公開情報の CA 証明書は置けても、秘密鍵は経路のどれかで漏れ得るので、Vault に入れない。
 - ツールが固定パスで読む資産は、環境変数越しに参照する。置き場を変えても、直す箇所が変数の定義だけになる。
+- PC ローカルの認証系ファイル（社内 CA 証明書など）は、ワークスペースの構造に依存しない `$HOME` 直下に置く。構成が変わっても参照が壊れず、リポジトリの外なので共有の経路も `.gitignore` の除外行も要らない。
+- Windows のパスを WSL へ渡すときは、`/mnt/c/...` を直書きせず、環境変数と `WSLENV` の `/p` を使う。ユーザー名や配置の直書きを避けられ、Windows 側の1か所の定義が正本になる。Windows と WSL で同じ値を使うものは、環境変数を共通の窓口にし、未設定のときの既定値を `common.sh` 側に持たせる。
 - アプリの履歴を新パスのキーへ移すときは、旧キーを消さず、コピーで行う。再開できる保証がなく、旧キーが唯一の確実な履歴になる。
 - 作業ディレクトリの rename は、そのディレクトリを cwd にするアプリとセッションをすべて閉じた、別のシェルから行う。使用中のディレクトリは、Windows が名前変更を拒否する。
 - 共有リポジトリの固定パスを変える変更は、他の PC に波及する（未移行の PC では、共有側の `AGENTS.md` のパスが存在しなくなる）。展開の方針（この PC だけ、橋渡しのジャンクション、全 PC 同時）を、実施の前に決める。
@@ -92,7 +94,8 @@ C:\vault\works\        # PC ごとのローカルなリポジトリ（実ディ�
 
 - **トップを `notes` から `works` に rename する**。根拠: 役割が、ノートではなく、業務と個人開発のデータ構造（PARA）になっていて、名前が体を表していなかった。却下案: `notes` のまま。
 - **環境変数 `NOTES_DIR` を `WORKS_DIR` に改名する**。根拠: rename の目的と合わせる。却下案: `NOTES_DIR` のまま（名前だけが古く残る）。
-- **`certs` を `works\areas\dev-env\certs\` に移す。置くのは CA 証明書だけ**。根拠: 会社固有の CA 証明書はローカルの情報で、共有の `resources/` には置けない。継続して維持するものは `areas/` が合い、Area は責任領域の名前にするので `areas/dev-env/` の下にした。却下案: `areas/certs/`（環境の設定が増えると名前が合わなくなる）、`areas/` に SSH の秘密鍵まで集約、`C:\vault\certs` のまま。
+- **`certs` を `works\areas\dev-env\certs\` に移す。置くのは CA 証明書だけ**（同日のうちに、下の「置き場を `$HOME\.certs` に変える」で置き換えた。以下は履歴）。根拠: 会社固有の CA 証明書はローカルの情報で、共有の `resources/` には置けない。継続して維持するものは `areas/` が合い、Area は責任領域の名前にするので `areas/dev-env/` の下にした。却下案: `areas/certs/`（環境の設定が増えると名前が合わなくなる）、`areas/` に SSH の秘密鍵まで集約、`C:\vault\certs` のまま。
+- **社内 CA 証明書の置き場を `$HOME\.certs`（Windows は `%USERPROFILE%\.certs`）に変える。WSL へは `WSLENV` の `CERTS_DIR/p` で渡し、WSL 側は `${CERTS_DIR:-$HOME/.certs}` を読む。環境変数 `CERTS_DIR` は残し、ディレクトリは `SSH_DIR` と同じ扱いで環境構築のスクリプト（`10_env.bat`）が作る**（2026-10-06。上の `areas/dev-env/certs` を置き換えた）。根拠: ユーザーの指示。ワークスペースの構造に依存させない。リポジトリの外なので、誤って共有する経路も、`.gitignore` の除外行も要らない。以前の置き場は、`/mnt/c` の直読みで WSL との二重管理を避けるためだけの選択だった（ユーザーの発言）。今後も WSL へは環境変数で寄せていく方針（ユーザーの発言）。却下案: 現状維持、WSL にも `~/.certs` を置く（2か所管理）、`wslpath` で求める（シェルの起動が遅くなる）、環境変数をやめて固定パスにする（参照側の変更が要る）。ワークスペースの `.gitignore` の雛形からは `/areas/dev-env/certs/` を除いた（kit 版 `2026-10-06.15`）。
 - **展開はこの PC だけ。他の PC は導入前なので、新規扱いで始める**。却下案: 橋渡しのジャンクション（`works` → `notes`）、全 PC の同時移行（どちらも、移行済みの PC が無いので不要）。
 - **旧名の扱いは時制で分ける**（上の Principles）。ユーザーは「rename 自体は重要でないので全削除でもよい」と考えていたが、整合が取れなくなる懸念も挙げ、現在形だけ直す折衷を選んだ。
 
@@ -306,7 +309,8 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - 解決（2026-10-05）: `links.map` から `..\notes|%NOTES_DIR%` を外した。`30_link.bat link -n`（ドライラン）で、`windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` が解決されることを確認し、同じ内容の `mklink /J` で `.obsidian` のジャンクションを張った（通しの実行は未確認）。
 - 解決（2026-10-05、Windows のみ）: `50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、既にあれば skip）を足した。Linux は未対応（TODO）。
 - 旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか（2026-10-05 時点で未決）。あわせて、旧 GitHub リポジトリを削除する時期（残し続けるか）、`git bundle` の保存先（Vault のディスクの外）と世代管理、旧 clone を消すときに Claude の履歴キー4つを残すか、バックアップを定期実行する仕組みを入れるか（2026-10-06 に追加）。
-- 他の PC で新規にトップを作るとき、`certs` の置き場（`areas/dev-env/certs`）を、「workflowを導入して」の生成に含めるか（雛形の `.gitignore` への追記は済み。2026-10-06）。
+- 解決（2026-10-06）: 他の PC で新規にトップを作るときの `certs` の置き場は、`$HOME\.certs` に変えたので、「workflowを導入して」の生成に含めない（作成は dotfiles の `10_env.bat`）。
+- `WSLENV` の `名前/p` は、Windows のパスを WSL のパスに変換して渡す指定（仮説）。別の Windows アカウントや複数ディストリビューションでも同じように働くかは未確認。
 - 新しい業務用 PC で、dotfiles の `50_repos` から「workflowを導入して」までの順で、この構造を再現して確認する。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
 - 仮説（未検証）: `.claude/settings.local.json` は、Claude Code を起動したディレクトリの `.claude/` から読まれる。
@@ -322,6 +326,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 - `vault-backup.bat` を作り、ジャンクションの扱いを決めて `schtasks` に登録する（取りこぼし防止設定をオン）。
 - 別フォルダへ復元し、Obsidianで開けるか確認する。
+- `10_env.bat` を再実行し、新しいターミナルと WSL の新しいセッションで、`CERTS_DIR`（`%USERPROFILE%\.certs`）と `WSLENV` が期待どおりになることを確認する。2026-10-06 時点のこの PC は未移行で、`CERTS_DIR` は旧置き場を指し、`WSLENV` は空、`~\.certs` は無い（確認: 2026-10-06、根拠: 環境変数の取得と `Test-Path`）。
 - 旧 clone で `git bundle create <名前>.bundle --all` を作り、`git bundle verify` で検証して、Vault のディスクの外にも置く（2026-10-06 時点）。
 - 旧 clone の未追跡のメモを、統合先のノートと突き合わせる。統合済みなら捨てる。
 - 他の PC に旧リポジトリの clone が無いことを確認する（2026-10-06 時点のユーザーの発言では、他の PC にはまだ環境を作っていない）。
