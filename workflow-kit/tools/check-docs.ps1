@@ -13,6 +13,7 @@
 .EXAMPLE
   pwsh -NoProfile -File <kit>/tools/check-docs.ps1                       # カレントディレクトリの docs/decisions.md を点検する
   pwsh -NoProfile -File <kit>/tools/check-docs.ps1 -Path <作業ディレクトリ>/docs/decisions.md -MaxPending 10
+  pwsh -NoProfile -File <kit>/tools/check-docs.ps1 <作業ディレクトリ>/docs/decisions.md           # パスは位置引数でも渡せる
 
 .NOTES
   項目 = Principles / Facts / Gotchas の最上位の箇条書き（行頭が `- `。中身が空の `-` は数えない）と、Decisions の `###` 節。
@@ -21,9 +22,9 @@
     転記済は `（YYYY-MM-DD → <先>）`、local・滞留・破棄は `（<理由>）` が要る。
   終了コード = FAIL の数。WARN は数えない。PowerShell 7 以降（UTF-8 のファイルを読むため）。
 #>
-[CmdletBinding(PositionalBinding = $false)]
+[CmdletBinding()]
 param(
-  [string]$Path = (Join-Path (Get-Location) 'docs/decisions.md'),
+  [Parameter(Position = 0)][string]$Path = (Join-Path (Get-Location) 'docs/decisions.md'),
   [int]$MaxPending = 20
 )
 
