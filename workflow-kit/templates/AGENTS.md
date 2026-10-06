@@ -4,7 +4,7 @@
 
 ## 共通ルール
 
-共通ルールの置き場は `C:\vault\works\resources\workflow-kit`（WSL: `/mnt/c/vault/works/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
+共通ルールの置き場は `$HOME\works\resources\workflow-kit`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
 
 - `docs-rules.md`: 作業を始める前と、`docs/` を更新するときに読む。`docs/` の運用。作業の終わりに `docs/log.md` と `docs/decisions.md` を更新する。
 - `closing-hook.md`: ユーザーが「終了処理して」と言ったときに読み、実行する（言われたときだけ）。作業の終わりの `docs/` 更新・棚卸し・ナレッジ化・コミットを、順に行う。
