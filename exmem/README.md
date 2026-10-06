@@ -57,6 +57,7 @@ exmem/                 # resources/exmem/
 │   ├── claude-code-storage.md
 │   ├── claude-code-vs-cowork.md
 │   ├── fonts.md                         # メインフォントの選定と導入
+│   ├── dotfiles-shell-tuning.md         # シェルの起動時間・WSL の配色とメモリ・設定の追跡方針
 │   ├── gh-release-download.md           # gh release download は未ログインでも使える
 │   ├── git-line-endings.md              # 改行コードを .gitattributes で決める
 │   ├── git-rebase-chronology.md         # rebase の前にコミットの時系列を確認する
@@ -78,6 +79,7 @@ exmem/                 # resources/exmem/
 │   ├── shell-script-testing-wsl.md      # WSL・Windowsバッチのスクリプトを試験する（偽のHOME・環境判定の差し替え・dry-run）
 │   ├── terminal-cursor-blink.md         # カーソル点滅を止める（DECSCUSR）
 │   ├── vscode-workspace.md
+│   ├── windows-cli-pitfalls.md          # Windows の PowerShell・バッチ・git 操作の落とし穴
 │   ├── workflow-kit.md                  # 作業ログとナレッジ化フックの共通機能の設計
 │   ├── wsl-file-placement.md
 │   ├── zed-acp.md
