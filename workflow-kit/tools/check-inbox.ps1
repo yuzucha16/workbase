@@ -113,7 +113,9 @@ foreach ($p in $Path) {
     Report ((Count $dec '(?m)^- \*\*.+\*\*（\d{4}-\d{2}-\d{2}') -eq $n) 'Decisions の全項目に日付がある'
     Report ((Count $dec '(?m)^  - 根拠:') -eq $n) 'Decisions の全項目に根拠がある' 'FAIL' "項目$n、根拠$(Count $dec '(?m)^  - 根拠:')"
     Report ((Count $dec '(?m)^  - 却下案:') -eq $n) 'Decisions の全項目に却下案がある' 'FAIL' "項目$n、却下案$(Count $dec '(?m)^  - 却下案:')"
-    Report ($dec -notmatch 'AI の提案') 'Decisions に「AI の提案」が混ざっていない（提案は Open Questions へ）' 'WARN'
+    # 「AI の提案」と「未承認」が同じ行にある、または「- 提案:」で始まる行を、未承認の提案の混入とみなす。
+    # 語だけで見ると、「AI の提案への承認」のような説明まで拾う（2026-10-06 の誤検知）。
+    Report ($dec -notmatch '(?m)(AI の提案[^\r\n]*未承認|^\s*- 提案[:：])') 'Decisions に未承認の「AI の提案」が混ざっていない（提案は Open Questions へ）' 'WARN'
   }
 
   # Facts
