@@ -12,7 +12,7 @@ aliases:
   - WSLのファイル配置
   - Windows側とWSL側の置き場所
 created: 2026-10-02
-updated: 2026-10-02
+updated: 2026-10-05
 sources:
   - ChatGPT conversation "ZedとWSLのファイル配置方針" (2026-10-02)
   - "%APPDATA%\\Zed\\settings.json、C:\\vault の構成（2026-10-02 に確認）"
@@ -65,7 +65,7 @@ ZedからWSLを使う開発環境で、プロジェクトや各種ファイル�
 ## Open Questions
 
 - ZedのWSL連携方式は何か。Zedのファイル操作、Language Server、Git統合、ターミナルが、それぞれWindows / WSLのどちらで動くか。
-- 現在Windows側にあるリポジトリ（`C:\vault\repos`）を、この方針でWSL側へ移すのか。それとも「Windowsで編集するリポジトリ」と「WSL側の開発用リポジトリ」を分けるのか。vaultとdotfilesは、Windows側から使う前提（ジャンクション・シンボリックリンク）なので、移すと崩れる（[[obsidian-vault]]）。
+- 現在Windows側にあるリポジトリ（`C:\vault\repos`）を、この方針でWSL側へ移すのか。それとも「Windowsで編集するリポジトリ」と「WSL側の開発用リポジトリ」を分けるのか。vaultとdotfilesは、Windows側から使う前提（ジャンクション・シンボリックリンク）なので、移すと崩れる（[[obsidian-vault]]）。（2026-10-05 の修正: vault のトップは実ディレクトリになり、ジャンクションは `.obsidian` だけになったので、vault については記述が古い。dotfiles の `links.map` は Windows のリンクを使う前提のまま。）
 - Windows側のアプリと頻繁に編集・同期するプロジェクトはあるか。
 - WSLのディストロ名、ユーザー名、標準のプロジェクトディレクトリ。
 
