@@ -341,6 +341,10 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 - **`.gitignore` の途中に `/` を含むパターンはルート基準になる**: `_local/*` は深い階層の `_local/` に効かない。`**/_local/*` と `!**/_local/.gitkeep` にして `check-ignore` で確認した。
 - **ファイルを書き込めなかった（一時的）**: PowerShell の `Set-Content` が「別のプロセスが使用中」で失敗した（原因は不明。Obsidian か Sync が掴んでいた可能性、未確認）。Edit ツールでの置換は成功した。
 
+### 2026-10-06 の Project の移動（`projects/` → `archives/`）で遭遇したもの
+
+- **ディレクトリごとの `git mv` が、再び `Permission denied` で失敗した**: 原因は未特定（上の 2026-10-03 と同種の可能性）。ファイル単位で `git mv` するとリネームとして履歴が保たれた。詳しくは [[windows-cli-pitfalls]]、PARA の運用は [[para-operations]]。
+
 ### 2026-10-05 の構造変更（共有とローカルの分離）で遭遇したもの
 
 - **新しいトップを雛形から作ったとき、旧ルートにあった `.gitattributes`（改行コードを LF に統一）が引き継がれなかった**: 旧ルートの全ファイルを棚卸ししなかった（切り替えの後の点検で発見）。トップに `.gitattributes` を置き、雛形にも足した（確認: 2026-10-05、根拠: `C:\vault\notes\.gitattributes` が `* text=auto eol=lf`）。
