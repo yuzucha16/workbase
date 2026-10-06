@@ -28,6 +28,9 @@ Windows で PowerShell・バッチ・git を使う作業で、繰り返しハマ
 - PowerShell から `wsl` や別のシェルへ渡す複雑なコマンドは、スクリプトを LF のファイルに書き出して実行させる。引数の `$(...)` や here-string のパイプが、渡る前に PowerShell 側で処理されて壊れる。
 - 改行コードを保つ編集は、`Set-Content` ではなく、`[IO.File]::ReadAllText` / `WriteAllText` で該当部分だけ置換する。`Set-Content` で書き直すと改行コードが変わり、全行が差分になる。
 - 構造変更（ディレクトリの移動）では、git が読む設定ファイルのリンク元を最初に動かさない。リンク先が消えると、git 全体が設定を読めず壊れる。
+- 非対話で走るスクリプトの表は、端末幅に依存する整形（`Format-Table`）に頼らず、自前で組み立てた Markdown や CSV で出す。非対話の実行では、幅の判定で列が落ちる。
+- 実行権限が要るスクリプトは、Windows 上の git では、`git update-index --chmod=+x` で、実行ビットを明示して記録する。
+- Make のレシピの中のシェル変数は `$$` で書き、変数名の直後に文字が続くときは `$${var}` のように波括弧で囲む。
 
 ## Facts
 
@@ -35,8 +38,17 @@ Windows で PowerShell・バッチ・git を使う作業で、繰り返しハマ
 - Windows バッチの `if exist` は、リンク切れの symlink に対しても真を返す。`dir /AL` はジャンクション先の中身を見るので、リンクの判定に使えない。`for %%F in ("path") do set "ATTR=%%~aF"` の属性文字列（1文字目 `d`、9文字目 `l`）で判定する（確認: 2026-10-06、根拠: 転記元の記録。再現は未実施）。
 - `git help --config` に出ないキーも、`git config` は受け付けて書き込む。エラーも警告も出ない（確認: 2026-10-06、根拠: git 2.56.0.windows.1 の試験。[[pc-setup-manuals]] の「git の設定の置き場」）。
 
+- `git update-index --chmod=+x <パス>` で、インデックスのモードが `100644` から `100755` に変わる。コミットの差分は、内容の変更なしのモード変更として出る（確認: 2026-10-06、根拠: `git ls-files -s` の前後）。
+- PowerShell の `Format-Table -AutoSize | Out-String -Width 200` は、非対話の実行（エージェントのツール経由）で、12列の表の最後の2列を落とした。`-AutoSize` を外しても同じだった。自前の Markdown の表では、全列が出た（確認: 2026-10-06、根拠: 同じ集計の出力を比べた）。
+- WSL の `sudo` は、パスワードが要る環境では、エージェントから実行できない（`sudo -n true` が `a password is required` で失敗する）。`wsl -u root` で回避せず、パッケージを manifest に追記して、実機への導入はユーザーが行う（確認: 2026-10-06、根拠: `sudo -n true` の出力）。
+
 ## Gotchas
 
+- **`[ValidateSet(...)][string]$Kind` を持つスクリプトで、`foreach ($kind in ...)` を書いたら、新しい値がパラメータの検証で拒否された**: PowerShell の変数名は大文字小文字を区別しないので、ループ変数 `$kind` が引数 `$Kind` と同じ変数になり、代入のたびに `ValidateSet` が検証された。ループ変数の名前を変える（`$kindName`）。同じ原因の例が [[workflow-kit]] の Gotchas（`$l` と `$L`）にある。
+- **PowerShell の `Export-Csv` で書いた CSV を、LF 統一のリポジトリでコミットしようとした**: Windows では CRLF で書かれ、`git add` が置換の警告を出す。書いた後に、全体を読み直して `` `r`n `` を `` `n `` に置換して書き戻す（BOM なしの UTF-8）。
+- **Windows 上の git で、WSL で `chmod +x` したスクリプトの実行ビットがコミットに入らなかった**: Windows 上の git が NTFS のファイルを `100644` で記録した（WSL の `chmod` は git に反映されない）。`git update-index --chmod=+x <パス>` で記録して、別のコミットにする。別の PC の Linux で clone したときに実行できなくなるのを防ぐ。
+- **`git mv` でディレクトリごと移したら `Permission denied` で失敗した**: 使用中のディレクトリの rename を Windows が拒否する（原因は未特定の場合もある）。`git ls-files` を回して、ファイル単位で `git mv` すると、リネームとして履歴が保たれる。未追跡のファイル（ビルド成果物など）は旧ディレクトリに残るので、別に処理する。
+- **Make のレシピで `for cpu in ...; do o=build/arm_$$cpu_$$(basename $$f .c).o; ...` と書いたら、出力ファイル名の `cpu` の部分が空になった**: レシピ内のシェル変数は `$$` で書き、変数名の直後に文字（`_` など）が続くときは `$${cpu}_` と波括弧で囲む。`$$cpu_` は変数 `cpu_` として読まれ、空になる。
 - **PowerShell から `wsl -d <ディストリビューション> -- bash -c "…$(…)…"` を実行した**: `$(...)` が PowerShell 側で先に展開された。`git commit -F -` への here-string のパイプも渡らない。スクリプトを LF で書き出して `bash` に渡し、コミットメッセージは一時ファイル経由にする。
 - **`rm`、`del /F`、`cmd /c` を含む PowerShell コマンドが、実行環境の安全装置にブロックされた**: 安全装置の誤検知（コマンド文字列中の語に反応した）。スクリプトをファイルに書いてから実行する。削除は `unlink` を使う。
 - **PowerShell の単一引用符の文字列に `` `r`n `` を書いた**: 単一引用符の文字列では、エスケープが展開されない。二重引用符の文字列を使う。
@@ -50,3 +62,5 @@ Windows で PowerShell・バッチ・git を使う作業で、繰り返しハマ
 - [[shell-script-testing-wsl]]
 - [[pc-setup-manuals]]
 - [[git-line-endings]]
+- [[embedded-c-constraint-checks]]
+- [[workflow-kit]]

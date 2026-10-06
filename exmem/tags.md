@@ -84,3 +84,8 @@ updated: 2026-10-06
 | `traceability` | 誰が・どの規則で行ったかを後から追えること |
 | `repository-design` | リポジトリの分け方・境界・切り出し |
 | `theming` | アプリの見た目（配色・CSS）の調整 |
+| `embedded` | 組込み開発（ベアメタル、Cortex-M など） |
+| `c-language` | C 言語の実装・規約 |
+| `static-analysis` | ビルド成果物やソースを機械で検査すること（`nm`、呼び出しグラフ、サニタイザなど） |
+| `metrics` | 作業や AI 活用の指標・測定 |
+| `para` | PARA（Projects / Areas / Resources / Archives）の運用 |
