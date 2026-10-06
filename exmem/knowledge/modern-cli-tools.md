@@ -79,7 +79,7 @@ AI の検索ツール（Claude Code の Grep / Glob）と `rg` が、リンク�
 ### Facts（検索）
 
 - ジャンクション越しのディレクトリは、Claude Code の Grep と Glob、`rg`（既定）、PowerShell の `Get-ChildItem -Recurse` が辿らない。`rg --follow` は辿る。ジャンクション自体をパスに指定した Grep は検索できる（結果は実体のパス）（確認: 2026-10-05、根拠: 使い捨ての一時ディレクトリに、通常のディレクトリとジャンクションを並べて実測。Windows 11、pwsh 7）。
-- トップの `.gitignore` が `/resources/`（別リポジトリの clone）を除外すると、トップからの Grep で `resources/` の中が出なかった（同じ語の検索が3件）。トップの `.ignore` に `!/resources/` を置くと、`resources/` 配下を含む8件以上になった（確認: 2026-10-05、根拠: Grep の結果の件数を、置く前後で比較）。`C:\vault\notes\.ignore` に `!/resources/` が現在も置かれている（確認: 2026-10-05、根拠: ファイルの読み取り）。
+- トップの `.gitignore` が `/resources/`（別リポジトリの clone）を除外すると、トップからの Grep で `resources/` の中が出なかった（同じ語の検索が3件）。トップの `.ignore` に `!/resources/` を置くと、`resources/` 配下を含む8件以上になった（確認: 2026-10-05、根拠: Grep の結果の件数を、置く前後で比較）。トップの `.ignore`（現在は `C:\vault\works\.ignore`）に `!/resources/` が置かれている（確認: 2026-10-06、根拠: ファイルの読み取り）。
 - Glob は、`.ignore` を置いた後に、`resources/workflow-kit/*.md` で期待どおりの結果だった。置く前の挙動は未確認（仮説: Glob も `.gitignore` の影響を受ける）。
 
 ### Gotchas（検索）
