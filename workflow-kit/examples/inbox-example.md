@@ -13,7 +13,7 @@ tags:
   - line-endings
   - setup
 created: 2026-01-15
-kit: 2026-10-06.20
+kit: 2026-10-06.21
 sources:
   - Claude Code conversation "改行コードの統一"
 ---
