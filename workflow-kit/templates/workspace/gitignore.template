@@ -3,6 +3,9 @@
 # 共有ナレッジは別リポジトリ（workbase）の clone。このリポジトリでは追跡しない
 /resources/
 
+# ghq の root（clone したリポジトリ。それぞれが別の git リポジトリ）
+/repos/
+
 # Obsidian の設定は dotfiles からのジャンクション（実体は dotfiles が持つ）
 /.obsidian
 
