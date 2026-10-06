@@ -49,7 +49,7 @@ ZedからWSLを使う開発環境で、プロジェクトや各種ファイル�
 
 - Zedのターミナルは `pwsh.exe`（`settings.json`）。2026-09-26 時点では `wsl.exe` だった（[[zed-vim]]）。現在、ZedのターミナルはWSLではない。
 - リポジトリはWindows側にある: `C:\vault\repos\github.com\yuzucha16\`（`areas_shared`、`dotfiles`）。「開発用ファイルはWSL側」という暫定方針とは逆の配置。
-- Zedのプロジェクトは、Windowsのパス（`C:\vault\notes\areas_shared\exmem` など）で開いている（[[claude-code-storage]]）。ZedのWSLプロジェクト連携（ファイルシステム・Language Server・ツール実行をWSL側に寄せる方式）を使っているかは、今回も確認できていない。
+- Zedのプロジェクトは、Windowsのパス（記述時点の例: `C:\vault\notes\areas_shared\exmem`。現在の Vault のトップは `C:\vault\works`）で開いている（[[claude-code-storage]]）。ZedのWSLプロジェクト連携（ファイルシステム・Language Server・ツール実行をWSL側に寄せる方式）を使っているかは、今回も確認できていない。
 - WSLにはZsh、`rg`、`fzf`、`zoxide` などが入っているが、`nvim` と `ghq` は入っていない（[[modern-cli-tools]]）。
 
 ## Gotchas
