@@ -11,10 +11,11 @@ aliases:
   - Claude Codeの履歴の保存場所
   - Claudeチャット履歴の移行
 created: 2026-10-01
-updated: 2026-10-04
+updated: 2026-10-06
 sources:
   - Claude (Claude Code via Zed ACP) conversation "Claudeチャット履歴の保存場所" (2026-10-01)
   - "C:\\Users\\ck\\.claude\\projects（2026-10-01 に確認）"
+  - Claude Code conversation "Vault のトップの rename と certs の移動" (2026-10-06。履歴コピーと `--resume` の結果)
 ---
 
 # Claude Codeのチャット履歴とメモリの保存場所
@@ -46,9 +47,15 @@ Claude Code（ZedのACP経由を含む）のチャット履歴とメモリがど
 
 履歴とメモリはプロジェクトの絶対パスごとに分かれるため、プロジェクトを移動すると前のチャットやメモリが見えなくなる。
 
-引き継ぐには、`projects\<旧プロジェクト名>\` の `.jsonl` と `memory\` を `projects\<新プロジェクト名>\` にコピーする。
+引き継ぐ方法の候補は、`projects\<旧プロジェクト名>\` の `.jsonl` と `memory\` を `projects\<新プロジェクト名>\` にコピーすること。ただし、**コピーした履歴は `claude --resume <ID>` で再開できなかった**（確認: 2026-10-06、根拠: Vault のトップを `C:\vault\notes` から `C:\vault\works` へ移したときのユーザーの発言。エラーの内容は未取得）。再開の条件は未特定。移動後は、新規のセッションを始める運用を基本にする。
+- 旧キーは消さず、コピーで行う。旧キーが唯一の確実な履歴になる。
+- コピーした `.jsonl` には、旧パスの `"cwd"`（`C:\\vault\\notes\\...` と `/c/vault/notes/...` の2形式）が入っている。`"cwd"` を新パスに書き換えて再コピーしても、再開できなかった。「`cwd` の不一致が原因」は、`cwd` だけでは足りないことが分かった。
+- `cwd` を書き換えた後も、旧パスが約 1180 件残っていた。内訳は、user メッセージ 941（ほぼツールの出力）、assistant 188、`attachment` 14（`edited_text_file` 8、`instructions` 4、`environment` 2）、`last-prompt` 7。構造的な情報にあたるのは `attachment` の `environment` と `instructions` の約6件で、残りは会話の中身。再開の可否にどれが関わるかは未検証。
+- 履歴全体の置換はしない。会話の内容が「`works` を `works` に」のように壊れ、記録として不適切になる。試すなら、コピーした一時キーで、構造的な部分だけを書き換える。
+- 旧パスが本文に残ったまま再開できた場合の実害は、モデルが旧パスを現在のパスと取り違えて、旧ディレクトリを作り直すこと（仮説）。
+- 旧パスのディレクトリを残して（または作り直して）、そこを cwd にすれば旧キーの履歴は再開できる（仮説。未試験）。旧 clone のディレクトリを削除すると、その cwd での再開ができなくなる。
 
-2026-10-01 に、作業拠点を `C:\Users\ck\vault\notes` から `C:\vault\notes\areas_shared\exmem` へ移すときにこの方法を使った（`C--Users-ck-vault-notes` → `C--vault-notes-areas-shared-exmem`）。コピーした履歴が新しい場所で表示されるかは未確認（仮説）。
+2026-10-01 に、作業拠点を `C:\Users\ck\vault\notes` から `C:\vault\notes\areas_shared\exmem` へ移すときにこの方法を使った（`C--Users-ck-vault-notes` → `C--vault-notes-areas-shared-exmem`）。コピーした履歴が新しい場所で表示されるかは、未確認のまま（上の 2026-10-06 の結果から、再開は通らない可能性が高い。仮説）。
 
 Claude Codeを起動して `projects\` に別の名前のフォルダができた場合は、プロジェクト名の仮説が外れている。そのフォルダへ `.jsonl` と `memory\` をコピーし直す。
 
@@ -82,6 +89,12 @@ Claude Codeを起動して `projects\` に別の名前のフォルダができ�
 - 原因: `/resume` はターミナル版Claude Codeのコマンドで、ZedのACP経由では使えない。
 - 解決: 過去のチャットを再開するときは、ターミナルで作業フォルダに移動してから `claude --resume` を実行する。
 
+### コピーした履歴が、新しいパスで `claude --resume` できない
+
+- 状況: Vault のトップを `C:\vault\notes` から `C:\vault\works` に rename したとき、履歴を新キー（`C--vault-works-*`）へコピーして `claude --resume <ID>` したが、再開できなかった。`"cwd"` を書き換えて再コピーしても同じだった（2026-10-06）。
+- 原因: 不明。`cwd` の不一致だけではない。`cwd` 以外のフィールドの旧パス（上の「プロジェクトを移動したとき」）、キーの付け方、セッションの索引が候補（未調査）。
+- 解決: なし。新しいパスでは、新規のセッションを始める。旧キーの履歴は残してある。
+
 ### Claude Desktop の Projects に履歴が出ない
 
 - 原因: 不具合ではない。Desktop の Projects はクラウド、Claude Code の履歴はローカルで、保存先が別。
@@ -90,9 +103,11 @@ Claude Codeを起動して `projects\` に別の名前のフォルダができ�
 
 - `~/.claude` の手書き設定のうち、`settings.json` は管理済み（dotfilesの `home/.claude/settings.json` へリンク。WSL・Windowsとも適用済み、2026-10-04 に確認。[[claude-code-permissions]]）。`CLAUDE.md` と `projects\<プロジェクト名>\memory\` をdotfilesで管理するかは未決。
 - Claude Desktop の Code 機能から、ローカルの履歴が見えるか。
+- `claude --resume` が通らない原因は何か（`cwd` の書き換えだけでは通らなかった）。
 
 ## Next Actions
 
+- `--resume` が通らない原因を調べる（任意）。調べないなら、移動後は新規のセッションを始める運用にする。調べるなら、失敗時のエラー文面を取り、コピーした一時キーで、構造的な旧パス（`attachment` の約6件）だけを書き換えて試す（2026-10-06 時点）。
 - ターミナルで `C:\vault\notes\areas_shared\exmem` に移動して `claude --resume` を実行し、コピーした履歴が表示されるか確認する。あわせて、`projects\` のどちらのフォルダに書き込まれるかを確認し、使われなかった方を削除する。
 
 ## Related
