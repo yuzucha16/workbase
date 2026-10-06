@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-06.7`
+版: `2026-10-06.8`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -19,8 +19,8 @@
 
 ## 場所
 
-- Windows: `C:\vault\notes\resources\workflow-kit`
-- WSL: `/mnt/c/vault/notes/resources/workflow-kit`
+- Windows: `C:\vault\works\resources\workflow-kit`
+- WSL: `/mnt/c/vault/works/resources/workflow-kit`
 
 ## 使い方
 
@@ -30,7 +30,7 @@
 
 ### ワークスペース（Vault のトップ）を作る
 
-新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。`workbase` の中で、対象を指定せずに言うと、項目 5 とみなして、既定値（対象 `C:\vault\notes`、業務用、remote なし、初回コミットする）で作る。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
+新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。`workbase` の中で、対象を指定せずに言うと、項目 5 とみなして、既定値（対象 `C:\vault\works`、業務用、remote なし、初回コミットする）で作る。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
 
 呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（`workbase` の中と、ワークスペースの中）と、ユーザーがパスを指示したとき。他の場所からの入口は、Claude 用スキル（TODO）。
 
@@ -57,6 +57,7 @@
 
 ## 変更履歴
 
+- 2026-10-06（版 `2026-10-06.8`）: Vault のトップの名前を `notes` から `works` に改めた（ユーザーの指示。名前が、業務・個人開発のデータ構造という役割を表していなかった）。固定パスを `C:\vault\works`（WSL: `/mnt/c/vault/works`、ネイティブ Linux: `~/vault/works`）に直した。項目 5 の既定の対象と、`AGENTS.md` の雛形の共通ルールのパスが変わるので、既存の各 `AGENTS.md` の固定パスも直す必要がある（dotfiles と `works` は同時に直した）。環境変数は `NOTES_DIR` から `WORKS_DIR` に改めた（dotfiles）。履歴の記述（過去の版の項目）の `notes` は、当時の名前のまま残す。モバイル用プロンプトの `kit:` と見本を合わせた。
 - 2026-10-06（版 `2026-10-06.7`）: 「ナレッジ化して」の改善1点を反映した（ユーザーの承認）。仮説の表記は `（仮説）` の形のとおりに書く（点検スクリプトが完全一致で見るため、`（仮説: …）` や `（仮説。…）` は FAIL になる。補足は括弧の外の別の文に書く）と、手順の「文章の規則」に明記した。モバイル用プロンプトに同じ趣旨を足し、`kit:` と見本の `kit:` を合わせた。点検スクリプトは変更なし。
 - 2026-10-06（版 `2026-10-06.6`）: 「ナレッジ化して」の改善1点を反映した（ユーザーの承認）。ファイル名の `<topic>` の語数をハイフン区切りで数えること（`dry-run` は2語）と、`sources` の `"<テーマ>"` の後ろに日付などを足さないことを、手順の「ファイル名・title・tags」に明記した（実行で、6語のファイル名と日付付きの `sources` が点検スクリプトで FAIL したため）。モバイル用プロンプトに同じ趣旨を足し、`kit:` と見本の `kit:` を合わせた。点検スクリプトは変更なし。
 - 2026-10-06（版 `2026-10-06.5`）: 「inbox のメモはコミットしない」の範囲を明確にした（ユーザーの指示）。対象は、「ナレッジ化して」のフックが作ったメモのファイルだけで、同じリポジトリのほかの変更（kit、`knowledge/`、`tags.md` など）はコミットしてよい。報告では範囲をメモに限定して書き、コミットを人に頼まない（人が行うのは push だけ）。`docs-rules.md` の「コミットしないもの」と、`knowledge-hook.md` の場所の制約・報告の型に反映した。手順の変更は無いので、モバイル用プロンプトは `kit:` だけ合わせた。

@@ -6,7 +6,7 @@
 
 ## 場所と書き込みの制約
 
-- exmem: `C:\vault\notes\resources\exmem`（WSL: `/mnt/c/vault/notes/resources/exmem`）
+- exmem: `C:\vault\works\resources\exmem`（WSL: `/mnt/c/vault/works/resources/exmem`）
 - 書き込みは `exmem/inbox/` の**新規ファイルだけ**（話題ごとに1ファイル）。`knowledge/` `contexts/` など inbox 以外は編集しない。
 - inbox のメモを `knowledge/` へ統合するのは exmem 側の運用（`exmem/AGENTS.md` の「inbox を整理するとき」）。ここでは行わない。
 - **このフックが `exmem/inbox/` に作ったメモは、コミットしない**（ユーザーの指示、2026-10-05。全体に適用）。理由: inbox のメモは、exmem 側で解釈して `knowledge/` に統合した後に削除する運用で、統合後は不要になるため。メモは未追跡のまま残す。コミットしないのは、このフックが作ったメモのファイルだけ（ほかの変更は対象外）。ほかの変更のコミットは `docs-rules.md` の「コミットと push」に従う。push はしない（ユーザーが行う）。
