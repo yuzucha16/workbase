@@ -13,7 +13,7 @@ aliases:
   - シェル履歴のユースケース
   - history seed
 created: 2026-10-04
-updated: 2026-10-05
+updated: 2026-10-06
 sources:
   - PSReadLine の履歴 2か所の分析（このPC 629行、他PC 5,436行。2026-10-04）
 ---
@@ -93,6 +93,7 @@ Get-Content .\extensions.txt | ForEach-Object { code --install-extension $_ }
 
 - `wsl --install` の打ち間違い（`wsl install`）が履歴にあった。`wsl --install -d <ディストロ名>` が正しい。ディストロ名は `wsl --list --online` で確認する。
 - `git config --global core.symlinks` は値を指定せず、設定を読むだけの形（Windows でシンボリックリンクを使えるかの確認）。
+- 注意（2026-10-06）: `user.name` / `user.email` を `--global` で書く行は、`~/.gitconfig` が設定リポジトリへの symlink のとき、リポジトリ内のファイルを書き換える（リンク前に使うと、実ファイルができてリンクが止まる）。PC ごとの値は `git config --file ~/.gitconfig_local` に書く（[[pc-setup-manuals]]）。履歴の種（`history.seed.txt` と `history.seed.sh.txt`）の同じ行は、未修正。
 
 ### 2. パッケージの調査と導入
 

@@ -114,6 +114,39 @@ Windows 11 のアプリを「scoop で管理するもの」と「それ以外」
 - 「アクセスが拒否されました。」の原因（上の未検証の候補のどれか）。
 - 試験の方法は [[shell-script-testing-wsl]] の「Windows のバッチ」の節。
 
+## suggest と VC++ ランタイム（vcredist2022。2026-10-06 追記）
+
+`scoop install` で、複数のアプリが `extras/vcredist2022` の導入を提案する表示が出る。
+
+### Principles（suggest）
+
+- scoop の `suggest` は任意の提案で、必須の依存（`depends`）ではない。マニフェストの `depends` が空で、表示だけでアプリは動く。表示を失敗として扱わない。
+- 管理者権限（UAC）が要る導入は、ユーザースコープのセットアップに自動で組み込まず、必要性の検出と警告にとどめる。管理者権限なしで再現する原則と衝突し、会社の PC で権限が無いと全体が止まる。
+- 「入れる判断基準」を先に作り、満たしたときだけ手で入れる。Windows 11 には、他のアプリの導入で既にランタイムが入っていることが多い（仮説）。
+- 見落としやすい警告は、色などで目立たせる。長いインストールの出力の中で、1行の警告が流れる。
+
+### Decisions（suggest。すべて 2026-10-06）
+
+- **vcredist2022 は自動導入せず、ランタイムが無いときだけ警告する**。根拠: `extras/vcredist2022` の導入は昇格（UAC）を要し、ユーザースコープ運用と衝突する。ユーザーの依頼（判断基準を作って対応する）に沿って実装し、新しい Windows アカウントで通して問題なしと報告された。ユーザーが現時点の決定として承認した（必要になったら解除する。解除するときは、現在形の記述（スクリプトと README）を直し、この記録は書き換えずに「撤回済み」と理由を足す）。却下案: 一覧（`apps.txt`）に足す（会社 PC で権限が無いと止まる）、`winget install Microsoft.VCRedist.2015+.x64`（これも昇格が要り、経路が増える）、`suggest` の表示を抑える（scoop に抑止の設定は確認できなかった）。
+- **入れる判断基準は、次のどれかに当てはまるときだけ**。基準: アプリの起動時に `VCRUNTIME140*.dll` / `MSVCP140*.dll` が無い、または `0xc000007b` のエラー。レジストリの確認が警告になった（x64 が無い）。新品の Windows や VM での最初の通し実行。根拠: 該当しなければ、既にあるランタイムで動く。却下案: 常に入れる。
+- **警告と「入っている」の両方の行をオレンジで表示する**。根拠: ユーザーの依頼。見落としがちなため。却下案: 色を付けない。
+
+### Facts（suggest）
+
+- 次のアプリが `suggest` で `extras/vcredist2022` を挙げる: lsd、ripgrep、bat、windows-terminal、starship、chatgpt（確認: 2026-10-06、根拠: 各 `buckets\*\bucket\<app>.json` の `suggest` と、空の `depends`）。bat は `less` も、vim は `vimtutor` も提案する。
+- `extras/vcredist2022` は「Microsoft Visual C++ 2015-2022 再頒布可能パッケージ」で、`post_install` が x64 と x86 のインストーラを `-RunAs`（昇格）で動かす。ライセンスは、マニフェストでは `Freeware`（確認: 2026-10-06、根拠: マニフェストの `license` と `post_install`）。
+- ランタイムの有無は、レジストリ `HKLM\SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64` の `Installed` が `1` かで判定できる（確認: 2026-10-06、根拠: Windows 11 10.0.26200 で `reg query` が存在と不存在の両方を正しく判定した）。
+- 検査した PC は、scoop に vcredist2022 が入っていなくても、x64 / x86 の「Microsoft Visual C++ v14 Redistributable」14.50.35719 が入っていた（Visual Studio や Build Tools は無し）（確認: 2026-10-06、根拠: アンインストールのレジストリ一覧と `System32\vcruntime140.dll`）。インストールの経路は不明（仮説: アプリのインストーラの同梱か Windows Update）。
+- 新しい Windows アカウントでは、ランタイムの警告は出なかった（確認: 2026-10-06、根拠: ユーザーの報告）。
+- `less` は、Git for Windows 同梱の `less.exe` が `scoop\apps\git\current\usr\bin\` にあるが、PATH には無い（確認: 2026-10-06、根拠: ファイルの存在と `Get-Command less`）。`bat` が `less` 無しで対話端末のページャをどう扱うかは、未確認（仮説: 出力は出る。パイプ経由では出力が出た）。
+- ランタイムが無い環境で警告が実際に表示される（仮説）。「無い」側の判定は、存在しないレジストリキーでの `reg query` でしか確認していない。
+
+### Open Questions / Next Actions（suggest）
+
+- 企業の PC に、この再頒布可能パッケージを入れてよいか（ライセンスと、会社の導入ポリシー）。マニフェストの `Freeware` の表記以上は未確認で、会社の判断になる。
+- ランタイムが無い環境で警告が出たとき、`scoop install extras/vcredist2022` で解消するか（UAC が出る）。
+- ランタイムが無い環境（新品の Windows や VM）で、警告の表示を確認する（2026-10-06 時点）。
+
 ## Related
 
 - [[shell-script-testing-wsl]]
