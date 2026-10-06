@@ -35,7 +35,9 @@ sources:
 
 ### 現在の構造（2026-10-05）
 
-2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた。以下の図と本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。この節の「作業の完了」は、実施後に追記する。
+2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた。以下の図と本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。
+
+**作業の完了（確認: 2026-10-06）**: 移行は完了した。環境変数は `WORKS_DIR=C:\vault\works` と `CERTS_DIR=C:\vault\works\areas\dev-env\certs`（`NOTES_DIR` は未設定）。`%APPDATA%\obsidian\obsidian.json` の Vault は `C:\vault\works`。`C:\vault\works\.obsidian` は dotfiles へのジャンクション。WSL（`/mnt/c/vault/works/resources/.git`）から読める。dotfiles の Linux テストは 36/36 合格（実 WSL の項目を含む）。旧パスは、日付つきの履歴を除いて残っていない。唯一の未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。[[claude-code-storage]]）。
 2026-10-05 に、下の「目標の構造（2026-10-02 決定）」から変更した。経緯は、その節と、Decisions の「撤回済み」の注記に残す。
 
 ```text
