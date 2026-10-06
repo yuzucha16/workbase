@@ -8,7 +8,7 @@ tags:
 
 # フォント セットアップ手順
 
-使うフォントは PlemolJP と Moralerspace（どちらも 1:2 の等幅。Nerd Fonts のグリフ入り）。
+使うフォントは PlemolJP（1:2 の等幅。Nerd Fonts のグリフ入り）。
 取得はスクリプト、インストールは手動。スクリプトは [dotfiles](https://github.com/yuzucha16/dotfiles) の `scripts/*/24_fonts.*` が正。
 
 ## 対象アプリ
@@ -24,24 +24,23 @@ Zed / Notepad++ / Obsidian / Windows Terminal
 | `PlemolJPConsoleNF-Text.ttf` | sub |
 | `PlemolJPConsoleNF-Bold.ttf` | |
 | `PlemolJPConsoleNF-Italic.ttf` | |
-| `MoralerspaceNeonHW-Regular.ttf` | sub |
 
-- PlemolJP は `PlemolJP_NF_v*.zip`、Moralerspace は `MoralerspaceHW_v*.zip` に入っている（Moralerspace は v2 以降、NF のグリフが HW に含まれる。NF 用の別 zip はない）。
+- PlemolJP は `PlemolJP_NF_v*.zip` に入っている。Moralerspace は、2026-10-06 に使わないことにした（一覧とフォントのフォールバックから外した）。
 
 ## 手順
 
-1. `gh` を入れる（`20_apps.bat` / `20_packages.sh` が `manifests` の一覧から入れる）。初回は `gh auth login`
-2. 取得する。先に `--dry-run` で内容を確認する（dry-run は `gh` が未ログインでも動く）
+1. `gh` を入れる（`20_apps.bat` / `20_packages.sh` が `manifests` の一覧から入れる）。**ログインは不要**（公開リリースのダウンロードは、未ログインで動く）
+2. 取得する
 
    ```powershell
-   scripts\windows\24_fonts.bat --dry-run
    scripts\windows\24_fonts.bat
    ```
 
    ```bash
-   scripts/linux/24_fonts.sh --dry-run
    scripts/linux/24_fonts.sh
    ```
+
+   - 1件失敗しても残りは続け、最後に `[ERROR]` と終了コード 1 になる。Windows は出力が `tmp\24_fonts.log`（dotfiles 側）にも残り、最後に `pause` で止まる
 
    - 保存先は `~/download`（Windows は `%USERPROFILE%\download`）。WSL で取ると WSL 側の `~/download` に入る。Windows のフォントとして使うなら、Windows 側のスクリプトで取る
    - 一覧は `manifests/fonts.txt`（`owner/repo:asset glob`）
