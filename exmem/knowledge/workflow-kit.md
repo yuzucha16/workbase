@@ -53,7 +53,7 @@ sources:
 
 ### 導入フックにワークスペース（Vault のトップ）の生成を足し、「workflowを導入して」だけで、初回コミットまで行う（2026-10-05。版 2026-10-05.7 時点）
 
-- 決めたこと: 既定値は、対象 `C:\vault\works`（決定時は `C:\vault\notes`。2026-10-06 の rename で変更）、業務用、remote なし、初回コミットする。報告に「条件」を出す。
+- 決めたこと: 既定値は、対象 `$HOME\works`（決定時は `C:\vault\notes`。2026-10-06 に `C:\vault\works` へ rename し、同日に `$HOME\works` へ移した）、業務用、remote なし、初回コミットする。報告に「条件」を出す。
 - 根拠: 入口を1つにして、覚える言葉を増やさない。呼び出し元は `workbase` の中。
 - 却下案: 別の言葉（「ワークスペースを作って」）を足す（入口が増える）。
 
@@ -160,7 +160,7 @@ sources:
 - 履歴を作り直した（単一コミットにした）リポジトリでは、それより前の履歴が残っていない（移管元で `git log --all -- <パス>` が初期コミットと移管コミットしか返さなかった）。
 - 実物（2026-10-04）: `resources/workflow-kit/` に `AGENTS.md`、`README.md`、`docs-rules.md`、`knowledge-hook.md`、`setup-hook.md`、`improvements.md`、`examples/`、`templates/` がある（2026-10-06 に再確認: `tools/` に `check-inbox.ps1`、`find-knowledge.ps1`、`check-docs.ps1` が加わった。`docs-rules.md` に「decisions.md の項目の行き先」の節がある）。`notes/AGENTS.md` が共通ルールの参照先と読む時機を持ち、`notes/docs/` に `log.md` と `decisions.md` がある（`notes/docs/` はローカル専用）。`improvements.md` には採用済みの提案が大半で、「提案」の状態が3件ある（Claude 用スキル、`contexts/` を消化する手段、実際のメモでの校正。kit の版の記録は採用済み）。
 - （2026-10-05 以前の記述）`notes` では `resources/` だけが Git 共有で、`projects/` `areas/` `archives/` はローカル専用だった。2026-10-05 以降は、`workbase`（`resources/`）が共有で、Vault のトップ（`projects/` `areas/` `archives/` `docs/`）は PC ごとのローカルなリポジトリ。そこに置いた `docs/` は、共有の `workbase` には載らない。
-- Windows の `C:\vault\works\resources\workflow-kit\` 以下を読める。WSL からも `/mnt/c/vault/works/resources/workflow-kit/` が読める（確認: 2026-10-06、根拠: WSL の `ls`）。作業ディレクトリの外のファイルを `@` で取り込むと、初回に承認が要る可能性がある（仮説）。
+- Windows の `$HOME\works\resources\workflow-kit\` 以下を読める。WSL からも `/mnt/c/Users/<Windows のユーザー名>/works/resources/workflow-kit/` が読める（確認: 2026-10-06、根拠: 移動前の `C:\vault\works` で、WSL の `ls`。移動後の実機の WSL での確認は未実施）。作業ディレクトリの外のファイルを `@` で取り込むと、初回に承認が要る可能性がある（仮説）。
 - コミットの身元とトレーラー（2026-10-06 に実物と照合）: `docs-rules.md` と `improvements.md`、`README.md` の版 `2026-10-06.1` の記述が、決定の内容と一致した。`git commit --trailer` で付け、`git log -1 --format='%(trailers:key=Kit-Rev,valueonly)'` で取り出せる（git 2.56.0 Windows で確認）。`-dirty` は、クリーン=なし、変更=あり、変更を戻した=なし、未追跡=あり、ステージのみ=あり、`.gitignore` 除外=なし（一時ディレクトリで確認）。kit 自身のコミットは、コミット前に未コミットの変更があるため `Kit-Rev` が `<親のハッシュ>-dirty` になる。
 - 今後、`docs/` の作業ログを日報・週報・仕様書の入力にし、ナレッジのマージ・見直しも行う予定（未実施）。改善の受け皿は、その見直しにも使える見込み（仮説）。
 

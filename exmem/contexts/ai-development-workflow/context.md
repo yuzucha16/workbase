@@ -60,8 +60,8 @@ updated: 2026-10-06
 - **Vault構造の移行を完了する**（[[obsidian-vault]] 移行の状況）。順序の制約: GitHub rename → 配置換え。
   1. 済み（2026-10-02）: GitHub で `notes` に rename、リポジトリ内の配置換え。
   2. 済み（2026-10-03）: `C:\vault\notes` を実体 `C:\vault\repos\github.com\yuzucha16\notes` へのジャンクションにした（それまでは `notes.lnk` というショートカットで、パスとして使えなかった）。`.obsidian` の取り込み、dotfiles 側の `windows/office` `windows/obsidian` の削除、`links.map` の書き換え、Office のリンク張り直しも済み（[[obsidian-vault]]）。
-  3. Obsidian で `C:\vault\works`（2026-10-06 に `notes` から rename）を Vault として開き直す。`knowledge.base` の一覧が表示されるか確認する。
-  4. 旧 `exmem/`（`areas_shared` クローン側）は削除してよい。Claude Code の履歴とメモリを新しい作業パス（`C:\vault\works\resources\exmem`）のフォルダへコピーし直す（[[claude-code-storage]]）。Zed のプロジェクトも開き直す。
+  3. 済み（2026-10-06）: Obsidian で `$HOME\works`（`notes` から rename し、`C:\vault\works` から移した）を Vault として開き直した。確認事項: `knowledge.base` の一覧が表示されるか確認する。
+  4. 旧 `exmem/`（`areas_shared` クローン側）は削除してよい。Claude Code の履歴とメモリを新しい作業パス（`$HOME\works\resources\exmem`）のフォルダへコピーし直す（[[claude-code-storage]]）。Zed のプロジェクトも開き直す。
   5. `C:\vault\notes_old` と旧クローン `C:\vault\repos\github.com\yuzucha16\areas_shared` を削除する（`notes.lnk` は削除済み。旧クローン内の `exmem\.claude\settings.local.json` は残す価値がない）。
   - `_local/` コミット（`27d1d08`）を push する（`origin/main` より1つ先、2026-10-03 確認）。
   6. `resources/fonts/` に HackGen Console NF Regular とライセンス文書を置いてコミットする（Git LFS、`README.md` の「版」を記入）。
