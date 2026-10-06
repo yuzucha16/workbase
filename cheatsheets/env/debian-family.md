@@ -189,16 +189,28 @@ sudo apt install fonts-noto-cjk fonts-ipafont
 
 ## 7. リポジトリ取得
 
-dotfiles を **所定のパスに** clone する。公開リポジトリなので、SSH 鍵が無くても HTTPS で取れる。
+dotfiles を **所定のパスに** clone する。**リポジトリの公開・非公開は未定**（2026-10-06 時点は非公開）。状況に合わせて、次の A（公開）か B（非公開）に読み替える。運用が決まったら、使わない方を削除する。
+
+**A. 公開リポジトリの場合**（SSH 鍵もサインインも不要。HTTPS で取れる）
 
 ```shell
 sudo apt install -y git curl
-mkdir -p ~/vault/repos/github.com/yuzucha16
 git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
 ```
 
+**B. 非公開リポジトリの場合**（clone に認証が要る。`gh` でサインインする）
+
+```shell
+sudo apt install -y git gh curl
+gh auth login          # GitHub.com → HTTPS → ブラウザ（ワンタイムコード）の順に選ぶ
+gh auth setup-git      # git が gh の認証を使うようにする
+git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
+```
+
+- B は、SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git ~/vault/repos/github.com/yuzucha16/dotfiles`。鍵の登録は「10. SSH と GitHub」）。
+- B の `gh auth login` から clone までは、新しい Linux の実機では未確認（Ubuntu 24.04 の apt に `gh` 2.45.0 があることだけ確認済み）。
 - `ghq` のルート（`GHQ_ROOT`）は `~/vault/repos`（`home/.profile` の既定）。Windows の `C:\vault\repos` に対応する。
-- git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。
+- git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。対話で作るスクリプトが `scripts/linux/11_git_identity.sh`（次の章）。手で書くなら:
 
   ```shell
   git config --file ~/.gitconfig_local user.name "<name>"
@@ -212,6 +224,7 @@ git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha
 | 順 | スクリプト | 内容 | 注意 |
 |---|---|---|---|
 | 10 | `10_dirs.sh` | XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る | |
+| 11 | `11_git_identity.sh` | `~/.gitconfig_local` が無いときだけ、git の名前・メールを対話で聞いて作る | 既にあれば触らない。**30 の前**に実行する（git が必要） |
 | 20 | `20_packages.sh desktop` | apt の更新、`manifests/apt.txt` + `apt.desktop.txt` のパッケージ、starship、ghq、`bat` / `fd` のリンクを入れる | `sudo` とネット接続が必要。パッケージの一覧はスクリプトでなく `manifests/` を直す |
 | 23 | `23_ja.sh` | fcitx5 + Mozc、日本語フォントを入れ、`im-config -n fcitx5` を実行する。Ubuntu 系は言語パックも入れる | **再ログイン**後に、Fcitx 5 設定で Mozc を追加する（手動、「6. 日本語入力」） |
 | 30 | `30_link.sh -n` → `30_link.sh` | stow で `home/` を `~` に展開する | 初回は **`-n`（ドライラン）**で確認する。リポジトリの場所は自動で判定される |
@@ -220,6 +233,7 @@ git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha
 ```shell
 cd ~/vault/repos/github.com/yuzucha16/dotfiles/scripts/linux
 bash 10_dirs.sh
+bash 11_git_identity.sh
 bash 20_packages.sh desktop
 bash 23_ja.sh
 bash 30_link.sh -n      # 確認
@@ -252,7 +266,7 @@ GUI エディタ（Xfce のテキストエディタ、gedit など）で開く�
 
 ## 10. SSH と GitHub
 
-push する場合に設定する（読み取りだけなら不要）。
+push する場合に設定する（読み取りだけなら不要。ただし非公開リポジトリは、読み取り（clone）にも認証が要る。「7. B」）。
 
 ```shell
 ssh-keygen -t ed25519 -C "<comment>"      # 保存先は既定のまま（~/.ssh/id_ed25519）
