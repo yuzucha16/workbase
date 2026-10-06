@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-06.22`
+版: `2026-10-06.23`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -21,8 +21,8 @@
 
 ## 場所
 
-- Windows: `C:\vault\works\resources\workflow-kit`
-- WSL: `/mnt/c/vault/works/resources/workflow-kit`
+- Windows: `$HOME\works\resources\workflow-kit`
+- WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/workflow-kit`
 
 ## 使い方
 
@@ -32,7 +32,7 @@
 
 ### ワークスペース（Vault のトップ）を作る
 
-新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。`workbase` の中で、対象を指定せずに言うと、項目 5 とみなして、既定値（対象 `C:\vault\works`、業務用、remote なし、初回コミットする）で作る。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
+新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`setup-hook.md` の項目 5 に従う。`workbase` の中で、対象を指定せずに言うと、項目 5 とみなして、既定値（対象 `$HOME\works`、業務用、remote なし、初回コミットする）で作る。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
 
 呼べるのは、`setup-hook.md` を参照している `AGENTS.md` の配下（`workbase` の中と、ワークスペースの中）と、ユーザーがパスを指示したとき。他の場所からの入口は、Claude 用スキル（TODO）。
 
@@ -67,6 +67,7 @@
 
 ## 変更履歴
 
+- 2026-10-06（版 `2026-10-06.23`）: Vault のトップを `C:\vault\works` から `$HOME\works`（Windows の `C:\Users\<ユーザー名>\works`）へ移したので、現在形の文書の固定パスを直した（ユーザーの指示）。対象は、`setup-hook.md`（既定の対象、ネイティブ Linux の例 `~/works`）、`knowledge-hook.md`、`integrate-hook.md`（`C:\vault\repos` は `$HOME\works\repos`）、この README の「場所」と「ワークスペースを作る」、`templates/` 2 つ、`examples/setup-example.md`。WSL は `/mnt/c/Users/<Windows のユーザー名>/works`。履歴（過去の版の項目と `improvements.md`）の旧パスは、当時のまま残す。モバイル用プロンプトの `kit:` と見本を合わせた。
 - 2026-10-06（版 `2026-10-06.22`）: 「inboxを整理して」の結果の突き合わせ（`works`）で出た改善1点を反映した（ユーザーの承認）。`integrate-hook.md` の手順 2 に、統合先の Decisions に写す根拠と却下案は元に書かれたものだけにし、元に却下案が無いときは「未検討（承認の経緯）」と書く、と足した。手順 4 に、統合先に元に無い記述が混ざっていないかの逆方向の確認を足した。モバイル用プロンプトは統合を呼ばないので変更せず、`kit:` と見本の `kit:` だけ合わせた。
 - 2026-10-06（版 `2026-10-06.21`）: 「終了処理して」の2回目の実行（`works`）で出た改善2点を反映した（ユーザーの承認）。(1) `closing-hook.md` の手順 5 に、メモを作ったら手順 4 の `check-docs.ps1` を再実行し、以後の報告の件数を再実行後の値にする、と足した（報告の型 2 も）。(2) `tools/check-docs.ps1` の `Path` を位置引数でも受けるようにした。モバイル用プロンプトは終了処理と点検スクリプトを呼ばないので変更せず、`kit:` と見本の `kit:` だけ合わせた。
 - 2026-10-06（版 `2026-10-06.20`）: 「終了処理して」の最初の大きな実行（`works` で、Project・Area の `docs/` も対象になった）で出た改善3点を反映した（ユーザーの承認）。(1) `closing-hook.md` の手順 2 に、リポジトリの中の Project・Area の `docs/`（`projects/` `areas/` `archives/` 配下）を、別の対象に数えると明記し、報告の型にも反映した。(2) `tools/check-inbox.ps1` の、Decisions に「AI の提案」が混ざっていないかの WARN を、「AI の提案」と「未承認」が同じ行にある、または `- 提案:` で始まる行に絞った（種類の説明の語を誤検知していた）。(3) `closing-hook.md` の手順 7 に、`転記待ち` の件数を `docs/` ごとと合計の両方で報告し、勧める閾値（15 件）は `docs/` ごとに見る（`check-docs.ps1` の上限 20 件が `docs/` ごとのため）と明記した。モバイル用プロンプトは、終了処理と点検スクリプトを呼ばないので変更せず、`kit:` と見本の `kit:` だけ合わせた。
