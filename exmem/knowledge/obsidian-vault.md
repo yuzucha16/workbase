@@ -13,7 +13,7 @@ aliases:
   - Obsidianの設定
   - vaultのバックアップ
 created: 2026-10-01
-updated: 2026-10-05
+updated: 2026-10-06
 sources:
   - Claude Code conversation "exmemの整理" (2026-09-26〜2026-10-01)
   - Claude Code conversation "ディレクトリ構造の見直し" (2026-10-02〜2026-10-03)
@@ -22,6 +22,7 @@ sources:
   - "C:\\vault\\notes\\.obsidian の設定ファイル（2026-10-01 に確認）"
   - "C:\\vault\\notes\\.obsidian の設定ファイルと `git log -- .obsidian`（2026-10-04 に確認。「設定」節を更新）"
   - Claude Code conversation "Vault の構造変更（共有とローカルのリポジトリ分離）と workflow の拡張" (2026-10-05。「設計の原則」「構造変更で遭遇したもの」)
+  - Claude Code conversation "workflow の導入フックで作るリポジトリ構成の見直し" (2026-10-06。トップの `notes` → `works` の rename と `certs` の移動)
 ---
 
 # Obsidian Vault
@@ -34,6 +35,7 @@ sources:
 
 ### 現在の構造（2026-10-05）
 
+2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた。以下の図と本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。この節の「作業の完了」は、実施後に追記する。
 2026-10-05 に、下の「目標の構造（2026-10-02 決定）」から変更した。経緯は、その節と、Decisions の「撤回済み」の注記に残す。
 
 ```text
