@@ -12,7 +12,7 @@ tags:
 aliases:
   - AI開発ワークフロー
 created: 2026-09-26
-updated: 2026-10-05
+updated: 2026-10-06
 sources:
   - Claude Code conversation "dotfiles と exmem の関係整理" (2026-10-04)
   - Claude Code conversation "残件の整理と、統合後の修正" (2026-10-04)
@@ -264,7 +264,7 @@ AIのコンテキスト
   - 根拠: exmem は AI をまたいで再利用する知識の置き場で、プロジェクトの進行状況は性質が違う。混ぜると、exmem の1ファイル（dotfiles で 250 行）が作業ログ兼設計書に肥大した。
   - 却下案: exmem の `contexts/<project>/context.md` に各プロジェクトの状態を置く（dotfiles については、設計意図が「リポジトリ内に育成ログを持つ」だったので不採用）。
 - **育成ログの形は、時系列の `docs/log.md`（Next Actions を先頭、Open Questions、Log）と、根拠・却下案・Gotchas の `docs/decisions.md` の2本。** 時系列の記録と判断の記録は性質が違い、1本にすると肥大する。却下案: `CHANGELOG` 1本。
-- **書き込みの唯一の例外は、ユーザーが「ナレッジ化して」と指示したとき、`exmem/inbox/YYYY-MM-DD-<topic>.md` に新規ファイルを1つ置くこと。** inbox のメモは、実物との照合とタグの正規化を含む統合の手順に乗る。この「ナレッジ化して」の手順と、`docs/` の仕組みは、共通機能として `notes` の `resources/workflow-kit/` にまとめた（設計の根拠は [[workflow-kit]]）。却下案: `knowledge/` へ直接書く（統合時の照合と正規化を飛ばす）、作業終了ごとの自動書き込み（作業ログが流れ込む）。
+- **書き込みの唯一の例外は、ユーザーが「ナレッジ化して」と指示したとき、`exmem/inbox/YYYY-MM-DD-<topic>.md` に新規ファイルを1つ置くこと。** inbox のメモは、実物との照合とタグの正規化を含む統合の手順に乗る。この「ナレッジ化して」の手順と、`docs/` の仕組みは、共通機能として `works`（当時は `notes`）の `resources/workflow-kit/` にまとめた（設計の根拠は [[workflow-kit]]）。却下案: `knowledge/` へ直接書く（統合時の照合と正規化を飛ばす）、作業終了ごとの自動書き込み（作業ログが流れ込む）。
 - 手順の指示文はリポジトリ側の `AGENTS.md` に置き、実行のたびに改善案を出させて育てる。承認なしに書き換えない。
 
 ### Facts
@@ -284,7 +284,7 @@ AIのコンテキスト
 
 ### Open Questions
 
-- 他のプロジェクト（`ai-business-adoption`、`linux-home-pc`、`zed-vim-migration`）の `contexts/` も、リポジトリ側に持つ形へ寄せるか。exmem 内で完結するプロジェクトは `contexts/` のままでよいか。なお、`contexts/` は「`notes` から見えない場所の作業を引き継ぐコンテキスト」という位置づけになった（2026-10-04、[[workflow-kit]]）。作業ログの置き場は、作業ディレクトリ側の `docs/`（`notes` 自体の作業は `notes/docs/`）。
+- 他のプロジェクト（`ai-business-adoption`、`linux-home-pc`、`zed-vim-migration`）の `contexts/` も、リポジトリ側に持つ形へ寄せるか。exmem 内で完結するプロジェクトは `contexts/` のままでよいか。なお、`contexts/` は「`works`（決定時は `notes`）から見えない場所の作業を引き継ぐコンテキスト」という位置づけになった（2026-10-04、[[workflow-kit]]）。作業ログの置き場は、作業ディレクトリ側の `docs/`（Vault のトップ自体の作業は `works/docs/`）。
 - プランの承認の使い方と、プラン自体の構成を、別の場で議論したい（ユーザーの要望）。プランを `~/.claude/plans/` 以外にも残す方法。
 
 ## 並行する複数セッション・人間・アプリとの整合（2026-10-04）
