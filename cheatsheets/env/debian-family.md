@@ -195,7 +195,7 @@ dotfiles を **所定のパスに** clone する。**リポジトリの公開・
 
 ```shell
 sudo apt install -y git curl
-git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
+git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
 ```
 
 **B. 非公開リポジトリの場合**（clone に認証が要る。`gh` でサインインする）
@@ -204,12 +204,12 @@ git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha
 sudo apt install -y git gh curl
 gh auth login          # GitHub.com → HTTPS → ブラウザ（ワンタイムコード）の順に選ぶ
 gh auth setup-git      # git が gh の認証を使うようにする
-git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
+git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
 ```
 
-- B は、SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git ~/vault/repos/github.com/yuzucha16/dotfiles`。鍵の登録は「10. SSH と GitHub」）。
+- B は、SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git ~/works/repos/github.com/yuzucha16/dotfiles`。鍵の登録は「10. SSH と GitHub」）。
 - B の `gh auth login` から clone までは、新しい Linux の実機では未確認（Ubuntu 24.04 の apt に `gh` 2.45.0 があることだけ確認済み）。
-- `ghq` のルート（`GHQ_ROOT`）は `~/vault/repos`（`home/.profile` の既定）。Windows の `C:\vault\repos` に対応する。
+- `ghq` のルート（`GHQ_ROOT`）は、ネイティブ Linux では `~/works/repos`（`home/.profile` の既定。Windows の `%USERPROFILE%\works\repos` に対応する）。WSL では、WSL 自身の `~/vault/repos`
 - git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。対話で作るスクリプトが `scripts/linux/11_git_identity.sh`（次の章）。手で書くなら:
 
   ```shell
@@ -231,7 +231,7 @@ git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha
 | 31 | `31_history_seed.sh [-n]` | zsh/bash の履歴に、定型コマンドの種（`manifests/history.seed.sh.txt`）を入れる | 履歴が無い/空のときだけ。既存の履歴は上書きしない。**最初のシェルを開く前に**実行する |
 
 ```shell
-cd ~/vault/repos/github.com/yuzucha16/dotfiles/scripts/linux
+cd ~/works/repos/github.com/yuzucha16/dotfiles/scripts/linux
 bash 10_dirs.sh
 bash 11_git_identity.sh
 bash 20_packages.sh desktop
@@ -257,7 +257,7 @@ which vim bat fd ghq        # 見つかる
 エディタで `README.md` を開く。どれか 1 つで文字化けなく見えれば完了。
 
 ```shell
-cd ~/vault/repos/github.com/yuzucha16/dotfiles
+cd ~/works/repos/github.com/yuzucha16/dotfiles
 vim README.md
 ```
 
@@ -284,7 +284,7 @@ Host github.com
 ```shell
 chmod 600 ~/.ssh/config
 ssh -T git@github.com          # "Hi <user>! You've successfully authenticated" が出る
-git -C ~/vault/repos/github.com/yuzucha16/dotfiles remote set-url origin git@github.com:yuzucha16/dotfiles.git
+git -C ~/works/repos/github.com/yuzucha16/dotfiles remote set-url origin git@github.com:yuzucha16/dotfiles.git
 ```
 
 - 鍵は RSA でなく **ed25519** を使う。
