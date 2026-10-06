@@ -72,7 +72,7 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 - Ubuntu 24.04 以降の apt ソースは deb822 形式（`/etc/apt/sources.list.d/ubuntu.sources`）。旧メモの `sed ... sources.list` は効かない。
 - Debian 13 は fcitx5 を使う。MX フォーラムの `fcitx`（v4）の手順は古い。
 - MX のインストーラーは、指定のない ESP を触らない。ESP は FAT32 で、フラグは `boot` と `esp`。
-- dotfiles の `GHQ_ROOT` の既定値は、Linux で `~/vault/repos`。
+- dotfiles の `GHQ_ROOT` の既定値は、Linux（WSL とネイティブ）で `~/works/repos`、Windows で `%USERPROFILE%\works\repos`（2026-10-06 に、WSL の `~/vault/repos` から変更）。
 
 実行して確認したこと（WSL Ubuntu 24.04）: `scripts/linux/` の全 `.sh` の構文チェック、`lib.sh` の関数4つ（`dots_dir` / `is_wsl` / `distro_is` / `read_list`。2026-10-05 時点では8つ: `notes_dir` / `clone_workbase` / `link_obsidian` / `distro_ids` が加わった。確認: dotfiles の `lib.sh`。試験の方法は [[shell-script-testing-wsl]]）、`23_ja.sh` が WSL で何もせず終了、`30_link.sh -n` が `--src` なしで正しいリポジトリを指す、`apt.txt` と `apt.desktop.txt` が19パッケージの配列にまとまる。
 
