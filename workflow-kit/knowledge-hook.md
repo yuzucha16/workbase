@@ -40,11 +40,11 @@
 
 ### ファイル名・title・tags
 
-- `<topic>`: テーマを表す英単語2〜5語の kebab-case（例: `terminal-cursor-blink-decscusr`）。
+- `<topic>`: テーマを表す英単語2〜5語の kebab-case（例: `terminal-cursor-blink-decscusr`）。語数は、ハイフンで区切った語の数で数える（`dry-run` は2語。複合語は1語にまとめてよい: `dryrun`）。書いたら語数を数える。
 - `title`: 日本語の名詞句（例: `ターミナルのカーソル点滅を止める`）。
 - 日付: 今日の日付（`YYYY-MM-DD`）。
 - `kit`: このメモを作った時点の workflow-kit の版。`README.md` の「版」の値を、そのまま書く。統合のとき、`knowledge/` の frontmatter には写さない（版ごとの出力を比べるための記録）。
-- `sources`: `<実行中のAI名> conversation "<テーマ>"`（例: `Claude Code conversation "fzf のキーバインド整理"`）。
+- `sources`: `<実行中のAI名> conversation "<テーマ>"`（例: `Claude Code conversation "fzf のキーバインド整理"`）。`"<テーマ>"` の後ろに、日付などを足さない（点検スクリプトが FAIL にする）。
 - `tags`: 英小文字の kebab-case で3〜6個。`exmem/tags.md` の語彙から選び、語彙に無いものは書いてよい（統合のときに exmem 側で正規化する）。ソフトウェアは `tool/<名前>`、AIサービスは `ai/<名前>`。`type` や `status` の値（`inbox`、`knowledge` など）はタグにしない。
 
 ### 文章の規則
