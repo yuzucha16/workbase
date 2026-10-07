@@ -84,4 +84,4 @@ sources:
 次にやること。
 ````
 
-このプロンプトは `resources/workflow-kit/knowledge-hook.md` の「書き方」「形式」と同じ内容にそろえてある。形式を変えるときは、kit を先に直し、ここを合わせる。モバイルのAIは exmem を検索できないので、統合先の候補は「不明」にし、統合のときに exmem 側で探す。
+このプロンプトは `resources/workflow-kit/stock-hook.md` の「書き方」「形式」と同じ内容にそろえてある。形式を変えるときは、kit を先に直し、ここを合わせる。モバイルのAIは exmem を検索できないので、統合先の候補は「不明」にし、統合のときに exmem 側で探す。
