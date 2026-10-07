@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-08.1`
+版: `2026-10-08.2`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -84,6 +84,8 @@
 - Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「workflowを導入して」と「ナレッジ化して」の入口にする。スキルは kit のファイルを読むだけにして、手順を重複させない。
 
 ## 変更履歴
+
+- 2026-10-08（版 `2026-10-08.2`）: 「wrap」の実行（`works`。フック名の整理）で出た改善1点を反映した（ユーザーの承認）。`wrap-hook.md` の手順 4 の行の末尾に混ざっていた手順 5 の文（重複）を削除した（旧 `closing-hook.md` から残っていた）。手順の内容は変更なし。モバイル用プロンプトと見本は、終了処理に触れていないので変更なし。
 
 - 2026-10-08（版 `2026-10-08.1`）: フック名の体系を決めた（ユーザーの決定）。README に「フックの体系」を足した（寿命の階層ごとの開始と終了の対: `init` / `open`・`close` / `start`・`wrap` / `stock` / `integrate`。日本語の言葉は別名）。ファイルを `closing-hook.md` → `wrap-hook.md`、`knowledge-hook.md` → `stock-hook.md`、`setup-hook.md` → `init-hook.md` に移し、旧名は案内だけを残した（削除は、名前が定着した後に参照とともに一斉に行う）。`integrate-hook.md` は名前そのまま。4つのファイルの冒頭に、呼び出し名と別名を足した。本文の手順は変更なし。`start-hook.md` `open-hook.md` `close-hook.md` を足した（works の手順書の下書きから、固有の内容を除いて一般化。試験運用）。`templates/AGENTS.md` と `templates/workspace/AGENTS.md` の呼び出し行を、新しい名前と別名にした（`templates/workspace/AGENTS.md` には `start` `open` `close` の行を足した）。モバイル用プロンプト（`exmem/inbox/README.md`）と見本（`examples/inbox-example.md`）は、メモの形式が変わらないので `kit:` は据え置き、参照先だけ `stock-hook.md` に直した。
 
