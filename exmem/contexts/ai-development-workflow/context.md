@@ -35,7 +35,7 @@ updated: 2026-10-06
   - メモの `ai-handson/` と `excel-aggregation` スキルは、実際にはまだ配置されていない（[[ai-handson-framework]]、[[claude-code-vs-cowork]]）。
   - vaultのバックアップ用タスクは見当たらない。「vaultの `.git` は1つ」という記述は実物と違う（[[obsidian-vault]]）。
   - WSLには `fd` / `eza` / `broot` / `ghq` / `nvim` が入っていない（[[modern-cli-tools]]）。
-- 新しい知識ファイルは、AIの設計（[[ai-harness-concepts]]、[[ai-handson-framework]]、[[ai-business-adoption]]、[[human-ai-decision-loop]]）、Office / 自動化（[[office-ai-workspace]]、[[claude-code-vs-cowork]]、[[power-automate-office-automation]]）、環境（[[wsl-file-placement]]、[[vscode-workspace]]、[[modern-cli-tools]]）、Linux（[[linux-distro-selection]]、[[linux-multiboot-setup]]）、その他（[[keyboard-switches]]）。業務適用とLinux移行は別のプロジェクトにした（[[ai-business-adoption/context]]、[[linux-home-pc/context]]）。
+- 新しい知識ファイルは、AIの設計（[[ai-harness-concepts]]、[[ai-handson-framework]]、[[ai-business-adoption]]、[[human-ai-decision-loop]]）、Office / 自動化（[[office-ai-workspace]]、[[claude-code-vs-cowork]]、[[power-automate-office-automation]]）、環境（[[wsl-file-placement]]、[[vscode-workspace]]、[[modern-cli-tools]]）、Linux（[[linux-distro-selection]]、[[linux-multiboot-setup]]）、その他（[[keyboard-switches]]）。Linux移行は別のプロジェクトにした（[[linux-home-pc/context]]）。業務適用のプロジェクトの contexts は、2026-10-08 に削除した（知識は [[ai-business-adoption]] に残る）。
 - 個人的な内容の3件（転職・EQ・入社計画）は、ユーザーがexmem外のローカルへ移した。inbox は空。
 - 2026-10-02 に、Claudeの自走期間を伸ばす権限制御のメモを統合した（5回目）。共通の許可ルールをdotfilesの `claude/user/settings.json`（のち `home/.claude/settings.json` に移動）に置き、WSLにはリンク済み。Windowsは同じ内容の実ファイルがあるだけで、リンクは未適用だった（2026-10-04 に両OSともリンク済みを確認。[[claude-code-permissions]]）。サンドボックス運用と `deny` は未決。
 - プロジェクトの `.claude/` は、`settings.local.json` だけをignoreし、`settings.json` / `skills/` は育ったら管理下に置く方針にした（[[claude-code-project-settings]]）。リポジトリのルートに `.gitignore` を追加した。
@@ -56,7 +56,7 @@ updated: 2026-10-06
 - シェルスクリプトの試験の置き場（dotfiles の `tests/` など）と `PROC_VERSION_FILE` の扱いを決める。ネイティブ Linux 実機で確認する（[[shell-script-testing-wsl]]）。
 
 - 新しい業務用 PC で、dotfiles の `50_repos` から「workflowを導入して」までの順で Vault の構造を再現し、新しい Windows アカウントで `20_apps.bat` の Scoop 導入を確認する（[[obsidian-vault]]、[[scoop-app-management]]）。旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか決める。
-- 他のプロジェクト（`ai-business-adoption`、`linux-home-pc`、`zed-vim-migration`）の `contexts/` を、リポジトリ側に持つ形へ寄せるか、exmem 内で完結するものは残すかを決める（[[ai-development-workflow]] の「他リポジトリとの関係」）。
+- 他のプロジェクト（`linux-home-pc`、`zed-vim-migration`）の `contexts/` を、リポジトリ側に持つ形へ寄せるか、exmem 内で完結するものは残すかを決める（[[ai-development-workflow]] の「他リポジトリとの関係」）。
 - **Vault構造の移行を完了する**（[[obsidian-vault]] 移行の状況）。順序の制約: GitHub rename → 配置換え。
   1. 済み（2026-10-02）: GitHub で `notes` に rename、リポジトリ内の配置換え。
   2. 済み（2026-10-03）: `C:\vault\notes` を実体 `C:\vault\repos\github.com\yuzucha16\notes` へのジャンクションにした（それまでは `notes.lnk` というショートカットで、パスとして使えなかった）。`.obsidian` の取り込み、dotfiles 側の `windows/office` `windows/obsidian` の削除、`links.map` の書き換え、Office のリンク張り直しも済み（[[obsidian-vault]]）。
@@ -76,7 +76,6 @@ updated: 2026-10-06
 - vaultのバックアップ（robocopy + タスクスケジューラ）を設定する（[[obsidian-vault]]）。
 - Zedで `claude-acp` が起動しない問題が再発したら、まずシェルのプロファイル出力を疑う（[[zed-acp]]）。
 - サンドボックス運用、`deny`、`acceptEdits` を決める。数日使って `/fewer-permission-prompts` を再実行する（[[claude-code-permissions]]）。
-- AI活用の業務適用の次の作業は [[ai-business-adoption/context]] を見る。
 
 ## Goal
 
