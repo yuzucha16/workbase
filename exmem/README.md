@@ -93,6 +93,8 @@ exmem/                 # resources/exmem/
     │   └── context.md
     ├── ai-development-workflow/
     │   └── context.md
+    ├── ai-literacy-metrics/
+    │   └── context.md
     ├── linux-home-pc/
     │   └── context.md
     ├── office-deliverable-workflow/
