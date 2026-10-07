@@ -10,3 +10,10 @@
 
 | 日付 | 種別 | メモ名 | 統合先 | 照合 |
 |---|---|---|---|---|
+| 2026-10-08 | 統合 | 2026-10-07-deciding-what-to-decide | knowledge/human-ai-decision-loop.md、knowledge/para-operations.md | 承認済（2026-10-08） |
+| 2026-10-08 | 統合 | 2026-10-07-claude-code-resume-sdk-sessions | knowledge/claude-code-storage.md | 承認済（2026-10-08） |
+| 2026-10-08 | 統合 | 2026-10-07-zed-thread-db-folder-paths | knowledge/zed-acp.md、knowledge/claude-code-storage.md | 承認済（2026-10-08） |
+| 2026-10-08 | 統合 | 2026-10-07-office-deliverable-ai-workflow | knowledge/office-ai-workspace.md | 承認済（2026-10-08） |
+| 2026-10-08 | 統合 | 2026-10-07-gitattributes-leftover-crlf-index | knowledge/git-line-endings.md | 承認済（2026-10-08） |
+| 2026-10-08 | 統合 | 2026-10-08-workflow-hook-naming-lifecycle | knowledge/workflow-kit.md、knowledge/para-operations.md | 承認済（2026-10-08） |
+| 2026-10-08 | 統合 | 2026-10-08-hook-authority-delegation-ledger | knowledge/workflow-kit.md、knowledge/windows-cli-pitfalls.md | 承認済（2026-10-08） |
