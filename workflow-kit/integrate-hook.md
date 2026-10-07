@@ -9,7 +9,7 @@
 - exmem: `$HOME\works\resources\exmem`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/exmem`）。
 - 書き込み先: `exmem/knowledge/`、`exmem/contexts/`、`exmem/README.md`、`exmem/tags.md`、統合したメモの削除（`exmem/AGENTS.md` の手順どおり）。
 - 作業ディレクトリの `docs/decisions.md` は、**ユーザーの承認を得てから**、`行き先` の行だけを書き換える（手順 3）。黙って他のリポジトリを書き換えない。
-- コミットは `docs-rules.md` の「コミットと push」に従う。push はしない。
+- コミットは `docs-rules.md` の「コミットと push」に従う。push はしない（使い捨ての環境は、`docs-rules.md` の「使い捨ての環境での緩和」）。コミット済みのメモ（使い捨ての環境で作られたもの）は、`git rm` で削除してコミットする。
 
 ## 手順
 
