@@ -84,4 +84,3 @@ AI活用（Prompt / Context / Workflow / Agent / Loop Engineering）を業務に
 - [[ai-handson-framework]]
 - [[human-ai-decision-loop]]
 - [[power-automate-office-automation]]
-- [[ai-business-adoption/context]]

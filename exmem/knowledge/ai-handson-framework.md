@@ -120,4 +120,3 @@ AI活用環境（エディタはZedとObsidian）を育てる最初の小タス�
 - [[ai-business-adoption]]
 - [[power-automate-office-automation]]
 - [[claude-code-vs-cowork]]
-- [[ai-business-adoption/context]]

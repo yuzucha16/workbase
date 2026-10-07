@@ -165,4 +165,3 @@ xlsx / pptx など、バイナリの成果物を繰り返し AI で作るとき�
 - [[power-automate-office-automation]]
 - [[ai-handson-framework]]
 - [[obsidian-vault]]
-- [[ai-business-adoption/context]]

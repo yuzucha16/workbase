@@ -90,15 +90,11 @@ exmem/                 # resources/exmem/
 │   ├── zed-dotfiles.md
 │   └── zed-vim.md
 └── contexts/
-    ├── ai-business-adoption/
-    │   └── context.md
     ├── ai-development-workflow/
     │   └── context.md
     ├── ai-literacy-metrics/
     │   └── context.md
     ├── linux-home-pc/
-    │   └── context.md
-    ├── office-deliverable-workflow/
     │   └── context.md
     └── zed-vim-migration/
         └── context.md
