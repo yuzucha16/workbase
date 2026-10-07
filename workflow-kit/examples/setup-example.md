@@ -1,8 +1,8 @@
 # 導入フックの見本
 
-`setup-hook.md` の入力・生成物・報告の型を、1つの完成例で示す。**内容は架空で、事実として扱わない。** 形式（入力の埋め方、生成物の姿、報告の順）だけを真似る。
+`init-hook.md` の入力・生成物・報告の型を、1つの完成例で示す。**内容は架空で、事実として扱わない。** 形式（入力の埋め方、生成物の姿、報告の順）だけを真似る。
 
-見本を直すのは、`setup-hook.md` を直したときだけ。出力が揺れた箇所があれば、このファイルに見本を足す（`improvements.md` に記録する）。
+見本を直すのは、`init-hook.md` を直したときだけ。出力が揺れた箇所があれば、このファイルに見本を足す（`improvements.md` に記録する）。
 
 ## 入力の例
 
@@ -22,13 +22,9 @@
 
 ## 共通ルール
 
-共通ルールの置き場は `$HOME\works\resources\workflow-kit`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
+共通ルールの置き場は `$HOME\works\resources\workflow-kit`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/workflow-kit`）。ユーザーが合言葉（手順書を呼ぶ短い言葉。日本語の別名つき）を言ったら、そこの `hooks.md` の表に従って手順書を読み、実行する。`docs-rules.md` は、作業を始める前と、`docs/` を更新するときに読む。
 
-- `docs-rules.md`: 作業を始める前と、`docs/` を更新するときに読む。`docs/` の運用。作業の終わりに `docs/log.md` と `docs/decisions.md` を更新する。
-- `closing-hook.md`: ユーザーが「終了処理して」と言ったときに読み、実行する（言われたときだけ）。作業の終わりの `docs/` 更新・棚卸し・ナレッジ化・コミットを、順に行う。
-- `knowledge-hook.md`: ユーザーが「ナレッジ化して」と言ったときに読み、実行する（言われたときだけ）。書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `knowledge-hook.md`）。
-
-上のファイルが読めない場合（`workbase` を clone していないPCなど）は、記憶で代用せず、ユーザーに伝えて止まる。
+読めない場合（`workbase` を clone していない PC など）は、記憶で代用せず、ユーザーに伝えて止まる。
 
 ## 読む順番
 
