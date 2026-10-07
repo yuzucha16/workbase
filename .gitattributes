@@ -1,2 +1,5 @@
 # 改行コードはLFに統一（Obsidian・AI・WSL/Linuxの出力がLFのため）。バイナリはgitが自動判定。
 * text=auto eol=lf
+
+# 統合台帳は追記のみ。並行する追記の競合を、両方の行を残して解消する。
+exmem/integrated.md merge=union
