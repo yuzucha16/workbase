@@ -92,7 +92,7 @@ sources:
 4. 該当する `knowledge/*.md` に統合する。該当がなければ新しいファイルを作る。
 5. `context.md` の `Current State` / `Next Actions` / `Open Questions` を更新する。
 6. 新しいファイルを作ったら `README.md` の構成図を更新する。
-7. 統合したメモを inbox から削除する。
+7. 統合したメモを inbox から削除する。**削除の前に、台帳 `integrated.md` に1行足す**（`| YYYY-MM-DD | <メモ名> | <統合先> |`。作業ディレクトリ側の `転記済` への確定は、`review` が台帳を読んで行う）。
 
 ## 作業を終えるとき
 

@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-08.2`
+版: `2026-10-08.3`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -20,6 +20,7 @@
 | Project | `open` | `close` | （なし） | `open-hook.md`、`close-hook.md`（試験運用） |
 | セッション | `start` | `wrap` | `wrap` は「終了処理して」、`start` は「作業を始めて」 | `wrap-hook.md`、`start-hook.md`（試験運用） |
 | 随時 | `stock`、`integrate` | | 「ナレッジ化して」、「inboxを整理して」 | `stock-hook.md`、`integrate-hook.md` |
+| 週1回の目途 | `review` | | 「見直して」 | `review-hook.md`（試験運用。チェック機能の集約先） |
 
 連鎖は `init`、`open → [start → 作業 → wrap]×N → close`。`stock` と `integrate` は随時。
 
@@ -70,6 +71,7 @@
 | `knowledge-hook.md` | 「ナレッジ化して」の手順・書き方・形式、改善フック |
 | `closing-hook.md` | 「終了処理して」の手順（対象の特定、`docs/` 更新、棚卸し、ナレッジ化、コミット、統合待ちの報告）・報告の型 |
 | `integrate-hook.md` | 「inboxを整理して」の手順（統合、行き先の検索、`転記済` への案、承認、コミット）・報告の型 |
+| `review-hook.md` | `review`（別名「見直して」。試験運用）の手順: 自動採用の規則の見直し、台帳による転記の一括確定、`reviews.csv` の指標 |
 | `setup-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
 | `improvements.md` | 改善提案の記録 |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`knowledge-hook.md` の自己点検のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`knowledge-hook.md` の「点検スクリプトの改善」） |
@@ -81,10 +83,13 @@
 
 ## TODO（次回以降）
 
+- `review` に、チェック機能を集約していく（いまは、自動採用の規則の見直しと、転記の一括確定だけ。`wrap` の棚卸し `check-docs.ps1` などは、実測してから1つずつ移す）。
+
 - Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「workflowを導入して」と「ナレッジ化して」の入口にする。スキルは kit のファイルを読むだけにして、手順を重複させない。
 
 ## 変更履歴
 
+- 2026-10-08（版 `2026-10-08.3`）: 権限移譲の線引きを決めた（ユーザーの決定。試験運用）。(1) `wrap` の改善案: 運用の補助は「自動採用の規則」の節に、承認なしで追加・削除してコミットする。安全規則（push、機密、破壊的操作、身元、決定の原則、書き込み先、承認の規則）と手順の本体、ほかのフックの改善案は、承認制のまま（`wrap-hook.md` の「自動採用の範囲」）。(2) push: 許可リストのリポジトリだけ、エージェントが行う。毎回、公開範囲・ブランチ・fast-forward・機密の検索を確認する（`docs-rules.md` の「push」。当面は PC ローカルの非公開リポジトリだけ）。(3) 転記: `integrate` が台帳（`exmem/integrated.md`）に追記し、新設の `review`（`review-hook.md`）が、台帳を読んで `転記待ち` を `転記済（…。本文残し）` に一括で進め、次の回で本文を外す（2段階）。(4) `review`（別名「見直して」。週1回を目途）を新設。チェック機能を、ここに集約していく。
 - 2026-10-08（版 `2026-10-08.2`）: 「wrap」の実行（`works`。フック名の整理）で出た改善1点を反映した（ユーザーの承認）。`wrap-hook.md` の手順 4 の行の末尾に混ざっていた手順 5 の文（重複）を削除した（旧 `closing-hook.md` から残っていた）。手順の内容は変更なし。モバイル用プロンプトと見本は、終了処理に触れていないので変更なし。
 
 - 2026-10-08（版 `2026-10-08.1`）: フック名の体系を決めた（ユーザーの決定）。README に「フックの体系」を足した（寿命の階層ごとの開始と終了の対: `init` / `open`・`close` / `start`・`wrap` / `stock` / `integrate`。日本語の言葉は別名）。ファイルを `closing-hook.md` → `wrap-hook.md`、`knowledge-hook.md` → `stock-hook.md`、`setup-hook.md` → `init-hook.md` に移し、旧名は案内だけを残した（削除は、名前が定着した後に参照とともに一斉に行う）。`integrate-hook.md` は名前そのまま。4つのファイルの冒頭に、呼び出し名と別名を足した。本文の手順は変更なし。`start-hook.md` `open-hook.md` `close-hook.md` を足した（works の手順書の下書きから、固有の内容を除いて一般化。試験運用）。`templates/AGENTS.md` と `templates/workspace/AGENTS.md` の呼び出し行を、新しい名前と別名にした（`templates/workspace/AGENTS.md` には `start` `open` `close` の行を足した）。モバイル用プロンプト（`exmem/inbox/README.md`）と見本（`examples/inbox-example.md`）は、メモの形式が変わらないので `kit:` は据え置き、参照先だけ `stock-hook.md` に直した。
