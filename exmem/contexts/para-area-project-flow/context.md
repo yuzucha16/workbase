@@ -33,10 +33,25 @@ updated: 2026-10-07
 ## Next Actions
 
 - Area の雛形を決める（「作業を始めて」の次にやること）。叩き台: `README.md`（frontmatter に `type: area` と `status`。本文に、案件の概要・目的、タスク候補、Project 一覧の Bases）、`docs/log.md`、`docs/decisions.md`（2026-10-07 時点）。
-- その後に、open（タスク候補を Project に切り出す）の雛形と手順書を決める。Area から渡すもの（ゴール、期限、関連する決定や資料へのリンク）と、Project の `README.md` の frontmatter（`status` `area` `review` に、期限を足すか）を決める。
+- その後に、open（タスク候補を Project に切り出す）の雛形と手順書を決める。論点は下の「open の雛形の論点」。その次に、close の雛形（status の更新、`archives/` への移動、【案件】の残りの点検、【汎用】のナレッジ化）を決める。
 - 3ラベルを `docs-rules.md` の【汎用】【この件】に足すか、Vault ローカルの規則で試すかを決める。kit を変えるときは承認を取る。
 - Vault 側の手順書（`project-open.md`、`project-close.md`）と、既存の Area・Project を、上の決定と照合する。
 - [[para-operations]] の Area の定義と Decisions を、統合のときに書き換える。
+
+## open の雛形の論点（Area の雛形の次に決めること）
+
+2026-10-07 に整理した。未決。Area の雛形（PC で決める）の後に決める。後に続くのは、close の雛形と、3ラベルの kit への反映。
+
+1. 呼び出しの言葉: 「作業を始めて」とは別にする（決定済み）。言葉は未定（例: 「タスクを切り出して」）。
+2. 入力: Area の `README.md` のタスク候補から1件を選ぶ。タスク候補の書式（タスク名、ゴール、期限）は、Area の雛形と合わせて決める。
+3. Project の作業ディレクトリの雛形: `projects/<名>/README.md`（frontmatter: `type: project`、`status`、`area`、`review`。期限と完了条件を足すか）、`docs/log.md`、`docs/decisions.md`。「workflowを導入して」の項目1〜3と同じ形にするか、Project 用の軽い雛形にするか。
+4. Project ごとの `AGENTS.md`: 置くか。提案: 置かない（Claude Code は親ディレクトリの `CLAUDE.md` も読むので、Vault のトップの規則が効く。固有の規則が要るときだけ足す）（AI の提案。未承認）。
+5. Area から渡すもの: 完了条件の1文（判断基準①）を、open のときに必須にするか。関連する決定や資料は、コピーせずにリンクで渡すか。
+6. Area 側の後処理: タスク候補から、その行を消すか、Project へのリンクに置き換えるか（一覧は Bases が集めるので、二重に持たない）。
+7. 命名: `projects/<名>/` の名前の規則（Area 名を前に付けるか、日付を付けるか）。ファイル名は Vault の中で一意に保つ規約がある。
+8. 上限: open のときに、進行中の Project が上限（3件、暫定）を超えないか点検するか。
+9. 接続: open の直後に、そのまま開始インタビュー（「作業を始めて」）に入るか。
+10. 記録: open をイベントログ（`docs/metrics/`）に残すか。
 
 ## Goal
 
