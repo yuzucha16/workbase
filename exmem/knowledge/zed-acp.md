@@ -9,11 +9,13 @@ tags:
   - ai/codex
   - ai/claude
   - tool/powershell
+  - windows
 aliases:
   - Zed ACP
 created: 2026-09-26
-updated: 2026-10-04
+updated: 2026-10-08
 sources:
+  - Claude Code conversation "Claude Code のセッション履歴の復元" (2026-10-07。Zed のスレッドの復元)
   - Claude Code conversation "Zed の設定を最適化する（目の負担軽減・claude-acp・Obsidian 併用）" (2026-10-04)
   - ChatGPT conversation "Zed ACP ハンズオン" (2026-09-26)
   - ChatGPT conversation "Zed ACPとAI横断ナレッジワークフロー" (2026-10-02)
@@ -127,6 +129,37 @@ Zed Thread History
 
 という方向。
 
+### スレッドの実体と、作業フォルダが旧パスのときの復元（2026-10-07 追記）
+
+作業フォルダを移したあと、Zed のエージェントパネルで、移動前のスレッド（アーカイブ済みを含む）を開けるようにした。開けなかった原因は、Zed が覚えている作業フォルダが旧パスのままだったこと。Claude 側の履歴（jsonl）の復元は [[claude-code-storage]]。
+
+**Principles**
+
+- Zed のスレッドは、会話の中身（エージェント側の jsonl）と、一覧の管理情報（Zed 側の DB）の2か所に分かれる。復元は両方の整合を見る。理由: 片方だけ直すと、一覧に出ても開けない、または開けても一覧に出ない。
+- アプリの内部 DB は、アプリを終了してから書き換える。更新の前に、WAL を含めてバックアップする。理由: 起動中は DB が更新され続けていて、書き換えと競合する。
+- アプリの中で動くエージェントが、そのアプリの終了を要する作業をするときは、終了を待って自動で実行するスクリプトを別プロセスで起動する。理由: アプリを閉じるとエージェントも止まり、終了の報告ができない。
+
+**Decisions**
+
+- **Zed の `sidebar_threads` の `folder_paths` と `main_worktree_paths` を、各セッションの現在の `cwd` に更新する**（2026-10-07）。根拠: Zed は `folder_paths` を作業フォルダとしてエージェントを起動し、エージェントはその `cwd` から対応する jsonl を探す。旧パスが残ると、エージェントの起動か、jsonl の検索で失敗する。ユーザーが、Zed を終了して実行することを了承した。却下案: 新しいパスのプロジェクトでスレッドを作り直す（過去の会話が使えない）。
+
+**Facts**
+
+- スレッド一覧の実体は `%LOCALAPPDATA%\Zed\db\0-stable\db.sqlite` の `sidebar_threads` テーブル。列は `thread_id` `session_id` `agent_id` `title` `updated_at` `created_at` `folder_paths` `archived` `main_worktree_paths` など（確認: 2026-10-07、根拠: DB のコピーを sqlite で読んだ。2026-10-08 に、DB のコピーを読み取り専用で開いて列を再確認）。
+- `agent_id` は `claude-acp` と `codex-acp`。2026-10-07 の記録は92件（Claude 61、Codex 31）、アーカイブ済みは66件。2026-10-08 の実測は Claude 70（アーカイブ 56）、Codex 31（アーカイブ 30）で、その後もスレッドが増えている。
+- Claude のスレッドの `session_id` は、`~\.claude\projects\<cwd 由来>\<ID>.jsonl` のファイル名と一致する。61件中56件が一致し、5件は jsonl が無かった（うち2件は `session_id` が空の空スレッド）（確認: 2026-10-07、根拠: DB とファイル名の突き合わせ）。
+- `%LOCALAPPDATA%\Zed\threads\threads.db` は、2026-08-13 から更新されていない（確認: 2026-10-07、根拠: ファイルの更新日時。2026-10-08 にも同じ日時）。現在の一覧に使われていないかは、未確認（仮説）。
+- `%LOCALAPPDATA%\Zed\logs\Zed.log` に、エージェントの起動の段階（`session/create` の `validate-cwd` `read-transcript` `resume-transcript`、`session/load` の `session-ready` `replay`）が出る（確認: 2026-10-07、根拠: ログの内容）。
+- アーカイブは `archived` フラグで、jsonl は消えない。履歴（時計アイコン）から開くと復元される。今回の DB 更新では `archived` は変えていない（確認: 2026-10-07、根拠: 更新前後の DB の比較とユーザーの報告）。
+- Zed のスレッド履歴は、`ctrl-alt-j` のサイドバーの時計アイコン、またはコマンド `agents sidebar: toggle thread history` で開く。アーカイブは、スレッドにカーソルを合わせたアイコンか `shift-backspace`（確認: 2026-10-07、根拠: 公式ドキュメント `zed.dev/docs/ai/agent-panel` と `external-agents`）。
+- 別プロセスの `Start-Process pwsh -WindowStyle Hidden` は、Zed を閉じても生き残り、終了を検知して処理を実行した（確認: 2026-10-07、根拠: ログに `Zed exited, running fix` と結果が残った）。
+- 2026-10-08 に、`folder_paths` に `vault` を含む行が37件残っていた（根拠: DB のコピーの集計。内訳〔Codex の31件か、移動後に作られたものか〕は未確認）。
+
+**Gotchas**
+
+- **旧パスのスレッドを開くと、`failed to spawn command "…pwsh.exe" "-C" "…node.exe '…claude-agent-acp\dist\index.js'"` で失敗する**: Zed が覚えている作業フォルダ（`folder_paths`）が、移動前のパスで存在しない（仮説。パスを直したあとに開けたことから推定）。Zed を終了してから、`sidebar_threads` の `folder_paths` を、セッションの現在の `cwd` に更新する。
+- **Zed の中のエージェントから、Zed の DB を直したい。Zed を閉じると、エージェントも止まる**: エージェントが Zed の子プロセスとして動いている。Zed の終了を待って、バックアップと更新を行うスクリプトを、別プロセスで起動する。結果はログファイルに残し、Zed の再起動後に確認する。
+
 ## Decisions
 
 ### Claude AgentはClaude Subscription認証を使う（2026-09-26）
@@ -199,6 +232,12 @@ ACPの通信ログはZed Command Paletteの `dev: open acp logs` で確認でき
 - プロファイル内に、他にも非対話で問題を起こす行（starship、PSFzf、scoop-completionのimportなど）があるか。現在はガードより後ろに置いてあるので、起動では読まれない。
 - `pwsh -NoProfile -c "..."` と `pwsh -c "..."` の出力を比べ、プロファイルが余計な出力を出していないか確認する。
 - Zed上のClaude / Codexセッションの保存場所とImport Threadsの挙動を、実環境でどこまで活用できるか（[[claude-code-storage]]）。
+- Codex のスレッド（31件）にも、同じ旧パスの問題があるか（2026-10-07 時点で未確認。2026-10-08 の `vault` を含む37件との関係も未確認）。
+- アーカイブを解除する専用の操作があるか（未確認。履歴から開けば復元できることは確認した）。
+
+## Next Actions
+
+- Codex のスレッドを開いて、旧パスで失敗するか確認する（2026-10-07 時点）。
 
 ## Related
 

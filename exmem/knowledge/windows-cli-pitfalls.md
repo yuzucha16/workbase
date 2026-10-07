@@ -12,10 +12,11 @@ aliases:
   - Windows CLI の落とし穴
   - PowerShell の落とし穴
 created: 2026-10-06
-updated: 2026-10-06
+updated: 2026-10-08
 sources:
   - Claude Code conversation "社内 CA 証明書の置き場の変更" (2026-10-06)
   - Claude Code conversation "Vault を $HOME\works へ移し、Linux 側の並びをそろえる" (2026-10-06。書き換えの事故防止)
+  - Claude Code conversation "フックの権限移譲の影響分析と実装" (2026-10-08。`git update-index --cacheinfo` と配列の渡し方)
 ---
 
 # Windows の PowerShell・バッチ・git 操作の落とし穴
@@ -54,6 +55,8 @@ Windows で PowerShell・バッチ・git を使う作業で、繰り返しハマ
 ## Gotchas
 
 - **行配列を作り直して `-join` し、`WriteAllText` で書き戻したら、ファイルが二重になった。直そうとして、2つ目の見出し行を探して後半を取り出し、書き戻すと、ファイルが空になった**: 二重になった原因は不明。空になったのは、見出し行の検索（`-eq`）が何も見つけず、`$null` を添字にしたエラーのあとも、スクリプトが続行して空の内容を書いたため。`git checkout -- <ファイル>` でコミット済みの版に戻し、未コミットだった差分は手で書き直した。
+- **PowerShell で `git update-index --cacheinfo 100644,$h,<path>` がエラーになった**: カンマが PowerShell の配列演算子として解釈された。引数を `"100644,$h,<path>"` のように引用符で囲む。
+- **PowerShell で、1組だけの置換ペアを `@(@('a','b'))` で関数に渡したら、文字の配列として扱われた**: 1要素の配列を `@()` で包むと、外側の配列に展開される。`,@('a','b')` のように、先頭にカンマを付けて渡す。
 - **`[ValidateSet(...)][string]$Kind` を持つスクリプトで、`foreach ($kind in ...)` を書いたら、新しい値がパラメータの検証で拒否された**: PowerShell の変数名は大文字小文字を区別しないので、ループ変数 `$kind` が引数 `$Kind` と同じ変数になり、代入のたびに `ValidateSet` が検証された。ループ変数の名前を変える（`$kindName`）。同じ原因の例が [[workflow-kit]] の Gotchas（`$l` と `$L`）にある。
 - **PowerShell の `Export-Csv` で書いた CSV を、LF 統一のリポジトリでコミットしようとした**: Windows では CRLF で書かれ、`git add` が置換の警告を出す。書いた後に、全体を読み直して `` `r`n `` を `` `n `` に置換して書き戻す（BOM なしの UTF-8）。
 - **Windows 上の git で、WSL で `chmod +x` したスクリプトの実行ビットがコミットに入らなかった**: Windows 上の git が NTFS のファイルを `100644` で記録した（WSL の `chmod` は git に反映されない）。`git update-index --chmod=+x <パス>` で記録して、別のコミットにする。別の PC の Linux で clone したときに実行できなくなるのを防ぐ。
