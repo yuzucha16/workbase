@@ -95,6 +95,8 @@ exmem/                 # resources/exmem/
     │   └── context.md
     ├── linux-home-pc/
     │   └── context.md
+    ├── office-deliverable-workflow/
+    │   └── context.md
     └── zed-vim-migration/
         └── context.md
 ```
