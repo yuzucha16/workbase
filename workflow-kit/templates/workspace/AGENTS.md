@@ -9,10 +9,11 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 共通ルールの置き場は `$HOME\works\resources\workflow-kit`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
 
 - `docs-rules.md`: 作業を始める前と、`docs/` を更新するときに読む。`docs/` の運用。作業の終わりに `docs/log.md` と `docs/decisions.md` を更新する。
-- `closing-hook.md`: ユーザーが「終了処理して」と言ったときに読み、実行する（言われたときだけ）。作業の終わりの `docs/` 更新・棚卸し・ナレッジ化・コミットを、順に行う。
-- `knowledge-hook.md`: ユーザーが「ナレッジ化して」と言ったときに読み、実行する（言われたときだけ）。書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `knowledge-hook.md`）。
-- `integrate-hook.md`: ユーザーが「inboxを整理して」と言ったときに読み、実行する（言われたときだけ。exmem 側の作業）。
-- `setup-hook.md`: ユーザーが「workflowを導入して」と言ったときに読み、実行する（言われたときだけ。このワークスペース配下の作業ディレクトリへの導入の入口）。
+- `wrap-hook.md`: ユーザーが「wrap」（別名「終了処理して」）と言ったときに読み、実行する（言われたときだけ）。作業の終わりの `docs/` 更新・棚卸し・ナレッジ化・コミットを、順に行う。
+- `stock-hook.md`: ユーザーが「stock」（別名「ナレッジ化して」）と言ったときに読み、実行する（言われたときだけ）。書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。
+- `integrate-hook.md`: ユーザーが「integrate」（別名「inboxを整理して」）と言ったときに読み、実行する（言われたときだけ。exmem 側の作業）。
+- `init-hook.md`: ユーザーが「init」（別名「workflowを導入して」）と言ったときに読み、実行する（言われたときだけ。このワークスペース配下の作業ディレクトリへの導入の入口）。
+- `start-hook.md` / `open-hook.md` / `close-hook.md`（試験運用）: ユーザーが「start」（別名「作業を始めて」）と言ったときに `start-hook.md` を読み、実行する。進行中の Project が無い、または新しい Project を始めるときは、先に `open-hook.md` で Project を作る（`open` は作ったあとに `start` を呼ぶ）。Project を閉じるときは `close-hook.md`（完了条件の達成を確認したら、AI が提案する）。言われたときだけ実行する。
 
 上のファイルが読めない場合（`resources/` を clone していない PC など）は、記憶で代用せず、ユーザーに伝えて止まる。
 

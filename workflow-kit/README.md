@@ -1,6 +1,6 @@
 # workflow-kit
 
-版: `2026-10-07.6`
+版: `2026-10-08.1`
 
 作業ディレクトリごとに必要になる、共通機能の正本。
 
@@ -10,6 +10,24 @@
 4. **「inboxを整理して」フック**（exmem 側。`inbox/` のメモを統合し、それを指す `docs/` の `転記待ち` を `転記済` に進める案を出す）: `integrate-hook.md`
 5. **「workflowを導入して」フック**（1と2を、作業ディレクトリに導入する。Vault のトップ（ワークスペース）の生成もここ。今後の追加機能も、ここで導入する）: `setup-hook.md`
 
+## フックの体系（2026-10-08 に決定）
+
+フックは、寿命の階層ごとに、開始と終了の対にする。呼び出し名は英語の短い名前を主にし、日本語の言葉は別名として当面残す（別名は、いま決まっているものだけ。増減は後で揃える）。
+
+| 寿命 | 開始 | 終了 | 別名（日本語） | ファイル |
+|---|---|---|---|---|
+| ワークスペース | `init` | なし | 「workflowを導入して」 | `init-hook.md` |
+| Project | `open` | `close` | （なし） | `open-hook.md`、`close-hook.md`（試験運用） |
+| セッション | `start` | `wrap` | `wrap` は「終了処理して」、`start` は「作業を始めて」 | `wrap-hook.md`、`start-hook.md`（試験運用） |
+| 随時 | `stock`、`integrate` | | 「ナレッジ化して」、「inboxを整理して」 | `stock-hook.md`、`integrate-hook.md` |
+
+連鎖は `init`、`open → [start → 作業 → wrap]×N → close`。`stock` と `integrate` は随時。
+
+- **用語**: スレッド = Claude Code の1会話（フックの対象にしない）。セッション = `start` から `wrap` までの作業手順の単位（1スレッドに複数セッション、複数スレッドで1セッションがありうる）。`open` と `close` は、スレッドでなく Project の寿命。
+- **`open` と `start`**: `open` は Project のひな形（`README.md`、`AGENTS.md`）を作ったあとに `start` を呼ぶ。`start` は単独でも呼べる（進行中の Project があるとき）。
+- **`end` にしない理由**: 「会話を終える」と取られやすいので、`wrap` にした（ユーザー）。
+- **旧ファイル名**: `closing-hook.md`、`knowledge-hook.md`、`setup-hook.md` は、新しい名前のファイルへの案内だけを残してある。参照が旧名のままでも動く。名前が定着し、ある程度の期間使った後に、参照とともに一斉に削除する（ユーザーの決定）。それまで、本文中の旧名と日本語の言葉は、そのまま読み替える。
+- **試験運用（`start` `open` `close`）**: 実測が少ないので、叩き台として扱う。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善は、呼び出し元の `docs/metrics/events.csv` に記録し、ユーザーの承認後に直す。
 ## 目的
 
 ナレッジと作業ログを分ける。
@@ -66,6 +84,8 @@
 - Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「workflowを導入して」と「ナレッジ化して」の入口にする。スキルは kit のファイルを読むだけにして、手順を重複させない。
 
 ## 変更履歴
+
+- 2026-10-08（版 `2026-10-08.1`）: フック名の体系を決めた（ユーザーの決定）。README に「フックの体系」を足した（寿命の階層ごとの開始と終了の対: `init` / `open`・`close` / `start`・`wrap` / `stock` / `integrate`。日本語の言葉は別名）。ファイルを `closing-hook.md` → `wrap-hook.md`、`knowledge-hook.md` → `stock-hook.md`、`setup-hook.md` → `init-hook.md` に移し、旧名は案内だけを残した（削除は、名前が定着した後に参照とともに一斉に行う）。`integrate-hook.md` は名前そのまま。4つのファイルの冒頭に、呼び出し名と別名を足した。本文の手順は変更なし。`start-hook.md` `open-hook.md` `close-hook.md` を足した（works の手順書の下書きから、固有の内容を除いて一般化。試験運用）。`templates/AGENTS.md` と `templates/workspace/AGENTS.md` の呼び出し行を、新しい名前と別名にした（`templates/workspace/AGENTS.md` には `start` `open` `close` の行を足した）。モバイル用プロンプト（`exmem/inbox/README.md`）と見本（`examples/inbox-example.md`）は、メモの形式が変わらないので `kit:` は据え置き、参照先だけ `stock-hook.md` に直した。
 
 - 2026-10-07（版 `2026-10-07.6`）: 「終了処理して」の実行（クラウドのセッション、exmem だけの作業）で出た改善1点を反映した（ユーザーの承認）。`closing-hook.md` の手順 4 と `knowledge-hook.md` の手順 7 に、`pwsh` が無い環境（クラウドのセッションなど）では点検を手で行い、報告に「点検スクリプトは未実行（手で確認）」と書く、手で見る項目、`docs/` が無いときの書き方、を足した。
 - 2026-10-07（版 `2026-10-07.5`）: 「終了処理して」の実行（dotfiles。Windows Terminal の設定の改行と `.gitattributes`）で出た改善2点を反映した（ユーザーの承認）。(1) `docs-rules.md` の「コミットと push」に、コミットを分けるときは `git commit` にパスを指定しない（パス指定は作業ツリーの内容をコミットするので、ステージで分けても1コミットにまとまる）、と足した。(2) 同じ節の「コミットの身元とトレーラー」を、終了処理のコミットだけでなく、作業の途中のエージェントのコミットすべてに適用すると明記し、`closing-hook.md` の手順 6 に、作業の途中のコミットの身元とトレーラーの点検と報告を足した。モバイル用プロンプトと見本は、コミットの規則に触れていないので変更なし。
