@@ -307,7 +307,7 @@ AI に作業の手順を呼び出させるフックの名前を、寿命（ワ�
 ### Facts（フック名）
 
 - フックの日本語の呼び出しの言葉は、共通機能の12ファイルに合計99か所あった（確認: 2026-10-08、根拠: 共通機能のディレクトリを4つの言葉で検索した件数。名前の変更後で、再現は未実施）。名前の変更は、案内ファイル方式でないと一度に直せない。
-- 実物（2026-10-08 に照合）: kit に `init-hook.md` `open-hook.md` `close-hook.md` `start-hook.md` `wrap-hook.md` `stock-hook.md` `integrate-hook.md` があり、旧名の `setup-hook.md` `closing-hook.md` `knowledge-hook.md` は「このファイルは移った」の案内だけになっている。`README.md` の表は、決定のとおり（`init`／`open`・`close`／`start`・`wrap`／`stock`・`integrate`）。
+- 実物（2026-10-08 に照合）: kit に `init-hook.md` `open-hook.md` `close-hook.md` `start-hook.md` `wrap-hook.md` `stock-hook.md` `integrate-hook.md` があり、旧名の `setup-hook.md` `closing-hook.md` `knowledge-hook.md` は「このファイルは移った」の案内だけになっている。（2026-10-08 のうちに、3ファイルとも削除した。呼び出し表の正本は `hooks.md`）`README.md` の表は、決定のとおり（`init`／`open`・`close`／`start`・`wrap`／`stock`・`integrate`）。
 - 背景を添えた依頼（ゴール・完了条件・制約・やらないこと）で始めても、前提の漏れは作業の種類に固有のものが残った（開発では評価の軸、文書作成では承認の判断基準・構成・図）。ただし、作業の種類が違い、各1回の比較（仮説）。
 
 ### Open Questions（フック名）
