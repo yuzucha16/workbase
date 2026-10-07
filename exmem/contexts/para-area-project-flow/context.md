@@ -28,6 +28,7 @@ updated: 2026-10-07
   - 判断の項目のラベルを3つにする（変更がある前提で試す）: 【この件】= Project に残す、【案件】= 見つけた時点で Area の `docs/decisions.md` に直接書く（例: タスクで判明した、仕様変更などの案件全体への影響）、【汎用】= workbase へ（今の `exmem/inbox/` の流れ）。これで、close のときに Project から Area へ戻す処理は要らなくなる。
   - open のフックは、「作業を始めて」とは別にする。
   - まず Vault ローカル（`docs/drafts/` の手順書）で試し、安定したら kit に昇格する。
+- 2026-10-07 の論点整理はここで区切った。この進め方（決めることを決める）は、`exmem/inbox/2026-10-07-deciding-what-to-decide.md` にナレッジ化した（未統合）。
 - AI の提案（未承認）: 終了処理の棚卸しで、Project 側に【案件】の項目が残っていないかを点検する。close の仕事は、status の更新、`archives/` への移動、【汎用】のナレッジ化だけになる。
 
 ## Next Actions
