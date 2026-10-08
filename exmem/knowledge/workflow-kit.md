@@ -27,6 +27,8 @@ sources:
 
 # 作業ログとナレッジ化フックの共通機能（workflow-kit）
 
+> **更新（2026-10-08）**: 転記の 6 状態・本文ハッシュ・台帳 `integrated.md`・`review` の B（転記の一括確定）・`check-docs.ps1` は、同日のうちに畳んだ。判断記録の項目を知識にしたときは、`→ <名前>` のリンクを 1 行足すだけにした（規則の正本は `workflow-kit/docs-rules.md` の「decisions.md の項目を知識にしたとき」）。下の該当する Principles / Decisions / Facts は、設計の経緯の履歴として残す。畳んだ理由は、第三者レビュー（L3・L5）の指摘と実測（台帳の仕組みで確定した件数 0、手作業の一括確定 42 件）。
+
 ## Purpose
 
 作業ディレクトリごとに必要になる「`docs/`（作業ログと判断ログ）」と、「ナレッジ化して」（再利用できる知識を exmem の inbox へ渡すフック）を、特定のリポジトリの記述から切り出し、どの作業ディレクトリからも参照できる共通機能にする。置き場は `works` の `resources/workflow-kit/`（`resources/` は共有の `workbase`）。手順そのものの正本は kit のファイルで、ここには設計の根拠を残す。出力のブレ対策は [[ai-output-consistency]]。exmem と他リポジトリの関係は [[ai-development-workflow]]。

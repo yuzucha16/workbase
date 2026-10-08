@@ -49,7 +49,7 @@
 
 ### 「終了処理して」と「inboxを整理して」を使う
 
-作業の終わりに、「終了処理して」と言うと、`wrap-hook.md` に従って、`docs/` 更新 → 棚卸し → ナレッジ化 → コミット → 統合待ちの報告、を順に行う。統合待ち（メモが5件以上、または `転記待ち` が15件以上）と報告されたら、exmem 側で「inboxを整理して」と言うと、`integrate-hook.md` に従って統合し、`転記待ち` を `転記済` に進める案が出る（承認制）。ソース側が統合待ちを知らせ（push）、exmem 側が統合する、という分担。
+作業の終わりに、「終了処理して」と言うと、`wrap-hook.md` に従って、現在状態の更新 → 昇格の案 → コミットと push → 報告（終了時の1問）、を順に行う。まとまった知識化は「ナレッジ化して」（`stock-hook.md`）で `exmem/inbox/` に置く。exmem 側で「inboxを整理して」と言うと、`integrate-hook.md` に従って統合する。未統合のメモが5件以上たまったら、`review` が勧める。
 
 ## 構成
 
@@ -57,14 +57,12 @@
 |---|---|
 | `docs-rules.md` | `docs/` の運用規則と、コミットと push の規則 |
 | `stock-hook.md` | 「ナレッジ化して」の手順・書き方・形式、改善フック |
-| `wrap-hook.md` | 「終了処理して」の手順（対象の特定、`docs/` 更新、棚卸し、ナレッジ化、コミット、統合待ちの報告）・報告の型 |
-| `integrate-hook.md` | 「inboxを整理して」の手順（統合、行き先の検索、`転記済` への案、承認、コミット）・報告の型 |
-| `review-hook.md` | `review`（別名「見直して」。試験運用）の手順: 自動採用の規則の見直し、台帳による転記の一括確定、`reviews.csv` の指標 |
+| `wrap-hook.md` | 「終了処理して」の手順（対象の特定、現在状態の更新、昇格の案、コミットと push）・報告の型 |
+| `integrate-hook.md` | 「inboxを整理して」の手順（統合、照合の報告、コミット）・報告の型 |
+| `review-hook.md` | `review`（別名「見直して」。試験運用）の手順: `again` と遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
 | `init-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
 | `improvements.md` | 改善提案の記録 |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`stock-hook.md` の「このフックの改善」） |
-| `tools/check-docs.ps1` | `docs/decisions.md` の項目の、ラベルと行き先の点検（`docs-rules.md` の「decisions.md の項目の行き先」。行き先の欠落、不正な状態、転記待ちの上限20件。PowerShell 7） |
-| `tools/item-hash.ps1` | `decisions.md` の項目の本文ハッシュ（`転記待ち` の行に記録し、`review` が、項目が転記待ちの後に変わっていないかを見る。読み取り専用。PowerShell 7） |
 | `tools/find-knowledge.ps1` | `stock-hook.md` 手順 5 の既存知識の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。読み取り専用。PowerShell 7） |
 | `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` はワークスペース（Vault のトップ）用（`AGENTS.md`、`gitignore.template`、`ignore.template`、`gitattributes.template`、`pre-push.template`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
@@ -72,7 +70,7 @@
 
 ## TODO（次回以降）
 
-- `review` に、チェック機能を集約していく（いまは、自動採用の規則の見直しと、転記の一括確定だけ。`wrap` の棚卸し `check-docs.ps1` などは、実測してから1つずつ移す）。
+- 手順書本体をさらに薄くする（`stock-hook.md` の手順 2 の例外の細則、`docs-rules.md`）。2026-10-15 の点検と 2026-11-08 の判定の結果を見てから。
 
 - Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「workflowを導入して」と「ナレッジ化して」の入口にする。スキルは kit のファイルを読むだけにして、手順を重複させない。
 

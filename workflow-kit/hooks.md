@@ -7,11 +7,11 @@
 | `init` | 「workflowを導入して」 | `init-hook.md` | ワークスペース | 作業ディレクトリへの導入の入口（Vault のトップの生成を含む） |
 | `open` | | `open-hook.md`（試験運用） | Project の開始 | Project のひな形を作り、`start` を呼ぶ |
 | `start` | 「作業を始めて」 | `start-hook.md`（試験運用） | セッションの開始 | 開始インタビュー |
-| `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | `docs/` の更新・棚卸し・ナレッジ化・コミットを、順序を固定して行う |
+| `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push を、順序を固定して行う |
 | `close` | | `close-hook.md`（試験運用） | Project の終了 | Project を閉じる |
 | `stock` | 「ナレッジ化して」 | `stock-hook.md` | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`） |
-| `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `knowledge/` に統合し、台帳に記録する |
-| `review` | 「見直して」 | `review-hook.md`（試験運用） | 週1回を目途 | チェック機能の集約先 |
+| `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `knowledge/` に統合し、照合を報告する |
+| `review` | 「見直して」 | `review-hook.md`（試験運用） | 週1回を目途 | `again` と遠回りの事例を見て、1つ直すか1つ畳む |
 | （常時） | | `docs-rules.md` | 作業を始める前と、`docs/` を更新するとき | `docs/` の運用規則 |
 
 - 連鎖: `init`、`open → [start → 作業 → wrap]×N → close`。`stock` と `integrate` は随時。
