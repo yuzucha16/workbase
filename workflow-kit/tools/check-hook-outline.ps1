@@ -9,6 +9,7 @@
   あわせて共通部の中身（hook-common.md）を見る: 冒頭の hooks.md、状態の行と hooks.md の（試験運用）の一致、報告の型の改善案、改善の章の hook-common.md への参照。
   これ以外の章（実測、未決、各フック固有の仕様など）は固有部で、点検しない。
   新しいフックを足すときも、この5章を同じ名前・順序で置く。
+  手順の参照は、番号でなく手順の見出しの名前で書く（番号参照が無いこと、名前の実在を見る）。
   あわせて、hooks.md と README.md の表の行に、全フックが載っていること、
   表にあるフック名のファイルが存在すること（削除・改名の漏れ）を見る。
 
@@ -52,6 +53,12 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   $last = [array]::IndexOf($h2, ($h2 | Where-Object { $_ -eq 'このフックの改善' } | Select-Object -First 1))
   $early = @(for ($i = 0; $i -lt $last; $i++) { if (-not ($common | Where-Object { $h2[$i] -eq $_ -or $h2[$i].StartsWith("$_（") }) -and $h2[$i] -notin $beforeOk) { $h2[$i] } })
   if ($early) { $content += "固有の章が共通部の途中にある: $($early -join '、')" }
+  # 手順の参照は番号でなく見出し（太字）の名前で書く。番号参照が無く、名前が同じファイルの手順に実在すること
+  if ($raw -match '手順 ?[0-9０-９]|手順の ?[0-9０-９]|」の [0-9０-９] ') { $content += '手順を番号で参照している（手順「名前」で書く）' }
+  $titles = @([regex]::Matches($raw, '(?m)^\s*[0-9]+\. \*\*(.+?)\*\*') | ForEach-Object { $_.Groups[1].Value.TrimEnd('。', ':', '：') })
+  $refs = @([regex]::Matches($raw, '手順「([^」]+)」|「手順」の「([^」]+)」') | ForEach-Object { if ($_.Groups[1].Success) { $_.Groups[1].Value } else { $_.Groups[2].Value } })
+  $dead = @($refs | Where-Object { $r = $_; -not ($titles | Where-Object { $_.StartsWith($r) }) } | Sort-Object -Unique)
+  if ($dead) { $content += "手順の参照先が無い: $($dead -join '、')" }
   if (-not $head.Contains('`hooks.md`')) { $content += '冒頭に正本 hooks.md の記載が無い' }
   $trial = $hooksRows -match ('`' + [regex]::Escape($f.Name) + '`（試験運用）')
   $hasState = $head.Contains('状態: **試験運用**')
