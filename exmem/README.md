@@ -46,49 +46,7 @@ exmem/                 # resources/exmem/
 ├── knowledge.base     # Obsidian Bases: 知識・プロジェクトの一覧表
 ├── inbox/
 │   └── README.md      # モバイル用の引き継ぎプロンプト
-├── knowledge/
-│   ├── ai-business-adoption.md          # AI活用の業務適用（ROI・習得工程）
-│   ├── ai-development-workflow.md       # exmem自体の設計
-│   ├── ai-output-consistency.md         # AIの出力のブレを抑える設計と校正の進め方
-│   ├── ai-handson-framework.md          # ハンズオン設計・情報ダイジェスト
-│   ├── ai-harness-concepts.md           # モデルとハーネス
-│   ├── app-config-placement.md          # アプリの設定ディレクトリを置くリポジトリの判断基準
-│   ├── claude-code-permissions.md       # 権限制御と共通土台（自走期間）
-│   ├── claude-code-project-settings.md  # .claude/ の管理方針
-│   ├── claude-code-storage.md
-│   ├── claude-code-vs-cowork.md
-│   ├── fonts.md                         # メインフォントの選定と導入
-│   ├── ai-work-metrics.md               # AI 活用の指標を会話履歴から測る
-│   ├── dotfiles-shell-tuning.md         # シェルの起動時間・WSL の配色とメモリ・設定の追跡方針
-│   ├── embedded-c-constraint-checks.md  # 組込み C の制約を nm と呼び出しグラフで機械検査する
-│   ├── gh-release-download.md           # gh release download は未ログインでも使える
-│   ├── git-line-endings.md              # 改行コードを .gitattributes で決める
-│   ├── git-rebase-chronology.md         # rebase の前にコミットの時系列を確認する
-│   ├── git-subdirectory-split.md        # 履歴を保ってサブディレクトリを別リポジトリに切り出す（git filter-repo）
-│   ├── human-ai-decision-loop.md
-│   ├── keyboard-switches.md
-│   ├── linux-distro-selection.md
-│   ├── linux-multiboot-setup.md
-│   ├── modern-cli-tools.md
-│   ├── obsidian-appearance.md           # ファイル一覧の色分けと、CSS で変えられない範囲
-│   ├── obsidian-vault.md
-│   ├── office-ai-workspace.md
-│   ├── para-operations.md               # PARA の運用と、AI の質問・提案の指標
-│   ├── pc-setup-manuals.md              # Win11 / Debian系の環境セットアップ手順書
-│   ├── notepad-plus-plus.md             # Notepad++（scoop版）の設定管理（config.xmlの雛形方式）
-│   ├── power-automate-office-automation.md
-│   ├── scoop-app-management.md          # scoopを正本にしたアプリ管理と管理外の最小化
-│   ├── shell-command-usecases.md        # コマンド利用傾向とヒストリの種（dotfilesの種ファイルの正本）
-│   ├── shell-fzf-keybindings.md         # fzfとキー割り当て（pwsh/zsh/bash）
-│   ├── shell-script-testing-wsl.md      # WSL・Windowsバッチのスクリプトを試験する（偽のHOME・環境判定の差し替え・dry-run）
-│   ├── terminal-cursor-blink.md         # カーソル点滅を止める（DECSCUSR）
-│   ├── vscode-workspace.md
-│   ├── windows-cli-pitfalls.md          # Windows の PowerShell・バッチ・git 操作の落とし穴
-│   ├── workflow-kit.md                  # 作業ログとナレッジ化フックの共通機能の設計
-│   ├── wsl-file-placement.md
-│   ├── zed-acp.md
-│   ├── zed-dotfiles.md
-│   └── zed-vim.md
+├── knowledge/         # 1ファイル1トピック。一覧は下の「知識の索引」
 └── contexts/
     ├── ai-development-workflow/
     │   └── context.md
@@ -102,6 +60,53 @@ exmem/                 # resources/exmem/
 
 exmem自体の設計（会話と知識の扱い、AIをまたぐ原則など）は `knowledge/ai-development-workflow.md` にある。
 Zed ACPは独立したプロジェクトではなく、AI開発ワークフローを構成する要素の一つとして `knowledge/zed-acp.md` で扱う。
+
+## 知識の索引（探すときは、ここから）
+
+1件1行（タイトルは各ファイルの frontmatter の `title`）。新しい知識ファイルを作ったら、1行足す。
+
+- [[ai-business-adoption]]: AI活用の業務負荷削減と習得工程
+- [[ai-development-workflow]]: AI開発ワークフロー
+- [[ai-handson-framework]]: AI活用ハンズオンの設計と情報ダイジェスト
+- [[ai-harness-concepts]]: AIエージェントのモデルとハーネス
+- [[ai-output-consistency]]: AIの出力のブレを抑える設計と校正の進め方
+- [[ai-work-metrics]]: AI 活用の指標を会話履歴から測る
+- [[app-config-placement]]: アプリの設定ディレクトリを置くリポジトリの判断基準
+- [[claude-code-permissions]]: Claude Codeの権限制御と共通土台（自走期間を伸ばす）
+- [[claude-code-project-settings]]: プロジェクトの .claude/ の管理方針
+- [[claude-code-storage]]: Claude Codeのチャット履歴とメモリの保存場所
+- [[claude-code-vs-cowork]]: Claude CodeとCoworkの使い分け（Windows）とExcelスキル
+- [[dotfiles-shell-tuning]]: dotfiles の起動時間・WSL の見た目・追跡方針
+- [[embedded-c-constraint-checks]]: 組込み C の制約を機械で検査する
+- [[fonts]]: フォントの選定と導入
+- [[gh-release-download]]: gh release download は未ログインでも使える
+- [[git-line-endings]]: Git の改行コードを .gitattributes で決める
+- [[git-rebase-chronology]]: rebase の前にコミットの時系列を確認する
+- [[git-subdirectory-split]]: 履歴を保ってサブディレクトリを別リポジトリに切り出す（git filter-repo）
+- [[human-ai-decision-loop]]: 人間とAIの意思決定ループ（Decision Loop）
+- [[keyboard-switches]]: キーボードのスイッチの好みとスタビラトル対策
+- [[linux-distro-selection]]: 自宅PCのLinuxディストロ選定
+- [[linux-multiboot-setup]]: 256GB SSDのマルチブートLinux構成（MX Linuxインストール）
+- [[modern-cli-tools]]: modern CLIツールの役割整理
+- [[notepad-plus-plus]]: Notepad++（scoop 版）の設定管理
+- [[obsidian-appearance]]: Obsidian のファイル一覧の色分けと、CSS で変えられない範囲
+- [[obsidian-vault]]: Obsidian Vault
+- [[office-ai-workspace]]: Office成果物をAIで作る作業環境とデータ配置
+- [[para-operations]]: PARA の運用と、AI の質問・提案の指標
+- [[pc-setup-manuals]]: 環境セットアップ手順書（Win11 / Debian系）
+- [[power-automate-office-automation]]: Power Automate / Office Scriptsによる業務自動化
+- [[scoop-app-management]]: Windows のアプリを scoop で管理し、管理外を最小にする
+- [[shell-command-usecases]]: ターミナルのコマンド利用傾向とヒストリの種
+- [[shell-fzf-keybindings]]: シェルの fzf とキー割り当て（pwsh / zsh / bash）
+- [[shell-script-testing-wsl]]: WSL でシェルスクリプトを試験する
+- [[terminal-cursor-blink]]: ターミナルのカーソル点滅を止める（DECSCUSR）
+- [[vscode-workspace]]: VS Codeの拡張機能とWorkspace運用
+- [[windows-cli-pitfalls]]: Windows の PowerShell・バッチ・git 操作の落とし穴
+- [[workflow-kit]]: 作業ログとナレッジ化フックの共通機能（workflow-kit）
+- [[wsl-file-placement]]: ZedとWSLのファイル配置方針
+- [[zed-acp]]: Zed ACP
+- [[zed-dotfiles]]: Zedのdotfiles管理
+- [[zed-vim]]: Zed Vim環境
 
 ## AI横断性
 
