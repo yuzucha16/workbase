@@ -13,7 +13,7 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 - `stock-hook.md`: ユーザーが「stock」（別名「ナレッジ化して」）と言ったときに読み、実行する（言われたときだけ）。書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。
 - `integrate-hook.md`: ユーザーが「integrate」（別名「inboxを整理して」）と言ったときに読み、実行する（言われたときだけ。exmem 側の作業）。
 - `init-hook.md`: ユーザーが「init」（別名「workflowを導入して」）と言ったときに読み、実行する（言われたときだけ。このワークスペース配下の作業ディレクトリへの導入の入口）。
-- `start-hook.md` / `open-hook.md` / `close-hook.md`（試験運用）: ユーザーが「start」（別名「作業を始めて」）と言ったときに `start-hook.md` を読み、実行する。進行中の Project が無い、または新しい Project を始めるときは、先に `open-hook.md` で Project を作る（`open` は作ったあとに `start` を呼ぶ）。Project を閉じるときは `close-hook.md`（完了条件の達成を確認したら、AI が提案する）。言われたときだけ実行する。
+- `start-hook.md` / `open-hook.md` / `close-hook.md`: ユーザーが「start」（別名「作業を始めて」）と言ったときに `start-hook.md` を読み、実行する。進行中の Project が無い、または新しい Project を始めるときは、先に `open-hook.md` で Project を作る（`open` は作ったあとに `start` を呼ぶ）。Project を閉じるときは `close-hook.md`（完了条件の達成を確認したら、AI が提案する）。言われたときだけ実行する。
 
 上のファイルが読めない場合（`resources/` を clone していない PC など）は、記憶で代用せず、ユーザーに伝えて止まる。
 
