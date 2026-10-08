@@ -11,7 +11,7 @@
   新しいフックを足すときも、この5章を同じ名前・順序で置く。
   手順の参照は、番号でなく手順の見出しの名前で書く（番号参照が無いこと、名前の実在を見る）。
   あわせて、hooks.md と README.md の表の行に、全フックが載っていること、
-  表にあるフック名のファイルが存在すること（削除・改名の漏れ）を見る。
+  表にあるフック名のファイルが存在すること（削除・改名の漏れ）、hook-matrix.md の列がフックと一致することを見る。
 
 .EXAMPLE
   pwsh -NoProfile -File tools/check-hook-outline.ps1
@@ -109,6 +109,27 @@ foreach ($t in 'hooks.md', 'README.md') {
   } else {
     Write-Output "OK    $t（表と全フックが一致）"
   }
+}
+# hook-matrix.md の列: 表の見出し行にある列が、*-hook.md のフックと一致すること
+$matrixPath = Join-Path $kitRoot 'hook-matrix.md'
+if (Test-Path -LiteralPath $matrixPath) {
+  $header = Get-Content -LiteralPath $matrixPath -Encoding utf8 | Where-Object { $_ -match '^\| 項目 \|' } | Select-Object -First 1
+  $cols = @(($header -split '\|') | ForEach-Object { $_.Trim() } | Where-Object { $_ -and $_ -ne '項目' })
+  $names = @($hooks | ForEach-Object { $_ -replace '-hook\.md$', '' })
+  $absent = @($names | Where-Object { $_ -notin $cols })
+  $ghost = @($cols | Where-Object { $_ -notin $names })
+  if ($absent -or $ghost) {
+    $fail++
+    $msg = @()
+    if ($absent) { $msg += "列に無い: $($absent -join '、')" }
+    if ($ghost) { $msg += "存在しないフック: $($ghost -join '、')" }
+    Write-Output "FAIL  hook-matrix.md  $($msg -join ' / ')"
+  } else {
+    Write-Output 'OK    hook-matrix.md（列と全フックが一致）'
+  }
+} else {
+  $fail++
+  Write-Output 'FAIL  hook-matrix.md  ファイルが無い'
 }
 # 他のファイルからの手順の参照: `X-hook.md` の手順「Y」の形で書き、Y が X の手順の見出しにあること。
 # hook-common.md の記録の表は、行のフック名の手順を指す
