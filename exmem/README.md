@@ -42,7 +42,6 @@ exmem/                 # resources/exmem/
 ├── AGENTS.md          # 全エージェント共通の入口・書き方ルール
 ├── CLAUDE.md          # @AGENTS.md を読み込むだけ
 ├── tags.md            # タグの語彙とルール
-├── integrated.md      # 統合台帳（統合したメモ名と統合先。integrate が追記し、作業ディレクトリ側の review が読む）
 ├── knowledge.base     # Obsidian Bases: 知識・プロジェクトの一覧表
 ├── inbox/
 │   └── README.md      # モバイル用の引き継ぎプロンプト
