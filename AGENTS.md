@@ -14,7 +14,7 @@
 | `cheatsheets/` | コマンド・設定のチートシート |
 | `handson/` | ハンズオンの課題とテンプレート |
 
-- このリポジトリは単独で clone しても自己完結する。外のファイルに依存しない。
+- このリポジトリは単独で clone しても自己完結する。作業ディレクトリに期待することは、`workflow-kit/hooks.md` の「契約」だけ。
 - 通常は、Obsidian Vault の `resources/` として clone して使う（Windows: `$HOME\works\resources`、WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources`）。Vault 全体（PARA の各区分、PC ごとのローカルの作業）は、このリポジトリの外にある。
 
 ## 共通ルール
