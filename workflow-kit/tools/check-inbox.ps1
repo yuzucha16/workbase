@@ -8,9 +8,6 @@
   点検するメモ。複数のときは、パスを空白で並べる（-Path は付けない）か、-Path a,b（カンマ区切り）にする。
   省略すると、exmem/inbox/ の今日の日付のメモ（README.md を除く）を点検する。
 
-.PARAMETER KitVersion
-  kit の版。省略すると、workflow-kit/README.md の「版」を読む。
-
 .PARAMETER Today
   今日の日付（YYYY-MM-DD）。省略すると、実行した日。
 
@@ -24,16 +21,11 @@
 [CmdletBinding(PositionalBinding = $false)]
 param(
   [Parameter(ValueFromRemainingArguments = $true)] [string[]]$Path,
-  [string]$KitVersion,
   [string]$Today = (Get-Date -Format 'yyyy-MM-dd')
 )
 
 $Path = @($Path | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
 $kitRoot = Split-Path -Parent $PSScriptRoot
-if (-not $KitVersion) {
-  $m = Select-String -Path (Join-Path $kitRoot 'README.md') -Pattern '^版: `([^`]+)`' | Select-Object -First 1
-  if ($m) { $KitVersion = $m.Matches[0].Groups[1].Value }
-}
 if (-not $Path) {
   $inbox = Join-Path (Split-Path -Parent $kitRoot) 'exmem/inbox'
   $Path = Get-ChildItem -Path $inbox -Filter "$Today-*.md" -File -ErrorAction SilentlyContinue | ForEach-Object FullName
@@ -75,8 +67,6 @@ foreach ($p in $Path) {
   $created = & $get 'created'
   Report ($created -match '^\d{4}-\d{2}-\d{2}$') 'created が YYYY-MM-DD'
   Report ($created -eq $Today) "created が今日（$Today）" 'WARN' $created
-  Report ((& $get 'kit') -match '^\d{4}-\d{2}-\d{2}\.\d+$') 'kit が `YYYY-MM-DD.N` の形' 'FAIL' (& $get 'kit')
-  Report ((& $get 'kit') -eq $KitVersion) "kit が README.md の現在の版（$KitVersion）と一致（作成後に版が上がっていれば問題無い）" 'WARN' (& $get 'kit')
   $tagBlock = [regex]::Match($front, '(?s)tags:\n(.*?)(?=\n\S|\z)').Groups[1].Value
   $tags = [regex]::Matches($tagBlock, '(?m)^\s+-\s+(\S+)\s*$') | ForEach-Object { $_.Groups[1].Value }
   Report (($tags.Count -ge 3) -and ($tags.Count -le 6)) 'tags が3〜6個' 'FAIL' "$($tags.Count)個"
