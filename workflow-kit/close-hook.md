@@ -16,8 +16,8 @@
 3. **未解決を整理する**: Next Actions と Open Questions の残りを、次の Project、親の Area（`areas/<名>/README.md`）、または破棄に振り分ける。持ち越すものは、移し先に書く。
 4. **ナレッジ化の候補を示す**: `docs/decisions.md` の `未仕分け` のうち【汎用】の項目を一覧にして、ユーザーに示す。**`stock` は、ユーザーが言ったときだけ実行する**（自動で実行しない。`stock-hook.md`）。実行の有無と時期は、ユーザーが決める。
 5. **状態を更新する**: `README.md` の frontmatter を `status: done`（中止は `cancelled`）、`closed: <日付>` にする。完了条件の結果（実測の数字）と、成果物の場所を、`README.md` に1段落で足す。
-6. **`archives/` へ移す**: 先に、ビルド成果物を消す（`make clean` など。移したあとに未追跡のファイルが残らないようにする）。`projects/<名>/` を `archives/<名>/` に `git mv` する。**ディレクトリごとの `git mv` が失敗したら（`Permission denied`）、`git ls-files` を回して、ファイル単位で移す**（履歴は、リネームとして保たれる）。空のディレクトリが残ったら削除する。親の Area の一覧を、「完了した Project」に移し、リンクをパス付きの wikilink（`[[archives/<名>/README|…]]`）にする。ほかの参照（`docs/log.md`、`docs/decisions.md`、`docs/metrics/events.csv` の `project` 列など）は、パスでなく名前なので、変更は不要か、`grep` で確認する。
-7. **指標を確定する**（呼び出し元に `docs/metrics/events.csv` があるとき）: この Project の行の `adopted` と `reversed` を確定する。`reversed` は、「`close` の時点で採用済みで、現在も維持されている行」を 0 にする（撤回された行は 1）。Project の単位で集計して、`docs/log.md` に結果を書く。
+6. **`archives/` へ移す**: 先に、ビルド成果物を消す（`make clean` など。移したあとに未追跡のファイルが残らないようにする）。`projects/<名>/` を `archives/<名>/` に `git mv` する。**ディレクトリごとの `git mv` が失敗したら（`Permission denied`）、`git ls-files` を回して、ファイル単位で移す**（履歴は、リネームとして保たれる）。空のディレクトリが残ったら削除する。親の Area の一覧を、「完了した Project」に移し、リンクをパス付きの wikilink（`[[archives/<名>/README|…]]`）にする。ほかの参照（`docs/log.md`、`docs/decisions.md`、`events` の `project` 列など）は、パスでなく名前なので、変更は不要か、`grep` で確認する。
+7. **指標を確定する**（呼び出し元に `events` があるとき）: この Project の行の `adopted` と `reversed` を確定する。`reversed` は、「`close` の時点で採用済みで、現在も維持されている行」を 0 にする（撤回された行は 1）。Project の単位で集計して、`docs/log.md` に結果を書く。
 8. **記録してコミットする**: `docs/log.md` に、閉じたことと結果を書く（日報の入力になる形）。パスを指定して `git add` し、コミットする（push はユーザー）。
 
 ## 実測から分かっていること

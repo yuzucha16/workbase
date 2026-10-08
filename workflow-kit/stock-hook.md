@@ -184,7 +184,7 @@ sources:
 
 ### 改善案の指標の記録（試験運用。2026-10-06 ユーザーの指示）
 
-呼び出し元に `docs/metrics/events.csv` があれば、改善案（フックの手順と点検スクリプトのどちらも。`wrap-hook.md` `integrate-hook.md` `init-hook.md` の改善も同じ）を、1案1行で追記する。無ければ記録しない（試験中で、導入の対象外）。列と定義は、そのディレクトリの `docs/metrics/README.md`（`kind=improvement`）。
+呼び出し元に `events` があれば、改善案（フックの手順と点検スクリプトのどちらも。`wrap-hook.md` `integrate-hook.md` `init-hook.md` の改善も同じ）を、1案1行で追記する。無ければ記録しない（試験中で、導入の対象外）。列と定義は、そのディレクトリの記録の定義（`AGENTS.md` が指す）（`kind=improvement`）。
 
 - 提案を出した直後に行を足す（`answered=0`、`adopted` は空）。ユーザーが承認・却下・修正したら、同じターンで `answered=1`、`adopted`（承認 1、却下 0）、`fix`（ユーザーが案を直したら 1）、`supplement` を埋める。
 - `answerable` は、問題が既存の規則・ノートで既に解決されていたか（提案を出す前の確認で分かるもの）。`reversed` は、後で撤回されたとき 1 にする。
