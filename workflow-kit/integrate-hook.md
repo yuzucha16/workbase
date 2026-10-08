@@ -30,10 +30,6 @@
 4. **コミット**: ハッシュと内容。push のコマンド（実行しない）。
 5. **改善案**（あったときだけ）: `hook-common.md` の「改善」に従う。
 
-## このフックの改善
-
-流れと承認は `hook-common.md` の「改善」「承認」。このフック固有の確認項目は無い。
-
 ## 統合そのものの手順（`exmem/AGENTS.md` から移した。2026-10-08）
 
 1. inbox のメモから Principles / Decisions / Gotchas / 事実 / Open Questions を抜き出す。
