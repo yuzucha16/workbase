@@ -68,7 +68,7 @@
 | `close-hook.md` | `close`（Project の終了。試験運用）の手順: 完了条件の確認、暫定の見直し、`archives/` への移動、指標の確定 |
 | `improvements.md` | 改善提案の記録 |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
-| `tools/find-knowledge.ps1` | `stock-hook.md` 手順 4 の既存知識の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。読み取り専用。PowerShell 7） |
+| `tools/find-knowledge.ps1` | `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。読み取り専用。PowerShell 7） |
 | `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検、`hooks.md` と README の表にフックが過不足なく載っているかの点検（フックの追加・削除の漏れ止め。PowerShell 7） |
 | `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` はワークスペース（Vault のトップ）用（`AGENTS.md`、`gitignore.template`、`ignore.template`、`gitattributes.template`、`pre-push.template`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
@@ -76,7 +76,7 @@
 
 ## TODO（次回以降）
 
-- 手順書本体をさらに薄くする（`stock-hook.md` の手順 1 の例外の細則、`docs-rules.md`）。2026-10-15 の点検と 2026-11-08 の判定の結果を見てから。
+- 手順書本体をさらに薄くする（`stock-hook.md` の手順「知識かどうかを判定する」の例外の細則、`docs-rules.md`）。2026-10-15 の点検と 2026-11-08 の判定の結果を見てから。
 
 - Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「workflowを導入して」と「ナレッジ化して」の入口にする。スキルは kit のファイルを読むだけにして、手順を重複させない。
 
