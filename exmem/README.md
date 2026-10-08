@@ -66,6 +66,8 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 
 - [[ai-business-adoption]]: AI活用の業務負荷削減と習得工程
 - [[ai-development-workflow]]: AI開発ワークフロー
+- [[abstract-concrete-matrix-review]]: 抽象と具体の手順書群を、横並びの表で整理し、揃える範囲を決める
+- [[accretion-without-pruning]]: 足す経路と畳む経路の非対称を防ぐ
 - [[ai-handson-framework]]: AI活用ハンズオンの設計と情報ダイジェスト
 - [[ai-harness-concepts]]: AIエージェントのモデルとハーネス
 - [[ai-output-consistency]]: AIの出力のブレを抑える設計と校正の進め方
@@ -84,6 +86,7 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 - [[git-subdirectory-split]]: 履歴を保ってサブディレクトリを別リポジトリに切り出す（git filter-repo）
 - [[human-ai-decision-loop]]: 人間とAIの意思決定ループ（Decision Loop）
 - [[keyboard-switches]]: キーボードのスイッチの好みとスタビラトル対策
+- [[layered-third-party-review]]: 仕組みの層別・第三者レビューの進め方
 - [[linux-distro-selection]]: 自宅PCのLinuxディストロ選定
 - [[linux-multiboot-setup]]: 256GB SSDのマルチブートLinux構成（MX Linuxインストール）
 - [[modern-cli-tools]]: modern CLIツールの役割整理
