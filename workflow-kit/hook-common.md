@@ -68,5 +68,6 @@ H2 の見出しは名前だけにする（括弧の注記を付けない）。�
 2. `README.md` のファイル表の行と、連鎖・体系の記述を合わせる。
 3. 冒頭の定型と、共通の4章を置く（足すとき）。参照している手順書（`wrap-hook.md` の自動採用の範囲、`init-hook.md` の導入項目の一覧、`templates/` の `AGENTS.md` など）を `grep` で探して合わせる（消すとき）。
 4. 上の「記録」の表に行を足す・消す。
-5. `improvements.md` に1行足す。
-6. `pwsh -NoProfile -File tools/check-hook-outline.ps1` を実行する。1〜4 のうち、表の過不足、章立て、冒頭の定型、記録の表の行は、ここで漏れが分かる。
+5. `hook-matrix.md` の列（フック名）と、各行の値、字数を更新する。章や方針を変えたときも同じ。
+6. `improvements.md` に1行足す。
+7. `pwsh -NoProfile -File tools/check-hook-outline.ps1` を実行する。1〜4 のうち、表の過不足、章立て、冒頭の定型、記録の表の行、`hook-matrix.md` の列は、ここで漏れが分かる。
