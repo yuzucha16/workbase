@@ -1,13 +1,14 @@
 #Requires -Version 7
 <#
 .SYNOPSIS
-  *-hook.md の章立ての共通部を点検する。共通の4章が、すべてのフックにあり、この順に並んでいることを見る。
+  *-hook.md の章立ての共通部を点検する。共通の5章が、すべてのフックにあり、この順に並んでいることを見る。
 
 .DESCRIPTION
-  共通部: 場所と書き込みの制約 → 手順 → 報告の型 → このフックの改善（H2）。
+  共通部: 目的と契機 → 場所と書き込みの制約 → 手順 → 報告の型 → このフックの改善（H2）。
+  固有の章は、このうち最後の「このフックの改善」より後ろに置く（例外: 導入項目の一覧、入力）。
   あわせて共通部の中身（hook-common.md）を見る: 冒頭の hooks.md、状態の行と hooks.md の（試験運用）の一致、報告の型の改善案、改善の章の hook-common.md への参照。
   これ以外の章（実測、未決、各フック固有の仕様など）は固有部で、点検しない。
-  新しいフックを足すときも、この4章を同じ名前・順序で置く。
+  新しいフックを足すときも、この5章を同じ名前・順序で置く。
   あわせて、hooks.md と README.md の表の行に、全フックが載っていること、
   表にあるフック名のファイルが存在すること（削除・改名の漏れ）を見る。
 
@@ -20,7 +21,9 @@
 [CmdletBinding()]
 param()
 
-$common = '場所と書き込みの制約', '手順', '報告の型', 'このフックの改善'
+$common = '目的と契機', '場所と書き込みの制約', '手順', '報告の型', 'このフックの改善'
+# 共通部より前に置いてよい固有の章（init の表は目次を兼ねる。入力は手順の入力）
+$beforeOk = '導入項目の一覧', '入力'
 $kitRoot = Split-Path -Parent $PSScriptRoot
 $fail = 0
 $hooksRows = @(Get-Content -LiteralPath (Join-Path $kitRoot 'hooks.md') -Encoding utf8 | Where-Object { $_ -match '^\|' })
@@ -46,6 +49,9 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
     $body[$c] = $m.Groups[1].Value
   }
   $content = @()
+  $last = [array]::IndexOf($h2, ($h2 | Where-Object { $_ -eq 'このフックの改善' } | Select-Object -First 1))
+  $early = @(for ($i = 0; $i -lt $last; $i++) { if (-not ($common | Where-Object { $h2[$i] -eq $_ -or $h2[$i].StartsWith("$_（") }) -and $h2[$i] -notin $beforeOk) { $h2[$i] } })
+  if ($early) { $content += "固有の章が共通部の途中にある: $($early -join '、')" }
   if (-not $head.Contains('`hooks.md`')) { $content += '冒頭に正本 hooks.md の記載が無い' }
   $trial = $hooksRows -match ('`' + [regex]::Escape($f.Name) + '`（試験運用）')
   $hasState = $head.Contains('状態: **試験運用**')
