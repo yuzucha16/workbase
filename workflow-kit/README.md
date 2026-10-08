@@ -16,8 +16,8 @@
 - **`open` と `start`**: `open` は Project のひな形（`README.md`、`AGENTS.md`）を作ったあとに `start` を呼ぶ。`start` は単独でも呼べる（進行中の Project があるとき）。
 - **`end` にしない理由**: 「会話を終える」と取られやすいので、`wrap` にした（ユーザー）。
 - **旧ファイル名**: `closing-hook.md`、`knowledge-hook.md`、`setup-hook.md` は、2026-10-08 に削除した（新名は `wrap-hook.md`、`stock-hook.md`、`init-hook.md`）。以下の履歴の旧名は、読み替える。
-- **フックの章立て**: 共通部は H2 の `場所と書き込みの制約` → `手順` → `報告の型` → `このフックの改善`（この順。新しいフックにも置く）。それ以外の章は、フック固有の部分で、置く場所は自由。`tools/check-hook-outline.ps1` で点検する。
-- **試験運用（`start` `open` `close`）**: 実測が少ないので、叩き台として扱う。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善は、呼び出し元の `docs/metrics/events.csv` に記録し、ユーザーの承認後に直す。
+- **フックの章立て**: 共通部は H2 の `場所と書き込みの制約` → `手順` → `報告の型` → `このフックの改善`（この順。新しいフックにも置く）。共通部の中身（冒頭の定型、改善、承認、フックを足す・消すとき）は `hook-common.md`。それ以外の章は、フック固有の部分で、置く場所は自由。`tools/check-hook-outline.ps1` で点検する。
+- **試験運用（`start` `open` `close`）**: 実測が少ないので、叩き台として扱う。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善は、呼び出し元の `docs/metrics/events.csv` に記録し、ユーザーの承認後に直す（`hook-common.md`）。
 ## 目的
 
 ナレッジと作業ログを分ける。
@@ -57,22 +57,26 @@
 | ファイル | 役割 |
 |---|---|
 | `docs-rules.md` | `docs/` の運用規則と、コミットと push の規則 |
-| `stock-hook.md` | 「ナレッジ化して」の手順・書き方・形式、改善フック |
+| `hook-common.md` | 全フックの共通規則: 冒頭の定型、改善の流れ、承認、フックを足す・消すとき |
+| `stock-hook.md` | 「ナレッジ化して」の手順・書き方・形式 |
 | `wrap-hook.md` | 「終了処理して」の手順（対象の特定、現在状態の更新、昇格の案、コミットと push）・報告の型 |
 | `integrate-hook.md` | 「inboxを整理して」の手順（統合、照合の報告、コミット）・報告の型 |
 | `review-hook.md` | `review`（別名「見直して」。試験運用）の手順: `again` と遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
 | `init-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
+| `open-hook.md` | `open`（Project の開始。試験運用）の手順: 対象の決定、判断基準での検査、ひな形の作成、Area の一覧の更新。Project の構造 |
+| `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始。試験運用）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
+| `close-hook.md` | `close`（Project の終了。試験運用）の手順: 完了条件の確認、暫定の見直し、`archives/` への移動、指標の確定 |
 | `improvements.md` | 改善提案の記録 |
-| `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`stock-hook.md` の「このフックの改善」） |
-| `tools/find-knowledge.ps1` | `stock-hook.md` 手順 5 の既存知識の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。読み取り専用。PowerShell 7） |
-| `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検（PowerShell 7） |
+| `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
+| `tools/find-knowledge.ps1` | `stock-hook.md` 手順 4 の既存知識の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。読み取り専用。PowerShell 7） |
+| `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検、`hooks.md` と README の表にフックが過不足なく載っているかの点検（フックの追加・削除の漏れ止め。PowerShell 7） |
 | `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` はワークスペース（Vault のトップ）用（`AGENTS.md`、`gitignore.template`、`ignore.template`、`gitattributes.template`、`pre-push.template`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
 | `AGENTS.md` | このディレクトリ自体を編集するときのルール |
 
 ## TODO（次回以降）
 
-- 手順書本体をさらに薄くする（`stock-hook.md` の手順 2 の例外の細則、`docs-rules.md`）。2026-10-15 の点検と 2026-11-08 の判定の結果を見てから。
+- 手順書本体をさらに薄くする（`stock-hook.md` の手順 1 の例外の細則、`docs-rules.md`）。2026-10-15 の点検と 2026-11-08 の判定の結果を見てから。
 
 - Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「workflowを導入して」と「ナレッジ化して」の入口にする。スキルは kit のファイルを読むだけにして、手順を重複させない。
 
