@@ -15,13 +15,13 @@
 | 2 | 作業ログと判断ログ | `docs/log.md`、`docs/decisions.md` | 必須 | `docs-rules.md` |
 | 3 | 「ナレッジ化して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 必須 | `stock-hook.md` |
 | 6 | 「終了処理して」「inboxを整理して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 「終了処理して」は必須 | `wrap-hook.md`、`integrate-hook.md` |
-| 4 | 履歴からの復元 | `docs/` の Log と判断記録の補完 | 任意 | 下の「履歴からの復元」 |
-| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、下の「ワークスペースの生成」 |
+| 4 | 履歴からの復元 | `docs/` の Log と判断記録の補完 | 任意 | `init-restore.md` |
+| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
 
 ### 導入項目を足すとき
 
 1. 上の表に行を足す（生成物、必須か任意か、規則の正本）。
-2. 「手順」の生成の節に、その項目の作り方を足す。
+2. 「手順」に、その項目の作り方を足す（長い任意の項目は、`init-` で始まる別ファイルに分け、その項目のときだけ読むと書く）。
 3. 「自己点検」に、その項目の確認を足す。
 4. 見本（`examples/setup-example.md`）を合わせる。
 5. `improvements.md` に1行残す。
@@ -30,7 +30,7 @@
 
 - 書き込み先は、対象ディレクトリの中の `AGENTS.md`、`CLAUDE.md`、`docs/` だけ。`exmem` やその他は触らない。
 - **既存のファイルは、上書きしない。** 既存があれば、差分の案を示して承認を得る。承認の前に変更しない。
-- コミットは `docs-rules.md` の「コミットと push」に従う（項目 5 の初回コミットは、「ワークスペースの生成」の手順「初回コミットをする」）。push はしない（ユーザーが行う）。
+- コミットは `docs-rules.md` の「コミットと push」に従う（項目 5 の初回コミットは、`init-workspace.md` の「初回コミットをする」）。push はしない（ユーザーが行う）。
 - 対象の `docs/` が、`.gitignore` の既定でローカル専用になる場合は、その旨を報告に書く（確認: `git check-ignore -v <パス>`）。ローカル専用の `docs/` は、他のPCに届かない。
 - 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`.gitattributes`、`areas/` `projects/` `archives/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
 - このフックが呼べるのは、`hooks.md` を参照している `AGENTS.md` の配下（共有リポジトリ `workbase` の中と、ワークスペースの中）と、ユーザーがこのファイルのパスを指示したとき。新しい PC でワークスペースを作るときは、`workbase` の clone の中で呼ぶ。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
@@ -74,8 +74,8 @@
    - `AGENTS.md`: `templates/AGENTS.md` を埋める。「共通ルール」の節（パスと `hooks.md` へのポインタ、読めない場合の一文）は、雛形のまま変えない。既存があれば、追加する節（共通ルール、読む順番）の差分案を示して承認を待つ。既存の `AGENTS.md` がそれ自体で規則を持つときは、「読む順番」の2番目を「この `AGENTS.md` の各節」とする。
    - `CLAUDE.md`: `@AGENTS.md` の1行。既存があれば、`@AGENTS.md` が入っているかを確認し、無ければ差分案を示す。
    - `docs/log.md`、`docs/decisions.md`: `templates/` から作り、冒頭の説明に目的を入れる。既存があれば触らない。
-4. **任意: 履歴から復元する**（ユーザーが望むときだけ。下の節）。
-5. **任意: ワークスペースを生成する**（トップを作るときだけ。下の節）。
+4. **任意: 履歴から復元する**（ユーザーが望むときだけ。`init-restore.md` を読む）。
+5. **任意: ワークスペースを生成する**（トップを作るときだけ。`init-workspace.md` を読む）。
 6. **「自己点検」を通す**（下の節）。
 7. **報告する**（下の「報告の型」）。
 
@@ -97,33 +97,6 @@
 
 - 入力の型・雛形・自己点検で、曖昧だった点、迷った点、足りなかった項目。
 - 導入項目の一覧に、足すべき機能。
-
-## ワークスペースの生成（任意。項目 5）
-
-Vault のトップを、この PC だけのローカルなリポジトリとして作る。共有ナレッジ（`resources/` = `workbase`）は、トップが参照するだけで、トップの管理に入れない。骨組みはこのフックで作り、PC ごとの違いは中身（PARA、`docs/`、固有ルール）に限る。決まった配置（リンクと clone）は、dotfiles（`30_link`、`50_repos`）が行う。
-
-1. **確認する**（変更しない）: 対象の中身（空か、既存のファイルがあるか）、`.git` の有無、`resources/.git` の有無と、その `origin` が `workbase` か、`.obsidian` が実ディレクトリかジャンクションか。`resources/` が無いときは、clone を案内して止まる（このフックは clone しない）。`.obsidian` が実ディレクトリのときは、dotfiles の `30_link` が `[ERR]` で止まるので、手で退避する旨を報告に書く。
-2. **生成する**（既存は上書きしない）:
-   - `.gitignore`: `templates/workspace/gitignore.template` を、そのまま置く。
-   - `.ignore`: `templates/workspace/ignore.template` を、そのまま置く。ripgrep（Claude Code の Grep / Glob を含む）は `.gitignore` を尊重するので、`.gitignore` が除外する `resources/` が、検索から黙って外れる。`.ignore` の `!/resources/` で打ち消す（実測: 2026-10-05）。
-   - `.gitattributes`: `templates/workspace/gitattributes.template` を、そのまま置く（改行コードを LF に統一する。Obsidian・AI・WSL/Linux の出力が LF のため）。
-   - `AGENTS.md`: `templates/workspace/AGENTS.md` を埋める（役割、remote、固有ルール）。「共通ルール」の節は、雛形のまま変えない。`CLAUDE.md`、`docs/` は、項目 1 と 2 のとおり。
-   - `areas/` `projects/` `archives/`: `.gitkeep` を置く（既存の中身があっても。中身は追跡しない）。
-   - `git init`。remote は、方針が「なし」なら足さず、`templates/workspace/pre-push.template` を `.git/hooks/pre-push` として置く（誤って remote を足しても push を止める。改行は LF）。URL があれば `origin` を足す（push はしない）。
-3. **初回コミットをする**（入力 7 が「する」のとき。`docs-rules.md` の「コミットと push」に従う）。コミットが1つもないときだけ行う（`git rev-parse --verify HEAD` が失敗する）。既にコミットがあれば、何もコミットせず、報告に書く。
-   - 追加するのは、このフックが生成した次のファイルだけ（パス指定）: `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`、`CLAUDE.md`、`docs/`、`areas/.gitkeep`、`projects/.gitkeep`、`archives/.gitkeep`。PARA の既存の中身は、追跡しない（未追跡のまま、報告に一覧する）。
-   - コミットの前の確認（`docs-rules.md` の ① 〜 ③）に加えて、`resources/` と `.obsidian` がステージされていないこと。外れたら、ステージを戻して（`git reset -q -- <パス>`）、コミットせずに報告する。
-   - 身元とトレーラーは、`docs-rules.md` の「コミットの身元とトレーラー」に従う（agent の身元を `-c` で渡す。`git config` は変えない）。
-   - メッセージ: `[works] initial commit: PC-local vault top (PARA, docs, AGENTS.md, ignore rules)`。
-   - push はしない。remote があるときは、報告に push のコマンド（`git push -u origin main`）を書き、リモートに既存のコミットがあると拒否されるので、その場合は先に `git pull --rebase origin main` が要る旨を添える。
-
-## 履歴からの復元（任意）
-
-- 一覧: `git log --format='%h %ad %s' --date=short -- <パス>`。変更範囲: `git show --stat <ハッシュ> -- <パス>`。設定値の変化: `git show <ハッシュ> -- <ファイル>`。
-- Log は日付の降順で、項目ごとにコミットのハッシュを添える。
-- 理由が書かれているもの（コミットメッセージ、ファイルのコメント、既存のナレッジ）だけを、出典つきで書く。書かれていない理由は、推測で補わず「不明」と書く。
-- 根拠と却下案が履歴にある項目だけを Decisions にする。無いものは Facts に事実として書く。
-- 冒頭に、復元元と範囲、残っていないもの（履歴の作り直しなど）を書く。別のリポジトリから移ったものは、移管元の履歴も調べる。
 
 ## 自己点検
 
