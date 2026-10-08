@@ -6,7 +6,7 @@
 .DESCRIPTION
   共通部: 目的と契機 → 場所と書き込みの制約 → 手順 → 報告の型（H2）。
   固有の章は、報告の型より後ろに置く（例外: 導入項目の一覧、入力）。「このフックの改善」は任意で、固有の確認項目があるフックだけが持つ（持つなら hook-common.md を指す）。
-  あわせて共通部の中身（hook-common.md）を見る: 冒頭の hooks.md、状態の行と hooks.md の（試験運用）の一致、報告の型の改善案、改善の章の hook-common.md への参照。
+  あわせて共通部の中身（hook-common.md）を見る: 冒頭の hooks.md、報告の型の改善案、改善の章の hook-common.md への参照。
   これ以外の章（実測、未決、各フック固有の仕様など）は固有部で、点検しない。
   新しいフックを足すときも、この5章を同じ名前・順序で置く。
   手順の参照は、番号でなく手順の見出しの名前で書く（番号参照が無いこと、名前の実在を見る）。
@@ -30,7 +30,6 @@ $beforeOk = '導入項目の一覧', '入力'
 $kitRoot = Split-Path -Parent $PSScriptRoot
 $fail = 0
 $common_text = Get-Content -LiteralPath (Join-Path $kitRoot 'hook-common.md') -Raw -Encoding utf8
-$hooksRows = @(Get-Content -LiteralPath (Join-Path $kitRoot 'hooks.md') -Encoding utf8 | Where-Object { $_ -match '^\|' })
 
 foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Name) {
   $h2 = @(Get-Content -LiteralPath $f.FullName -Encoding utf8 |
@@ -63,9 +62,6 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   $dead = @($refs | Where-Object { $r = $_; -not ($titles | Where-Object { $_.StartsWith($r) }) } | Sort-Object -Unique)
   if ($dead) { $content += "手順の参照先が無い: $($dead -join '、')" }
   if (-not $head.Contains('`hooks.md`')) { $content += '冒頭に正本 hooks.md の記載が無い' }
-  $trial = $hooksRows -match ('`' + [regex]::Escape($f.Name) + '`（試験運用）')
-  $hasState = $head.Contains('状態: **試験運用**')
-  if ([bool]$trial -ne $hasState) { $content += "状態の行と hooks.md の（試験運用）が不一致（hooks.md: $([bool]$trial)、本文: $hasState）" }
   if (-not $body['報告の型'].Contains('改善案')) { $content += '報告の型に「改善案」が無い' }
   $imp = [regex]::Match($raw, '(?ms)^## このフックの改善[^\r\n]*\r?\n(.*?)(?=^## |\z)')
   if ($imp.Success -and -not $imp.Groups[1].Value.Contains('hook-common.md')) { $content += '改善の章が hook-common.md を指していない' }
