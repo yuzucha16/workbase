@@ -16,7 +16,7 @@
 3. **聞く**（選択式。答えが1つに定まるものは宣言する）: 種類 `type`（`doc` `dev` `research`。成果物の種類で決める。Area は既定値のヒント）、主題（言語や方式など）、完了条件の種類、見直し日。開発系の Project は、`start-hook.md` の「開発」の差分の項目を、**実装の前に**ここで聞く。
 4. **作る**: `projects/<名>/` に、`README.md`（ひな形: `templates/project/README.template.md`。frontmatter: `status: active`、`area`、`type`、`review`、`created`、`updated`。本文: 目的、完了条件、成果物、範囲外、Open Questions）。複数セッションにまたがるなら、`docs/log.md` と `docs/decisions.md`（`docs-rules.md` の書式）。構造は下の「Project の構造」。必要なら `AGENTS.md`。名前は、`<動詞か領域>-<主題>`（例: `learn-c-pool-allocator`）で、ワークスペース内で一意にする。
 5. **Area の一覧を更新する**: `areas/<名>/README.md` の「進行中の Project」に、パス付きの wikilink（`[[projects/<名>/README|<名>]]`。README が複数あるのでファイル名だけのリンクは使えない）で足す。
-6. **記録する**: `docs/log.md` に Log を1項目。呼び出し元に `docs/metrics/events.csv` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `docs/decisions.md` に決定として書く。
+6. **記録する**: `docs/log.md` に Log を1項目。呼び出し元に `events` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `docs/decisions.md` に決定として書く。
 7. **コミットする**: パスを指定して `git add`。push はユーザー（使い捨ての環境では `docs-rules.md` に従う）。
 8. **`start` を呼ぶ**。
 
