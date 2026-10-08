@@ -114,7 +114,7 @@ foreach ($t in 'hooks.md', 'README.md') {
 $matrixPath = Join-Path $kitRoot 'hook-matrix.md'
 if (Test-Path -LiteralPath $matrixPath) {
   $header = Get-Content -LiteralPath $matrixPath -Encoding utf8 | Where-Object { $_ -match '^\| 項目 \|' } | Select-Object -First 1
-  $cols = @(($header -split '\|') | ForEach-Object { $_.Trim() } | Where-Object { $_ -and $_ -ne '項目' })
+  $cols = @(($header -split '\|') | ForEach-Object { $_.Trim() } | Where-Object { $_ -and $_ -notin '項目', '区分' })
   $names = @($hooks | ForEach-Object { $_ -replace '-hook\.md$', '' })
   $absent = @($names | Where-Object { $_ -notin $cols })
   $ghost = @($cols | Where-Object { $_ -notin $names })
@@ -126,6 +126,25 @@ if (Test-Path -LiteralPath $matrixPath) {
     Write-Output "FAIL  hook-matrix.md  $($msg -join ' / ')"
   } else {
     Write-Output 'OK    hook-matrix.md（列と全フックが一致）'
+  }
+  # 区分: Must の行に「—」が無いこと（有れば違反）。Want の行が全フック ○ か △ なら、Must に上げる通知
+  $mustFail = @()
+  foreach ($row in Get-Content -LiteralPath $matrixPath -Encoding utf8 | Where-Object { $_ -match '^\| ' -and $_ -notmatch '^\| 項目 \|' -and $_ -notmatch '^\|---' }) {
+    $cells = @(($row.Trim().Trim('|') -split '\|') | ForEach-Object { $_.Trim() })
+    if ($cells.Count -lt 3) { continue }
+    $kind = $cells[1]
+    $vals = @($cells[2..($cells.Count - 1)])
+    $hasDash = [bool]($vals | Where-Object { $_ -eq '—' })
+    if ($kind -eq 'Must' -and $hasDash) { $mustFail += "Must の行に — がある: $($cells[0])" }
+    elseif ($kind -eq 'Want' -and -not $hasDash) { Write-Output "NOTE  hook-matrix.md  全フックが ○ か △: Must に上げる候補: $($cells[0])" }
+  }
+  if ($mustFail) { $fail += $mustFail.Count; $mustFail | ForEach-Object { Write-Output "FAIL  hook-matrix.md  $_" } }
+  # 字数の目安（5,000 字）を超えるフックのうち、表の「字数の例外」に無いものを通知する
+  $exceptLine = Get-Content -LiteralPath $matrixPath -Encoding utf8 | Where-Object { $_ -match '字数の例外' } | Select-Object -First 1
+  foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md') {
+    $len = (Get-Content -LiteralPath $f.FullName -Raw -Encoding utf8).Length
+    $hookName = $f.Name -replace '-hook\.md$', ''
+    if ($len -gt 5000 -and -not ($exceptLine -and $exceptLine.Contains($hookName))) { Write-Output "NOTE  $($f.Name)  $len 字で目安（5,000 字）を超えている。畳む案を出す（hook-matrix.md の肥大化の抑制）" }
   }
 } else {
   $fail++
