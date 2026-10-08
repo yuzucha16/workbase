@@ -17,7 +17,7 @@
 - **`end` にしない理由**: 「会話を終える」と取られやすいので、`wrap` にした（ユーザー）。
 - **旧ファイル名**: `closing-hook.md`、`knowledge-hook.md`、`setup-hook.md` は、2026-10-08 に削除した（新名は `wrap-hook.md`、`stock-hook.md`、`init-hook.md`）。以下の履歴の旧名は、読み替える。
 - **フックの章立て**: 共通部は H2 の `目的と契機` → `場所と書き込みの制約` → `手順` → `報告の型`（この順。新しいフックにも置く）。共通部の中身（冒頭の定型、目的と契機、章の並び、手順の参照、改善、承認、記録、フックを足す・消すとき）は `hook-common.md`。それ以外の章は、フック固有の部分で、共通部の後ろに置く（例外: `入力`、init の `導入項目の一覧`）。`このフックの改善` は、固有の確認項目があるフックだけが持つ任意の章。`tools/check-hook-outline.ps1` で点検する。
-- **試験運用（`start` `open` `close`）**: 実測が少ないので、叩き台として扱う。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善は、呼び出し元の `docs/metrics/events.csv` に記録し、ユーザーの承認後に直す（`hook-common.md`）。
+- **実測が少ないフック（`start` `open` `close`）**: 叩き台として扱い、実測で直して育てる。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善の流れは `hook-common.md`。
 ## 目的
 
 ナレッジと作業ログを分ける。
@@ -61,11 +61,13 @@
 | `stock-hook.md` | 「ナレッジ化して」の手順・書き方・形式 |
 | `wrap-hook.md` | 「終了処理して」の手順（対象の特定、現在状態の更新、昇格の案、コミットと push）・報告の型 |
 | `integrate-hook.md` | 「inboxを整理して」の手順（統合、照合の報告、コミット）・報告の型 |
-| `review-hook.md` | `review`（別名「見直して」。試験運用）の手順: `again` と遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
+| `review-hook.md` | `review`（別名「見直して」）の手順: `again` と遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
 | `init-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
-| `open-hook.md` | `open`（Project の開始。試験運用）の手順: 対象の決定、判断基準での検査、ひな形の作成、Area の一覧の更新。Project の構造 |
-| `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始。試験運用）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
-| `close-hook.md` | `close`（Project の終了。試験運用）の手順: 完了条件の確認、暫定の見直し、`archives/` への移動、指標の確定 |
+| `init-workspace.md` | init の導入項目 5（ワークスペースの生成）の作り方。項目 5 のときだけ読む |
+| `init-restore.md` | init の導入項目 4（履歴からの復元）の作り方。項目 4 のときだけ読む |
+| `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、ひな形の作成、Area の一覧の更新。Project の構造 |
+| `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
+| `close-hook.md` | `close`（Project の終了）の手順: 完了条件の確認、暫定の見直し、`archives/` への移動 |
 | `improvements.md` | 改善提案の記録 |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
 | `tools/find-knowledge.ps1` | `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。読み取り専用。PowerShell 7） |
