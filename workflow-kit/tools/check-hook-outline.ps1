@@ -35,9 +35,9 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   $h2 = @(Get-Content -LiteralPath $f.FullName -Encoding utf8 |
     Where-Object { $_ -match '^## ' } |
     ForEach-Object { ($_ -replace '^## ', '').Trim() })
-  # 見出しが共通名そのもの、または「手順（…）」のように括弧つきの注記が続くものを、共通の章とみなす
+  # 見出しが共通名そのものであるものを、共通の章とみなす（注記は本文の1行目に書く）
   $found = @(foreach ($h in $h2) {
-      $hit = $common | Where-Object { $h -eq $_ -or $h.StartsWith("$_（") }
+      $hit = $common | Where-Object { $h -eq $_ }
       if ($hit) { $hit }
     })
   $missing = @($common | Where-Object { $_ -notin $found })
@@ -52,7 +52,7 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
     $body[$c] = $m.Groups[1].Value
   }
   $content = @()
-  $last = [array]::IndexOf($h2, ($h2 | Where-Object { $_ -eq '報告の型' -or $_.StartsWith('報告の型（') } | Select-Object -First 1))
+  $last = [array]::IndexOf($h2, ($h2 | Where-Object { $_ -eq '報告の型' } | Select-Object -First 1))
   $early = @(for ($i = 0; $i -lt $last; $i++) { if (-not ($common | Where-Object { $h2[$i] -eq $_ -or $h2[$i].StartsWith("$_（") }) -and $h2[$i] -notin $beforeOk) { $h2[$i] } })
   if ($early) { $content += "固有の章が共通部の途中にある: $($early -join '、')" }
   # 手順の参照は番号でなく見出し（太字）の名前で書く。番号参照が無く、名前が同じファイルの手順に実在すること
@@ -66,6 +66,17 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   $imp = [regex]::Match($raw, '(?ms)^## このフックの改善[^\r\n]*\r?\n(.*?)(?=^## |\z)')
   if ($imp.Success -and -not $imp.Groups[1].Value.Contains('hook-common.md')) { $content += '改善の章が hook-common.md を指していない' }
   if ($common_text -notmatch ('(?m)^\| `' + $f.BaseName.Replace('-hook','') + '` \|')) { $content += 'hook-common.md の記録の表に行が無い' }
+  # 見出し（H2）に括弧の注記を付けない（日付・決定者・出典は本文の1行目に書く）
+  $annot = @($h2 | Where-Object { $_ -match '[（(]' })
+  if ($annot) { $content += "見出しに括弧の注記がある: $($annot -join '、')" }
+  # 目的と契機: 目的 → 契機 → 前提（前提は任意）の順
+  $labels = @([regex]::Matches($body['目的と契機'], '(?m)^- \*\*([^*]+)\*\*') | ForEach-Object { $_.Groups[1].Value })
+  if (($labels -join ',') -notin '目的,契機', '目的,契機,前提') { $content += "目的と契機の項目が「目的 → 契機 → 前提（任意）」でない: $($labels -join ' → ')" }
+  # 報告の型: 番号つきリスト（太字のラベル）で、連番、最後が「改善案」
+  $items = @([regex]::Matches($body['報告の型'], '(?m)^([0-9]+)\. \*\*([^*]+)\*\*'))
+  if (-not $items) { $content += '報告の型が番号つきリスト（太字のラベル）でない' }
+  elseif ((($items | ForEach-Object { $_.Groups[1].Value }) -join ',') -ne ((1..$items.Count) -join ',')) { $content += '報告の型の番号が連番でない' }
+  elseif ($items[-1].Groups[2].Value -ne '改善案') { $content += '報告の型の最後が「改善案」でない' }
   if ($missing -or $dup -or -not $ordered -or $content) {
     $fail++
     $msg = @()
@@ -99,4 +110,32 @@ foreach ($t in 'hooks.md', 'README.md') {
     Write-Output "OK    $t（表と全フックが一致）"
   }
 }
+# 他のファイルからの手順の参照: `X-hook.md` の手順「Y」の形で書き、Y が X の手順の見出しにあること。
+# hook-common.md の記録の表は、行のフック名の手順を指す
+$stepTitles = @{}
+foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md') {
+  $raw = Get-Content -LiteralPath $f.FullName -Raw -Encoding utf8
+  $stepTitles[$f.Name] = @([regex]::Matches($raw, '(?m)^\s*[0-9]+\. \*\*(.+?)\*\*') | ForEach-Object { $_.Groups[1].Value.TrimEnd('。', ':', '：') })
+}
+function Test-Step($file, $step) { [bool]($stepTitles[$file] | Where-Object { $_.StartsWith($step) }) }
+$refFail = @()
+$scan = Get-ChildItem -Path $kitRoot -Recurse -File -Include '*.md', '*.ps1' |
+  Where-Object { $_.Name -notlike '*-hook.md' -and $_.Name -notin 'improvements.md', 'hook-common.md', 'check-hook-outline.ps1' }
+foreach ($f in $scan) {
+  $n = 0
+  foreach ($line in Get-Content -LiteralPath $f.FullName -Encoding utf8) {
+    $n++
+    foreach ($m in [regex]::Matches($line, '(?:`?([a-z]+-hook\.md)`?\s*の)?手順「([^」]+)」')) {
+      if (-not $m.Groups[1].Success) { $refFail += "$($f.Name):$n 手順「$($m.Groups[2].Value)」にフックのファイル名が無い" }
+      elseif (-not (Test-Step $m.Groups[1].Value $m.Groups[2].Value)) { $refFail += "$($f.Name):$n $($m.Groups[1].Value) に手順「$($m.Groups[2].Value)」が無い" }
+    }
+  }
+}
+$n = 0
+foreach ($line in Get-Content -LiteralPath (Join-Path $kitRoot 'hook-common.md') -Encoding utf8) {
+  $n++
+  $m = [regex]::Match($line, '^\| `([a-z]+)` \|.*手順「([^」]+)」')
+  if ($m.Success -and -not (Test-Step "$($m.Groups[1].Value)-hook.md" $m.Groups[2].Value)) { $refFail += "hook-common.md:$n $($m.Groups[1].Value)-hook.md に手順「$($m.Groups[2].Value)」が無い" }
+}
+if ($refFail) { $fail += $refFail.Count; $refFail | ForEach-Object { Write-Output "FAIL  参照  $_" } } else { Write-Output 'OK    手順の参照（他のファイルから）' }
 exit $fail

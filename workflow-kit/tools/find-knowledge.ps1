@@ -1,7 +1,7 @@
 #Requires -Version 7
 <#
 .SYNOPSIS
-  「ナレッジ化して」の手順「既存の知識と重なるか確認する」の検索を行う。
+  `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索を行う。
   exmem/knowledge/ のファイル名、見出し（^#）、frontmatter の tags と aliases の行を、キーワードで検索し、
   ヒットしたキーワードの種類が多い順に、ファイルを最大3件まで示す。
 
@@ -13,7 +13,7 @@
   ヒットしたキーワードの種類が同じなら、ヒットした行の数が多いファイルを上位にする。
 
 .PARAMETER Top
-  示すファイルの最大数。既定は3（手順「既存の知識と重なるか確認する」の3は最大2件を選ぶ。選ぶのはエージェント）。
+  示すファイルの最大数。既定は3（`stock-hook.md` の手順「既存の知識と重なるか確認する」の3は最大2件を選ぶ。選ぶのはエージェント）。
 
 .EXAMPLE
   pwsh -NoProfile -File tools/find-knowledge.ps1 git 改行 gitattributes autocrlf
