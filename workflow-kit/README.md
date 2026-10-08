@@ -16,6 +16,7 @@
 - **`open` と `start`**: `open` は Project のひな形（`README.md`、`AGENTS.md`）を作ったあとに `start` を呼ぶ。`start` は単独でも呼べる（進行中の Project があるとき）。
 - **`end` にしない理由**: 「会話を終える」と取られやすいので、`wrap` にした（ユーザー）。
 - **旧ファイル名**: `closing-hook.md`、`knowledge-hook.md`、`setup-hook.md` は、2026-10-08 に削除した（新名は `wrap-hook.md`、`stock-hook.md`、`init-hook.md`）。以下の履歴の旧名は、読み替える。
+- **フックの章立て**: 共通部は H2 の `場所と書き込みの制約` → `手順` → `報告の型` → `このフックの改善`（この順。新しいフックにも置く）。それ以外の章は、フック固有の部分で、置く場所は自由。`tools/check-hook-outline.ps1` で点検する。
 - **試験運用（`start` `open` `close`）**: 実測が少ないので、叩き台として扱う。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善は、呼び出し元の `docs/metrics/events.csv` に記録し、ユーザーの承認後に直す。
 ## 目的
 
@@ -64,6 +65,7 @@
 | `improvements.md` | 改善提案の記録 |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`stock-hook.md` の「このフックの改善」） |
 | `tools/find-knowledge.ps1` | `stock-hook.md` 手順 5 の既存知識の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。読み取り専用。PowerShell 7） |
+| `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検（PowerShell 7） |
 | `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` はワークスペース（Vault のトップ）用（`AGENTS.md`、`gitignore.template`、`ignore.template`、`gitattributes.template`、`pre-push.template`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
 | `AGENTS.md` | このディレクトリ自体を編集するときのルール |
