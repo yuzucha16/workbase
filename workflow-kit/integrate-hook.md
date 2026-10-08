@@ -13,6 +13,7 @@
 5. `context.md` の `Current State` / `Next Actions` / `Open Questions` を更新する。
 6. 新しいファイルを作ったら `README.md` の「知識の索引」に1行足す。
 7. 統合したメモを inbox から削除する。削除の前に、下の「手順」の 3 の照合を行う。
+
 ## 場所と書き込みの制約
 
 - exmem: `$HOME\works\resources\exmem`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/exmem`）。
