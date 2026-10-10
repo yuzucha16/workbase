@@ -2,8 +2,9 @@
 type: quickref
 title: apt クイックリファレンス
 tags:
-  - quickref
-  - apt
+  - tool/apt
+  - linux
+  - cli
 migrated_from: denisidoro/cheats (navi)
 ---
 

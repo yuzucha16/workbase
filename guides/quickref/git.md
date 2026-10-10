@@ -2,8 +2,8 @@
 type: quickref
 title: git クイックリファレンス
 tags:
-  - quickref
-  - git
+  - tool/git
+  - cli
 migrated_from: denisidoro/cheats (navi)
 ---
 

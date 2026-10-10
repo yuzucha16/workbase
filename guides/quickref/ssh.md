@@ -2,8 +2,8 @@
 type: quickref
 title: SSH クイックリファレンス
 tags:
-  - quickref
-  - ssh
+  - tool/ssh
+  - cli
 ---
 
 # SSH

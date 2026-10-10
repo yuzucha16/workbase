@@ -2,8 +2,8 @@
 type: quickref
 title: shell クイックリファレンス
 tags:
-  - quickref
   - shell
+  - cli
 migrated_from: denisidoro/cheats (navi)
 ---
 

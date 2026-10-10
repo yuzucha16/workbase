@@ -2,9 +2,9 @@
 type: howto
 title: Windows 11 セットアップ手順
 tags:
-  - howto
-  - env
   - windows
+  - setup
+  - dotfiles
 ---
 
 # Windows 11 セットアップ手順

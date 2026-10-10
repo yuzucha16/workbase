@@ -2,8 +2,8 @@
 type: quickref
 title: docker クイックリファレンス
 tags:
-  - quickref
-  - docker
+  - tool/docker
+  - cli
 migrated_from: denisidoro/cheats (navi)
 ---
 
