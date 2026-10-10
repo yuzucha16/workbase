@@ -1,7 +1,8 @@
 ---
+type: quickref
 title: apt クイックリファレンス
 tags:
-  - cheatsheet
+  - quickref
   - apt
 migrated_from: denisidoro/cheats (navi)
 ---

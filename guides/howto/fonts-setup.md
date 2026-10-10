@@ -1,7 +1,8 @@
 ---
+type: howto
 title: フォント セットアップ手順
 tags:
-  - cheatsheet
+  - howto
   - env
   - fonts
 ---
