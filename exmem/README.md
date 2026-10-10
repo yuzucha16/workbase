@@ -91,6 +91,7 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 - [[power-automate-office-automation]]: Power Automate / Office Scriptsによる業務自動化
 - [[reference-doc-types]]: 人が見る文書の3種類（手順書・理解ガイド・クイックリファレンス）の作り方
 - [[scoop-app-management]]: Windows のアプリを scoop で管理し、管理外を最小にする
+- [[session-handoff]]: スレッド（セッション）を切り替える作法
 - [[shell-command-usecases]]: ターミナルのコマンド利用傾向とヒストリの種
 - [[shell-fzf-keybindings]]: シェルの fzf とキー割り当て（pwsh / zsh / bash）
 - [[shell-script-testing-wsl]]: WSL でシェルスクリプトを試験する
