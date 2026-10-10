@@ -12,7 +12,7 @@ tags:
 aliases:
   - AI開発ワークフロー
 created: 2026-09-26
-updated: 2026-10-06
+updated: 2026-10-10
 sources:
   - Claude Code conversation "dotfiles と exmem の関係整理" (2026-10-04)
   - Claude Code conversation "残件の整理と、統合後の修正" (2026-10-04)
@@ -210,7 +210,7 @@ AIのコンテキスト
 - 根拠: Codex・Copilot・Zedが `AGENTS.md` を読む。指示を1か所にして重複と食い違いを避ける。
 - 却下案: AIごとに個別の指示ファイルを書く。
 
-### D7: `context.md` を引き継ぎメモとして使う（2026-09-26）
+### D7: `context.md` を引き継ぎメモとして使う（2026-09-26。2026-10-10 に廃止、D10 参照）
 
 - 決定: `context.md` の先頭に `Current State` / `Next Actions` を置き、作業の終わりに更新する。
 - 根拠: 次に作業するAI・端末が、そこから再開できる。
@@ -224,6 +224,13 @@ AIのコンテキスト
 
 - 決定: ファイル名は英語の kebab-case、`aliases` に日本語名・別名を入れる。
 - 根拠: Obsidianのリンク補完・検索を日本語で行える。
+
+### D10: `contexts/` を廃止する（2026-10-10）
+
+- 決定: `exmem/contexts/` と `context.md` を廃止する。決定と未完の項目は、各 `knowledge/` のノートの Open Questions / Next Actions に移した。
+- 根拠: 想定していた「モバイルの壁打ちの途中を預け、Claude Code で続ける」使い方は、実際には1件も無かった。実際の中身は、Vault の外のスレッドで進めた作業の現在地メモで、作業側の `docs/` と役割が重なった。モバイルからは「stock」で知識を渡せる。5件のうち3件は、2026-10-02 以降、更新が止まっていた。
+- 却下案: 期限つきの引継ぎ置き場として残す（今は需要が見えない。必要になったら、inbox に未完のメモを置く案を先に試す）。
+- 移し先: `ai-literacy-metrics` → [[ai-work-metrics]]。`para-area-project-flow` → [[para-operations]]。`linux-home-pc` → [[linux-multiboot-setup]]。`zed-vim-migration` → [[zed-vim]]。`ai-development-workflow` の履歴は削除した（git の履歴に残る）。残りの未完は下の「contexts から移した未完の項目」。
 
 ## Gotchas
 
@@ -284,7 +291,7 @@ AIのコンテキスト
 
 ### Open Questions
 
-- 他のプロジェクト（`ai-business-adoption`、`linux-home-pc`、`zed-vim-migration`）の `contexts/` も、リポジトリ側に持つ形へ寄せるか。exmem 内で完結するプロジェクトは `contexts/` のままでよいか。なお、`contexts/` は「`works`（決定時は `notes`）から見えない場所の作業を引き継ぐコンテキスト」という位置づけになった（2026-10-04、[[workflow-kit]]）。作業ログの置き場は、作業ディレクトリ側の `docs/`（Vault のトップ自体の作業は `works/docs/`）。
+- （解消: 2026-10-10 に `contexts/` を廃止した。D10）他のプロジェクト（`ai-business-adoption`、`linux-home-pc`、`zed-vim-migration`）の `contexts/` も、リポジトリ側に持つ形へ寄せるか。exmem 内で完結するプロジェクトは `contexts/` のままでよいか。なお、`contexts/` は「`works`（決定時は `notes`）から見えない場所の作業を引き継ぐコンテキスト」という位置づけになった（2026-10-04、[[workflow-kit]]）。作業ログの置き場は、作業ディレクトリ側の `docs/`（Vault のトップ自体の作業は `works/docs/`）。
 - プランの承認の使い方と、プラン自体の構成を、別の場で議論したい（ユーザーの要望）。プランを `~/.claude/plans/` 以外にも残す方法。
 
 ## 並行する複数セッション・人間・アプリとの整合（2026-10-04）
@@ -315,6 +322,21 @@ AIのコンテキスト
 - 並行するセッションの変更を、いつ・どう検知するか（作業の開始時に `git status` と `git log` を確認するなど。共通機能に足すか）。
 - `improvements.md` のような共通のファイルの更新が、複数セッションで衝突しないか（今回は衝突しなかった）。
 
+## contexts から移した未完の項目（2026-10-10。2026-10-06 時点の記述。多くは未確認）
+
+- `git config --global user.name` / `user.email` を設定し、作者 agent・コミッター人間の分離を採用するか決める（[[workflow-kit]]）。
+- 他の PC で `git pull` したあと `git ls-files --eol` を確認する。clone 前の git 設定の順序を手順書に書くか判断する（[[git-line-endings]]）。
+- シェルスクリプトの試験の置き場（dotfiles の `tests/` など）と `PROC_VERSION_FILE` の扱いを決める。ネイティブ Linux 実機で確認する（[[shell-script-testing-wsl]]）。
+- 新しい業務用 PC で、dotfiles の `50_repos` から `init` までの順で Vault の構造を再現し、新しい Windows アカウントで `20_apps.bat` の Scoop 導入を確認する。旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか決める（[[obsidian-vault]]、[[scoop-app-management]]）。
+- Vault 構造の移行の残り: 旧 `exmem/`（`areas_shared` クローン側）の削除、Claude Code の履歴とメモリを新しい作業パスへコピーし直す（[[claude-code-storage]]）、Zed のプロジェクトを開き直す、`C:\vault\notes_old` と旧クローンの削除、`_local/` コミット（`27d1d08`）の push、`resources/fonts/` に HackGen Console NF Regular とライセンス文書を置く（Git LFS）。`knowledge.base` の一覧がObsidianで表示されるか確認する（[[obsidian-vault]]）。
+- Zed で exmem を開き、Claude Agent が `AGENTS.md` を読んでいるか確認する。ターミナルで `claude --resume` を実行し、コピーした履歴とメモリが引き継がれているか確認する。
+- モバイルで壁打ちし、Obsidian モバイルアプリで inbox に保存して、Sync 経由で PC に届くか試す（D4 の検証）。
+- Obsidian の設定変更（新規ノートの保存先・日付型・テンプレート）を判断する。Copilot を接続する。vault のバックアップ（robocopy + タスクスケジューラ）を設定する。
+- Zed の WSL 連携方式と、開発リポジトリを Windows 側に置くか WSL 側に置くかを決める（[[wsl-file-placement]]）。
+- Zed で `claude-acp` が起動しない問題が再発したら、まずシェルのプロファイル出力を疑う（[[zed-acp]]）。
+- サンドボックス運用、`deny`、`acceptEdits` を決める。数日使って `/fewer-permission-prompts` を再実行する（[[claude-code-permissions]]）。
+- 未決: Git と Obsidian Sync の使い分け（`_local/` も Sync されるかは未検証）。プロジェクトの状態をどこまで自動生成するか。
+
 ## 8. 未決事項
 
 - Obsidian Vaultと開発リポジトリの境界
@@ -331,5 +353,4 @@ AIのコンテキスト
 - [[ai-harness-concepts]]
 - [[ai-handson-framework]]
 - [[human-ai-decision-loop]]
-- [[ai-development-workflow/context]]
 - [[tags]]

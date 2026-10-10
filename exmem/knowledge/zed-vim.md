@@ -12,7 +12,7 @@ aliases:
   - Zed Vim環境
   - ZedへのVim環境移行
 created: 2026-09-26
-updated: 2026-10-04
+updated: 2026-10-10
 sources:
   - Claude Code conversation "Zed の設定を最適化する（目の負担軽減・claude-acp・Obsidian 併用）" (2026-10-04)
   - ChatGPT conversation "ZedへのVim環境移行" (2026-09-26)
@@ -124,9 +124,29 @@ Vim modeにはVimの基本操作に加えて、ZedのPane（`Ctrl-W h/j/k/l`）�
 - 戻す場合: `vim_mode: true` と `vim.use_system_clipboard: "always"`。必要な Vim 風キーは keymap で足す案もある（未実施）。
 - 上の「Current Settings」の `vim_mode: true`、`tab_size: 4`、テーマ、ターミナルのシェルは 2026-10-02 時点の値。2026-10-04 時点では `vim_mode` がオフ、`tab_size` が 2（Notepad++ にそろえた。[[notepad-plus-plus]]）、テーマが自作の Material Gruvbox Dark、`terminal.shell` は削除済み（OS 既定。[[zed-dotfiles]]）。
 
+## Open Questions
+
+`contexts/zed-vim-migration` から移した（2026-10-10）。2026-10-04 に `vim_mode` をオフにしたため、前提が変わっている可能性がある。
+
+- `Space` を leader として、Zed の一部の操作を Neovim と共通化するか。
+- leader を Zed 側で変更するか、キーボード側で `Ctrl+Shift` を1キー化するか。
+- Fern 時代のディレクトリ操作を、どこまで Zed 標準のまま使うか。
+- gtags の操作を、LSP / Symbol 検索へ具体的にどう置き換えるか。
+- GitGutter で使っていた操作を、Zed Git のどの標準操作へ対応させるか。
+- 会話メモでは「`keymap.json` は空」としていたが、実際にはターミナル用の設定がある（`Ctrl-P` / `Ctrl-N` / `Ctrl-Shift-M` をシェルへ送る）。残す意図か（確認: 2026-10-02）。
+
+## Next Actions
+
+1. Project Panel で、Fern 相当のディレクトリ操作を確定する。
+2. Go to File で、fzf なしのファジー検索の目的を満たせるか確認する。
+3. Status Bar を基本とし、Airline 相当の追加設定を最小限にする。
+4. gtags の代わりに、LSP の定義・参照・Symbol 検索を使う。
+5. Zed Git + Vim mode の標準操作で、GitGutter / Fugitive の操作を試す。
+6. 不足した操作だけ `keymap.json` へ追加する。
+7. 最後に、Neovim との共通化を目的として Space leader を設計する。
+
 ## Related
 
-- [[zed-vim-migration/context]]
 - [[zed-acp]]
 - [[wsl-file-placement]]
 - [[vscode-workspace]]

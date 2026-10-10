@@ -15,16 +15,6 @@ views:
       - tags
       - updated
   - type: table
-    name: Projects
-    filters:
-      and:
-        - type == "project"
-    order:
-      - file.folder
-      - title
-      - status
-      - updated
-  - type: table
     name: Inbox
     filters:
       and:
