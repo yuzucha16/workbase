@@ -2,8 +2,7 @@
 type: index
 title: guides の索引
 tags:
-  - index
-  - guides
+  - knowledge-management
 aliases:
   - guides
   - 手順書の索引
