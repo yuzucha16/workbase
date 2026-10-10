@@ -8,25 +8,24 @@ exmem（external memory、外部メモリ）は、AIと人間が共有するナ�
 
 - `workbase` の内容は、すべて共有（Git管理）する。公開されうる前提で書く。機密、会社固有の情報、PC ごとのデータを入れない。ローカルのデータ（PARA の `areas/` `projects/` `archives/`）は、Vault のトップのリポジトリにあり、`workbase` の外にある。
 - 共有側のノートから、ローカル側（`areas/` など）へ `[[リンク]]` を張らない。他のPCでリンク切れになる。
-- **`contexts/` に業務の文脈（会社固有・案件固有の内容、会社環境の制約や設定）を書かない**（2026-10-08 ユーザーの決定。公開の予定はあるが未決定）。業務の引継ぎが必要なときは、作業側の `docs/`（非公開の remote か、ローカルの git）に書く。書いてしまったら、公開前に削除する。
+- **exmem に業務の文脈（会社固有・案件固有の内容、会社環境の制約や設定）を書かない**（2026-10-08 ユーザーの決定。公開の予定はあるが未決定。2026-10-10 に `contexts/` を廃止したので、対象を exmem 全体の表現にした）。業務の引継ぎが必要なときは、作業側の `docs/`（非公開の remote か、ローカルの git）に書く。書いてしまったら、公開前に削除する。
 
 ## 読む順番
 
 1. `README.md` の「知識の索引」で、該当する知識を探し、その `knowledge/*.md` を読む（全件は読まない）。
-2. 作業を引き継ぐときは、`contexts/<project>/context.md` の `Current State` と `Next Actions`。
+2. 作業の途中の状態は、その `knowledge/` のノートの `Open Questions` と `Next Actions`。
 3. タグの一覧は `tags.md`。
 
 ## ディレクトリの役割
 
 - `inbox/`: 未整理の会話メモの一時置き場。知識へ統合したら削除する（`inbox/README.md` は除く）。
 - `knowledge/`: AIをまたいで再利用する知識。1ファイル1トピック。
-- `contexts/<project>/context.md`: `works` から見えない場所の作業の、現在状態と次にやること（引継ぎ用。作業ログの置き場ではない）。Vault 直下の `projects/` とは別物。
 
 ## Frontmatter
 
 ```yaml
 ---
-type: knowledge          # knowledge / project / index / inbox
+type: knowledge          # knowledge / index / inbox
 title: Zed Vim環境
 status: active           # active / superseded
 tags:
@@ -52,7 +51,7 @@ sources:
 - frontmatter の `tags` にリストで書く。`#` は付けない。本文中にタグを書かない。
 - 英小文字の kebab-case。スペース不可。
 - `tags.md` の語彙から選ぶ。新しいタグが必要なら `tags.md` に追記してから使う。
-- `type` や `status` の値（`project`、`knowledge` など）をタグにしない。プロパティと重複するため。
+- `type` や `status` の値（`knowledge`、`inbox` など）をタグにしない。プロパティと重複するため。
 - 特定のノートとの関係はタグではなく `[[リンク]]` で表す。
 
 ## 本文の書き方
@@ -74,7 +73,6 @@ sources:
 ## リンク
 
 - ノート間のリンクは `[[ファイル名]]` で書く（例: `[[zed-vim]]`）。
-- `context.md` は複数あるため、`[[zed-vim-migration/context]]` のようにフォルダ名を付ける。
 - 知識ファイルには、関係する知識・プロジェクトへのリンクを `## Related` にまとめる。
 
 ## 統合と書き込み
@@ -82,4 +80,4 @@ sources:
 - 新しい知識ファイルを作ったら、`README.md` の「知識の索引」に1行足す。
 - `inbox/` の統合は、ユーザーが「inboxを整理して」と言ったときに、kit の `integrate-hook.md`（統合の手順の正本）に従う。
 - 作業ディレクトリは exmem を基本は読み取り専用で参照する。書き込みの例外は、ユーザーが「ナレッジ化して」と指示したときの `inbox/` への新規メモ1つだけ（正本は kit の `stock-hook.md`。`inbox/README.md` のプロンプトはその写し）。
-- exmem に、作業ディレクトリの作業ログを置かない（経緯・決定・次にやることは、各ディレクトリの `docs/` が持つ）。`contexts/` の作業を終えるときは、`Current State` と `Next Actions` を更新する。この引継ぎコンテキストを消化する手段は未定。
+- exmem に、作業ディレクトリの作業ログを置かない（経緯・決定・次にやることは、各ディレクトリの `docs/` が持つ）。`contexts/`（作業の引継ぎ用）は 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。未完の項目は、該当する `knowledge/` のノートの `Open Questions` / `Next Actions` に書く。

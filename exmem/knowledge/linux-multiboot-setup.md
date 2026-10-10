@@ -11,7 +11,7 @@ aliases:
   - 共有ESP構成
   - MX Linuxインストール
 created: 2026-10-02
-updated: 2026-10-02
+updated: 2026-10-10
 sources:
   - Claude conversation "256GB SSD マルチブートLinux環境構築(MX Linuxインストール)" (2026-10-02)
 ---
@@ -62,6 +62,7 @@ sources:
 - MX Linuxインストーラのブートローダー設定は MBR / PBR / ESP の3択。
 - swap設定画面には、パーティション型swapとは別に「swapファイルを作成する」オプション（デフォルトでオン、`/swap/swap` に3072MB）がある。既存のswapパーティションとは独立した追加のswap。
 - Zram swapは、RAM上に圧縮領域を確保してswap代わりに使う。ディスクI/O削減・SSD延命の利点があり、CPU負荷とRAM消費がトレードオフ。
+- 対象機は中古の ThinkPad X13 Gen1 の想定。ただし、上の 256GB SSD がこの機体のものかは未確認（2026-10-02 時点。`contexts/linux-home-pc` から移した）。
 - インストーラのESPの「フォーマット」欄にある「(FAT32)を確保」は、「既存のファイルシステムを保持しフォーマットし直さない」という意味と解釈した。仮説（表記のみでの判断）。
 
 ## Gotchas
@@ -82,14 +83,18 @@ sources:
 - 2つ目以降のディストロで、既存のESPとswapをどう選択・共有させるか（インストーラごとに挙動が違う可能性）。
 - os-proberが、複数ディストロ混在で各OSのブートエントリを正しく検出・維持できるか（追加のたびに要検証）。
 - `/home` を将来分離するか。
+- MX Linux 25 での Zed の導入方法（公式スクリプトか debian.griffo.io か）。
+- Windows とのデュアルブートにするか、Linux のみにするか。
 
 ## Next Actions
 
 - インストール完了後、再起動してGRUBメニューから起動できるか確認する。
 - 2つ目のディストロでは、未割り当て領域（約165GB）から新しいrootを切り出し、既存のESP（FAT32）とswap（8GB）を指定して入れる。
 - ディストロ追加後、os-proberが全ディストロを検出しているか確認する。
+- Zed を公式インストールスクリプトまたは Flatpak で導入する。Neovim は当面 apt 標準版（0.10.4 系）で使う。
+- Mozc（fcitx5 + fcitx5-mozc）と udev ルールを、勉強用に手動で構築する（お題は未決）。
+- 慣れたら Mint 22 への移行を検討する（[[linux-distro-selection]]）。
 
 ## Related
 
 - [[linux-distro-selection]]
-- [[linux-home-pc/context]]
