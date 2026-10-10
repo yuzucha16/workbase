@@ -172,4 +172,3 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 - [[ai-harness-concepts]]
 - [[ai-handson-framework]]
 - [[zed-dotfiles]]
-- [[ai-development-workflow/context]]
