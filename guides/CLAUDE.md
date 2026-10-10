@@ -4,6 +4,8 @@
 文書の種類は、読む人の最初の問いで決める。種類ごとの型は `exmem/lessons/reference-doc-types.md`。
 Claudeは、以下のルールに従って作業する。以下は主に `howto/` の手順書のルール。
 
+入口は `guides-index.md`(やりたいこと・場面から引く索引)。文書を足したら・消したら、索引も同じコミットで直す(更新の規則は索引の末尾)。
+
 ## ディレクトリ構成
 
 | ディレクトリ | 種類 | 読む人の問い | 例 |
@@ -13,6 +15,7 @@ Claudeは、以下のルールに従って作業する。以下は主に `howto/
 | `quickref/` | クイックリファレンス | あのコマンドは何だっけ | `apt.md`、`git.md`。`やりたいこと | コマンド | 注意` の表 |
 
 - frontmatter に `type`(`howto` / `explain` / `quickref`)、`title`、`tags` を付ける
+- `guides-index.md` だけは `type: index`(どの種類のディレクトリにも置かない)
 - ファイル名は、リポジトリ内で一意にする(`exmem/lessons/` と重ならない名前にする。例: `fonts-setup.md`)
 
 ## 手順書(howto/)の作り方
