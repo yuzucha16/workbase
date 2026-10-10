@@ -1,7 +1,8 @@
 ---
+type: explain
 title: SSL証明書とSSLインスペクション:理解ガイド
 tags:
-  - cheatsheet
+  - explain
   - env
   - tls
   - ssl-inspection

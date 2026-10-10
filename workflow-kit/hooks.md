@@ -10,13 +10,14 @@
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push を、順序を固定して行う |
 | `close` | | `close-hook.md` | Project の終了 | Project を閉じる |
 | `stock` | 「ナレッジ化して」 | `stock-hook.md` | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`） |
-| `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `knowledge/` に統合し、照合を報告する |
+| `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
 | `review` | 「見直して」 | `review-hook.md` | 週1回を目途 | `again` と遠回りの事例を見て、1つ直すか1つ畳む |
 | （常時） | | `docs-rules.md` | 作業を始める前と、`docs/` を更新するとき | `docs/` の運用規則 |
 
 - 連鎖: `init`、`open → [start → 作業 → wrap]×N → close`。`stock` と `integrate` は随時。
 - 全フックの共通規則（冒頭の定型、改善、承認、フックを足す・消すとき）は `hook-common.md`。
 - 上のファイルが読めない場合（`workbase` を clone していない PC など）は、記憶で代用せず、ユーザーに伝えて止まる。
+- ディレクトリ名: `exmem/knowledge/` は `exmem/lessons/` に、`cheatsheets/` は `guides/`（`howto/` `explain/` `quickref/`）に、2026-10-10 に改名した。履歴の中の旧名は、これで読み替える。
 - 旧ファイル名 `closing-hook.md` `knowledge-hook.md` `setup-hook.md` は、2026-10-08 に削除した（新名は `wrap` `stock` `init`）。履歴の中の旧名は、この表で読み替える。
 
 ## 作業ディレクトリへの契約（手順書が前提にするもの）

@@ -10,25 +10,26 @@ tags:
 aliases:
   - 環境セットアップ手順書
   - cheatsheets/env
+  - guides/howto
   - PC再セットアップ
 created: 2026-10-03
 updated: 2026-10-06
 sources:
   - Claude Code conversation "新しいPCの初回セットアップ設計" (2026-10-06。「初回の取得」)
   - Claude Code conversation "環境セットアップ手順書(Win11 / Debian系)の整備と scripts/linux の統合" (2026-10-03)
-  - "resources/cheatsheets/env/ と dotfiles scripts/linux/（2026-10-03 に確認）"
+  - "resources/cheatsheets/env/（現 resources/guides/howto/）と dotfiles scripts/linux/（2026-10-03 に確認）"
 ---
 
 # 環境セットアップ手順書（Win11 / Debian系）
 
 ## Purpose
 
-PCを入れ替えても、手順書とスクリプトで同じ環境を再現できるようにする。手順書は `resources/cheatsheets/env/` にあり、スクリプトは dotfiles リポジトリが正。範囲は「インストール準備」から「エディタでテキストが見られる」まで。
+PCを入れ替えても、手順書とスクリプトで同じ環境を再現できるようにする。手順書は `resources/guides/howto/`（旧 `cheatsheets/env/`、2026-10-10 に移動）にあり、スクリプトは dotfiles リポジトリが正。範囲は「インストール準備」から「エディタでテキストが見られる」まで。
 
 ## 場所
 
-- `resources/cheatsheets/env/win11.md`、`debian-family.md`、`fonts.md`（2026-10-03 に実物で確認）。
-- 書き方のルールは `resources/cheatsheets/CLAUDE.md`（`handson/` や `exmem/` の慣例に合わせて `cheatsheets/` 直下）。ルールを先に作ってから Win11、Debian系の順に書いた。ぶれを防ぐため。
+- `resources/guides/howto/win11.md`、`debian-family.md`、`fonts-setup.md`（2026-10-03 に実物で確認。2026-10-10 に `cheatsheets/env/` から移動し、`fonts.md` は `fonts-setup.md` に改名した）。
+- 書き方のルールは `resources/guides/CLAUDE.md`（`handson/` や `exmem/` の慣例に合わせて `guides/` 直下。旧 `cheatsheets/CLAUDE.md`）。ルールを先に作ってから Win11、Debian系の順に書いた。ぶれを防ぐため。
 - 旧メモ3つ（`win_setup` / `linux_setup` / `setup_alma`）は削除した（古く、会社PC由来の情報が多い。履歴から復元できる）。
 
 ## Principles

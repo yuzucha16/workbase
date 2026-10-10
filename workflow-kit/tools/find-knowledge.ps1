@@ -2,7 +2,7 @@
 <#
 .SYNOPSIS
   `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索を行う。
-  exmem/knowledge/ のファイル名、見出し（^#）、frontmatter の tags と aliases の行を、キーワードで検索し、
+  exmem/lessons/ のファイル名、見出し（^#）、frontmatter の tags と aliases の行を、キーワードで検索し、
   ヒットしたキーワードの種類が多い順に、ファイルを最大3件まで示す。
 
 .PARAMETER Keyword
@@ -19,7 +19,7 @@
   pwsh -NoProfile -File tools/find-knowledge.ps1 git 改行 gitattributes autocrlf
 
 .NOTES
-  読み取り専用。knowledge/ は編集しない。リテラル一致（正規表現ではない）。PowerShell 7 以降。
+  読み取り専用。lessons/ は編集しない。リテラル一致（正規表現ではない）。PowerShell 7 以降。
 #>
 [CmdletBinding(PositionalBinding = $false)]
 param(
@@ -32,8 +32,8 @@ $Keyword = @($Keyword | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
 if (-not $Keyword) { Write-Host 'キーワードを2〜4語、空白で並べる'; exit 1 }
 
 $kitRoot = Split-Path -Parent $PSScriptRoot
-$dir = Join-Path (Split-Path -Parent $kitRoot) 'exmem/knowledge'
-if (-not (Test-Path $dir)) { Write-Host "knowledge/ が無い: $dir"; exit 1 }
+$dir = Join-Path (Split-Path -Parent $kitRoot) 'exmem/lessons'
+if (-not (Test-Path $dir)) { Write-Host "lessons/ が無い: $dir"; exit 1 }
 
 $results = foreach ($f in Get-ChildItem -Path $dir -Recurse -Filter *.md -File) {
   $lines = [IO.File]::ReadAllLines($f.FullName, [Text.Encoding]::UTF8)
@@ -81,6 +81,6 @@ $results = foreach ($f in Get-ChildItem -Path $dir -Recurse -Filter *.md -File) 
 if (-not $results) { Write-Host "ヒット無し（キーワード: $($Keyword -join ', ')）。統合先の候補は「新規トピック」"; exit 0 }
 $order = if ($Body) { @(@{ Expression = 'Kinds'; Descending = $true }, @{ Expression = 'Hits'; Descending = $true }, 'File') } else { @(@{ Expression = 'Kinds'; Descending = $true }, 'File') }   # 既定の並びは変えない
 foreach ($r in $results | Sort-Object -Property $order | Select-Object -First $Top) {
-  Write-Host "knowledge/$($r.File)  [$($r.Kinds)/$($Keyword.Count) 語: $($r.Keywords)]"
+  Write-Host "lessons/$($r.File)  [$($r.Kinds)/$($Keyword.Count) 語: $($r.Keywords)]"
   foreach ($e in $r.Evidence) { Write-Host "    $e" }
 }

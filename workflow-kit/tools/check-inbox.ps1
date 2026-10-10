@@ -83,7 +83,7 @@ foreach ($p in $Path) {
   # Goal 末尾
   $goal = Section $raw 'Goal' 'Principles'
   $lastLine = ($goal -split "`n")[-1]
-  Report ($lastLine -match '^統合先の候補: .*(knowledge/\S+?\.md|新規トピック)（キーワード: .+）') 'Goal の末尾が「統合先の候補: …（キーワード: …）」の行' 'FAIL' $lastLine
+  Report ($lastLine -match '^統合先の候補: .*((?:knowledge|lessons)/\S+?\.md|新規トピック)（キーワード: .+）') 'Goal の末尾が「統合先の候補: …（キーワード: …）」の行' 'FAIL' $lastLine
 
   # 「なし」は、見出しの直後に1語だけの行にする。補足が付くと、項目ありとみなされ、後続の点検（3行セットなど）が意味を成さない
   $badNone = @{}

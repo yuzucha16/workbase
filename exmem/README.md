@@ -26,9 +26,11 @@ AIサービスの会話履歴やメモリに知識を閉じ込めず、Markdown�
 会話の根拠（なぜそう決めたか）とハマりどころは、知識ファイルの中に残す。
 
 - `inbox/`: 未整理の会話メモの一時置き場。知識へ統合したら削除する
-- `knowledge/`: AIをまたいで再利用する知識。1ファイル1トピック
+- `lessons/`: AI が今後の参考にする、判断・原則・落とし穴の記録。1ファイル1トピック（旧名 `knowledge/`。2026-10-10 に改名）
 
-exmem はナレッジの置き場で、他リポジトリの作業ログは置かない。dotfiles は exmem を基本は読み取り専用で参照するだけ（例外は、ユーザーの指示で `inbox/` に知識メモを置くことだけ）で、dotfiles の作業の経緯・決定・次にやることは dotfiles リポジトリの `docs/` が持つ（2026-10-04 に `knowledge/dotfiles.md` と `contexts/dotfiles/` を移して削除した）。`contexts/`（作業の引継ぎ用）自体も 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。
+人が手順や仕組みを思い出すための文書は、exmem の外の `guides/`（`howto/` 手順書、`explain/` 理解ガイド、`quickref/` クイックリファレンス）に置く。作り方は [[reference-doc-types]]。
+
+exmem はナレッジの置き場で、他リポジトリの作業ログは置かない。dotfiles は exmem を基本は読み取り専用で参照するだけ（例外は、ユーザーの指示で `inbox/` に知識メモを置くことだけ）で、dotfiles の作業の経緯・決定・次にやることは dotfiles リポジトリの `docs/` が持つ（2026-10-04 に `knowledge/dotfiles.md`（現 `lessons/`）と `contexts/dotfiles/` を移して削除した）。`contexts/`（作業の引継ぎ用）自体も 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。
 
 ## ディレクトリ構造
 
@@ -44,11 +46,11 @@ exmem/                 # resources/exmem/
 ├── knowledge.base     # Obsidian Bases: 知識と inbox の一覧表
 ├── inbox/
 │   └── README.md      # モバイル用の引き継ぎプロンプト
-└── knowledge/         # 1ファイル1トピック。一覧は下の「知識の索引」
+└── lessons/           # 1ファイル1トピック。一覧は下の「知識の索引」
 ```
 
-exmem自体の設計（会話と知識の扱い、AIをまたぐ原則など）は `knowledge/ai-development-workflow.md` にある。
-Zed ACPは独立したプロジェクトではなく、AI開発ワークフローを構成する要素の一つとして `knowledge/zed-acp.md` で扱う。
+exmem自体の設計（会話と知識の扱い、AIをまたぐ原則など）は `lessons/ai-development-workflow.md` にある。
+Zed ACPは独立したプロジェクトではなく、AI開発ワークフローを構成する要素の一つとして `lessons/zed-acp.md` で扱う。
 
 ## 知識の索引（探すときは、ここから）
 
@@ -117,8 +119,8 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 ## 運用ルール
 
 1. 壁打ちの最後に `inbox/README.md` のプロンプトで要点をまとめさせ、Obsidianモバイルアプリで `inbox/` に保存する。
-2. inbox のメモから決定・根拠・ハマりどころ・未決事項を `knowledge/` に統合し、メモは削除する。
-3. 未完の項目は、該当する `knowledge/` のノートの `Open Questions` / `Next Actions` に書く（作業ディレクトリの作業ログは、各ディレクトリの `docs/` が持つ）。
+2. inbox のメモから決定・根拠・ハマりどころ・未決事項を `lessons/` に統合し、メモは削除する。
+3. 未完の項目は、該当する `lessons/` のノートの `Open Questions` / `Next Actions` に書く（作業ディレクトリの作業ログは、各ディレクトリの `docs/` が持つ）。
 4. AIを変更しても読めるよう、Markdown + YAML frontmatter + 通常の見出しを基本とする。
 
 詳しい書き方は `AGENTS.md` を参照。

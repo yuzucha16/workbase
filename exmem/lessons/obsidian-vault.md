@@ -52,7 +52,7 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 ├── .obsidian/         # dotfiles へのジャンクション（実体は dotfiles の windows\obsidian\.obsidian）
 ├── projects/  areas/  archives/   # ローカルの PARA
 └── resources/         # 共有リポジトリ workbase の clone（別リポジトリ）
-    ├── exmem/  workflow-kit/  cheatsheets/  handson/
+    ├── exmem/  workflow-kit/  guides/  handson/
 ```
 
 - Vault のトップは、PC ごとのローカルなリポジトリ（業務用 PC は remote なし、個人用 PC は非公開 remote を使える）。`areas/` `projects/` `archives/`、`docs/`（作業ログ）、PC 用の `AGENTS.md` を持つ。作り方は、`workflow-kit` の導入フック（項目 5「ワークスペースの生成」）。
@@ -167,7 +167,7 @@ notes/                 # Git root
 ├── .obsidian/         # 共有（workspace*.json は除外）
 ├── resources/         # 共有（唯一）
 │   ├── exmem/
-│   ├── cheatsheets/
+│   ├── guides/
 │   ├── handson/
 │   ├── office/        # Officeテンプレ・リボン設定
 │   ├── fonts/         # Git LFS
