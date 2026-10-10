@@ -1,119 +1,43 @@
 ---
-title: apt cheatsheet
+title: apt クイックリファレンス
 tags:
   - cheatsheet
   - apt
 migrated_from: denisidoro/cheats (navi)
 ---
 
-# apt cheatsheet
+# apt クイックリファレンス
 
-## Apt
+Debian 系の apt コマンド。root 権限が要るものは `sudo` を付ける。
 
-**Update content listings from package repositories**
+## 調べる
 
-```bash
-apt update
-```
+| やりたいこと | コマンド | 注意 |
+|---|---|---|
+| パッケージ一覧を更新 | `apt update` | install / upgrade の前に実行する |
+| 導入済みの一覧 | `apt list --installed` | |
+| 更新できるものの一覧 | `apt list --upgradeable` | |
+| 版の一覧 | `apt list -a <package>` | |
+| 検索（名前と説明） | `apt search <query>` | |
+| 詳細 | `apt show -a <package>` | |
+| 依存先 | `apt depends <package>` | |
+| 逆依存（何から使われているか） | `apt rdepends <package>` | |
 
-**List all available packages**
+## 入れる・更新する
 
-```bash
-apt list
-```
+| やりたいこと | コマンド | 注意 |
+|---|---|---|
+| 入れる | `apt install <package>` | |
+| ローカルの deb を入れる | `apt install <path.deb>` | パス指定（`./` を付ける） |
+| 全部更新 | `apt upgrade` | 依存の追加・削除はしない |
+| 全部更新（依存の追加・削除あり） | `apt full-upgrade` | |
+| 1つだけ更新 | `apt install --only-upgrade <package>` | |
+| 版を指定して入れる（ダウングレード） | `apt install <package>=<version>` | 版は `apt list -a` で調べる |
 
-**List all installed packages**
+## 消す
 
-```bash
-apt list --installed
-```
-
-**Info about package (including description)**
-
-```bash
-apt show -a <package-name>
-```
-
-**Show versions and archive areas of available package**
-
-```bash
-apt list -a <package-name>
-```
-
-**Search in repository (packages and description)**
-
-```bash
-apt search <query>
-```
-
-**Check updates for installed packages**
-
-```bash
-apt list --upgradeable
-```
-
-**Update all installed packages**
-
-```bash
-apt upgrade
-```
-
-**Upgrade all installed packages (add/remove dependencies)**
-
-```bash
-apt full-upgrade
-```
-
-**Update specific/individual package**
-
-```bash
-apt install --only-upgrade <package-name>
-```
-
-**Downgrade package to a specific version**
-
-```bash
-apt install <package-name>=<package-version>
-```
-
-**Install a package from repository**
-
-```bash
-apt install <package-name>
-```
-
-**Remove/delete package**
-
-```bash
-apt remove <package-name>
-```
-
-**Remove/delete package (with config files)**
-
-```bash
-apt purge <package-name>
-```
-
-**Install local dpkg package**
-
-```bash
-apt install <filepath-deb>
-```
-
-**List dependencies of package**
-
-```bash
-apt depends <package-name>
-```
-
-**List reverse dependencies of package**
-
-```bash
-apt rdepends <package-name>
-```
-
-**Remove un-needed packages and dependencies**
-
-```bash
-apt autoremove
-```
+| やりたいこと | コマンド | 注意 |
+|---|---|---|
+| 消す | `apt remove <package>` | 設定ファイルは残る |
+| 設定ファイルごと消す | `apt purge <package>` | |
+| 不要な依存を消す | `apt autoremove` | |
