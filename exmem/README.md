@@ -87,6 +87,7 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 - [[para-operations]]: PARA の運用と、AI の質問・提案の指標
 - [[pc-setup-manuals]]: 環境セットアップ手順書（Win11 / Debian系）
 - [[power-automate-office-automation]]: Power Automate / Office Scriptsによる業務自動化
+- [[reference-doc-types]]: 人が見る文書の3種類（手順書・理解ガイド・クイックリファレンス）の作り方
 - [[scoop-app-management]]: Windows のアプリを scoop で管理し、管理外を最小にする
 - [[shell-command-usecases]]: ターミナルのコマンド利用傾向とヒストリの種
 - [[shell-fzf-keybindings]]: シェルの fzf とキー割り当て（pwsh / zsh / bash）
