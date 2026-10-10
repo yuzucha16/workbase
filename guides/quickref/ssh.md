@@ -1,3 +1,11 @@
+---
+type: quickref
+title: SSH クイックリファレンス
+tags:
+  - quickref
+  - ssh
+---
+
 # SSH
 
 ## インストール

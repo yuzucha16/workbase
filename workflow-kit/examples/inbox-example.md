@@ -21,7 +21,7 @@ sources:
 
 ## Goal
 Windows と WSL でリポジトリを共有するときに、改行コードの差分が出ないようにする方法を決めたかった。
-統合先の候補: knowledge/git-config.md（キーワード: git, 改行, line-endings, gitattributes）
+統合先の候補: lessons/git-config.md（キーワード: git, 改行, line-endings, gitattributes）
 
 ## Principles
 - 改行コードの扱いは、各PCの設定（`core.autocrlf`）ではなく、リポジトリ内の `.gitattributes` で決める。理由: clone したPCごとに結果が変わらず、差分の原因を探さずに済む。

@@ -232,6 +232,13 @@ AIのコンテキスト
 - 却下案: 期限つきの引継ぎ置き場として残す（今は需要が見えない。必要になったら、inbox に未完のメモを置く案を先に試す）。
 - 移し先: `ai-literacy-metrics` → [[ai-work-metrics]]。`para-area-project-flow` → [[para-operations]]。`linux-home-pc` → [[linux-multiboot-setup]]。`zed-vim-migration` → [[zed-vim]]。`ai-development-workflow` の履歴は削除した（git の履歴に残る）。残りの未完は下の「contexts から移した未完の項目」。
 
+### D11: `knowledge/` を `lessons/` に、`cheatsheets/` を `guides/` に改名する（2026-10-10）
+
+- 決定: exmem の用途を「AI が今後の参考にするもの（`exmem/lessons/`）」と「ユーザーが手順や仕組みを思い出すもの（`guides/`）」の2つに分ける。`guides/` の中は `howto/`（手順書）、`explain/`（理解ガイド）、`quickref/`（クイックリファレンス）に分ける。`exmem` と `inbox/`、`stock` / `integrate` の名前は維持する。frontmatter の `type: knowledge` と `knowledge.base` の名前は、そのままにした。
+- 根拠: ユーザーが案 1 を選んだ。`knowledge/` の中身は判断・原則・落とし穴の記録で、AI 用としては名前が広すぎた。`cheatsheets/` は手順書や理解ガイドには狭かった。作り方は [[reference-doc-types]]。
+- 却下案: 人用を種類別にトップへ並べる、トップを `for-ai/` `for-human/` にする、名前を変えず役割だけ再定義する（ユーザーが案 1 を選択）。
+- 履歴の中の旧名（`knowledge/`、`cheatsheets/env/`）は読み替える。`env/fonts.md` は `guides/howto/fonts-setup.md` に改名した（`lessons/fonts.md` と同名で `[[fonts]]` が曖昧だったため）。
+
 ## Gotchas
 
 ### 会話から知識への抽出で情報が抜け落ちた

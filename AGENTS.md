@@ -9,9 +9,9 @@
 
 | ディレクトリ | 内容 |
 |---|---|
-| `exmem/` | AI をまたいで再利用するナレッジ（external memory） |
+| `exmem/` | AI が今後の参考にするナレッジ（external memory）。判断・原則・落とし穴の記録は `exmem/lessons/` |
 | `workflow-kit/` | 作業ディレクトリに導入する共通機能（`docs/` の運用と、合言葉で呼ぶフック。呼び出し表は `hooks.md`）の正本 |
-| `cheatsheets/` | コマンド・設定のチートシート |
+| `guides/` | 人（ユーザー）が手順や仕組みを思い出すための文書。`howto/`（手順書）、`explain/`（理解ガイド）、`quickref/`（クイックリファレンス）。作り方は `exmem/lessons/reference-doc-types.md` |
 | `handson/` | ハンズオンの課題とテンプレート |
 
 - このリポジトリは単独で clone しても自己完結する。作業ディレクトリに期待することは、`workflow-kit/hooks.md` の「契約」だけ。
@@ -35,4 +35,4 @@
 ## 書式とコミット
 
 - 改行コードは LF（`.gitattributes` で統一）。
-- コミットメッセージは `[領域] 変更内容` の形式（例: `[exmem] ...`、`[workflow-kit] ...`、`[cheatsheets] ...`）。
+- コミットメッセージは `[領域] 変更内容` の形式（例: `[exmem] ...`、`[workflow-kit] ...`、`[guides] ...`）。

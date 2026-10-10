@@ -12,14 +12,15 @@ exmem（external memory、外部メモリ）は、AIと人間が共有するナ�
 
 ## 読む順番
 
-1. `README.md` の「知識の索引」で、該当する知識を探し、その `knowledge/*.md` を読む（全件は読まない）。
-2. 作業の途中の状態は、その `knowledge/` のノートの `Open Questions` と `Next Actions`。
+1. `README.md` の「知識の索引」で、該当する知識を探し、その `lessons/*.md` を読む（全件は読まない）。
+2. 作業の途中の状態は、その `lessons/` のノートの `Open Questions` と `Next Actions`。
 3. タグの一覧は `tags.md`。
 
 ## ディレクトリの役割
 
 - `inbox/`: 未整理の会話メモの一時置き場。知識へ統合したら削除する（`inbox/README.md` は除く）。
-- `knowledge/`: AIをまたいで再利用する知識。1ファイル1トピック。
+- `lessons/`: AI が今後の参考にする、判断・原則・落とし穴の記録。1ファイル1トピック。旧名は `knowledge/`（2026-10-10 に改名。履歴の中の旧名は読み替える。frontmatter の `type: knowledge` は、ノートの種類名としてそのまま）。
+- 人が手順や仕組みを思い出すための文書は、exmem でなく `../guides/` に置く（`reference-doc-types.md`）。
 
 ## Frontmatter
 
@@ -80,4 +81,4 @@ sources:
 - 新しい知識ファイルを作ったら、`README.md` の「知識の索引」に1行足す。
 - `inbox/` の統合は、ユーザーが「inboxを整理して」と言ったときに、kit の `integrate-hook.md`（統合の手順の正本）に従う。
 - 作業ディレクトリは exmem を基本は読み取り専用で参照する。書き込みの例外は、ユーザーが「ナレッジ化して」と指示したときの `inbox/` への新規メモ1つだけ（正本は kit の `stock-hook.md`。`inbox/README.md` のプロンプトはその写し）。
-- exmem に、作業ディレクトリの作業ログを置かない（経緯・決定・次にやることは、各ディレクトリの `docs/` が持つ）。`contexts/`（作業の引継ぎ用）は 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。未完の項目は、該当する `knowledge/` のノートの `Open Questions` / `Next Actions` に書く。
+- exmem に、作業ディレクトリの作業ログを置かない（経緯・決定・次にやることは、各ディレクトリの `docs/` が持つ）。`contexts/`（作業の引継ぎ用）は 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。未完の項目は、該当する `lessons/` のノートの `Open Questions` / `Next Actions` に書く。

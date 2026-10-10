@@ -1,7 +1,8 @@
 ---
+type: howto
 title: Windows 11 セットアップ手順
 tags:
-  - cheatsheet
+  - howto
   - env
   - windows
 ---
