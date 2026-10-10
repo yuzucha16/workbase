@@ -10,7 +10,7 @@ aliases:
   - external memory
   - 外部メモリ
 created: 2026-09-26
-updated: 2026-10-04
+updated: 2026-10-10
 ---
 
 # exmem
@@ -27,9 +27,8 @@ AIサービスの会話履歴やメモリに知識を閉じ込めず、Markdown�
 
 - `inbox/`: 未整理の会話メモの一時置き場。知識へ統合したら削除する
 - `knowledge/`: AIをまたいで再利用する知識。1ファイル1トピック
-- `contexts/`: Vault のトップ（`works`）から見えない場所（モバイルや他環境での壁打ちなど）の作業を引き継ぐためのコンテキスト。作業ログの置き場ではない（Vault の PARA の `projects/` とは別物）
 
-exmem はナレッジの置き場で、他リポジトリの作業ログは置かない。dotfiles は exmem を基本は読み取り専用で参照するだけ（例外は、ユーザーの指示で `inbox/` に知識メモを置くことだけ）で、dotfiles の作業の経緯・決定・次にやることは dotfiles リポジトリの `docs/` が持つ（2026-10-04 に `knowledge/dotfiles.md` と `contexts/dotfiles/` を移して削除した）。
+exmem はナレッジの置き場で、他リポジトリの作業ログは置かない。dotfiles は exmem を基本は読み取り専用で参照するだけ（例外は、ユーザーの指示で `inbox/` に知識メモを置くことだけ）で、dotfiles の作業の経緯・決定・次にやることは dotfiles リポジトリの `docs/` が持つ（2026-10-04 に `knowledge/dotfiles.md` と `contexts/dotfiles/` を移して削除した）。`contexts/`（作業の引継ぎ用）自体も 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。
 
 ## ディレクトリ構造
 
@@ -42,19 +41,10 @@ exmem/                 # resources/exmem/
 ├── AGENTS.md          # 全エージェント共通の入口・書き方ルール
 ├── CLAUDE.md          # @AGENTS.md を読み込むだけ
 ├── tags.md            # タグの語彙とルール
-├── knowledge.base     # Obsidian Bases: 知識・プロジェクトの一覧表
+├── knowledge.base     # Obsidian Bases: 知識と inbox の一覧表
 ├── inbox/
 │   └── README.md      # モバイル用の引き継ぎプロンプト
-├── knowledge/         # 1ファイル1トピック。一覧は下の「知識の索引」
-└── contexts/
-    ├── ai-development-workflow/
-    │   └── context.md
-    ├── ai-literacy-metrics/
-    │   └── context.md
-    ├── linux-home-pc/
-    │   └── context.md
-    └── zed-vim-migration/
-        └── context.md
+└── knowledge/         # 1ファイル1トピック。一覧は下の「知識の索引」
 ```
 
 exmem自体の設計（会話と知識の扱い、AIをまたぐ原則など）は `knowledge/ai-development-workflow.md` にある。
@@ -127,8 +117,7 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 
 1. 壁打ちの最後に `inbox/README.md` のプロンプトで要点をまとめさせ、Obsidianモバイルアプリで `inbox/` に保存する。
 2. inbox のメモから決定・根拠・ハマりどころ・未決事項を `knowledge/` に統合し、メモは削除する。
-3. `works` から見えない場所の作業の引継ぎは、`contexts/<project>/context.md` に集約する（作業ディレクトリの作業ログは、各ディレクトリの `docs/` が持つ）。
-4. 作業の終わりに `context.md` の `Current State` と `Next Actions` を更新する。
-5. AIを変更しても読めるよう、Markdown + YAML frontmatter + 通常の見出しを基本とする。
+3. 未完の項目は、該当する `knowledge/` のノートの `Open Questions` / `Next Actions` に書く（作業ディレクトリの作業ログは、各ディレクトリの `docs/` が持つ）。
+4. AIを変更しても読めるよう、Markdown + YAML frontmatter + 通常の見出しを基本とする。
 
 詳しい書き方は `AGENTS.md` を参照。
