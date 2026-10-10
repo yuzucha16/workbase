@@ -106,6 +106,5 @@ sources:
 ## Related
 
 - [[linux-multiboot-setup]]
-- [[linux-home-pc/context]]
 - [[modern-cli-tools]]
 - [[zed-acp]]

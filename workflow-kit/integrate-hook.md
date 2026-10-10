@@ -10,7 +10,7 @@
 ## 場所と書き込みの制約
 
 - exmem: `$HOME\works\resources\exmem`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/exmem`）。
-- 書き込み先: `exmem/knowledge/`、`exmem/contexts/`、`exmem/README.md`（索引）、`exmem/tags.md`、統合したメモの削除。作業ディレクトリの `docs/` は書き換えない。
+- 書き込み先: `exmem/knowledge/`、`exmem/README.md`（索引）、`exmem/tags.md`、統合したメモの削除。作業ディレクトリの `docs/` は書き換えない。
 - コミットは `docs-rules.md` の「コミットと push」に従う。push はしない（使い捨ての環境は、`docs-rules.md` の「使い捨ての環境での緩和」）。コミット済みのメモ（使い捨ての環境で作られたもの）は、`git rm` で削除してコミットする。
 
 ## 手順
@@ -38,6 +38,6 @@
 2. **実物と照合する。** メモの内容は会話から生まれたもので、実物と食い違うことがある。設定ファイル・コード・コマンド出力など確認できるものは実際に見て、一致すれば「確認済み」、食い違えば実物を正として記録し、食い違いを `Open Questions` に残す。確認できないものは仮説として書く。
 3. タグを `tags.md` の語彙に正規化する。
 4. 該当する `knowledge/*.md` に統合する。該当がなければ新しいファイルを作る。
-5. `context.md` の `Current State` / `Next Actions` / `Open Questions` を更新する。
+5. 統合先の `knowledge/` のノートの `Open Questions` / `Next Actions` を更新する（未完の項目の置き場）。
 6. 新しいファイルを作ったら `README.md` の「知識の索引」に1行足す。
 7. 統合したメモを inbox から削除する。削除の前に、上の「手順」の「メモと統合先の照合」を行う。
