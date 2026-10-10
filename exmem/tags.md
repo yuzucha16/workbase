@@ -7,12 +7,14 @@ tags:
 aliases:
   - Tags
 created: 2026-09-26
-updated: 2026-10-06
+updated: 2026-10-10
 ---
 
 # タグ一覧
 
 タグは「何についての知識か」を表す。新しいタグは、ここに追記してから使う。
+
+対象は `exmem/` と `../guides/` の両方（guides は 2026-10-10 から。ユーザーの決定）。guides で必須にするのはタグの規約だけで、frontmatter の項目は `guides/CLAUDE.md` に従う。
 
 ## ルール
 
@@ -45,6 +47,9 @@ updated: 2026-10-06
 | `tool/git` | Git（コミット規則・改行・設定、`git filter-repo` などの周辺ツール含む） |
 | `tool/stow` | GNU Stow（symlink 配置） |
 | `tool/ripgrep` | ripgrep（`rg`。Claude Code の Grep の実体） |
+| `tool/docker` | Docker |
+| `tool/apt` | apt（Debian 系のパッケージマネージャー） |
+| `tool/ssh` | SSH（`ssh`、鍵、`~/.ssh/config`） |
 
 ### `ai/` — AIサービス・エージェント
 
@@ -89,3 +94,5 @@ updated: 2026-10-06
 | `static-analysis` | ビルド成果物やソースを機械で検査すること（`nm`、呼び出しグラフ、サニタイザなど） |
 | `metrics` | 作業や AI 活用の指標・測定 |
 | `para` | PARA（Projects / Areas / Resources / Archives）の運用 |
+| `tls` | TLS・証明書・SSLインスペクション |
+| `markdown` | Markdown の記法 |

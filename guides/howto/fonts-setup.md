@@ -2,9 +2,9 @@
 type: howto
 title: フォント セットアップ手順
 tags:
-  - howto
-  - env
-  - fonts
+  - font
+  - setup
+  - dotfiles
 ---
 
 # フォント セットアップ手順

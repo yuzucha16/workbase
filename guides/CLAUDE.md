@@ -15,6 +15,7 @@ Claudeは、以下のルールに従って作業する。以下は主に `howto/
 | `quickref/` | クイックリファレンス | あのコマンドは何だっけ | `apt.md`、`git.md`。`やりたいこと | コマンド | 注意` の表 |
 
 - frontmatter に `type`(`howto` / `explain` / `quickref`)、`title`、`tags` を付ける
+- タグは `exmem/tags.md` の語彙から選ぶ(無ければ先に追記する)。`type` の値(`howto` など)はタグにしない。`status` / `created` / `updated` は必須にしない(手順書の鮮度は対応バージョン表の確認日で見る。2026-10-10 ユーザーの決定)
 - `guides-index.md` だけは `type: index`(どの種類のディレクトリにも置かない)
 - ファイル名は、リポジトリ内で一意にする(`exmem/lessons/` と重ならない名前にする。例: `fonts-setup.md`)
 
@@ -36,7 +37,7 @@ Claudeは、以下のルールに従って作業する。以下は主に `howto/
 
 ### 構成
 
-1. frontmatter(`title`、`type: howto`、`tags: [howto, env, <os>]`)
+1. frontmatter(`title`、`type: howto`、`tags: [setup, <os>, ...]`)
 2. 冒頭の説明(範囲とゴール、スクリプトとの関係)
 3. **対応バージョン表**(次節)
 4. **全体の流れ**の表(章、区分=手動/スクリプト、完了の目安)
