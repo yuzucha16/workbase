@@ -1,7 +1,8 @@
 ---
+type: howto
 title: Debian系 Linux セットアップ手順 (MX / Ubuntu / Mint)
 tags:
-  - cheatsheet
+  - howto
   - env
   - linux
   - debian
