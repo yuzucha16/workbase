@@ -78,10 +78,18 @@ exmem の用途は2つ。(1) AI が今後の参考にするもの（`exmem/lesso
 
 ## Open Questions
 
-- 既存のクイックリファレンス（`guides/quickref/` の `git.md` `shell.md` `docker.md` `markdown.md` `ssh.md`）を、表の形へ順に書き直すか。`apt.md` だけ書き直した（2026-10-10 時点）。
+- `quickref/` の `git.md` `docker.md` `shell.md` の説明は、元の英語のまま。日本語にするか、場面ごとの節に分け直すか（`git.md` は38行が1つの表）。`markdown.md`（記法の見本）と `ssh.md`（メモ）は、表にならないので書き直していない（2026-10-10 時点）。
+- `guides/` に、`exmem/README.md` の「知識の索引」に当たる入口（やりたいこと・場面から引く索引）が無い。
+- `tags.md` と frontmatter の規約（`created` `updated` `status` など）を `guides/` にも適用するか。今は `type` `title` `tags` だけ。
 - 旧名は `cheatsheets/`（`env/` を含む）と `knowledge/`。履歴の中の旧名は読み替える。
+
+## Next Actions
+
+- `guides/` の入口の索引を作る案を、別のスレッドで進める（依頼文は [[session-handoff]] の型に沿って書く）。
+- `guides/` への規約の適用を決める。決めたら `guides/CLAUDE.md` に反映する。
 
 ## Related
 
 - [[pc-setup-manuals]]
 - [[workflow-kit]]
+- [[session-handoff]]
