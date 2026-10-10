@@ -2,8 +2,8 @@
 type: quickref
 title: Markdown クイックリファレンス
 tags:
-  - quickref
   - markdown
+  - tool/obsidian
 ---
 
 # Markdown Cheatsheet

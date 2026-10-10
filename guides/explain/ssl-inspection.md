@@ -2,12 +2,10 @@
 type: explain
 title: SSL証明書とSSLインスペクション:理解ガイド
 tags:
-  - explain
-  - env
   - tls
-  - ssl-inspection
   - tool/git
   - tool/docker
+  - windows
 ---
 
 # SSL証明書とSSLインスペクション:理解ガイド

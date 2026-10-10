@@ -2,10 +2,9 @@
 type: howto
 title: Debian系 Linux セットアップ手順 (MX / Ubuntu / Mint)
 tags:
-  - howto
-  - env
   - linux
-  - debian
+  - setup
+  - dotfiles
 ---
 
 # Debian系 Linux セットアップ手順 (MX / Ubuntu / Mint)
