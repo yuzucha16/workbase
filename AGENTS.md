@@ -11,7 +11,7 @@
 |---|---|
 | `exmem/` | AI が今後の参考にするナレッジ（external memory）。判断・原則・落とし穴の記録は `exmem/lessons/` |
 | `workflow-kit/` | 作業ディレクトリに導入する共通機能（`docs/` の運用と、合言葉で呼ぶフック。呼び出し表は `hooks.md`）の正本 |
-| `guides/` | 人（ユーザー）が手順や仕組みを思い出すための文書。`howto/`（手順書）、`explain/`（理解ガイド）、`quickref/`（クイックリファレンス）。作り方は `exmem/lessons/reference-doc-types.md` |
+| `guides/` | 人（ユーザー）が手順や仕組みを思い出すための文書。`howto/`（手順書）、`explain/`（理解ガイド）、`quickref/`（クイックリファレンス）。作り方は `exmem/lessons/reference-doc-types.md`。入口（場面から引く索引）は `guides/guides-index.md` |
 | `handson/` | ハンズオンの課題とテンプレート |
 
 - このリポジトリは単独で clone しても自己完結する。作業ディレクトリに期待することは、`workflow-kit/hooks.md` の「契約」だけ。
