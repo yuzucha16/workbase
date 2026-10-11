@@ -167,6 +167,7 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 
 ## Related
 
+- [[claude-code-auth-providers]]
 - [[claude-code-project-settings]]
 - [[claude-code-storage]]
 - [[ai-harness-concepts]]
