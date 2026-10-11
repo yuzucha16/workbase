@@ -13,7 +13,7 @@ aliases:
   - シェル履歴のユースケース
   - history seed
 created: 2026-10-04
-updated: 2026-10-06
+updated: 2026-10-11
 sources:
   - PSReadLine の履歴 2か所の分析（このPC 629行、他PC 5,436行。2026-10-04）
 ---
@@ -51,117 +51,120 @@ PC を移行するたびに、定型処理のコマンドを調べ直す時間�
 
 ## 履歴の種
 
-コードブロックは種ファイルへそのまま写す。`#` で始まる説明行は種ファイルに含めない（コードブロックの外に書く）。順序は上から古い履歴の扱い。
+コードブロックは種ファイルへそのまま写す。`#` で始まる説明行は種ファイルに含めない（コードブロックの外に書く）。
 
-### 1. 環境・初回セットアップ
+**追記のしかた（2026-10-11 に、使い方別からツール別に並べ替えた）。** ツールごとの節（`###`）をアルファベット順に並べ、節の中はサブコマンド順にしている。新しい行は、そのツールの節のサブコマンドの位置に足す。新しいツールは、節ごとアルファベット順の位置に足す。節に入らない cmdlet・環境変数・設定ファイルの編集は `PowerShell` に入れる。種ファイルは、上の節から順にブロックを連結して作る（履歴では、下の行ほど新しい扱いになり、`↑` で先に出る）。
+
+- 2026-10-11 に、他PCの履歴（写真2枚）から、公式インストーラー、社内プロキシ配下の証明書まわり（`UV_SYSTEM_CERTS`、`http.sslBackend schannel`）、`aws`、`claude` を足した。載せなかったのは、`http.sslVerify false`（証明書検証の無効化）、ユーザー名入りのパス、社内の証明書パス、案件のディレクトリ、打ち間違い、`--version` 単独の行、`rnr regex ...`、`claude --teleport`（`uvx mcp-proxy-for-aws ...` は、いったん載せたが、使わないのでユーザーの指示で外した）。元の `set UV_SYSTEM_CERTS=true` は cmd の書き方で、PowerShell の `set` は `Set-Variable` のため環境変数にならない。`$env:` に直した。
+
+### aws
 
 ```powershell
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-Get-ExecutionPolicy -List
-wsl --status
-wsl --update
-wsl --list --online
-wsl --list --verbose
-wsl --install -d <ディストロ名>
-wsl --set-default <ディストロ名>
-wsl --unregister <ディストロ名>
-wsl --shutdown
-ghq root
+aws bedrock list-inference-profiles --region ap-northeast-1
+aws configure
+aws configure list-profiles
+aws sts get-caller-identity
+```
+
+### cargo・rustup
+
+```powershell
+cargo install <クレート名>
+cargo install --locked <クレート名>
+rustup update
+```
+
+### claude
+
+```powershell
+claude
+claude --help
+claude --version
+claude-api
+claude-bedrock
+claude-oauth
+claude-pick
+```
+
+- `claude-api` / `claude-bedrock` / `claude-oauth` / `claude-pick` は、自作のランチャー（`profile.ps1` など。dotfiles の `windows/claude/`）。
+
+### code
+
+```powershell
+code --list-extensions > extensions.txt
+Get-Content .\extensions.txt | ForEach-Object { code --install-extension $_ }
+```
+
+### gh
+
+```powershell
+gh release download -R <owner名>/<repo名> -p "<ファイルパターン>" -D "$HOME\Downloads"
+```
+
+### ghq
+
+```powershell
 ghq get <owner名>/<repo名>
+ghq root
+```
+
+### git
+
+```powershell
+git add .
+git archive --format=zip <tag名> <パス> -o <出力ファイル名>.zip
+git branch
+git branch -a
+git branch -r
+git branch -a --no-merged
+git branch -d <ブランチ名>
+git branch -D <ブランチ名>
+git checkout main
+git clone <リポジトリURL> <クローン先パス>
+git commit -m <メッセージ>
 git config --global ghq.root <パス>
 git config --global user.name <ユーザー名>
 git config --global user.email <メールアドレス>
 git config --global core.autocrlf <値>
 git config --global core.symlinks
+git config --global http.sslBackend schannel
 git config --list
-git submodule sync
-git submodule update --init --recursive
-winget search <名前>
-winget install --id <ID> -e
-winget list
-winget uninstall --id <ID>
-uv tool install <ツール名>
-uv tool update-shell
-uv python install <バージョン>
-uv python list
-uv python pin <バージョン>
-gh release download -R <owner名>/<repo名> -p "<ファイルパターン>" -D "$HOME\Downloads"
-setx <変数名> "<値>"
-code --list-extensions > extensions.txt
-Get-Content .\extensions.txt | ForEach-Object { code --install-extension $_ }
-```
-
-- `wsl --install` の打ち間違い（`wsl install`）が履歴にあった。`wsl --install -d <ディストロ名>` が正しい。ディストロ名は `wsl --list --online` で確認する。
-- `git config --global core.symlinks` は値を指定せず、設定を読むだけの形（Windows でシンボリックリンクを使えるかの確認）。
-- 注意（2026-10-06）: `user.name` / `user.email` を `--global` で書く行は、`~/.gitconfig` が設定リポジトリへの symlink のとき、リポジトリ内のファイルを書き換える（リンク前に使うと、実ファイルができてリンクが止まる）。PC ごとの値は `git config --file ~/.gitconfig_local` に書く（[[pc-setup-manuals]]）。履歴の種（`history.seed.txt` と `history.seed.sh.txt`）の同じ行は、未修正。
-
-### 2. パッケージの調査と導入
-
-```powershell
-scoop bucket add extras
-scoop search <名前>
-scoop info <名前>
-scoop install <名前>
-scoop uninstall <名前>
-scoop list
-scoop list | Select-String <パターン>
-scoop update *
-scoop update <名前>
-scoop cleanup *
-cargo install <クレート名>
-cargo install --locked <クレート名>
-rustup update
-which <コマンド>
-where <コマンド>
-<コマンド> --version
-```
-
-- 傾向: `search` → `install` → 使ってみて `uninstall`、の試行錯誤が多い。履歴には成功と失敗が混ざる（PSReadLine は終了コードを記録しない）ので、`install` が多いことは「定番」を意味しない。
-- `rye`（他PC）は、このPCでは `uv` に置き換わったので種に載せない。`rye sync` / `rye run` は `uv sync` / `uv run` に当たる（このPCの履歴にあるのは `uv run python --version` だけで、未検証）。
-- Windows の PowerShell で `which` を使うには、`scoop` の `which` が入っている前提（`apps.txt` に `which` がある）。
-
-### 3. git の日常とリリース
-
-```powershell
-git status
+git config --show-origin --list
+git config --show-origin --get-all credential.helper
+git credential-manager version
 git fetch
+git gc --prune=now
+git log --oneline --graph
+git merge <ブランチ名>
+git merge --squash <ブランチ名>
+git merge --abort
 git pull
 git pull origin main
-git branch
-git branch -a
-git branch -r
-git branch -a --no-merged
-git checkout main
-git switch main
-git switch -c <ブランチ名>
 git push origin main
 git push origin <ブランチ名>
 git push --tag
 git push origin main --tag
 git push -d origin <tag名>
-git tag
-git tag -a <tag名> -m "<メッセージ>"
-git tag -d <tag名>
 git rebase main
 git rebase main <ブランチ名>
 git rebase <ブランチ名>
 git rebase --continue
 git rebase --abort
 git rebase -i main
-git merge <ブランチ名>
-git merge --squash <ブランチ名>
-git merge --abort
-git branch -d <ブランチ名>
-git branch -D <ブランチ名>
-git log --oneline --graph
-git add .
-git commit -m <メッセージ>
 git reset --hard <リモート名>/<ブランチ名>
+git status
+git submodule sync
+git submodule update --init --recursive
+git switch main
+git switch -c <ブランチ名>
 git switch -C main origin/main
-git gc --prune=now
-git archive --format=zip <tag名> <パス> -o <出力ファイル名>.zip
+git tag
+git tag -a <tag名> -m "<メッセージ>"
+git tag -d <tag名>
 ```
 
+- `git config --global core.symlinks` は値を指定せず、設定を読むだけの形（Windows でシンボリックリンクを使えるかの確認）。
+- 注意（2026-10-06）: `user.name` / `user.email` を `--global` で書く行は、`~/.gitconfig` が設定リポジトリへの symlink のとき、リポジトリ内のファイルを書き換える（リンク前に使うと、実ファイルができてリンクが止まる）。PC ごとの値は `git config --file ~/.gitconfig_local` に書く（[[pc-setup-manuals]]）。履歴の種（`history.seed.txt` と `history.seed.sh.txt`）の同じ行は、未修正。
 - タグの運用（他PCで多い）: `git tag -a <tag名> -m "<メッセージ>"` → `git push --tag`。作り直すときは `git tag -d <tag名>` と `git push -d origin <tag名>` の両方が要る。
 - `git push --tag` は `--tags` の短縮（git が前方一致で受け付ける）。
 - `git archive --format=zip <tag名> <パス> -o <出力>` は、タグ時点の一部のファイルだけを zip にする使い方。作業ツリーの状態ではなく、タグのコミットの中身が入る。
@@ -172,19 +175,140 @@ git archive --format=zip <tag名> <パス> -o <出力ファイル名>.zip
   - 途中でコンフリクトしたら、直して `git add` → `git rebase --continue`。やめるなら `git rebase --abort`。`git rebase -i main` は、main から分かれた後のコミットを対話的に整理する。
 - **`git merge --squash <ブランチ名>` は main（取り込む側）で実行する。** topic の変更を1つにまとめてステージするだけで、コミットは作られず、マージとしても記録されない。続けて `git commit -m ...` が要る。topic は「マージ済み」と見なされないので、消すときは `git branch -d` ではなく `git branch -D`（`git branch -a --no-merged` にも出続ける）。通常の `git merge` のあとなら `-d` で消せる。
 
-### 4. 設定の編集と再読み込み
+### installer
 
 ```powershell
-notepad $PROFILE.CurrentUserAllHosts
+Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
+irm https://astral.sh/uv/install.ps1 | iex
+irm https://claude.ai/install.ps1 | iex
+```
+
+- 公式の配布元のインストーラー。プレースホルダーが無いので、選んで Enter を押すと、そのまま外部のスクリプトを実行する。
+
+### PowerShell
+
+```powershell
 . $PROFILE.CurrentUserAllHosts
+(Get-Command <コマンド>).Source
+echo $env:<変数名>
+(Get-PSReadLineOption).HistorySavePath
+$env:UV_SYSTEM_CERTS = "true"
+Get-ChildItem Env: | Where-Object Name -match 'AWS_'
+Get-DnsClientCache | Where-Object Entry -match 'anthropic|bedrock|amazonaws'
+Get-ExecutionPolicy -List
+Get-Content (Get-PSReadLineOption).HistorySavePath
+Get-Content (Get-PSReadLineOption).HistorySavePath | Select-String <パターン>
+Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU"
 Get-PSReadLineOption
 Get-PSReadLineOption | Select-Object EditMode, PredictionSource, PredictionViewStyle
-(Get-PSReadLineOption).HistorySavePath
-vim ~/.vimrc
+Measure-Command { pwsh -Command "exit" }
+Measure-Command { pwsh -NoProfile -Command "exit" }
+notepad $PROFILE.CurrentUserAllHosts
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+setx <変数名> "<値>"
 ```
 
 - 元の履歴は `notepad $PROFILE` と `. $PROFILE.CurrentUserCurrentHost` だった。いまの構成では `Microsoft.PowerShell_profile.ps1` を廃止して `profile.ps1`（全ホスト共通）だけにしたので、`CurrentUserAllHosts` に直した。`$PROFILE` は `CurrentUserCurrentHost`（存在しないファイル）を指す。
+- `Measure-Command { pwsh -Command "exit" }` と `-NoProfile` 付きの差が、プロファイルの起動時間になる。
 
+### scoop
+
+```powershell
+scoop bucket add extras
+scoop cleanup *
+scoop info <名前>
+scoop install <名前>
+scoop list
+scoop list | Select-String <パターン>
+scoop search <名前>
+scoop uninstall <名前>
+scoop update *
+scoop update <名前>
+```
+
+- 傾向: `search` → `install` → 使ってみて `uninstall`、の試行錯誤が多い。履歴には成功と失敗が混ざる（PSReadLine は終了コードを記録しない）ので、`install` が多いことは「定番」を意味しない。
+
+### uv
+
+```powershell
+uv init
+uv pip list
+uv pip install pandas
+uv pip install django==4.2.0
+uv pip install -r requirements.txt
+uv python install <バージョン>
+uv python install 3.13
+uv python list
+uv python pin <バージョン>
+uv python pin 3.13
+uv remove pandas
+uv run python --version
+uv run <スクリプト名>.py
+uv sync
+uv tool install <ツール名>
+uv tool update-shell
+uv venv <ディレクトリ名>
+```
+
+- `rye`（他PC）は、このPCでは `uv` に置き換わったので種に載せない。`rye sync` / `rye run` は `uv sync` / `uv run` に当たる（このPCの履歴にあるのは `uv run python --version` だけで、未検証）。
+
+### vim
+
+```powershell
+vim ~/.vimrc
+```
+
+### volta
+
+```powershell
+volta install node
+volta install node@latest
+volta install node@22
+volta install <パッケージ名>
+volta list
+volta pin node@22
+volta pin npm@10
+volta run <コマンド>
+volta run node --version
+volta uninstall <パッケージ名>
+volta which <コマンド>
+volta which npm
+```
+
+- 注意（2026-10-11）: `volta pin` で固定できるのは `node` / `npm` / `yarn` だけで、一般のパッケージは固定できない。`volta uninstall` が外すのはグローバルにインストールしたパッケージで、`node` 自体ではない（`node` は別の版を `volta install` して切り替える）。`node@<バージョン>` は語の途中の `<` で実行されてしまうため、具体的な版（`22`）にしてある。
+
+### where・which
+
+```powershell
+where <コマンド>
+which <コマンド>
+```
+
+- Windows の PowerShell で `which` を使うには、`scoop` の `which` が入っている前提（`apps.txt` に `which` がある）。
+
+### winget
+
+```powershell
+winget install --id <ID> -e
+winget list
+winget search <名前>
+winget uninstall --id <ID>
+```
+
+### wsl
+
+```powershell
+wsl --install -d <ディストロ名>
+wsl --list --online
+wsl --list --verbose
+wsl --set-default <ディストロ名>
+wsl --shutdown
+wsl --status
+wsl --unregister <ディストロ名>
+wsl --update
+```
+
+- `wsl --install` の打ち間違い（`wsl install`）が履歴にあった。`wsl --install -d <ディストロ名>` が正しい。ディストロ名は `wsl --list --online` で確認する。
 ## 履歴の種（zsh/bash・素案）
 
 Windows の種を zsh/bash 向けに置き換えた素案（2026-10-04、試験用）。コードブロックは `bash`（Windows 側の `powershell` ブロックとは別扱い）。履歴ファイルは zsh・bash とも1行1コマンドの平文でよい（zsh は拡張形式でなくても読める。実機で `fc -R` / `history -r` に読み込めることを確認）。
@@ -251,7 +375,7 @@ which <コマンド>
 
 ### 3. git の日常とリリース（zsh/bash）
 
-Windows 側の 3 と同一（コマンド仕様が同じなので流用）。
+Windows 側の git の節と同一（コマンド仕様が同じなので流用）。
 
 ```bash
 git status
