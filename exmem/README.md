@@ -65,6 +65,7 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 - [[ai-output-consistency]]: AIの出力のブレを抑える設計と校正の進め方
 - [[ai-work-metrics]]: AI 活用の指標を会話履歴から測る
 - [[app-config-placement]]: アプリの設定ディレクトリを置くリポジトリの判断基準
+- [[claude-code-auth-providers]]: Claude Code の認証経路とモデル指定（Anthropic 直接と Bedrock）
 - [[claude-code-permissions]]: Claude Codeの権限制御と共通土台（自走期間を伸ばす）
 - [[claude-code-project-settings]]: プロジェクトの .claude/ の管理方針
 - [[claude-code-storage]]: Claude Codeのチャット履歴とメモリの保存場所
