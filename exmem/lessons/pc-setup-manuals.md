@@ -7,14 +7,17 @@ tags:
   - dotfiles
   - windows
   - linux
+  - tool/git
+  - tls
 aliases:
   - 環境セットアップ手順書
   - cheatsheets/env
   - guides/howto
   - PC再セットアップ
 created: 2026-10-03
-updated: 2026-10-06
+updated: 2026-10-11
 sources:
+  - Claude Code conversation "git の CA バンドルと schannel の判断" (2026-10-10。GIT_SSL_CAINFO の取りやめ)
   - Claude Code conversation "新しいPCの初回セットアップ設計" (2026-10-06。「初回の取得」)
   - Claude Code conversation "環境セットアップ手順書(Win11 / Debian系)の整備と scripts/linux の統合" (2026-10-03)
   - "resources/cheatsheets/env/（現 resources/guides/howto/）と dotfiles scripts/linux/（2026-10-03 に確認）"
@@ -149,6 +152,31 @@ Windows の git で、SSL バックエンドを schannel に切り替えるか�
 - scoop の git の system gitconfig は、Git Credential Manager を `credential.helper` にしている（確認: 2026-10-06、根拠: `git config --system --list --show-origin`）。
 - `http.sslVerify` の既定は true なので、`y` のときに明示しても挙動は変わらず、設定の意図を残す効果だけがある（仮説）。
 - `credential.helperselector.selected` は、Git for Windows の credential helper 選択ツールが記録する選択結果で、`manager` は Git Credential Manager を指す（仮説）。共通ファイルにあっても、Linux の git は未知のセクションとして無視するはず（仮説）。
+
+### git の CA を `GIT_SSL_CAINFO` で指すのを取りやめ、schannel のままにする（2026-10-10 追記）
+
+社内プロキシの CA を git にも効かせるため、環境変数 `GIT_SSL_CAINFO` に CA ファイルを指す案を実装しかけ、取りやめた。上の schannel の決定の補強にあたる。
+
+**Principles**
+
+- 環境全体に効く設定（ユーザー環境変数など、全プロセスが引き継ぐもの）は、実装の前に、影響範囲と外れたときの症状を示してユーザーに確認する。理由: 間違うと git の HTTPS 通信がすべて同時に失敗し、GUI アプリにも及ぶ。今回は実装した後にユーザーが懸念を指摘した。
+- 信頼する CA の一覧を置き換える設定は、置き換え先が完全だと保証できるかを先に確かめる。保証できなければ、OS の信頼ストアを見る方式を選ぶ。理由: 保証できない一覧は、足りない CA の分だけ、通信が失敗する形で障害になる。
+- PC 固有の値（絶対パス）は、リポジトリを指す設定ファイルに `git config --global` で書かない。理由: `~/.gitconfig` がリポジトリ内のファイルへの symlink のとき、書いた値がコミット対象になる。環境変数か PC ローカルのファイルに置く。
+
+**Decisions**
+
+- **git の SSL は schannel のままにし、`GIT_SSL_CAINFO` は設定しない**（2026-10-10）。根拠: ユーザーの決定。会社 CA だけのバンドルでは、完全性も、プロキシが全通信を再署名するかも保証できない。schannel は Windows の証明書ストア（ブラウザと同じ）を見る。却下案: `GIT_SSL_CAINFO` に会社 CA だけのバンドルを指す（既定の CA 一覧を置き換え、外れると全通信が失敗）。git 同梱の `ca-bundle.crt` に会社 CA を足した結合ファイル（git の更新のたびに作り直しが要るため採用されなかった）。
+
+**Facts**
+
+- `GIT_SSL_CAINFO` は `http.sslCAInfo` を上書きし、git が信頼する CA の一覧をそのファイルの内容に置き換える（仮説）。公式ドキュメントの記憶に基づき、実行では未確認。
+- schannel では、検査型プロキシの下で失効確認が失敗して `CRYPT_E_NO_REVOCATION_CHECK` が出ることがある。`http.schannelCheckRevoke=false` で逃がせるが、失効確認を外す設定になる（仮説）。
+- schannel の設定は、PC ローカルの `~/.gitconfig_local` に置く。`~/.gitconfig` はリポジトリ内の `home/.gitconfig` への symlink で、`--global` で書くとリポジトリのファイルが書き換わる（確認: 2026-10-06、根拠: `11_git_identity.bat` の実装と試験）。
+- 実物（2026-10-11 に照合）: この PC に `GIT_SSL_CAINFO` のユーザー環境変数は無く、`git config --show-origin` で `http.sslBackend` `http.sslCAInfo` `http.schannelCheckRevoke` はいずれも出力が無かった（この PC では SSL の設定が未設定）。決定のとおり、`GIT_SSL_CAINFO` は設定されていない。
+
+**Open Questions**
+
+- 会社 PC で、プロキシ下の schannel が失効確認で失敗するか（`git -c http.sslBackend=schannel ls-remote <URL> HEAD` で確認する。2026-10-10 時点）。
 
 ### Gotchas（git の設定）
 
