@@ -105,6 +105,33 @@ S1〜S6 すべて合格。案Yの形（専用ディストリビューション�
 
 実測から決まった事項（上の「1」の実測結果の「設計に足すこと」）も、同じく確定: AI は一般ユーザーで動かす、Zed は WSL リモート接続でだけ使う、`~$*` は無視する、大量の一時ファイルは `~/tmp/`、`rg` はパスを明示する、AI が書くスクリプトに標準ライブラリと同名を付けない。
 
+### 手作業の1巡（1巡目、2026-10-12）
+
+Area の部屋 `room-office-admin`（`wsl --install Ubuntu-24.04 --name ... --no-launch`、`wsl.conf` は automount・interop 無効、`mountFsTab=false`、既定ユーザーは一般ユーザー。`curl` `rg` `uv` Claude Code を導入）を作り、既存の Project 1件（顧客データなし）で `mount → AI の作業 → 回収 → unmount` を通した。検証用の `ai-room-test` と `_spike-room` は、サンプルとして残している。
+
+Vault 側の変更（ローカルの git）: Area の `README.md` に `boundary: internal`、ワークスペースの `.gitignore` に `**/_noai/` と `~$*`、Project の `docs/` を `ai/docs/` へ、成果物を `ai/out/` へ（ファイル単位の `git mv`）、`ai/{in,work,records}` に `.gitkeep`、`_noai/{raw,map,final}` は追跡外。README の成果物のパスを直した。`ai/docs/log.md`（過去の記録）の旧パスは、当時の事実なので直さない。
+
+| 項目 | 実測 |
+|---|---|
+| マウント | 0.1 秒。部屋から見えるのは `ai/` の中身だけ。`/mnt/c` は空 |
+| AI の作業 | 約33秒（`log.md` の要約、HTML のレビュー、`out/review-notes.md` の作成）。HTML は無変更 |
+| 回収 | 成果物は、Windows 側にそのまま現れる（コピー不要） |
+| 会話履歴 | `~/.claude/projects/-mnt-room-<Project 名>/` に Project ごとに分かれて残る（小さな作業1回で約180KB）。これが zombie の実体 |
+| unmount | 成功 |
+
+手作業は4手（マウント、起動、回収の確認、アンマウント＋`rmdir`）。重いのは AI の処理時間だけで、マウントと回収は無視できる。スクリプト化に向く。
+
+#### 1巡目で見つかった問題と対応
+
+1. **README が部屋から見えない。** AI が、`log.md` の参照先の README（完了条件と制約）が無いと報告した。`start` / `wrap` は README の完了条件を読む前提。対応案: `room start` が README の写しを `ai/docs/` に置く（Vault が正本、部屋は読み取りのみ。README を索引として残す決定 3 と整合）。または、完了条件を `ai/docs/` 側に移す。
+2. **マウント点のディレクトリが残ると、Project 名が他の Project の AI に見える。** 過去のテストの空ディレクトリが `/mnt/room/` に残り、AI の `ls` に出た。`umount` のあとに `rmdir` する手順を、`room start` と `room close` に入れる。
+3. `claude -p`（非対話）では、許可されていないコマンド（`ls` など）が実行されない。`room start` の起動は対話モードの想定なので、影響は小さい。
+4. `mount` は `-o <オプション> <デバイス> <マウント点>` の順で書く。root が `wsl -u root` で行ったマウントは、別セッションの一般ユーザーから見える。PowerShell から標準入力でコマンドを渡すと、改行が CRLF になる（`umount` が引数なしのエラーになり、同じ場所にマウントが積み重なった）。`room.py` は、バイト列で LF を明示する。マウントが残っていないかを、`room start` の最初と `room close` の最後に点検する。
+
+#### 未実施（2巡目以降）
+
+`wrap`（`decisions.md` の【案件】ラベル）と Area の `inbox.md` への同期、manifest と来歴チェックとログ（`ai/records/`）、`close`（アンマウントを先に、ファイル単位の `git mv` で `archives/` へ）、Zed から `/mnt/room/<Project 名>` を開く操作、マスク（使い捨てのダミーデータで）。
+
 ## 3. スクリプト（`room`）の最小版を作る
 
 1. `room open`: Project のひな形（`README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final}`）と、`.gitignore`（`**/_noai/`）、Area の一覧の更新。
