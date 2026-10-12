@@ -130,7 +130,23 @@ Vault 側の変更（ローカルの git）: Area の `README.md` に `boundary:
 
 5. **個人のグローバル ignore（`~/.gitignore_global`）の `out/` が、`ai/out/` の新しいファイルを無視する。** 成果物が、回収のコミットから黙って漏れる（すでに追跡されているファイルの `git mv` は通るので、気づきにくい）。ワークスペースの `.gitignore` に `!**/ai/out/` を足して打ち消した（リポジトリの `.gitignore` は、グローバルより優先される）。`ai/` の他の名前（`in` `work` `records` `docs`）は衝突しない。雛形（`gitignore.template`）にも入れる。`room.py` の回収では、コミット後に「`ai/` に未追跡のファイルが残っていないか」を点検する。
 
-#### 未実施（2巡目以降）
+### 手作業の2巡目: close（2026-10-12）
+
+実在の Project 1件（顧客データなし）を、`close` まで通し、`archives/` へ移した（戻さない。ユーザーの指示: テスト版なので、未記入の欄は「完了扱い」にして閉じる）。流れは、判断が部屋の AI（`out/close.md` と `docs/log.md` の更新。約68秒。AI への指示は `ai/records/session-close-prompt.md` に記録）、副作用が Windows 側（`room close` の役を手作業で）。
+
+- 部屋の AI: 完了条件の確認、暫定の見直し、未解決の振り分け（Area へ【案件】6件、破棄3件）、【汎用】候補3件（`stock` は実行しない）、`docs/log.md` の現在状態の更新。変更したのは2ファイルだけ。
+- Windows 側: README の状態更新（`status: done`、`closed`、`reap_after`、完了条件の結果）、Area の一覧の更新、Area の `ai/docs/inbox.md` への【案件】の転記（Project 名と連番の識別子つき）、アンマウントと `rmdir`、`ctx/` の削除、ファイル単位の `git mv` で `archives/` へ、コミット、実行記録（`ai/records/room-log.md`）。
+- 成立したこと: README の写し（`ai/ctx/README.md`。派生物なので `**/ai/ctx/` を ignore）で、AI が完了条件を読んで判断できた。郵便受け（P5）は、Windows 側から Area の `ai/docs/inbox.md` に追記する形で成立（Area の `ai/` は部屋にマウントされず、AI は Area の記録を直接触れない）。判断（AI）と副作用（スクリプト）の分担は、`close-hook.md` の手順1〜4と5〜7の境で分かれた。
+
+#### 2巡目で見つかった問題と対応
+
+6. アンマウント直後に `/proc/mounts` を数えると、マウントが1つ残って見えた（数秒後に消えた）。`room close` では、少し待って再点検する。
+7. PowerShell の `Remove-Item` が、削除ガードで止まった。空ディレクトリは `[IO.Directory]::Delete` で消せる（`room.py`は Python なので影響しない）。
+8. `git mv` の前に、`git add -A` で新規ファイルをステージする。そうしないと、追跡されていない成果物（`close.md` など）が `archives/` に移らない。
+9. 旧ログの「総括は新しいスレッドで」のような、Project の外の作業の項目は、AI が Area へ渡さず、確認を求めた。この判断は、そのまま妥当（人が決める）。
+10. 未検証のまま: manifest の記録と来歴チェックの自動化、呼び出し元の記録（Vault トップの `docs/log.md`）への close の記録、`wrap` 単独、Zed で `/mnt/room/<Project 名>` を開く操作、マスク（使い捨てのダミーデータで）、reap。
+
+#### 未実施（3巡目以降）
 
 `wrap`（`decisions.md` の【案件】ラベル）と Area の `inbox.md` への同期、manifest と来歴チェックとログ（`ai/records/`）、`close`（アンマウントを先に、ファイル単位の `git mv` で `archives/` へ）、Zed から `/mnt/room/<Project 名>` を開く操作、マスク（使い捨てのダミーデータで）。
 
