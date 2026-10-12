@@ -17,7 +17,7 @@ tags:
 
 - **ゴール（完了の目安）**: 部屋の中の Claude Code が、Project の `ai/` の中のファイルだけを読み書きでき、`/mnt/c` や Vault の他の場所が見えないこと。作業の成果物が、Vault（Windows 側）にそのまま現れること
 - 範囲: 部屋の作成から、Project の作業、`close`、片付けまで。マスク・復元の操作（`room.py`）は範囲外（未実装。付録）
-- **スクリプトとの関係**: 操作を自動化する `room.py`（`open` / `start` / `close`）は**未実装**。それができるまでは、この手順書の手作業が正。実装後は、スクリプトが正になり、この手順書はスクリプトの前後（手動の作業）と注意点だけにする
+- **スクリプトとの関係**: 操作を自動化する `room.py`（`open` / `start` / `close` / `umount`。置き場は `workflow-kit/room/`）は、**v0 を実装して、使い捨ての Vault で通した**（2026-10-12）。ただし**マスク・復元は未実装**で、実運用はこれから。このため、5・7 章の手作業を残している（`room.py` の動作の説明も兼ねる）。スクリプトの実運用が安定したら、スクリプトが正になり、この手順書はスクリプトの前後（手動の作業）と注意点だけにする
 - 固有情報（勤務先名、顧客名、ユーザー名）は書かない。パスは `$HOME` と `<Area>` `<Project>` で書く
 
 ## 対応バージョン表
@@ -214,7 +214,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 ## 5. Project を部屋で使う（作業のたびに）
 
-将来は `room start` が行う。それまでは、次のとおり手作業で行う。
+`room.py start <Project>` が、下の 1〜6 を行う（チェック、README の写し、マウント、AI の起動、アンマウント、回収の一覧。コミットは `--commit` のときだけ）。使い方は `workflow-kit/room/README.md`。以下は、何をしているかの説明を兼ねた、手作業の手順。
 
 1. **チェック**（人が確認する）
    - Project の `README.md` の `area:` が、部屋の名前の `<Area>` と一致している
@@ -295,7 +295,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 ## 7. Project を閉じる
 
-将来は `room close` が行う。それまでは、判断を部屋の AI が、副作用を人が行う。
+判断を部屋の AI が、副作用を人が（`room.py close <Project>` が）行う。`room.py close` は、下の 2 の 1〜7 のうち、README の更新、Area への転記と一覧の更新、実行記録、`archives/` への移動を行う（1 の AI の判断で `ai/out/close.md` ができていることが前提）。以下は、何をしているかの説明を兼ねた、手作業の手順。
 
 1. **部屋の AI が判断する**（5 章のようにマウントして行う）: 完了条件の確認、暫定の見直し、未解決の振り分け（Area に渡す【案件】、破棄）、ナレッジ化の候補（【汎用】の一覧）、`docs/log.md` の更新。結果は `ai/out/close.md` に書かせる。指示は `ai/records/` に残す
 2. **人が副作用を行う**
@@ -344,7 +344,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 ## 付録: 課題（未了・要確認）
 
-- **`room.py` の実装**（Windows 側の Python 1本。uv で管理して、バージョンを固定）。実装できたら、5・7 章を、スクリプトの呼び出しに差し替える。置き場は、`workflow-kit/` 配下（**要確認**）
+- **`room.py` の残り**: マスク・復元、【汎用】の下書きの回収、reap、部屋の作成の自動化（`workflow-kit/room/README.md` の「未実装」）。実運用で安定したら、5・7 章を、スクリプトの呼び出しに差し替える
 - workflow-kit の手順書（`open` `start` `wrap` `close`）が、`docs/` を Project 直下と想定している。`ai/docs/` への読み替えと、部屋の中の AI が行う部分・人が行う部分の分担を、手順書に書く
 - workflow-kit のワークスペースの雛形（`gitignore.template`、`AGENTS.md`）への反映（2.1 の `.gitignore`、AI は部屋で使うこと、Zed は WSL リモートで使うこと、AI が書くスクリプトに標準ライブラリと同名を付けないこと）
 - マスク・復元（`mask.toml`、zip レベルの置換、置換後の点検）は、ダミーデータでの試験が未了
