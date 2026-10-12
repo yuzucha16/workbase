@@ -14,3 +14,4 @@
 | ディレクトリ | 内容 | 状態 |
 |---|---|---|
 | `ai-workspace-boundary/` | AI に見せる領域・見せない領域の境界（AI 作業部屋の設計） | 検討を終え、PC で検証・実装へ（2026-10-12） |
+| `dotfiles-boundary/` | workbase と dotfiles の切り分け（dotfiles の挙動を書いた手順書を dotfiles へ移す） | 方針と洗い出しを終え、PC で反映へ（2026-10-12） |
