@@ -7,7 +7,7 @@ aliases:
   - guides
   - 手順書の索引
 created: 2026-10-10
-updated: 2026-10-10
+updated: 2026-10-12
 ---
 
 # guides の索引
@@ -29,6 +29,16 @@ updated: 2026-10-10
 | WSL2 / Ubuntu を入れる | [[win11#8. 任意設定]] | 手順書 |
 | エディタ・ターミナルのフォント（PlemolJP）を入れる | [[fonts-setup]] | 手順書 |
 | Claude Code の設定を PC に入れる・入れ替える | dotfiles の `windows/claude/README.md`（このリポジトリの外。スクリプトの隣に置く手順書） | 手順書 |
+
+### AI に顧客データ・社外秘を見せない
+
+| やりたいこと・場面 | 見る文書 | 種類 |
+|---|---|---|
+| なぜ「AI 作業部屋」を入れたのか、選択肢から選ぶまでの経緯と、試して確かめたことを、自分で説明できるようにする | [[ai-room-why]] | 理解ガイド |
+| AI に見せたくないファイルを、設定で隠す方式（禁止リスト）でなく、渡したものだけ見せる方式（許可リスト）にする理由を思い出す | [[ai-room-why#2. 理解のための基礎知識]] | 理解ガイド |
+| 部屋で AI を使っていて、`Permission denied`、成果物がコミットに入らない、マウントが残る、などで困った | [[ai-room-why#3. チェックリスト（症状・疑問 → 原因 → 対処）]]、[[ai-room-setup#10. うまくいかないとき]] | 理解ガイド・手順書 |
+| WSL に AI 作業部屋を作り、Project の `ai/` だけを渡して Claude Code で作業する | [[ai-room-setup]] | 手順書 |
+| 部屋で作業した Project を閉じて、`archives/` に移す | [[ai-room-setup#7. Project を閉じる]] | 手順書 |
 
 ### エラー・困りごとを切り分ける
 
@@ -53,8 +63,8 @@ updated: 2026-10-10
 
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
-| 手順書（`howto/`） | どの順で何をやるんだっけ | [[win11]]、[[debian-family]]、[[fonts-setup]] |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]] |
+| 手順書（`howto/`） | どの順で何をやるんだっけ | [[win11]]、[[debian-family]]、[[fonts-setup]]、[[ai-room-setup]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新
