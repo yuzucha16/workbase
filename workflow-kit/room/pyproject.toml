@@ -1,0 +1,6 @@
+[project]
+name = "room"
+version = "0.1.0"
+description = "AI 作業部屋の操作（open / start / close / umount）。人が Windows で実行する"
+requires-python = "==3.13.*"
+dependencies = []
