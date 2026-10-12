@@ -1,0 +1,382 @@
+"""room.py のテスト。WSL は差し替え、一時ディレクトリの Vault（git）で `open → start → close` を通す。"""
+import argparse
+import json
+import os
+import stat
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import room  # noqa: E402
+
+GITIGNORE = "**/_noai/\n~$*\n!**/ai/out/\n**/ai/ctx/\n*.tmp\n"
+AREA_README = """---
+status: active
+boundary: internal
+updated: 2026-10-01
+---
+
+# area-x
+
+## 進行中の Project
+
+なし。
+
+## 次の Project の候補
+
+なし。
+"""
+
+
+class FakeWsl:
+    def __init__(self, distros=("room-area-x",)):
+        self._distros = list(distros)
+        self.mounted = False
+        self.scripts = []
+        self.interactive_calls = []
+        self.on_interactive = None  # AI が行う作業の代わり
+
+    def distros(self):
+        return list(self._distros)
+
+    def script(self, distro, text, root=False):
+        self.scripts.append((distro, text, root))
+        assert "\r" not in text, "CRLF が混ざった"
+        if "mount -t drvfs" in text:
+            self.mounted = True
+        if "umount" in text:
+            self.mounted = False
+        if text.startswith("grep ' /mnt/room/' /proc/mounts") and self.mounted:
+            return 0, "C:\\x /mnt/room/p 9p rw 0 0\n", ""
+        return 0, "", ""
+
+    def interactive(self, distro, command):
+        self.interactive_calls.append((distro, command))
+        if self.on_interactive:
+            self.on_interactive()
+        return 0
+
+
+def sh(vault, *args):
+    subprocess.run(["git", "-C", str(vault), *args], check=True, capture_output=True)
+
+
+def make_vault(tmp, gitignore=GITIGNORE):
+    v = Path(tmp)
+    (v / "areas" / "area-x").mkdir(parents=True)
+    (v / "areas" / "area-x" / "README.md").write_text(AREA_README, encoding="utf-8", newline="\n")
+    (v / "projects").mkdir()
+    (v / "archives").mkdir()
+    (v / ".gitignore").write_text(gitignore, encoding="utf-8", newline="\n")
+    sh(v, "init", "-q")
+    sh(v, "config", "user.email", "t@example.com")
+    sh(v, "config", "user.name", "t")
+    sh(v, "config", "core.autocrlf", "false")
+    sh(v, "add", "-A")
+    sh(v, "commit", "-qm", "init", "--allow-empty")
+    return v
+
+
+def ctx_for(v, wsl=None):
+    msgs = []
+    c = room.Ctx(v, wsl=wsl or FakeWsl(), today="2026-10-12", now="2026-10-12 10:00", say=msgs.append, settle=0)
+    c.msgs = msgs
+    return c
+
+
+def opened(tmp, wsl=None):
+    v = make_vault(tmp)
+    c = ctx_for(v, wsl)
+    room.cmd_open(c, argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+    return v, c
+
+
+class FrontmatterTest(unittest.TestCase):
+    def test_update_and_remove(self):
+        t = "---\nstatus: active\nreview: 仮置き\nupdated: 2026-10-01\n---\n\n# x\n"
+        r = room.update_frontmatter(t, {"status": "done", "closed": "2026-10-12"}, remove=("review",))
+        self.assertIn("status: done", r)
+        self.assertNotIn("review", r)
+        self.assertIn("closed: 2026-10-12", r)
+        self.assertTrue(r.endswith("\n# x\n"))
+
+    def test_read_ignores_trailing_comment(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "R.md"
+            p.write_text("---\nboundary: internal   # 印\nstatus: active\n---\n", encoding="utf-8")
+            self.assertEqual(room.read_frontmatter(p), {"boundary": "internal", "status": "active"})
+
+
+class AreaListTest(unittest.TestCase):
+    def test_add_replaces_none(self):
+        r = room.add_area_entry(AREA_README, "## 進行中の Project", "- [[projects/a/README|a]]")
+        self.assertIn("- [[projects/a/README|a]]", r)
+        self.assertNotIn("## 進行中の Project\n\nなし。", r)
+
+    def test_move_to_done(self):
+        t = room.add_area_entry(AREA_README, "## 進行中の Project", "- [[projects/a/README|a]]（開始）")
+        r = room.move_area_entry(t, "a", "2026-10-12")
+        self.assertIn("## 完了した Project", r)
+        self.assertIn("[[archives/a/README|a]]（開始、2026-10-12 完了）", r)
+        self.assertNotIn("[[projects/a/README", r)
+        head = r.split("## 完了した Project")[0]
+        self.assertIn("なし。", head)
+
+
+class InboxTest(unittest.TestCase):
+    def test_idempotent_and_numbering(self):
+        t, n = room.append_inbox(room.INBOX_NEW, "p", "2026-10-12", ["A", "B"], "src")
+        self.assertEqual(n, 2)
+        self.assertIn("`p#1` A", t)
+        t2, n2 = room.append_inbox(t, "p", "2026-10-13", ["B", "C"], "src")
+        self.assertEqual(n2, 1)
+        self.assertIn("`p#3` C", t2)
+        self.assertEqual(t2.count("`p#2` B"), 1)
+        self.assertLess(t2.index("`p#3` C"), t2.index("## 取り込み済み"))
+
+    def test_parse_cases(self):
+        md = "- 【案件】やること1\n- 【汎用】別\n  - 【案件】やること2\n本文 【案件】は拾わない\n"
+        self.assertEqual(room.parse_cases(md), ["やること1", "やること2"])
+
+
+class OpenTest(unittest.TestCase):
+    def test_open_creates_layout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            p = v / "projects" / "proj-a"
+            for d in room.AI_DIRS:
+                self.assertTrue((p / d).is_dir(), d)
+            self.assertIn("area: area-x", (p / "README.md").read_text(encoding="utf-8"))
+            self.assertIn("[[projects/proj-a/README|proj-a]]", (v / "areas/area-x/README.md").read_text(encoding="utf-8"))
+            tracked = subprocess.run(["git", "-C", str(v), "ls-files"], capture_output=True, text=True, encoding="utf-8").stdout
+            self.assertIn("projects/proj-a/ai/in/.gitkeep", tracked)
+            self.assertNotIn("_noai", tracked)
+
+    def test_open_refuses_without_gitignore_rules(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp, gitignore="*.tmp\n")
+            with self.assertRaises(room.RoomError):
+                room.cmd_open(ctx_for(v), argparse.Namespace(name="p", area="area-x", type="doc", boundary=None, commit=False))
+
+    def test_open_requires_boundary(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            (v / "areas/area-x/README.md").write_text("---\nstatus: active\n---\n\n# x\n", encoding="utf-8")
+            a = argparse.Namespace(name="p", area="area-x", type="doc", boundary=None, commit=False)
+            with self.assertRaises(room.RoomError):
+                room.cmd_open(ctx_for(v), a)
+            a.boundary = "internal"
+            room.cmd_open(ctx_for(v), a)
+            self.assertIn("boundary: internal", (v / "areas/area-x/README.md").read_text(encoding="utf-8"))
+
+
+class StartTest(unittest.TestCase):
+    def args(self, **kw):
+        d = dict(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False)
+        d.update(kw)
+        return argparse.Namespace(**d)
+
+    def test_start_flow_mounts_runs_unmounts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            p = v / "projects" / "proj-a"
+            wsl.on_interactive = lambda: (p / "ai/out/result.md").write_text("done\n", encoding="utf-8")
+            room.cmd_start(c, self.args())
+            mount_scripts = [s for s in wsl.scripts if "mount -t drvfs" in s[1]]
+            self.assertEqual(len(mount_scripts), 1)
+            self.assertTrue(mount_scripts[0][2], "マウントは root で行う")
+            self.assertIn("/mnt/room/proj-a", mount_scripts[0][1])
+            self.assertIn("-o metadata,uid=1000,gid=1000", mount_scripts[0][1])
+            self.assertEqual(wsl.interactive_calls[0][1], "cd /mnt/room/proj-a && claude")
+            self.assertFalse(wsl.mounted)
+            self.assertFalse((p / "ai/ctx").exists(), "ctx は消える")
+            self.assertIn("start", (p / "ai/records/room-log.md").read_text(encoding="utf-8"))
+            self.assertTrue(any("result.md" in m for m in c.msgs))
+
+    def test_start_snapshots_readme_readonly_during_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            seen = {}
+
+            def during():
+                f = v / "projects/proj-a/ai/ctx/README.md"
+                seen["exists"] = f.exists()
+                seen["readonly"] = not os.stat(f).st_mode & stat.S_IWRITE
+            wsl.on_interactive = during
+            room.cmd_start(c, self.args())
+            self.assertEqual(seen, {"exists": True, "readonly": True})
+
+    def test_start_restores_write_permission_of_all_in_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            keep = v / "projects/proj-a/ai/in/.gitkeep"
+
+            def ro():  # マウント中に、部屋が in/ の全ファイルを読み取り専用にした状態
+                os.chmod(keep, stat.S_IREAD)
+            wsl.on_interactive = ro
+            room.cmd_start(c, self.args())
+            self.assertTrue(os.stat(keep).st_mode & stat.S_IWRITE)
+
+    def test_start_blocked_by_existing_mount(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            wsl.mounted = True
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_start(c, self.args())
+            self.assertIn("マウントが残っている", str(cm.exception))
+            self.assertEqual(wsl.interactive_calls, [])
+
+    def test_start_blocked_without_distro(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            c.wsl._distros = []
+            with self.assertRaises(room.RoomError):
+                room.cmd_start(c, self.args())
+
+    def test_provenance_blocks_unknown_file_and_adopt_records(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            f = v / "projects/proj-a/ai/in/data.csv"
+            f.write_text("a,b\n1,2\n", encoding="utf-8")
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_start(c, self.args())
+            self.assertIn("由来の記録が無い", str(cm.exception))
+            self.assertEqual(wsl.interactive_calls, [])
+            room.cmd_start(c, self.args(adopt=True))
+            man = json.loads((v / "projects/proj-a/ai/records/manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(man["files"]["in/data.csv"]["area"], "area-x")
+            # 入力は書き込み可能に戻る（人が差し替えられる）
+            self.assertTrue(os.stat(f).st_mode & stat.S_IWRITE)
+            # 中身が変わると止まる
+            f.write_text("a,b\n9,9\n", encoding="utf-8")
+            with self.assertRaises(room.RoomError) as cm2:
+                room.cmd_start(c, self.args())
+            self.assertIn("ハッシュが違う", str(cm2.exception))
+
+    def test_provenance_blocks_file_from_other_project(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            p = v / "projects/proj-a"
+            (p / "ai/in/x.csv").write_text("x\n", encoding="utf-8")
+            room.cmd_start(c, self.args(adopt=True))
+            man = json.loads((p / "ai/records/manifest.json").read_text(encoding="utf-8"))
+            man["files"]["in/x.csv"]["project"] = "other"
+            (p / "ai/records/manifest.json").write_text(json.dumps(man), encoding="utf-8")
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_start(c, self.args())
+            self.assertIn("由来が違う", str(cm.exception))
+
+    def test_start_warns_about_ignored_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            p = v / "projects/proj-a"
+            wsl.on_interactive = lambda: (p / "ai/work/scratch.tmp").write_text("x", encoding="utf-8")
+            room.cmd_start(c, self.args())
+            self.assertTrue(any("無視されている" in m for m in c.msgs))
+            self.assertTrue(any("scratch.tmp" in m for m in c.msgs))
+
+    def test_start_unmounts_even_if_ai_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+
+            def boom():
+                raise KeyboardInterrupt
+            wsl.on_interactive = boom
+            with self.assertRaises(KeyboardInterrupt):
+                room.cmd_start(c, self.args())
+            self.assertFalse(wsl.mounted)
+            self.assertFalse((v / "projects/proj-a/ai/ctx").exists())
+
+    def test_commit_refuses_stray_staged_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            (v / "other.txt").write_text("x", encoding="utf-8")
+            sh(v, "add", "other.txt")
+            (v / "projects/proj-a/ai/out/r.md").write_text("r", encoding="utf-8")
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_start(c, self.args(commit=True))
+            self.assertIn("対象外", str(cm.exception))
+
+
+class CloseTest(unittest.TestCase):
+    def test_close_requires_close_md_and_unmounted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            with self.assertRaises(room.RoomError):
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            (v / "projects/proj-a/ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
+            wsl.mounted = True
+            with self.assertRaises(room.RoomError):
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+
+    def test_close_moves_to_archives_and_hands_over(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            p = v / "projects/proj-a"
+            (p / "ai/out/close.md").write_text("- 【案件】運用で埋める\n- 【案件】表記ゆれを直す\n", encoding="utf-8")
+            (p / "ai/out/final.md").write_text("成果物\n", encoding="utf-8")
+            (p / "_noai/raw/orig.csv").write_text("secret\n", encoding="utf-8")
+            (p / "_noai/map").mkdir(exist_ok=True)
+            (p / "ai/ctx").mkdir(exist_ok=True)
+            (p / "ai/ctx/README.md").write_text("snapshot", encoding="utf-8")
+            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=True))
+            a = v / "archives/proj-a"
+            self.assertFalse(p.exists())
+            self.assertTrue((a / "ai/out/final.md").exists())
+            self.assertTrue((a / "ai/out/close.md").exists())
+            self.assertEqual((a / "_noai/raw/orig.csv").read_text(encoding="utf-8"), "secret\n", "追跡外も移る")
+            self.assertFalse((a / "ai/ctx").exists())
+            fm = room.read_frontmatter(a / "README.md")
+            self.assertEqual((fm["status"], fm["closed"], fm["reap_after"]), ("done", "2026-10-12", "2026-10-26"))
+            self.assertNotIn("review", fm)
+            inbox = (v / "areas/area-x/ai/docs/inbox.md").read_text(encoding="utf-8")
+            self.assertIn("`proj-a#1` 運用で埋める", inbox)
+            self.assertIn("`proj-a#2` 表記ゆれを直す", inbox)
+            area = (v / "areas/area-x/README.md").read_text(encoding="utf-8")
+            self.assertIn("[[archives/proj-a/README|proj-a]]", area)
+            tracked = subprocess.run(["git", "-C", str(v), "ls-files"], capture_output=True, text=True, encoding="utf-8").stdout
+            self.assertIn("archives/proj-a/ai/out/final.md", tracked)
+            self.assertNotIn("projects/proj-a", tracked)
+            self.assertNotIn("_noai", tracked)
+            self.assertNotIn("secret", tracked)
+            status = subprocess.run(["git", "-C", str(v), "status", "--porcelain"], capture_output=True, text=True, encoding="utf-8").stdout
+            self.assertEqual(status.strip(), "", "コミット後はクリーン")
+            log = subprocess.run(["git", "-C", str(v), "log", "-1", "--format=%s"], capture_output=True, text=True, encoding="utf-8").stdout
+            self.assertIn("[room] proj-a を close", log)
+
+    def test_close_second_run_does_not_duplicate_inbox(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            text, n = room.append_inbox(room.INBOX_NEW, "proj-a", "2026-10-12", ["x"], "s")
+            again, n2 = room.append_inbox(text, "proj-a", "2026-10-12", ["x"], "s")
+            self.assertEqual((n, n2), (1, 0))
+            self.assertEqual(text, again)
+
+
+class WslQuotingTest(unittest.TestCase):
+    def test_script_text_keeps_backslashes_and_lf(self):
+        wsl = FakeWsl()
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, wsl)
+            p = room.Project.load(c, "proj-a")
+            room.mount(c, p)
+            text = [s for s in wsl.scripts if "mount -t drvfs" in s[1]][0][1]
+            self.assertIn(str(p.ai), text)  # Windows のパスが、そのまま（引用符つきで）入る
+            self.assertNotIn("\r", text)
+            self.assertTrue(text.startswith("set -e\n"))
+
+
+if __name__ == "__main__":
+    unittest.main()
