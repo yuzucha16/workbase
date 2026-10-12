@@ -2,6 +2,18 @@
 
 前提と決定は [[ai-room-handover]]。詳細は [[ai-room-design]]。ここは PC のセッションで行う順序。各段階の終わりに、実測の結果を残して、次へ進むか判断する。
 
+## TODO（忘れないための一覧。済んだら `[x]`）
+
+- [ ] ルートの `AGENTS.md` の構成表に `mobile-session/`（モバイルから PC への引き継ぎ置き場）を足すか決めて、足す
+- [ ] 実機で確かめる S1〜S6（下の「1」）。PC でしかできない
+- [ ] 未決9つをユーザーに1つずつ確認する（下の「2」）
+- [ ] 検討の結果を `exmem/lessons/` に残す（下の「0」）
+- [ ] `room` の最小版を作る（下の「3」）
+- [ ] workflow-kit の手順書・雛形を更新する（下の「4」）
+- [ ] 1つの Project で試す（下の「5」）
+- [ ] 後回しの論点: `areas/dev-env/certs` の移し替え、対応表の保護、Obsidian の AI プラグイン、Codex・Copilot の設定（下の「6」）
+- [ ] 反映が終わったら、`mobile-session/ai-workspace-boundary/` を削除する（履歴は git に残る）
+
 ## 0. 反映の方針を決める（ユーザーに確認）
 
 - 検討の結果を、どこに残すか。案: 決定と理由は `exmem/lessons/` の新しいノート（例: `ai-workspace-boundary.md`）、手順は `workflow-kit/`（新しいフック）、ワークスペースの規約は雛形（`workflow-kit/templates/workspace/`）。ノートの形式は `exmem/AGENTS.md` に従う。
