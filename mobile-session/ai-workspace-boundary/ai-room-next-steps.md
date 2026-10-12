@@ -8,7 +8,7 @@
 - [x] 実機で確かめる S1〜S6（下の「1」）。全部合格（2026-10-12）。結果は「1」の「実測の結果」
 - [x] 未決9つをユーザーに1つずつ確認する（下の「2」）。確定（2026-10-12）
 - [ ] 検討の結果を `exmem/lessons/` に残す（下の「0」）
-- [ ] `room` の最小版を作る（下の「3」）
+- [~] `room` の最小版を作る（下の「3」）。v0（`open` / `start` / `close` / `umount`）は実装・テスト済み、コミット待ち。マスク・復元が残り
 - [ ] workflow-kit の手順書・雛形を更新する（下の「4」）
 - [ ] 1つの Project で試す（下の「5」）
 - [ ] 後回しの論点: `areas/dev-env/certs` の移し替え、対応表の保護、Obsidian の AI プラグイン、Codex・Copilot の設定（下の「6」）
@@ -158,6 +158,16 @@ Vault 側の変更（ローカルの git）: Area の `README.md` に `boundary:
 4. `room start` の wait 部（回収）: `ai/out/` の成果物の復元（プレースホルダー → 実データ）→ `_noai/final/`、戻らなかったプレースホルダーの一覧（あれば止める）、【案件】の項目を Area の `inbox.md` へ、manifest の更新、コミット。
 5. `room close`: 最後の回収、`README.md` の状態の更新、アンマウント、`archives/` への移動（追跡する部分はファイル単位の `git mv`。`_noai/` も一緒に移す）、zombie の印（`reap_after`）、reap。
 - 先に、手作業でこの流れを1巡して（S1〜S6 の環境で）、どこが重いかを測ってからスクリプトにする。
+
+### 実装の状況（2026-10-12）: v0
+
+`workflow-kit/room/`（`room.py`、`pyproject.toml`、`.python-version`、`uv.lock`、`tests/`、`README.md`）。標準ライブラリだけ。Python は uv で 3.13.14 に固定。**未コミット**（`workflow-kit/AGENTS.md` が、kit の変更は承認を得た後と定めているため、ユーザーの承認待ち）。
+
+- 実装済み: `open`、`start`（チェック、README の写し、マウント、AI の起動、必ずアンマウント、回収の一覧、無視されているファイルの警告）、`close`（【案件】を Area の `inbox.md` へ、README の状態、Area の一覧、`archives/` へ移動）、`umount`。来歴チェック（manifest。`start --adopt` で人が記録）、`.gitignore` の必須行の点検、コミットのガード（対象外のステージ済みファイルがあれば止める）、`--no-launch`（Zed の WSL リモート用）。
+- テスト: 23件（WSL は差し替え、一時ディレクトリの git）。加えて、**実際の部屋（`room-office-admin`）と使い捨ての Vault で、`open → start → close` を通した**。部屋の中で、一般ユーザー、`/mnt/c` が空、`../` の原本が見えない、`in/` に書けない、`out/` に書ける、を確認。アンマウントと残りの確認も OK。close では、追跡外の `_noai/`（原本）が `archives/` に移り、git には入らないことを確認した。
+- e2e で見つかって直した不具合: (1) アンマウント後に `in/.gitkeep` が読み取り専用のまま残った（マウント時は `in/` の全ファイルを読み取り専用にするので、戻すのも全ファイル）。(2) 回収の一覧が、`?? .../ai/out/` とフォルダ単位でまとまり、新しいファイル名が見えなかった（`git status -uall` にした）。(3) wsl の出力と、`room.py` の表示の順序が前後した（行バッファにした）。
+- 未実装: マスク・復元（`mask.toml`、zip レベルの置換、置換後の点検、manifest への記録）、【汎用】の下書きの回収、reap、部屋の作成の自動化、`start` の対話モードで `claude` の許可を求められる挙動の確認（`--cmd` でテストした。`claude` の対話は、あなたの端末で確認する）。
+- 次の候補: マスク・復元の最小版（csv と xlsx。使い捨てのダミーデータで）。
 
 ## 4. workflow-kit に組み込む
 
