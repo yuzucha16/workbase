@@ -95,4 +95,5 @@ updated: 2026-10-10
 | `metrics` | 作業や AI 活用の指標・測定 |
 | `para` | PARA（Projects / Areas / Resources / Archives）の運用 |
 | `tls` | TLS・証明書・SSLインスペクション |
+| `security` | 顧客データ・機密・鍵を AI やツールに見せない境界の設計・運用 |
 | `markdown` | Markdown の記法 |
