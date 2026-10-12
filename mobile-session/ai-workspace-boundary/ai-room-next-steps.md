@@ -128,6 +128,8 @@ Vault 側の変更（ローカルの git）: Area の `README.md` に `boundary:
 3. `claude -p`（非対話）では、許可されていないコマンド（`ls` など）が実行されない。`room start` の起動は対話モードの想定なので、影響は小さい。
 4. `mount` は `-o <オプション> <デバイス> <マウント点>` の順で書く。root が `wsl -u root` で行ったマウントは、別セッションの一般ユーザーから見える。PowerShell から標準入力でコマンドを渡すと、改行が CRLF になる（`umount` が引数なしのエラーになり、同じ場所にマウントが積み重なった）。`room.py` は、バイト列で LF を明示する。マウントが残っていないかを、`room start` の最初と `room close` の最後に点検する。
 
+5. **個人のグローバル ignore（`~/.gitignore_global`）の `out/` が、`ai/out/` の新しいファイルを無視する。** 成果物が、回収のコミットから黙って漏れる（すでに追跡されているファイルの `git mv` は通るので、気づきにくい）。ワークスペースの `.gitignore` に `!**/ai/out/` を足して打ち消した（リポジトリの `.gitignore` は、グローバルより優先される）。`ai/` の他の名前（`in` `work` `records` `docs`）は衝突しない。雛形（`gitignore.template`）にも入れる。`room.py` の回収では、コミット後に「`ai/` に未追跡のファイルが残っていないか」を点検する。
+
 #### 未実施（2巡目以降）
 
 `wrap`（`decisions.md` の【案件】ラベル）と Area の `inbox.md` への同期、manifest と来歴チェックとログ（`ai/records/`）、`close`（アンマウントを先に、ファイル単位の `git mv` で `archives/` へ）、Zed から `/mnt/room/<Project 名>` を開く操作、マスク（使い捨てのダミーデータで）。
