@@ -12,6 +12,16 @@
 # Claude Code のローカル専用の許可設定（端末ごと・個人用）
 **/.claude/settings.local.json
 
+# AI 作業部屋（workflow-kit/room/）
+# AI に見せない領域（原本・対応表・復元済みの成果物）は追跡しない
+**/_noai/
+# 部屋に渡す README の写し（一時）
+**/ai/ctx/
+# Office の一時ファイル
+~$*
+# 個人のグローバル ignore（out/ など）が、成果物 ai/out/ を無視しないように打ち消す
+!**/ai/out/
+
 ### Windows
 Thumbs.db
 [Dd]esktop.ini

@@ -58,6 +58,7 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 
 - [[ai-business-adoption]]: AI活用の業務負荷削減と習得工程
 - [[ai-development-workflow]]: AI開発ワークフロー
+- [[ai-isolated-work-room]]: AI に見せる領域を分ける作業部屋（専用 WSL）方式の原則と決定
 - [[abstract-concrete-matrix-review]]: 抽象と具体の手順書群を、横並びの表で整理し、揃える範囲を決める
 - [[accretion-without-pruning]]: 足す経路と畳む経路の非対称を防ぐ
 - [[ai-handson-framework]]: AI活用ハンズオンの設計と情報ダイジェスト
