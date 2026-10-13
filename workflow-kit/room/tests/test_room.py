@@ -175,7 +175,7 @@ class OpenTest(unittest.TestCase):
 
 class StartTest(unittest.TestCase):
     def args(self, **kw):
-        d = dict(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False)
+        d = dict(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=False)
         d.update(kw)
         return argparse.Namespace(**d)
 
@@ -306,6 +306,77 @@ class StartTest(unittest.TestCase):
             with self.assertRaises(room.RoomError) as cm:
                 room.cmd_start(c, self.args(commit=True))
             self.assertIn("対象外", str(cm.exception))
+
+
+class MaskIntegrationTest(unittest.TestCase):
+    MASK = '[terms.CUST]\nacme = ["アクメ商事株式会社", "アクメ商事"]\n'
+
+    def args(self, **kw):
+        d = dict(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=True)
+        d.update(kw)
+        return argparse.Namespace(**d)
+
+    def setup_project(self, tmp, wsl):
+        v, c = opened(tmp, wsl)
+        p = v / "projects/proj-a"
+        (p / "_noai/mask.toml").write_text(self.MASK, encoding="utf-8", newline="\n")
+        (p / "_noai/raw/売上.csv").write_text("顧客,額\nアクメ商事株式会社,100\n", encoding="utf-8", newline="\n")
+        return v, c, p
+
+    def test_start_masks_runs_and_restores(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p = self.setup_project(tmp, wsl)
+            seen = {}
+
+            def ai():
+                seen["in"] = (p / "ai/in/売上.csv").read_text(encoding="utf-8-sig")
+                (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は増加\n", encoding="utf-8", newline="\n")
+            wsl.on_interactive = ai
+            room.cmd_start(c, self.args())
+            self.assertNotIn("アクメ", seen["in"])
+            self.assertIn("⟦CUST_001⟧", seen["in"])
+            self.assertIn("アクメ商事株式会社 の売上は増加", (p / "_noai/final/report.md").read_text(encoding="utf-8"))
+            self.assertIn("⟦CUST_001⟧", (p / "ai/out/report.md").read_text(encoding="utf-8"))
+            man = json.loads((p / "ai/records/manifest.json").read_text(encoding="utf-8"))
+            e = man["files"]["in/売上.csv"]
+            self.assertTrue(e["raw_sha256"] and e["mask_sha256"] and e["mapping_version"] == 1)
+            mapping = (p / "_noai/map/mapping.json").read_text(encoding="utf-8")
+            self.assertNotIn("アクメ", (p / "ai/records/manifest.json").read_text(encoding="utf-8"))
+            self.assertIn("アクメ商事株式会社", mapping)
+
+    def test_unchanged_raw_is_not_remasked_and_changed_toml_asks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p = self.setup_project(tmp, wsl)
+            room.cmd_start(c, self.args())
+            mt = (p / "ai/in/売上.csv").stat().st_mtime_ns
+            room.cmd_start(c, self.args())
+            self.assertEqual(mt, (p / "ai/in/売上.csv").stat().st_mtime_ns)
+            (p / "_noai/mask.toml").write_text(self.MASK + '[terms.PERSON]\nt = ["田中太郎"]\n', encoding="utf-8", newline="\n")
+            (p / "_noai/raw/売上.csv").write_text("顧客,額\nアクメ商事株式会社,100\n田中太郎,1\n", encoding="utf-8", newline="\n")
+            room.cmd_start(c, self.args())
+            self.assertIn("⟦PERSON_001⟧", (p / "ai/in/売上.csv").read_text(encoding="utf-8-sig"))
+
+    def test_raw_without_mask_toml_stops_before_mount(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p = self.setup_project(tmp, wsl)
+            (p / "_noai/mask.toml").unlink()
+            with self.assertRaises(room.RoomError):
+                room.cmd_start(c, self.args())
+            self.assertEqual(wsl.interactive_calls, [])
+
+    def test_unresolved_placeholder_stops_and_writes_no_final(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p = self.setup_project(tmp, wsl)
+            wsl.on_interactive = lambda: (p / "ai/out/r.md").write_text("⟦CUST_099⟧\n", encoding="utf-8", newline="\n")
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_start(c, self.args())
+            self.assertIn("CUST_099", str(cm.exception))
+            self.assertFalse((p / "_noai/final/r.md").exists())
+            self.assertFalse(wsl.mounted)
 
 
 class CloseTest(unittest.TestCase):

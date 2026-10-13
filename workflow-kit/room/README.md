@@ -1,8 +1,8 @@
 # room
 
-AI 作業部屋の操作（`open` / `start` / `close` / `umount`）。人が Windows で実行する。**AI には実行させない**（将来、原本と対応表を読む工程（マスク・復元）を含むため）。設計の理由は `guides/explain/ai-room-why.md`、手作業の手順は `guides/howto/ai-room-setup.md`。
+AI 作業部屋の操作（`open` / `start` / `close` / `umount` / `mask` / `restore`）。人が Windows で実行する。**AI には実行させない**（原本と対応表を読む工程（マスク・復元）を含むため）。設計の理由は `guides/explain/ai-room-why.md`、手作業の手順は `guides/howto/ai-room-setup.md`。
 
-状態: v0（2026-10-12）。マスク・復元は未実装（次の段階）。実際の WSL（部屋）で、使い捨ての Vault を使って `open → start → close` を通した。
+状態: v0（2026-10-12）に、マスク・復元（`maskkit.py`）を足した（2026-10-13、モバイルで実装。**合成データの単体テストのみ。実際の Excel・WSL では未確認**）。実際の WSL（部屋）で、使い捨ての Vault を使って `open → start → close` を通した。
 
 ## 使い方
 
@@ -23,9 +23,11 @@ uv run room.py umount --area <Area>
 | `open` | ワークスペースの `.gitignore`（`**/_noai/` と `!**/ai/out/`）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final}` を作り、Area の一覧に足す |
 | `start` | `area:` とディストロ名の一致、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴（manifest）を確認 → README の写しを `ai/ctx/` に置く → `ai/` を `/mnt/room/<名>` に root でマウントし、`in/` を読み取り専用に → 部屋で AI を起動（一般ユーザー）→ **必ず**アンマウントして、マウント点を消し、残りを確認 → 変更の一覧と、追跡されずに無視されているファイルの警告 |
 | `close` | マウントが無いこと、`ai/out/close.md`（部屋の AI が書く）を確認 → 【案件】を Area の `ai/docs/inbox.md` に追記（重複しない）→ README を `status: done`、`closed`、`reap_after` に → Area の一覧を「完了した Project」に → ファイル単位の `git mv` で `archives/` へ（追跡外の `_noai/` も移す） |
+| `mask` | `_noai/raw/` の新しい・変わった原本（csv・xlsx）を、`_noai/mask.toml` に従ってマスクし `ai/in/` へ。manifest に原本・マスク後・`mask.toml` のハッシュと対応表の版を記録。語が残っていれば止める（`start` の最初でも自動で行う） |
+| `restore` | `ai/out/` を復元して `_noai/final/` へ。戻らないプレースホルダー・未知の形式があれば、何も書かずに一覧を出して止める（`start` の終わりでも自動で行う） |
 | `umount` | 部屋に残った `/mnt/room/*` のマウントを外す |
 
-`start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクの工程ができるまでの手段）。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。
+`start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。
 
 ## 実装の決まり
 
@@ -41,9 +43,26 @@ uv run python -m unittest discover -s tests
 
 WSL は差し替えて、一時ディレクトリの git で行う（実際の部屋には触れない）。実際の部屋での通し（`open → start → close`）は、使い捨ての Vault で手動で行った（2026-10-12）。
 
+## マスク・復元（`maskkit.py`）
+
+仕様は `mobile-session/ai-workspace-boundary/ai-room-mask-spec.md`。ファイルは Project の中に置く。
+
+| ファイル | 内容 | git |
+|---|---|---|
+| `_noai/mask.toml` | 人が書く。`[terms.<種類>] キー = ["正式名", "表記ゆれ", …]`、`[columns] "シート!列名" = "種類"` | しない |
+| `_noai/map/mapping.json` | `room` が書く。番号の追記専用の対応表 | しない |
+| `_noai/final/` | 復元済みの成果物 | しない |
+
+- プレースホルダー: 本文は `⟦CUST_001⟧`、シート名・定義名は ASCII の `SHEET_001` / `NAME_001`。番号は自動採番で、一度振ったら変わらない。
+- 一致は広い（部分一致、大文字小文字・全角半角を区別しない）。長い語を優先して1回で置換する。1文字の語は受け付けない。
+- シート名・定義名が語と同じ・語を含むときは、名前全体を `SHEET_` / `NAME_` にする（本文の同じ語もそちらに置換される）。
+- xlsx: zip の中の `.xml` / `.rels` / `.vml` を置換。作成者・最終更新者・会社・管理者は常に空にする。プリンタ設定（`printerSettings*.bin`）は削除する。語が複数の書式（run）にまたがる文字列は、1つの run にまとめてから置換する（警告に出る）。点検は全 part と、run を連結した文字列で行う。
+- csv: `utf-8-sig` → `cp932` の順に読み、`utf-8-sig` で書く。
+- 候補: 法人格・敬称・メール・電話・URL・郵便番号の形は、対応表に無くても警告に出す（止めない）。
+- 復元: csv・md・txt・bas・json・html は文字列、xlsx は zip。`ai/out/close.md` と `ai/out/stock/` は対象外。ピボットは Excel の「すべて更新」が要る（人が PC で）。
+
 ## 未実装
 
-- マスク・復元（`mask.toml`、zip レベルの置換、置換後の点検）
 - 【汎用】の下書き（`ai/out/stock/`）の回収
 - reap（期限切れの会話履歴を記録に写して消す）
 - 部屋の作成（ディストロ、`wsl.conf`、道具、ログイン）の自動化

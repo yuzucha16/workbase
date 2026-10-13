@@ -1,4 +1,4 @@
-"""room: AI 作業部屋の操作（open / start / close / umount）。
+"""room: AI 作業部屋の操作（open / start / close / umount / mask / restore）。
 
 人が Windows で実行する。AI には実行させない（原本と対応表を読む工程を含むため）。
 設計は guides/explain/ai-room-why.md、手作業の手順は guides/howto/ai-room-setup.md。
@@ -17,6 +17,9 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import maskkit  # noqa: E402
 
 MOUNT_ROOT = "/mnt/room"
 ROOM_UID = 1000
@@ -474,6 +477,7 @@ def snapshot_readme(p):
 def cmd_start(ctx, a):
     p = Project.load(ctx, a.name)
     boundary = preflight(ctx, p)
+    masked = mask_project(ctx, p, yes=a.yes)
     if a.adopt:
         n = adopt_in(ctx, p)
         ctx.say(f"ai/in の {n} ファイルを、この Project の入力として manifest に記録した")
@@ -481,7 +485,7 @@ def cmd_start(ctx, a):
     if problems:
         raise RoomError("来歴チェックに失敗した:\n  " + "\n  ".join(problems)
                         + "\n（人が確認したファイルなら、--adopt で記録する）")
-    checks = f"area 一致、boundary={boundary}、in {len(in_files(p))} 件の来歴 OK"
+    checks = f"area 一致、boundary={boundary}、in {len(in_files(p))} 件の来歴 OK" + (f"、マスク {masked} 件" if masked else "")
     snapshot_readme(p)
     ctx.say(f"チェック OK（{checks}）")
     result = "不明"
@@ -502,6 +506,9 @@ def cmd_start(ctx, a):
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
+    restored, restore_problems = restore_project(ctx, p)
+    if restored:
+        ctx.say(f"復元した: {restored} ファイル → _noai/final")
     ignored = unexpected_ignored(ctx, p)
     status = [l for l in git(ctx.vault, "status", "--porcelain", "-uall", "--", f"projects/{p.name}").splitlines() if l]
     log_room(ctx, p, "start", checks, f"{result}、変更 {len(status)} 件")
@@ -512,8 +519,108 @@ def cmd_start(ctx, a):
         ctx.say("警告: 追跡されずに無視されているファイル（成果物が漏れている可能性）:")
         for f in ignored:
             ctx.say("  " + f)
+    if restore_problems:
+        raise RoomError("復元を止めた（_noai/final は変更していない。ai/out は回収済み）:\n  " + "\n  ".join(restore_problems)
+                        + "\n（直して `room restore " + p.name + "` を再実行する。コミットはしていない）")
     if a.commit:
         commit_paths(ctx, [f"projects/{p.name}"], f"[room] {p.name}: start {ctx.now()}")
+
+
+# ---------- マスクと復元（maskkit。仕様は ai-room-mask-spec.md） ----------
+
+def noai_dir(p):
+    return p.dir / "_noai"
+
+
+def write_bytes(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+
+
+def mask_project(ctx, p, yes=False):
+    """_noai/raw の新しい・変わった原本を、マスクして ai/in へ。点検に通らなければ止める。作った件数を返す。"""
+    n = noai_dir(p)
+    raw = maskkit.list_files(n / "raw")
+    if not raw:
+        return 0
+    conf_path = n / "mask.toml"
+    if not conf_path.exists():
+        raise RoomError(f"_noai/raw に原本があるが、{conf_path} が無い（マスクの指定を人が書く）")
+    try:
+        config = maskkit.load_config(conf_path)
+        mapping = maskkit.Mapping.load(n / "map" / "mapping.json")
+        conf_hash = maskkit.sha256_bytes(conf_path.read_bytes())
+        man = load_manifest(p)
+        todo, rebuild = set(), False
+        for rel, data in raw.items():
+            e = man["files"].get(f"in/{rel}")
+            if e is None or e.get("raw_sha256") != maskkit.sha256_bytes(data) or not (p.ai / "in" / rel).exists():
+                todo.add(rel)
+            elif e.get("mask_sha256") != conf_hash:
+                rebuild = True
+        if rebuild:
+            ctx.say("mask.toml が変わった。ai/in の全ファイルを作り直す")
+            if not yes and input("作り直してよいか [y/N]: ").strip().lower() != "y":
+                raise RoomError("作り直しを中止した")
+            todo = set(raw)
+        if not todo:
+            return 0
+        res = maskkit.mask_files(raw, config, mapping, only=todo)
+    except maskkit.MaskError as e:
+        raise RoomError(f"マスクを止めた（ai/in は変更していない）:\n{e}")
+    version = sum(mapping.data["counters"].values())
+    for rel, data in res["outputs"].items():
+        write_bytes(p.ai / "in" / rel, data)
+        man["files"][f"in/{rel}"] = {
+            "sha256": maskkit.sha256_bytes(data), "area": p.area, "project": p.name, "added": ctx.now(),
+            "raw_sha256": maskkit.sha256_bytes(raw[rel]), "mask_sha256": conf_hash, "mapping_version": version,
+            "masked_from": f"_noai/raw/{rel}",
+        }
+    mapping.save(n / "map" / "mapping.json")
+    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
+    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    ctx.say(f"マスクした: {len(res['outputs'])} ファイル → ai/in（対応表の版 {version}）")
+    for w in res["warnings"]:
+        ctx.say("  注意: " + w)
+    if res["hints"]:
+        ctx.say("  対応表に無い固有名詞の候補（必要なら mask.toml に足す。止めない）:")
+        for h in res["hints"]:
+            ctx.say("    " + h)
+    return len(res["outputs"])
+
+
+def restore_project(ctx, p):
+    """ai/out を復元して _noai/final へ。戻らないものがあれば何も書かずに問題の一覧を返す。"""
+    n = noai_dir(p)
+    out = maskkit.list_files(p.ai / "out")
+    if not out:
+        return 0, []
+    mapping = maskkit.Mapping.load(n / "map" / "mapping.json")
+    try:
+        restored, problems = maskkit.restore_files(out, mapping)
+    except maskkit.MaskError as e:
+        return 0, [str(e)]
+    if problems:
+        return 0, problems
+    for rel, data in restored.items():
+        write_bytes(n / "final" / rel, data)
+    return len(restored), []
+
+
+def cmd_mask(ctx, a):
+    p = Project.load(ctx, a.name)
+    preflight(ctx, p)
+    k = mask_project(ctx, p, yes=a.yes)
+    if k == 0:
+        ctx.say("マスクするものは無い（原本が無いか、変更が無い）")
+
+
+def cmd_restore(ctx, a):
+    p = Project.load(ctx, a.name)
+    k, problems = restore_project(ctx, p)
+    if problems:
+        raise RoomError("復元を止めた（_noai/final は変更していない）:\n  " + "\n  ".join(problems))
+    ctx.say(f"復元した: {k} ファイル → _noai/final")
 
 
 # ---------- umount ----------
@@ -644,7 +751,12 @@ def build_parser():
     s.add_argument("--cmd", default="claude", help="部屋で実行するコマンド（既定: claude）")
     s.add_argument("--no-launch", action="store_true", help="起動せず、マウントしたまま待つ（Zed などで使う）")
     s.add_argument("--adopt", action="store_true", help="ai/in の現在のファイルを、この Project の入力として記録する")
+    s.add_argument("--yes", action="store_true", help="mask.toml が変わったときの作り直しを確認しない")
     s.add_argument("--commit", action="store_true")
+    m = sub.add_parser("mask", help="_noai/raw の原本をマスクして ai/in へ（start でも自動で行う）")
+    m.add_argument("name"); m.add_argument("--yes", action="store_true")
+    r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
+    r.add_argument("name")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     u = sub.add_parser("umount", help="部屋に残ったマウントを外す")
@@ -657,7 +769,8 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
-        {"open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount}[a.command](ctx, a)
+        {"open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
+         "mask": cmd_mask, "restore": cmd_restore}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2
