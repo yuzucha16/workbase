@@ -32,6 +32,13 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 | `resources/` | 共有ナレッジ（`workbase`）。このリポジトリの `.gitignore` で除外する | 別リポジトリ（git 操作は `resources/` の中で行う） |
 | `.obsidian/` | Obsidian の設定。dotfiles からのジャンクション。このリポジトリでは追跡しない | dotfiles |
 
+## AI 作業部屋（`projects/` `areas/` `archives/` を扱うとき）
+
+- この 3 つの中の作業は、AI 作業部屋（専用の WSL ディストリビューション）の中で行う。Vault 側の AI（この `AGENTS.md` を読む AI）は、`projects/` `areas/` `archives/` を読まない・編集しない。`.claude/settings.json` で `Read` と `Edit` を deny している（雛形: `resources/workflow-kit/templates/workspace/claude-settings.template.json`。安全網であって境界の保証ではない）。
+- `room`（`resources/workflow-kit/room/`）は人が端末で実行する。AI は実行しない。
+- 部屋の使い方と読み替えは `resources/workflow-kit/room/README.md` と `resources/workflow-kit/room-context.md`。
+- `.gitignore` に `**/_noai/`（AI に見せない領域。追跡しない）と `!**/ai/out/` を入れる（雛形: `gitignore.template`）。
+
 ## このワークスペース固有のルール
 
 - <remote の方針に合わせて書く。remote が無いとき: このリポジトリに remote を足さない。push しない（誤って push しないよう、`.git/hooks/pre-push` で止めてある）。>

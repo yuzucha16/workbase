@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./projects/**)",
+      "Read(./areas/**)",
+      "Read(./archives/**)",
+      "Edit(./projects/**)",
+      "Edit(./areas/**)",
+      "Edit(./archives/**)",
+      "Bash(*room.py*)",
+      "Bash(*room *)"
+    ]
+  }
+}
