@@ -26,6 +26,7 @@ uv run room.py umount --area <Area>
 | `close` | マウントが無いこと、`ai/out/close.md`（部屋の AI が書く）を確認 → 【案件】を Area の `ai/docs/inbox.md` に追記（重複しない）→ README を `status: done`、`closed`、`reap_after` に → Area の一覧を「完了した Project」に → ファイル単位の `git mv` で `archives/` へ（追跡外の `_noai/` も移す） |
 | `mask` | `_noai/raw/` の新しい・変わった原本（csv・xlsx）を、`_noai/mask.toml` に従ってマスクし `ai/in/` へ。manifest に原本・マスク後・`mask.toml` のハッシュと対応表の版を記録。語が残っていれば止める（`start` の最初でも自動で行う） |
 | `restore` | `ai/out/` を復元して `_noai/final/` へ。戻らないプレースホルダー・未知の形式があれば、何も書かずに一覧を出して止める（`start` の終わりでも自動で行う） |
+| `readme` | 部屋の AI が書いた `ai/out/readme-draft.md`（本文だけ）を、`README.md` の本文に反映する（frontmatter は変えず、`updated` だけ今日にする。確認あり、`--yes` で省略）。`open` の判断部分（目的・完了条件）を AI が下書きする形 |
 | `umount` | 部屋に残った `/mnt/room/*` のマウントを外す |
 
 `start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。

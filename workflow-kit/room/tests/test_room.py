@@ -429,6 +429,34 @@ class SharedPushTest(unittest.TestCase):
             self.assertEqual(wsl.pushes, [])
 
 
+class ReadmeDraftTest(unittest.TestCase):
+    def test_draft_replaces_body_keeps_frontmatter(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            p = v / "projects/proj-a"
+            before = (p / "README.md").read_text(encoding="utf-8")
+            fm_before = room.split_frontmatter(before)[0]
+            (p / "ai/out/readme-draft.md").write_text("# 目的\n\n新しい目的\n", encoding="utf-8")
+            room.cmd_readme(c, argparse.Namespace(name="proj-a", yes=True, commit=False))
+            after = (p / "README.md").read_text(encoding="utf-8")
+            self.assertIn("新しい目的", after)
+            self.assertIn("status: active", after)
+            self.assertIn("area: area-x", after)
+            self.assertIn("updated: 2026-10-12", after)
+            self.assertEqual(room.split_frontmatter(after)[0].count("\n"), fm_before.count("\n"))
+
+    def test_draft_with_frontmatter_or_missing_is_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            p = v / "projects/proj-a"
+            args = argparse.Namespace(name="proj-a", yes=True, commit=False)
+            with self.assertRaises(room.RoomError):
+                room.cmd_readme(c, args)
+            (p / "ai/out/readme-draft.md").write_text("---\nstatus: done\n---\nx\n", encoding="utf-8")
+            with self.assertRaises(room.RoomError):
+                room.cmd_readme(c, args)
+
+
 class CloseTest(unittest.TestCase):
     def test_close_requires_close_md_and_unmounted(self):
         with tempfile.TemporaryDirectory() as tmp:

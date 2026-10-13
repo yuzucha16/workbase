@@ -20,6 +20,15 @@
 - ディレクトリ名: `exmem/knowledge/` は `exmem/lessons/` に、`cheatsheets/` は `guides/`（`howto/` `explain/` `quickref/`）に、2026-10-10 に改名した。履歴の中の旧名は、これで読み替える。
 - 旧ファイル名 `closing-hook.md` `knowledge-hook.md` `setup-hook.md` は、2026-10-08 に削除した（新名は `wrap` `stock` `init`）。履歴の中の旧名は、この表で読み替える。
 
+## 運用コマンド（`room`）
+
+合言葉のフックとは別の層。人が端末で打つスクリプトで、AI は実行しない。呼び出し表と正本は `room/README.md`。合言葉の `open` `start` `close` と名前が重なるので、必ず `room` を前置して区別する。部屋の中でフックを使うときの読み替えと分担は `room-context.md`。
+
+| コマンド | すること |
+|---|---|
+| `room open` / `start` / `close` | Project のひな形、起動の準備（マスク、写しの送付、マウント）と回収（復元）、Area への引き渡しと `archives/` への移動 |
+| `room mask` / `restore` / `readme` / `umount` | マスクと復元の単独実行、AI の下書きの README への反映、残ったマウントの解除 |
+
 ## 作業ディレクトリへの契約（手順書が前提にするもの）
 
 手順書は、次だけを前提にする。これ以外の作業側のファイル名・列・スクリプトを、手順書に書かない（共有側は公開されうるので、作業側の構造を載せない）。

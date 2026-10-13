@@ -1,4 +1,4 @@
-"""room: AI 作業部屋の操作（open / start / close / umount / mask / restore）。
+"""room: AI 作業部屋の操作（open / start / close / umount / mask / restore / readme）。
 
 人が Windows で実行する。AI には実行させない（原本と対応表を読む工程を含むため）。
 設計は guides/explain/ai-room-why.md、手作業の手順は guides/howto/ai-room-setup.md。
@@ -730,6 +730,33 @@ def cmd_restore(ctx, a):
     ctx.say(f"復元した: {k} ファイル → _noai/final")
 
 
+def cmd_readme(ctx, a):
+    """部屋の AI が書いた ai/out/readme-draft.md（本文だけ）を、Project の README.md の本文に反映する。frontmatter は変えない（updated だけ今日にする）。"""
+    p = Project.load(ctx, a.name)
+    draft = p.ai / "out" / "readme-draft.md"
+    if not draft.exists():
+        raise RoomError(f"下書きが無い: {draft}（部屋の AI に ai/out/readme-draft.md を書かせる）")
+    body = draft.read_text(encoding="utf-8").replace("\r\n", "\n")
+    if split_frontmatter(body)[0] is not None:
+        raise RoomError("下書きに frontmatter がある。本文だけにする（frontmatter は README.md のものを使う）")
+    if not body.strip():
+        raise RoomError("下書きが空")
+    old = p.readme.read_text(encoding="utf-8")
+    _fm, old_body = split_frontmatter(old)
+    new = update_frontmatter(old, {"updated": ctx.today()})
+    new = new[:len(new) - len(old_body)] + body.rstrip("\n") + "\n"
+    if new == old:
+        ctx.say("README.md は下書きと同じ。変更なし")
+        return
+    ctx.say("README.md の本文を、下書きに置き換える（frontmatter は変えない）")
+    if not a.yes and input("反映してよいか [y/N]: ").strip().lower() != "y":
+        raise RoomError("反映を中止した")
+    p.readme.write_text(new, encoding="utf-8", newline="\n")
+    ctx.say("反映した。確認して、コミットする（`git diff projects/" + p.name + "/README.md`）")
+    if a.commit:
+        commit_paths(ctx, [f"projects/{p.name}/README.md"], f"[room] {p.name}: README を更新 {ctx.now()}")
+
+
 # ---------- umount ----------
 
 def cmd_umount(ctx, a):
@@ -864,6 +891,8 @@ def build_parser():
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
     r.add_argument("name")
+    rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
+    rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     u = sub.add_parser("umount", help="部屋に残ったマウントを外す")
@@ -877,7 +906,7 @@ def main(argv=None):
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
         {"open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
-         "mask": cmd_mask, "restore": cmd_restore}[a.command](ctx, a)
+         "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2

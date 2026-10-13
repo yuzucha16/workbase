@@ -49,7 +49,17 @@ room close       最後の回収
 | `integrate` `review` | Vault 側（workbase の作業） | 部屋の外。`integrate` が rebase の解決を担当 |
 | `init` | Vault 側 | ワークスペースへの導入。部屋の作成は別（下の論点2） |
 
-## 論点（決めること）
+## 論点の結果（2026-10-13、ユーザーの「フックの整理をお願い」を受けて実施）
+
+| 論点 | 結果 |
+|---|---|
+| 1 README の書き手 | 下書き方式で実装: AI が `ai/out/readme-draft.md`（本文だけ）を書き、人が `room readme <名>` で反映（`room.py`、テスト2件） |
+| 2 部屋の作成 | `room init <Area>` は**未実装**。実際の WSL が要るので PC のセッションで（`wsl --import`、`wsl.conf`、一般ユーザー `ai`、道具、`~/CLAUDE.md` から `~/shared/ROOM.md` への案内） |
+| 3 名前の衝突 | `hooks.md` に「運用コマンド」の節を足した。`room` を前置する決まりは `room-context.md` |
+| 4 手順書の読み替え | 手順書の本文は変えず、`workflow-kit/room-context.md` に差分（`docs/` → `ai/docs/`、分担、受け渡しのファイル）を集めた |
+| 5 手順書の渡し方 | ロードマップ2番で実装済み（`~/shared`、`ROOM.md`） |
+
+## 論点（決めること）（以下は整理前の記述）
 
 1. **README の書き手**: Project の `README.md`（目的・完了条件）は Vault が正本で、部屋の AI からは読み取りの写し（`ai/ctx/`）しか見えない。kit の `open`（AI が README を作る）は、そのままでは動かない。案: `room open` が人に聞く（目的・完了条件）、または AI が `ai/out/readme-draft.md` に下書きして、`room` が反映する（`close.md` と同じ形）。**推奨: 後者**（AI の判断と副作用の分担が `close` と揃う）。
 2. **部屋の作成**: 部屋専用のディストリビューションの作成（`wsl.conf`、一般ユーザー、道具、ログイン）を、どのコマンドにするか。案: `room init <Area>`（新設）。kit の `init` は Vault への導入のままにして、手順書の中で「部屋が要るなら `room init`」と案内する。
