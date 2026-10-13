@@ -7,6 +7,7 @@
 import argparse
 import datetime
 import hashlib
+import io
 import json
 import os
 import re
@@ -15,6 +16,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import tarfile
 import time
 from pathlib import Path
 
@@ -46,6 +48,12 @@ class Wsl:
     def script(self, distro, text, root=False):
         cmd = ["wsl.exe", "-d", distro] + (["-u", "root"] if root else []) + ["--", "sh", "-s"]
         r = subprocess.run(cmd, input=text.replace("\r\n", "\n").encode("utf-8"), capture_output=True)
+        return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
+
+    def push(self, distro, data, script):
+        """data（バイト列）を標準入力で渡して、script を一般ユーザーで実行する（共有知の写しを送る）。"""
+        cmd = ["wsl.exe", "-d", distro, "--", "sh", "-c", script]
+        r = subprocess.run(cmd, input=data, capture_output=True)
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
     def interactive(self, distro, command):
@@ -474,6 +482,103 @@ def snapshot_readme(p):
     os.chmod(dst, stat.S_IREAD)
 
 
+# ---------- 共有知の写し（方式 A。ai-room-shared-knowledge-sync.md） ----------
+
+SHARE_PATHS = ("AGENTS.md", "workflow-kit", "exmem/AGENTS.md", "exmem/README.md", "exmem/tags.md", "exmem/lessons", "guides")
+SHARE_SKIP = {".git", ".venv", "__pycache__", "node_modules"}
+SHARE_DEST = "shared"  # 部屋の一般ユーザーの ~/shared
+
+ROOM_GUIDE = """# 共有知の写し（読み取り専用）
+
+この `~/shared` は、`room start` が送った workbase（共有知）の写し。セッションの途中では更新されない。書き込めない。
+
+- 基準コミット: {commit}{dirty}
+- 送った日時: {now}
+
+読むところ:
+- 合言葉と手順書: `~/shared/workflow-kit/hooks.md`（表）、`~/shared/workflow-kit/*-hook.md`
+- 共通規約: `~/shared/AGENTS.md`、`~/shared/exmem/AGENTS.md`
+- 知識: `~/shared/exmem/README.md` の「知識の索引」→ `~/shared/exmem/lessons/*.md`
+- 手順書・理解ガイド: `~/shared/guides/guides-index.md`
+
+共有知へ戻したい知見（`stock`）は、直接書かず、`ai/out/stock/` に下書きを書く。下書きの先頭に次を入れる:
+
+- 基準コミット: {commit}
+- 観測日: 書いた日
+
+人が確認して `exmem/inbox/` へ運ぶ。
+"""
+
+
+def share_root(ctx):
+    return ctx.vault / "resources"
+
+
+def build_share_tar(root, extra=None):
+    """共有知の写しを tar.gz にする（順序と時刻を固定して、同じ内容なら同じバイト列）。"""
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz", format=tarfile.PAX_FORMAT, compresslevel=6) as tf:
+        def add(path, arc):
+            ti = tf.gettarinfo(str(path), arcname=arc)
+            ti.mtime, ti.uid, ti.gid, ti.uname, ti.gname = 0, 0, 0, "", ""
+            ti.mode = 0o755 if path.is_dir() else (0o755 if ti.mode & 0o100 else 0o644)
+            if path.is_dir():
+                tf.addfile(ti)
+                for ch in sorted(path.iterdir()):
+                    if ch.name not in SHARE_SKIP:
+                        add(ch, f"{arc}/{ch.name}")
+            else:
+                with open(path, "rb") as f:
+                    tf.addfile(ti, f)
+        for rel in SHARE_PATHS:
+            src = root / rel
+            if src.exists():
+                add(src, rel)
+        for name, text in sorted((extra or {}).items()):
+            raw = text.encode("utf-8")
+            ti = tarfile.TarInfo(name)
+            ti.size, ti.mode = len(raw), 0o644
+            tf.addfile(ti, io.BytesIO(raw))
+    return buf.getvalue()
+
+
+def share_state(ctx, root):
+    """(コミット, 未コミットの変更があるか)。git でなければ ('不明', False)。"""
+    r = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"], capture_output=True)
+    if r.returncode != 0:
+        return "不明", False
+    commit = r.stdout.decode().strip()
+    dirty = bool(git(root, "status", "--porcelain", "--", *[x for x in SHARE_PATHS if (root / x).exists()], check=False).strip())
+    return commit, dirty
+
+
+def push_shared(ctx, p):
+    """workbase の写しを、部屋の ~/shared に読み取り専用で送り、基準コミットを manifest に記録する。送ったら True。"""
+    root = share_root(ctx)
+    if not root.is_dir():
+        ctx.say(f"共有知の写しは送らない（{root} が無い）")
+        return False
+    commit, dirty = share_state(ctx, root)
+    guide = ROOM_GUIDE.format(commit=commit, dirty="（未コミットの変更を含む）" if dirty else "", now=ctx.now())
+    data = build_share_tar(root, {"ROOM.md": guide})
+    ctx_dir = p.ai / "ctx"
+    ctx_dir.mkdir(parents=True, exist_ok=True)
+    (ctx_dir / "SHARED.md").write_text(guide, encoding="utf-8", newline="\n")
+    script = (f"set -e; d=\"$HOME/{SHARE_DEST}\"; if [ -e \"$d\" ]; then chmod -R u+w \"$d\"; rm -rf \"$d\"; fi; "
+              f"mkdir -p \"$d\" && tar xzf - -C \"$d\"; "
+              f"chmod -R a-w \"$d\"")
+    rc, _o, err = ctx.wsl.push(p.distro, data, script)
+    if rc != 0:
+        raise RoomError(f"共有知の写しを送れなかった: {err.strip()}")
+    man = load_manifest(p)
+    man["shared"] = {"commit": commit, "dirty": dirty, "pushed": ctx.now(), "paths": [x for x in SHARE_PATHS if (root / x).exists()],
+                     "tar_sha256": hashlib.sha256(data).hexdigest()}
+    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
+    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    ctx.say(f"共有知の写しを送った: ~/{SHARE_DEST}（基準コミット {commit[:10]}{'、未コミットの変更あり' if dirty else ''}）")
+    return True
+
+
 def cmd_start(ctx, a):
     p = Project.load(ctx, a.name)
     boundary = preflight(ctx, p)
@@ -487,6 +592,8 @@ def cmd_start(ctx, a):
                         + "\n（人が確認したファイルなら、--adopt で記録する）")
     checks = f"area 一致、boundary={boundary}、in {len(in_files(p))} 件の来歴 OK" + (f"、マスク {masked} 件" if masked else "")
     snapshot_readme(p)
+    if push_shared(ctx, p):
+        checks += "、共有知の写し送付"
     ctx.say(f"チェック OK（{checks}）")
     result = "不明"
     try:
