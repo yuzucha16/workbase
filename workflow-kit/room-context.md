@@ -18,6 +18,15 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 - 手順書は `~/shared/workflow-kit/` にある（読み取り専用の写し。基準コミットは `~/shared/ROOM.md`）。
 - 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、コミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する。
 
+## `stock` の下書きの書き方（部屋の中）
+
+`ai/out/stock/YYYY-MM-DD-<topic>.md` に、`stock-hook.md` の形式で書く。frontmatter に次の2つを足す（点検スクリプトは、知らない項目があっても FAIL にしない）。
+
+- `base_commit: <~/shared/ROOM.md の基準コミット>`
+- `observed: YYYY-MM-DD`（観測した日。並べる順は到着順でなく、この日付）
+
+人が `room stock <名>` で確認して `exmem/inbox/` に運ぶ。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
+
 ## 分担と受け渡し
 
 | 場面 | AI（部屋の中）が行う | 人（`room`）が行う | 受け渡しのファイル |
@@ -26,6 +35,6 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 | `start` | 開始インタビュー | `room start <名>`（チェック、マスク、写しの送付、マウント、起動） | `ai/ctx/`、`ai/in/` |
 | `wrap` | `ai/docs/` の更新、昇格の案 | 回収（復元、コミット） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close` | 完了条件の確認、暫定の見直し、未解決の振り分け、【汎用】候補の提示 | `room close <名>`（Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
-| `stock` | 下書きまで | 人が確認して `exmem/inbox/` へ運ぶ | `ai/out/stock/`（先頭に基準コミットと観測日） |
+| `stock` | 下書きまで | `room stock <名>`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
 | `integrate` `review` | 部屋では行わない（Vault 側の workbase の作業） | — | — |
 | `init` | 部屋では行わない（ワークスペースへの導入。部屋の作成は `room` の手順） | — | — |

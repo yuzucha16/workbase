@@ -27,6 +27,7 @@ uv run room.py umount --area <Area>
 | `mask` | `_noai/raw/` の新しい・変わった原本（csv・xlsx）を、`_noai/mask.toml` に従ってマスクし `ai/in/` へ。manifest に原本・マスク後・`mask.toml` のハッシュと対応表の版を記録。語が残っていれば止める（`start` の最初でも自動で行う） |
 | `restore` | `ai/out/` を復元して `_noai/final/` へ。戻らないプレースホルダー・未知の形式があれば、何も書かずに一覧を出して止める（`start` の終わりでも自動で行う） |
 | `readme` | 部屋の AI が書いた `ai/out/readme-draft.md`（本文だけ）を、`README.md` の本文に反映する（frontmatter は変えず、`updated` だけ今日にする。確認あり、`--yes` で省略）。`open` の判断部分（目的・完了条件）を AI が下書きする形 |
+| `stock` | 部屋の AI の【汎用】の下書き（`ai/out/stock/*.md`）を、**1件ずつ人が確認して**（`--yes` で省略）`resources/exmem/inbox/` に運ぶ。frontmatter に `base_commit` と `observed` が要る。対応表の語を含む下書きは運ばない。基準以降に統合先の `lessons/` が変わっていれば、frontmatter に `base_stale` を足す。運んだものは manifest の `stock` に記録し（同じ内容は二度運ばない）、未追跡のまま残す（コミットしない: `stock-hook.md` の方針） |
 | `umount` | 部屋に残った `/mnt/room/*` のマウントを外す |
 
 `start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。
@@ -65,6 +66,5 @@ WSL は差し替えて、一時ディレクトリの git で行う（実際の�
 
 ## 未実装
 
-- 【汎用】の下書き（`ai/out/stock/`）の回収
 - reap（期限切れの会話履歴を記録に写して消す）
 - 部屋の作成（ディストロ、`wsl.conf`、道具、ログイン）の自動化
