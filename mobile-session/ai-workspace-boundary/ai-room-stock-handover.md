@@ -12,9 +12,9 @@
 - 下書きのヘッダー項目と `check-inbox.ps1`: スクリプトを読むと、決まった項目だけを見ていて、知らない frontmatter 項目は FAIL にしない（読んで確認。`pwsh` で実行はしていない）。PC で `pwsh` を使って、`base_commit` と `observed` と `base_stale` 入りのメモで確認する。
 - Vault 側の AI が下書きを受け取る場所: Vault 側の AI を介さず、人が `room stock` で `exmem/inbox/` に直接運ぶ。
 
-## 承認が要ること（kit の変更）
+## 承認を得て反映した kit の変更（2026-10-13）
 
-`integrate-hook.md` に「`base_stale` が付いたメモは、`base_commit` の版・下書き・最新の版の3点で照らして統合し、食い違いは Open Questions に書く。並べる順は `observed`」を足す。`workflow-kit/AGENTS.md` の規則で、ユーザーの承認が要るので、まだ変えていない。
+`integrate-hook.md` に「`base_stale` が付いたメモは、`base_commit` の版・下書き・最新の版の3点で照らして統合し、食い違いは Open Questions に書く。並べる順は `observed`」を足す。`workflow-kit/AGENTS.md` の規則で、ユーザーの承認が要るので、承認を得て、`integrate-hook.md` の「統合そのものの手順」に 2a として足した。
 
 ## PC で確認すること
 
