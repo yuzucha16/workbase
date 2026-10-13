@@ -1,4 +1,4 @@
-"""room: AI 作業部屋の操作（open / start / close / umount / mask / restore / readme）。
+"""room: AI 作業部屋の操作（open / start / close / umount / mask / restore / readme / stock）。
 
 人が Windows で実行する。AI には実行させない（原本と対応表を読む工程を含むため）。
 設計は guides/explain/ai-room-why.md、手作業の手順は guides/howto/ai-room-setup.md。
@@ -757,6 +757,84 @@ def cmd_readme(ctx, a):
         commit_paths(ctx, [f"projects/{p.name}/README.md"], f"[room] {p.name}: README を更新 {ctx.now()}")
 
 
+# ---------- 【汎用】の下書きの回収（stock） ----------
+
+def stock_staleness(ctx, base):
+    """(基準コミットが有効か, lessons で基準以降に変わったファイルの一覧)。"""
+    root = share_root(ctx)
+    if not base or subprocess.run(["git", "-C", str(root), "cat-file", "-e", f"{base}^{{commit}}"], capture_output=True).returncode != 0:
+        return False, []
+    out = git(root, "diff", "--name-only", base, "HEAD", "--", "exmem/lessons", check=False)
+    return True, [l.strip().removeprefix("exmem/") for l in out.splitlines() if l.strip()]
+
+
+def cmd_stock(ctx, a):
+    """ai/out/stock/*.md（部屋の AI の【汎用】の下書き）を、人の確認を経て resources/exmem/inbox/ に運ぶ。コミットしない（stock-hook.md の方針）。"""
+    p = Project.load(ctx, a.name)
+    src = p.ai / "out" / "stock"
+    drafts = sorted(f for f in src.glob("*.md")) if src.exists() else []
+    if not drafts:
+        ctx.say("運ぶ下書きは無い（ai/out/stock/*.md）")
+        return
+    inbox = share_root(ctx) / "exmem" / "inbox"
+    if not inbox.is_dir():
+        raise RoomError(f"運び先が無い: {inbox}")
+    n = p.dir / "_noai" / "map" / "mapping.json"
+    table = maskkit.Table(maskkit.Mapping.load(n)) if n.exists() else None
+    man = load_manifest(p)
+    sent = man.setdefault("stock", {})
+    delivered = 0
+    for f in drafts:
+        raw = f.read_bytes()
+        digest = hashlib.sha256(raw).hexdigest()
+        if sent.get(f.name, {}).get("sha256") == digest:
+            ctx.say(f"  済み（同じ内容を運んだ）: {f.name}")
+            continue
+        text = raw.decode("utf-8").replace("\r\n", "\n")
+        fm = split_frontmatter(text)[0]
+        if fm is None:
+            ctx.say(f"  運ばない（frontmatter が無い）: {f.name}")
+            continue
+        meta = read_frontmatter(f)
+        base, observed = meta.get("base_commit", ""), meta.get("observed", "")
+        if not base or not observed:
+            ctx.say(f"  運ばない（frontmatter に base_commit と observed が要る）: {f.name}")
+            continue
+        if table is not None and table.search(text):
+            ctx.say(f"  運ばない（対応表の語が含まれている。公開されうる workbase に入れない）: {f.name}: {table.search(text).group(0)}")
+            continue
+        valid, changed = stock_staleness(ctx, base)
+        cands = set(re.findall(r"lessons/([^\s）)、,]+?\.md)", text.split("\n## Principles")[0]))
+        hit = sorted(c for c in cands if f"lessons/{c}" in changed)
+        if not valid:
+            stale = "基準コミットを確認できない"
+        elif hit:
+            stale = "統合先の lessons が基準以降に変わった: " + ", ".join(hit)
+        elif cands:
+            stale = ""
+        else:
+            stale = f"統合先の候補が特定できない（lessons の変更 {len(changed)} 件）" if changed else ""
+        title = meta.get("title", f.name)
+        ctx.say(f"  {f.name}: {title}" + (f"\n    印: 基準が古い可能性 — {stale}" if stale else ""))
+        if not a.yes and input("    exmem/inbox に運ぶか [y/N]: ").strip().lower() != "y":
+            ctx.say("    運ばなかった")
+            continue
+        if stale:
+            text = update_frontmatter(text, {"base_stale": f'"{stale}"'})
+        dst = inbox / f.name
+        k = 2
+        while dst.exists():
+            dst = inbox / f"{f.stem}-{k}{f.suffix}"
+            k += 1
+        dst.write_text(text, encoding="utf-8", newline="\n")
+        sent[f.name] = {"sha256": digest, "delivered": ctx.now(), "inbox": dst.name, "base_commit": base, "stale": bool(stale)}
+        delivered += 1
+        ctx.say(f"    運んだ: exmem/inbox/{dst.name}（未追跡のまま。点検: check-inbox.ps1）")
+    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
+    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    ctx.say(f"{delivered} 件を運んだ")
+
+
 # ---------- umount ----------
 
 def cmd_umount(ctx, a):
@@ -893,6 +971,8 @@ def build_parser():
     r.add_argument("name")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
+    st = sub.add_parser("stock", help="ai/out/stock/ の【汎用】の下書きを、確認を経て exmem/inbox/ に運ぶ")
+    st.add_argument("name"); st.add_argument("--yes", action="store_true", help="確認を省く（印と対応表の点検は行う）")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     u = sub.add_parser("umount", help="部屋に残ったマウントを外す")
@@ -906,7 +986,7 @@ def main(argv=None):
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
         {"open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
-         "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme}[a.command](ctx, a)
+         "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2

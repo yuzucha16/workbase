@@ -457,6 +457,66 @@ class ReadmeDraftTest(unittest.TestCase):
                 room.cmd_readme(c, args)
 
 
+class StockTest(unittest.TestCase):
+    DRAFT = ("---\ntype: inbox\ntitle: テスト知識\ntags:\n  - a\n  - b\n  - c\ncreated: 2026-10-12\nbase_commit: {base}\nobserved: 2026-10-12\n"
+             "sources:\n  - Claude Code conversation \"x\"\n---\n\n# t\n\n## Goal\nx\n統合先の候補: lessons/topic-a.md（キーワード: a）\n\n## Principles\nなし\n")
+
+    def setup(self, tmp):
+        v, c = opened(tmp)
+        r = v / "resources"
+        (r / "exmem/lessons").mkdir(parents=True)
+        (r / "exmem/inbox").mkdir(parents=True)
+        (r / "exmem/lessons/topic-a.md").write_text("v1\n", encoding="utf-8")
+        sh(r, "init", "-q"); sh(r, "config", "user.email", "t@e"); sh(r, "config", "user.name", "t")
+        sh(r, "add", "-A"); sh(r, "commit", "-qm", "c1")
+        base = subprocess.run(["git", "-C", str(r), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        return v, c, r, base
+
+    def ns(self, **kw):
+        d = dict(name="proj-a", yes=True)
+        d.update(kw)
+        return argparse.Namespace(**d)
+
+    def test_delivers_without_stale_mark_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, r, base = self.setup(tmp)
+            p = v / "projects/proj-a"
+            (p / "ai/out/stock").mkdir(parents=True)
+            (p / "ai/out/stock/2026-10-12-topic-a.md").write_text(self.DRAFT.format(base=base), encoding="utf-8")
+            room.cmd_stock(c, self.ns())
+            got = (r / "exmem/inbox/2026-10-12-topic-a.md").read_text(encoding="utf-8")
+            self.assertNotIn("base_stale", got)
+            room.cmd_stock(c, self.ns())
+            self.assertEqual(len(list((r / "exmem/inbox").glob("*.md"))), 1)
+
+    def test_stale_mark_when_target_lesson_changed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, r, base = self.setup(tmp)
+            p = v / "projects/proj-a"
+            (r / "exmem/lessons/topic-a.md").write_text("v2\n", encoding="utf-8")
+            sh(r, "add", "-A"); sh(r, "commit", "-qm", "c2")
+            (p / "ai/out/stock").mkdir(parents=True)
+            (p / "ai/out/stock/2026-10-12-topic-a.md").write_text(self.DRAFT.format(base=base), encoding="utf-8")
+            room.cmd_stock(c, self.ns())
+            got = (r / "exmem/inbox/2026-10-12-topic-a.md").read_text(encoding="utf-8")
+            self.assertIn("base_stale:", got)
+            self.assertIn("topic-a.md", got)
+
+    def test_refuses_missing_header_and_masked_terms(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, r, base = self.setup(tmp)
+            p = v / "projects/proj-a"
+            (p / "ai/out/stock").mkdir(parents=True)
+            (p / "ai/out/stock/no-header.md").write_text("---\ntype: inbox\ntitle: x\n---\nx\n", encoding="utf-8")
+            leak = self.DRAFT.format(base=base).replace("テスト知識", "アクメ商事の知識")
+            (p / "ai/out/stock/leak.md").write_text(leak, encoding="utf-8")
+            (p / "_noai/mask.toml").write_text('[terms.CUST]\nacme = ["アクメ商事"]\n', encoding="utf-8")
+            (p / "_noai/raw/a.csv").write_text("x\nアクメ商事\n", encoding="utf-8")
+            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
+            room.cmd_stock(c, self.ns())
+            self.assertEqual(list((r / "exmem/inbox").glob("*.md")), [])
+
+
 class CloseTest(unittest.TestCase):
     def test_close_requires_close_md_and_unmounted(self):
         with tempfile.TemporaryDirectory() as tmp:
