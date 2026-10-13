@@ -37,6 +37,7 @@ class FakeWsl:
         self.mounted = False
         self.scripts = []
         self.interactive_calls = []
+        self.pushes = []
         self.on_interactive = None  # AI が行う作業の代わり
 
     def distros(self):
@@ -51,6 +52,10 @@ class FakeWsl:
             self.mounted = False
         if text.startswith("grep ' /mnt/room/' /proc/mounts") and self.mounted:
             return 0, "C:\\x /mnt/room/p 9p rw 0 0\n", ""
+        return 0, "", ""
+
+    def push(self, distro, data, script):
+        self.pushes.append((distro, data, script))
         return 0, "", ""
 
     def interactive(self, distro, command):
@@ -377,6 +382,51 @@ class MaskIntegrationTest(unittest.TestCase):
             self.assertIn("CUST_099", str(cm.exception))
             self.assertFalse((p / "_noai/final/r.md").exists())
             self.assertFalse(wsl.mounted)
+
+
+class SharedPushTest(unittest.TestCase):
+    def test_push_records_base_commit_and_sends_tar(self):
+        import io
+        import tarfile
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            r = v / "resources"
+            (r / "workflow-kit").mkdir(parents=True)
+            (r / "workflow-kit/hooks.md").write_text("hooks\n", encoding="utf-8")
+            (r / "workflow-kit/.venv").mkdir()
+            (r / "workflow-kit/.venv/x").write_text("no", encoding="utf-8")
+            (r / "exmem/lessons").mkdir(parents=True)
+            (r / "exmem/lessons/a.md").write_text("a\n", encoding="utf-8")
+            (r / "mobile-session").mkdir()
+            (r / "mobile-session/x.md").write_text("no", encoding="utf-8")
+            sh(r, "init", "-q"); sh(r, "config", "user.email", "t@e"); sh(r, "config", "user.name", "t")
+            sh(r, "add", "-A"); sh(r, "commit", "-qm", "c")
+            commit = subprocess.run(["git", "-C", str(r), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+            # 外側の Vault の git に resources を追跡させない（入れ子の git）
+            args = argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=False)
+            room.cmd_start(c, args)
+            self.assertEqual(len(wsl.pushes), 1)
+            distro, data, script = wsl.pushes[0]
+            self.assertEqual(distro, "room-area-x")
+            self.assertIn("chmod -R a-w", script)
+            names = tarfile.open(fileobj=io.BytesIO(data), mode="r:gz").getnames()
+            self.assertIn("workflow-kit/hooks.md", names)
+            self.assertIn("exmem/lessons/a.md", names)
+            self.assertIn("ROOM.md", names)
+            self.assertFalse([n for n in names if ".venv" in n or "mobile-session" in n])
+            man = json.loads((v / "projects/proj-a/ai/records/manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(man["shared"]["commit"], commit)
+            self.assertFalse(man["shared"]["dirty"])
+            # 同じ内容なら同じバイト列
+            self.assertEqual(data, room.build_share_tar(r, {"ROOM.md": tarfile.open(fileobj=io.BytesIO(data), mode="r:gz").extractfile("ROOM.md").read().decode()}))
+
+    def test_no_resources_skips(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=False))
+            self.assertEqual(wsl.pushes, [])
 
 
 class CloseTest(unittest.TestCase):
