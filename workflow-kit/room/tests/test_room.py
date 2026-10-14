@@ -418,6 +418,12 @@ class SharedPushTest(unittest.TestCase):
             man = json.loads((v / "projects/proj-a/ai/records/manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(man["shared"]["commit"], commit)
             self.assertFalse(man["shared"]["dirty"])
+            # 部屋の ~/.claude/CLAUDE.md への案内（目印の範囲だけを入れ替える sh -s のスクリプト）
+            ptr = [t for (_d, t, _r) in wsl.scripts if "room-shared:begin" in t]
+            self.assertEqual(len(ptr), 1)
+            self.assertIn("~/shared/ROOM.md", ptr[0])
+            self.assertIn("$HOME/.claude/CLAUDE.md", ptr[0])
+            self.assertIn("sed -i '/^<!-- room-shared:begin/,/^<!-- room-shared:end -->/d'", ptr[0])
             # 同じ内容なら同じバイト列
             self.assertEqual(data, room.build_share_tar(r, {"ROOM.md": tarfile.open(fileobj=io.BytesIO(data), mode="r:gz").extractfile("ROOM.md").read().decode()}))
 

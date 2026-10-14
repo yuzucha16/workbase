@@ -16,7 +16,17 @@
 
 `integrate-hook.md` に「`base_stale` が付いたメモは、`base_commit` の版・下書き・最新の版の3点で照らして統合し、食い違いは Open Questions に書く。並べる順は `observed`」を足す。`workflow-kit/AGENTS.md` の規則で、ユーザーの承認が要るので、承認を得て、`integrate-hook.md` の「統合そのものの手順」に 2a として足した。
 
-## PC で確認すること
+## PC での確認の結果（2026-10-14）
 
-1. 実際の部屋で下書きを書かせ、`room stock` で運べるか。`base_stale` の印が正しく付くか（`resources/` が git であること）。
-2. `pwsh` で `check-inbox.ps1` が、追加の frontmatter 項目で通るか。
+ダミーの下書き 4 件（架空の内容。基準が最新・基準が古い・ヘッダー欠け・対応表の語を含む）を `ai/out/stock/` に置き、`room stock` を実機で実行した。
+
+| 確認 | 結果 |
+|---|---|
+| 基準が最新の下書き | 印なしで `exmem/inbox/` に運ばれた。同じ内容を再実行すると「済み」で飛ばされた |
+| 基準が古い下書き | 「統合先の lessons が基準以降に変わった: reference-doc-types.md」と表示され、運ぶと frontmatter に `base_stale` が付いた |
+| `base_commit` と `observed` が無い下書き | 運ばれなかった |
+| 対応表の語を含む下書き | 運ばれなかった（語を表示して拒否） |
+| `pwsh` の `check-inbox.ps1` | 追加の frontmatter 項目（`base_commit`、`observed`、`base_stale`）による FAIL は無い |
+
+**未確認**: 実際の部屋の AI に下書きを書かせて運ぶ通し（ダミーは人が置いたファイル）。部屋の AI が `ROOM.md` に従って、先頭に基準コミットと観測日を付けられるか。
+**残る小さな点**: `check-inbox.ps1` の FAIL（`tags` が 3〜6 個、Goal の末尾の形）は、ダミーの形が原因。運んだ下書きの形は、AI が `stock-hook.md` に従って書く。
