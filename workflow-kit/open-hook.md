@@ -56,7 +56,7 @@
 | type | 追加 | 備考 |
 |---|---|---|
 | `doc`（手順書・仕様・設計・チェックリスト） | `drafts/`（版ごとの下書き、レビュー版）、`refs/`（ユーザーから渡された資料、チェックリスト） | 下書きは `docs/` に入れない（`docs/` を「作業の記録」の意味だけにする） |
-| `dev`（設計・実装・評価） | `src/` `tests/` `tools/`、ビルド設定 | 設計メモ（design、coding-rules）は `docs/` |
+| `dev`（設計・実装・評価） | `src/` `tests/` `tools/`、ビルド設定 | 設計メモ（design、coding-rules）は `docs/`。作り方は `dev-deliverable-guide.md`。AI 作業部屋の Project（`ai/` の中だけが見える）では、`src/` `tests/` `tools/` と文書は `ai/out/<成果物名>/` に置く（2026-10-15 ユーザー承認） |
 | `research`（調査） | `sources/`（収集した資料と抜粋）。結論は直下の `report.md` | 実測が無い。叩き台 |
 
 ## 実測から分かっていること
