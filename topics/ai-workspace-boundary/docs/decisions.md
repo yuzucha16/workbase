@@ -38,10 +38,12 @@
 - 却下案: `room` に結果の受け取り口（マスクして `ai/in/` へ）を作る（実装が要る。Next Actions に残した）。部屋の `interop` を有効にする（境界が破れる）。
 - → lessons/ai-tool-deliverable-structure
 
-### 【この件】Area の共通ルールは Area の README に書き、`room start` が `ai/ctx/area-README.md` に写す（2026-10-15）
+### 【汎用】Area の共通ルールは Area の README に書き、`room start` が `ai/ctx/area-README.md` に写す（2026-10-15）
 - 決めたこと: Project を跨ぐ約束（旧プレイブックの親フォルダの共通ルール）は、Area の README に置く。`room start` が Area の README を読み取り専用で `ai/ctx/area-README.md` に写し、AI が開始時に読む。16 KiB を超えたら `start` が警告する（止めない）。
 - 根拠: 既存のパス（`ai/ctx/`）を使え、`room` の変更が小さい。`ai/ctx/` は追跡せず、`start` の終了ごとに消えるので蓄積しない。Area は境界の単位なので、同じ Area の Project 名しか写らない。
 - 却下案: Project の README に写す（Area 側と二重になり古くなる）。Project の `ai/docs/decisions.md` に持つ（Area に1つのルールを複数の Project が重複して持つ）。
+- ユーザーが昇格を承認（2026-10-15）。ラベルを【この件】から【汎用】に直した。
+- → inbox/2026-10-15-area-readme-room-context
 
 ### 【この件】kit に `type: dev` の成果物の手順を足す（2026-10-15）
 - 決めたこと: `open-hook.md` の Project の構造（`type: dev` の行）に、部屋の Project では成果物を `ai/out/<成果物名>/` に置くと追記した。作り方は新しい `dev-deliverable-guide.md`（`type: dev` の `open` / `start` のときだけ読む短い手順。理由は lessons へのリンクだけ）。コミット `b6c3199`。
