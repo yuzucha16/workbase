@@ -12,7 +12,7 @@ Get-ChildItem *-hook.md | ForEach-Object { '{0} {1}' -f $_.Name, (Get-Content $_
 
 | 項目 | 区分 | init | open | start | close | review | wrap | integrate | stock |
 |---|---|---|---|---|---|---|---|---|---|
-| 字数 | — | 6.3k（別に init-workspace 2.3k、init-restore 0.5k） | 3.1k | 3.1k | 2.5k | 1.7k | 3.9k | 2.3k | 8.8k |
+| 字数 | — | 6.3k（別に init-workspace 2.3k、init-restore 0.5k） | 3.1k | 3.7k | 2.5k | 1.7k | 3.9k | 2.3k | 8.8k |
 | 冒頭の呼び出し名・別名・正本 `hooks.md`（点検済み） | Must | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ |
 | 自発実行しない | Must | ○ | △ 案内あり | ○ | △ 提案あり | △ 勧める | ○ | ○ | ○ |
 | 目的と契機（目的→契機→前提の順を点検） | Must | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ |
