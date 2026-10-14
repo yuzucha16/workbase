@@ -2,17 +2,30 @@
 
 前提と決定は [[ai-room-handover]]。詳細は [[ai-room-design]]。ここは PC のセッションで行う順序。各段階の終わりに、実測の結果を残して、次へ進むか判断する。
 
-## TODO（忘れないための一覧。済んだら `[x]`）
+**次のセッションの入口は [[ai-room-start-here]]。** 優先順位と各項目の状態の正本は [[ai-room-roadmap]]。この文書の TODO は、roadmap の項目と対応させた一覧（2026-10-14 に整合させた）。
 
-- [ ] ルートの `AGENTS.md` の構成表に `mobile-session/`（モバイルから PC への引き継ぎ置き場）を足すか決めて、足す
-- [x] 実機で確かめる S1〜S6（下の「1」）。全部合格（2026-10-12）。結果は「1」の「実測の結果」
+## TODO（忘れないための一覧。済んだら `[x]`。`(R<n>)` は roadmap の番号）
+
+- [x] ルートの `AGENTS.md` の構成表に `mobile-session/` を足す（反映済み）
+- [x] 実機で確かめる S1〜S6（下の「1」）。全部合格（2026-10-12）
 - [x] 未決9つをユーザーに1つずつ確認する（下の「2」）。確定（2026-10-12）
-- [ ] 検討の結果を `exmem/lessons/` に残す（下の「0」）
-- [~] `room` の最小版を作る（下の「3」）。v0（`open` / `start` / `close` / `umount`）は実装・テスト済み・コミット済み（`7a9e7bc`）。マスク・復元は 2026-10-13 に実装（単体テストのみ）。PC での確認は [[ai-room-mask-handover]]
-- [ ] workflow-kit の手順書・雛形を更新する（下の「4」）
-- [ ] 1つの Project で試す（下の「5」）
+- [x] 検討の結果を `exmem/lessons/` に残す（`exmem/lessons/ai-isolated-work-room.md`。2026-10-13）
+- [x] `room` の v0（`open` / `start` / `close` / `umount`）を作る（下の「3」）。コミット済み（`7a9e7bc`）
+- [x] (R1) マスク・復元を実装する（2026-10-13、モバイルのセッション。単体テストまで）。**この PC で単体テスト45件が通った**（2026-10-14）
+- [ ] (R1) マスク・復元の PC での確認: Excel で開く、ピボット、複数 run、実機の通し、cp932、候補の警告（[[ai-room-mask-handover]]）
+- [x] (R2) 共有知の写しを部屋へ入れる実装（方式 A。単体テストまで）
+- [ ] (R2) 実際の部屋で確認する（[[ai-room-shared-push-handover]]）
+- [x] (R3) フックの整理: 文書、`room readme`、`hooks.md` の運用コマンドの節（[[ai-room-hook-taxonomy]]）。雛形（`gitignore.template`、Vault 側の deny、`AGENTS.md`）と `init-workspace.md` も反映済み（2026-10-13。実機で未検証）
+- [ ] (R3) `room init`（部屋の作成の自動化）と、`open` から `close` までの1巡の確認
+- [x] (R4) `room stock`（下書きの回収）の実装、`integrate-hook.md` の対応（単体テストまで）
+- [ ] (R4) 実際の部屋で確認する（[[ai-room-stock-handover]]。`pwsh` の `check-inbox.ps1` の確認を含む）
+- [ ] (R5) 部屋の運用: `room init`、reap（会話履歴を記録に写して消す）、会話履歴のバックアップ、対応表のバックアップ方針の決定（[[ai-room-ops-handover]]）
+- [x] (R6) Area の切り方の指針（`ai-room-why.md` に判断表を追加。2026-10-13）
+- [ ] (R7) 雛形の実機確認（Vault 側の deny の書式 `Read(./projects/**)` が Windows ネイティブで効くか）
+- [ ] (R8) 顧客データのある実 Project で `open` から `close` まで1巡する（手数、マスク漏れ、復元の失敗、再現性）
+- [ ] 文書2本（`guides/explain/ai-room-why.md`、`guides/howto/ai-room-setup.md`）を別のセッションでレビューし、「草稿（未レビュー）」の注記を外す
 - [ ] 後回しの論点: `areas/dev-env/certs` の移し替え、対応表の保護、Obsidian の AI プラグイン、Codex・Copilot の設定（下の「6」）
-- [ ] 反映が終わったら、`mobile-session/ai-workspace-boundary/` を削除する（履歴は git に残る）
+- [ ] 反映と確認が終わったら、検証用の環境（`ai-room-test`、`_spike-room`、`%TEMP%\s5\`）を消し、`mobile-session/ai-workspace-boundary/` を削除する（履歴は git に残る。[[ai-room-start-here]] の「完了したときの片付け」）
 
 ## 0. 反映の方針を決める（ユーザーに確認）
 
