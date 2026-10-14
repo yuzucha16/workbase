@@ -564,9 +564,12 @@ def push_shared(ctx, p):
     ctx_dir = p.ai / "ctx"
     ctx_dir.mkdir(parents=True, exist_ok=True)
     (ctx_dir / "SHARED.md").write_text(guide, encoding="utf-8", newline="\n")
-    script = (f"set -e; d=\"$HOME/{SHARE_DEST}\"; if [ -e \"$d\" ]; then chmod -R u+w \"$d\"; rm -rf \"$d\"; fi; "
-              f"mkdir -p \"$d\" && tar xzf - -C \"$d\"; "
-              f"chmod -R a-w \"$d\"")
+    # wsl.exe は `sh -c` の引数を、部屋の側の外側のシェルでもう一度解釈する。スクリプト内で代入した変数（$d など）は
+    # 外側で空に展開されるので、変数を使わず $HOME/<dest> を直接書く（$HOME は外側でも定義されている）。
+    d = f"\"$HOME/{SHARE_DEST}\""
+    script = (f"set -e; if [ -e {d} ]; then chmod -R u+w {d}; rm -rf {d}; fi; "
+              f"mkdir -p {d} && tar xzf - -C {d}; "
+              f"chmod -R a-w {d}")
     rc, _o, err = ctx.wsl.push(p.distro, data, script)
     if rc != 0:
         raise RoomError(f"共有知の写しを送れなかった: {err.strip()}")
