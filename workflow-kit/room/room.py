@@ -478,14 +478,24 @@ def rmtree_force(path):
     shutil.rmtree(path, onerror=onerror) if Path(path).exists() else None
 
 
-def snapshot_readme(p):
-    ctx_dir = p.ai / "ctx"
-    ctx_dir.mkdir(parents=True, exist_ok=True)
-    dst = ctx_dir / "README.md"
+AREA_README_WARN_BYTES = 16 * 1024  # Area の README の写しは、AI が開始時に読む。大きくなったら知らせる
+
+
+def _snapshot(src, dst):
     if dst.exists():
         os.chmod(dst, stat.S_IWRITE | stat.S_IREAD)
-    shutil.copyfile(p.readme, dst)
+    shutil.copyfile(src, dst)
     os.chmod(dst, stat.S_IREAD)
+
+
+def snapshot_readme(p):
+    """Project の README と、所属する Area の README（Area の共通ルール）を `ai/ctx/` に写す。Area の README の大きさを返す。"""
+    ctx_dir = p.ai / "ctx"
+    ctx_dir.mkdir(parents=True, exist_ok=True)
+    _snapshot(p.readme, ctx_dir / "README.md")
+    area_readme = p.area_dir / "README.md"
+    _snapshot(area_readme, ctx_dir / "area-README.md")
+    return area_readme.stat().st_size
 
 
 # ---------- 共有知の写し（方式 A。ai-room-shared-knowledge-sync.md） ----------
@@ -661,7 +671,10 @@ def cmd_start(ctx, a):
         raise RoomError("来歴チェックに失敗した:\n  " + "\n  ".join(problems)
                         + "\n（人が確認したファイルなら、--adopt で記録する）")
     checks = f"area 一致、boundary={boundary}、in {len(in_files(p))} 件の来歴 OK" + (f"、マスク {masked} 件" if masked else "")
-    snapshot_readme(p)
+    area_size = snapshot_readme(p)
+    if area_size > AREA_README_WARN_BYTES:
+        ctx.say(f"注意: Area の README が大きい（{area_size // 1024} KiB）。部屋の AI が開始時に読むので、"
+                "完了した Project の一覧などを畳むことを検討する")
     if push_shared(ctx, p):
         checks += "、共有知の写し送付"
     ctx.say(f"チェック OK（{checks}）")
