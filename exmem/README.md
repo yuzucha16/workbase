@@ -64,15 +64,18 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 - [[ai-handson-framework]]: AI活用ハンズオンの設計と情報ダイジェスト
 - [[ai-harness-concepts]]: AIエージェントのモデルとハーネス
 - [[ai-output-consistency]]: AIの出力のブレを抑える設計と校正の進め方
+- [[ai-tool-deliverable-structure]]: AI で作る小さなツールの成果物構成・文書・テストの型
 - [[ai-work-metrics]]: AI 活用の指標を会話履歴から測る
 - [[app-config-placement]]: アプリの設定ディレクトリを置くリポジトリの判断基準
 - [[claude-code-auth-providers]]: Claude Code の認証経路とモデル指定（Anthropic 直接と Bedrock）
+- [[claude-code-external-plugins]]: 外部の Claude Code スキル（プラグイン）の取り込み方
 - [[claude-code-permissions]]: Claude Codeの権限制御と共通土台（自走期間を伸ばす）
 - [[claude-code-project-settings]]: プロジェクトの .claude/ の管理方針
 - [[claude-code-storage]]: Claude Codeのチャット履歴とメモリの保存場所
 - [[claude-code-vs-cowork]]: Claude CodeとCoworkの使い分け（Windows）とExcelスキル
 - [[dotfiles-shell-tuning]]: dotfiles の起動時間・WSL の見た目・追跡方針
 - [[embedded-c-constraint-checks]]: 組込み C の制約を機械で検査する
+- [[excel-vba-ai-development]]: Excel VBA マクロを AI で作るときの規約と落とし穴
 - [[fonts]]: フォントの選定と導入
 - [[gh-release-download]]: gh release download は未ログインでも使える
 - [[git-line-endings]]: Git の改行コードを .gitattributes で決める
