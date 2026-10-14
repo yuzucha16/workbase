@@ -6,8 +6,8 @@
 
 - [x] kit の点検を実行する（下の「1」。2026-10-14、全 OK。start は 3.7k）
 - [x] 作業側の `events` の定義に `goal_change` を足す（下の「2」。2026-10-14、`AGENTS.md`・`docs/metrics/README.md`・`summarize.ps1`。作業側は未コミット）
-- [ ] `start` のモードを、次の2〜3セッションで試す（下の「3」）
-- [ ] 推測の項目をユーザーに確認する（下の「4」）
+- [ ] `start` のモードを、次の2〜3セッションで試す（下の「3」）。次回 `review` の対象にした（`works/docs/log.md` の Next Actions 2。作業側は未コミット）
+- [x] 推測の項目をユーザーに確認する（下の「4」。2026-10-14、3つとも「合っている」。lessons に反映済み）
 - [x] inbox の6本を lessons へ統合する（下の「5」。2026-10-14、フラットに6ファイル。取扱説明書は `user-manual`、A/B とモードは `session-goal-modes`）
 - [ ] 反映が終わったら、`mobile-session/improvement-methods/` を削除し、`mobile-session-index.md` の行を消す
 
