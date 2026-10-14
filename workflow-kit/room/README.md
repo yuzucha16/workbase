@@ -44,6 +44,8 @@ uv run room.py umount --area <Area>
 uv run python -m unittest discover -s tests
 ```
 
+実機（Excel）でマスク・復元を確かめるための架空のダミー（ピボット、コメント、定義名、通常+太字の run をまたぐ語を含む xlsx と、cp932 の csv、`mask.toml`）は、`python tests/dummy_fixture.py <Project のディレクトリ>` で `<Project>/_noai/` に作る（単体テストの対象ではない）。
+
 WSL は差し替えて、一時ディレクトリの git で行う（実際の部屋には触れない）。実際の部屋での通し（`open → start → close`）は、使い捨ての Vault で手動で行った（2026-10-12）。
 
 ## マスク・復元（`maskkit.py`）
