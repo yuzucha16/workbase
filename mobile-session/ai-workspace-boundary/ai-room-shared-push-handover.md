@@ -25,7 +25,7 @@
 | 1 読める・書き込めない | `~/shared/ROOM.md` と `workflow-kit/hooks.md` を一般ユーザーで読めた。`touch` は `Permission denied`（ディレクトリは `dr-xr-xr-x`） |
 | 2 時間とサイズ | 1.5MB、120ファイル。送付は数秒で、遅さは感じなかった。`guides/` と `lessons/` が増えたら再測定 |
 | 3 `resources/` の位置 | Vault の `resources/` から送れた。manifest の `shared` に基準コミット、`dirty`、送付時刻、tar の sha256 が入った。`ai/ctx/SHARED.md` も作られた |
-| 4 部屋の `~/CLAUDE.md` からの案内 | **未実施**（部屋の作成手順への追記。kit の手順書の変更なので、案を示して承認を得る） |
+| 4 部屋の AI への案内 | 実装した（ユーザーが方式 A を選択）。`room start` が、部屋の `~/.claude/CLAUDE.md` に `~/shared/ROOM.md` への案内を、目印で囲んだ範囲だけ入れ替えて置く。**`~/CLAUDE.md` ではない**: 作業ディレクトリは `/mnt/room/<Project>` なので、`~` の直下の `CLAUDE.md` は読まれない。`~/.claude/CLAUDE.md` は作業ディレクトリによらず読まれる。部屋で `sh -s` を2回実行して、ブロックが1つだけ・既存の行が残ることを確認した。次の `room start` で、実際の部屋に入る |
 | 5 部屋の AI が合言葉で動けるか | **未確認**（AI を起動して試す必要がある） |
 
 **見つけて直した不具合**: 初回の `room start` が `mkdir: cannot create directory ''` で止まった。`wsl.exe -- sh -c "<script>"` は、引数を部屋の側の外側のシェルでもう一度解釈するので、スクリプト内で代入した変数（`$d`）が空に展開される。`$HOME` は外側でも定義されているので問題ない。変数を使わず `"$HOME/shared"` を直接書くようにした（コミット `930b8ac`）。**WSL を差し替える単体テストでは検出できない**ので、`wsl.exe` に渡す `sh -c` のスクリプトでは、スクリプト内で代入した変数を使わない。

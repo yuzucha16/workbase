@@ -552,6 +552,33 @@ def share_state(ctx, root):
     return commit, dirty
 
 
+POINTER_BEGIN = "<!-- room-shared:begin（room start が管理する。この範囲は書き換えられる） -->"
+POINTER_END = "<!-- room-shared:end -->"
+POINTER_TEXT = """共有知（読み取り専用の写し）が `~/shared` にある。作業の前に `~/shared/ROOM.md` を読む。
+合言葉（`start` `wrap` など）を言われたら、`~/shared/workflow-kit/hooks.md` の表に従って手順書を読む。`~/shared` には書かない。"""
+
+
+def install_guide_pointer(ctx, p):
+    """部屋の一般ユーザーの ~/.claude/CLAUDE.md（Claude Code が、作業ディレクトリによらず読む）に、~/shared/ROOM.md への案内を入れる。
+    目印で囲んだ範囲だけを入れ替え、ほかの内容は変えない。"""
+    block = f"{POINTER_BEGIN}\n{POINTER_TEXT}\n{POINTER_END}\n"
+    # ここは標準入力から渡す sh -s なので、変数を使ってよい（wsl.exe の `sh -c` の二重解釈を受けない）
+    script = (
+        "set -e\n"
+        "f=\"$HOME/.claude/CLAUDE.md\"\n"
+        "mkdir -p \"$HOME/.claude\"\n"
+        "touch \"$f\"\n"
+        "sed -i '/^<!-- room-shared:begin/,/^<!-- room-shared:end -->/d' \"$f\"\n"
+        "if [ -s \"$f\" ] && [ -n \"$(tail -c1 \"$f\")\" ]; then echo >> \"$f\"; fi\n"
+        "cat >> \"$f\" <<'ROOM_POINTER_EOF'\n"
+        f"{block}"
+        "ROOM_POINTER_EOF\n"
+    )
+    rc, out, err = ctx.wsl.script(p.distro, script)
+    if rc != 0:
+        raise RoomError(f"部屋の ~/.claude/CLAUDE.md に案内を入れられなかった: {err.strip() or out.strip()}")
+
+
 def push_shared(ctx, p):
     """workbase の写しを、部屋の ~/shared に読み取り専用で送り、基準コミットを manifest に記録する。送ったら True。"""
     root = share_root(ctx)
@@ -573,6 +600,7 @@ def push_shared(ctx, p):
     rc, _o, err = ctx.wsl.push(p.distro, data, script)
     if rc != 0:
         raise RoomError(f"共有知の写しを送れなかった: {err.strip()}")
+    install_guide_pointer(ctx, p)
     man = load_manifest(p)
     man["shared"] = {"commit": commit, "dirty": dirty, "pushed": ctx.now(), "paths": [x for x in SHARE_PATHS if (root / x).exists()],
                      "tar_sha256": hashlib.sha256(data).hexdigest()}
