@@ -10,7 +10,7 @@ aliases:
   - external memory
   - 外部メモリ
 created: 2026-09-26
-updated: 2026-10-10
+updated: 2026-10-14
 ---
 
 # exmem
@@ -79,6 +79,8 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 - [[git-rebase-chronology]]: rebase の前にコミットの時系列を確認する
 - [[git-subdirectory-split]]: 履歴を保ってサブディレクトリを別リポジトリに切り出す（git filter-repo）
 - [[human-ai-decision-loop]]: 人間とAIの意思決定ループ（Decision Loop）
+- [[improvement-expectation-gap]]: 改善のやり方2: 想定と実際のズレを仮説にして修正する
+- [[improvement-quantified-options]]: 改善のやり方1: 現状を数値にして、改善幅ごとの選択肢を比べてから動く
 - [[keyboard-switches]]: キーボードのスイッチの好みとスタビラトル対策
 - [[layered-third-party-review]]: 仕組みの層別・第三者レビューの進め方
 - [[linux-distro-selection]]: 自宅PCのLinuxディストロ選定
@@ -91,13 +93,17 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 - [[para-operations]]: PARA の運用と、AI の質問・提案の指標
 - [[pc-setup-manuals]]: 環境セットアップ手順書（Win11 / Debian系）
 - [[power-automate-office-automation]]: Power Automate / Office Scriptsによる業務自動化
+- [[problem-solving-analogy]]: 問題解決のやり方1: 一般化して、類似問題の解き方を借りる
+- [[problem-solving-iterative-revision]]: 問題解決のやり方2: 前提を書き戻して、決定に差し戻す反復
 - [[reference-doc-types]]: 人が見る文書の3種類（手順書・理解ガイド・クイックリファレンス）の作り方
 - [[scoop-app-management]]: Windows のアプリを scoop で管理し、管理外を最小にする
 - [[session-handoff]]: スレッド（セッション）を切り替える作法
+- [[session-goal-modes]]: セッションの進め方: ゴールを決める工程と達成する工程の分離（start のモードの根拠）
 - [[shell-command-usecases]]: ターミナルのコマンド利用傾向とヒストリの種
 - [[shell-fzf-keybindings]]: シェルの fzf とキー割り当て（pwsh / zsh / bash）
 - [[shell-script-testing-wsl]]: WSL でシェルスクリプトを試験する
 - [[terminal-cursor-blink]]: ターミナルのカーソル点滅を止める（DECSCUSR）
+- [[user-manual]]: ユーザー（ee）の取扱説明書: 口癖から読む思考・行動パターン
 - [[vscode-workspace]]: VS Codeの拡張機能とWorkspace運用
 - [[windows-cli-pitfalls]]: Windows の PowerShell・バッチ・git 操作の落とし穴
 - [[workflow-kit]]: 作業ログとナレッジ化フックの共通機能（workflow-kit）
