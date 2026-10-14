@@ -17,7 +17,7 @@ updated: 2026-10-08
 sources:
   - Claude Code conversation "Claude Code のセッション履歴の復元" (2026-10-07。「履歴の移行と再開」)
   - Claude (Claude Code via Zed ACP) conversation "Claudeチャット履歴の保存場所" (2026-10-01)
-  - "C:\\Users\\<user>\\.claude\\projects（2026-10-01 に確認）"
+  - "$HOME\\.claude\\projects（2026-10-01 に確認）"
   - Claude Code conversation "Vault のトップの rename と certs の移動" (2026-10-06。履歴コピーと `--resume` の結果)
 ---
 
@@ -38,7 +38,7 @@ Claude Code（ZedのACP経由を含む）のチャット履歴とメモリがど
 | プロジェクトごとの許可設定 | `<プロジェクト>\.claude\settings.local.json` |
 
 - `<プロジェクト名>` は、プロジェクトの絶対パスの英数字以外（`:` `\` `.` など）を `-` に置き換えたもの。
-  - `C:\Users\<user>\vault\github.com\yuzucha16\notes` → `C--Users-<user>-vault-github-com-yuzucha16-notes`（確認済み）
+  - `C:\Users\<ユーザー名>\vault\github.com\yuzucha16\notes` → `C--Users-<ユーザー名>-vault-github-com-yuzucha16-notes`（確認済み）
   - `C:\vault\repos\github.com\yuzucha16\areas_shared` → `C--vault-repos-github-com-yuzucha16-areas-shared`（`_` も `-` になる。確認済み）
 - ジャンクション経由のパスは、実体のパスに解決されてから名前になる可能性がある（仮説）。exmemの場合、`C--vault-notes-areas-shared-exmem` と `C--vault-repos-github-com-yuzucha16-areas-shared-exmem` のどちらになるかは未確認のため、2026-10-01 に両方へ履歴とメモリをコピーした。
 - 1チャット = 1ファイル。隠しファイルではない。
@@ -59,7 +59,7 @@ Claude Code（ZedのACP経由を含む）のチャット履歴とメモリがど
 - 旧パスが本文に残ったまま再開できた場合の実害は、モデルが旧パスを現在のパスと取り違えて、旧ディレクトリを作り直すこと（仮説）。
 - 旧パスのディレクトリを残して（または作り直して）、そこを cwd にすれば旧キーの履歴は再開できる（仮説。未試験）。旧 clone のディレクトリを削除すると、その cwd での再開ができなくなる。
 
-2026-10-01 に、作業拠点を `C:\Users\<user>\vault\notes` から `C:\vault\notes\areas_shared\exmem` へ移すときにこの方法を使った（`C--Users-<user>-vault-notes` → `C--vault-notes-areas-shared-exmem`）。コピーした履歴が新しい場所で表示されるかは、未確認のまま（上の 2026-10-06 の結果から、再開は通らない可能性が高い。仮説）。
+2026-10-01 に、作業拠点を `C:\Users\<ユーザー名>\vault\notes` から `C:\vault\notes\areas_shared\exmem` へ移すときにこの方法を使った（`C--Users-<ユーザー名>-vault-notes` → `C--vault-notes-areas-shared-exmem`）。コピーした履歴が新しい場所で表示されるかは、未確認のまま（上の 2026-10-06 の結果から、再開は通らない可能性が高い。仮説）。
 
 Claude Codeを起動して `projects\` に別の名前のフォルダができた場合は、プロジェクト名の仮説が外れている。そのフォルダへ `.jsonl` と `memory\` をコピーし直す。
 
