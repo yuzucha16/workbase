@@ -11,7 +11,7 @@ aliases:
   - settings.local.json
   - Claude Codeのプロジェクト設定
 created: 2026-10-02
-updated: 2026-10-05
+updated: 2026-10-14
 sources:
   - Claude Code conversation "inbox整理と.claude/の扱い" (2026-10-02)
   - "exmem/.claude/ の中身（2026-10-02 に確認）"
@@ -81,3 +81,4 @@ sources:
 - [[claude-code-storage]]
 - [[ai-development-workflow]]
 - [[zed-acp]]
+- [[claude-code-external-plugins]]

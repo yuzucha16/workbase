@@ -13,7 +13,7 @@ aliases:
   - AI スコープの分離
   - 許可リスト方式の隔離
 created: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-14
 sources:
   - Claude Code conversation "AI に見せる領域の分離設計" (2026-10-13)
 ---
@@ -75,3 +75,4 @@ sources:
 - [[ai-development-workflow]]
 - [[claude-code-permissions]]
 - [[git-rebase-chronology]]
+- [[ai-tool-deliverable-structure]]

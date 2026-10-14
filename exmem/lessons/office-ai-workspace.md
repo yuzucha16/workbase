@@ -14,7 +14,7 @@ aliases:
   - xlsx/pptxのAI作業設計
   - Master/view分離
 created: 2026-10-02
-updated: 2026-10-08
+updated: 2026-10-14
 sources:
   - Claude conversation "Office成果物(xlsx/pptx)をAIで作る作業環境とデータ配置の設計" (2026-10-02)
   - Claude conversation "バイナリ成果物の作り方" (2026-10-07。「繰り返す成果物の手順と分担」)
@@ -165,3 +165,5 @@ xlsx / pptx など、バイナリの成果物を繰り返し AI で作るとき�
 - [[power-automate-office-automation]]
 - [[ai-handson-framework]]
 - [[obsidian-vault]]
+- [[ai-tool-deliverable-structure]]
+- [[excel-vba-ai-development]]

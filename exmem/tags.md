@@ -7,7 +7,7 @@ tags:
 aliases:
   - Tags
 created: 2026-09-26
-updated: 2026-10-10
+updated: 2026-10-14
 ---
 
 # タグ一覧
@@ -97,3 +97,5 @@ updated: 2026-10-10
 | `tls` | TLS・証明書・SSLインスペクション |
 | `security` | 顧客データ・機密・鍵を AI やツールに見せない境界の設計・運用 |
 | `markdown` | Markdown の記法 |
+| `plugins` | Claude Code などのプラグイン・マーケットプレイスの導入と管理 |
+| `skills` | AI エージェントのスキル（`SKILL.md`）の利用・取り込み |
