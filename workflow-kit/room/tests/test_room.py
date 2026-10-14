@@ -230,6 +230,33 @@ class StartTest(unittest.TestCase):
             room.cmd_start(c, self.args())
             self.assertEqual(seen, {"exists": True, "readonly": True})
 
+    def test_start_snapshots_area_readme_readonly_during_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            seen = {}
+
+            def during():
+                f = v / "projects/proj-a/ai/ctx/area-README.md"
+                seen["exists"] = f.exists()
+                seen["same"] = f.read_text(encoding="utf-8") == (v / "areas/area-x/README.md").read_text(encoding="utf-8")
+                seen["readonly"] = not os.stat(f).st_mode & stat.S_IWRITE
+            wsl.on_interactive = during
+            room.cmd_start(c, self.args())
+            self.assertEqual(seen, {"exists": True, "same": True, "readonly": True})
+            self.assertFalse((v / "projects/proj-a/ai/ctx").exists(), "ctx は消える")
+            self.assertFalse(any("Area の README が大きい" in m for m in c.msgs))
+
+    def test_start_warns_when_area_readme_is_large(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            readme = v / "areas/area-x/README.md"
+            readme.write_text(readme.read_text(encoding="utf-8") + "x" * (room.AREA_README_WARN_BYTES + 1) + "\n",
+                              encoding="utf-8")
+            room.cmd_start(c, self.args())
+            self.assertTrue(any("Area の README が大きい" in m for m in c.msgs))
+
     def test_start_restores_write_permission_of_all_in_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()

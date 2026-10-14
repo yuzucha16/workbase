@@ -68,6 +68,7 @@
 | `init-workspace.md` | init の導入項目 5（ワークスペースの生成）の作り方。項目 5 のときだけ読む |
 | `init-restore.md` | init の導入項目 4（履歴からの復元）の作り方。項目 4 のときだけ読む |
 | `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、ひな形の作成、Area の一覧の更新。Project の構造 |
+| `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 構成、文書、テスト、変更の依頼、立ち上げ・完了のチェック。`type: dev` の `open` / `start` のときだけ読む |
 | `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
 | `close-hook.md` | `close`（Project の終了）の手順: 完了条件の確認、暫定の見直し、`archives/` への移動 |
 | `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `topics/kit-growth/docs/decisions.md`） |

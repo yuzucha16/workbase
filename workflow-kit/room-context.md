@@ -14,8 +14,8 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 
 ## 部屋の中の読み替え
 
-- 起動する場所は `/mnt/room/<名>`（Project の `ai/`）に固定される。開始時に読むのは `~/shared/ROOM.md` → `ai/ctx/README.md`（窓口の写し）→ `ai/docs/log.md`。
-- 手順書の `docs/` は、部屋では `ai/docs/`（Project の記録）。Project の `README.md` は書き込めない。写し（`ai/ctx/README.md`）を読む。
+- 起動する場所は `/mnt/room/<名>`（Project の `ai/`）に固定される。開始時に読むのは `~/shared/ROOM.md` → `ai/ctx/README.md`（Project の窓口の写し）→ `ai/ctx/area-README.md`（所属する Area の README の写し。Area の共通ルール）→ `ai/docs/log.md`。
+- 手順書の `docs/` は、部屋では `ai/docs/`（Project の記録）。Project と Area の `README.md` は書き込めない。写し（`ai/ctx/README.md`、`ai/ctx/area-README.md`）を読む。
 - 手順書は `~/shared/workflow-kit/` にある（読み取り専用の写し。基準コミットは `~/shared/ROOM.md`）。
 - 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、コミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する。
 
