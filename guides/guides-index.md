@@ -40,6 +40,12 @@ updated: 2026-10-12
 | WSL に AI 作業部屋を作り、Project の `ai/` だけを渡して Claude Code で作業する | [[ai-room-setup]] | 手順書 |
 | 部屋で作業した Project を閉じて、`archives/` に移す | [[ai-room-setup#7. Project を閉じる]] | 手順書 |
 
+### AI にコミット・push を任せる
+
+| やりたいこと・場面 | 見る文書 | 種類 |
+|---|---|---|
+| 安全規則（`git add -A`、push の許可リストなど）を、なぜ作り、どこで破られ、どう直したかを、自分で説明できるようにする | [[agent-safety-rules]] | 理解ガイド |
+
 ### エラー・困りごとを切り分ける
 
 | やりたいこと・場面 | 見る文書 | 種類 |
@@ -64,7 +70,7 @@ updated: 2026-10-12
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
 | 手順書（`howto/`） | どの順で何をやるんだっけ | [[win11]]、[[debian-family]]、[[fonts-setup]]、[[ai-room-setup]] |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[agent-safety-rules]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新
