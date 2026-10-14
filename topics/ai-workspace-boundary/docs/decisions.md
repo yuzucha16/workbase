@@ -21,3 +21,32 @@
 
 実測から決まった事項（上の「1」の実測結果の「設計に足すこと」）も、同じく確定: AI は一般ユーザーで動かす、Zed は WSL リモート接続でだけ使う、`~$*` は無視する、大量の一時ファイルは `~/tmp/`、`rg` はパスを明示する、AI が書くスクリプトに標準ライブラリと同名を付けない。
 
+
+## 2026-10-15 type: dev の成果物の置き場と、Area の共通ルールの届け方（ユーザーが1つずつ承認）
+
+他環境（`projects/` の下に Area と Project を重ねていた旧 kit）の AI 開発環境プレイブックを、この環境の `areas/` `projects/` の分離に当てはめた。知識の本体は `exmem/lessons/ai-tool-deliverable-structure.md`（共通部）と `excel-vba-ai-development.md`（VBA 固有）。
+
+### 【汎用】成果物は `ai/out/<成果物名>/` に一式で置く（2026-10-15）
+- 決めたこと: README、`src/`、`docs/`、`tests/`、`tools/` を `ai/out/<成果物名>/` にまとめる。`ai/docs/` は作業の記録だけ。参考資料は `ai/in/`、中間成果物は `ai/work/`、元データは `_noai/raw/`。1 Project = 1 成果物（`open-hook.md` の判断基準）。
+- 根拠: 自己完結で配布の単位になり、`room restore`（`ai/out/` の置換）がそのまま掛かる。`out/` 直下の `close.md` や `stock/` と混ざらない。
+- 却下案: `ai/work/` を正本、`ai/out/` を派生物にする（コピーの工程が増え、手数が重い）。
+- → lessons/ai-tool-deliverable-structure
+
+### 【汎用】検証を2層に分け、実環境の結果は人が実データの語を伏せて AI に渡す（2026-10-15）
+- 決めたこと: 部屋の中で完結する検証は AI、実環境が要る検証は人が Windows で実行する。実行結果を AI に渡すときは、人が実データの語を伏せる（規約）。
+- 根拠: 部屋は `interop` と C: のマウントを無効にするので、AI は Excel などを動かせない。規約は手数が増えず、すぐ運用できる。
+- 却下案: `room` に結果の受け取り口（マスクして `ai/in/` へ）を作る（実装が要る。Next Actions に残した）。部屋の `interop` を有効にする（境界が破れる）。
+- → lessons/ai-tool-deliverable-structure
+
+### 【この件】Area の共通ルールは Area の README に書き、`room start` が `ai/ctx/area-README.md` に写す（2026-10-15）
+- 決めたこと: Project を跨ぐ約束（旧プレイブックの親フォルダの共通ルール）は、Area の README に置く。`room start` が Area の README を読み取り専用で `ai/ctx/area-README.md` に写し、AI が開始時に読む。16 KiB を超えたら `start` が警告する（止めない）。
+- 根拠: 既存のパス（`ai/ctx/`）を使え、`room` の変更が小さい。`ai/ctx/` は追跡せず、`start` の終了ごとに消えるので蓄積しない。Area は境界の単位なので、同じ Area の Project 名しか写らない。
+- 却下案: Project の README に写す（Area 側と二重になり古くなる）。Project の `ai/docs/decisions.md` に持つ（Area に1つのルールを複数の Project が重複して持つ）。
+
+### 【この件】kit に `type: dev` の成果物の手順を足す（2026-10-15）
+- 決めたこと: `open-hook.md` の Project の構造（`type: dev` の行）に、部屋の Project では成果物を `ai/out/<成果物名>/` に置くと追記した。作り方は新しい `dev-deliverable-guide.md`（`type: dev` の `open` / `start` のときだけ読む短い手順。理由は lessons へのリンクだけ）。コミット `b6c3199`。
+- 根拠: kit は手順書を薄くする方針。`type: dev` のときだけ読むなら、他の作業の読み込みが増えない。
+- 却下案: 未検討（提案をそのまま承認）。
+
+### Facts
+- `room` の単体テストは51件。`SharedPermissionTest` の2件（`test_snippet_creates_file_when_missing`、`test_snippet_merges_keeps_existing_and_is_idempotent`）が失敗する。今回の変更の前から同じ（確認: 2026-10-15、根拠: 変更を外して実行し、同じ2件が失敗）。原因は未調査。

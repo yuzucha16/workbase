@@ -26,6 +26,10 @@
 
 ## 残りの確認・保留
 
+- `room start` が `ai/ctx/area-README.md` を写して、部屋の AI が開始時に読めるか（実機。単体テストのみ）。Area の README の書き方（共通ルールの節）の指針は未整備。
+- `type: dev` の Project を1つ、`dev-deliverable-guide.md` どおりに `open` から1巡して、手順の過不足を測る。
+- 実環境の結果を AI に渡す受け取り口（人が置いた結果を `room` がマスクして `ai/in/` へ）を作るか。当面は、人が語を伏せる規約。
+- `room` の単体テストの `SharedPermissionTest` 2件が失敗する（元から。原因は未調査）。
 - `room restore` が `ai/out/<成果物>/` のサブディレクトリを復元できるか、`mapping.json` が無い・版が食い違うときに止まるか（実機）。
 - 文書2本（`guides/explain/ai-room-why.md`、`guides/howto/ai-room-setup.md`）のレビュー（「草稿（未レビュー）」の注記を外す）。
 - 後回し: `areas/dev-env/certs` の移し替え、対応表の保護、Obsidian の AI プラグイン、Codex・Copilot の設定、小さいファイルが多い処理の遅さ（規則で対処済み）。
