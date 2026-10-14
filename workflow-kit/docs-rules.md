@@ -6,7 +6,8 @@
 
 | ファイル | 役割 |
 |---|---|
-| `docs/log.md` | 現在の状態と次にやること。作業を再開するときの入口 |
+| `docs/log.md` | 現在の状態と次にやること。作業を再開するときの入口（短く保つ。4KB 目安。上書きで更新する） |
+| `docs/log-history.md` | 経緯（日付つきの Log）と、過去の Next Actions の全文。開始時に読まない。必要なとき検索する |
 | `docs/decisions.md` | 判断の根拠（Why）、却下案、Gotchas、実機で確認した事実 |
 | `README.md`（あれば） | 構成と使い方（How）の正本 |
 
@@ -16,14 +17,14 @@
 
 ## 読む順番
 
-1. `docs/log.md`
+1. `docs/log.md`（開始時に読むのはこれだけ）
 2. `README.md`（あれば）
-3. `docs/decisions.md`
+3. `docs/decisions.md` と `docs/log-history.md` は開始時に読まない。何かを決める・変える前に `decisions.md` を検索して、既存の決定と矛盾しないか確かめる。経緯が要るときは `log-history.md` を検索する
 
 ## 更新のタイミング
 
 - 作業の終わりの処理（更新、昇格の案、コミット）は、「終了処理して」フック（`wrap-hook.md`）が順序を固定して行う。
-- 作業の終わりに、`log.md` の Next Actions を更新し、Log に日付つきで追記する。
+- 作業の終わりに、`log.md` の現在状態（Next Actions、Open Questions）を更新し、`log-history.md` の `## Log` の先頭に日付つきで追記する。
 - 判断（決めたこと・根拠・却下案）、遭遇した詰まり、実機で確認した事実は、その場で `decisions.md` に書く。
 - 「ナレッジ化して」の前に `docs/` が未更新なら、先に更新する。
 
@@ -32,21 +33,19 @@
 ```markdown
 # 作業ログ（log）
 
-<このディレクトリの現在状態と次にやること。判断の根拠は docs/decisions.md。>
+<このディレクトリの現在状態と次にやること。経緯は docs/log-history.md、判断の根拠は docs/decisions.md。>
 
 ## Next Actions
 ## Open Questions
-## Log
-
-### YYYY-MM-DD
-
-- <1項目で完結する記述>
 ```
+
+`log-history.md` の書式: `# 作業ログの経緯（log-history）`、`## Log`、日付の見出し `### YYYY-MM-DD`、1項目で完結する記述。過去の Next Actions の全文も、ここに残す。
 
 - Log は日付の降順。新しい日付の見出しを上に足す。
 - **1項目は単体で読めるようにする**: 何を・なぜ・結果（確認したか）を書く。判断を伴うなら `decisions.md` の項目名を添える。コミットや関連ファイルがあれば添える。日報・週報・仕様書などの入力に使うため、「あれ」「さっきの」のような会話依存の表現を避ける。
-- Next Actions は、終わったら消す。経緯は Log に残る。
-- Open Questions は、決まったら Log に移して消す。
+- Next Actions は、終わったら `log.md` から消す。経緯は `log-history.md` の Log に残る。
+- Open Questions は、決まったら `log-history.md` の Log に移して `log.md` から消す。
+- `log.md` が 4KB を超えたら、古い状態を `log-history.md` へ移して縮める。
 
 ## decisions.md の書式
 
