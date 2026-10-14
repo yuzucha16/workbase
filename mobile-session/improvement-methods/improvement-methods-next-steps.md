@@ -8,7 +8,7 @@
 - [ ] 作業側の `events` の定義に `goal_change` を足す（下の「2」）
 - [ ] `start` のモードを、次の2〜3セッションで試す（下の「3」）
 - [ ] 推測の項目をユーザーに確認する（下の「4」）
-- [ ] inbox の6本を lessons へ統合する（下の「5」）
+- [x] inbox の6本を lessons へ統合する（下の「5」。2026-10-14、フラットに6ファイル。取扱説明書は `user-manual`、A/B とモードは `session-goal-modes`）
 - [ ] 反映が終わったら、`mobile-session/improvement-methods/` を削除し、`mobile-session-index.md` の行を消す
 
 ## 1. kit の点検
