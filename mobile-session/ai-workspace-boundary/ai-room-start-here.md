@@ -32,6 +32,8 @@
 
 - WSL のディストリビューション: `Ubuntu-24.04`（普段使い。**触らない**）、`ai-room-test`（検証のサンプル。`wsl --unregister` で消せる）、`room-<Area>`（Area 用の部屋。1つ作成済みで、Claude Code はログイン済み）。
 - Vault（`$HOME\works`、リモートなしのローカル git）: 試験で完了させた Project が `archives/` にある。`projects/_spike-room/` は、検証用のダミー（`.git/info/exclude` で git から除外）。ワークスペースの `.gitignore` に、`**/_noai/`、`~$*`、`!**/ai/out/`、`**/ai/ctx/` を入れてある。
+- 確認用のダミー Project `dummy-mask`（Vault の `projects/`。架空データ。`resources/workflow-kit/room/tests/dummy_fixture.py` で `_noai/` を作り直せる）。部屋には、PowerShell の `room-sh <Area>`（dotfiles の `profile.ps1`）で入る。Windows Terminal は、部屋を出さない設定にした（WSL の動的プロファイルを無効にして、`Ubuntu-24.04` だけ固定。dotfiles の `windows/terminal/settings.json`）。
+- 2026-10-14 の PC のセッションで、マスク・復元（ダミー）、共有知の送付、`stock`（ダミー）の実機の確認が済んだ。各 handover の「PC での確認の結果」を読む。残りと保留は [[ai-room-next-steps]] の TODO。
 - Python は uv で 3.13.14 に固定している（`workflow-kit/room/`）。Windows に uv が入っている。
 - 検証の結果、**設計に影響したこと**は [[ai-room-next-steps]] の「1」にある。特に: 部屋の root は C: をマウントできる（AI は一般ユーザーで動かす）、WSL への標準入力は LF 固定（CRLF だとマウントが積み重なる）、個人のグローバル ignore の `out/` が `ai/out/` を無視する、Zed は WSL リモートで開いたときだけ境界が効く。
 

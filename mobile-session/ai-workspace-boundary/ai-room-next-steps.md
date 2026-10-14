@@ -12,14 +12,22 @@
 - [x] 検討の結果を `exmem/lessons/` に残す（`exmem/lessons/ai-isolated-work-room.md`。2026-10-13）
 - [x] `room` の v0（`open` / `start` / `close` / `umount`）を作る（下の「3」）。コミット済み（`7a9e7bc`）
 - [x] (R1) マスク・復元を実装する（2026-10-13、モバイルのセッション。単体テストまで）。**この PC で単体テスト45件が通った**（2026-10-14）
-- [ ] (R1) マスク・復元の PC での確認: Excel で開く、ピボット、複数 run、実機の通し、cp932、候補の警告（[[ai-room-mask-handover]]）
+- [x] (R1) マスク・復元の PC での確認 1〜4・6（ダミー。Excel で開く、ピボット、複数 run、cp932）。2026-10-14（[[ai-room-mask-handover]]）
+- [ ] (R1) 残り: 5 `room start` の通し（マスク → AI → 復元）、7 実データでの候補の警告量
 - [x] (R2) 共有知の写しを部屋へ入れる実装（方式 A。単体テストまで）
-- [ ] (R2) 実際の部屋で確認する（[[ai-room-shared-push-handover]]）
+- [x] (R2) 実際の部屋で確認 1〜4（送付、読み取り専用、manifest、`~/.claude/CLAUDE.md` の案内の実装）。2026-10-14。不具合 1 件を修正（`wsl.exe` の二重解釈）（[[ai-room-shared-push-handover]]）
+- [ ] (R2) 残り: 5 の実行の完遂（AI が `wrap` を最後まで通せるか、`pwsh` 製の道具が動かない場合）。`~/shared` の読み取り許可は当面手動（恒久対策の案は handover に）
 - [x] (R3) フックの整理: 文書、`room readme`、`hooks.md` の運用コマンドの節（[[ai-room-hook-taxonomy]]）。雛形（`gitignore.template`、Vault 側の deny、`AGENTS.md`）と `init-workspace.md` も反映済み（2026-10-13。実機で未検証）
 - [ ] (R3) `room init`（部屋の作成の自動化）と、`open` から `close` までの1巡の確認
 - [x] (R4) `room stock`（下書きの回収）の実装、`integrate-hook.md` の対応（単体テストまで）
-- [ ] (R4) 実際の部屋で確認する（[[ai-room-stock-handover]]。`pwsh` の `check-inbox.ps1` の確認を含む）
-- [ ] (R5) 部屋の運用: `room init`、reap（会話履歴を記録に写して消す）、会話履歴のバックアップ、対応表のバックアップ方針の決定（[[ai-room-ops-handover]]）
+- [x] (R4) `room stock` の実機の確認（ダミーの下書き 4 件。運搬、`base_stale`、拒否 2 種、`check-inbox.ps1`）。2026-10-14（[[ai-room-stock-handover]]）
+- [ ] (R4) 残り: 部屋の AI が実際に下書きを書き、`room stock` で運ぶ通し
+- [ ] (R5) 部屋の運用（別セッションのディレクトリ構造の議論と合流してから進める。2026-10-14 にユーザーが保留）。決定済み（2026-10-14）: 対応表のバックアップ = `room close` で `archives/` へ移る `_noai/` ごと、Windows 側のバックアップに任せる（`_noai/` は追跡外なので、PC のバックアップ機能に依存する）。会話履歴 = 写さず、期限（close から 14 日）で消すだけ（復元は `exmem` や `docs/` でする）。案の順: 5-a `room init`（使い捨ての部屋で実装・確認。ログインは人）→ 5-b reap（消すだけ）→ 5-d `room intake`（人が置いた実環境の結果をマスクして `ai/in/` へ）。詳細は [[ai-room-ops-handover]]
+- [ ] (R5) `room restore` が、`ai/out/<成果物>/` のサブディレクトリを復元できるか、`mapping.json` が無い・版が食い違うときに止まるかを、実機で確認する（2026-10-14 時点で未確認）
+- [x] 決定の項目のラベルを【汎用】【案件】【この件】の 3 種類にそろえる（2026-10-14。`docs-rules.md` に【案件】を足した）
+- [ ] `~/shared` の許可の確認が毎回出る件の恒久対策（`room start` が部屋の `~/.claude/settings.json` に `~/shared` だけの読み取り許可を足す案。キーの形は Claude Code のドキュメントで確認）
+- [ ] マウントが別の `wsl.exe` セッションから見えない件（`room_mounts` の検査が別セッションから働くか、Zed の WSL リモートから `ai/` が見えるか）
+- [ ] 単体テスト `test_push_records_base_commit_and_sends_tar` が間欠的に落ちる（gzip ヘッダーの時刻。`GzipFile(mtime=0)` で直る見込み。承認待ち）
 - [x] (R6) Area の切り方の指針（`ai-room-why.md` に判断表を追加。2026-10-13）
 - [ ] (R7) 雛形の実機確認（Vault 側の deny の書式 `Read(./projects/**)` が Windows ネイティブで効くか）
 - [ ] (R8) 顧客データのある実 Project で `open` から `close` まで1巡する（手数、マスク漏れ、復元の失敗、再現性）
