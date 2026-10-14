@@ -128,7 +128,7 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 
 - 作業の置き場は、固定の絶対パスではなく、ホーム基準（`%USERPROFILE%` / `$HOME`）にする。理由: 置き場を1つしか持たないなら、固定の親ディレクトリは要らず、ユーザー名を含むパスを文書やスクリプトに直書きせずに済む。
 - OS ごとに置き場の名前と並びをそろえる（`works/`、その下に `repos/`）。理由: 手順書とスクリプトの分岐が減り、どの OS でも同じ言い方で説明できる。
-- Windows のパスを WSL に渡すときは、パスを組み立てずに、環境変数を `WSLENV` の `/p` 付きで渡す（上の「rename と旧名の扱い」の Principles と同じ。理由: WSL のユーザー名は Windows と違うことがある。この PC は Windows `ck`、WSL `yy` で、実際に違った）。
+- Windows のパスを WSL に渡すときは、パスを組み立てずに、環境変数を `WSLENV` の `/p` 付きで渡す（上の「rename と旧名の扱い」の Principles と同じ。理由: WSL のユーザー名は Windows と違うことがある。この PC は Windows と WSL で実際に違った）。
 
 **Decisions**（すべて 2026-10-06）
 
@@ -139,9 +139,9 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 **Facts**
 
 - dotfiles の Linux 側の試験（`tests/linux/test_scripts.sh`）は、変更後に 51/51 合格した（確認: 2026-10-06、根拠: WSL で試験スクリプトを実行した結果。統合時にも再実行して 51/51）。
-- `WORKS_DIR` を `WSLENV` の `WORKS_DIR/p` で WSL に渡す実装は、一時ディレクトリと偽の HOME の試験でだけ確認していた。**実機では渡っていなかった**（確認: 2026-10-06、根拠: Windows 側で `WORKS_DIR=C:\Users\ck\works`、`WSLENV=CERTS_DIR/p;WORKS_DIR/p` を確認したうえで、`wsl -e bash -c 'printenv WORKS_DIR CERTS_DIR'` が何も出さず rc=1。WSL 側の `WSLENV` は同じ値で見えている。原因は未特定。エージェントのツール経由で起動した PowerShell からの確認で、ユーザーの通常のターミナルでは未確認）。
-- 渡らないときの `~/.profile` の既定値 `/mnt/c/Users/$USER/works` は外れる（確認: 2026-10-06、根拠: Ubuntu-24.04 のログインシェルが `WORKS_DIR=/mnt/c/Users/yy/works` を返した。Windows のユーザーは `ck`）。
-- この PC の WSL（Ubuntu-24.04）は、未移行（確認: 2026-10-06、根拠: `~/works` は無く、`GHQ_ROOT=/home/yy/vault/repos`。`~/.profile` などは旧 `/mnt/c/vault/repos/…/dotfiles/home/` へのシンボリックリンク。`C:\vault` を残しているので、リンクは切れていない）。
+- `WORKS_DIR` を `WSLENV` の `WORKS_DIR/p` で WSL に渡す実装は、一時ディレクトリと偽の HOME の試験でだけ確認していた。**実機では渡っていなかった**（確認: 2026-10-06、根拠: Windows 側で `WORKS_DIR=C:\Users\<Windows のユーザー名>\works`、`WSLENV=CERTS_DIR/p;WORKS_DIR/p` を確認したうえで、`wsl -e bash -c 'printenv WORKS_DIR CERTS_DIR'` が何も出さず rc=1。WSL 側の `WSLENV` は同じ値で見えている。原因は未特定。エージェントのツール経由で起動した PowerShell からの確認で、ユーザーの通常のターミナルでは未確認）。
+- 渡らないときの `~/.profile` の既定値 `/mnt/c/Users/$USER/works` は外れる（確認: 2026-10-06、根拠: Ubuntu-24.04 のログインシェルが `WORKS_DIR=/mnt/c/Users/<WSL のユーザー名>/works` を返した。Windows のユーザー名とは違う）。
+- この PC の WSL（Ubuntu-24.04）は、未移行（確認: 2026-10-06、根拠: `~/works` は無く、`GHQ_ROOT=/home/<WSL のユーザー名>/vault/repos`。`~/.profile` などは旧 `/mnt/c/vault/repos/…/dotfiles/home/` へのシンボリックリンク。`C:\vault` を残しているので、リンクは切れていない）。
 
 **Gotchas**
 
@@ -392,7 +392,7 @@ Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3
 
 ### Vaultを移したあと、古い場所を編集していた
 
-- 状況: 2026-10-01 にナレッジベースを `C:\Users\ck\vault\notes` 配下から `C:\vault\notes\areas_shared\exmem` へ移したが、AIエージェントは古い場所を作業ディレクトリとして開いたまま編集を続けた。
+- 状況: 2026-10-01 にナレッジベースを `C:\Users\<ユーザー名>\vault\notes` 配下から `C:\vault\notes\areas_shared\exmem` へ移したが、AIエージェントは古い場所を作業ディレクトリとして開いたまま編集を続けた。
 - 解決: 変更を exmem へ移し、古い場所は削除した。エージェントは `C:\vault\notes\areas_shared\exmem` を作業ディレクトリとして起動した（2026-10-02 の構造見直しで `C:\vault\notes\resources\exmem` に変わる）。
 
 ## Proposals
