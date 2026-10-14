@@ -2,6 +2,14 @@
 
 旧 `ai-room-next-steps.md` の実測の結果・手作業の巡回・実装の状況と、旧 TODO 全文（2026-10-15 時点）。現在状態は `log.md`、決定は `decisions.md`。
 
+## Log
+
+### 2026-10-15
+- 他環境（旧 kit で `projects/` の下に Area と Project を重ねていた PC）の AI 開発環境プレイブック（画像）を、この環境の `areas/` `projects/` に当てはめた。固有名と作業固有の仕組みは省き、共通部と Excel VBA 固有部を `exmem/lessons/` の2ノートにした（コミット `e051cc1`、判読残件の反映は `91fb76b`）。決定は `decisions.md` の 2026-10-15。
+- 当てはめで見つかった穴を塞いだ。(1) 部屋の AI から Area の共通ルールが見えない → `room start` が Area の README を `ai/ctx/area-README.md` に写す。(2) `type: dev` の `src/` `tests/` `tools/` の置き場 → `ai/out/<成果物名>/`、`open-hook.md` と `dev-deliverable-guide.md`。コミット `b6c3199`。
+- 確認: `room` の単体テストは51件で、新しい2件は通る。元からの失敗2件（`SharedPermissionTest`）は残る。実際の WSL での通しは未実施。
+- 遠回り: 少し（画像で渡された他環境の文書の読み取りに手間取った）。
+
 ## 0. 反映の方針を決める（ユーザーに確認）
 
 - 検討の結果を、どこに残すか。案: 決定と理由は `exmem/lessons/` の新しいノート（例: `ai-workspace-boundary.md`）、手順は `workflow-kit/`（新しいフック）、ワークスペースの規約は雛形（`workflow-kit/templates/workspace/`）。ノートの形式は `exmem/AGENTS.md` に従う。
