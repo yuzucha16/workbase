@@ -38,6 +38,8 @@ class FakeWsl:
         self.scripts = []
         self.interactive_calls = []
         self.pushes = []
+        self.keepalives = []
+        self.keep_procs = []
         self.on_interactive = None  # AI が行う作業の代わり
 
     def distros(self):
@@ -53,6 +55,18 @@ class FakeWsl:
         if text.startswith("grep ' /mnt/room/' /proc/mounts") and self.mounted:
             return 0, "C:\\x /mnt/room/p 9p rw 0 0\n", ""
         return 0, "", ""
+
+    def keepalive(self, distro):
+        self.keepalives.append(distro)
+
+        class K:
+            terminated = False
+
+            def terminate(self):
+                self.terminated = True
+        k = K()
+        self.keep_procs.append(k)
+        return k
 
     def push(self, distro, data, script):
         self.pushes.append((distro, data, script))
@@ -521,6 +535,54 @@ class StockTest(unittest.TestCase):
             room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
             room.cmd_stock(c, self.ns())
             self.assertEqual(list((r / "exmem/inbox").glob("*.md")), [])
+
+
+class SharedPermissionTest(unittest.TestCase):
+    def test_snippet_merges_keeps_existing_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+            (home / ".claude").mkdir()
+            (home / ".claude/settings.json").write_text(
+                json.dumps({"model": "x", "permissions": {"allow": ["Bash(ls)"], "deny": ["Read(~/.ssh/**)"]}}), encoding="utf-8")
+            env = dict(os.environ, HOME=str(home))
+            for _ in range(2):
+                subprocess.run([sys.executable, "-c", room.SHARED_RULE_PY], env=env, check=True)
+            d = json.loads((home / ".claude/settings.json").read_text(encoding="utf-8"))
+            self.assertEqual(d["model"], "x")
+            self.assertEqual(d["permissions"]["deny"], ["Read(~/.ssh/**)"])
+            self.assertEqual(d["permissions"]["allow"], ["Bash(ls)", "Read(~/shared/**)"])
+
+    def test_snippet_creates_file_when_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            env = dict(os.environ, HOME=tmp)
+            subprocess.run([sys.executable, "-c", room.SHARED_RULE_PY], env=env, check=True)
+            d = json.loads((Path(tmp) / ".claude/settings.json").read_text(encoding="utf-8"))
+            self.assertEqual(d["permissions"]["allow"], ["Read(~/shared/**)"])
+
+    def test_start_installs_permission_with_shared(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            (v / "resources/workflow-kit").mkdir(parents=True)
+            (v / "resources/workflow-kit/hooks.md").write_text("h\n", encoding="utf-8")
+            room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=False))
+            self.assertTrue(any("ROOM_PERM_EOF" in s[1] and s[2] is False for s in wsl.scripts))
+
+
+class KeepaliveTest(unittest.TestCase):
+    def test_no_launch_keeps_room_alive_and_stops_it(self):
+        import builtins
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            orig = builtins.input
+            builtins.input = lambda *a, **k: ""
+            try:
+                room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=True, adopt=False, commit=False, yes=False))
+            finally:
+                builtins.input = orig
+            self.assertEqual(wsl.keepalives, ["room-area-x"])
+            self.assertTrue(wsl.keep_procs[0].terminated)
 
 
 class CloseTest(unittest.TestCase):

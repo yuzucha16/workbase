@@ -57,6 +57,11 @@ class Wsl:
         r = subprocess.run(cmd, input=data, capture_output=True)
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
+    def keepalive(self, distro):
+        """部屋のディストリビューションが、wsl.exe のセッションが無いまま止まらないように、長く動くプロセスを1つ起こす。止めるには .terminate()。"""
+        return subprocess.Popen(["wsl.exe", "-d", distro, "--", "sleep", "infinity"],
+                                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
     def interactive(self, distro, command):
         """端末をつないだまま、一般ユーザーで実行する。"""
         return subprocess.run(["wsl.exe", "-d", distro, "--", "bash", "-ic", command]).returncode
@@ -583,6 +588,35 @@ def install_guide_pointer(ctx, p):
         raise RoomError(f"部屋の ~/.claude/CLAUDE.md に案内を入れられなかった: {err.strip() or out.strip()}")
 
 
+SHARED_RULE = "Read(~/shared/**)"
+SHARED_RULE_PY = """import json, os
+f = os.path.expanduser("~/.claude/settings.json")
+d = {}
+if os.path.exists(f) and os.path.getsize(f) > 0:
+    with open(f, encoding="utf-8") as fh:
+        d = json.load(fh)
+allow = d.setdefault("permissions", {}).setdefault("allow", [])
+if "Read(~/shared/**)" not in allow:
+    allow.append("Read(~/shared/**)")
+os.makedirs(os.path.dirname(f), exist_ok=True)
+with open(f, "w", encoding="utf-8", newline="\\n") as fh:
+    json.dump(d, fh, ensure_ascii=False, indent=2)
+    fh.write("\\n")
+"""
+
+
+def install_shared_permission(ctx, p):
+    """部屋の一般ユーザーの ~/.claude/settings.json に、~/shared の読み取りだけの許可を足す（既存の項目は残す。毎回の確認を無くす）。
+    `Read(~/shared/**)` は読み取りだけを許す。`~/.claude/.credentials.json` など、ほかの場所は許さない。"""
+    script = ("set -e\n"
+              "python3 - <<'ROOM_PERM_EOF'\n"
+              f"{SHARED_RULE_PY}"
+              "ROOM_PERM_EOF\n")
+    rc, out, err = ctx.wsl.script(p.distro, script)
+    if rc != 0:
+        raise RoomError(f"部屋の ~/.claude/settings.json に ~/shared の許可を足せなかった: {err.strip() or out.strip()}")
+
+
 def push_shared(ctx, p):
     """workbase の写しを、部屋の ~/shared に読み取り専用で送り、基準コミットを manifest に記録する。送ったら True。"""
     root = share_root(ctx)
@@ -605,6 +639,7 @@ def push_shared(ctx, p):
     if rc != 0:
         raise RoomError(f"共有知の写しを送れなかった: {err.strip()}")
     install_guide_pointer(ctx, p)
+    install_shared_permission(ctx, p)
     man = load_manifest(p)
     man["shared"] = {"commit": commit, "dirty": dirty, "pushed": ctx.now(), "paths": [x for x in SHARE_PATHS if (root / x).exists()],
                      "tar_sha256": hashlib.sha256(data).hexdigest()}
@@ -636,7 +671,11 @@ def cmd_start(ctx, a):
         ctx.say(f"マウントした: {p.mount_point}")
         if a.no_launch:
             ctx.say("--no-launch: ここで AI を起動しない。Zed などで WSL リモート接続し、終わったら Enter")
-            input()
+            keep = ctx.wsl.keepalive(p.distro)  # セッションが無くなって部屋が止まると、マウントも消える（仮説。実機で確認する）
+            try:
+                input()
+            finally:
+                keep.terminate()
             rc = 0
         else:
             ctx.say(f"起動: {a.cmd}")

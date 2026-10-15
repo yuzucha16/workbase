@@ -25,8 +25,8 @@
 - [ ] (R5) 部屋の運用（別セッションのディレクトリ構造の議論と合流してから進める。2026-10-14 にユーザーが保留）。決定済み（2026-10-14）: 対応表のバックアップ = `room close` で `archives/` へ移る `_noai/` ごと、Windows 側のバックアップに任せる（`_noai/` は追跡外なので、PC のバックアップ機能に依存する）。会話履歴 = 写さず、期限（close から 14 日）で消すだけ（復元は `exmem` や `docs/` でする）。案の順: 5-a `room init`（使い捨ての部屋で実装・確認。ログインは人）→ 5-b reap（消すだけ）→ 5-d `room intake`（人が置いた実環境の結果をマスクして `ai/in/` へ）。詳細は [[ai-room-ops-handover]]
 - [ ] (R5) `room restore` が、`ai/out/<成果物>/` のサブディレクトリを復元できるか、`mapping.json` が無い・版が食い違うときに止まるかを、実機で確認する（2026-10-14 時点で未確認）
 - [x] 決定の項目のラベルを【汎用】【案件】【この件】の 3 種類にそろえる（2026-10-14。`docs-rules.md` に【案件】を足した）
-- [ ] `~/shared` の許可の確認が毎回出る件の恒久対策（`room start` が部屋の `~/.claude/settings.json` に `~/shared` だけの読み取り許可を足す案。キーの形は Claude Code のドキュメントで確認）
-- [ ] マウントが別の `wsl.exe` セッションから見えない件（`room_mounts` の検査が別セッションから働くか、Zed の WSL リモートから `ai/` が見えるか）
+- [x] `~/shared` の許可の確認が毎回出る件: `room start` が部屋の `~/.claude/settings.json` に `Read(~/shared/**)` を足す（既存の項目は残す。冪等）。書式は公式ドキュメントで確認（permissions の `Read(~/path)`）。**実機で、確認が出なくなるか未確認**（2026-10-15、単体テストまで）。`blockReadsOutsideWorkingDirectories` が有効だと allow が効かない可能性があるので、実機で見る
+- [ ] マウントが別の `wsl.exe` セッションから見えない件: 仮説 = 待っている間に `wsl.exe` のセッションが無く、部屋が止まってマウントが消えた（空のマウント点だけが残る）。対策を実装: `--no-launch` の待機中は `sleep infinity` を部屋で動かして止まらないようにする（2026-10-15、単体テストまで）。**実機で、別セッションから `/proc/mounts` と `ai/` が見えるか、Zed の WSL リモートから `ai/` が見えるか確認する**。見えれば済み
 - [x] 単体テスト `test_push_records_base_commit_and_sends_tar` が間欠的に落ちる件: `build_share_tar` の gzip を `GzipFile(mtime=0)` で作り、同じ内容なら同じバイト列にした（2026-10-15。1秒空けて2回作って一致することを確認）
 - [x] (R6) Area の切り方の指針（`ai-room-why.md` に判断表を追加。2026-10-13）
 - [ ] (R7) 雛形の実機確認（Vault 側の deny の書式 `Read(./projects/**)` が Windows ネイティブで効くか）
