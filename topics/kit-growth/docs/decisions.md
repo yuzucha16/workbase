@@ -18,3 +18,7 @@
 - 【汎用】開始時に読む順番を、トピックと同じ「窓口 → `docs/log.md`」にそろえた（`docs-rules.md`、`templates/AGENTS.md`）。`decisions.md` は決める前に検索。雛形を変えた理由: 引き継ぎの読み込みを最小にする（topic-workflow の Q6）。既存の各ディレクトリの `AGENTS.md` は書き換えていない。
 - 【汎用】AI 作業部屋は例外として文書だけで書く（`room-context.md`）。`ai/AGENTS.md` を作る案は、部屋の動作確認中のため見送り。
 - 【汎用】`wrap` の書き込み先の既定に、このセッションで作業した単位（起動した単位、または「続き」で読みに行った単位）の `docs/` を加えた。
+
+## 2026-10-15 improvements.md を指す残りの記述を向け直した
+
+- 【この件】`workflow-kit/AGENTS.md` と `examples/` の2つの見本で、記録先を `improvements.md` から `topics/kit-growth/docs/decisions.md` に変えた（ユーザーの承認）。`wrap-hook.md` の自動採用の手順は、2026-11-08 の判定で節ごと畳む想定なので残した。
