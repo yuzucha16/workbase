@@ -28,9 +28,9 @@
 
 ## 読む順番
 
-1. `docs/log.md`
-2. `README.md`
-3. `docs/decisions.md`
+1. `README.md`（窓口）
+2. `docs/log.md`（開始時に読むのはここまで）
+3. `docs/decisions.md`（何かを決める・変える前に検索する）
 
 ## このディレクトリ固有のルール
 
