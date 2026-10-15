@@ -30,4 +30,5 @@
 - 【汎用】`docs-rules.md` に「読み方の共通ルール」（大きいファイルは節だけ、出力は絞ってから、スクリプトは要約と件数）を、`exmem/AGENTS.md` の読む順番に「10KB 超のノートは節だけ」を足した。
 - 【汎用】`review` の入力に「重い会話」（入力の最大トークンが大きい会話を上位1〜2件）を足した。集計は呼び出し元にあるときだけ。
 - 【汎用】`find-knowledge.ps1` は、ファイルの大きさ（KB）と、ヒットした見出しの節の行の範囲を返す。`check-inbox.ps1` は、既定で PASS の行を出さない（`-ShowPass` で出す）。
-- 【この件】見送り: 雛形の workspace `AGENTS.md` の読む順番の修正（影響が大。既存のワークスペースを手で直す必要がある）、切る目安の数値、`lessons/` の字数の目安。
+- 【この件】見送り: 切る目安の数値、`lessons/` の字数の目安。
+- 【汎用】雛形の workspace `AGENTS.md` の読む順番を、開始時は `docs/log.md` と `resources/AGENTS.md` まで、`docs/decisions.md` は決める前に検索する形に直した（同日、ユーザーの追加の依頼）。見本 `examples/setup-example.md` の読む順番と、`init-hook.md` の自己点検の項目も合わせた。既存のワークスペースの `AGENTS.md` は、各 PC で同じ箇所を手で直す。

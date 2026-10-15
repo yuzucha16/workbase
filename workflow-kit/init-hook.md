@@ -110,7 +110,7 @@
 - [ ] 書き込み先が、対象ディレクトリの中だけ
 - [ ] 既存のファイルを上書きしていない（差分案を示して、承認を待っている）
 - [ ] `AGENTS.md` の「共通ルール」の節が、雛形どおり（パスと `hooks.md` へのポインタ、読めない場合の一文）
-- [ ] 「読む順番」の1番目が `docs/log.md`
+- [ ] 「読む順番」が、窓口（あれば）→ `docs/log.md` の順で、`docs/decisions.md` を開始時に読まない（決める前に検索する）
 - [ ] `CLAUDE.md` が `@AGENTS.md` を含む
 - [ ] `docs/log.md` の見出しが Next Actions / Open Questions / Log、`docs/decisions.md` の見出しが Principles / Decisions / Gotchas
 - [ ] 雛形のプレースホルダ（`<` `>`）が残っていない
