@@ -4,8 +4,8 @@ PC1 などで使った印象を、帰り道の壁打ちのあとに1行ずつ足
 
 ## 未選別
 
-- （topic-workflow から移した）handover・next-steps・roadmap は、名前と内容が一致していて、log・decisions より分かりやすい。いずれ両方の良いところを取る。いまはフックの再利用を優先して docs の名前にしている（2026-10-15）。
+なし。
 
 ## 選別済み
 
-なし。
+- （topic-workflow から移した）handover・next-steps・roadmap は、名前と内容が一致していて、log・decisions より分かりやすい。いずれ両方の良いところを取る。いまはフックの再利用を優先して docs の名前にしている（2026-10-15）。 → 見送り: log/decisions のまま進める（他セッションで決定。2026-10-15、ユーザー）。
