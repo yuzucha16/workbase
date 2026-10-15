@@ -69,7 +69,7 @@
 | `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、ひな形の作成、Area の一覧の更新。Project の構造 |
 | `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
 | `close-hook.md` | `close`（Project の終了）の手順: 完了条件の確認、暫定の見直し、`archives/` への移動 |
-| `improvements.md` | 改善提案の記録 |
+| `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `topics/kit-growth/docs/decisions.md`） |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
 | `tools/find-knowledge.ps1` | `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。読み取り専用。PowerShell 7） |
 | `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検、`hooks.md` と README の表にフックが過不足なく載っているかの点検（フックの追加・削除の漏れ止め。PowerShell 7） |

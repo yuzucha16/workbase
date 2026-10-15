@@ -50,7 +50,7 @@ WSL は差し替えて、一時ディレクトリの git で行う（実際の�
 
 ## マスク・復元（`maskkit.py`）
 
-仕様は `mobile-session/ai-workspace-boundary/ai-room-mask-spec.md`。ファイルは Project の中に置く。
+仕様は `topics/ai-workspace-boundary/notes/ai-room-mask-spec.md`。ファイルは Project の中に置く。
 
 | ファイル | 内容 | git |
 |---|---|---|
