@@ -17,8 +17,8 @@
 
 ## 読む順番
 
-1. `docs/log.md`（開始時に読むのはこれだけ）
-2. `README.md`（あれば）
+1. 窓口（`README.md`、トピックは `*-start-here.md`。あれば）
+2. `docs/log.md`（開始時に読むのはここまで）
 3. `docs/decisions.md` と `docs/log-history.md` は開始時に読まない。何かを決める・変える前に `decisions.md` を検索して、既存の決定と矛盾しないか確かめる。経緯が要るときは `log-history.md` を検索する
 
 ## 更新のタイミング

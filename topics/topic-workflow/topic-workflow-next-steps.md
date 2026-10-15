@@ -18,8 +18,8 @@
 ## 追加の TODO（Q6 から。2026-10-15）
 
 - [x] 窓口の雛形を kit の `templates/` に足した（2026-10-15）: トピック用 `templates/topic/start-here.template.md`、Project 用は `templates/project/README.template.md` に「いま / あなた待ち / 次の一手」を足して README が窓口を兼ねる。足した字数に見合う畳みは、5（2回使えてから）で行う。Area の README への展開は未
-- [ ] **cwd（作業を始める場所）を明確にする**（2026-10-15 ユーザーの指摘。kit にはほぼ明文化が無い。`improvements.md` の古い1行のみ）。決めること: ① どこで Claude を起動するか（トピック / Project / Area の各ディレクトリか、Vault のトップか、リポジトリのトップか）、② cwd によって AI が自動で読むもの（`CLAUDE.md` / `AGENTS.md` は cwd から上へ、下は必要時）が変わるので、窓口・`AGENTS.md` を置く階層、③ 「<名前> の続き」が効く条件（cwd がそのトピック・Project のとき。トップから始めるなら名前を言う）、④ 部屋（AI 作業部屋）では cwd = `/mnt/room/<Project>` で固定されること、⑤ 書き込み先の既定（`wrap` の「対象を特定する」は cwd を使う）。成果は `docs-rules.md` か `hooks.md` の契約に1節
-- [ ] 各 Project / Area の `AGENTS.md`（雛形）の「読む順番」に窓口を入れるか決める。現状の雛形は `docs/log.md` → README → `decisions.md` で、README が窓口の役を担う
+- [x] （2026-10-15 済。決定は kit-growth の `docs/decisions.md`。kit は `hooks.md` の「起動する場所（cwd）」ほか）**cwd（作業を始める場所）を明確にする**（2026-10-15 ユーザーの指摘。kit にはほぼ明文化が無い。`improvements.md` の古い1行のみ）。決めること: ① どこで Claude を起動するか（トピック / Project / Area の各ディレクトリか、Vault のトップか、リポジトリのトップか）、② cwd によって AI が自動で読むもの（`CLAUDE.md` / `AGENTS.md` は cwd から上へ、下は必要時）が変わるので、窓口・`AGENTS.md` を置く階層、③ 「<名前> の続き」が効く条件（cwd がそのトピック・Project のとき。トップから始めるなら名前を言う）、④ 部屋（AI 作業部屋）では cwd = `/mnt/room/<Project>` で固定されること、⑤ 書き込み先の既定（`wrap` の「対象を特定する」は cwd を使う）。成果は `docs-rules.md` か `hooks.md` の契約に1節
+- [x] （2026-10-15 済。窓口 → `log.md` にそろえた）各 Project / Area の `AGENTS.md`（雛形）の「読む順番」に窓口を入れるか決める。現状の雛形は `docs/log.md` → README → `decisions.md` で、README が窓口の役を担う
 - [ ] 短いセッションを多く回す前提での測定: 再開ごとの開始時の読み込み字数（`sessions`）、`again`、`gap`
 
 ## 確かめること（仮説）
