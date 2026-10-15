@@ -63,7 +63,7 @@
 | `stock-hook.md` | 「ナレッジ化して」の手順・書き方・形式 |
 | `wrap-hook.md` | 「終了処理して」の手順（対象の特定、現在状態の更新、昇格の案、コミットと push）・報告の型 |
 | `integrate-hook.md` | 「inboxを整理して」の手順（統合、照合の報告、コミット）・報告の型 |
-| `review-hook.md` | `review`（別名「見直して」）の手順: `again` と遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
+| `review-hook.md` | `review`（別名「見直して」）の手順: 遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
 | `init-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
 | `init-workspace.md` | init の導入項目 5（ワークスペースの生成）の作り方。項目 5 のときだけ読む |
 | `init-restore.md` | init の導入項目 4（履歴からの復元）の作り方。項目 4 のときだけ読む |
