@@ -14,7 +14,7 @@ aliases:
   - apiKeyHelper
   - OAuth と API キーの切り替え
 created: 2026-10-11
-updated: 2026-10-11
+updated: 2026-10-15
 sources:
   - Claude Code conversation "Claude Code の認証経路とモデル指定" (2026-10-08)
   - Claude Code conversation "Bedrock 設定の生成と OAuth への切り替え" (2026-10-08)
@@ -44,7 +44,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 
 すべて 2026-10-08。
 
-- **個人利用は、OAuth（サブスク）と、Anthropic 直接の Console API キー + `apiKeyHelper` の併用にする**。根拠: ユーザーの方針（個人利用は直接、併用）。却下案: Bedrock 経由（個人では AWS を使う理由が無い）。
+- **個人利用は、OAuth（サブスク）と、Anthropic 直接の Console API キー + `apiKeyHelper` の併用にする**（2026-10-15 追記: Bedrock も、経験を積む目的で試す。Claude Code、Zed、Obsidian から繋ぐ予定。手順は [[bedrock-first-hello]]）。根拠: ユーザーの方針（個人利用は直接、併用）。却下案: Bedrock 経由（個人では AWS を使う理由が無い）。
 - **API キー側の設定は別ファイルに分け、`--settings` で読む起動関数を作る方式（案A）で進める**。根拠: `apiKeyHelper` が OAuth より認証の優先順位が高く、共通の `settings.json` に書くと常にキー認証になる。ユーザーが案Aを選んだ。却下案: `CLAUDE_CONFIG_DIR` でディレクトリごと分ける案B（設定が二重管理になる）。共通 `settings.json` に `apiKeyHelper` を書く案（OAuth に戻れない）。
 - **既定のモデルは、できるだけ安い Sonnet（Sonnet 5.5、`claude-sonnet-5-5`）にする**。根拠: ユーザーが「基本は Sonnet のできるだけ安いモデル」と指示した。Sonnet 5.5 は、Sonnet のうち最安の Sonnet 5 と同額で、キャッシュ読み出しが半額。却下案: Sonnet 5（同額だがキャッシュ読み出しが倍で旧世代）。Sonnet 4.6（入力3ドル・出力15ドルで高い）。Opus / Fable（高額）。
 - **Bedrock の設定は、PC ごとに生成するファイルと、セットアップスクリプト、起動関数 `claude-bedrock` にする**。根拠: ユーザーが、API キーのときと同じ要領で、Bedrock の導入もスクリプトにして dotfiles に入れるよう依頼した。方式の細部は AI が選んだ。却下案: 固定のテンプレートを置く（実値を持てず、手で直す手間が残る）。公式の `/setup-bedrock` ウィザード（共通の user settings に書き込み、OAuth の `claude` まで Bedrock 優先になる）。
@@ -112,7 +112,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - 解決（2026-10-11）: 起動関数の名前の提案（AI の提案、`claude-api`）は、実物のプロファイルに `claude-api` として入っている。明示の承認は未確認のまま、実装され使われている。
 - 提案（AI の提案。実機では動いたが、明示の承認は未確認）: キーの保管は DPAPI で暗号化したファイルにする。SecretManagement と 1Password CLI との比較表は、dotfiles の手順書にある。
 - Opus と Haiku のピン留めをどのモデルにするか。現在の `settings-api.json` は `claude-opus-5-5` と `claude-haiku-4-5`（暫定と同じ）。一覧には、より安い `claude-haiku-5-5` もあるが、思考を切れない点を含めて未判断。
-- Bedrock の料金は直接と同じ水準か（AWS の料金ページで未確認）。
+- 解決（2026-10-15、一部）: Bedrock の Sonnet 5.5 は、Global で Anthropic 直接と同額（入力 $2・出力 $10 / 100万トークン）。地域固定は約10%増と公式ページにあるが、Sonnet 5.5 が対象かは AWS の料金ページで未確認（根拠: platform.claude.com の pricing ページ）。
 - 「API キーが優先される」と感じた場面は、ターミナルの `claude` 単独か、`claude-api` を使っているときか。前者なら、その端末の環境変数（`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_USE_BEDROCK`）を調べる。2026-10-11 のこの PC では、ユーザー環境変数にいずれも無い。
 - 同じセッションの中で、API キー認証から OAuth へ切り替える手段はあるか（未確認）。
 - Bedrock の実際の AWS 環境で、一覧の取得、設定の生成、`claude-bedrock` の起動が通るか。

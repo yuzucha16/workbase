@@ -48,6 +48,7 @@ updated: 2026-10-14
 | `tool/stow` | GNU Stow（symlink 配置） |
 | `tool/ripgrep` | ripgrep（`rg`。Claude Code の Grep の実体） |
 | `tool/docker` | Docker |
+| `tool/aws` | AWS（Bedrock・IAM・AWS CLI） |
 | `tool/apt` | apt（Debian 系のパッケージマネージャー） |
 | `tool/ssh` | SSH（`ssh`、鍵、`~/.ssh/config`） |
 
