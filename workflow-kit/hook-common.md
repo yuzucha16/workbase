@@ -53,14 +53,12 @@ H2 の見出しは名前だけにする（括弧の注記を付けない）。�
 |---|---|---|
 | `init` | なし | |
 | `open` | `events`: 質問ごとの行 | 手順「記録する」 |
-| `start` | `events`: 質問ごとの行（`kind=interview`）、後から出た前提（`kind=gap`）、探索型でゴールが変わったとき（`kind=goal_change`） | 手順「記録する」 |
+| `start` | `events`: 質問ごとの行（`kind=interview`）、探索型でゴールが変わったとき（`kind=goal_change`） | 手順「記録する」 |
 | `wrap` | 終了時の1問の答え（記録先は呼び出し元の `AGENTS.md` が定める） | 報告の型の「終了時の1問」 |
 | `close` | なし | |
 | `stock` | なし | |
 | `integrate` | なし | |
 | `review` | `reviews`: 1回につき1行。入力として `events` と `sessions` を読む | 手順「指標を足す」 |
-
-再伝達（`again`）は、フックでなく呼び出し元の規則で足す。
 
 ## フックを足す・消すとき
 
