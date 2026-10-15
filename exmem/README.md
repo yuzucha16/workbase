@@ -82,6 +82,7 @@ Zed ACPは独立したプロジェクトではなく、AI開発ワークフロ�
 - [[git-rebase-chronology]]: rebase の前にコミットの時系列を確認する
 - [[git-subdirectory-split]]: 履歴を保ってサブディレクトリを別リポジトリに切り出す（git filter-repo）
 - [[human-ai-decision-loop]]: 人間とAIの意思決定ループ（Decision Loop）
+- [[improvement-coverage-matrix]]: 改善のやり方3: 観点を絞り込み、星取り表から修正・削除・追加の案を出して実施項目を決める
 - [[improvement-expectation-gap]]: 改善のやり方2: 想定と実際のズレを仮説にして修正する
 - [[improvement-quantified-options]]: 改善のやり方1: 現状を数値にして、改善幅ごとの選択肢を比べてから動く
 - [[keyboard-switches]]: キーボードのスイッチの好みとスタビラトル対策
