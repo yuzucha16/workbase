@@ -27,7 +27,7 @@
 - [x] 決定の項目のラベルを【汎用】【案件】【この件】の 3 種類にそろえる（2026-10-14。`docs-rules.md` に【案件】を足した）
 - [ ] `~/shared` の許可の確認が毎回出る件の恒久対策（`room start` が部屋の `~/.claude/settings.json` に `~/shared` だけの読み取り許可を足す案。キーの形は Claude Code のドキュメントで確認）
 - [ ] マウントが別の `wsl.exe` セッションから見えない件（`room_mounts` の検査が別セッションから働くか、Zed の WSL リモートから `ai/` が見えるか）
-- [ ] 単体テスト `test_push_records_base_commit_and_sends_tar` が間欠的に落ちる（gzip ヘッダーの時刻。`GzipFile(mtime=0)` で直る見込み。承認待ち）
+- [x] 単体テスト `test_push_records_base_commit_and_sends_tar` が間欠的に落ちる件: `build_share_tar` の gzip を `GzipFile(mtime=0)` で作り、同じ内容なら同じバイト列にした（2026-10-15。1秒空けて2回作って一致することを確認）
 - [x] (R6) Area の切り方の指針（`ai-room-why.md` に判断表を追加。2026-10-13）
 - [ ] (R7) 雛形の実機確認（Vault 側の deny の書式 `Read(./projects/**)` が Windows ネイティブで効くか）
 - [ ] (R8) 顧客データのある実 Project で `open` から `close` まで1巡する（手数、マスク漏れ、復元の失敗、再現性）
