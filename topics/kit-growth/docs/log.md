@@ -13,7 +13,7 @@
 ## Next Actions
 
 1. PC1 の印象を `inbox.md` に入れ始める（モバイル。随時）。
-2. `start` のモード（確定型・探索型）を次の2〜3セッションで試し、`review` で `again`・`gap`・`goal_change` を見る（improvement-methods の close で受け継いだ。詳細は `exmem/lessons/session-goal-modes.md`）。
+2. `start` のモード（確定型・探索型）を次の2〜3セッションで試し、`review` で `goal_change` を見る（`again`・`gap` は 2026-10-15 に廃止）（improvement-methods の close で受け継いだ。詳細は `exmem/lessons/session-goal-modes.md`）。
 3. `token-matrix.md` の初回の採点し直しは済んだ（`70b8e22` で 103、下がった列なし）。入力「重い会話」は、会話履歴の集計がある端末の `review` で見る。見送った2件（切る目安の数値、`lessons/` の字数の目安）は、その結果を見て決める。
 4. topic-workflow の kit への取り込み（docs-rules の「トピック」の節）が済んだら、`topics/` の型の記述をそちらへ寄せる。
 

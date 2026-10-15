@@ -11,7 +11,7 @@
 | `close` | | `close-hook.md` | Project の終了 | Project を閉じる |
 | `stock` | 「ナレッジ化して」 | `stock-hook.md` | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`） |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
-| `review` | 「見直して」 | `review-hook.md` | 週1回を目途 | `again` と遠回りの事例を見て、1つ直すか1つ畳む |
+| `review` | 「見直して」 | `review-hook.md` | 週1回を目途 | 遠回りの事例を見て、1つ直すか1つ畳む |
 | （常時） | | `docs-rules.md` | 作業を始める前と、`docs/` を更新するとき | `docs/` の運用規則 |
 
 - 連鎖: `init`、`open → [start → 作業 → wrap]×N → close`。`stock` と `integrate` は随時。
@@ -35,7 +35,7 @@
 
 - **必須**: `AGENTS.md`（共通ルールのポインタ、読む順番、固有ルール）と `CLAUDE.md`（`@AGENTS.md` の1行）。`docs/log.md`（現在状態と次にやること）。複数セッションにまたがる判断があるときは `docs/decisions.md`。
 - **呼び出し元の `AGENTS.md` が定めるもの**: コミットの規則と push の許可リスト（無ければ push しない）。追加の手順（指標の記録など。`docs/` の更新に続けて行う）。
-- **任意の記録**: 記録名は `events`（質問・承認・改善案・再伝達 `again`・漏れ `gap`）、`sessions`、`reviews`、`rule-hits`。保存先と列は、呼び出し元の `AGENTS.md` が定める。定められていなければ記録しない（手順書は、存在を確かめてから記録する）。
+- **任意の記録**: 記録名は `events`（質問・承認・改善案）、`sessions`、`reviews`、`rule-hits`。保存先と列は、呼び出し元の `AGENTS.md` が定める。定められていなければ記録しない（手順書は、存在を確かめてから記録する）。
 - 共有側から作業側へ `[[リンク]]` を張らない。作業側固有の情報を、共有側に書かない。
 
 ### 起動する場所（cwd）
