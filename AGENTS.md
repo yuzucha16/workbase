@@ -12,7 +12,7 @@
 | `exmem/` | AI が今後の参考にするナレッジ（external memory）。判断・原則・落とし穴の記録は `exmem/lessons/` |
 | `workflow-kit/` | 作業ディレクトリに導入する共通機能（`docs/` の運用と、合言葉で呼ぶフック。呼び出し表は `hooks.md`）の正本。AI 作業部屋の操作コマンドは `room/` |
 | `guides/` | 人（ユーザー）が手順や仕組みを思い出すための文書。`howto/`（手順書）、`explain/`（理解ガイド）、`quickref/`（クイックリファレンス）。作り方は `exmem/lessons/reference-doc-types.md`。入口（場面から引く索引）は `guides/guides-index.md` |
-| `mobile-session/` | モバイル（クラウド）のセッションから PC のセッションへの引き継ぎ置き場。話題ごとのディレクトリ。反映が終わったら、その話題のディレクトリを削除する（履歴は git に残る） |
+| `topics/` | 大きな取り組み（トピック）を、セッションと端末（モバイル・PC）をまたいで進める置き場。旧名 `mobile-session/`。一覧は `topics/topics-index.md`。反映が済んだトピックは close して削除する（履歴は git に残る） |
 | `handson/` | ハンズオンの課題とテンプレート |
 
 - このリポジトリは単独で clone しても自己完結する。作業ディレクトリに期待することは、`workflow-kit/hooks.md` の「契約」だけ。

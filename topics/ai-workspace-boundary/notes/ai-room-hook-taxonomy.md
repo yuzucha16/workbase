@@ -1,7 +1,7 @@
 # フックの整理: 運用コマンド（room）と AI 行動フック
 
 - 作成: 2026-10-13（モバイルのセッションでの議論）。状態: **整理の提案**。ユーザーの課題認識: 「ルーム向けのフック（`room start`）と AI 行動のフック（`init` `start` など）がごっちゃになっている」。
-- 前提: [[ai-room-handover]]、[[ai-room-next-steps]]（決定4: 人が言うコマンドは `room open` / `room start` / `room close`）。
+- 前提: [[ai-room-handover]]、`docs/log.md`（決定は `docs/decisions.md`、経緯は `docs/log-history.md`）（決定4: 人が言うコマンドは `room open` / `room start` / `room close`）。
 
 ## 何がごっちゃか
 

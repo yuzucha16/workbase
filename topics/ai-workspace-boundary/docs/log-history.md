@@ -1,39 +1,6 @@
-# 次のステップ: AI 作業部屋
+# ai-workspace-boundary: 経緯（開始時に読まない）
 
-前提と決定は [[ai-room-handover]]。詳細は [[ai-room-design]]。ここは PC のセッションで行う順序。各段階の終わりに、実測の結果を残して、次へ進むか判断する。
-
-**次のセッションの入口は [[ai-room-start-here]]。** 優先順位と各項目の状態の正本は [[ai-room-roadmap]]。この文書の TODO は、roadmap の項目と対応させた一覧（2026-10-14 に整合させた）。
-
-## TODO（忘れないための一覧。済んだら `[x]`。`(R<n>)` は roadmap の番号）
-
-- [x] ルートの `AGENTS.md` の構成表に `mobile-session/` を足す（反映済み）
-- [x] 実機で確かめる S1〜S6（下の「1」）。全部合格（2026-10-12）
-- [x] 未決9つをユーザーに1つずつ確認する（下の「2」）。確定（2026-10-12）
-- [x] 検討の結果を `exmem/lessons/` に残す（`exmem/lessons/ai-isolated-work-room.md`。2026-10-13）
-- [x] `room` の v0（`open` / `start` / `close` / `umount`）を作る（下の「3」）。コミット済み（`7a9e7bc`）
-- [x] (R1) マスク・復元を実装する（2026-10-13、モバイルのセッション。単体テストまで）。**この PC で単体テスト45件が通った**（2026-10-14）
-- [x] (R1) マスク・復元の PC での確認 1〜4・6（ダミー。Excel で開く、ピボット、複数 run、cp932）。2026-10-14（[[ai-room-mask-handover]]）
-- [ ] (R1) 残り: 5 `room start` の通し（マスク → AI → 復元）、7 実データでの候補の警告量
-- [x] (R2) 共有知の写しを部屋へ入れる実装（方式 A。単体テストまで）
-- [x] (R2) 実際の部屋で確認 1〜4（送付、読み取り専用、manifest、`~/.claude/CLAUDE.md` の案内の実装）。2026-10-14。不具合 1 件を修正（`wsl.exe` の二重解釈）（[[ai-room-shared-push-handover]]）
-- [ ] (R2) 残り: 5 の実行の完遂（AI が `wrap` を最後まで通せるか、`pwsh` 製の道具が動かない場合）。`~/shared` の読み取り許可は当面手動（恒久対策の案は handover に）
-- [x] (R3) フックの整理: 文書、`room readme`、`hooks.md` の運用コマンドの節（[[ai-room-hook-taxonomy]]）。雛形（`gitignore.template`、Vault 側の deny、`AGENTS.md`）と `init-workspace.md` も反映済み（2026-10-13。実機で未検証）
-- [ ] (R3) `room init`（部屋の作成の自動化）と、`open` から `close` までの1巡の確認
-- [x] (R4) `room stock`（下書きの回収）の実装、`integrate-hook.md` の対応（単体テストまで）
-- [x] (R4) `room stock` の実機の確認（ダミーの下書き 4 件。運搬、`base_stale`、拒否 2 種、`check-inbox.ps1`）。2026-10-14（[[ai-room-stock-handover]]）
-- [ ] (R4) 残り: 部屋の AI が実際に下書きを書き、`room stock` で運ぶ通し
-- [ ] (R5) 部屋の運用（別セッションのディレクトリ構造の議論と合流してから進める。2026-10-14 にユーザーが保留）。決定済み（2026-10-14）: 対応表のバックアップ = `room close` で `archives/` へ移る `_noai/` ごと、Windows 側のバックアップに任せる（`_noai/` は追跡外なので、PC のバックアップ機能に依存する）。会話履歴 = 写さず、期限（close から 14 日）で消すだけ（復元は `exmem` や `docs/` でする）。案の順: 5-a `room init`（使い捨ての部屋で実装・確認。ログインは人）→ 5-b reap（消すだけ）→ 5-d `room intake`（人が置いた実環境の結果をマスクして `ai/in/` へ）。詳細は [[ai-room-ops-handover]]
-- [ ] (R5) `room restore` が、`ai/out/<成果物>/` のサブディレクトリを復元できるか、`mapping.json` が無い・版が食い違うときに止まるかを、実機で確認する（2026-10-14 時点で未確認）
-- [x] 決定の項目のラベルを【汎用】【案件】【この件】の 3 種類にそろえる（2026-10-14。`docs-rules.md` に【案件】を足した）
-- [x] `~/shared` の許可の確認が毎回出る件: `room start` が部屋の `~/.claude/settings.json` に `Read(~/shared/**)` を足す（既存の項目は残す。冪等）。書式は公式ドキュメントで確認（permissions の `Read(~/path)`）。**実機で、確認が出なくなるか未確認**（2026-10-15、単体テストまで）。`blockReadsOutsideWorkingDirectories` が有効だと allow が効かない可能性があるので、実機で見る
-- [ ] マウントが別の `wsl.exe` セッションから見えない件: 仮説 = 待っている間に `wsl.exe` のセッションが無く、部屋が止まってマウントが消えた（空のマウント点だけが残る）。対策を実装: `--no-launch` の待機中は `sleep infinity` を部屋で動かして止まらないようにする（2026-10-15、単体テストまで）。**実機で、別セッションから `/proc/mounts` と `ai/` が見えるか、Zed の WSL リモートから `ai/` が見えるか確認する**。見えれば済み
-- [x] 単体テスト `test_push_records_base_commit_and_sends_tar` が間欠的に落ちる件: `build_share_tar` の gzip を `GzipFile(mtime=0)` で作り、同じ内容なら同じバイト列にした（2026-10-15。1秒空けて2回作って一致することを確認）
-- [x] (R6) Area の切り方の指針（`ai-room-why.md` に判断表を追加。2026-10-13）
-- [ ] (R7) 雛形の実機確認（Vault 側の deny の書式 `Read(./projects/**)` が Windows ネイティブで効くか）
-- [ ] (R8) 顧客データのある実 Project で `open` から `close` まで1巡する（手数、マスク漏れ、復元の失敗、再現性）
-- [ ] 文書2本（`guides/explain/ai-room-why.md`、`guides/howto/ai-room-setup.md`）を別のセッションでレビューし、「草稿（未レビュー）」の注記を外す
-- [ ] 後回しの論点: `areas/dev-env/certs` の移し替え、対応表の保護、Obsidian の AI プラグイン、Codex・Copilot の設定（下の「6」）
-- [ ] 反映と確認が終わったら、検証用の環境（`ai-room-test`、`_spike-room`、`%TEMP%\s5\`）を消し、`mobile-session/ai-workspace-boundary/` を削除する（履歴は git に残る。[[ai-room-start-here]] の「完了したときの片付け」）
+旧 `ai-room-next-steps.md` の実測の結果・手作業の巡回・実装の状況と、旧 TODO 全文（2026-10-15 時点）。現在状態は `log.md`、決定は `decisions.md`。
 
 ## 0. 反映の方針を決める（ユーザーに確認）
 
@@ -107,24 +74,6 @@ S1〜S6 すべて合格。案Yの形（専用ディストリビューション�
 - 一時スクリプト: `%TEMP%\s5\`。
 - 未確認のまま残った点: `/mnt/wslg/distro` の中身、`printerSettings*.bin` の中身、`⟦⟧` がシート名・定義名に使えるか、`.wslconfig` の `[experimental] autoMemoryReclaim` の警告（部屋とは無関係）。
 
-## 2. 未決を決める（確定。2026-10-12、ユーザーが1つずつ確認し、最後に一覧で確定）
-
-最初はこれで開始する。使ってみて修正が入る可能性はある。ここで決めたことが、前の P1〜P8 と食い違うところは、この節が優先。
-
-| # | 決定 |
-|---|---|
-| 1 | 部屋は **Area ごとのディストロ**、Project ごとにマウントする部屋（P1 を変更）。同じ Area の中では、会話履歴などを共有する。**顧客・機密度の境界は Area で切る**（顧客の違う Project は別の Area に置く）。理由: ライフサイクルが分かりやすく、ログインと導入が Area の数で済む |
-| 1補 | 境界を守る歯止め: (a) Project の `README.md` に `area:` を必須にし、ディストロ名（`room-<Area>`）と一致しない Project は、マウントを拒否する。(b) Area の `README.md` に `boundary:`（顧客・機密度の印）を持たせ、`room open` で入力を必須にする。(c) 来歴チェック: `ai/in/` の各ファイルの由来（Area と Project）を manifest に記録し、記録のないファイルや由来の違うファイルがあれば止める。(d) 毎回の `room start` で、日時・Area・Project・ディストロ・マウントしたパス・manifest のハッシュ・チェック結果を `ai/records/` に追記する。(e) 同じディストロに、同時に複数の Project をマウントしない。(f) 顧客をまたぐ横展開は、汎用化した成果だけを【汎用】の経路（部屋の AI が `ai/out/stock/` に下書き → 人が確認して workbase の `exmem/inbox/` へ）で行う。限界: 人が Windows 側で Area をまたいでファイルをコピーすること自体は止められない（来歴チェックで検出して記録する） |
-| 2 | スクリプトは Windows 側の Python 1本（`room.py`）。**uv 管理で、バージョンを pin 留め**（`.python-version`、`requires-python`、`uv.lock`。コミットする）。部屋の中の Python も uv で入れて pin する。標準ライブラリ中心。pwsh は薄いラッパーのみ。置き場は `workflow-kit/` 配下（手順書を書く段階で決める）。Windows には `uv` 0.13.0 と Python 3.13 が導入済み |
-| 3 | `projects/<名>/ai/` だけをマウント（P3）。`_noai/` は `ai/` の外に置き、git で追跡しない。`docs/` は `ai/docs/` へ移す。**マウント点は `/mnt/room/<Project 名>`**（Claude Code の履歴が作業ディレクトリのパスごとに分かれるので、Project 単位で処理できる）。マウントは作業中の Project の `ai/` だけに限り、終わったらアンマウントする。既存: `archives/` の2件は移さない。`projects/` の1件は、最初の試行で移す。Area の `ai/` は、Area の部屋を初めて開くときに作る。Vault トップの `docs/` はそのまま（Vault 側の作業記録） |
-| 4 | 人が言うコマンドは `room open` / `room start` / `room close`（P4）。既存のフック（`open` `start` `wrap` `close`）は、部屋の中で AI が判断の部分を行う |
-| 5 | Area への同期は郵便受け（P5）。`room start` の回収で、同じ Area の【案件】の項目を Area の `ai/docs/inbox.md` へ（Windows 側の `room.py` が追記）。【汎用】は `exmem/inbox/` の経路 |
-| 6 | マスク: (6-1) プレースホルダーは場所で2種類。定義名・シート名は ASCII（`SHEET_001`、`NAME_001`）、それ以外は `⟦CUST_001⟧` 形式（種類の接頭辞つき）。実測: `⟦⟧` はシート名には使えるが、定義名には使えない。(6-2) 数値は既定でマスクしない。語は `_noai/` の `mask.toml` の `[terms]`、列は `[columns]`（`シート名!列名`）で指定。(6-3) xlsx は zip レベルの置換を基本に、作成者・会社名のプロパティは無条件に空に、`printerSettings*.bin` は削除（`[Content_Types].xml` と `.rels` も直す）、置換後に全 part を点検して、対応表の語が残っていれば止める。**対象は csv と xlsx**。docx・pptx も同じ zip 方式で揃えるが、変更は xlsx を基準にし、まず小さく動かして決める |
-| 7 | reap は close から14日を既定に、**設定で変更可能**（置き場は設定ファイルか Project の `README.md` の frontmatter。実装時に決める）。次の `room close` で期限切れを一覧にし、承認して実行する（`room reap <名>` でも可）。履歴は `ai/records/sessions/` に写してから消す。zombie の実体は、Project ごとの会話履歴（`~/.claude/projects/-mnt-room-<名>/`）と `~/tmp/<名>/` |
-| 8 | Vault 側で `projects/` `areas/` `archives/` を丸ごと deny（`Read` と `Edit`）。ワークスペースの `.claude/settings.json` の雛形に入れる。安全網であって境界の保証ではない（`grep -r` やスクリプトの中は止まらない）。`room.py` は AI に実行させない（`AGENTS.md` に明記）。Windows ネイティブで絶対パスの deny が効くかは、雛形を作るときに実機で確認する |
-| 9 | Codex・Copilot は今は設定しない。必要になったら部屋の中へ導入する（境界は物理分離なので、AI の種類に依存しない）。部屋の規約の正本は `AGENTS.md`、`CLAUDE.md` は `@AGENTS.md` で読ませる。エディタ内蔵の Copilot（部屋の外で動く）は、機密を扱う Project では使わない |
-
-実測から決まった事項（上の「1」の実測結果の「設計に足すこと」）も、同じく確定: AI は一般ユーザーで動かす、Zed は WSL リモート接続でだけ使う、`~$*` は無視する、大量の一時ファイルは `~/tmp/`、`rg` はパスを明示する、AI が書くスクリプトに標準ライブラリと同名を付けない。
 
 ### 手作業の1巡（1巡目、2026-10-12）
 
@@ -208,3 +157,85 @@ Vault 側の変更（ローカルの git）: Area の `README.md` に `boundary:
 - 対応表の保護（Vault の中の private 領域の扱い。今回の AI 分離とは別の論点とした）。
 - Obsidian で使う AI プラグインの扱い（部屋の外にいるので、機密を扱う Project には使わない決まりにする）。
 - Codex・Copilot の個別の設定。
+
+
+## 旧 TODO 全文（2026-10-15 時点。`(R<n>)` は優先順位の番号）
+
+- [x] ルートの `AGENTS.md` の構成表に `topics/` を足す（反映済み）
+- [x] 実機で確かめる S1〜S6（下の「1」）。全部合格（2026-10-12）
+- [x] 未決9つをユーザーに1つずつ確認する（下の「2」）。確定（2026-10-12）
+- [x] 検討の結果を `exmem/lessons/` に残す（`exmem/lessons/ai-isolated-work-room.md`。2026-10-13）
+- [x] `room` の v0（`open` / `start` / `close` / `umount`）を作る（下の「3」）。コミット済み（`7a9e7bc`）
+- [x] (R1) マスク・復元を実装する（2026-10-13、モバイルのセッション。単体テストまで）。**この PC で単体テスト45件が通った**（2026-10-14）
+- [x] (R1) マスク・復元の PC での確認 1〜4・6（ダミー。Excel で開く、ピボット、複数 run、cp932）。2026-10-14（[[ai-room-mask-handover]]）
+- [ ] (R1) 残り: 5 `room start` の通し（マスク → AI → 復元）、7 実データでの候補の警告量
+- [x] (R2) 共有知の写しを部屋へ入れる実装（方式 A。単体テストまで）
+- [x] (R2) 実際の部屋で確認 1〜4（送付、読み取り専用、manifest、`~/.claude/CLAUDE.md` の案内の実装）。2026-10-14。不具合 1 件を修正（`wsl.exe` の二重解釈）（[[ai-room-shared-push-handover]]）
+- [ ] (R2) 残り: 5 の実行の完遂（AI が `wrap` を最後まで通せるか、`pwsh` 製の道具が動かない場合）。`~/shared` の読み取り許可は当面手動（恒久対策の案は handover に）
+- [x] (R3) フックの整理: 文書、`room readme`、`hooks.md` の運用コマンドの節（[[ai-room-hook-taxonomy]]）。雛形（`gitignore.template`、Vault 側の deny、`AGENTS.md`）と `init-workspace.md` も反映済み（2026-10-13。実機で未検証）
+- [ ] (R3) `room init`（部屋の作成の自動化）と、`open` から `close` までの1巡の確認
+- [x] (R4) `room stock`（下書きの回収）の実装、`integrate-hook.md` の対応（単体テストまで）
+- [x] (R4) `room stock` の実機の確認（ダミーの下書き 4 件。運搬、`base_stale`、拒否 2 種、`check-inbox.ps1`）。2026-10-14（[[ai-room-stock-handover]]）
+- [ ] (R4) 残り: 部屋の AI が実際に下書きを書き、`room stock` で運ぶ通し
+- [ ] (R5) 部屋の運用（別セッションのディレクトリ構造の議論と合流してから進める。2026-10-14 にユーザーが保留）。決定済み（2026-10-14）: 対応表のバックアップ = `room close` で `archives/` へ移る `_noai/` ごと、Windows 側のバックアップに任せる（`_noai/` は追跡外なので、PC のバックアップ機能に依存する）。会話履歴 = 写さず、期限（close から 14 日）で消すだけ（復元は `exmem` や `docs/` でする）。案の順: 5-a `room init`（使い捨ての部屋で実装・確認。ログインは人）→ 5-b reap（消すだけ）→ 5-d `room intake`（人が置いた実環境の結果をマスクして `ai/in/` へ）。詳細は [[ai-room-ops-handover]]
+- [ ] (R5) `room restore` が、`ai/out/<成果物>/` のサブディレクトリを復元できるか、`mapping.json` が無い・版が食い違うときに止まるかを、実機で確認する（2026-10-14 時点で未確認）
+- [x] 決定の項目のラベルを【汎用】【案件】【この件】の 3 種類にそろえる（2026-10-14。`docs-rules.md` に【案件】を足した）
+- [x] `~/shared` の許可の確認が毎回出る件: `room start` が部屋の `~/.claude/settings.json` に `Read(~/shared/**)` を足す（既存の項目は残す。冪等）。書式は公式ドキュメントで確認（permissions の `Read(~/path)`）。**実機で、確認が出なくなるか未確認**（2026-10-15、単体テストまで）。`blockReadsOutsideWorkingDirectories` が有効だと allow が効かない可能性があるので、実機で見る
+- [ ] マウントが別の `wsl.exe` セッションから見えない件: 仮説 = 待っている間に `wsl.exe` のセッションが無く、部屋が止まってマウントが消えた（空のマウント点だけが残る）。対策を実装: `--no-launch` の待機中は `sleep infinity` を部屋で動かして止まらないようにする（2026-10-15、単体テストまで）。**実機で、別セッションから `/proc/mounts` と `ai/` が見えるか、Zed の WSL リモートから `ai/` が見えるか確認する**。見えれば済み
+- [x] 単体テスト `test_push_records_base_commit_and_sends_tar` が間欠的に落ちる件: `build_share_tar` の gzip を `GzipFile(mtime=0)` で作り、同じ内容なら同じバイト列にした（2026-10-15。1秒空けて2回作って一致することを確認）
+- [x] (R6) Area の切り方の指針（`ai-room-why.md` に判断表を追加。2026-10-13）
+- [ ] (R7) 雛形の実機確認（Vault 側の deny の書式 `Read(./projects/**)` が Windows ネイティブで効くか）
+- [ ] (R8) 顧客データのある実 Project で `open` から `close` まで1巡する（手数、マスク漏れ、復元の失敗、再現性）
+- [ ] 文書2本（`guides/explain/ai-room-why.md`、`guides/howto/ai-room-setup.md`）を別のセッションでレビューし、「草稿（未レビュー）」の注記を外す
+- [ ] 後回しの論点: `areas/dev-env/certs` の移し替え、対応表の保護、Obsidian の AI プラグイン、Codex・Copilot の設定（下の「6」）
+- [ ] 反映と確認が終わったら、検証用の環境（`ai-room-test`、`_spike-room`、`%TEMP%\s5\`）を消し、`topics/ai-workspace-boundary/` を削除する（履歴は git に残る。[[ai-room-start-here]] の「完了したときの片付け」）
+
+
+
+## 旧 roadmap 全文（2026-10-15 に log.md へ状態を移した）
+
+（元の題: 対応の優先順位と進め方）
+
+- 次のセッションの入口は [[ai-room-start-here]]（読む順とローカルの状態）。この文書が、優先順位と各項目の状態の正本。
+- 作成: 2026-10-13（モバイルのセッション）。ユーザーの指示: 「マスクと復元が先。論点を優先度として1つずつやる」「Obsidian の AI は、ツール都合でやむを得ないので優先度を下げる」。
+- 前提: [[ai-room-handover]]、ai-room-next-steps（旧。このファイルに分けた）、[[ai-room-hook-taxonomy]]、[[ai-room-shared-knowledge-sync]]。
+- 状態: 優先順位は提案。1番は着手を合意済み。以降は、前の項目が終わるごとに、順序を見直す。
+
+## 進め方（毎回同じ）
+
+1. **1項目ずつ**。前の項目が「完了の目安」を満たしてから、次へ進む。
+2. 項目ごとに、(a) 設計の未決を詰める（ユーザーに1つずつ確認。必要なら「一般化 → 類似問題 → 適用」の流れで解く。`exmem/inbox/2026-10-13-problem-solving-by-analogy.md`（統合後は lessons へ））、(b) 実装、(c) 検証、(d) 文書の更新、の順に行う。
+3. 場所の分担:
+   - **モバイル（クラウド）のセッション**: 設計、実装（標準ライブラリの Python）、合成データでの単体テスト、文書、コミット。WSL と Excel は動かせない。
+   - **PC のセッション**: 実機（WSL、Excel）での検証、部屋の作成、実 Project での試行。
+4. kit（`workflow-kit/`）の変更は、`workflow-kit/AGENTS.md` の規則どおり、ユーザーの承認を得てから行う。コミットは main に直接（ユーザーの指示）。コミットメッセージは `[領域] 変更内容`。
+5. 項目が終わったら、`ai-room-next-steps.md` の TODO と、この文書の状態を更新する。実機の確認が残るものは、「未検証」と明記して PC に引き継ぐ。
+
+## 優先順位
+
+| # | 項目 | 完了の目安 | 主な場所 | 依存 |
+|---|---|---|---|---|
+| 1 | **マスク・復元**（実装・単体テスト済み 2026-10-13。PC のダミーでの確認 1〜4・6 は済み 2026-10-14、5（`room start` の通し）と 7（実データ）は未確認: [[ai-room-mask-handover]]）（`room.py`: `mask.toml`、プレースホルダー、対応表、zip 置換、置換後の点検、復元、戻らなかったものの一覧、manifest への記録）。対象は csv と xlsx | 合成データ（csv と、ピボット・コメント・定義名・プロパティを含む xlsx）で、マスク → 部屋での作業（模擬）→ 復元の往復が一致し、マスク後に対応表の語が 0 件。PC で、Excel が開き「すべて更新」が通る | 設計・実装・単体テストはモバイル。Excel での確認は PC | なし |
+| 2 | **共有知を部屋へ入れる**（実装・単体テスト済み 2026-10-13。PC の実機で送付・読み取り専用・manifest の確認 1〜3 は済み 2026-10-14、4（案内は `~/.claude/CLAUDE.md`）は実装・確認済み、5 は AI が手順書を読むところまで確認（実行の完遂は未）。未解決: `~/shared` の読み取りの許可の確認が毎回出る: [[ai-room-shared-push-handover]]）（方式 A: 起動のたびに workbase の写しを `~/shared` に読み取り専用で送る。基準コミットを manifest に記録）と、部屋の `AGENTS.md` からの案内 | 部屋の AI が、フックの手順書と `lessons/` を読める。manifest に基準コミットが入る | 実装はモバイル、実機確認は PC | 1 と並行可 |
+| 3 | **フックの整理**（文書と `room readme` は実装済み 2026-10-13。`room init` は PC。結果: [[ai-room-hook-taxonomy]]）（[[ai-room-hook-taxonomy]] の論点）: README の書き手（下書き方式）、部屋の作成 `room init`、`hooks.md` の運用コマンドの節、kit の手順書の `ai/docs/` への読み替え | `open` から `close` までを、2層の役割どおりに1巡できる | モバイル（文書）＋ PC（1巡の確認） | 2 |
+| 4 | **出る方向（`stock`）**（`room stock` は実装・単体テスト済み 2026-10-13。`integrate` の手順書の対応も反映済み。PC のダミーでの `room stock` の確認は済み 2026-10-14、部屋の AI に下書きを書かせる通しは未: [[ai-room-stock-handover]]）: 下書きの回収（基準コミットと観測日を持たせる）、`integrate` の rebase の検出と解決、点検スクリプトの対応 | 部屋で書いた【汎用】の下書きが、人の確認を経て `exmem/inbox/` に入り、基準が古ければ印が付く | モバイル＋ PC | 2、3 |
+| 5 | **部屋の運用**（**保留中**: 別セッションのディレクトリ構造の議論と合流してから。決定済み 2026-10-14: 対応表のバックアップは `archives/` の `_noai/` を PC のバックアップに任せる、会話履歴は写さず期限で消すだけ。案: `room init`、reap（消すだけ）、`room intake`）（モバイルでできる分は無し。実装には実際の WSL が要る。設計メモ: [[ai-room-ops-handover]]）: 部屋の作成の自動化、更新、reap、会話履歴のバックアップ、Area 数ぶんのログイン | 新しい Area の部屋を、手順書どおりに短時間で作れる。期限切れの履歴が整理される | PC | 3 |
+| 6 | **Area の切り方の指針**（`ai-room-why.md` に判断表を追加済み 2026-10-13）（顧客の境界は Area で切る。`boundary:` の使い方） | 新しい Project を作るとき、どの Area に置くかを迷わない | モバイル（文書） | 5 |
+| 7 | **雛形と記録への反映**（雛形・lessons・ルート `AGENTS.md`・`init-workspace.md` は反映済み 2026-10-13。`topics/` の削除は PC の確認後）: ワークスペースの雛形（`AGENTS.md`、`gitignore.template`、Vault 側の deny を入れた `.claude/settings.json`）、`exmem/lessons/` への決定の記録、ルート `AGENTS.md` の構成表への `topics/`、`topics/` の整理 | 新しい PC に導入するとき、手順書と雛形だけで同じ構成になる | モバイル＋ PC | 1〜5 の安定 |
+| 8 | **顧客データのある実 Project での試行**（手数、マスク漏れ、復元の失敗、再現性を測る） | 実 Project を `open` から `close` まで1巡し、問題が一覧になる | PC | 1〜4 |
+
+優先度を下げるもの（バックログ）:
+- **Obsidian の中で AI と話す**: Claudian は部屋に繋がらない。ツールの都合でやむを得ないので、AI は Zed で使う。やるなら、Linux 版の Obsidian を部屋の中（WSLg）で動かす案を実機で試す（[[ai-room-hook-taxonomy]] とは別）。
+- 小さいファイルが多い処理の遅さ（約50倍）: 規則（大量の一時ファイルは `~/tmp/`）で対処済み。
+- Codex・Copilot の設定: 必要になってから。
+
+## 1番（マスク・復元）の次の一手
+
+設計の未決を詰める。確認する点（1つずつ聞く）:
+1. `mask.toml` の形（語の表 `[terms]`、列の指定 `[columns]`、マスクしないものの指定）。
+2. 対応表の置き場と形式（`_noai/map/`、1ファイルか種類別か）。
+3. 復元の対象（`ai/out/` の xlsx・csv・md か、拡張子の範囲）。
+4. 置換の規則（長い語から。大文字小文字・全半角・部分一致の扱い）。
+5. 対応表に無い固有名詞の候補を洗い出す方法（最小限でよいか）。
+6. `room start` との組み込み方（マスクは `start` の最初、復元は回収で）。
+

@@ -26,7 +26,7 @@
 2. 「手順」に、その項目の作り方を足す（長い任意の項目は、`init-` で始まる別ファイルに分け、その項目のときだけ読むと書く）。
 3. 「自己点検」に、その項目の確認を足す。
 4. 見本（`examples/setup-example.md`）を合わせる。
-5. `improvements.md` に1行残す。
+5. 改善の受け皿（`topics/kit-growth/docs/decisions.md`）に1行残す（`improvements.md` は凍結）。
 
 ## 場所と書き込みの制約
 

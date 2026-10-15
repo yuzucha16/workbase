@@ -6,7 +6,7 @@
 
 ## 目的
 
-`mobile-session/` での進め方（話題ディレクトリ、handover・next-steps・roadmap・窓口）を分析・一般化し、AI との作業の進め方の一サンプルにする。横展開できる部分は workflow-kit に取り込む。
+`topics/` での進め方（話題ディレクトリ、handover・next-steps・roadmap・窓口）を分析・一般化し、AI との作業の進め方の一サンプルにする。横展開できる部分は workflow-kit に取り込む。
 
 ユーザーが重視する観点: ① 大きなトピックを他のセッションに引き継ぎながら進める、② 問題・課題と決定を残す、③ 途中で知識を部分的に stock する、④ workflow への取り込み、⑤ モバイルと PC をまたいだ共有。
 
