@@ -6,6 +6,7 @@
 """
 import argparse
 import datetime
+import gzip
 import hashlib
 import io
 import json
@@ -516,8 +517,8 @@ def share_root(ctx):
 
 def build_share_tar(root, extra=None):
     """共有知の写しを tar.gz にする（順序と時刻を固定して、同じ内容なら同じバイト列）。"""
-    buf = io.BytesIO()
-    with tarfile.open(fileobj=buf, mode="w:gz", format=tarfile.PAX_FORMAT, compresslevel=6) as tf:
+    raw_tar = io.BytesIO()
+    with tarfile.open(fileobj=raw_tar, mode="w", format=tarfile.PAX_FORMAT) as tf:
         def add(path, arc):
             ti = tf.gettarinfo(str(path), arcname=arc)
             ti.mtime, ti.uid, ti.gid, ti.uname, ti.gname = 0, 0, 0, "", ""
@@ -539,7 +540,10 @@ def build_share_tar(root, extra=None):
             ti = tarfile.TarInfo(name)
             ti.size, ti.mode = len(raw), 0o644
             tf.addfile(ti, io.BytesIO(raw))
-    return buf.getvalue()
+    out = io.BytesIO()
+    with gzip.GzipFile(fileobj=out, mode="wb", compresslevel=6, mtime=0) as gz:  # gzip ヘッダーの時刻も固定する
+        gz.write(raw_tar.getvalue())
+    return out.getvalue()
 
 
 def share_state(ctx, root):
