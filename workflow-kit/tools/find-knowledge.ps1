@@ -4,6 +4,7 @@
   `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索を行う。
   exmem/lessons/ のファイル名、見出し（^#）、frontmatter の tags と aliases の行を、キーワードで検索し、
   ヒットしたキーワードの種類が多い順に、ファイルを最大3件まで示す。
+  各ファイルに大きさ（KB）を、ヒットした見出しに節の行の範囲（L開始-終了）を添える。大きいファイルは、その範囲だけを読む。
 
 .PARAMETER Keyword
   検索キーワード。空白で並べる（-Keyword は付けない）。日本語と英語の両方を含める。大文字小文字は区別しない。
@@ -37,6 +38,13 @@ if (-not (Test-Path $dir)) { Write-Host "lessons/ が無い: $dir"; exit 1 }
 
 $results = foreach ($f in Get-ChildItem -Path $dir -Recurse -Filter *.md -File) {
   $lines = [IO.File]::ReadAllLines($f.FullName, [Text.Encoding]::UTF8)
+  # 見出しの節の終わり（次の同じか上の階層の見出しの手前）。コードブロックの中の # は見出しに数えない。節だけを読めるように、範囲を示す
+  $level = @{}; $fence = $false
+  for ($i = 0; $i -lt $lines.Count; $i++) {
+    if ($lines[$i] -match '^(```|~~~)') { $fence = -not $fence; continue }
+    if (-not $fence -and $lines[$i] -match '^(#{1,6})\s') { $level[$i] = $Matches[1].Length }
+  }
+  $heads = @($level.Keys | Sort-Object)
   $hitKw = [System.Collections.Generic.HashSet[string]]::new()
   $evidence = [System.Collections.Generic.List[string]]::new()
   $bodyEv = [System.Collections.Generic.List[string]]::new()
@@ -60,6 +68,11 @@ $results = foreach ($f in Get-ChildItem -Path $dir -Recurse -Filter *.md -File) 
         $lineHit = $true
         if (-not $isBody) {
           $ev = "L$($i + 1): $($l.Trim())"
+          if ($level.ContainsKey($i)) {
+            $end = $lines.Count
+            foreach ($h in $heads) { if ($h -gt $i -and $level[$h] -le $level[$i]) { $end = $h; break } }
+            $ev = "L$($i + 1)-$($end): $($l.Trim())"
+          }
           if ($evidence.Count -lt 3 -and -not $evidence.Contains($ev)) { $evidence.Add($ev) }
         }
       }
@@ -74,13 +87,13 @@ $results = foreach ($f in Get-ChildItem -Path $dir -Recurse -Filter *.md -File) 
   }
   if ($hitKw.Count -gt 0) {
     foreach ($b in $bodyEv) { $evidence.Add("本文 $b") }
-    [pscustomobject]@{ File = $f.FullName.Substring($dir.Length + 1).Replace('\', '/'); Kinds = $hitKw.Count; Hits = $hits; Keywords = ($hitKw -join ', '); Evidence = $evidence }
+    [pscustomobject]@{ File = $f.FullName.Substring($dir.Length + 1).Replace('\', '/'); KB = [math]::Round($f.Length / 1KB); Kinds = $hitKw.Count; Hits = $hits; Keywords = ($hitKw -join ', '); Evidence = $evidence }
   }
 }
 
 if (-not $results) { Write-Host "ヒット無し（キーワード: $($Keyword -join ', ')）。統合先の候補は「新規トピック」"; exit 0 }
 $order = if ($Body) { @(@{ Expression = 'Kinds'; Descending = $true }, @{ Expression = 'Hits'; Descending = $true }, 'File') } else { @(@{ Expression = 'Kinds'; Descending = $true }, 'File') }   # 既定の並びは変えない
 foreach ($r in $results | Sort-Object -Property $order | Select-Object -First $Top) {
-  Write-Host "lessons/$($r.File)  [$($r.Kinds)/$($Keyword.Count) 語: $($r.Keywords)]"
+  Write-Host "lessons/$($r.File)  ($($r.KB)KB)  [$($r.Kinds)/$($Keyword.Count) 語: $($r.Keywords)]"
   foreach ($e in $r.Evidence) { Write-Host "    $e" }
 }

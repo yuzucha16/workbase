@@ -11,6 +11,9 @@
 .PARAMETER Today
   今日の日付（YYYY-MM-DD）。省略すると、実行した日。
 
+.PARAMETER ShowPass
+  PASS の行も出す。既定は FAIL と WARN の行と、最後の RESULT の行だけ（読む量を絞るため）。
+
 .EXAMPLE
   pwsh -NoProfile -File tools/check-inbox.ps1 exmem/inbox/2026-10-05-a-topic.md exmem/inbox/2026-10-05-b-topic.md
   pwsh -NoProfile -File tools/check-inbox.ps1                       # 今日の日付のメモを、すべて点検する
@@ -21,7 +24,8 @@
 [CmdletBinding(PositionalBinding = $false)]
 param(
   [Parameter(ValueFromRemainingArguments = $true)] [string[]]$Path,
-  [string]$Today = (Get-Date -Format 'yyyy-MM-dd')
+  [string]$Today = (Get-Date -Format 'yyyy-MM-dd'),
+  [switch]$ShowPass
 )
 
 $Path = @($Path | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
@@ -34,7 +38,7 @@ if (-not $Path) { Write-Host "点検するメモが無い（Path 未指定で、
 
 $script:fail = 0; $script:warn = 0; $script:pass = 0
 function Report([bool]$ok, [string]$name, [string]$level = 'FAIL', [string]$detail = '') {
-  if ($ok) { $script:pass++; Write-Host "  PASS: $name"; return }
+  if ($ok) { $script:pass++; if ($ShowPass) { Write-Host "  PASS: $name" }; return }
   if ($level -eq 'WARN') { $script:warn++ } else { $script:fail++ }
   $d = if ($detail) { " ($detail)" } else { '' }
   Write-Host "  ${level}: $name$d"
