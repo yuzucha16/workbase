@@ -1,8 +1,8 @@
 # 洗い出し: workbase の中の dotfiles への依存
 
-- 作成: 2026-10-12。workbase の main（`61da8fc`）で `dotfiles`、`30_link`、`50_repos`、`scripts/` を全文検索した結果を、[[dotfiles-boundary-handover]] の線で仕分けた。
+- 作成: 2026-10-12。workbase の main（`61da8fc`）で `dotfiles`、`30_link`、`50_repos`、`scripts/` を全文検索した結果を、`docs/decisions.md` の線で仕分けた。
 - 該当は 44 ファイル（`topics/` を除く）。1つのファイルが2つの区分に出る場合（`app-config-placement.md`、`docs-rules.md`）は、件数では主な区分で1回だけ数えた。仕分けは AI の案。**要判断**の行は、ユーザーに確認してから動かす。
-- dotfiles 側は読めていない。dotfiles の中で workbase を参照している箇所は、PC で洗い出す（[[dotfiles-boundary-next-steps]] の 2）。
+- dotfiles 側は読めていない。dotfiles の中で workbase を参照している箇所は、PC で洗い出す（`notes/dotfiles-boundary-procedure.md` の 2）。
 
 ## 区分
 
