@@ -1,11 +1,11 @@
 # 大きなトピックを、セッションと端末をまたいで進める型（汎化の案）
 
 - 作成: 2026-10-15（Claude Projects のスレッドで作った案を、そのまま移した）。決定と次の一手は [[topic-workflow-handover]] と [[topic-workflow-next-steps]]。この文書は分析と案の詳細（決定前の推奨を含む）。
-- 読んだもの: `mobile-session/` の全18ファイル（約14万字）、ルートと exmem の `AGENTS.md`、`workflow-kit/`（README、hooks、docs-rules、stock、wrap ほか）、`exmem/lessons/` の session-handoff・accretion-without-pruning・para-operations・session-goal-modes、Claude Projects の共有フォルダの過去の議論メモ。
+- 読んだもの: `topics/` の全18ファイル（約14万字）、ルートと exmem の `AGENTS.md`、`workflow-kit/`（README、hooks、docs-rules、stock、wrap ほか）、`exmem/lessons/` の session-handoff・accretion-without-pruning・para-operations・session-goal-modes、Claude Projects の共有フォルダの過去の議論メモ。
 
 ## 0. 3行で
 
-1. `mobile-session/` の話題ディレクトリは、実質「**クラウドから届く場所に置いた `docs/`**」になっている。kit にある `docs/` の型（log・decisions・log-history）と、Project の寿命（open / close）を**そのまま流用**すれば、新しい仕組みはほぼ要らない。
+1. `topics/` の話題ディレクトリは、実質「**クラウドから届く場所に置いた `docs/`**」になっている。kit にある `docs/` の型（log・decisions・log-history）と、Project の寿命（open / close）を**そのまま流用**すれば、新しい仕組みはほぼ要らない。
 2. 試行錯誤の負債の中心は「**状態の写しが4〜5か所にある**」ことと「**毎回読む文書の予算が無い**」こと。人が覚えられない、モバイルで読めない、の原因もここ。
 3. 進め方は「案に合意 → 小さい話題で1回試す → 大きい話題を畳み直す → 2回使えたら kit に取り込む（足すなら畳む）」。
 
@@ -17,7 +17,7 @@
 
 | # | 観察 | 根拠 |
 |---|---|---|
-| A | 話題ごとのディレクトリで、状態をリポジトリに置き、会話に置かない | `mobile-session-index.md`、`session-handoff.md` の原則 |
+| A | 話題ごとのディレクトリで、状態をリポジトリに置き、会話に置かない | `topics-index.md`、`session-handoff.md` の原則 |
 | B | 項目ごとに「場所（モバイル / PC）」を明記し、分担している | `ai-room-roadmap.md` の「主な場所」列 |
 | C | 1項目ずつ、未決は1問ずつ聞く | `ai-room-start-here.md`「作業の約束」 |
 | D | 決定に「ユーザーの発言」を根拠として付ける | `dotfiles-boundary-handover.md`「決めた方法」列 |
@@ -32,7 +32,7 @@
 | 1 | **状態の写しが多い**。同じ項目の状態が roadmap の表、next-steps の TODO、各 handover、index の「状態」列、start-here の「ローカルの状態」にある | ai-room の R1 の状態は少なくとも4か所 | 更新漏れ。どれが正しいか人が分からない |
 | 2 | **毎回読む文書に予算が無い**。next-steps が 34KB・210行、start-here が 7KB、話題全体で 13万字 | `wc -c` | モバイルで読めない。セッションの先頭が重い |
 | 3 | **next-steps が追記型の経緯を抱えている**（実測の結果、1巡目・2巡目の問題…） | next-steps の「1」「2」「3」節 | docs-rules の「log と log-history の分割」を自分で破っている |
-| 4 | **引き継ぎの置き場の規則が3つあり、食い違う** | ① `exmem/AGENTS.md` と docs-rules「使い捨ての環境」: lessons の Open Questions / Next Actions、② index: `mobile-session/`、③ Claude Projects の共有フォルダ（git 外） | どこを見ればよいか毎回迷う |
+| 4 | **引き継ぎの置き場の規則が3つあり、食い違う** | ① `exmem/AGENTS.md` と docs-rules「使い捨ての環境」: lessons の Open Questions / Next Actions、② index: `topics/`、③ Claude Projects の共有フォルダ（git 外） | どこを見ればよいか毎回迷う |
 | 5 | **引き継ぎの型が2つある**（session-handoff の「3行の依頼文」と、start-here の窓口） | 両ファイル | 型の正本が無い |
 | 6 | **名前が実態とずれている**。PC のセッションも書くし、モバイルに限らない | 「PC のセッション」が書いた commit が多数 | 何の置き場か直感で分からない |
 | 7 | **話題の間の依存が追えない**。R5 は「別セッションのディレクトリ構造の議論と合流してから」保留 | roadmap の 5 | 保留が忘れられる |
@@ -89,7 +89,7 @@ topics/<トピック名>/
 | 他のセッションに引き継ぐ | 新しいセッションへの依頼は「`<トピック名>` の続き」の1行。AI は窓口 → log.md の順に読む。session-handoff の3行の依頼文は、この1行に畳む |
 | 問題・課題・決定を残す | 課題は log.md の Open Questions、決定は decisions.md。決定は「ユーザーの発言」を根拠に持つ（既存の規則どおり）。保留は理由と「再開の条件」を書く（依存先のトピック名つき。負債7） |
 | 途中で stock する | 項目が1つ終わるごとに、【汎用】の決定を `stock` で inbox へ。終わりにまとめない。`→` の有無で運んだかが分かる（既存の規則） |
-| workflow への取り込み | kit に足すのは「トピック」の節を1つ（docs-rules）と、窓口の雛形1つだけ。代わりに畳むもの: `mobile-session-index.md` の使い方、session-handoff の依頼文の型、docs-rules と exmem/AGENTS の「引継ぎは lessons の Open Questions」の記述（負債4・5） |
+| workflow への取り込み | kit に足すのは「トピック」の節を1つ（docs-rules）と、窓口の雛形1つだけ。代わりに畳むもの: `topics-index.md` の使い方、session-handoff の依頼文の型、docs-rules と exmem/AGENTS の「引継ぎは lessons の Open Questions」の記述（負債4・5） |
 | モバイル・PC をまたぐ | トピックは workbase（GitHub）に置く＝両方から届く。各項目に場所を付ける（B を規則化）。Claude Projects の `notes/` は「議論の下書き」、確定したらトピックへ移す、で役割を分ける（負債4） |
 
 ### 2-4. Areas への横展開

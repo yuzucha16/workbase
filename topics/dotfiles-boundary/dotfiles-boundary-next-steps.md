@@ -10,7 +10,7 @@
 - [ ] workbase の規則・索引を直す（下の「4」）
 - [ ] 「割る」「削る」を行う（下の「5」）
 - [ ] 線と一方向の規則を exmem に残す（下の「6」）
-- [ ] 反映が終わったら、`mobile-session/dotfiles-boundary/` を削除し、`mobile-session-index.md` の行を消す
+- [ ] 反映が終わったら、`topics/dotfiles-boundary/` を削除し、`topics-index.md` の行を消す
 
 ## 1. 要判断（ユーザーに1つずつ確認）
 

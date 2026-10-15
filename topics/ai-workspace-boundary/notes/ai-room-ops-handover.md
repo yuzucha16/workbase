@@ -42,4 +42,4 @@
 
 ## 片付け
 
-PC の確認が済んだら、`mobile-session/ai-workspace-boundary/` を削除する（`ai-room-next-steps.md` の TODO。履歴は git に残る）。
+PC の確認が済んだら、`topics/ai-workspace-boundary/` を削除する（`ai-room-next-steps.md` の TODO。履歴は git に残る）。

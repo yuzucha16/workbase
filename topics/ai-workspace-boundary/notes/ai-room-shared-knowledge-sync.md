@@ -1,7 +1,7 @@
 # 部屋と共有知（workbase）の同期: 一般化と rebase の担当
 
 - 作成: 2026-10-13（モバイルのセッションでの議論）。状態: **方向と、入る方向の方式 A に合意。細部は未決**。ユーザーの発言: 「gitのrebaseだよね。これをいつ誰がやるかが問題」「この方向が良い」。
-- 前提: [[ai-room-handover]]、[[ai-room-next-steps]]。
+- 前提: [[ai-room-handover]]、`docs/log.md`（決定は `docs/decisions.md`、経緯は `docs/log-history.md`）。
 
 ## 問題
 

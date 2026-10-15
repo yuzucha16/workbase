@@ -1,7 +1,7 @@
 # 引き継ぎ: workflow-kit の育て方（改善の経路）
 
 - 作成: 2026-10-15（モバイルのセッションでの検討）。
-- 状態: 方向は合意済み。**着手は、PC2 で並行中の AI の見せる範囲（ai-workspace-boundary）の話が終わってから。** 順番は「`mobile-session/` → `topics/` の改名（別の話題で決定済み）→ この経路の整備」。
+- 状態: **取り込み済み（2026-10-15）**: `topics/kit-growth/` を作り、`review` の入力・`hook-common.md` の「改善」・`improvements.md`（凍結）を直した。窓口は [[kit-growth-start-here]]。以下は当時の記録。方向は合意済み。**着手は、PC2 で並行中の AI の見せる範囲（ai-workspace-boundary）の話が終わってから。** 順番は「`mobile-session/` → `topics/` の改名（別の話題で決定済み）→ この経路の整備」。
 
 ## 前提（ユーザーが明示）
 
