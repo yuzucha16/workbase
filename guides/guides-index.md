@@ -7,7 +7,7 @@ aliases:
   - guides
   - 手順書の索引
 created: 2026-10-10
-updated: 2026-10-12
+updated: 2026-10-15
 ---
 
 # guides の索引
@@ -29,6 +29,13 @@ updated: 2026-10-12
 | WSL2 / Ubuntu を入れる | [[win11#8. 任意設定]] | 手順書 |
 | エディタ・ターミナルのフォント（PlemolJP）を入れる | [[fonts-setup]] | 手順書 |
 | Claude Code の設定を PC に入れる・入れ替える | dotfiles の `windows/claude/README.md`（このリポジトリの外。スクリプトの隣に置く手順書） | 手順書 |
+
+### AI を使う環境をつなぐ
+
+| やりたいこと・場面 | 見る文書 | 種類 |
+|---|---|---|
+| 個人の AWS アカウントを作って、Bedrock 経由で Claude Code に「こんにちは」と話しかける | [[bedrock-first-hello]] | 手順書 |
+| Bedrock と Anthropic 直接の単価の差、リージョン指定の割増を思い出す | [[bedrock-first-hello#対応バージョン表]] | 手順書 |
 
 ### AI に顧客データ・社外秘を見せない
 
@@ -63,7 +70,7 @@ updated: 2026-10-12
 
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
-| 手順書（`howto/`） | どの順で何をやるんだっけ | [[win11]]、[[debian-family]]、[[fonts-setup]]、[[ai-room-setup]] |
+| 手順書（`howto/`） | どの順で何をやるんだっけ | [[win11]]、[[debian-family]]、[[fonts-setup]]、[[ai-room-setup]]、[[bedrock-first-hello]] |
 | 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
