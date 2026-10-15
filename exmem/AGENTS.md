@@ -12,7 +12,7 @@ exmem（external memory、外部メモリ）は、AIと人間が共有するナ�
 
 ## 読む順番
 
-1. `README.md` の「知識の索引」で、該当する知識を探し、その `lessons/*.md` を読む（全件は読まない）。
+1. `README.md` の「知識の索引」で、該当する知識を探し、その `lessons/*.md` を読む（全件は読まない）。大きいノート（目安 10KB 超）は、見出しの一覧か `find-knowledge.ps1` が示す行の範囲を見て、必要な節だけを読む。
 2. 作業の途中の状態は、その `lessons/` のノートの `Open Questions` と `Next Actions`。
 3. タグの一覧は `tags.md`。
 

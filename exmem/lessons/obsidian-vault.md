@@ -15,7 +15,7 @@ aliases:
   - Obsidianの設定
   - vaultのバックアップ
 created: 2026-10-01
-updated: 2026-10-06
+updated: 2026-10-15
 sources:
   - Claude Code conversation "exmemの整理" (2026-09-26〜2026-10-01)
   - Claude Code conversation "ディレクトリ構造の見直し" (2026-10-02〜2026-10-03)
@@ -44,7 +44,7 @@ sources:
 2026-10-06 の第2の変更（同日の夕方）: トップを `C:\vault\works` から `$HOME\works`（Windows は `%USERPROFILE%\works`）へ移し、ghq の root を `$HOME\works\repos` にした。置き場は1つだけなので、親の `C:\vault` を畳んだ（ユーザーの決定）。以下の現在形の記述（図、環境変数、場所）は `$HOME\works` に直した。`C:\vault\works` と書かれた日付つきの履歴は、当時のパスのまま残す。Linux 側（WSL・ネイティブ）も `~/works`、`~/works/repos` にそろえた。この移動の原則・決定・事実・遭遇したことは、下の「置き場を `$HOME\works` へ移す」にまとめた。
 
 **現在の状態（確認: 2026-10-06、根拠: ユーザーの確認、起動したセッション、dotfiles の試験）**: 環境変数は `WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` は `%USERPROFILE%\.certs`（`VAULT_HOME` は廃止。`NOTES_DIR` は未設定）。Obsidian と Claude Code は、新しい場所で動いた。`.obsidian` は dotfiles へのジャンクション。WSL へは `WSLENV` の `WORKS_DIR/p` で渡す設計だが、実機の WSL では渡っていなかった（確認: 2026-10-06、下の「置き場を `$HOME\works` へ移す」の Facts）。dotfiles の Linux の試験は 51/51 合格（再実行で再確認: 2026-10-06）。未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。旧 `C:\vault`（旧 clone とバックアップ）は、この `--resume` の試験のために、削除せずに残している（ユーザーの指示）。rename の判断・原則・遭遇したことは、下の「rename と旧名の扱い」にまとめた。
-2026-10-05 に、下の「目標の構造（2026-10-02 決定）」から変更した。経緯は、その節と、Decisions の「撤回済み」の注記に残す。
+2026-10-05 に、2026-10-02 に決めた目標の構造から変更した。経緯は、下の「過去の構造」と、Decisions の「撤回済み」の注記に残す。
 
 ```text
 $HOME\works\           # PC ごとのローカルなリポジトリ（実ディレクトリ。ジャンクションではない）
@@ -154,55 +154,11 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 - 削除すると決めたら、順は「GitHub 側 → 復元期間が過ぎてから旧 clone → バックアップは最後」。削除したら、「旧 `notes` はアーカイブにした」の決定を撤回済みにして、旧 URL が無効になったことを1行足す（履歴の URL は書き換えない）。
 - 旧 clone のディレクトリを消すと、そこを cwd にした `--resume` ができなくなる。Claude Code の旧キー（`…-yuzucha16-notes` 系統の4つ）は、GitHub 側の削除では影響を受けない。
 
-### 目標の構造（2026-10-02 決定。2026-10-05 に変更。上の「現在の構造」を参照）
+### 過去の構造（2026-10-01〜05。畳んだ）
 
-- Vaultのルート: `C:\vault\notes`。ここがそのまま Gitリポジトリ（GitHub: `yuzucha16/notes`）のルートになる。
-- 直下はPARA形式: `projects/` / `areas/` / `resources/` / `archives/`
-- 共有（Git管理）するのは `resources/` と `.obsidian/` だけ。`projects/` `areas/` `archives/` はローカル専用で、`.gitignore` のホワイトリストで除外する。
-- このナレッジベースの場所: `resources/exmem`
-
-```text
-notes/                 # Git root
-├── .gitignore / .gitattributes
-├── .obsidian/         # 共有（workspace*.json は除外）
-├── resources/         # 共有（唯一）
-│   ├── exmem/
-│   ├── guides/
-│   ├── handson/
-│   ├── office/        # Officeテンプレ・リボン設定
-│   ├── fonts/         # Git LFS
-│   ├── wallpapers/    # Git LFS
-│   └── _archive/      # 共有の古い資料（旧 obsolete/）
-├── projects/  areas/  archives/   # ローカル専用
-```
-
-### 移行の状況（2026-10-03 時点。履歴）
-
-- 済み（2026-10-02）: `areas_shared` リポジトリ内の配置換え（`exmem` `cheatsheets` `handson` を `resources/` 配下へ、`obsolete` を `resources/_archive/obsolete` へ）、`.gitignore` / `.gitattributes` の作成、`office` の dotfiles からのコピー、ドキュメントの更新。GitHub 側の `areas_shared` → `notes` の rename。
-- 済み（2026-10-03）: 実体は `C:\vault\repos\github.com\yuzucha16\notes`（ghq 管理）。`C:\vault\notes` はその実体へのジャンクション。`.obsidian` を dotfiles から取り込み（`workspace.json` は除外）。dotfiles 側の `windows/office` と `windows/obsidian` を削除し、`links.map` のリンク元を `..\notes\resources\office\...` に変更。`%APPDATA%` 側の Office のリンク7本を新しい実体へ張り直した。
-- 注意: `C:\vault` に置かれていた `notes.lnk` は Windows のショートカットで、パスとして辿れない（ジャンクション / シンボリックリンクとは別物）。`C:\vault\notes` は 2026-10-03 にジャンクションとして作り直した。
-- 済み（2026-10-03 確認）: `C:\vault\notes` は実体 `repos\...\notes` へのジャンクション。`C:\vault\notes.lnk` は無くなっている。`_local/` のコミット（`27d1d08`）は `origin/main` より1つ先で、未 push。
-- 未実施: 旧 `areas_shared` クローン（`C:\vault\repos\github.com\yuzucha16\areas_shared`）と `C:\vault\notes_old` の削除（2026-10-03 時点でどちらも残っている。旧クローンは clean で未 push の変更なし）。Obsidian で `C:\vault\notes` を Vault として開き直す確認。`resources/fonts/` には `README.md` だけで、HackGen はまだ無い。
-
-### dotfiles との関係（2026-10-03 時点。2026-10-05 に変更）
-
-2026-10-05 の変更: `links.map` の `..\notes|%NOTES_DIR%` は無くなり、`windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` になった。`notes` は clone しない。`workbase` は `50_repos.bat` が `NOTES_DIR\resources` に clone する。`office/` は dotfiles の `windows/office/` に戻った（配置は手動のまま）。以下は、2026-10-03〜04 時点の記述。
-
-- `notes` は dotfiles の隣のリポジトリ。`links.map` が `..\notes|%NOTES_DIR%`（Vault）を張る。Office のテンプレ・リボン設定は、その後の dotfiles の見直しで `links.map` から外れ、初回に手で配置する運用になった。
-- **撤回済み（2026-10-05。dotfiles へ戻す。理由は [[app-config-placement]] の Decisions）**: `.obsidian` は `notes` に置き続け、dotfiles には戻さない（2026-10-04 決定）。根拠: Obsidian は Vault 直下の `.obsidian` を読む（dotfiles に置くとジャンクションが必須）、設定の中身が Vault と連動する、dotfiles → `notes` の片方向の依存を保てる、プラグインで dotfiles の履歴が重くなるのを避ける。dotfiles に置いてリンクすると、clone 順の循環、リンク前に Obsidian を開いたときの衝突、コミット先の分離が起きる。設定を変える作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない。判断基準の全体は [[app-config-placement]]。
-- セットアップの順序は「`notes` を先に clone → `30_link.bat`」（旧 `w2a`。スクリプトは2026-10-03 に `NN_<内容>` へ改名された）。`NOTES_DIR` はリンクで作られる。
-- ローカル専用の `projects/` `areas/` `archives/` は gitignore のため、clone 直後には存在しない。必要に応じて手で作る。
-
-### 移行前の構造（2026-10-01 時点）
-
-一部のフォルダはGitリポジトリへのジャンクションになっていた。
-
-| Vault内のパス      | 実体                                                                        | Gitリモート                                     |
-| -------------- | ------------------------------------------------------------------------- | ------------------------------------------- |
-| `.obsidian`    | `C:\vault\repos\github.com\yuzucha16\dotfiles\windows\obsidian\.obsidian` | dotfiles                                    |
-| `areas_shared` | `C:\vault\repos\github.com\yuzucha16\areas_shared`                        | `https://github.com/yuzucha16/areas_shared` |
-
-Git の管理境界が `notes`（管理外）・`areas_shared`・`dotfiles` の3つに分かれていた。
+- 2026-10-15 に、今の構造に置き換わった4つの節（目標の構造 2026-10-02、移行の状況 2026-10-03、dotfiles との関係 2026-10-03、移行前の構造 2026-10-01）を畳んだ。全文は git の履歴にある（畳む前のコミット `33e9fe3`。`git show 33e9fe3:exmem/lessons/obsidian-vault.md`）。
+- 要点: 2026-10-01 は `.obsidian` と `areas_shared` がジャンクションで、Git の管理境界が `notes`（管理外）・`areas_shared`・dotfiles の3つに分かれていた。2026-10-02 に、Vault のルートを1つの Git リポジトリ（`notes`。共有は `resources/` と `.obsidian/` だけ）にする目標を決めた。2026-10-05 に、上の「現在の構造」（共有の `workbase` と、PC ローカルの Vault の分離）へ変えた。
+- **撤回済み（2026-10-05）**: `.obsidian` を `notes` に置き続ける決定（2026-10-04）は撤回し、dotfiles へ戻した。理由は [[app-config-placement]] の Decisions。
 
 ## 設定
 
