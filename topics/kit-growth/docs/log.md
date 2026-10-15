@@ -6,13 +6,13 @@
 
 - 経路は整備済み: 受け皿 = このトピック、入力 = `inbox.md`、見直し = `review`（inbox の未選別と、動いているトピックを見る）、`improvements.md` は凍結。
 - 自動採用（`wrap-hook.md` の節）は、2026-10-15 に畳んだ（判定を前倒し）。
-- トークン節約（会話を切る・出力を絞る）の対応を kit と exmem に入れた。`review` が星取り表 `workflow-kit/token-matrix.md`（4観点）で自己採点する。基準値は 切る 16・絞る 24・予算 38・外部化 25、合計 103（`6bd1a2a`）。
+- トークン節約（会話を切る・出力を絞る）の対応を kit と exmem に入れた。`review` が星取り表 `workflow-kit/token-matrix.md`（4観点）で自己採点する。基準値は 切る 16・絞る 24・予算 38・外部化 25、合計 103（`6bd1a2a`）。初回の採点し直しも 103（`70b8e22`）。
 
 ## Next Actions
 
 1. PC1 の印象を `inbox.md` に入れ始める（モバイル。随時）。
 2. `start` のモード（確定型・探索型）を次の2〜3セッションで試し、`review` で `again`・`gap`・`goal_change` を見る（improvement-methods の close で受け継いだ。詳細は `exmem/lessons/session-goal-modes.md`）。
-3. 次の `review` で、`token-matrix.md` を初めて採点し直し（基準 103）、入力「重い会話」で入力トークンの大きい会話を見る。見送った2件（切る目安の数値、`lessons/` の字数の目安）は、その結果を見て決める。
+3. `token-matrix.md` の初回の採点し直しは済んだ（`70b8e22` で 103、下がった列なし）。入力「重い会話」は、会話履歴の集計がある端末の `review` で見る。見送った2件（切る目安の数値、`lessons/` の字数の目安）は、その結果を見て決める。
 4. topic-workflow の kit への取り込み（docs-rules の「トピック」の節）が済んだら、`topics/` の型の記述をそちらへ寄せる。
 
 ## Open Questions
