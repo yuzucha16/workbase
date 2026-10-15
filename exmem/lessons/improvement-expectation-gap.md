@@ -10,7 +10,7 @@ aliases:
   - 改善のやり方2
   - 期待と実際のギャップ
 created: 2026-10-13
-updated: 2026-10-14
+updated: 2026-10-15
 sources:
   - Claude Code conversation "改善のやり方1" (2026-10-13)
 ---
@@ -66,4 +66,5 @@ sources:
 ## Related
 
 - [[improvement-quantified-options]]: 改善のやり方1
+- [[improvement-coverage-matrix]]: 改善のやり方3
 - [[user-manual]]: 仮説を伏せる理由
