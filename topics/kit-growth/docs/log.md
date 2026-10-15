@@ -5,14 +5,13 @@
 ## 状態
 
 - 経路は整備済み: 受け皿 = このトピック、入力 = `inbox.md`、見直し = `review`（inbox の未選別と、動いているトピックを見る）、`improvements.md` は凍結。
-- 自動採用（`wrap-hook.md` の節。停止中）は、2026-11-08 の判定で畳む方向。
+- 自動採用（`wrap-hook.md` の節）は、2026-10-15 に畳んだ（判定を前倒し）。
 
 ## Next Actions
 
 1. PC1 の印象を `inbox.md` に入れ始める（モバイル。随時）。
 2. `start` のモード（確定型・探索型）を次の2〜3セッションで試し、`review` で `again`・`gap`・`goal_change` を見る（improvement-methods の close で受け継いだ。詳細は `exmem/lessons/session-goal-modes.md`）。
-3. 2026-11-08: 自動採用の節の判定（畳むか）。
-4. topic-workflow の kit への取り込み（docs-rules の「トピック」の節）が済んだら、`topics/` の型の記述をそちらへ寄せる。
+3. topic-workflow の kit への取り込み（docs-rules の「トピック」の節）が済んだら、`topics/` の型の記述をそちらへ寄せる。
 
 ## Open Questions
 
