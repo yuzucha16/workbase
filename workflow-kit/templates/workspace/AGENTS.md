@@ -20,8 +20,8 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 ## 読む順番
 
 1. `docs/log.md`
-2. `resources/AGENTS.md`（Vault 全体の規約）
-3. `docs/decisions.md`
+2. `resources/AGENTS.md`（Vault 全体の規約。開始時に読むのはここまで）
+3. `docs/decisions.md`（開始時に読まない。何かを決める・変える前に検索する）
 
 ## 構成と管理
 
