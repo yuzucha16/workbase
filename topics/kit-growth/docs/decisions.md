@@ -32,3 +32,4 @@
 - 【汎用】`find-knowledge.ps1` は、ファイルの大きさ（KB）と、ヒットした見出しの節の行の範囲を返す。`check-inbox.ps1` は、既定で PASS の行を出さない（`-ShowPass` で出す）。
 - 【この件】見送り: 切る目安の数値、`lessons/` の字数の目安。
 - 【汎用】雛形の workspace `AGENTS.md` の読む順番を、開始時は `docs/log.md` と `resources/AGENTS.md` まで、`docs/decisions.md` は決める前に検索する形に直した（同日、ユーザーの追加の依頼）。見本 `examples/setup-example.md` の読む順番と、`init-hook.md` の自己点検の項目も合わせた。既存のワークスペースの `AGENTS.md` は、各 PC で同じ箇所を手で直す。
+- 【汎用】`review` の入力に「トークン消費の自己採点」を足した。星取り表 `workflow-kit/token-matrix.md`（切る・絞る。◎3・○2・△1 点）で採点し直し、前回よりどちらかの列が下がったら見直す。基準値は 2026-10-15 の対応後（`a46cf2e`）の 切る 16・絞る 24（ユーザーの依頼。「当面は」の運用）。
