@@ -8,16 +8,16 @@
 
 フックは、寿命の階層ごとに、開始と終了の対にする。呼び出し名は英語の短い名前を主にし、日本語の言葉は別名として当面残す（別名は、いま決まっているものだけ。増減は後で揃える）。
 
-呼び出し表は `hooks.md` に移した（2026-10-08。写しを作らない）。寿命の階層: ワークスペース `init`、Project `open`・`close`、セッション `start`・`wrap`、随時 `stock`・`integrate`、週1回の目途 `review`。
+呼び出し表は `hooks.md` に移した（2026-10-08。写しを作らない）。寿命の階層: ワークスペース `init`、Project `open`（終了は `room close`）、セッション `start`・`wrap`、随時 `stock`・`integrate`、週1回の目途 `review`。
 
-連鎖は `init`、`open → [start → 作業 → wrap]×N → close`。`stock` と `integrate` は随時。
+連鎖は `init`、`open → [start → 作業 → wrap]×N`。`stock` と `integrate` は随時。
 
-- **用語**: スレッド = Claude Code の1会話（フックの対象にしない）。セッション = `start` から `wrap` までの作業手順の単位（1スレッドに複数セッション、複数スレッドで1セッションがありうる）。`open` と `close` は、スレッドでなく Project の寿命。
-- **`open` と `start`**: `open` は Project のひな形（`README.md`、`AGENTS.md`）を作ったあとに `start` を呼ぶ。`start` は単独でも呼べる（進行中の Project があるとき）。
+- **用語**: スレッド = Claude Code の1会話（フックの対象にしない）。セッション = `start` から `wrap` までの作業手順の単位（1スレッドに複数セッション、複数スレッドで1セッションがありうる）。`open` は、スレッドでなく Project の寿命。
+- **`open` と `start`**: `open` は README 本文を下書きしたあとに `start` を呼ぶ（ひな形は人が `room open` で作る）。`start` は単独でも呼べる（進行中の Project があるとき）。
 - **`end` にしない理由**: 「会話を終える」と取られやすいので、`wrap` にした（ユーザー）。
 - **旧ファイル名**: `closing-hook.md`、`knowledge-hook.md`、`setup-hook.md` は、2026-10-08 に削除した（新名は `wrap-hook.md`、`stock-hook.md`、`init-hook.md`）。以下の履歴の旧名は、読み替える。
 - **フックの章立て**: 共通部は H2 の `目的と契機` → `場所と書き込みの制約` → `手順` → `報告の型`（この順。新しいフックにも置く）。共通部の中身（冒頭の定型、目的と契機、章の並び、手順の参照、改善、承認、記録、フックを足す・消すとき）は `hook-common.md`。それ以外の章は、フック固有の部分で、共通部の後ろに置く（例外: `入力`、init の `導入項目の一覧`）。`このフックの改善` は、固有の確認項目があるフックだけが持つ任意の章。`tools/check-hook-outline.ps1` で点検する。
-- **実測が少ないフック（`start` `open` `close`）**: 叩き台として扱い、実測で直して育てる。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善の流れは `hook-common.md`。
+- **実測が少ないフック（`start` `open`）**: 叩き台として扱い、実測で直して育てる。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善の流れは `hook-common.md`。
 ## 目的
 
 ナレッジと作業ログを分ける。
@@ -68,10 +68,9 @@
 | `init-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
 | `init-workspace.md` | init の導入項目 5（ワークスペースの生成）の作り方。項目 5 のときだけ読む |
 | `init-restore.md` | init の導入項目 4（履歴からの復元）の作り方。項目 4 のときだけ読む |
-| `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、ひな形の作成、Area の一覧の更新。Project の構造 |
+| `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、聞き取り、README 本文の下書き。Project の構造 |
 | `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 構成、文書、テスト、変更の依頼、立ち上げ・完了のチェック。`type: dev` の `open` / `start` のときだけ読む |
 | `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
-| `close-hook.md` | `close`（Project の終了）の手順: 完了条件の確認、暫定の見直し、`archives/` への移動 |
 | `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `topics/kit-growth/docs/decisions.md`） |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
 | `tools/find-knowledge.ps1` | `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。ファイルの大きさと、ヒットした見出しの節の行の範囲を返す。読み取り専用。PowerShell 7） |

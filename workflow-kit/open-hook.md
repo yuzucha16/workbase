@@ -6,37 +6,32 @@
 
 ## 目的と契機
 
-- **目的**: `open` は Project の主題と完了条件を決めて、ひな形を作る。作ったあとに `start`（`start-hook.md`）を呼び、その日のゴールと前提を決める。
+- **目的**: `open` は Project の主題と完了条件を決めて、README 本文を下書きする。続けて `start`（`start-hook.md`）を呼び、その日のゴールと前提を決める。ひな形（`README.md`、`ai/`、`_noai/`）、Area の一覧、状態、コミットは、人が行う `room open` / `room readme` の責務で、この手順書は持たない（`room-context.md`、`room/README.md`）。
 - **契機**: Project を新しく始めるときに、ユーザーが言う、または `start` が、進行中の Project が無いと判断したときに案内する。小さな再開では、`open` は不要。
-- **前提**: ワークスペース（PARA 構成。`areas/` `projects/` `archives/`）がある。
+- **前提**: ワークスペース（PARA 構成。`areas/` `projects/` `archives/`）があり、人が `room open <名>` で Project のひな形を作ってある。
 
 ## 場所と書き込みの制約
 
-- 書き込み先は、`projects/<名>/`（手順「作る」）、`areas/<名>/README.md` の一覧（手順「Area の一覧を更新する」）、呼び出し元の記録（`docs/log.md`、`docs/decisions.md`、`events`。手順「記録する」）だけ。`archives/` は触らない（`close` の領分）。
-- 実行する場所: ワークスペースの Vault 側の AI は、`projects/` `areas/` `archives/` を読み書きしない。この手順の書き込みは AI 作業部屋の中で行う。副作用（ひな形、状態の更新、コミット）は人が `room` で行い、AI は判断をファイルに書く（`room-context.md`）。
-- コミットと push は、手順「コミットする」に従う。
+- 書き込み先は、`ai/out/readme-draft.md`（README の本文だけ。frontmatter を含めない）と、呼び出し元の記録（`ai/docs/log.md`、`ai/docs/decisions.md`、`events`。手順「記録する」）だけ。Project と Area の `README.md` は書き込めない（`ai/ctx/` の写しを読む）。
+- 実行する場所: ワークスペースの Vault 側の AI は、`projects/` `areas/` `archives/` を読み書きしない。この手順は AI 作業部屋の中で行う。反映は人が `room readme <名>` で行う。`archives/` は触らない。
 
 ## 手順
 
-1. **対象を決める**: 候補（Area の README の「次の Project の候補」、`docs/log.md` の Next Actions）から選ぶ。新しい題材なら、どの Area に属するかを決める（無ければ Area を作る。Area の上限は、ワークスペースの規約に従う。暫定: 5件）。
+1. **対象を決める**: 候補（Area の README の「次の Project の候補」、`ai/docs/log.md` の Next Actions）から選ぶ。新しい題材なら、どの Area に属するかを決める（Area の上限は、ワークスペースの規約に従う。暫定: 5件）。
 2. **判断基準で検査する**:
    - 完了条件を、1文で書けるか（書けなければ Project ではなく Area）。
    - 見直し日を置けるか。成果物が1つに特定できるか（複数なら Project を分ける）。
    - 進行中の Project の上限を超えないか（暫定: 3件）。
 3. **聞く**（選択式。答えが1つに定まるものは宣言する）: 種類 `type`（`doc` `dev` `research`。成果物の種類で決める。Area は既定値のヒント）、主題（言語や方式など）、完了条件の種類、見直し日。開発系の Project は、`start-hook.md` の「開発」の差分の項目を、**実装の前に**ここで聞く。
-4. **作る**: `projects/<名>/` に、`README.md`（ひな形: `templates/project/README.template.md`。frontmatter: `status: active`、`area`、`type`、`review`、`created`、`updated`。本文: 目的、完了条件、成果物、範囲外、Open Questions）。複数セッションにまたがるなら、`docs/log.md` と `docs/decisions.md`（`docs-rules.md` の書式）。構造は下の「Project の構造」。必要なら `AGENTS.md`。名前は、`<動詞か領域>-<主題>`（例: `learn-c-pool-allocator`）で、ワークスペース内で一意にする。
-5. **Area の一覧を更新する**: `areas/<名>/README.md` の「進行中の Project」に、パス付きの wikilink（`[[projects/<名>/README|<名>]]`。README が複数あるのでファイル名だけのリンクは使えない）で足す。
-6. **記録する**: `docs/log-history.md` の `## Log` に1項目（現在状態に影響するなら `docs/log.md` も更新）。呼び出し元に `events` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `docs/decisions.md` に決定として書く。
-7. **コミットする**: パスを指定して `git add`。push はユーザー（使い捨ての環境では `docs-rules.md` に従う）。
-8. **`start` を呼ぶ**。
+4. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`）を書く。完了条件は、ユーザーが承認してから書く（承認の前に「ユーザー承認: 日付」を書かない）。Project の名前の案（`<動詞か領域>-<主題>`、例: `learn-c-pool-allocator`。ワークスペース内で一意）を添える。
+5. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。呼び出し元に `events` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
+6. **`start` を呼ぶ**。
 
 ## 報告の型
 
-1. **作った Project**: パス、種類（`type`）、完了条件、見直し日。
-2. **更新した Area の一覧**: 対象の `areas/<名>/README.md`。
-3. **コミット**: ハッシュと内容。push の有無。
-4. **次**: `start` を呼んだこと（または呼ばなかった理由）。
-5. **改善案**（あったときだけ）: `hook-common.md` の「改善」に従う。
+1. **下書き**: `ai/out/readme-draft.md`、種類（`type`）、完了条件、見直し日。
+2. **次**: 人が `room readme <名>` で反映すること、`start` を呼んだこと（または呼ばなかった理由）。
+3. **改善案**（あったときだけ）: `hook-common.md` の「改善」に従う。
 
 ## Project の構造
 
