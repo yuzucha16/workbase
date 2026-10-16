@@ -12,9 +12,11 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 
 ## 読む順番
 
-1. `docs/log.md`
-2. `resources/AGENTS.md`（Vault 全体の規約。開始時に読むのはここまで）
-3. `docs/decisions.md`（開始時に読まない。何かを決める・変える前に検索する）
+1. `README.md`（窓口。構成と管理。Vault 全体の規約は `resources/AGENTS.md`。`resources/` の作業のときに読む）
+2. `docs/log.md`（開始時に読むのはここまで。「期日」の節があれば、今日以前または3日以内の項目を、最初の返答で知らせて判断を求める）
+3. `docs/decisions.md` と `docs/log-history.md` は開始時に読まない。何かを決める・変える前に `decisions.md` を検索する。経緯が要るときは `log-history.md` を検索する。
+
+下位の単位の「<名前> の続き」は、kit の `docs-rules.md` の「上の階層で起動して…」に従う。
 
 ## 構成と管理
 
