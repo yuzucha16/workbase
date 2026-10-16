@@ -13,7 +13,7 @@
 - 移す前に `grep -n '\[\[' guides/howto/*.md` で wikilink を確認し、dotfiles 側では URL か名前に直す。
 - 付録「dotfiles 側の課題」は、残っているものを dotfiles の課題の置き場へ移し、付録自体は消す。
 - 移したあと、workbase の中に `[[win11]]` `[[debian-family]]` `[[fonts-setup]]` への wikilink が残っていないか確かめる（`rg -n "\[\[(win11|debian-family|fonts-setup)"`）。
-- dotfiles の push は、`docs-rules.md` の規則どおり、エージェントは行わずコマンドを報告する。
+- dotfiles の push は、dotfiles の `AGENTS.md` の許可リストと `docs-rules.md` の「push」に従う（2026-10-16 に、エージェントが push してよいと決まった。公開なので機密の検索を広げる）。
 
 ## 4. workbase の規則・索引を直す
 
