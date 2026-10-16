@@ -24,7 +24,7 @@ Claudeは、以下のルールに従って作業する。以下は主に `howto/
 ### 範囲と正
 
 - 手順書は、**ゴール(完了の目安)を先に決めてから**書く。範囲は「準備」から「ゴール」まで。範囲外は書かない
-- dotfiles のスクリプトに依存する手順書は、dotfiles の `docs/setup/` に置く(ここには置かない。dotfiles の挙動を workbase に書かない。`topics/dotfiles-boundary/` の決定)
+- dotfiles のスクリプトに依存する手順書は、dotfiles の `docs/setup/` に置く(ここには置かない。dotfiles の挙動を workbase に書かない。2026-10-16 の決定。理由は `exmem/lessons/app-config-placement.md`)
 - 手順書は、スクリプトの前後(手動でしかできない作業)と、順序・注意点を書く。スクリプトの中身(パッケージ一覧など)を写さない。重複は、片方が古くなる原因になる
 
 ### ファイルの分け方

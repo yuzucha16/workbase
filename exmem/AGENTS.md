@@ -2,7 +2,7 @@
 
 exmem（external memory、外部メモリ）は、AIと人間が共有するナレッジ置き場。AIとの壁打ちや作業から得た知識を、AI・端末をまたいで引き継ぐ。Claude / Codex / Copilot など、どのエージェントも同じルールで読み書きする。人間はObsidianで閲覧・編集する。
 
-場所は `$HOME\works\resources\exmem`（共有リポジトリ `workbase` の一部）。エージェントはこのディレクトリを作業ディレクトリとして起動する。
+場所は `$HOME\works\resources\exmem`（共有リポジトリ `workbase` の一部）。起動する単位はリポジトリのトップ（`resources/`）で、exmem での作業は「exmem の続き」で扱う（`workflow-kit/docs-rules.md` の「上の階層で起動して…」。2026-10-16 の決定）。
 
 ## 共有の範囲
 
