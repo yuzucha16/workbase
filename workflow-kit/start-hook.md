@@ -63,11 +63,11 @@
 
 ## 作業の種類の差分
 
-前提として後から出た（漏れ）項目を、作業の種類ごとに足している。いずれも、実測が少ない。種類は、Project の README の `type`（`doc` `dev` `research`。構造は `open-hook.md` の「Project の構造」）に対応する。
+前提として後から出た（漏れ）項目を、作業の種類ごとに足している。いずれも、実測が少ない。種類は、Project の README の `type`（`doc` `dev` `dev-env` `dev-test` `research`。構造は `open-hook.md` の「Project の構造」）に対応する。
 
 ### 開発（設計・実装・評価）
 
-実装の**前に**聞く。
+実装の**前に**聞く。`dev-env` `dev-test` も、この表と、`dev-deliverable-guide.md` の「`dev-env` と `dev-test`」の聞く項目を使う。
 
 | 項目 | 内容 |
 |---|---|
