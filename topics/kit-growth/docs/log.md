@@ -13,7 +13,11 @@
 - 3 リポジトリの規則を揃えた（2026-10-16。`2156d92` `2a35149` `3cdeeb1` `286d714`）。経緯は `log-history.md`。
 - `review` に消化モード（`review 消化`）、`start` に引数つきモード（`start 解決` / `start 改善`）を足した（2026-10-16 ユーザーの承認。`f395e34` `8242e1c` `c0a46cb`）。やり方の要点は `workflow-kit/methods.md`、詳細は `exmem/lessons/`（`28202d7`）。`start` のインタビューは残した。
 
+- `wrap` を軽くした（`9fbf4e4`）。フックの重さの基準（字数・手順・報告の項目数）を `hook-matrix.md` に固定し、`review` が比べる（`da81042`、`dc2931d`）。
+
 ## Next Actions
+
+6. 次の `review` で、重さの基準と比べる初回を実施する。3回後に N（字数 +20%、項目数 +2）を決め直す。`wrap` の読み込み字数（`docs-rules.md` の節だけ読む効果）も測り直す。
 
 0. 入力 8 は 2026-10-16 に初回を実施済み。deny 設定は dotfiles に入れ、凍結の対として 3 つの `AGENTS.md` の禁止コマンドの列挙を畳んだ（ユーザーの決定）。残るギャップは、`pre-push`（works の 11-08 の判定の項目⑧。git 周りは後日まとめて見直す）、works の `docs/log.md` の超過、dotfiles の `docs/setup/` の案（`topics/dotfiles-boundary/`）との置き場の整合。規則を足したので、凍結の対（畳むもの）は機密の項で足りたが、入力 8 の分は未対（次の `review` で畳む候補を挙げる）。
 
