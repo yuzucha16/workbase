@@ -1,5 +1,12 @@
 # kit-growth: 決定
 
+## 2026-10-16 init に `init 更新`（雛形の反映）のモードを足した（ユーザーの依頼。案 B をユーザーが選択）
+
+- 【汎用】ワークスペースのトップに、雛形（`templates/workspace/`）の後からの変更を反映するモード。前に反映した版の雛形（基点）→ 新しい雛形の変更だけを `git merge-file` でローカルに当てる（3者マージ）。案を出し、承認後に書いてコミットする。基点は反映のコミットのトレーラー `Template-Rev`（無ければ初回コミットの `Kit-Rev`、それも使えなければその回だけ2者の差分）。`settings.json` の `deny` は集合で合わせ、雛形から消えた項目は自動で消さない。手順は `init-update.md`。背景: 雛形の変更を各 PC で手で直していた（同日の workspace `AGENTS.md` の読む順番の決定）。検討メモ: プロジェクトの `notes/init-update-mode/2026-10-16-proposal.md`。
+- 却下: 差分を見せるだけ（案 A。手直しの手間が残る）、ローカル部分を別ファイルに分けて上書きだけにする（案 C。契約の変更と既存の移行が要り、`settings.local.json` に寄せると deny が PC 間で揃わない）、スクリプト化（案 D。B の手順が固まってから）。
+- 範囲外: 薄い雛形 `templates/AGENTS.md`（トピックや Project の `AGENTS.md`）と `project/` `topic/` の雛形への反映。使ってから決める。
+- 見直しの条件: PC1 と PC2 で一度ずつ使い、衝突の出方と、初回（基点なし）の2者の差分が読めるかを見る。
+
 ## 2026-10-16 init の項目 5 に `resources_p/`（PC ローカルの resources）を足した（ユーザーの依頼と承認）
 
 - 【汎用】ワークスペースのトップに `resources_p/` を作り、`gitignore.template` に `/resources_p/`、`ignore.template` に `!/resources_p/` を足した（`.gitignore` が除外すると ripgrep の検索から黙って外れるため、`resources/` と同じ打ち消しが要る）。空のディレクトリで `.gitkeep` は置かず、初回コミットの確認に「ステージされていないこと」を足した。Vault 側の AI は読み書きしてよいので、`claude-settings.template.json` では deny しない。背景: `resources/` は公開リポジトリで、この PC だけの情報を置けない。名前は `resources_p` （`resources_private` より短く、`resources/` の隣に並ぶ）。

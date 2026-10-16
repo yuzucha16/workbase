@@ -99,6 +99,7 @@
   - 身元は、コミット1回ごとの `-c` で渡す。`git config`（グローバルも `.git/config`）は書き換えない（後で人間が手動でコミットしたときまで agent 名義になるため）。作者とコミッターは、どちらも agent にする。
   - 名前は `agent`、メールは `agent@agent.local`。道具やモデルは、名前でなくトレーラーに書く。
   - トレーラーは2行を毎回付ける（`git commit --trailer "<キー: 値>"`）。`Agent: <道具> <モデルID>`（例: `Agent: claude-code claude-sonnet-5-5`）、`Kit-Rev: <ハッシュ>`（`resources/` の `git rev-parse --short HEAD`。`resources/` に未コミットの変更（未追跡ファイルとステージ済みを含む。`.gitignore` で除外されたものは含まない）があれば末尾に `-dirty`。判定: `git status --porcelain` が空でない）。
+  - `init 更新`（`init-update.md`）の反映のコミットだけは、3行目に `Template-Rev: <ハッシュ>`（反映した雛形の版。`resources/` の短縮ハッシュ）を付ける。次回の反映の基点になる。
   - 例: `git -c user.name=agent -c user.email=agent@agent.local commit -m "[works] ..." --trailer "Agent: claude-code claude-sonnet-5-5" --trailer "Kit-Rev: 3daeff6"`
   - 人間の名義でコミットしたい（ユーザーが言葉で指示した）ときだけ、`git config` の身元を使う。未設定、または `example.com` を含む仮値なら、コミットせずに設定を促して止まる。
   - 過去のコミットは書き換えない（`workbase` の既存コミットは `user` 名義のまま。移行日以降が agent 名義）。
