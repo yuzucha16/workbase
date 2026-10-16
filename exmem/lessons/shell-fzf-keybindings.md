@@ -12,7 +12,7 @@ aliases:
   - Ctrl+R Ctrl+T
   - Alt+j Alt+k
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-16
 sources:
   - Claude Code conversation "シェルのコマンド履歴の種と fzf・キーバインドの整理" (2026-10-04)
   - "dotfiles の profile.ps1 / common.sh（2026-10-04 に確認）"
@@ -63,7 +63,6 @@ sources:
 - 起動時間への影響（fzf のキーバインドの有無を交互に7回測定）: zsh 約 +8 ms、bash 約 +9 ms。
 - zsh/bash: `Alt+j`/`Alt+k`、`Ctrl+R`（履歴の一覧から選んだコマンドがプロンプトに入る）、`Ctrl+T`（選んだパスが入る）を疑似端末で確認した。`Alt+c` は標準の `capitalize-word`。
 - pwsh: `Ctrl+R`/`Ctrl+T` はユーザーが実機で動作確認した。`Get-FzfHistory`（新しい順・重複なし）とパスのクォート処理は非対話で確認した。
-- dotfiles の実物: `profile.ps1` に `Alt+j`/`Alt+k`/`Ctrl+r`/`Ctrl+t` のハンドラと `PredictionViewStyle ListView` がある。`common.sh` に `FZF_DEFAULT_OPTS` と `key-bindings` の読み込みがある。
 
 仮説（未確認）:
 

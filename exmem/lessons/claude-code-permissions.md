@@ -16,7 +16,7 @@ aliases:
   - サンドボックス運用
   - 自走期間
 created: 2026-10-02
-updated: 2026-10-05
+updated: 2026-10-16
 sources:
   - Claude Code conversation "Claude Code 権限制御の設計と dotfiles への共通土台の配備" (2026-10-02)
   - "dotfiles（claude/、_scripts/links.map、l1_copy_dotfiles.sh、コミット d4878a5 / b0cca61）、%USERPROFILE%\\.claude\\settings.json、WSLの ~/.claude/settings.json（2026-10-02 に確認）"
@@ -53,9 +53,9 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 
 ## Decisions
 
-### 共通の土台は `~/.claude/settings.json` に置く（実体は dotfiles の `home/.claude/settings.json`）（2026-10-02）
+### 共通の土台は `~/.claude/settings.json` に置く（実体は dotfiles が管理）（2026-10-02）
 
-- 2026-10-02 の決定時の実体は `claude/user/settings.json` だった。2026-10-03 の dotfiles 再編（`home/` を `~` の鏡にした）で `home/.claude/settings.json` に移った。決定の中身（ユーザー階層に集約する）は変わらない。
+- 実体のパスは、2026-10-03 の dotfiles 再編（`home/` を `~` の鏡にした）で変わった。決定の中身（ユーザー階層に集約する）は変わらない。
 
 - 根拠: 全リポジトリ共通の read + 取返し可 write をユーザー階層に集約し、OS間で共有する。
 - 却下案: 各プロジェクトの `.claude/settings.json` に個別配置（重複・同期漏れ）。dotfilesの `.claude/` はgitignore対象なので管理にも向かない。
@@ -81,23 +81,7 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 
 ### 配備方法
 
-現行（2026-10-04 時点。dotfiles の `README.md` が正）:
-
-- Windows: `manifests/links.map` の `home\.claude\settings.json|%USERPROFILE%\.claude\settings.json`（`scripts\windows\30_link.bat` で適用）。
-- WSL / Linux: `scripts/linux/30_link.sh` が `stow --no-folding` で `home/` を `~` に展開する（`home/.claude/settings.json` は自動で張られる）。
-- サンドボックスのテンプレは `templates/claude/settings.sandbox.json`（配置しない雛形。リンク対象外）。
-
-2026-10-02 時点の旧方式（記録）:
-
-- Windows: `_scripts/links.map` の `claude\user\settings.json|…`（`_scripts\w2a_copy_dotfiles.bat` で適用）。
-- WSL / Linux: `_scripts/l1_copy_dotfiles.sh` で `do_stow "$SRC_DIR/claude" "$DST_DIR/.claude" "user"`。
-- `claude/user/settings.json`（リンク対象）と `claude/settings.sandbox.json`（テンプレ）を分けた。stowは「パッケージ内の全ファイル」をリンクするため、`user/` サブディレクトリで分離していた。`home/` の鏡構成に移ったので、この分離は不要になった。
-
-### リンク切れsymlinkの自動削除を `l1_copy_dotfiles.sh` に追加（現在は `30_link.sh` が同じ掃除を持つ）
-
-- 根拠: 旧パスを指すリンク切れがstowの競合になり、`set -e` で後続のstow（`claude` を含む）が実行されなかった。
-- 仕様: `home/` 直下のエントリとバックアップ対象のうち、リンク切れ（`-L` かつ `! -e`）のみ `rm`。dry-runは表示のみ、`--unlink` では何もしない。実体のあるリンクや実ファイルは触らない。
-- 却下案: 手動でunlink（再発する）。`--reset`（競合のため効かない）。
+配備の実体（`links.map`、`30_link.*`、サンドボックスのテンプレの場所）は dotfiles の `README.md` が正（2026-10-16 に、ここにあった写しと旧方式の記録を削った）。要点は3つ: Windows はリンクスクリプトで張る。WSL / Linux は stow で `home/` を `~` に展開する。サンドボックスのテンプレは、配置しない雛形としてリンク対象外に置く。
 
 ### サンドボックスのテンプレ（`templates/claude/settings.sandbox.json`。2026-10-02 時点は `claude/settings.sandbox.json`）
 
@@ -108,10 +92,7 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 
 ### 実物との照合（2026-10-02）
 
-- dotfilesのコミット `d4878a5`（土台 + links.map + stow + サンドボックステンプレ）と `b0cca61`（リンク切れsymlinkの削除）は実在する。`claude/user/settings.json` の allow の内容はメモの記述どおり。ほかに `"theme": "dark-ansi"` が入っている（メモに記載なし）。
-- `l1_copy_dotfiles.sh` に `do_stow ... "user"`（179行目）と、リンク切れの削除（117行目付近）がある。`links.map` に該当エントリがある。
-- （2026-10-02 時点。現在は次の 2026-10-04 の確認が正）**WSL**: `~/.claude/settings.json` は dotfilesの `claude/user/settings.json` へのシンボリックリンク。**Windows**: `%USERPROFILE%\.claude\settings.json` は中身が土台と同じ（1569バイト）の**実ファイル**で、`links.map` 経由のリンクは未適用だった。
-- 2026-10-04 に再確認: **Windows** の `%USERPROFILE%\.claude\settings.json` は `home\.claude\settings.json`（dotfiles）へのシンボリックリンク。**WSL** の `~/.claude/settings.json` も同じファイルへのシンボリックリンク（`/mnt/c/vault/repos/github.com/yuzucha16/dotfiles/home/.claude/settings.json`）。両OSともリンク済み。
+- dotfiles の実物（コミット、`links.map`、スクリプト）は dotfiles が正。2026-10-04 に、Windows の `%USERPROFILE%\.claude\settings.json` と WSL の `~/.claude/settings.json` が、どちらも dotfiles の同じファイルへのシンボリックリンクであることを確認した。
 - dotfilesは `.claude/` をgitignoreしている。`dotfiles/.claude/settings.local.json` には「Yes, don't ask again」で自動追記された1回きりの長い複合コマンドが約30件たまっていた（再利用されない。メモによれば削除済み）。
 - `/fewer-permission-prompts` は履歴（直近50ファイル上限）から読み取り系を抽出するスキル。今回は7ファイル・ほぼPowerShellツール経由で、Bashツールの呼び出しは無かった。履歴の頻出は `git -C <path> status/log/diff`（約42回）、`Select-Object` 系（約70）、`Get-*` 系（約40）、`git add/commit`（約20）、`git push`（4）、`Remove-Item -Recurse/-Force`（約15）。
 

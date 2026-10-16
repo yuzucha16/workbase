@@ -14,7 +14,7 @@ aliases:
   - xlsx/pptxのAI作業設計
   - Master/view分離
 created: 2026-10-02
-updated: 2026-10-14
+updated: 2026-10-16
 sources:
   - Claude conversation "Office成果物(xlsx/pptx)をAIで作る作業環境とデータ配置の設計" (2026-10-02)
   - Claude conversation "バイナリ成果物の作り方" (2026-10-07。「繰り返す成果物の手順と分担」)
@@ -86,7 +86,7 @@ sources:
 - 確認済み（ユーザー発言）: 現在は集計表の仕事が多く、既存Excelをさらに集計する業務。Master / viewが分かれていない。Obsidianでテキストを主にPARA構造で管理し、コード・dotfilesはghq + gitで別ディレクトリ管理。両者は別々に運用している。
 - 確認済み（メモ記載）: Excelで開いているファイルはエージェントから書き換えられない（ロックされる）。
 - 確認済み（メモ記載）: スキルはClaude側の仕組みで、Office内のCopilotには効かない。
-- **実物との照合（2026-10-02）**: 実際の配置はメモの想定と少し違う。vaultは `C:\vault\notes`、リポジトリは `C:\vault\repos\github.com\yuzucha16\`（`areas_shared` と `dotfiles`）にあり、`areas_shared` と `.obsidian` はジャンクションでvaultに入っている（[[obsidian-vault]]）。「コードをvaultに入れない」の原則に対し、`areas_shared` は例外的にvaultへ入れたリポジトリ（exmem）。
+- **実物との照合（2026-10-02。当時の配置。2026-10-06 以降は `$HOME\works`）**: 実際の配置はメモの想定と少し違う。vaultは `C:\vault\notes`、リポジトリは `C:\vault\repos\github.com\yuzucha16\`（`areas_shared` と `dotfiles`）にあり、`areas_shared` と `.obsidian` はジャンクションでvaultに入っている（[[obsidian-vault]]）。「コードをvaultに入れない」の原則に対し、`areas_shared` は例外的にvaultへ入れたリポジトリ（exmem）。
 - 仮説: anthropics/skillsのdocx / pptx / xlsx / pdfスキルは通常のOSSと異なるライセンス条件の可能性がある。改変・社内配布の前に要確認。
 - 仮説: 会社のMicrosoft 365にCopilotライセンスがあるかで、Copilot統一かClaude併用かが変わる。
 

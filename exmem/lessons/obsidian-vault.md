@@ -15,7 +15,7 @@ aliases:
   - Obsidianの設定
   - vaultのバックアップ
 created: 2026-10-01
-updated: 2026-10-15
+updated: 2026-10-16
 sources:
   - Claude Code conversation "exmemの整理" (2026-09-26〜2026-10-01)
   - Claude Code conversation "ディレクトリ構造の見直し" (2026-10-02〜2026-10-03)
@@ -57,7 +57,7 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 
 - Vault のトップは、PC ごとのローカルなリポジトリ（業務用 PC は remote なし、個人用 PC は非公開 remote を使える）。`areas/` `projects/` `archives/`、`docs/`（作業ログ）、PC 用の `AGENTS.md` を持つ。作り方は、`workflow-kit` の導入フック（項目 5「ワークスペースの生成」）。
 - `resources/` は、共有リポジトリ `workbase`（GitHub: `yuzucha16/workbase`、非公開。公開範囲は未定）を、**直接 `git clone` したもの**（ghq の管理外。ジャンクションにしない）。トップの `.gitignore` が除外する。`workbase` は、単独で clone しても自己完結する（Vault のローカル側を知らない）。
-- `.obsidian/` の実体は dotfiles。トップへジャンクションで張る（`links.map`）。`workspace*.json` は追跡しない。
+- `.obsidian/` の実体は dotfiles。トップへジャンクションで張る。`workspace*.json` は追跡しない。
 - 変更の理由: 業務用 PC で、ローカルの作業もコミットしたい。共有（GitHub）とローカルを、1つの作業ツリーに混ぜられない。1つのリポジトリの作業ツリーは連続している必要があり、入れ子の `.git` の中は、外側のリポジトリから追跡できない。共有側がローカルの存在を知らない構成にして、共有側を汎用ナレッジとして育てられるようにした。境界の数は、公開範囲の種類（共有 / PC ローカル / 設定）に合わせた。
 - 却下案: 1つの作業ツリーに2つの git を重ねる（ルートの `.gitignore` が両方に効き、片方は `git add -f` 前提になる）、共有リポジトリをトップに置いて `company/` を入れ子にする（共有側がローカルの存在を知る）、トップをリポジトリにしない（`AGENTS.md` と `docs/` の持ち主がいない）、`resources/` を ghq の位置に置いてジャンクションで出す（下の検索の項）。
 - 検索（確認: 2026-10-05）: ripgrep（Claude Code の Grep を含む）は `.gitignore` を尊重するので、トップの `.gitignore` が除外する `resources/` は、検索から黙って外れる。トップの `.ignore` に `!/resources/` を置くと含まれる。ジャンクション越しのディレクトリは、Grep / Glob / `rg`（既定）が辿らない（`rg --follow` なら辿る）。
@@ -138,7 +138,6 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 
 **Facts**
 
-- dotfiles の Linux 側の試験（`tests/linux/test_scripts.sh`）は、変更後に 51/51 合格した（確認: 2026-10-06、根拠: WSL で試験スクリプトを実行した結果。統合時にも再実行して 51/51）。
 - `WORKS_DIR` を `WSLENV` の `WORKS_DIR/p` で WSL に渡す実装は、一時ディレクトリと偽の HOME の試験でだけ確認していた。**実機では渡っていなかった**（確認: 2026-10-06、根拠: Windows 側で `WORKS_DIR=C:\Users\<Windows のユーザー名>\works`、`WSLENV=CERTS_DIR/p;WORKS_DIR/p` を確認したうえで、`wsl -e bash -c 'printenv WORKS_DIR CERTS_DIR'` が何も出さず rc=1。WSL 側の `WSLENV` は同じ値で見えている。原因は未特定。エージェントのツール経由で起動した PowerShell からの確認で、ユーザーの通常のターミナルでは未確認）。
 - 渡らないときの `~/.profile` の既定値 `/mnt/c/Users/$USER/works` は外れる（確認: 2026-10-06、根拠: Ubuntu-24.04 のログインシェルが `WORKS_DIR=/mnt/c/Users/<WSL のユーザー名>/works` を返した。Windows のユーザー名とは違う）。
 - この PC の WSL（Ubuntu-24.04）は、未移行（確認: 2026-10-06、根拠: `~/works` は無く、`GHQ_ROOT=/home/<WSL のユーザー名>/vault/repos`。`~/.profile` などは旧 `/mnt/c/vault/repos/…/dotfiles/home/` へのシンボリックリンク。`C:\vault` を残しているので、リンクは切れていない）。

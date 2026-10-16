@@ -30,7 +30,7 @@ AIサービスの会話履歴やメモリに知識を閉じ込めず、Markdown�
 
 人が手順や仕組みを思い出すための文書は、exmem の外の `guides/`（`howto/` 手順書、`explain/` 理解ガイド、`quickref/` クイックリファレンス）に置く。作り方は [[reference-doc-types]]。
 
-exmem はナレッジの置き場で、他リポジトリの作業ログは置かない。dotfiles は exmem を基本は読み取り専用で参照するだけ（例外は、ユーザーの指示で `inbox/` に知識メモを置くことだけ）で、dotfiles の作業の経緯・決定・次にやることは dotfiles リポジトリの `docs/` が持つ（2026-10-04 に `knowledge/dotfiles.md`（現 `lessons/`）と `contexts/dotfiles/` を移して削除した）。`contexts/`（作業の引継ぎ用）自体も 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。
+exmem はナレッジの置き場で、他リポジトリの作業ログは置かない。dotfiles は exmem を基本は読み取り専用で参照するだけ（依存は dotfiles → workbase の一方向。[[app-config-placement]]。例外は、ユーザーの指示で `inbox/` に知識メモを置くことだけ）で、dotfiles の作業の経緯・決定・次にやることは dotfiles リポジトリの `docs/` が持つ（2026-10-04 に `knowledge/dotfiles.md`（現 `lessons/`）と `contexts/dotfiles/` を移して削除した）。`contexts/`（作業の引継ぎ用）自体も 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。
 
 ## ディレクトリ構造
 
