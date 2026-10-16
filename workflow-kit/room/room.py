@@ -500,7 +500,7 @@ def snapshot_readme(p):
 
 # ---------- 共有知の写し（方式 A。ai-room-shared-knowledge-sync.md） ----------
 
-SHARE_PATHS = ("AGENTS.md", "workflow-kit", "exmem/AGENTS.md", "exmem/README.md", "exmem/tags.md", "exmem/lessons", "guides")
+SHARE_PATHS = ("AGENTS.md", "workflow-kit", "exmem/AGENTS.md", "exmem/README.md", "exmem/exmem-index.md", "exmem/tags.md", "exmem/lessons", "guides")
 SHARE_SKIP = {".git", ".venv", "__pycache__", "node_modules"}
 SHARE_DEST = "shared"  # 部屋の一般ユーザーの ~/shared
 
@@ -514,7 +514,7 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 読むところ:
 - 合言葉と手順書: `~/shared/workflow-kit/hooks.md`（表）、`~/shared/workflow-kit/*-hook.md`
 - 共通規約: `~/shared/AGENTS.md`、`~/shared/exmem/AGENTS.md`
-- 知識: `~/shared/exmem/README.md` の「知識の索引」→ `~/shared/exmem/lessons/*.md`
+- 知識: `~/shared/exmem/exmem-index.md`→ `~/shared/exmem/lessons/*.md`
 - 手順書・理解ガイド: `~/shared/guides/guides-index.md`
 
 共有知へ戻したい知見（`stock`）は、直接書かず、`ai/out/stock/` に下書きを書く。下書きの先頭に次を入れる:
