@@ -19,7 +19,7 @@
 | 3 | 「ナレッジ化して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 必須 | `stock-hook.md` |
 | 6 | 「終了処理して」「inboxを整理して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 「終了処理して」は必須 | `wrap-hook.md`、`integrate-hook.md` |
 | 4 | 履歴からの復元 | `docs/` の Log と判断記録の補完 | 任意 | `init-restore.md` |
-| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
+| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`README.md`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
 | 7 | 雛形の反映（`init 更新`） | 雛形の変更を当てた `AGENTS.md`、ignore、`.claude/settings.json` など。コミットの `Template-Rev` | 任意（雛形が更新されたとき） | `init-update.md` |
 
 ### 導入項目を足すとき
@@ -120,4 +120,4 @@
 - [ ] 共有したくない値が無い
 - [ ] 追跡状況（共有かローカル専用か）を報告に書いた
 - [ ] 復元した場合は、出典・範囲・「不明」の明記がある
-- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダがある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー3行（`Agent` `Workflow-Kit` `Kit-Rev`）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
+- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダと `README.md` がある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー2行（`Agent` `Kit-Rev`。`Workflow-Kit` は 2026-10-08 に廃止）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
