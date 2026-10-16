@@ -4,16 +4,12 @@
 
 ## 状態
 
-- 経路は整備済み: 受け皿 = このトピック、入力 = `inbox.md`、見直し = `review`（inbox の未選別と、動いているトピックを見る）、`improvements.md` は凍結。
-- 自動採用（`wrap-hook.md` の節）は、2026-10-15 に畳んだ（判定を前倒し）。
-- cwd（起動する場所）を明文化した（`4997f7a`）: `AGENTS.md` の単位で起動、上の階層からの「続き」は AI が読みに行く、読む順番は 窓口 → `log.md`、部屋は例外、`wrap` は作業した単位の `docs/` を既定に。
-- トークン節約の対応を入れた。`review` が `token-matrix.md`（4観点）で自己採点する。基準値は合計 103（`6bd1a2a`、`70b8e22`）。
-- `again` と `gap` の記録を廃止した（2026-10-16、`139091c`）。`goal_change` は残した。topic-workflow の kit 取り込みの時機は要再判断（`topics/topic-workflow/topic-workflow-next-steps.md` の5）。
-- `wrap` の記録先は workbase の `AGENTS.md` の「wrap の記録先」に定めた（トピック外の kit 等の変更は kit-growth の `docs/`、遠回りは `inbox.md`）。
-- 3 リポジトリの規則を揃えた（2026-10-16。`2156d92` `2a35149` `3cdeeb1` `286d714`）。経緯は `log-history.md`。
-- `review` に消化モード（`review 消化`）、`start` に引数つきモード（`start 解決` / `start 改善`）を足した（2026-10-16 ユーザーの承認。`f395e34` `8242e1c` `c0a46cb`）。やり方の要点は `workflow-kit/methods.md`、詳細は `exmem/lessons/`（`28202d7`）。`start` のインタビューは残した。
-
-- `wrap` を軽くした（`9fbf4e4`）。フックの重さの基準（字数・手順・報告の項目数）を `hook-matrix.md` に固定し、`review` が比べる（`da81042`、`dc2931d`）。
+- 経路は整備済み: 受け皿 = このトピック、入力 = `inbox.md`、見直し = `review`、`improvements.md` は凍結。自動採用は 2026-10-15 に畳んだ。
+- cwd はリポジトリのトップだけ（`4997f7a`）。上の階層からの「続き」は AI が読みに行き、`wrap` は作業した単位の `docs/` を既定にする。各フックの cwd の期待は `hook-matrix.md` の 3 行に記録した（`53c3771`、確認日 2026-10-16）。
+- `review` は 3 リポジトリ（works の基準の「点検の対象」）の未統合メモ・トピック・機密を見る（`302fccb` `9b19540`）。終了時の 1 問は起動した単位に記録する。
+- トークン消費は `token-matrix.md`（4観点）で自己採点する。基準値は合計 103。`again` `gap` の記録は廃止（`139091c`）。
+- `review 消化`、`start 解決` / `start 改善`、`methods.md` を足した（`f395e34` `8242e1c` `28202d7`）。`start` のインタビューは残した。
+- `wrap` を軽くし（`9fbf4e4`）、フックの重さの基準を `hook-matrix.md` に固定した（`dc2931d`）。3 リポジトリの規則を揃えた。経緯は `log-history.md`。
 
 ## Next Actions
 
