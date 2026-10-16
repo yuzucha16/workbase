@@ -230,7 +230,7 @@ Area を増やすと、部屋（ディストロ）とログインも増える。
 | 部屋の粒度 | Area ごとのディストロ、Project ごとのマウント。Area は顧客・機密度の境界と一致させる |
 | スクリプト | Windows 側の Python 1本（`room.py`）。uv で管理し、バージョンを固定する |
 | 渡すフォルダ | `projects/<Project>/ai/` だけ。`_noai/`（原本、対応表、実データ入りの成果物）は `ai/` の外で、git で追跡しない |
-| コマンド | 人が言うのは `room open` / `room start` / `room close`。部屋の中の AI は、既存の `start` / `wrap` / `close`（判断の部分）を行う |
+| コマンド | 人が言うのは `room open` / `room start` / `room close`。部屋の中の AI は、既存の `start` / `wrap` と、`close` の判断（`ai/out/close.md` を書く。書き方は `workflow-kit/room-context.md`）を行う |
 | Area への同期 | 郵便受け（Area の `ai/docs/inbox.md`）。同じ Area の【案件】だけ |
 | マスク | 対象は csv と xlsx（docx・pptx は後）。xlsx は zip レベルの置換。置換後に点検 |
 | 部屋の片付け | `close` から14日（変更可）後に、会話履歴を記録に写して消す |
