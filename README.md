@@ -1,6 +1,6 @@
 # workbase
 
-汎用ナレッジと共通機能を育てる共有リポジトリ。通常は、Obsidian Vault（`works`）の `resources/` として clone して使う（Windows: `$HOME\works\resources`、WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources`）。単独で clone しても自己完結する。規約は `AGENTS.md`。
+汎用ナレッジと共通機能を育てる共有リポジトリ。通常は、Obsidian Vault の `resources/` として clone して使う（Windows: `$HOME\works\resources`、WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources`）。単独で clone しても自己完結する。規約は `AGENTS.md`。
 
 ## 構成
 

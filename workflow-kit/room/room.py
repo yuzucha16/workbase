@@ -1036,7 +1036,7 @@ def cmd_close(ctx, a):
 def build_parser():
     ap = argparse.ArgumentParser(prog="room", description="AI 作業部屋の操作（人が実行する。AI には実行させない）")
     ap.add_argument("--vault", default=os.environ.get("ROOM_VAULT") or str(Path.home() / "works"),
-                    help="Vault のトップ（既定: $ROOM_VAULT か ~/works）")
+                    help="ワークスペースのルート（既定: $ROOM_VAULT か ~/works）")
     ap.add_argument("--reap-days", type=int, default=int(os.environ.get("ROOM_REAP_DAYS") or REAP_DAYS_DEFAULT),
                     help="close から reap までの日数（既定 14）")
     sub = ap.add_subparsers(dest="command", required=True)
