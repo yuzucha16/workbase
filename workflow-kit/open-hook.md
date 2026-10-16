@@ -13,6 +13,7 @@
 ## 場所と書き込みの制約
 
 - 書き込み先は、`projects/<名>/`（手順「作る」）、`areas/<名>/README.md` の一覧（手順「Area の一覧を更新する」）、呼び出し元の記録（`docs/log.md`、`docs/decisions.md`、`events`。手順「記録する」）だけ。`archives/` は触らない（`close` の領分）。
+- 実行する場所: ワークスペースの Vault 側の AI は、`projects/` `areas/` `archives/` を読み書きしない。この手順の書き込みは AI 作業部屋の中で行う。副作用（ひな形、状態の更新、コミット）は人が `room` で行い、AI は判断をファイルに書く（`room-context.md`）。
 - コミットと push は、手順「コミットする」に従う。
 
 ## 手順

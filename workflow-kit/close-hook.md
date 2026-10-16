@@ -15,6 +15,7 @@
 ## 場所と書き込みの制約
 
 - 書き込み先は、対象の Project（`projects/<名>/` から `archives/<名>/` へ移す。手順「`archives/` へ移す」）、親の Area の `README.md`（手順「未解決を整理する」「`archives/` へ移す」）、呼び出し元の記録（`docs/log.md`、`docs/decisions.md`。手順「暫定の見直し」「記録してコミットする」）だけ。
+- 実行する場所: ワークスペースの Vault 側の AI は、`projects/` `areas/` `archives/` を読み書きしない。この手順の書き込みは AI 作業部屋の中で行う。`archives/` への移動と Area への転記は人が `room close` で行い、AI は判断をファイルに書く（`room-context.md`）。
 - `exmem/` は触らない。`stock` は、ユーザーが言ったときだけ実行する（手順「ナレッジ化の候補を示す」）。
 - コミットは手順「記録してコミットする」に従う。push はユーザーが行う。
 
