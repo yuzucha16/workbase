@@ -26,6 +26,7 @@
 0. `room restore` が、人が変えた `_noai/final/` を上書きせず止めるようにした（下の決定）。実機で、止まる・`--force` で通る・AI だけが変えたときは止まらないを確認する。
 1. 項目 1 → 2 → 4 の「実機の確認の残り」を進める。各 `notes/*-handover.md` の「PC で確認すること」を見る。
 2. 小さな不具合: マウントが別の `wsl.exe` から見えない件（対策を実装済み。`--no-launch` 中に別セッションから `/proc/mounts` と `ai/` が見えるか確認する）。
+3. リモート（ssh 先）の dev 用に、部屋専用の SSH 鍵を1本作って試す。対象ホストの権限を絞ったユーザーだけに登録し、`authorized_keys` の `command=` `from=` で絞る。1Password のエージェントは渡さない（interop を切ったままにする）。部屋に鍵を置くことになるので、結果を見て採否を `decisions.md` に書く。比較: `notes/dev-repo-remote/2026-10-16-comparison.md`（project files）。
 
 ## 残りの確認・保留
 
