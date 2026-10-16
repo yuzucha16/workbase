@@ -22,7 +22,7 @@
 ## あなた待ち
 
 1. 手順書の移動先。案: dotfiles の `docs/setup/`（既存の `windows/claude/README.md` の置き方と合わせるかは PC で見る）。
-2. `guides/CLAUDE.md` の手順書の書式・文体の規則を、残すか dotfiles へ移すか。案: 移す。
+2. `guides/AGENTS.md` の手順書の書式・文体の規則を、残すか dotfiles へ移すか。案: 移す。
 3. 「割る」の4ノート。案: `pc-setup-manuals` と `zed-dotfiles` は割る、`shell-command-usecases` の種の正本は dotfiles へ、`obsidian-vault` は削るだけ。
 4. `docs-rules.md` の push の対象外の理由。案: 「public 前提で扱うため、push の前に人が確認する」に書き換え、対象外は維持（kit の変更）。
 

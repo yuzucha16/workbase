@@ -32,7 +32,7 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 ## 場所
 
 - `resources/guides/howto/win11.md`、`debian-family.md`、`fonts-setup.md`（2026-10-03 に実物で確認。2026-10-10 に `cheatsheets/env/` から移動し、`fonts.md` は `fonts-setup.md` に改名した）。
-- 書き方のルールは `resources/guides/CLAUDE.md`（`handson/` や `exmem/` の慣例に合わせて `guides/` 直下。旧 `cheatsheets/CLAUDE.md`）。ルールを先に作ってから Win11、Debian系の順に書いた。ぶれを防ぐため。
+- 書き方のルールは `resources/guides/AGENTS.md`（`handson/` や `exmem/` の慣例に合わせて `guides/` 直下。旧 `cheatsheets/CLAUDE.md`）。ルールを先に作ってから Win11、Debian系の順に書いた。ぶれを防ぐため。
 - 旧メモ3つ（`win_setup` / `linux_setup` / `setup_alma`）は削除した（古く、PC1由来の情報が多い。履歴から復元できる）。
 
 ## Principles
