@@ -13,16 +13,16 @@
 | 1 | 要判断4つの確認 | 済（2026-10-16） | どこでも |
 | 2 | dotfiles から workbase への参照の洗い出し | 済（2026-10-16。手順書の参照は直した。残りは許可された参照） | PC |
 | 3 | 手順書3本（win11 / debian-family / fonts-setup）を dotfiles へ移す | 済（2026-10-16。dotfiles `6f9cae5` を push 済み。workbase 側の削除は同日コミット） | PC |
-| 4 | workbase の規則・索引を直す | 一部（`guides-index.md`・`guides/AGENTS.md` は済。判断 2 の整理も済。残りは inventory の「直す」の表） | PC |
-| 5 | 「割る」「削る」 | 未 | PC |
-| 6 | 線と一方向の規則を exmem に残す | 未 | どこでも |
+| 4 | workbase の規則・索引を直す | 済（2026-10-16。`docs-rules.md` は不要でクローズ） | PC |
+| 5 | 「割る」「削る」 | 済（2026-10-16。`pc-setup-manuals` と `zed-dotfiles` を割り、約19件を削った。`scripts/wsl` の改名の決定は dotfiles の `docs/decisions.md` へ移した） | PC |
+| 6 | 線と一方向の規則を exmem に残す | ほぼ済（2026-10-16。`app-config-placement` の Principles に追記。ルートの `AGENTS.md` に1行足すかだけ、ユーザー確認待ち） | どこでも |
 
 手順の詳細は `notes/dotfiles-boundary-procedure.md` の同じ番号。
 
 ## あなた待ち
 
-1. 手順書の移動先。案: dotfiles の `docs/setup/`（既存の `windows/claude/README.md` の置き方と合わせるかは PC で見る）。
-2. `guides/AGENTS.md` の手順書の書式・文体の規則を、残すか dotfiles へ移すか。案: 移す。
+1. ~~手順書の移動先~~ 決定済み: dotfiles の `docs/setup/`。
+2. ~~書式・文体の規則の置き場~~ 決定済み: workbase の `guides/AGENTS.md` に1か所だけ残す（案 A）。
 3. ~~「割る」の4ノート~~ 決定済み（2026-10-16、`decisions.md`）。割るのは `pc-setup-manuals` と `zed-dotfiles`、`obsidian-vault` は削るだけ、`shell-command-usecases` は exmem が正本のまま（割らない）。
 4. ~~`docs-rules.md` の push の理由~~ クローズ（2026-10-16）。kit の push の規則は更新済みで、書き換え不要。
 
@@ -30,8 +30,8 @@
 
 ## Next Actions
 
-1. PC で 4（残り）を進める。
-2. 続けて 5 → 6。dotfiles の push は、dotfiles の `AGENTS.md` の許可リストと `docs-rules.md` の「push」に従う。
+1. ルートの `AGENTS.md` の「共有の範囲」に、1行を足すかをユーザーに確認する（案: 「dotfiles の挙動（スクリプトの中身・配置）をこのリポジトリに書かない。名前とリンクで指す」）。
+2. 確認が済んだら、このディレクトリを削除し、`topics-index.md` の行を消す（完了の条件）。
 
 ## 完了の条件
 

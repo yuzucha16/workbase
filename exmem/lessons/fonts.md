@@ -12,7 +12,7 @@ aliases:
   - PlemolJP
   - メインフォント
 created: 2026-10-03
-updated: 2026-10-05
+updated: 2026-10-16
 sources:
   - Claude conversation "Win11メインフォントの採用基準と選定" (2026-10-03)
   - Claude Code conversation "フォント導入 (PlemolJP / Moralerspace) と Zed・Terminal・Notepad++ のフォント統一" (2026-10-03)
@@ -45,7 +45,7 @@ Win11 のメインフォントを、目の負担を最優先に選び、Zed / Wi
 
 - 決めたこと: Light 専用名は使わず、ファミリー `PlemolJP Console NF` に `font_weight` 300 を指定する。Moralerspace のファミリー名は `Moralerspace Neon HW`（スペースあり）。
 - Zed は UI・エディタ・ターミナル・エージェントを同じ設定にする: フォールバックは `Moralerspace Neon HW`、`Meiryo UI`。サイズは4項目を 15 に統一した。Windows Terminal と Notepad++ も同じフォントにした。
-- 確認済み（2026-10-03）: dotfiles の `home/.config/zed/settings.json` に上記の設定が入っている。Zed での反映（細くなる、`ui_font_*` で claude-acp のチャット本文も変わる）は、ユーザーが実機で確認した。
+- 確認済み（2026-10-03）: dotfiles の Zed の設定に上記が入っている。Zed での反映（細くなる、`ui_font_*` で claude-acp のチャット本文も変わる）は、ユーザーが実機で確認した。
 
 ### フォントの取得はスクリプト、インストールは手動（2026-10-03）
 

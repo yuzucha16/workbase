@@ -13,7 +13,7 @@ aliases:
   - gitattributes
   - autocrlf
 created: 2026-10-06
-updated: 2026-10-08
+updated: 2026-10-16
 sources:
   - Claude Code conversation ".gitattributes を足したあとに index の CRLF が残る落とし穴" (2026-10-07)
   - Claude Code conversation "clone 直後の大量差分と改行コード" (2026-10-06)
@@ -68,7 +68,7 @@ Windows で clone した直後に、64ファイル・約8,000行の改行だけ�
 - `git add --renormalize <パス>` で、index が LF になった（確認: 2026-10-07、根拠: 実行後の `git ls-files --eol` が `i/lf w/lf`）。
 - `.reg` の 2 本は先頭が `Wind`（`Windows Registry Editor` の ASCII）で、BOM も UTF-16 でもなかった。`.ahk` も BOM なし（確認: 2026-10-07、根拠: `ReadAllBytes` の先頭4バイト）。UTF-16 の `.reg` なら git が `text` として扱わない可能性がある（仮説）。
 - `-text` を付けたファイル（`.exportedUI` 4本）は、index が CRLF のままでも意図的な指定として残る（確認: 2026-10-07、根拠: `git ls-files --eol` が `attr/-text`。2026-10-08 にも同じ 4 本）。
-- 追跡対象の XML（Notepad++ のテーマ 1 本、`windows/notepadpp/Gruvbox dark medium.xml`）は index も作業ツリーも CRLF（`attr/text=auto eol=lf`）で、LF にそろえるかは未決。Notepad++ が保存時に CRLF へ書き直すかを確認していない（仮説。2026-10-08 にも `i/crlf w/crlf`）。
+- 追跡対象の XML（Notepad++ のテーマ 1 本）は index も作業ツリーも CRLF（`attr/text=auto eol=lf`）で、LF にそろえるかは未決。Notepad++ が保存時に CRLF へ書き直すかを確認していない（仮説。2026-10-08 にも `i/crlf w/crlf`）。
 - clone 直後は、index が LF、作業ツリーが CRLF だった（確認: 2026-10-06、根拠: `git ls-files --eol` が `i/lf w/crlf`）。
 - 有効な設定は `core.autocrlf=false`（ユーザー設定）と `core.eol=lf`。システムの gitconfig（scoop 版 git 2.56.0）は `core.autocrlf=true`（確認: 2026-10-06、根拠: 整理時に `git config --show-origin --get-all core.autocrlf` を再実行し、システム側 `true`・ユーザー側 `false` を確認）。
 - clone 時に `autocrlf=true` が効いて CRLF でチェックアウトされ、その後ユーザー設定の `false` が有効になった、という順序は推定（仮説）。

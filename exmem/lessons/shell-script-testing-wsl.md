@@ -15,7 +15,7 @@ aliases:
   - 偽の HOME
   - 環境判定の差し替え
 created: 2026-10-06
-updated: 2026-10-11
+updated: 2026-10-16
 sources:
   - Claude Code conversation "AWS CLI・uv・Volta のインストーラ追加" (2026-10-10。LF の .bat とラベル)
   - Claude Code conversation "セットアップ bat の pause・SKIP ログ・環境変数ログ" (2026-10-10。.bat のログの出し方)
@@ -89,7 +89,7 @@ Scoop でアプリを入れる Windows のバッチ（dotfiles の `20_apps.bat`
 - 【汎用】PowerShell の関数は、同名のコマンドレットより優先される。`function Set-ExecutionPolicy { ... }` で偽物に差し替えた状態で、取り出した1行を実行できる（確認: 2026-10-06、根拠: 分岐6項目が合格し、実機の CurrentUser ポリシーは試験の前後で RemoteSigned のまま）。
 - 【汎用】`powershell.exe -ExecutionPolicy <値>`（Process スコープ）で、実効ポリシーを作れる。レジストリは書かないので、実機の設定を変えずに試験できる（確認: 2026-10-06、根拠: 同上）。
 - 【この件】試験は18項目: バッチの3場面12項目と、埋め込み PowerShell の6項目（`Restricted` `AllSigned` は設定して導入、`RemoteSigned` `Unrestricted` `Bypass` は設定せず導入、設定失敗は警告して続行）。すべて合格した（確認: 2026-10-06、根拠: メモに記録された出力 `failures=0`）。
-- 【この件】`tests/windows/test_20_apps.ps1` と `tests/linux/test_scripts.sh` が dotfiles にある。`20_apps.bat` に `PS_EXE`（未設定なら `%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe`）が足されている（確認: 2026-10-06、根拠: ファイルの存在と `20_apps.bat` の21行目）。Linux 側の試験の保存（`tests/linux/`）も、上の WSL 節の Open Questions（置き場）の答えになっている。
+- 【この件】`tests/windows/test_20_apps.ps1` と `tests/linux/test_scripts.sh` が dotfiles にある。`20_apps.bat` に `PS_EXE`（未設定なら `%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe`）が足されている（確認: 2026-10-06、根拠: ファイルの存在）。Linux 側の試験の保存（`tests/linux/`）も、上の WSL 節の Open Questions（置き場）の答えになっている。
 - 【この件】実機の新しい Windows アカウントでの導入は未確認（仮説: 実機でも試験と同じ分岐になる）。
 
 ### Gotchas（バッチ）

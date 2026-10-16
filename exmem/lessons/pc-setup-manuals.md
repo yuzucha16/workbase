@@ -15,7 +15,7 @@ aliases:
   - guides/howto
   - PC再セットアップ
 created: 2026-10-03
-updated: 2026-10-11
+updated: 2026-10-16
 sources:
   - Claude Code conversation "git の CA バンドルと schannel の判断" (2026-10-10。GIT_SSL_CAINFO の取りやめ)
   - Claude Code conversation "新しいPCの初回セットアップ設計" (2026-10-06。「初回の取得」)
@@ -27,12 +27,12 @@ sources:
 
 ## Purpose
 
-PCを入れ替えても、手順書とスクリプトで同じ環境を再現できるようにする。手順書は `resources/guides/howto/`（旧 `cheatsheets/env/`、2026-10-10 に移動）にあり、スクリプトは dotfiles リポジトリが正。範囲は「インストール準備」から「エディタでテキストが見られる」まで。
+PCを入れ替えても、手順書とスクリプトで同じ環境を再現できるようにする。手順書とスクリプトは dotfiles リポジトリにある（手順書は `docs/setup/`。2026-10-16 に workbase の `guides/howto/` から移した）。範囲は「インストール準備」から「エディタでテキストが見られる」まで。
 
 ## 場所
 
-- `resources/guides/howto/win11.md`、`debian-family.md`、`fonts-setup.md`（2026-10-03 に実物で確認。2026-10-10 に `cheatsheets/env/` から移動し、`fonts.md` は `fonts-setup.md` に改名した）。
-- 書き方のルールは `resources/guides/AGENTS.md`（`handson/` や `exmem/` の慣例に合わせて `guides/` 直下。旧 `cheatsheets/CLAUDE.md`）。ルールを先に作ってから Win11、Debian系の順に書いた。ぶれを防ぐため。
+- 手順書は dotfiles の `docs/setup/` の `win11.md`、`debian-family.md`、`fonts-setup.md`（2026-10-03 に実物で確認。2026-10-10 に `cheatsheets/env/` から `guides/howto/` へ移動し、`fonts.md` は `fonts-setup.md` に改名した。2026-10-16 に dotfiles の `docs/setup/` へ移した）。
+- 書き方のルールは dotfiles の `docs/setup/README.md`（dotfiles 固有の点）と、workbase の `resources/guides/AGENTS.md`（書式・文体。旧 `cheatsheets/CLAUDE.md`）。ルールを先に作ってから Win11、Debian系の順に書いた。ぶれを防ぐため。
 - 旧メモ3つ（`win_setup` / `linux_setup` / `setup_alma`）は削除した（古く、PC1由来の情報が多い。履歴から復元できる）。
 
 ## Principles
@@ -62,9 +62,7 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 
 ### `scripts/wsl/` を `scripts/linux/` に改名して1本化（2026-10-03）
 
-- 決めたこと: WSL とネイティブ共通。違いは `lib.sh` の `is_wsl` などで分岐する。パッケージ一覧は `manifests/apt.txt`（共通）と `apt.desktop.txt`（ネイティブのみ）。日本語入力・フォントは `23_ja.sh` に分離（WSL では何もしない）。`30_link.sh` の `--src` の既定は、スクリプトの位置から自動判定する。
-- 根拠: WSL 固有の差分は約3か所（1割強）で、3割基準を下回る。Windows の `apps.txt` と対称にできる。
-- 却下案: `wsl/` と `linux/` に分離（約240行が重複）、`linux/` を本体にして `wsl/` を薄いラッパーにする。
+- dotfiles 固有の決定なので、dotfiles の `docs/decisions.md` に移した（2026-10-16）。ここでの要点は、差分が3割を下回るなら系統で1本にする、という上の基準だけ。
 
 ## Facts
 
@@ -76,9 +74,8 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 - Ubuntu 24.04 以降の apt ソースは deb822 形式（`/etc/apt/sources.list.d/ubuntu.sources`）。旧メモの `sed ... sources.list` は効かない。
 - Debian 13 は fcitx5 を使う。MX フォーラムの `fcitx`（v4）の手順は古い。
 - MX のインストーラーは、指定のない ESP を触らない。ESP は FAT32 で、フラグは `boot` と `esp`。
-- dotfiles の `GHQ_ROOT` の既定値は、Linux（WSL とネイティブ）で `~/works/repos`、Windows で `%USERPROFILE%\works\repos`（2026-10-06 に、WSL の `~/vault/repos` から変更）。
 
-実行して確認したこと（WSL Ubuntu 24.04）: `scripts/linux/` の全 `.sh` の構文チェック、`lib.sh` の関数4つ（`dots_dir` / `is_wsl` / `distro_is` / `read_list`。2026-10-05 時点では8つ: `notes_dir` / `clone_workbase` / `link_obsidian` / `distro_ids` が加わった。確認: dotfiles の `lib.sh`。試験の方法は [[shell-script-testing-wsl]]）、`23_ja.sh` が WSL で何もせず終了、`30_link.sh -n` が `--src` なしで正しいリポジトリを指す、`apt.txt` と `apt.desktop.txt` が19パッケージの配列にまとまる。
+実行して確認したこと（WSL Ubuntu 24.04）: `scripts/linux/` の構文チェックなどは、dotfiles の `docs/decisions.md`「`scripts/wsl/` を `scripts/linux/` に改名して1本化した」と `tests/README.md` が正。試験の方法は [[shell-script-testing-wsl]]。
 
 仮説（未確認）: MX で Secure Boot を有効のまま入れられるか。各インストーラーのメニュー名（「カスタム」「Something else」など）。Debian 13 / MX で `os-prober` が既定で無効か。Rufus で MX を書き込むとき ISO モードで起動するか（DD モードが要るか）。`fcitx5-config-qt` が MX と Ubuntu にあるか（`23_ja.sh` はあるほうを選ぶ）。MX の Package Installer の日本語化の項目名。Mint の差分全般。
 
@@ -88,14 +85,10 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 - **起動メニューに他の OS が出ない**: `/etc/default/grub` の `GRUB_DISABLE_OS_PROBER=false` にして `update-grub`。
 - **OS を切り替えると時計が9時間ずれる**: Windows のレジストリ `RealTimeIsUniversal=1`。
 - **デュアルブート前の Windows 側の準備**: 高速スタートアップを OFF にし、BitLocker / デバイスの暗号化が無効であることを確認する。
-- **`30_link.sh` が `[ERR]` で止まる**: 展開先に実ファイル（初期の `.bashrc` など）があるため。自動退避はしない。手で `mv` してから再実行する。
 - **Windows の symlink が失敗する**: 開発者モードが OFF のとき。設定 → システム → 開発者向け。
 - **OneDrive がドキュメントを付け替える**: PowerShell プロファイルのリンク先がずれる。OFF にする。
 - **`setx` 後のターミナル**: 現在のセッションに反映されない。新しいターミナルを開く。
-- 旧スクリプト名（`w1a_*`, `w2a_*`）が `apps*.txt` と `links.map` のコメントに残っていた。現在の名前に直した。
-- **初回を zip の展開先で番号順に実行し、その後 `50_repos` で ghq の場所に再取得して、`30_link` をもう一度実行していた**（2026-10-06）: 最初の置き場所が、最終の置き場所と違っていた。最初から最終の場所に clone する（下の「初回の取得」）。
-- **手順書が「公開リポジトリなので HTTPS で取れる」と書いていたが、リポジトリは非公開だった**（2026-10-06）: 運用が未定のまま公開の前提で書かれ、直されていなかった。公開と非公開の両方の手順を併記した。
-- **手順書に、使わないことにした `winget install Git.Git` と、削除済みスクリプトの行が残っていた**（2026-10-06）: スクリプトを変えたとき、手順書を同じ作業で更新していなかった。
+- **手順書に、廃止した手順やスクリプトの行が残っていた**（2026-10-06）: スクリプトを変えたとき、手順書を同じ作業で更新していなかった。手順書とスクリプトは同じリポジトリに置き、同じコミットで直す。
 
 ## 初回の取得（新しいPC。2026-10-06）
 
@@ -110,23 +103,9 @@ dotfiles を、新しい PC で最初にどう取得し、git の名前・メー
 - 運用が未定の前提（リポジトリの公開・非公開など）は、手順に両方を並べて書き、決まったら一方を削除する。未定の間に、手順書の前提が実態とずれ、読み替えを誤る。
 - OS 間で対称にするのは「役割」（同じ番号は同じ役割）で、OS 固有の事情（Windows の Git Credential Manager、ダブルクリックでウィンドウが閉じる問題など）は対称にしない。
 
-### Decisions（初回の取得。すべて 2026-10-06）
+### Decisions・Facts（初回の取得）
 
-- **初回は最終の場所に直接 clone する。zip の取得は使わない**。根拠: 取得とリンクの二重が無くなり、番号の順序も変えずに済む。却下案: `50_repos` を前に出す（`ghq` と `GHQ_ROOT` に依存）、zip を最終の場所に展開して後で `.git` を付ける（複雑で、差分と改行の確認が要る）。
-- **git は scoop だけにする。クイックスタートは、実行ポリシーの設定、scoop の導入、`scoop install git`、`git clone` の4行**。根拠: ユーザーの方針（scoop で完結したい）。管理者権限が要らず、PATH の優先順位の問題も起きない。却下案: winget の git で最初の clone をして、後で scoop の git に置き換える（git が2種類併存し、撤去と UAC が要る）。
-- **手順1〜3（scoop と git の導入、clone）は、スクリプトにせず、README の冒頭の貼り付けブロックにする**。根拠: ユーザーの選択。private で、clone 前にスクリプトを取得できない。ファイルを介さないので、ダウンロードの印（`RemoteSigned` で止まる原因）も避けられる。却下案: ブラウザで Raw を保存して実行する `00_bootstrap.bat`（LF の `.bat` のラベルが壊れることがあり、受け渡しの手間もある）。
-- **リポジトリの公開・非公開は未定のまま、手順書と README に両方の手順を併記する**。根拠: ユーザーの指示。決まったら、使わない方を削除する。却下案: 非公開だけを書く（公開にしたときに読み替えが要る）。
-- **git の名前・メールは、新しいスクリプトで対話的に作る。無いときだけ作り、既にあれば触らない**。根拠: ユーザーの選択。リンクの前後どちらでも安全にするため `git config --file` を使う。却下案: 取得スクリプトの先頭で作る（リンクの後になる）、環境変数を設定するスクリプトの末尾で作る（git が必須になる）。
-
-### Facts（初回の取得）
-
-- リポジトリが private のとき、Raw の URL は匿名で 404 になり、匿名の `git ls-remote` は認証を求める（確認: 2026-10-06、根拠: `Invoke-WebRequest` が 404、`git ls-remote` が `could not read Username`）。
-- scoop の git は、システムの `gitconfig` で `credential.helper` に Git Credential Manager を設定しており、clone でサインイン画面が開く（確認: 2026-10-06、根拠: `git config --system --list --show-origin`）。
-- 新しい Windows アカウントで、クイックスタートの4行から `20_apps`、`30_link`、`50_repos` まで通った（確認: 2026-10-06、根拠: ユーザーの報告「問題なし」）。
-- Ubuntu 24.04 の apt に `gh` 2.45.0 がある（確認: 2026-10-06、根拠: `apt-cache policy gh` の Candidate）。
-- `winget list --id Git.Git -e` は、該当が無いと終了コード `-1978335212` を返す（確認: 2026-10-06、根拠: 実行した出力）。
-- Linux で、非公開リポジトリを `gh auth login`（HTTPS、ブラウザ）と `gh auth setup-git` で clone する手順が通る（仮説）。新しい Linux の実機では未実行。
-- 非公開から公開にしても、Windows の4行は変わらない。違いはサインイン画面が出るかどうかだけ（仮説）。
+- 初回の clone の手順（scoop の git だけで最終の場所に clone、クイックスタートの4行、`11_git_identity` で git の名前・メールを作る）と、その実機での確認は、dotfiles の `docs/decisions.md`「初回は scoop の git だけで最終の場所に clone する」が正（2026-10-16 に移した）。
 
 ## git の設定の置き場（SSL バックエンドと credential。2026-10-06）
 
@@ -138,17 +117,14 @@ Windows の git で、SSL バックエンドを schannel に切り替えるか�
 - 選択肢が1つしかない値は、質問せずに固定値として共通ファイルに持たせる。PC ローカルのファイルは「既にあれば触らない」運用だと、既存の PC に新しい値が届かない。共通ファイルなら `git pull` だけで届く。
 - 「使わない」の動作は、何かを書くのではなく、何も書かないことで既定値に落とす。既定値が変わっても、スクリプトを直さずに追随できる。
 
-### Decisions（git の設定。すべて 2026-10-06）
+### Decisions（git の設定）
 
-- **SSL バックエンド（schannel）は、`11_git_identity.bat` が `[y/N]` で聞き、`y` のときだけ PC ローカルの `.gitconfig_local` に `http.sslBackend = schannel` と `http.sslVerify = true` を書く。`n`・空は何も書かない**。根拠: ユーザーの依頼。schannel を使うかは PC ごとに選ぶものなので、PC ローカルに置く。何も書かなければ、暗黙に OpenSSL になる。却下案: 共通ファイル `home/.gitconfig` に直書き（`n` を選んでも schannel になり、Linux にも配られる）。
-- **`credential.helperselector.selected = manager` は、共通ファイル `home/.gitconfig` に静的に持たせ、スクリプトからは書かない**。根拠: ユーザーの判断。Windows の全 PC で `manager`（Git Credential Manager）に固定で、選択肢が無い。却下案: `y/N` で聞く（選択肢が無い）、共通ファイルとスクリプトの両方に書く（どちらが効くか分かりにくい）。
-- **設定キーは `https.sslVerify` ではなく `http.sslVerify` にする**。根拠: ユーザーの承認。`git help --config` に `https.sslVerify` は無い。却下案: 当初の指定どおり `[https] sslVerify`（効かない）。
+- schannel を PC ごとの選択（`.gitconfig_local`）にし、credential は共通ファイルに固定値で持たせる決定は、dotfiles の `docs/decisions.md`「git の SSL バックエンド（schannel）は PC ごとの選択として…」が正（2026-10-16 に移した）。設定キーは `http.sslVerify`（`https.sslVerify` は無効。下の Gotchas）。
 
 ### Facts（git の設定）
 
 - `git help --config` の一覧に `http.sslBackend` と `http.sslVerify` はあるが、`https.sslVerify` は無い（確認: 2026-10-06、根拠: git 2.56.0.windows.1 で実行）。
 - `git config --file <ファイル> https.sslVerify true` は、未知のキーでもエラーにならず `[https]` セクションに書き込む（確認: 2026-10-06、根拠: 当初の指定でスクリプトの試験が通った）。
-- dotfiles に `scripts/windows/11_git_identity.bat` があり、共通の `home/.gitconfig` に `[credential "helperselector"]` の `selected = manager` がある（確認: 2026-10-06、根拠: ファイルの存在と内容）。この PC の `~/.gitconfig_local` に、SSL の設定はまだ無い。
 - scoop の git の system gitconfig は、Git Credential Manager を `credential.helper` にしている（確認: 2026-10-06、根拠: `git config --system --list --show-origin`）。
 - `http.sslVerify` の既定は true なので、`y` のときに明示しても挙動は変わらず、設定の意図を残す効果だけがある（仮説）。
 - `credential.helperselector.selected` は、Git for Windows の credential helper 選択ツールが記録する選択結果で、`manager` は Git Credential Manager を指す（仮説）。共通ファイルにあっても、Linux の git は未知のセクションとして無視するはず（仮説）。
@@ -192,10 +168,7 @@ Windows の git で、SSL バックエンドを schannel に切り替えるか�
 - MX Linux 25.3 の実機または VM で、`10 → 20 → 23 → 30` が通るか。Secure Boot、`os-prober`、インストーラーの名称が合っているか。
 - Win11 の OOBE 手順（Rufus のオプション）が実機で動くか。
 - Mint を Ubuntu 列に含めるか、Mint 23 の公開後に独立させるか。
-- Fedora を足すときの構成（`lib.sh` に `pkg_install` を包むか、`manifests/dnf.txt` を別に持つか）。足す場合は `env/fedora.md` を新設する。
-- `env/` の手順書に、`workbase`（旧 `notes`）が公開になった場合に支障のある記述がないか（公開範囲は未定。[[obsidian-vault]] の Open Questions）。2026-10-06 に、clone の節が公開・非公開の併記になり、一部は解消した。
-- dotfiles のリポジトリを公開にするか、非公開にするか。決まったら、README の冒頭と手順書の clone の節から、使わない方を削除する。
-- Linux の非公開リポジトリの clone に、SSH 鍵を使う案と `gh` を使う案のどちらを標準にするか。新しい Linux の実機で、`gh auth login` から clone までを確認する（2026-10-06 時点）。
+- Fedora を足すときの構成（パッケージ管理の包み方、`manifests/dnf.txt` を別に持つか）。足す場合は dotfiles の `docs/setup/` に手順書を足す。
 - GRUB のメニューを持つディストロをどれにするか（最後に入れた1台か、固定か）。
 
 ## Related

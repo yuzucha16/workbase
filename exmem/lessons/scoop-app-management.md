@@ -13,7 +13,7 @@ aliases:
   - scoopと管理外アプリ
   - アプリの整理
 created: 2026-10-04
-updated: 2026-10-06
+updated: 2026-10-16
 sources:
   - Claude Code conversation "scoop 管理下と管理外アプリの整理" (2026-10-04)
   - "winget list / pnputil の出力（2026-10-04、Windows 11 Home 10.0.26200）"
@@ -102,7 +102,7 @@ Windows 11 のアプリを「scoop で管理するもの」と「それ以外」
 - 【この件】「カレントに `powershell` という名前のフォルダがあると、cmd が `powershell` を実行できない」という仮説は、再現せず却下した（確認: 2026-10-06、根拠: Windows 11 10.0.26200 で、`cmd /c` から実行して終了コード0）。
 - 【この件】原因は未特定。未検証の候補は、セキュリティ製品や AppLocker によるブロック、新アカウント側から見た `C:\vault` の ACL、新アカウントの LocalMachine の既定が Restricted であること（仮説）。このPCの LocalMachine は RemoteSigned。
 - 【この件】効いた原因が RemoteSigned の設定か、`iwr -useb` と `Invoke-RestMethod` の違いかは、切り分けていない（仮説）。
-- 【この件】dotfiles の `scripts/windows/20_apps.bat` は、上の Decisions のとおりになっている（確認: 2026-10-06、根拠: バッチの24行目の `Get-ExecutionPolicy` の条件、`Invoke-RestMethod`、`PS_EXE` の完全パス）。
+- 【この件】dotfiles の `scripts/windows/20_apps.bat` は、上の Decisions のとおりになっている（確認: 2026-10-06、根拠: バッチの `Get-ExecutionPolicy` の条件、`Invoke-RestMethod`、`PS_EXE` の完全パス）。
 
 ### Gotchas（導入）
 

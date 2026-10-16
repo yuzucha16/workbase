@@ -14,12 +14,13 @@ aliases:
   - 自動で書き換わるファイルの追跡
   - data.jsonの追跡
 created: 2026-10-04
-updated: 2026-10-15
+updated: 2026-10-16
 sources:
   - Claude Code conversation "colored-tags の data.json を追跡から外す" (2026-10-15)
   - Claude Code conversation ".obsidian の置き場の判断基準" (2026-10-04)
   - Claude Code conversation "colored-tags の data.json の追跡判断" (2026-10-04)
   - "notes の .obsidian/、dotfiles の manifests/links.map（2026-10-04 に確認）"
+  - Claude Code conversation "workbase と dotfiles の切り分け（dotfiles-boundary）" (2026-10-12 方針、2026-10-16 反映)
 ---
 
 # アプリの設定ディレクトリを置くリポジトリの判断基準
@@ -32,7 +33,9 @@ sources:
 
 - **設定の置き場は、その設定が何と連動して変わるかで決める。** 連動先が Vault の中身（ノート規約、プロパティ型、検索除外）なら Vault 側、環境全体（テーマ・フォントを複数アプリでそろえるなど）なら dotfiles 側。連動するものと同じリポジトリにあれば、変更が1つのコミットで済む。
 - **アプリが固定の場所を読む設定は、実体をその場所に置く。** リンクで別のリポジトリに逃がさない。リンクは、clone 順、リンク前の起動による衝突、コミット先の分離といった運用の負担を足す。
-- **設定ファイルの管理を2つのリポジトリで相互に参照させない。** セットアップの順序が循環し、片方だけの環境で動かなくなる。
+- **設定ファイルの管理を2つのリポジトリで相互に参照させない。** セットアップの順序が循環し、片方だけの環境で動かなくなる。リポジトリ全体では、次の2項になる。
+- **リポジトリを切る線は、「PC に置かれる・実行されるもの」か「人か AI が読んで判断・作業するもの」か。** 前者は dotfiles、後者は workbase（共有リポジトリ）。迷ったら「PC を作り直すときに要るか」で決め、要るなら dotfiles に置く（2026-10-12 方針）。
+- **依存は dotfiles → workbase の一方向だけにする。** dotfiles が workbase について知るのは、clone の URL と置き場所、スキルが読む kit のパスだけ。workbase は dotfiles を、名前とリンクでしか呼ばず、スクリプトの中身や挙動を書かない。理由は3つ: 立ち上げの順番（dotfiles が先に clone され、そこから workbase が置かれる）、AI の境界（AI がノートのついでに直したものが、次の PC セットアップでそのまま実行されない）、規約（「PC ごとのデータを入れない」とぶつからない）。dotfiles を workbase に取り込まず、別リポジトリのまま保つ。dotfiles の挙動を書いた手順書は dotfiles の `docs/setup/` に置く（2026-10-16 に移した）。
 - **`AGENTS.md` と `docs/` は、リポジトリのルートか、独立して判断を積む単位にだけ置く。** 小さなサブディレクトリごとには置かない。AI が読む前提資料が作業単位ごとに増え、管理コストだけが膨らむ（[[workflow-kit]]）。
 - **AI に置き場の影響を説明させるときは、作業場（Claude を開くディレクトリ）がどこになるかを前提に整理させる。** 置き場を変えると作業場も変わるので、粒度への影響は作業場を基準にしないと誤る（Gotchas）。
 
@@ -83,7 +86,7 @@ sources:
 
 ### `.obsidian` を dotfiles へ戻す（2026-10-05。2026-10-04 の決定「`notes` に置き続ける」を撤回）
 
-- 決めたこと（ユーザー）: `.obsidian` の実体を dotfiles（`windows/obsidian/.obsidian`）に置き、Vault のトップ（`NOTES_DIR`）の `.obsidian` へジャンクションで張る。
+- 決めたこと（ユーザー）: `.obsidian` の実体を dotfiles に置き、Vault のトップ（`NOTES_DIR`）の `.obsidian` へジャンクションで張る。
 - 撤回の理由: Vault のトップを、PC ごとのローカルなリポジトリ（PC1 は remote なし）にして、共有の部分を別リポジトリ `workbase`（`resources/` に clone）に分けた。トップは PC 間で共有されないので、`.obsidian` をトップに置くと、設定が PC ごとに別管理になる。dotfiles は全 PC に clone するので、設定を共有できる（判断基準の ③ 依存の向きと ④ 全 PC への到達性が、前提から変わった）。
 - 経緯: 提案の時点で、2026-10-04 の決定を示せていなかった。ユーザーに、10-04 の決定と根拠を示した上で、改めて確認して決めた。
 - 引き受ける負担（下の撤回済みの決定の根拠と同じもの）: ジャンクション越しの運用。リンクの前に Obsidian を開くと、実ディレクトリが先にできて `30_link.bat` が止まる。設定の変更が dotfiles のコミットになる（`[obsidian]` の接頭辞は dotfiles 側で使う）。`workspace*.json` の除外が dotfiles の `.gitignore` に要る。

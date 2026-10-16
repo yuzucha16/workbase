@@ -11,7 +11,7 @@ aliases:
   - Zedのdotfiles管理
   - Zedの設定の再現
 created: 2026-10-01
-updated: 2026-10-04
+updated: 2026-10-16
 sources:
   - Claude (Claude Code via Zed ACP) conversation "Zedのextension/ACPエージェントのdotfiles管理" (2026-10-01)
   - "%APPDATA%\\Zed / %LOCALAPPDATA%\\Zed / dotfilesリポジトリ（2026-10-01 に確認）"
@@ -31,42 +31,11 @@ Zedの設定・extension・ACPエージェントをdotfilesリポジトリで管
 
 ## 管理しているもの
 
-2026-10-01 時点で確認済み。
+管理の実体（リンク先のパス、`settings.json` の中身）は dotfiles が正（`README.md`、`windows/README.md`、`home/.config/zed/`。2026-10-16 に、ここにあった写しを削った）。ここには、管理の考え方だけを残す。
 
-`%APPDATA%\Zed\` の設定ファイルは、dotfilesリポジトリ（`C:\vault\repos\github.com\yuzucha16\dotfiles`）へのシンボリックリンクになっている。
-
-> 2026-10-03 の dotfiles 再編で、正本は `home/.config/zed/` に移った（`manifests/links.map` で `%APPDATA%\zed\` へリンク。詳細は dotfiles リポジトリ）。下の表は2026-10-01 時点のパス。フォント設定（`ui_font_*` `buffer_font_*`、`terminal.shell` の削除）も追加されている（[[fonts]]）。
-
-| ファイル | リンク先（2026-10-01 時点） |
-|---|---|
-| `%APPDATA%\Zed\settings.json` | `dotfiles\zed\settings.json` |
-| `%APPDATA%\Zed\keymap.json` | `dotfiles\zed\keymap.json` |
-
-`settings.json` で管理している内容:
-
-```json
-"auto_install_extensions": {
-  "powershell": true
-},
-"agent_servers": {
-  "claude-acp": {
-    "default_config_options": { "model": "sonnet" },
-    "type": "registry"
-  },
-  "codex-acp": { "type": "registry" }
-}
-```
-
-- `auto_install_extensions`: 起動時に不足しているextensionを自動インストールする。`powershell` を登録済み（コミット `0533feb`）。
-- `agent_servers`: ACPエージェントの設定。Registryからインストールした時点で自動的に記録される（[[zed-acp]]）。2026-10-02 の確認で、`claude-acp` に `default_config_options.model: "sonnet"`（既定モデル）が加わっていた。
-
-PowerShellのプロファイルも同じ方式で管理されている（2026-10-02 に確認）。
-
-| ファイル | リンク先 |
-|---|---|
-| `%USERPROFILE%\Documents\PowerShell\profile.ps1` | `dotfiles\profile.ps1`（シンボリックリンク。2026-10-03 以降の正本は `windows\powershell\profile.ps1`） |
-
-プロファイルの先頭には、非対話起動なら抜けるガードがあり、ZedのClaude Agent起動に必要（[[zed-acp]]）。dotfilesのGit追跡ファイルの一覧には `Microsoft.PowerShell_profile.ps1` があるが、リンク先の `profile.ps1` が追跡されているかは今回確認していない。
+- `auto_install_extensions`: 起動時に不足しているextensionを自動インストールする。
+- `agent_servers`: ACPエージェントの設定。Registryからインストールした時点で自動的に記録される（[[zed-acp]]）。`claude-acp` には `default_config_options.model`（既定モデル）を持たせられる。
+- PowerShell のプロファイルの先頭には、非対話起動なら抜けるガードがあり、ZedのClaude Agent起動に必要（[[zed-acp]]）。
 
 ## 目の負担を減らす設定と、AIの窓口の設定（2026-10-04）
 
@@ -82,7 +51,7 @@ PowerShellのプロファイルも同じ方式で管理されている（2026-10
 
 ### Decisions
 
-- **自作テーマ "Material Gruvbox Dark" を使う**。Obsidian の Material Gruvbox テーマ（`theme.css`）の配色を移植した（背景 `#282828`、サイドバー・パネル `#1d2021`、文字 `#d4be98`、アクセント `#7daea3`、見出し `#a7b85a`）。置き場は dotfiles の `home/.config/zed/themes/`（`%APPDATA%\zed\themes` はそこへのジャンクション。2026-10-04 に確認）。根拠: Zed 標準の Gruvbox Dark は文字色が `#ebdbb2` で明るい。却下案: 標準の Gruvbox Dark のまま。
+- **自作テーマ "Material Gruvbox Dark" を使う**。Obsidian の Material Gruvbox テーマ（`theme.css`）の配色を移植した（背景 `#282828`、サイドバー・パネル `#1d2021`、文字 `#d4be98`、アクセント `#7daea3`、見出し `#a7b85a`）。置き場は dotfiles（`%APPDATA%\zed\themes` へのジャンクション。2026-10-04 に確認）。根拠: Zed 標準の Gruvbox Dark は文字色が `#ebdbb2` で明るい。却下案: 標準の Gruvbox Dark のまま。
 - **メッセージ送信は Ctrl+Enter**（`agent.use_modifier_to_send: true`）。IME の変換確定の Enter で送信されるのを防ぐ。
 - **エージェントパネルは左ドック、プロジェクトパネルは右ドック**。同じドックに置いたパネルは上下に並ばず、どちらか一方の表示になる（実機で確認）。
 - **モデルは `sonnet` 固定**（賢さよりトークン量を優先）。codex-acp は別環境で使うので据え置き。`mode: "plan"` を入れてあり、新しいセッションはプランモードで始まる。

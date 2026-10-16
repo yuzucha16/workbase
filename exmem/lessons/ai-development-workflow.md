@@ -12,7 +12,7 @@ tags:
 aliases:
   - AI開発ワークフロー
 created: 2026-09-26
-updated: 2026-10-10
+updated: 2026-10-16
 sources:
   - Claude Code conversation "dotfiles と exmem の関係整理" (2026-10-04)
   - Claude Code conversation "残件の整理と、統合後の修正" (2026-10-04)
@@ -264,6 +264,7 @@ AIのコンテキスト
 ## 他リポジトリとの関係（2026-10-04）
 
 プロジェクトのリポジトリ（dotfiles など）と exmem は、「作業ログはリポジトリ側、知識は exmem」と分ける。実際の整理は dotfiles で行い、ルールは `AGENTS.md` の末尾にも書いてある（2026-10-04 に確認済み）。
+2026-10-16 に、リポジトリを切る線を足した。**PC に置かれる・実行されるもの**（dotfiles）と、**人か AI が読んで判断・作業するもの**（workbase）で分ける。依存は dotfiles → workbase の一方向で、workbase は dotfiles の挙動を書かない（[[app-config-placement]]）。
 
 ### Principles
 

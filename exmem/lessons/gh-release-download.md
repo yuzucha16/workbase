@@ -11,7 +11,7 @@ aliases:
   - gh未ログイン
   - GitHub Releasesの取得
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-16
 sources:
   - Claude Code conversation "24_fonts スクリプトの簡素化と gh 未ログインの検証" (2026-10-04)
   - "dotfiles の scripts/{windows,linux}/24_fonts.*（2026-10-04 に確認）"
@@ -44,7 +44,6 @@ GitHub の公開リリースの zip（フォントなど）を `gh release downl
 - 空の `GH_CONFIG_DIR` を指定し、`GH_TOKEN` と `GITHUB_TOKEN` を未設定にして未ログインを再現した。`gh auth status` は「not logged into any GitHub hosts」と表示した。
 - 未ログインで `gh release download -R yuru7/PlemolJP -p "PlemolJP_NF_v*.zip" -D <dir>` が成功し、約153MBの zip を取得した。`-R yuru7/moralerspace -p "MoralerspaceHW_v*.zip"` も成功し、約102MBを取得した（終了コード 0 と取得ファイルのサイズ）。
 - 未ログインで `gh release list -R yuru7/PlemolJP -L 1` は失敗した。`gh auth login` を促すメッセージが出て、終了コードは 4。
-- dotfiles の実物: `24_fonts.bat` と `24_fonts.sh` に `--dry-run` や `gh auth` の記述は無い（`dry` / `auth` の検索が0件）。
 
 仮説（未確認）:
 

@@ -13,7 +13,7 @@ aliases:
   - DECSCUSR
   - 点滅を止める
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-16
 sources:
   - Claude Code conversation "ターミナルのカーソル点滅を止める（Zed・Windows Terminal・WSL）" (2026-10-04)
   - "dotfiles の profile.ps1 / .bashrc / common.sh / home/.config/zed/settings.json（2026-10-04 に確認）"
@@ -50,10 +50,7 @@ sources:
 
 ## Facts
 
-確認済み（2026-10-04、dotfiles の実物）:
-
-- `windows/powershell/profile.ps1` に `[Console]::Write("$([char]27)[2 q")`、`home/.bashrc` に `printf '\e[2 q'`、`home/.config/shell/common.sh` に zsh の `_steady_cursor() { printf '\e[2 q' }` がある。
-- `home/.config/zed/settings.json` に `"cursor_blink": false` と `"terminal": { "blinking": "off" }` がある。
+確認済み（2026-10-04）: dotfiles の PowerShell・bash・zsh・Zed の設定に、カーソルの点滅を止める記述が入っている（実物は dotfiles が正）。要点: PowerShell は `[Console]::Write("$([char]27)[2 q")`、bash / zsh は `printf '\e[2 q'`、Zed は `"cursor_blink": false` と `"terminal": { "blinking": "off" }`。
 
 実機での観察（会話の時点）:
 
