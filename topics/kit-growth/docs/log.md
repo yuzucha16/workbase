@@ -11,7 +11,11 @@
 - `again`（言い直し）と `gap`（漏れ）の記録を廃止した（2026-10-16、`139091c`）。言い直しがほぼ起きず、`start` の利用も減ったため。`goal_change` は残した。topic-workflow の kit 取り込みの時機は要再判断（`topics/topic-workflow/topic-workflow-next-steps.md` の5）。
 - `wrap` の空回りを減らした: workbase の `AGENTS.md` に「wrap の記録先」（トピック外の kit 等の変更は kit-growth の `docs/`、遠回りの「少し」「大きく」は `inbox.md`）を定め、`wrap-hook.md` の手順1がリポジトリの既定の対象を見るようにした（ユーザーの選択。案3「依頼文だけ」は見送り）。
 
+- 3 リポジトリ（works、resources、dotfiles）の規則を揃えた（2026-10-16。一律に kit を正とはしない）。`docs-rules.md` を読む時機を「`docs/` 更新時とコミット・push の前」に統一、階層化の規則（上段は表引き、下段に詳細）を追加、機密の項は `review` の入力 6 に移した、`review` の入力 8（リポジトリ間の整合の表）を追加、workspace 雛形の写しを除去（`2156d92` `2a35149` `3cdeeb1` `286d714`）。
+
 ## Next Actions
+
+0. 次の `review` で入力 8（現状の表とギャップの表）を初めて回す。残るギャップは、`pre-push` と deny 設定（works の 11-08 の判定の項目⑧）と、dotfiles の `docs/setup/` の案（`topics/dotfiles-boundary/`）との置き場の整合。規則を足したので、凍結の対（畳むもの）は機密の項で足りたが、入力 8 の分は未対（次の `review` で畳む候補を挙げる）。
 
 1. PC1 の印象を `inbox.md` に入れ始める（モバイル。随時）。
 2. `start` のモード（確定型・探索型）を次の2〜3セッションで試し、`review` で `goal_change` を見る（`again`・`gap` は 2026-10-15 に廃止）（improvement-methods の close で受け継いだ。詳細は `exmem/lessons/session-goal-modes.md`）。
