@@ -35,7 +35,7 @@ exmem はナレッジの置き場で、他リポジトリの作業ログは置�
 ## ディレクトリ構造
 
 場所は `$HOME\works\resources\exmem`（共有リポジトリ `workbase` の一部。通常は Obsidian Vault の `resources/` として clone される。Vault の配置は [[obsidian-vault]]）。
-AIエージェントはこのディレクトリを作業ディレクトリとして起動する。
+AIエージェントは `resources/`（リポジトリのトップ）で起動し、exmem での作業は「exmem の続き」で扱う（`workflow-kit/docs-rules.md` の「上の階層で起動して…」）。
 
 ```text
 exmem/                 # resources/exmem/
