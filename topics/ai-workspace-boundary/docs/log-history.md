@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-10-16
+- 別スレッドの変更（`7b2c515` open の構造、`c86b4d6` close-hook 削除）と、トピックの残件を突き合わせた。`ai-room-handover.md` の close-hook への参照を直した。
+- `room restore` が人の変えた `_noai/final/` を上書きせず止める（`1a037f9`）。`room init`（`e12209e`）、`room reap`（`3c838c1`）を実装。項目 5 の保留を解除。`room intake` は見送り（`e96c511`）。単体テストは59件で全部通る。
+- 未決のまま: リポジトリが正の `src`・remote の扱い（kit-growth の Open Questions）。
+- 遠回り: なし。
+
 ### 2026-10-15
 - 他環境（旧 kit で `projects/` の下に Area と Project を重ねていた PC）の AI 開発環境プレイブック（画像）を、この環境の `areas/` `projects/` に当てはめた。固有名と作業固有の仕組みは省き、共通部と Excel VBA 固有部を `exmem/lessons/` の2ノートにした（コミット `e051cc1`、判読残件の反映は `91fb76b`）。決定は `decisions.md` の 2026-10-15。
 - 当てはめで見つかった穴を塞いだ。(1) 部屋の AI から Area の共通ルールが見えない → `room start` が Area の README を `ai/ctx/area-README.md` に写す。(2) `type: dev` の `src/` `tests/` `tools/` の置き場 → `ai/out/<成果物名>/`、`open-hook.md` と `dev-deliverable-guide.md`。コミット `b6c3199`。
