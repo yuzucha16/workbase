@@ -35,6 +35,7 @@ updated: 2026-10-16
 - [[dotfiles-shell-tuning]]: dotfiles の起動時間・WSL の見た目・追跡方針
 - [[embedded-c-constraint-checks]]: 組込み C の制約を機械で検査する
 - [[excel-vba-ai-development]]: Excel VBA マクロを AI で作るときの規約と落とし穴
+- [[change-method]]: 変更のやり方1: 中間成果物を拠りどころに、基点つきで最小の変更を入れる（Must / Want）
 - [[fonts]]: フォントの選定と導入
 - [[gh-release-download]]: gh release download は未ログインでも使える
 - [[git-line-endings]]: Git の改行コードを .gitattributes で決める

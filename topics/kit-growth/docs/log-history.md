@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-16（「変更のやり方」を Must / Want で足した）
+
+- `init 更新` が一撃で通った要因を振り返り、「変更のやり方」を解決・改善のやり方の延長に足した。ブロックA（仕込み。中間成果物）とB（変更）に分け、プレイブックの3文書（要求仕様・機能仕様・運用マニュアル）を中間成果物の出どころとして格下げした。ユーザーの条件は「ガッチリ定義しない。Must と Want で小さく始め、`review` の対象にする」。`methods.md`、`exmem/lessons/change-method.md`、`hook-matrix.md` の「review の点検」7、`exmem-index.md` を更新。決定は `decisions.md` の同日の項。
+
 ### 2026-10-16（init に `init 更新` を足した）
 
 - ユーザーの依頼で、雛形の更新を works に反映するモードを検討し、案 B（基点つきの3者マージ。案を出して承認後に反映）を選んだ。`init-update.md` を新設し、`init-hook.md`・`hooks.md`・`docs-rules.md`（`Template-Rev` トレーラー）・`hook-matrix.md` を合わせた。決定は `decisions.md` の同日の項。`git merge-file` で、埋めた行が残ることと、旧版 → 新版の雛形の変更が当たることを一時ディレクトリで確認した（衝突 0）。
