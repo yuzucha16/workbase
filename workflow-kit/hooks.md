@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | `init` | 「workflowを導入して」 | `init-hook.md` | ワークスペース | 作業ディレクトリへの導入の入口（Vault のトップの生成を含む） |
 | `open` | | `open-hook.md` | Project の開始 | Project のひな形を作り、`start` を呼ぶ |
-| `start` | 「作業を始めて」 | `start-hook.md` | セッションの開始 | 開始インタビュー。`start 問題解決` / `start 改善` で、進め方を選んで始める |
+| `start` | 「作業を始めて」 | `start-hook.md` | セッションの開始 | 開始インタビュー。`start 解決` / `start 改善` で、進め方を選んで始める |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push を、順序を固定して行う |
 | `close` | | `close-hook.md` | Project の終了 | Project を閉じる |
 | `stock` | 「ナレッジ化して」 | `stock-hook.md` | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`） |
