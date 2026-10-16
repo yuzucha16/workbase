@@ -1114,10 +1114,94 @@ def cmd_close(ctx, a):
     os.rmdir(p.dir)
     ctx.say(f"archives/{p.name} へ移した（追跡 {len(files)} ファイル）。reap_after: {reap}")
     ctx.say(f"部屋の会話履歴（{p.distro} の ~/.claude/projects/-mnt-room-{p.name}/）は、reap_after まで残す")
+    offer_reap(ctx, interactive=sys.stdin.isatty())
     if a.commit:
         # projects/<名> の削除は、git mv でステージ済み（消えたパスは pathspec にできない）
         commit_paths(ctx, [f"archives/{p.name}", f"areas/{p.area}"], f"[room] {p.name} を close し archives へ移動",
                      extra_allowed=(f"projects/{p.name}",))
+
+
+# ---------- reap（閉じた Project が部屋に残した跡を、期限で片付ける） ----------
+
+REAP_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
+
+
+def find_reapable(ctx, today=None):
+    """archives/ の Project のうち、reap_after が今日以前で、まだ reaped でないもの。[(名前, Area, reap_after)]。"""
+    today = today or ctx.today()
+    found = []
+    for readme in sorted((ctx.vault / "archives").glob("*/README.md")):
+        fm = read_frontmatter(readme)
+        due = fm.get("reap_after", "")
+        if fm.get("status") == "done" and due and due <= today and not fm.get("reaped"):
+            found.append((readme.parent.name, fm.get("area", ""), due))
+    return found
+
+
+def reap_project(ctx, name, area):
+    """部屋の中の、その Project の会話履歴と ~/tmp/<名> を消し、archives の README に reaped を付ける。消した、または対象が無ければ True。"""
+    readme = ctx.vault / "archives" / name / "README.md"
+    if not readme.exists():
+        raise RoomError(f"archives/{name} が無い")
+    if not REAP_NAME_RE.match(name):
+        raise RoomError(f"{name}: 名前が英数字・_・- だけでないので、会話履歴のディレクトリ名を決められない。部屋の ~/.claude/projects/ と ~/tmp/ を手で確認して消す")
+    distro = f"room-{area}"
+    if distro not in ctx.wsl.distros():
+        ctx.say(f"  {name}: 部屋 {distro} が無い。消すものは無いとして、reaped を付ける")
+    else:
+        hist, tmp = f"-mnt-room-{name}", name
+        script = (f'rm -rf -- "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}"\n'
+                  f'ls -d "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}" 2>/dev/null\n')
+        rc, out, err = ctx.wsl.script(distro, script)
+        if rc != 0 or out.strip():
+            raise RoomError(f"{name}: 消せなかった（{(err or out).strip()[-300:]}）")
+    readme.write_text(update_frontmatter(readme.read_text(encoding="utf-8"), {"reaped": ctx.today()}),
+                      encoding="utf-8", newline="\n")
+    return True
+
+
+def offer_reap(ctx, yes=False, interactive=True):
+    due = find_reapable(ctx)
+    if not due:
+        return 0
+    ctx.say(f"reap の期限が来ている Project（部屋の会話履歴と ~/tmp/<名> を消す。{len(due)} 件）:")
+    for name, area, d in due:
+        ctx.say(f"  {name}（room-{area}、期限 {d}）")
+    if not yes:
+        if not interactive:
+            ctx.say("  → `room reap` で承認して実行する")
+            return 0
+        if input("消してよいか [y/N]: ").strip().lower() != "y":
+            ctx.say("  → 見送った。`room reap` でいつでも実行できる")
+            return 0
+    done = 0
+    for name, area, _d in due:
+        reap_project(ctx, name, area)
+        ctx.say(f"  消した: {name}")
+        done += 1
+    return done
+
+
+def cmd_reap(ctx, a):
+    if a.name:
+        readme = ctx.vault / "archives" / a.name / "README.md"
+        if not readme.exists():
+            raise RoomError(f"archives/{a.name} が無い")
+        fm = read_frontmatter(readme)
+        if fm.get("status") != "done":
+            raise RoomError(f"{a.name} は close されていない（status={fm.get('status')}）")
+        if fm.get("reaped"):
+            raise RoomError(f"{a.name} は reap 済み（{fm.get('reaped')}）")
+        due = fm.get("reap_after", "")
+        if due > ctx.today() and not a.force:
+            raise RoomError(f"{a.name} の期限は {due}。前倒しなら --force")
+        if not a.yes and input(f"{a.name} の会話履歴と ~/tmp を消してよいか [y/N]: ").strip().lower() != "y":
+            raise RoomError("中止した")
+        reap_project(ctx, a.name, fm.get("area", ""))
+        ctx.say(f"消した: {a.name}")
+        return
+    if offer_reap(ctx, yes=a.yes) == 0:
+        ctx.say("期限が来ていて、まだ消していない Project は無い")
 
 
 # ---------- main ----------
@@ -1153,6 +1237,9 @@ def build_parser():
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
     i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")
+    rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
+    rp.add_argument("name", nargs="?"); rp.add_argument("--yes", action="store_true")
+    rp.add_argument("--force", action="store_true", help="期限前でも消す（名前を指定したとき）")
     u = sub.add_parser("umount", help="部屋に残ったマウントを外す")
     u.add_argument("--area", required=True)
     return ap
@@ -1163,7 +1250,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
-        {"init": cmd_init, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
+        {"init": cmd_init, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
          "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
