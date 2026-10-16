@@ -4,9 +4,7 @@
 
 ## Next Actions
 
-- push はユーザーが行う（許可リストなし）。未 push のコミットは `git log origin/main..HEAD` で確認する。
-- `guides/` の `CLAUDE.md` は本文をそのまま持つ。cwd を増やさない方針なので、いまは触らない（`AGENTS.md` へ移して `CLAUDE.md` を1行にするのは後回し）。
-- `handson/` は削除予定。そのままにする。
+なし
 
 ## Open Questions
 
