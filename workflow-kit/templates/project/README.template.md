@@ -21,7 +21,7 @@ updated: <YYYY-MM-DD>
 
 ## 成果物
 
-- `<最終成果物>`: <直下に置く>
+- `ai/out/<成果物名>/`: <最終成果物>
 
 ## 範囲外
 
@@ -33,10 +33,10 @@ updated: <YYYY-MM-DD>
 
 <!--
 構造（open-hook.md「Project の構造」）:
-- 固定: README.md、docs/（log.md と decisions.md。複数セッションにまたがるときだけ）、最終成果物（直下）
-- doc: drafts/（版ごとの下書き、レビュー版）、refs/（渡された資料、チェックリスト）
-- dev: src/、tests/、tools/、ビルド設定
-- research: sources/（収集した資料と抜粋）、report.md（結論。直下）
-- 空のディレクトリは先に作らない。最初のファイルが来たときに作る。深さは Project 直下から2階層まで。
+- 固定: README.md、ai/{docs,in,work,out,records}（`room open` が作る）、_noai/（原本・対応表・復元済みの成果物。追跡しない）
+- doc: ai/in/ に渡された資料、ai/work/ に版ごとの下書き、ai/out/<成果物名>/ に最終版
+- dev: ai/out/<成果物名>/ に src/、tests/、tools/、ビルド設定（dev-deliverable-guide.md）
+- research: ai/in/ に渡された資料、ai/work/ に集めた資料と抜粋、ai/out/<成果物名>/report.md に結論
+- ai/ の下は、空のディレクトリを先に作らない。最初のファイルが来たときに作る。
 この注記は、Project の README では削除する。
 -->
