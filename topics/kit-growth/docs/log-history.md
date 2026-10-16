@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-16（共有側から works への名指しを外した）
+
+- 共有側（resources）が works をリポジトリとして名指しする説明を、「ワークスペースのルート」に言い換えた（窓口、手順書、`room.py` のヘルプ文、設計・引継ぎ 5 本）。works 固有の運用記録 `guides/explain/agent-safety-rules.md` は works の `docs/explain/` へ移し、`guides-index.md` と `review-hook-why.md` の参照を外した。kit の `init` フックと `room` が works の PARA 構造を前提にすることは許容。判断は works の `docs/decisions.md` の先頭の項（ユーザーの決定）。コミット `6d8f427` `b50bab2`。遠回りの答え: なし。
+
 ### 2026-10-16
 
 - works、resources、dotfiles の `AGENTS.md`・README・`docs/log.md` の規則を揃える作業をした（フェーズ1〜3。一律に kit を正とはしない方針で、明らかなずれは事前にユーザーへ確認した）。kit の変更: `docs-rules.md` を読む時機の統一、階層化の規則、機密の項の畳み、workspace 雛形の写しの除去、`review` の入力 6（機密の点検）と入力 8（リポジトリ間の整合）。判断は `docs/decisions.md` の「2026-10-16」。dotfiles 側は README を 34.8KB から 16KB に分割し、`log.md` を 17.9KB から 3.8KB に縮めた。コミット: resources `9c87f10` `2156d92` `2a35149` `3cdeeb1` `286d714`、dotfiles `cc20299` `71e326d` `000125e` `a404711` `293c0a3`、works `142c226`。遠回りの答え: なし。
