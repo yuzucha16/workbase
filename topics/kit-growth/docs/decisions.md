@@ -1,5 +1,11 @@
 # kit-growth: 決定
 
+## 2026-10-16 `docs-rules.md` を読む時機を揃えた（ユーザーの承認。3 リポジトリの規則を揃える作業の一部）
+
+- 【汎用】`docs-rules.md` は「`docs/` を更新するときと、コミット・push の前」に読む（旧: 作業を始める前と `docs/` を更新するとき）。理由: works が 2026-10-08 から試験運用していて、開始時の読み込みが減る。直した箇所: `hooks.md` の常時の行、`templates/AGENTS.md`、`templates/workspace/AGENTS.md`、`examples/setup-example.md`、`resources/AGENTS.md`、dotfiles の `AGENTS.md`。
+- 【汎用】rebase は、dotfiles も含めて禁止（kit の `docs-rules.md` に合わせた。dotfiles のユーザー決定）。
+- 【汎用】一律に kit を正とはしない。kit が遅れているときは、明らかにずれている箇所を事前に確認して、kit 側を直す（ユーザー、2026-10-16）。
+
 ## 2026-10-15（ユーザーの合意。経緯は [[kit-growth-handover]]）
 
 - 【汎用】改善の受け皿は workbase の `topics/` に置く。理由: モバイルと PC2 の両方から届く。PC2 の works には置かない。

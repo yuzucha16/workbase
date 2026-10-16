@@ -12,7 +12,7 @@
 | `stock` | 「ナレッジ化して」 | `stock-hook.md` | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`） |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
 | `review` | 「見直して」 | `review-hook.md` | 週1回を目途 | 遠回りの事例を見て、1つ直すか1つ畳む |
-| （常時） | | `docs-rules.md` | 作業を始める前と、`docs/` を更新するとき | `docs/` の運用規則 |
+| （常時） | | `docs-rules.md` | `docs/` を更新するとき、コミット・push の前 | `docs/` の運用規則 |
 
 - 連鎖: `init`、`open → [start → 作業 → wrap]×N → close`。`stock` と `integrate` は随時。
 - 全フックの共通規則（冒頭の定型、改善、承認、フックを足す・消すとき）は `hook-common.md`。
