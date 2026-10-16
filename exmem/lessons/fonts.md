@@ -23,7 +23,7 @@ sources:
 
 ## Purpose
 
-Win11 のメインフォントを、目の負担を最優先に選び、Zed / Windows Terminal / Notepad++ で揃える。フォントの取得スクリプトは dotfiles リポジトリにある。手順書は `resources/guides/howto/fonts-setup.md`（旧 `cheatsheets/env/fonts.md`）（[[pc-setup-manuals]]）。
+Win11 のメインフォントを、目の負担を最優先に選び、Zed / Windows Terminal / Notepad++ で揃える。フォントの取得スクリプトは dotfiles リポジトリにある。手順書は dotfiles の `docs/setup/fonts-setup.md`（2026-10-16 に workbase の `guides/howto/` から移した）（[[pc-setup-manuals]]）。
 
 ## Principles
 
