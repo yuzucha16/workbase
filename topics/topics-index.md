@@ -5,7 +5,7 @@ tags:
   - workflow
   - knowledge-management
 created: 2026-10-12
-updated: 2026-10-15
+updated: 2026-10-16
 ---
 
 # topics
@@ -16,6 +16,5 @@ updated: 2026-10-15
 |---|---|---|---|
 | `ai-workspace-boundary/` | Project（優先順位 1〜7 が PC で確認済みで close） | [[ai-room-start-here]] | 0 |
 | `kit-growth/` | Area（workflow-kit の育て方） | [[kit-growth-start-here]] | 0 |
-| `topic-workflow/` | Project（この置き場の型の一般化。kit への取り込みは 2 回使えてから） | [[topic-workflow-handover]] | 0 |
 
-型の規則（案）: 窓口（2KB 目安）・`docs/log.md`（状態の正本、4KB）・`docs/decisions.md`・`docs/log-history.md`（読まない）・`notes/`（詳細）。詳しくは [[topic-workflow-proposal]] の 2。出口（削除）は、反映が済んだトピックに行う（`AGENTS.md` の「トピックを終わらせるとき」）。
+型と書き方、終わらせ方の規則は `AGENTS.md`。

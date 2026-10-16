@@ -8,8 +8,11 @@
 
 ## 書くとき
 
+- 窓口は `workflow-kit/templates/topic/start-here.template.md` から作る。
 - 状態は `docs/log.md` だけに置く（窓口には「いま」の1行だけ。ほかに写さない）。予算: 窓口 2KB、`log.md` 4KB。
+- Claude Projects の共有フォルダは議論の下書きの置き場。確定したらトピックへ移す。
 - 決定は `docs/decisions.md`（ユーザーの発言を根拠に）。経緯は `docs/log-history.md`。
+- 次の会話への依頼は「<トピック名> の続き」の1行（状態は窓口と `log.md` が持つ）。
 - 反映が済んだトピックは、下の「トピックを終わらせるとき」に従って削除する（履歴は git）。
 
 ## トピックを終わらせるとき
