@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-16（wrap: room の type に dev-env と dev-test を足した。消化モードの対象の曖昧さを OQ に足した）
+更新: 2026-10-16（「調査のやり方1」と start 調査を足した。room の type に dev-env と dev-test を足した記録を含む）
 
 ## 状態
 
@@ -16,9 +16,12 @@
 - `open-hook.md` の「Project の構造」を、`ai/` と `_noai/` への対応に書き直した(`7b2c515`。type 別の置き場、基準文書の置き場)。`_noai/` は残す。`close-hook.md` を削除し、トピックの終了は `topics/AGENTS.md` の節に、Project の終了の判断(`ai/out/close.md`)は `room-context.md` に移し、`open-hook.md` を判断部分に縮めた(`c86b4d6`)。
 - init に `init 更新`（雛形の変更をワークスペースに反映。基点つきの3者マージ、`Template-Rev` トレーラー）を足し、ワークスペースの雛形に `README.md` を足した(`316840f` `8b74187`)。
 - room の type に `dev-env`（主にテスト環境）と `dev-test` を足した(`ccfe968`)。`dev` の子でなく独立の type。`dev-env` は「環境の置き場」を立ち上げで聞く。`remote` という type の案は未決。
+- 「調査のやり方1」(Must / Want。`methods.md` の「調査」、`research-method`、`start 調査`)を足した。調査 = 仕込み + 調査プロセス。問いと章立てのひな形は Claude スキルの調査から取った。
 - topic-workflow を取り込んで close した。トピックの型の正本は `topics/AGENTS.md`（docs-rules に節は足さない）。`wrap` の依頼文は「<単位> の続き」の1行。
 
 ## Next Actions
+
+11. 「調査のやり方1」(`methods.md` の「調査」、`exmem/lessons/research-method.md`、`start 調査`)を、次の調査から使う。3回の `review` の後に、Must(仕込み3・プロセス6)の増減を決める。仕込みとプロセスの境目(4を想定読者として仕込みに移した案)の承認を得る。pwsh のある PC で `tools/check-hook-outline.ps1` を実行する。先送り: 読者が変わる業務の調査(`research` type)、値の更新、置き場。
 
 10. `dev-env` / `dev-test` を、最初の Project で1回使い、置き場の表と完了条件の例が合うかを見る(`dev-deliverable-guide.md` の末尾の節)。使った後に `remote` の type の要否を決める。
 9. `open` / `close` の整理は実施済み(`c86b4d6`)。次に `room close` を実機で通すとき、`room-context.md` の `close.md` の書き方で足りるかを見る。`open-hook.md` の基準を縮小後の 4,687 字に下げたので(`hook-matrix.md`)、次の `review` で比べる。
