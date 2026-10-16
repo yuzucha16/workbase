@@ -52,9 +52,21 @@ class FakeWsl:
             self.mounted = True
         if "umount" in text:
             self.mounted = False
+        if text.startswith("echo user="):
+            return 0, getattr(self, "isolation", "user=ai\nc=0\ncmd=no\nsudo=no\n"), ""
+        if text.startswith("export PATH") and "claude --version" in text:
+            return 0, "2.1.296 (Claude Code)\n", ""
         if text.startswith("grep ' /mnt/room/' /proc/mounts") and self.mounted:
             return 0, "C:\\x /mnt/room/p 9p rw 0 0\n", ""
         return 0, "", ""
+
+    def install(self, distro, base):
+        self.installed = (distro, base)
+        self._distros.append(distro)
+        return 0
+
+    def terminate(self, distro):
+        self.terminated = getattr(self, "terminated", []) + [distro]
 
     def keepalive(self, distro):
         self.keepalives.append(distro)
@@ -111,6 +123,44 @@ def opened(tmp, wsl=None):
     c = ctx_for(v, wsl)
     room.cmd_open(c, argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
     return v, c
+
+
+class InitTest(unittest.TestCase):
+    def test_init_creates_room_configures_and_installs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl(distros=())
+            v = make_vault(tmp)
+            c = ctx_for(v, wsl)
+            room.cmd_init(c, argparse.Namespace(area="area-x", resume=False))
+            self.assertEqual(wsl.installed, ("room-area-x", "Ubuntu-24.04"))
+            scripts = [(s[1], s[2]) for s in wsl.scripts]
+            conf = [t for t, root in scripts if "/etc/wsl.conf" in t][0]
+            self.assertIn("enabled=false", conf)
+            self.assertIn("default=ai", conf)
+            self.assertLess([i for i, (t, _) in enumerate(scripts) if "useradd" in t][0],
+                            [i for i, (t, _) in enumerate(scripts) if "/etc/wsl.conf" in t][0])
+            self.assertEqual(wsl.terminated, ["room-area-x"])
+            self.assertTrue(any("apt-get" in t and root for t, root in scripts))
+
+    def test_init_refuses_existing_and_bad_isolation_stops_before_tools(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            with self.assertRaises(room.RoomError):
+                room.cmd_init(ctx_for(v, FakeWsl()), argparse.Namespace(area="area-x", resume=False))
+            wsl = FakeWsl(distros=())
+            wsl.isolation = "user=ai\nc=3\ncmd=no\nsudo=no\n"
+            with self.assertRaises(room.RoomError):
+                room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=False))
+            self.assertFalse(any("apt-get" in s[1] for s in wsl.scripts))
+
+    def test_init_resume_needs_existing_room(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            with self.assertRaises(room.RoomError):
+                room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-x", resume=True))
+            wsl = FakeWsl()
+            room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=True))
+            self.assertFalse(hasattr(wsl, "installed"))
 
 
 class FrontmatterTest(unittest.TestCase):
