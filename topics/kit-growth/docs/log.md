@@ -21,7 +21,7 @@
 
 ## Next Actions
 
-11. 「調査のやり方1」(`methods.md` の「調査」、`exmem/lessons/research-method.md`、`start 調査`)を、次の調査から使う。3回の `review` の後に、Must(仕込み3・プロセス6)の増減を決める。仕込みとプロセスの境目(4を想定読者として仕込みに移した案)の承認を得る。pwsh のある PC で `tools/check-hook-outline.ps1` を実行する。先送り: 読者が変わる業務の調査(`research` type)、値の更新、置き場。品質チェック(新しい会話で3回実行し、基準と比較)は実施済み。3回目の直しは未検証で、`start-hook.md` は +17%(+20% の手前)なので、次に足すときは畳む。
+11. 「調査のやり方1」(`methods.md` の「調査」、`exmem/lessons/research-method.md`、`start 調査`)を、次の調査から使う。3回の `review` の後に、Must(仕込み3・プロセス6)の増減を決める。仕込みとプロセスの境目(4を想定読者として仕込みに移した案)は承認済み。pwsh のある PC で `tools/check-hook-outline.ps1` を実行する。先送り: 読者が変わる業務の調査(`research` type)、値の更新、置き場。品質チェック(新しい会話で3回実行し、基準と比較)は実施済み。3回目の直しは未検証で、`start-hook.md` は +17%(+20% の手前)なので、次に足すときは畳む。
 
 10. `dev-env` / `dev-test` を、最初の Project で1回使い、置き場の表と完了条件の例が合うかを見る(`dev-deliverable-guide.md` の末尾の節)。使った後に `remote` の type の要否を決める。
 9. `open` / `close` の整理は実施済み(`c86b4d6`)。次に `room close` を実機で通すとき、`room-context.md` の `close.md` の書き方で足りるかを見る。`open-hook.md` の基準を縮小後の 4,687 字に下げたので(`hook-matrix.md`)、次の `review` で比べる。
