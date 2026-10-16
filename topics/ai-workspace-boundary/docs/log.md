@@ -1,6 +1,6 @@
 # ai-workspace-boundary: 現在状態（正本）
 
-更新: 2026-10-15。状態の写しをほかに置かない。経緯は `log-history.md`、決定は `decisions.md`。
+更新: 2026-10-16。状態の写しをほかに置かない。経緯は `log-history.md`、決定は `decisions.md`。
 
 ## 項目の状態（優先順位 1〜8）
 
@@ -10,7 +10,7 @@
 | 2 | 共有知を部屋へ | 済 | 1〜4 済。残り: 5 AI が `wrap` を通せるか。許可の確認（`Read(~/shared/**)` 追加済み）が出なくなるか | PC |
 | 3 | フックの整理 | 済（文書・`room readme`） | 残り: `room init`、`open`〜`close` の1巡 | PC |
 | 4 | `stock` の回収 | 済 | ダミーで済。残り: 部屋の AI が実際に下書きを書く通し | PC |
-| 5 | 部屋の運用 | 未（`room init`、reap、`room intake`） | — | PC（保留中。別セッションの構造の議論と合流してから） |
+| 5 | 部屋の運用 | 未（`room init`、reap、`room intake`） | — | PC（保留は解除済み。構造の議論は 7b2c515 で合流。案は `notes/ai-room-ops-handover.md` の 5-a〜5-d） |
 | 6 | Area の切り方 | 済 | — | — |
 | 7 | 雛形・記録 | 済 | 残り: Vault 側 deny の書式 `Read(./projects/**)` が Windows で効くか | PC |
 | 8 | 実 Project での1巡 | — | 未 | PC |
@@ -21,6 +21,7 @@
 
 ## 次の一手（PC）
 
+0. `room restore` が、人が変えた `_noai/final/` を上書きせず止めるようにした（下の決定）。実機で、止まる・`--force` で通る・AI だけが変えたときは止まらないを確認する。
 1. 項目 1 → 2 → 4 の「実機の確認の残り」を進める。各 `notes/*-handover.md` の「PC で確認すること」を見る。
 2. 小さな不具合: マウントが別の `wsl.exe` から見えない件（対策を実装済み。`--no-launch` 中に別セッションから `/proc/mounts` と `ai/` が見えるか確認する）。
 
