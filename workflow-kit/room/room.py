@@ -57,6 +57,13 @@ class Wsl:
         r = subprocess.run(cmd, input=data, capture_output=True)
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
+    def install(self, distro, base):
+        """base（例: Ubuntu-24.04）から、名前 distro のディストリビューションを作る（起動しない）。"""
+        return subprocess.run(["wsl.exe", "--install", base, "--name", distro, "--no-launch"]).returncode
+
+    def terminate(self, distro):
+        return subprocess.run(["wsl.exe", "--terminate", distro], capture_output=True).returncode
+
     def keepalive(self, distro):
         """部屋のディストリビューションが、wsl.exe のセッションが無いまま止まらないように、長く動くプロセスを1つ起こす。止めるには .terminate()。"""
         return subprocess.Popen(["wsl.exe", "-d", distro, "--", "sleep", "infinity"],
@@ -452,6 +459,74 @@ def cmd_open(ctx, a):
     ctx.say(f"作った: projects/{a.name}（ai/ と _noai/）。README の <...> を埋める")
     if a.commit:
         commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}"], f"[room] {a.name} を open（Area {a.area}）")
+
+
+# ---------- init（部屋を作る。手順は ai-room-setup.md の 3〜4 章） ----------
+
+ROOM_BASE = "Ubuntu-24.04"
+WSL_CONF = """[automount]
+enabled=false
+mountFsTab=false
+
+[interop]
+enabled=false
+appendWindowsPath=false
+
+[user]
+default=ai
+"""
+ROOM_PATH_LINE = 'export PATH="$HOME/.local/bin:$PATH"'
+
+
+def step_script(ctx, distro, title, text, root=False):
+    ctx.say(f"  {title}")
+    rc, out, err = ctx.wsl.script(distro, text, root=root)
+    if rc != 0:
+        raise RoomError(f"{title} が失敗した（終了コード {rc}）: {(err or out).strip()[-400:]}")
+    return out
+
+
+def cmd_init(ctx, a):
+    """Area の部屋（専用ディストロ）を作り、道具を入れる。ログインは人が行う。"""
+    area_readme = ctx.vault / "areas" / a.area / "README.md"
+    if not area_readme.exists():
+        raise RoomError(f"Area が無い: areas/{a.area}")
+    if not read_frontmatter(area_readme).get("boundary"):
+        raise RoomError("Area に boundary: が無い。`room open` の --boundary か、README の frontmatter で付ける")
+    distro = f"room-{a.area}"
+    exists = distro in ctx.wsl.distros()
+    if exists and not a.resume:
+        raise RoomError(f"部屋がすでにある: {distro}。作りかけの続きなら --resume（設定と道具の入れ直しだけを行う）")
+    if not exists:
+        if a.resume:
+            raise RoomError(f"--resume だが部屋が無い: {distro}")
+        ctx.say(f"部屋を作る: {distro}（{ROOM_BASE}。ダウンロードに数分かかる）")
+        if ctx.wsl.install(distro, ROOM_BASE) != 0 or distro not in ctx.wsl.distros():
+            raise RoomError("wsl --install が失敗した（古い WSL は --name が使えない可能性がある。ai-room-setup.md の 3 章）")
+    ctx.say("設定する（一般ユーザーを先に作る。root のままだと C: をマウントできてしまう）")
+    step_script(ctx, distro, "一般ユーザー ai", "id ai >/dev/null 2>&1 || useradd -m -u 1000 -s /bin/bash ai\nid ai\n", root=True)
+    step_script(ctx, distro, "/etc/wsl.conf", "cat > /etc/wsl.conf <<'EOF'\n" + WSL_CONF + "EOF\n", root=True)
+    ctx.wsl.terminate(distro)
+    out = step_script(ctx, distro, "分離の確認",
+                      "echo user=$(id -un)\necho c=$(ls /mnt/c 2>/dev/null | wc -l)\n"
+                      "command -v cmd.exe >/dev/null 2>&1 && echo cmd=yes || echo cmd=no\n"
+                      "sudo -n true >/dev/null 2>&1 && echo sudo=yes || echo sudo=no\n")
+    got = dict(l.strip().split("=", 1) for l in out.splitlines() if "=" in l)
+    if got != {"user": "ai", "c": "0", "cmd": "no", "sudo": "no"}:
+        raise RoomError(f"分離の確認が目安と違う（{got}）。user=ai, c=0, cmd=no, sudo=no が目安。道具は入れていない")
+    ctx.say("道具を入れる（curl、rg、uv、Claude Code。配布元のスクリプトをそのまま実行する）")
+    step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep）",
+                "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep\n", root=True)
+    step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
+    step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
+    step_script(ctx, distro, "PATH",
+                f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
+    ver = step_script(ctx, distro, "道具の確認",
+                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nrg --version | head -1\n')
+    ctx.say(ver.rstrip())
+    ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
+            f"  wsl -d {distro}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
+            f"  確認: wsl -d {distro} -- bash -ic 'cd ~ && claude -p \"Reply with exactly: ok\"'")
 
 
 # ---------- start ----------
@@ -1076,6 +1151,8 @@ def build_parser():
     st.add_argument("name"); st.add_argument("--yes", action="store_true", help="確認を省く（印と対応表の点検は行う）")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
+    i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
+    i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")
     u = sub.add_parser("umount", help="部屋に残ったマウントを外す")
     u.add_argument("--area", required=True)
     return ap
@@ -1086,7 +1163,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
-        {"open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
+        {"init": cmd_init, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
          "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)

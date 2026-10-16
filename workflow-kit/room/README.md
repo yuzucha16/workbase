@@ -15,11 +15,12 @@ uv run room.py umount --area <Area>
 ```
 
 - Vault は `$ROOM_VAULT`、無ければ `~/works`。`--vault <パス>` で指定できる（`--vault` はサブコマンドの前に書く）。`close` から reap までの日数は `--reap-days`（既定 14。`$ROOM_REAP_DAYS` でも指定できる）。
-- 部屋（WSL のディストリビューション）は `room-<Area>`。先に作っておく（`guides/howto/ai-room-setup.md` の 3・4 章）。
+- 部屋（WSL のディストリビューション）は `room-<Area>`。`room init <Area>` で作る（手作業の手順は `guides/howto/ai-room-setup.md` の 3・4 章）。
 - コミットは、`--commit` を付けたときだけ。対象のパス以外がステージされていたら、コミットしない。
 
 | コマンド | すること |
 |---|---|
+| `init` | Area の部屋 `room-<Area>` を作る（実機は未確認）: `boundary:` の確認 → `wsl --install Ubuntu-24.04 --name … --no-launch` → 一般ユーザー `ai` → `/etc/wsl.conf`（automount・interop 無効）→ 分離の確認（`ai` / `/mnt/c` 空 / `cmd.exe` 無し / sudo 不可。外れたら道具を入れずに止まる）→ curl・rg・uv・Claude Code → 道具の確認。**ログインは人**（手順を表示する）。部屋がすでにあれば止まる。作りかけは `--resume`（設定と道具の入れ直し） |
 | `open` | ワークスペースの `.gitignore`（`**/_noai/` と `!**/ai/out/`）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final}` を作り、Area の一覧に足す |
 | `start` | `area:` とディストロ名の一致、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴（manifest）を確認 → Project の README と所属する Area の README の写しを `ai/ctx/`（`README.md`、`area-README.md`）に置く（Area の README が 16 KiB を超えると知らせる）→ `ai/` を `/mnt/room/<名>` に root でマウントし、`in/` を読み取り専用に → 部屋で AI を起動（一般ユーザー）→ **必ず**アンマウントして、マウント点を消し、残りを確認 → 変更の一覧と、追跡されずに無視されているファイルの警告 |
 | （`start` の中） | 共有知の写し（方式 A）: `<Vault>/resources/` の `AGENTS.md`、`workflow-kit/`、`exmem/{AGENTS.md,README.md,tags.md,lessons/}`、`guides/` を tar.gz にして、部屋の `~/shared` に読み取り専用で送る（起動のたびに入れ替え。途中では更新しない）。基準コミット（と未コミットの変更の有無）を manifest の `shared` に記録し、`~/shared/ROOM.md` に案内を置く。あわせて、部屋の `~/.claude/CLAUDE.md`（Claude Code が作業ディレクトリによらず読む）に `ROOM.md` への案内を、目印（`room-shared:begin`〜`end`）で囲んだ範囲だけ入れ替えて置く（ほかの内容は変えない）。`resources/` が無ければ送らない。部屋の `~/.claude/CLAUDE.md` に案内を、`~/.claude/settings.json` に `Read(~/shared/**)` の許可（読み取りだけ）を足す |
