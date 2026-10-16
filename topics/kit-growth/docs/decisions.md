@@ -1,5 +1,9 @@
 # kit-growth: 決定
 
+## 2026-10-16 `docs-rules.md` に「期日の節」と「定例」を足した（ユーザーの承認）
+
+- 【汎用】`log.md` の書式に「期日」の節（日付つきの項目があるときだけ）を足した。表は `期日 | 種別 | 内容 | 担当`。種別は単発と定例。定例は実行したら次回の期日に書き換える。Next Actions と Open Questions には終わりのある項目だけを置く（周期のある項目を置くと「0 になる」判定が成り立たない）。works が先に進んでいた期日の節を kit に戻した（`alignment-baseline.md` の行 5）。
+
 ## 2026-10-16 `docs-rules.md` を読む時機を揃えた（ユーザーの承認。3 リポジトリの規則を揃える作業の一部）
 
 - 【汎用】`docs-rules.md` は「`docs/` を更新するときと、コミット・push の前」に読む（旧: 作業を始める前と `docs/` を更新するとき）。理由: works が 2026-10-08 から試験運用していて、開始時の読み込みが減る。直した箇所: `hooks.md` の常時の行、`templates/AGENTS.md`、`templates/workspace/AGENTS.md`、`examples/setup-example.md`、`resources/AGENTS.md`、dotfiles の `AGENTS.md`。
