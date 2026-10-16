@@ -10,7 +10,7 @@
 ## 場所と書き込みの制約
 
 - exmem: `$HOME\works\resources\exmem`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/exmem`）。
-- 書き込み先: `exmem/lessons/`、`exmem/README.md`（索引）、`exmem/tags.md`、統合したメモの削除。作業ディレクトリの `docs/` は書き換えない。
+- 書き込み先: `exmem/lessons/`、`exmem/exmem-index.md`（索引）、`exmem/tags.md`、統合したメモの削除。作業ディレクトリの `docs/` は書き換えない。
 - コミットは `docs-rules.md` の「コミットと push」に従う。push はしない（使い捨ての環境は、`docs-rules.md` の「使い捨ての環境での緩和」）。コミット済みのメモ（使い捨ての環境で作られたもの）は、`git rm` で削除してコミットする。
 
 ## 手順
@@ -40,5 +40,5 @@
 3. タグを `tags.md` の語彙に正規化する。
 4. 該当する `lessons/*.md` に統合する。該当がなければ新しいファイルを作る。
 5. 統合先の `lessons/` のノートの `Open Questions` / `Next Actions` を更新する（未完の項目の置き場）。
-6. 新しいファイルを作ったら `README.md` の「知識の索引」に1行足す。
+6. 新しいファイルを作ったら `exmem-index.md` に1行足す。
 7. 統合したメモを inbox から削除する。削除の前に、上の「手順」の「メモと統合先の照合」を行う。
