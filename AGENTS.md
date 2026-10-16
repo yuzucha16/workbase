@@ -5,28 +5,25 @@
 
 ノートの読み書きは、エージェントがファイルを直接行う。人間は Obsidian で閲覧・編集する。
 
-## 構成
-
-| ディレクトリ | 内容 |
-|---|---|
-| `exmem/` | AI が今後の参考にするナレッジ（external memory）。判断・原則・落とし穴の記録は `exmem/lessons/` |
-| `workflow-kit/` | 作業ディレクトリに導入する共通機能（`docs/` の運用と、合言葉で呼ぶフック。呼び出し表は `hooks.md`）の正本。AI 作業部屋の操作コマンドは `room/` |
-| `guides/` | 人（ユーザー）が手順や仕組みを思い出すための文書。`howto/`（手順書）、`explain/`（理解ガイド）、`quickref/`（クイックリファレンス）。作り方は `exmem/lessons/reference-doc-types.md`。入口（場面から引く索引）は `guides/guides-index.md` |
-| `topics/` | 大きな取り組み（トピック）を、セッションと端末（モバイル・PC）をまたいで進める置き場。旧名 `mobile-session/`。一覧は `topics/topics-index.md`。反映が済んだトピックは close して削除する（履歴は git に残る） |
-| `handson/` | ハンズオンの課題とテンプレート |
-
-- このリポジトリは単独で clone しても自己完結する。作業ディレクトリに期待することは、`workflow-kit/hooks.md` の「契約」だけ。
-- 通常は、Obsidian Vault の `resources/` として clone して使う（Windows: `$HOME\works\resources`、WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources`）。Vault 全体（PARA の各区分、PC ごとのローカルの作業）は、このリポジトリの外にある。
+構成は `README.md`。このリポジトリは単独で clone しても自己完結する。作業ディレクトリに期待することは、`workflow-kit/hooks.md` の「契約」だけ。通常は Obsidian Vault の `resources/` として clone して使う。Vault 全体（PARA の各区分、PC ごとのローカルの作業）は、このリポジトリの外にある。
 
 ## 共通ルール
 
-共通ルールの置き場は `workflow-kit/`（上の場所なら `$HOME\works\resources\workflow-kit`）。ユーザーが合言葉（手順書を呼ぶ短い言葉。日本語の別名つき）を言ったら、そこの `hooks.md` の表に従って手順書を読み、実行する（言われたときだけ）。`docs-rules.md` は、`docs/` を更新するときと、コミット・push の前に読む。読めない場合は、記憶で代用せず、ユーザーに伝えて止まる。
+共通ルールの置き場は `workflow-kit/`（`$HOME\works\resources\workflow-kit`）。ユーザーが合言葉（手順書を呼ぶ短い言葉。日本語の別名つき）を言ったら、そこの `hooks.md` の表に従って手順書を読み、実行する（言われたときだけ）。`docs-rules.md` は、`docs/` を更新するときと、コミット・push の前に読む。読めない場合は、記憶で代用せず、ユーザーに伝えて止まる。
+
+## 読む順番
+
+1. `README.md`（窓口）
+2. `docs/log.md`（開始時に読むのはここまで。「期日」の節があれば、今日以前または3日以内の項目を、最初の返答で知らせて判断を求める）
+3. `docs/decisions.md` と `docs/log-history.md` は開始時に読まない。何かを決める・変える前に `decisions.md` を検索する。経緯が要るときは `log-history.md` を検索する。
+
+下位の単位（トピック、`guides/` など）の「<名前> の続き」は、`workflow-kit/docs-rules.md` の「上の階層で起動して…」に従う。
 
 ## wrap の記録先
 
-このリポジトリの直下には `docs/` が無いので、`wrap`（`workflow-kit/wrap-hook.md`）は次を使う。
+`wrap`（`workflow-kit/wrap-hook.md`）は次を使う。
 
-- **既定の対象**: トピックの続きで作業したときは、そのトピックの `docs/`。トピックの外で `workflow-kit/` `exmem/` `guides/` などを変えたときは、`topics/kit-growth/docs/`（kit の改善の受け皿）。
+- **既定の対象**: トピックの続きで作業したときは、そのトピックの `docs/`。トピックの外で作業したときは、このリポジトリ直下の `docs/`。`workflow-kit/` `exmem/` `guides/` などの kit 改善の記録は、`topics/kit-growth/docs/`（kit の改善の受け皿）。
 - **遠回りの答え**: 「少し」「大きく」なら、`topics/kit-growth/inbox.md` の「未選別」に、日付と原因を1行で足す。「なし」は記録しない。
 
 ## 共有の範囲

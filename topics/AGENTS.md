@@ -4,9 +4,7 @@
 
 ## 「<トピック名> の続き」と言われたら
 
-1. `<トピック>/` の窓口（`*-start-here.md`、無ければ `*-handover.md`）を読む。
-2. `<トピック>/docs/log.md`（現在状態と次の一手）を読む。開始時に読むのはここまで。
-3. `docs/decisions.md` は、何かを決める・変える前に検索する。`docs/log-history.md` と `notes/` は、必要なときだけ読む。
+`workflow-kit/docs-rules.md` の「上の階層で起動して…」に従う。トピックでの差分は、窓口が `*-start-here.md`（無ければ `*-handover.md`）であることと、`notes/` は必要なときだけ読むこと。
 
 ## 書くとき
 
