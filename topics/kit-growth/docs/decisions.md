@@ -1,5 +1,10 @@
 # kit-growth: 決定
 
+## 2026-10-16 init の項目 5 に `resources_p/`（PC ローカルの resources）を足した（ユーザーの依頼と承認）
+
+- 【汎用】ワークスペースのトップに `resources_p/` を作り、`gitignore.template` に `/resources_p/`、`ignore.template` に `!/resources_p/` を足した（`.gitignore` が除外すると ripgrep の検索から黙って外れるため、`resources/` と同じ打ち消しが要る）。空のディレクトリで `.gitkeep` は置かず、初回コミットの確認に「ステージされていないこと」を足した。Vault 側の AI は読み書きしてよいので、`claude-settings.template.json` では deny しない。背景: `resources/` は公開リポジトリで、この PC だけの情報を置けない。名前は `resources_p` （`resources_private` より短く、`resources/` の隣に並ぶ）。
+- 範囲外: `resources_p/` 自体を別の非公開リポジトリで管理する案（PC 間の同期が要るなら別に検討）。既存の PC の `.gitignore` と `.ignore` は、init が上書きしないので、差分案を別に出して承認後に反映する。
+
 ## 2026-10-16 フックの重さの基準を `hook-matrix.md` に置き、`review` で比べる（ユーザーの依頼。N=20% は根拠なしの仮）
 
 - 【汎用】基準日 2026-10-16 の各フックの字数・手順の項目数・報告の項目数を `hook-matrix.md` の「重さの基準」に固定した。`review` が今の値と比べ、字数は +20%、項目数は +2 以上増えたフックを見直しの対象にし、そのフックの星取り表と修正・削除・追加の対応表（`improvement-coverage-matrix`）を作る。決めたこと（AI の設計を、ユーザーが採用: 2026-10-16。N は実績を見てから決め直す）: 項目数は割合でなく +2（小さい数で割合が跳ねるため）、比べる相手は前回でなく基準（少しずつの増加を見逃さないため）、基準は実施後に更新、減ったときは基準を下げる。

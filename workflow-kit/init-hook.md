@@ -18,7 +18,7 @@
 | 3 | 「ナレッジ化して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 必須 | `stock-hook.md` |
 | 6 | 「終了処理して」「inboxを整理して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 「終了処理して」は必須 | `wrap-hook.md`、`integrate-hook.md` |
 | 4 | 履歴からの復元 | `docs/` の Log と判断記録の補完 | 任意 | `init-restore.md` |
-| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
+| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
 
 ### 導入項目を足すとき
 
@@ -34,7 +34,7 @@
 - **既存のファイルは、上書きしない。** 既存があれば、差分の案を示して承認を得る。承認の前に変更しない。
 - コミットは `docs-rules.md` の「コミットと push」に従う（項目 5 の初回コミットは、`init-workspace.md` の「初回コミットをする」）。push はしない（ユーザーが行う）。
 - 対象の `docs/` が、`.gitignore` の既定でローカル専用になる場合は、その旨を報告に書く（確認: `git check-ignore -v <パス>`）。ローカル専用の `docs/` は、他のPCに届かない。
-- 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`.gitattributes`、`areas/` `projects/` `archives/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
+- 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`.gitattributes`、`areas/` `projects/` `archives/`、`resources_p/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
 - このフックが呼べるのは、`hooks.md` を参照している `AGENTS.md` の配下（共有リポジトリ `workbase` の中と、ワークスペースの中）と、ユーザーがこのファイルのパスを指示したとき。新しい PC でワークスペースを作るときは、`workbase` の clone の中で呼ぶ。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
 
 ## 入力
