@@ -50,5 +50,13 @@
 - 根拠: kit は手順書を薄くする方針。`type: dev` のときだけ読むなら、他の作業の読み込みが増えない。
 - 却下案: 未検討（提案をそのまま承認）。
 
+## 2026-10-16 AI が使えない間の `_noai/final/` の扱い（ユーザーが最小案を承認）
+
+### 【汎用】復元は、人が変えた `_noai/final/` を上書きせず止める
+- 決めたこと: `room restore`（`start` の終わりを含む）は、`_noai/final/` のファイルが前回の復元の書き出しと違えば、何も書かずに一覧を出して止める。`--force` で上書きできる。前回の書き出しのハッシュは `_noai/map/final-manifest.json`（追跡外）。AI だけが変えたときは止まらない。
+- 根拠: 設計で、人が `final/` でピボットの更新などの仕上げをする。無条件の上書きはそれを消す。
+- 却下案（今は採らない）: 正本の宣言、`raw/` → `mask` → `ai/in/` の戻り方の約束。実 Project の1巡で足りないと分かってから決める。
+- 実装: `room.py` の `restore_project`、テスト `test_restore_stops_when_final_was_edited_by_human`。
+
 ### Facts
 - `room` の単体テストは51件。`SharedPermissionTest` の2件（`test_snippet_creates_file_when_missing`、`test_snippet_merges_keeps_existing_and_is_idempotent`）が失敗する。今回の変更の前から同じ（確認: 2026-10-15、根拠: 変更を外して実行し、同じ2件が失敗）。原因は未調査。
