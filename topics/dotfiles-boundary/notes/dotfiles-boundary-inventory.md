@@ -34,7 +34,7 @@ frontmatter の出典（`sources:` の「dotfiles の〜を確認」）は、履
 |---|---|---|
 | `exmem/lessons/pc-setup-manuals.md` | 「場所」「Facts」（`GHQ_ROOT`、`lib.sh` の関数）、「初回の取得」、`scripts/wsl` の改名 | 手順書の分け方（パッケージ系統）、Rufus、git の SSL バックエンドと credential の判断 |
 | `exmem/lessons/zed-dotfiles.md` | 「管理しているもの」「Windowsでの配置」（dotfiles のパスとリンク） | Zed の設定の置き場、extension と ACP エージェントの管理方針、目の負担の設定。名前を `zed-config.md` などに変える案 |
-| `exmem/lessons/shell-command-usecases.md` | 「正本はこのノート。dotfiles の種ファイルはここから機械的に作る」。履歴の種（`history.seed.*`）の元のコードブロック | コマンドの使いどころの判断基準。種は PC に置かれるものなので、線に従えば正本は dotfiles 側 |
+| ~~`exmem/lessons/shell-command-usecases.md`~~ | **割らない**（2026-10-16 決定）。exmem が正本のまま。dotfiles の `history.seed.*` は派生物。`decisions.md` 参照 | |
 | `exmem/lessons/obsidian-vault.md` | 「現在の状態」の環境変数と `.obsidian` のジャンクション、dotfiles の試験結果（51/51） | Vault の構造と原則。構造は workbase の規約（kit）の側なので残す |
 
 ## 削る（実物の写しを、リンクか名前に置き換える）
@@ -68,7 +68,7 @@ frontmatter の出典（`sources:` の「dotfiles の〜を確認」）は、履
 | `exmem/README.md` | 33 行目「dotfiles は exmem を読み取り専用で参照」。一方向の規則として残し、文言をそろえる |
 | `exmem/lessons/ai-development-workflow.md` | 「作業ログはリポジトリ側、知識は exmem」。今回の線（置かれる・実行される／読まれる）を足す |
 | `exmem/lessons/app-config-placement.md` | 原則「相互に参照させない」を、リポジトリ全体の一方向の規則に広げる（反映先の第一候補） |
-| `workflow-kit/docs-rules.md` | 102 行目の push の規則「共有リポジトリと dotfiles は、公開範囲が決まるまで対象外」。両方 public 前提なら、対象外のまま理由を書き換えるか（**要判断**） |
+| ~~`workflow-kit/docs-rules.md`~~ | 不要（2026-10-16 クローズ）。push の規則は更新済み |
 
 ## 残す（名前・例・出典だけ。一方向の規則に反しない）
 

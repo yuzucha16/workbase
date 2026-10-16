@@ -7,7 +7,7 @@ aliases:
   - guides
   - 手順書の索引
 created: 2026-10-10
-updated: 2026-10-15
+updated: 2026-10-16
 ---
 
 # guides の索引
@@ -21,13 +21,7 @@ updated: 2026-10-15
 
 | やりたいこと・場面 | 見る文書 | 種類 |
 |---|---|---|
-| Windows 11 を入れて、dotfiles のスクリプトまで通す | [[win11]] | 手順書 |
-| Windows と Linux のマルチブートにする（Windows 側の準備） | [[win11#Linux とデュアルブートする場合]] | 手順書 |
-| Debian 系 Linux（MX / Ubuntu / Mint）を入れて、dotfiles のスクリプトまで通す | [[debian-family]] | 手順書 |
-| Linux の EFI・パーティション・起動メニュー・時計のずれ | [[debian-family]] の 2〜4 章 | 手順書 |
-| Linux で SSH 鍵を作り、GitHub につなぐ | [[debian-family#10. SSH と GitHub]] | 手順書 |
-| WSL2 / Ubuntu を入れる | [[win11#8. 任意設定]] | 手順書 |
-| エディタ・ターミナルのフォント（PlemolJP）を入れる | [[fonts-setup]] | 手順書 |
+| Windows 11 / Debian 系 Linux（MX / Ubuntu / Mint）を入れて、dotfiles のスクリプトまで通す。マルチブート、Linux の EFI・パーティション、SSH 鍵と GitHub、WSL2、フォント（PlemolJP）もここ | dotfiles の `docs/setup/`（`win11.md`、`debian-family.md`、`fonts-setup.md`。このリポジトリの外。`$HOME\works\repos\github.com\yuzucha16\dotfiles\docs\setup\`） | 手順書 |
 | Claude Code の設定を PC に入れる・入れ替える | dotfiles の `windows/claude/README.md`（このリポジトリの外。スクリプトの隣に置く手順書） | 手順書 |
 
 ### AI を使う環境をつなぐ
@@ -76,7 +70,7 @@ updated: 2026-10-15
 
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
-| 手順書（`howto/`） | どの順で何をやるんだっけ | [[win11]]、[[debian-family]]、[[fonts-setup]]、[[ai-room-setup]]、[[bedrock-first-hello]] |
+| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[bedrock-first-hello]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
 | 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[review-hook-why]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
