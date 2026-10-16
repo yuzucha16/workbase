@@ -40,10 +40,8 @@
 
 1. 手順「事前確認」を行う（`log.md` の読み込み、期日、`review` と `review 消化` の提案）。
 2. ゴールを1文で聞く（Next Actions の候補つき）。「触ってよい範囲」は既定（この Project の中だけ）を宣言し、広げる必要があるときだけ聞く。
-3. やり方を1問で選ばせる。Recommended は、ゴールの性質で決める。
-   - 解決: `problem-solving-analogy`（一般化して類似問題の解き方を借りる）、`problem-solving-iterative-revision`（前提を書き戻して決定に差し戻す反復）。
-   - 改善: `improvement-quantified-options`（現状を数値にして選択肢を比べる）、`improvement-expectation-gap`（想定と実際のズレを仮説にする）、`improvement-coverage-matrix`（観点を絞り、星取り表から案を出す）。
-4. 選んだ lesson を読み、その手順で作業する。要約は、ゴール・やり方・触ってよい範囲の3点を返す。
+3. `methods.md` の該当の表（解決または改善）を読み、「選ぶ基準」から Recommended を決めて、やり方を1問で選ばせる。
+4. 選んだやり方の骨子（`methods.md`）と、右端のノート（`exmem/lessons/`）を読み、その手順で作業する。要約は、ゴール・やり方・触ってよい範囲の3点を返す。
 5. 手順「記録する」と、`wrap` での突き合わせは、通常の `start` と同じ。
 
 ## 共通の項目
