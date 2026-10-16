@@ -9,6 +9,9 @@
 - `room restore` が人の変えた `_noai/final/` を上書きせず止める（`1a037f9`）。`room init`（`e12209e`）、`room reap`（`3c838c1`）を実装。項目 5 の保留を解除。`room intake` は見送り（`e96c511`）。単体テストは59件で全部通る。
 - 未決のまま: リポジトリが正の `src`・remote の扱い（kit-growth の Open Questions）。
 - 遠回り: なし。
+- `type: dev` で実装対象が公開リポジトリのときとリモート（ssh）のときを比べた。推奨は公開リポジトリから。部屋はネットワークが開いているので、部屋の中から認証なしで clone できる。リモートは鍵も接続も部屋に入れない決定のため、反映・実行・ログ取りが毎回人を通り、ログのマスクも csv と xlsx にしか対応していない。公開リポジトリで引っかかるのは `room restore` で、復元できる形式が xlsx と `.csv .md .txt .bas .json .html` に限られるため、`.git` や `.py` で止まる（コードで確認、実測は未）。案: clone は `~/tmp/<Project>/`、成果は基準文書と patch、マスクの無い Project では restore を飛ばす。比較は project files の `notes/dev-repo-remote/2026-10-16-comparison.md`。kit と `room.py` は未変更。
+- リモートの SSH を、Windows の ssh agent を WSL に渡して通せるか検討した。interop を切った部屋では定番のブリッジ（npiperelay、1Password の WSL 連携）が動かず、渡せても全鍵が使えてしまう。ユーザーが、部屋専用の鍵を1本作って試すことを選び、Next Actions 3 に足した（0eba5d3）。
+- `log.md` が 4KB を超えていたので、「後回し」の行を畳んだ。後回しの項目: `areas/dev-env/certs` の移し替え、対応表の保護、Obsidian の AI プラグイン、Codex・Copilot の設定、小さいファイルが多い処理の遅さ（規則で対処済み）。
 
 ### 2026-10-15
 - 他環境（旧 kit で `projects/` の下に Area と Project を重ねていた PC）の AI 開発環境プレイブック（画像）を、この環境の `areas/` `projects/` に当てはめた。固有名と作業固有の仕組みは省き、共通部と Excel VBA 固有部を `exmem/lessons/` の2ノートにした（コミット `e051cc1`、判読残件の反映は `91fb76b`）。決定は `decisions.md` の 2026-10-15。
