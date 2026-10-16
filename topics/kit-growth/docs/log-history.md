@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-16（init に `init 更新` を足した）
+
+- ユーザーの依頼で、雛形の更新を works に反映するモードを検討し、案 B（基点つきの3者マージ。案を出して承認後に反映）を選んだ。`init-update.md` を新設し、`init-hook.md`・`hooks.md`・`docs-rules.md`（`Template-Rev` トレーラー）・`hook-matrix.md` を合わせた。決定は `decisions.md` の同日の項。`git merge-file` で、埋めた行が残ることと、旧版 → 新版の雛形の変更が当たることを一時ディレクトリで確認した（衝突 0）。
+
 ### 2026-10-16（各フックの cwd の期待を点検し、review の点検対象を 3 リポジトリに広げた）
 
 - 各フックが期待する cwd と書き込み先を突き合わせた。`review` は起動した単位 1 つの記録だけを見ており、works から起動すると resources の `exmem/inbox/`・`topics/` と、公開リポジトリ（resources、dotfiles）の機密が点検されなかった。works の基準に「点検の対象」の一覧を置き、入力 3・4・6 がその全リポジトリを見るようにした（`302fccb` `9b19540`。ユーザーの決定、案 A）。
