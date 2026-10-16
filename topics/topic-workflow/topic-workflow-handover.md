@@ -24,7 +24,7 @@
 | Q1 | `mobile-session/` を `topics/` に改名する | 「する」 |
 | Q2 | トピックの中身を kit の `docs/` の型（log・decisions・log-history）にそろえる。フックの再利用を優先する | 「揃える」「いまはフック再利用を優先して docs と同じで良い」 |
 | Q3 | AI 作業部屋（ai-workspace-boundary）は Project 型。完了条件は「roadmap の 1〜7 が PC で確認済み」。8 以降は新しい Project か改善の1行にする。子には分けない | 「はい、すっきりした」（AI の意見「Area はもうある。改善の Area を別に作ると状態が二重になる」への同意） |
-| Q4 | Claude Projects の共有フォルダは、議論の下書きの置き場。確定したらリポジトリのトピックへ移す（リポジトリの旧用語 `notes/`（今の `works`）とは別物） | 「はい」 |
+| Q4 | Claude Projects の共有フォルダは、議論の下書きの置き場。確定したらリポジトリのトピックへ移す（リポジトリの旧用語 `notes/`（今のワークスペースのルート）とは別物） | 「はい」 |
 | Q5 | 最初の試行は、improvement-methods を新しい型で close すること | 「はい」 |
 | 時機 | 改名・組み替えなどの実行は、ai-workspace-boundary の動作確認が終わってから | 「実行タイミングはあちらの進捗に揃えさせて」 |
 
