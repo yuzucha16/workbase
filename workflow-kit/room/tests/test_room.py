@@ -163,6 +163,56 @@ class InitTest(unittest.TestCase):
             self.assertFalse(hasattr(wsl, "installed"))
 
 
+class ReapTest(unittest.TestCase):
+    def archived(self, v, name, reap_after, status="done", reaped=None):
+        d = v / "archives" / name
+        d.mkdir(parents=True)
+        fm = f"---\narea: area-x\nstatus: {status}\nreap_after: {reap_after}\n" + (f"reaped: {reaped}\n" if reaped else "") + "---\n\n# x\n"
+        (d / "README.md").write_text(fm, encoding="utf-8", newline="\n")
+
+    def test_find_only_due_and_not_reaped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            self.archived(v, "old", "2026-10-01")
+            self.archived(v, "today", "2026-10-12")
+            self.archived(v, "future", "2026-10-30")
+            self.archived(v, "done-already", "2026-10-01", reaped="2026-10-05")
+            self.assertEqual([n for n, _a, _d in room.find_reapable(ctx_for(v))], ["old", "today"])
+
+    def test_reap_removes_history_and_tmp_only_for_that_project_and_marks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v = make_vault(tmp)
+            self.archived(v, "old", "2026-10-01")
+            c = ctx_for(v, wsl)
+            self.assertEqual(room.offer_reap(c, yes=True), 1)
+            text = wsl.scripts[-1][1]
+            self.assertIn("-mnt-room-old", text)
+            self.assertIn("$HOME/tmp/old", text)
+            self.assertNotIn("-mnt-room-old-", text)
+            self.assertIn("reaped: 2026-10-12", (v / "archives/old/README.md").read_text(encoding="utf-8"))
+            self.assertEqual(room.find_reapable(c), [])
+
+    def test_unsafe_name_is_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v = make_vault(tmp)
+            self.archived(v, "a b;rm", "2026-10-01")
+            with self.assertRaises(room.RoomError):
+                room.reap_project(ctx_for(v, wsl), "a b;rm", "area-x")
+            self.assertEqual(wsl.scripts, [])
+
+    def test_cmd_reap_named_requires_due_unless_force(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            self.archived(v, "future", "2026-10-30")
+            a = lambda: argparse.Namespace(name="future", yes=True, force=False)
+            with self.assertRaises(room.RoomError):
+                room.cmd_reap(ctx_for(v), a())
+            room.cmd_reap(ctx_for(v), argparse.Namespace(name="future", yes=True, force=True))
+            self.assertIn("reaped", (v / "archives/future/README.md").read_text(encoding="utf-8"))
+
+
 class FrontmatterTest(unittest.TestCase):
     def test_update_and_remove(self):
         t = "---\nstatus: active\nreview: 仮置き\nupdated: 2026-10-01\n---\n\n# x\n"
