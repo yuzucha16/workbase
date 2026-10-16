@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-16（room の type に dev-env と dev-test を足した）
+
+- ユーザーの依頼で、`open-hook.md` の type 別の表、`room.py` の `--type`、README の雛形、`dev-deliverable-guide.md`(末尾に節)を更新した(`ccfe968`)。
+- ユーザーの指摘で、GitHub / GitLab のようなサービスは権限が無く AI に頼れないと分かった。`dev-env` は type を増やさず「環境の置き場」を聞く項目にし、`remote` の type は未決に残した。
+
 ### 2026-10-16（`review 消化` を初めて使い、Next Actions 3件を完了にした）
 
 - ユーザーの答えで、NA 0（入力 8 の残りのギャップ）、NA 2（`start` のモードを試す）、NA 5（`start 解決` / `start 改善` と `review 消化` を使う）を完了にして消した。NA 3（重い会話の確認）は、まだ見ていないので残した。「選ぶ基準・10件超の目安が合うか」は、使った結果、合わない点は出なかった（ユーザーの答えに指摘なし）。

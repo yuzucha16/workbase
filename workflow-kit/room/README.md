@@ -8,7 +8,7 @@ AI 作業部屋の操作（`open` / `start` / `close` / `umount` / `mask` / `res
 
 ```powershell
 cd <このディレクトリ>
-uv run room.py open <Project> --area <Area> [--type doc|dev|research] [--boundary <印>] [--commit]
+uv run room.py open <Project> --area <Area> [--type doc|dev|dev-env|dev-test|research] [--boundary <印>] [--commit]
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--adopt] [--commit]
 uv run room.py close <Project> [--commit]
 uv run room.py umount --area <Area>

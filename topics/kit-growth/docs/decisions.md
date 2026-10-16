@@ -1,5 +1,12 @@
 # kit-growth: 決定
 
+## 2026-10-16 room の type に `dev-env` と `dev-test` を足した（ユーザーの承認）
+
+- 【汎用】`dev` の子ではなく独立の type にする(1 Project = 1 成果物。入れ子にしない)。受け渡しは `ai/in/` + `--adopt`。`dev-env` の想定は、主にテスト環境を作ること。`room.py` は `--type` の選択肢だけ。
+- 【汎用】環境の置き場(ローカル、リモート・コンテナ、リポジトリ、GitHub / GitLab のようなサービス)は type を分けず、`dev-env` の立ち上げで聞く。サービスは権限が無いので、この仕組みでは AI に任せない。理由: 部屋の AI が触れるのは `ai/` の中だけで、違いは検証する人と公開の扱いだけだから。
+- 範囲外(先送り): `remote` の type(WSL から SSH で user 権限のリモートを操作する。`dev` でも使える)。見直しの条件: `dev-env` を1回使った後。
+- 畳んだもの: なし(追記のみ)。
+
 ## 2026-10-16 topic-workflow を kit に取り込み、close した（ユーザーの承認）
 
 - 【汎用】トピックの型の正本は `topics/AGENTS.md` にする。docs-rules に「トピック」の節は足さない。理由: 読む順と「続き」は `docs-rules.md` に、窓口の雛形は `templates/topic/` に既にあり、足す側は済んでいた。`topics/AGENTS.md` に、雛形の場所、共有フォルダは下書きの置き場（topic-workflow の Q4）、依頼は「<トピック名> の続き」の1行、を足した。
