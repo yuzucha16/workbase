@@ -33,6 +33,8 @@
 | 1 | 手順書の移動先は dotfiles の `docs/setup/`。理由: 横断的な手順書の置き場として自然で、今後 `docs/` 配下の log を使った日報・進捗の作成も予定しているため | 発言（「Aにします」） |
 | 2 | `guides/AGENTS.md` の手順書の書式・文体の規則は、dotfiles へ移す。`guides/AGENTS.md` には「dotfiles の `docs/setup/` へ移した」の1行だけ残す。付録「dotfiles 側の課題」の規則は消す | 発言（「移しましょう」） |
 
+**判断 2 の修正（2026-10-16）**: `guides/howto/` に `ai-room-setup.md` と `bedrock-first-hello.md` が残る（空にならない）ため、書式・文体の規則は workbase の `guides/AGENTS.md` に1か所だけ残す（案 A。ユーザーの決定）。dotfiles の `docs/setup/README.md` には、dotfiles 固有の規則（スクリプトが正、食い違いは log へ、付録を作らない、公開リポジトリの注意）と、`guides/AGENTS.md` への参照だけを置く。
+
 ### 取り込まない理由（ユーザーに示したもの）
 
 - **立ち上げの順番**: dotfiles は新しい PC で最初に clone し、そこから `50_repos` が workbase を `resources/` に置き、`30_link` が `.obsidian` を張る。取り込むと、Vault を作るスクリプトが Vault の中に住む。
