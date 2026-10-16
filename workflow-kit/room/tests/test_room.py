@@ -391,6 +391,27 @@ class MaskIntegrationTest(unittest.TestCase):
             self.assertNotIn("アクメ", (p / "ai/records/manifest.json").read_text(encoding="utf-8"))
             self.assertIn("アクメ商事株式会社", mapping)
 
+    def test_restore_stops_when_final_was_edited_by_human(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p = self.setup_project(tmp, wsl)
+            write = lambda: (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は増加\n", encoding="utf-8", newline="\n")
+            wsl.on_interactive = write
+            room.cmd_start(c, self.args())
+            final = p / "_noai/final/report.md"
+            final.write_text("人が直した\n", encoding="utf-8", newline="\n")
+            (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は減少\n", encoding="utf-8", newline="\n")
+            k, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
+            self.assertEqual(k, 0)
+            self.assertIn("report.md", problems[0])
+            self.assertEqual(final.read_text(encoding="utf-8"), "人が直した\n")
+            k, problems = room.restore_project(c, room.Project.load(c, "proj-a"), force=True)
+            self.assertEqual((k, problems), (1, []))
+            self.assertIn("減少", final.read_text(encoding="utf-8"))
+            # AI だけが変えたときは止まらない
+            (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は横ばい\n", encoding="utf-8", newline="\n")
+            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a"))[1], [])
+
     def test_unchanged_raw_is_not_remasked_and_changed_toml_asks(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
