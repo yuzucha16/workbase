@@ -783,8 +783,8 @@ def mask_project(ctx, p, yes=False):
     return len(res["outputs"])
 
 
-def restore_project(ctx, p):
-    """ai/out を復元して _noai/final へ。戻らないものがあれば何も書かずに問題の一覧を返す。"""
+def restore_project(ctx, p, force=False):
+    """ai/out を復元して _noai/final へ。戻らないもの、または人が変えた final があれば（force 以外は）何も書かずに問題の一覧を返す。"""
     n = noai_dir(p)
     out = maskkit.list_files(p.ai / "out")
     if not out:
@@ -796,8 +796,22 @@ def restore_project(ctx, p):
         return 0, [str(e)]
     if problems:
         return 0, problems
+    mf = n / "map" / "final-manifest.json"
+    written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
+    if not force:
+        changed = []
+        for rel, data in restored.items():
+            dest = n / "final" / rel
+            if dest.exists():
+                cur = dest.read_bytes()
+                if cur != data and written.get(rel) != maskkit.sha256_bytes(cur):
+                    changed.append(f"{rel}: _noai/final が、前回の復元から変わっている（人の変更を上書きしてしまう）")
+        if changed:
+            return 0, changed + ["（確認して、上書きしてよければ `room restore " + p.name + " --force`。人の変更は先に退避する）"]
     for rel, data in restored.items():
         write_bytes(n / "final" / rel, data)
+        written[rel] = maskkit.sha256_bytes(data)
+    write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
     return len(restored), []
 
 
@@ -811,7 +825,7 @@ def cmd_mask(ctx, a):
 
 def cmd_restore(ctx, a):
     p = Project.load(ctx, a.name)
-    k, problems = restore_project(ctx, p)
+    k, problems = restore_project(ctx, p, force=a.force)
     if problems:
         raise RoomError("復元を止めた（_noai/final は変更していない）:\n  " + "\n  ".join(problems))
     ctx.say(f"復元した: {k} ファイル → _noai/final")
@@ -1055,7 +1069,7 @@ def build_parser():
     m = sub.add_parser("mask", help="_noai/raw の原本をマスクして ai/in へ（start でも自動で行う）")
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
-    r.add_argument("name")
+    r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
     st = sub.add_parser("stock", help="ai/out/stock/ の【汎用】の下書きを、確認を経て exmem/inbox/ に運ぶ")
