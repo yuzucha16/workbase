@@ -86,7 +86,7 @@ exmem の用途は2つ。(1) AI が今後の参考にするもの（`exmem/lesso
 ## Next Actions
 
 - `guides/` の入口の索引を作る案を、別のスレッドで進める（依頼文は [[session-handoff]] の型に沿って書く）。
-- `guides/` への規約の適用を決める。決めたら `guides/CLAUDE.md` に反映する。
+- `guides/` への規約の適用を決める。決めたら `guides/AGENTS.md` に反映する。
 
 ## Related
 
