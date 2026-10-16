@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-16（wrap: open の構造の書き直しと、close-hook の削除・open-hook の縮小まで）
+更新: 2026-10-16（wrap: open の構造の書き直し、close-hook の削除・open-hook の縮小、topic-workflow の取り込みと close まで）
 
 ## 状態
 
@@ -15,6 +15,7 @@
 - 「変更のやり方」(Must / Want。`methods.md` の「変更」、`change-method`)を足した(`266c361`)。中間成果物は「基準文書」に改称し、`areas/` `projects/` への適用を決めた(`40d8aa6`。置き場は `ai/out/<成果物名>/`、マスク後の語で書く)。
 - `open-hook.md` の「Project の構造」を、`ai/` と `_noai/` への対応に書き直した(`7b2c515`。type 別の置き場、基準文書の置き場)。`_noai/` は残す。`close-hook.md` を削除し、トピックの終了は `topics/AGENTS.md` の節に、Project の終了の判断(`ai/out/close.md`)は `room-context.md` に移し、`open-hook.md` を判断部分に縮めた(`c86b4d6`)。
 - init に `init 更新`（雛形の変更をワークスペースに反映。基点つきの3者マージ、`Template-Rev` トレーラー）を足し、ワークスペースの雛形に `README.md` を足した(`316840f` `8b74187`)。
+- topic-workflow を取り込んで close した。トピックの型の正本は `topics/AGENTS.md`（docs-rules に節は足さない）。`wrap` の依頼文は「<単位> の続き」の1行。
 
 ## Next Actions
 
@@ -30,8 +31,6 @@
 1. PC1 の印象を `inbox.md` に入れ始める（モバイル。随時）。
 2. `start` のモード（確定型・探索型）を次の2〜3セッションで試し、`review` で `goal_change` を見る（`again`・`gap` は 2026-10-15 に廃止）（improvement-methods の close で受け継いだ。詳細は `exmem/lessons/session-goal-modes.md`）。
 3. `token-matrix.md` の初回の採点し直しは済んだ（`70b8e22` で 103、下がった列なし）。入力「重い会話」は、会話履歴の集計がある端末の `review` で見る。見送った2件（切る目安の数値、`lessons/` の字数の目安）は、その結果を見て決める。
-4. topic-workflow の kit への取り込み（docs-rules の「トピック」の節）が済んだら、`topics/` の型の記述をそちらへ寄せる。
-
 5. `start 解決` / `start 改善` と `review 消化` を実際に使い、選ぶ基準・「10件超」の目安が合うか見る。使われなければ、`start` のインタビューを畳むか、`start` の「作業の種類の差分」を畳むかを、次の `review` で決める（凍結の対）。`again` `gap` 廃止の原因（進め方のサンプルの影響）は未分析。
 
 ## Open Questions
