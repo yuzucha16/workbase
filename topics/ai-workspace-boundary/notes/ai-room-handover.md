@@ -64,8 +64,8 @@ GitHub への公開・非公開の境界は、workbase とそれ以外の1本だ
 
 ## 既存のリポジトリとの関係（調べた範囲）
 
-- workbase にあるのは、フックの手順書（`workflow-kit/`）とナレッジ。ワークスペースのルート（`areas/` `projects/` `archives/` `docs/`）は PC ごとのローカルで、workbase の外にある。手順書 `open-hook.md` / `close-hook.md` / `wrap-hook.md` / `start-hook.md` と `hooks.md`（呼び出し表の正本）、ワークスペースの雛形 `workflow-kit/templates/workspace/`（`AGENTS.md`、`gitignore.template`、`ignore.template`）が、変更の対象になる。
+- workbase にあるのは、フックの手順書（`workflow-kit/`）とナレッジ。ワークスペースのルート（`areas/` `projects/` `archives/` `docs/`）は PC ごとのローカルで、workbase の外にある。手順書 `open-hook.md` / `wrap-hook.md`（`close-hook.md` は 2026-10-16 に削除。Project の終了は `room close`、判断は `room-context.md`） / `start-hook.md` と `hooks.md`（呼び出し表の正本）、ワークスペースの雛形 `workflow-kit/templates/workspace/`（`AGENTS.md`、`gitignore.template`、`ignore.template`）が、変更の対象になる。
 - 現在の Project は `docs/` を Project 直下に持つ。P3 では `ai/docs/` に移る。open / close / wrap の「`docs/` の場所」を直す必要がある。
-- `close` は `archives/` への `git mv` を、ディレクトリごとだと `Permission denied` で失敗することがあり、ファイル単位で行う（`close-hook.md` の実測）。マウント中のフォルダの移動は、先にアンマウントする。
+- `close` は `archives/` への `git mv` を、ディレクトリごとだと `Permission denied` で失敗することがあり、ファイル単位で行う（旧 `close-hook.md` の実測。今は `room close` がファイル単位で移す）。マウント中のフォルダの移動は、先にアンマウントする。
 - 共有側（workbase）のルール: ローカルのファイルへ `[[リンク]]` を張らない。機密・会社固有の情報を書かない。コミットは `[領域] 変更内容`。
 - モバイル側のセッションの記憶（チームのメモ）はリポジトリに入っていない。必要な情報は、この文書にすべて書いた。
