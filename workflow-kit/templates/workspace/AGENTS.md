@@ -20,7 +20,7 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 
 ## 構成と管理
 
-構成の表は `README.md`（`areas/` `projects/` `archives/`、`docs/`、`resources/`、`repos/`、`.obsidian/` など）。`resources/` と `repos/` の各リポジトリは別の git リポジトリで、git 操作はそれぞれの中で行い、作業の前にその `AGENTS.md` を読む。
+構成の表は `README.md`（`areas/` `projects/` `archives/`、`docs/`、`resources/`、`repos/`、`.obsidian/` など）。`resources/` と `repos/` の各リポジトリは別の git リポジトリで、git 操作はそれぞれの中で行い、作業の前にその `AGENTS.md` を読む。`resources_p/` は PC ローカルの resources（この PC だけの情報の置き場。追跡しない。Vault 側の AI は読み書きしてよく、`areas/` などのような deny はしない）。
 
 ## AI 作業部屋（`projects/` `areas/` `archives/` を扱うとき）
 
@@ -33,7 +33,7 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 ## このワークスペース固有のルール
 
 - <remote の方針に合わせて書く。remote が無いとき: このリポジトリに remote を足さない。push しない（誤って push しないよう、`.git/hooks/pre-push` で止めてある）。>
-- ローカル側から共有側（`resources/`）への `[[リンク]]` は張ってよい。共有側のノートから、ローカル側（`areas/` `projects/` `archives/`）へは張らない。他の PC でリンク切れになる。
+- ローカル側から共有側（`resources/`）への `[[リンク]]` は張ってよい。共有側のノートから、ローカル側（`areas/` `projects/` `archives/` `resources_p/`）へは張らない。他の PC でリンク切れになる。
 - この PC のローカルの情報（業務固有のもの、個人的なもの）を、`resources/`（共有）に書かない。`resources/` の変更は、`resources/` の中でコミットする（このリポジトリのコミットには含まれない）。
 - `git add -f` で、ignore 済みのファイルを追加しない。
 - <その他の固有ルール。無ければ「なし」>
