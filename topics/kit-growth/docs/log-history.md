@@ -5,6 +5,8 @@
 ### 2026-10-16（init に `init 更新` を足した）
 
 - ユーザーの依頼で、雛形の更新を works に反映するモードを検討し、案 B（基点つきの3者マージ。案を出して承認後に反映）を選んだ。`init-update.md` を新設し、`init-hook.md`・`hooks.md`・`docs-rules.md`（`Template-Rev` トレーラー）・`hook-matrix.md` を合わせた。決定は `decisions.md` の同日の項。`git merge-file` で、埋めた行が残ることと、旧版 → 新版の雛形の変更が当たることを一時ディレクトリで確認した（衝突 0）。
+- 同日の追加（ユーザーの指摘）: 雛形の読む順番が指す `README.md` を項目 5 が生成していなかったので、`templates/workspace/README.md` を足し、生成物と初回コミットに含めた。`init-hook.md` の自己点検のトレーラーを2行（`Workflow-Kit` は廃止済み）に直した（`8b74187`）。`hook-matrix.md` の `init-update` の字数を 7.9k に直した（初出の 3.9k は誤り）。
+- 続けて、`init 更新` が一撃で通った要因を話し合い、「変更のやり方」を解決・改善のやり方の延長で足す案が出た。議論は次のセッションへ(log.md の Next Actions 8）。
 
 ### 2026-10-16（各フックの cwd の期待を点検し、review の点検対象を 3 リポジトリに広げた）
 
