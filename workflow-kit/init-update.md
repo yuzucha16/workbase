@@ -12,6 +12,7 @@
 
 | ローカル | 雛形（`workflow-kit/templates/workspace/`） | 扱い |
 |---|---|---|
+| `README.md` | `README.md` | 3者マージ（埋めた行と、足した行が残る）。ローカルに無ければ、手順 4 で作る |
 | `AGENTS.md` | `AGENTS.md` | 3者マージ（埋めた行が残る） |
 | `.gitignore` | `gitignore.template` | 3者マージ |
 | `.ignore` | `ignore.template` | 3者マージ |
