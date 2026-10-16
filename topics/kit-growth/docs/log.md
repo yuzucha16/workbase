@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-16（wrap: open の構造の書き直し、close-hook の削除・open-hook の縮小、topic-workflow の取り込みと close まで）
+更新: 2026-10-16（review 消化: NA 0・2・5 を完了として消した）
 
 ## 状態
 
@@ -26,12 +26,9 @@
 
 6. 次の `review` で、重さの基準と比べる初回と、各フックの cwd の期待の点検（`hook-matrix.md` の cwd の3行。確認日 2026-10-16）の初回を実施する。3回後に N（字数 +20%、項目数 +2）を決め直す。`wrap` の読み込み字数（`docs-rules.md` の節だけ読む効果）も測り直す。
 
-0. 入力 8 は 2026-10-16 に初回を実施済み。deny 設定は dotfiles に入れ、凍結の対として 3 つの `AGENTS.md` の禁止コマンドの列挙を畳んだ（ユーザーの決定）。残るギャップは、`pre-push`（works の 11-08 の判定の項目⑧。git 周りは後日まとめて見直す）、works の `docs/log.md` の超過、dotfiles の `docs/setup/` の案（`topics/dotfiles-boundary/`）との置き場の整合。規則を足したので、凍結の対（畳むもの）は機密の項で足りたが、入力 8 の分は未対（次の `review` で畳む候補を挙げる）。
 
 1. PC1 の印象を `inbox.md` に入れ始める（モバイル。随時）。
-2. `start` のモード（確定型・探索型）を次の2〜3セッションで試し、`review` で `goal_change` を見る（`again`・`gap` は 2026-10-15 に廃止）（improvement-methods の close で受け継いだ。詳細は `exmem/lessons/session-goal-modes.md`）。
 3. `token-matrix.md` の初回の採点し直しは済んだ（`70b8e22` で 103、下がった列なし）。入力「重い会話」は、会話履歴の集計がある端末の `review` で見る。見送った2件（切る目安の数値、`lessons/` の字数の目安）は、その結果を見て決める。
-5. `start 解決` / `start 改善` と `review 消化` を実際に使い、選ぶ基準・「10件超」の目安が合うか見る。使われなければ、`start` のインタビューを畳むか、`start` の「作業の種類の差分」を畳むかを、次の `review` で決める（凍結の対）。`again` `gap` 廃止の原因（進め方のサンプルの影響）は未分析。
 
 ## Open Questions
 
