@@ -1,5 +1,12 @@
 # kit-growth: 決定
 
+## 2026-10-16 topic-workflow を kit に取り込み、close した（ユーザーの承認）
+
+- 【汎用】トピックの型の正本は `topics/AGENTS.md` にする。docs-rules に「トピック」の節は足さない。理由: 読む順と「続き」は `docs-rules.md` に、窓口の雛形は `templates/topic/` に既にあり、足す側は済んでいた。`topics/AGENTS.md` に、雛形の場所、共有フォルダは下書きの置き場（topic-workflow の Q4）、依頼は「<トピック名> の続き」の1行、を足した。
+- 【汎用】`wrap` の「次の会話への依頼文」を、3行の下書きから「<作業した単位> の続き」の1行にした（状態は窓口と `log.md` が持つ）。3行の型は単位の外の作業に残す（`session-handoff.md`）。
+- 時機: 「再開を2回試してから」の条件は `again` `gap` の廃止で外れた。同日のスレッドが「topic-workflowの続き」の1行で再開できたので、取り込んだ。残った測定（再開ごとの読み込み字数、窓口 2KB の目安）は `inbox.md` へ。
+- 畳んだもの: `topics-index.md` の「型の規則（案）」、`wrap` の3行の依頼文の型。規則の字数は今回 −113 字。10-15 の窓口の雛形（+1,070 字）は、同日の `close-hook.md` の削除（`c86b4d6`）で相殺した扱いにする（規模の凍結。判定日 2026-11-08）。
+
 ## 2026-10-16 `open` と `close` を畳む方向を決めた。`open` の Project の構造を `ai/` と `_noai/` に対応させた（ユーザーの承認）
 
 - 【汎用】`close` は、Project の分をルーム操作（`room close`）に移管済みなので、トピック専用に絞る。手順書 `close-hook.md` は削除し、`topics/AGENTS.md` に短い節で吸収する。理由（ユーザー）: トピックは完了条件が未定のまま進むことが多い。暫定の見直しは `review 消化` で Next Actions のように消化させる。未解決は `log.md` の Next Actions / Open Questions。ナレッジ化の判断は人。記録は `wrap`。残るのは削除だけ。実施はまだ（`log.md` の Next Actions 9）。

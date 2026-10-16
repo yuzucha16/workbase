@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-16（topic-workflow を取り込み、close した）
+
+- 止まっていた TODO 5 を見直した。足す側（docs-rules の読む順・「続き」、窓口の雛形）は済んでいたので、正本を `topics/AGENTS.md` にして、畳む側だけを行った。並行セッションの `close-hook.md` の削除（`c86b4d6`）と `topics/AGENTS.md` で重なり、マージした。
+- topic-workflow は新しい「トピックを終わらせるとき」の最初の利用。【汎用】の Q4（共有フォルダ）だけ未反映だったので `topics/AGENTS.md` に足した。差分は `notes/topic-workflow/2026-10-16-kit-intake.diff`（プロジェクトの共有フォルダ）。
+
 ### 2026-10-16（`open` / `close` を畳む議論。`open` の Project の構造を `ai/` と `_noai/` に対応させた）
 
 - ユーザーの問い「`open` と `close` は `room` に統合されて不要では」から始め、両手順書の役割を洗い出した。ひな形・状態更新・`archives/` への移動・コミットは `room` が担う。残るのは、部屋の AI の判断（`readme-draft.md`、`close.md`）、「Project の構造」の表、トピックの close だった。ユーザーは `close` をトピック専用にして `topics/AGENTS.md` に吸収する、`open` は構造に限定する、と決めた。
