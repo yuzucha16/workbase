@@ -1215,7 +1215,7 @@ def build_parser():
     sub = ap.add_subparsers(dest="command", required=True)
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
-    o.add_argument("--type", default="doc", choices=["doc", "dev", "research"])
+    o.add_argument("--type", default="doc", choices=["doc", "dev", "dev-env", "dev-test", "research"])
     o.add_argument("--boundary", help="Area に boundary: が無いときに付ける印")
     o.add_argument("--commit", action="store_true")
     s = sub.add_parser("start", help="チェック → マウント → AI を起動 → アンマウント → 回収")

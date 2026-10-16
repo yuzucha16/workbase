@@ -22,7 +22,7 @@
    - 完了条件を、1文で書けるか（書けなければ Project ではなく Area）。
    - 見直し日を置けるか。成果物が1つに特定できるか（複数なら Project を分ける）。
    - 進行中の Project の上限を超えないか（暫定: 3件）。
-3. **聞く**（選択式。答えが1つに定まるものは宣言する）: 種類 `type`（`doc` `dev` `research`。成果物の種類で決める。Area は既定値のヒント）、主題（言語や方式など）、完了条件の種類、見直し日。開発系の Project は、`start-hook.md` の「開発」の差分の項目を、**実装の前に**ここで聞く。
+3. **聞く**（選択式。答えが1つに定まるものは宣言する）: 種類 `type`（`doc` `dev` `dev-env` `dev-test` `research`。成果物の種類で決める。Area は既定値のヒント。環境やテストだけが成果物なら `dev` でなく `dev-env` `dev-test`）、主題（言語や方式など）、完了条件の種類、見直し日。開発系（`dev` `dev-env` `dev-test`）の Project は、`start-hook.md` の「開発」の差分の項目を、**実装の前に**ここで聞く。
 4. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`）を書く。完了条件は、ユーザーが承認してから書く（承認の前に「ユーザー承認: 日付」を書かない）。Project の名前の案（`<動詞か領域>-<主題>`、例: `learn-c-pool-allocator`。ワークスペース内で一意）を添える。
 5. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。呼び出し元に `events` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
 6. **`start` を呼ぶ**。
@@ -57,11 +57,13 @@
 |---|---|---|---|
 | `doc`（手順書・仕様・設計・チェックリスト） | 旧 `refs/`: 渡された資料、チェックリスト | 旧 `drafts/`: 版ごとの下書き、レビュー版 | 最終版の文書 |
 | `dev`（設計・実装・評価） | 参考資料、マスク済みの入力 | 中間物、使い捨てのスクリプト | `src/` `tests/` `tools/`、ビルド設定、文書。構成は `dev-deliverable-guide.md` |
+| `dev-env`（環境構築） | 対象環境の情報（OS、既存の道具と版の一覧。マスク済み）、既存の手順書 | 試行のログ、調べ途中のメモ、使い捨てのスクリプト | 環境定義（セットアップのスクリプト、コンテナ定義、版の固定）、確認スクリプト、文書。構成は `dev-deliverable-guide.md` の「`dev-env` と `dev-test`」 |
+| `dev-test`（テスト） | テスト対象（ソースのスナップショット）と、その要求仕様 | 試しのテスト、失敗の切り分け | `tests/` `tools/`、テスト仕様、`report.md`（実行結果）。構成は同上 |
 | `research`（調査） | 旧 `sources/` のうち、人が渡した資料 | 旧 `sources/` のうち、AI が集めた資料と抜粋。調べ途中の整理 | `report.md`（結論） |
 
 基準文書（`exmem/lessons/change-method.md`。変更の設計と検証の物差しになる、AI が読めるテキスト。人と AI の工程の境界）:
 
-- 置き場は、成果物と同じ `ai/out/<成果物名>/`（全 type 共通）。`dev` は、成果物の `docs/` の3文書（要求仕様・機能仕様・運用マニュアル）が兼ねる。
+- 置き場は、成果物と同じ `ai/out/<成果物名>/`（全 type 共通）。`dev` は、成果物の `docs/` の3文書（要求仕様・機能仕様・運用マニュアル）が兼ねる。`dev-env` は環境の要求仕様、`dev-test` はテスト仕様が兼ねる（`dev-deliverable-guide.md`）。
 - `ai/work/` の下書きや使い捨てのスクリプトとは別物。`ai/docs/`（作業の記録）にも入れない。
 - 前の Project の基準文書を次の Project に渡すときは、人が次の Project の `ai/in/` に置き、`room start --adopt` で入力として記録する。
 - 設計メモ（design、coding-rules）は `ai/docs/`。下書きは `ai/docs/` に入れない（`ai/docs/` を「作業の記録」の意味だけにする）。
@@ -77,6 +79,7 @@
 
 - `doc` と `research` の基準文書の形（2026-10-16）。置き場と最小の中身（Must の3項目）は `change-method.md` で決まっているが、type 別の書き方は、最初の利用の後に決める（`dev` だけ、3文書が兼ねる）。
 - リポジトリが正の `src`、remote で動くものの置き場（2026-10-16 残件）。この構造は、新規にフルスクラッチで作る前提。clone を `ai/out/` に置くと、`.git` の中身で `restore` が止まる（復元できない形式）。案（未検証）: clone は `repos/` に置いたまま、人がスナップショットを `ai/work/<名>/` に写し、AI の成果は `ai/out/<成果物名>/` に基準文書と patch で置く。基準文書の「正の向き」はリポジトリ側。remote の検証は人が行う（検証項目に書く）。
+- `remote` という type（2026-10-16 ee の案）。WSL から SSH で接続し、user 権限でリモート（Docker を含む）を操作する、AI の活用。`dev-env` に限らず `dev` でも使うので、置き場の違いを `type` にする案。`dev-env` は、テスト環境を作る用途に絞る。`remote` の接続の安全（鍵、権限、記録）は、AI 作業部屋の境界の設計（`topics/ai-workspace-boundary/`）と合わせて決める。実測の後に決める。
 - Area が無い題材のときの、Area の作り方（基準: 終わりのない責任領域か）。
 - 上限（Project 3件、Area 5件）の見直し。
-- Project の構造（type は3種、`ai/work/` の下書きの分離）の実測。`research` と、`dev` と `doc` の混合の Project の扱い。
+- Project の構造（type は5種、`ai/work/` の下書きの分離）の実測。`dev-env` と `dev-test` は2026-10-16 に足した叩き台で、実測が無い。`research` と、`dev` と `doc` の混合の Project の扱い。
