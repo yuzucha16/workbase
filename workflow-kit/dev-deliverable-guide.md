@@ -17,8 +17,6 @@ projects/<Project>/
 └─ _noai/               AI に見せない（raw/ 元データ、map/ 対応表、final/ 復元済みの成果物）
 ```
 
-部屋でない Project は、`ai/out/<成果物名>/` を Project 直下の `<成果物名>/` に読み替える。
-
 Area の共通ルール（Project を跨ぐ約束）は、Area の README に書く。部屋の AI は `ai/ctx/area-README.md` で読む。Project 固有の約束は、成果物の README か、Project の `ai/docs/decisions.md` に置く。
 
 ## 成果物の構成（`ai/out/<成果物名>/`）
