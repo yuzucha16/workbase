@@ -9,7 +9,7 @@
 
 ## 3. 手順書を移す
 
-- dotfiles と workbase のコミットは分ける（`guides/CLAUDE.md` の既存の規則。dotfiles を先にコミットして、移した先が存在してから workbase 側を消す）。
+- dotfiles と workbase のコミットは分ける（`guides/AGENTS.md` の既存の規則。dotfiles を先にコミットして、移した先が存在してから workbase 側を消す）。
 - 移す前に `grep -n '\[\[' guides/howto/*.md` で wikilink を確認し、dotfiles 側では URL か名前に直す。
 - 付録「dotfiles 側の課題」は、残っているものを dotfiles の課題の置き場へ移し、付録自体は消す。
 - 移したあと、workbase の中に `[[win11]]` `[[debian-family]]` `[[fonts-setup]]` への wikilink が残っていないか確かめる（`rg -n "\[\[(win11|debian-family|fonts-setup)"`）。

@@ -14,7 +14,7 @@ updated: 2026-10-14
 
 タグは「何についての知識か」を表す。新しいタグは、ここに追記してから使う。
 
-対象は `exmem/` と `../guides/` の両方（guides は 2026-10-10 から。ユーザーの決定）。guides で必須にするのはタグの規約だけで、frontmatter の項目は `guides/CLAUDE.md` に従う。
+対象は `exmem/` と `../guides/` の両方（guides は 2026-10-10 から。ユーザーの決定）。guides で必須にするのはタグの規約だけで、frontmatter の項目は `guides/AGENTS.md` に従う。
 
 ## ルール
 

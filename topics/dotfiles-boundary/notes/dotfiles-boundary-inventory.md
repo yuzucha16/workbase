@@ -64,7 +64,7 @@ frontmatter の出典（`sources:` の「dotfiles の〜を確認」）は、履
 | ファイル | 書き換え |
 |---|---|
 | `guides/guides-index.md` | win11 / debian-family / fonts-setup の行を、dotfiles の `docs/setup/` への1行のリンクにまとめる |
-| `guides/CLAUDE.md` | 「手順書(howto/)の作り方」のうち dotfiles に依存する規則（スクリプトが正、付録、作る流れの 2 と 5、リポジトリごとのコミット）を dotfiles へ移す。書式・文体の規則は残すか、一緒に移すか（**要判断**） |
+| `guides/AGENTS.md` | 「手順書(howto/)の作り方」のうち dotfiles に依存する規則（スクリプトが正、付録、作る流れの 2 と 5、リポジトリごとのコミット）を dotfiles へ移す。書式・文体の規則は残すか、一緒に移すか（**要判断**） |
 | `exmem/README.md` | 33 行目「dotfiles は exmem を読み取り専用で参照」。一方向の規則として残し、文言をそろえる |
 | `exmem/lessons/ai-development-workflow.md` | 「作業ログはリポジトリ側、知識は exmem」。今回の線（置かれる・実行される／読まれる）を足す |
 | `exmem/lessons/app-config-placement.md` | 原則「相互に参照させない」を、リポジトリ全体の一方向の規則に広げる（反映先の第一候補） |
