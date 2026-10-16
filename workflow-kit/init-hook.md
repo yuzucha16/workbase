@@ -6,6 +6,7 @@
 
 - **目的**: 作業ディレクトリに、workflow-kit の共通機能を導入するためのフック。
 - **契機**: ユーザーが「workflowを導入して」と言ったときだけ実行する（自発的には導入しない）。
+- **モード**: `init 更新`（別名「雛形を反映して」）と言われたときは、`init-update.md` を読み、そこに従う（項目 5 で作ったワークスペースに、その後の雛形の変更を反映する）。下の入力と手順は使わない。
 
 ## 導入項目の一覧
 
@@ -19,6 +20,7 @@
 | 6 | 「終了処理して」「inboxを整理して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 「終了処理して」は必須 | `wrap-hook.md`、`integrate-hook.md` |
 | 4 | 履歴からの復元 | `docs/` の Log と判断記録の補完 | 任意 | `init-restore.md` |
 | 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
+| 7 | 雛形の反映（`init 更新`） | 雛形の変更を当てた `AGENTS.md`、ignore、`.claude/settings.json` など。コミットの `Template-Rev` | 任意（雛形が更新されたとき） | `init-update.md` |
 
 ### 導入項目を足すとき
 
