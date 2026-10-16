@@ -1,5 +1,13 @@
 # kit-growth: 決定
 
+## 2026-10-16 `open` と `close` を畳む方向を決めた。`open` の Project の構造を `ai/` と `_noai/` に対応させた（ユーザーの承認）
+
+- 【汎用】`close` は、Project の分をルーム操作（`room close`）に移管済みなので、トピック専用に絞る。手順書 `close-hook.md` は削除し、`topics/AGENTS.md` に短い節で吸収する。理由（ユーザー）: トピックは完了条件が未定のまま進むことが多い。暫定の見直しは `review 消化` で Next Actions のように消化させる。未解決は `log.md` の Next Actions / Open Questions。ナレッジ化の判断は人。記録は `wrap`。残るのは削除だけ。実施はまだ（`log.md` の Next Actions 9）。
+- 【汎用】`open` はディレクトリ構造に限定する方針（ひな形・Area の一覧・コミットは `room open` の責務）。Project の構造を、`ai/` と `_noai/` への対応に書き直した（`7b2c515`）: 参考資料 → `ai/in/`、下書き → `ai/work/`、最終版と結論 → `ai/out/<成果物名>/`。`_noai/` は残す（理由: 追跡しない領域を一段で分けられ、type ごとの割り当てが要らない）。
+- 【汎用】基準文書の置き場は `ai/out/<成果物名>/` のまま。`doc` と `research` の基準文書の形は、最初の利用後に決める。
+- 範囲外（先送り）: リポジトリが正の `src` と remote で動くもの（フルスクラッチ前提）。AI が使えない間の引き継ぎ（人が `final/` で続ける場合の正本と戻り方。ユーザーが「別の話にする」）。`room close` の `close.md` の書き方の置き場（Next Actions 9 の③）。
+- 畳んだもの: なし（`open-hook.md` の `drafts/` `refs/` `sources/` `report.md` の旧記述を置き換えた）。`close-hook.md` は、①の実施で畳む。
+
 ## 2026-10-16 「変更」を `areas/` `projects/` に適用した。「中間成果物」を「基準文書」に改めた（ユーザーの承認）
 
 - 【汎用】語の衝突を解いた。`ai/work/` の「中間成果物」は作業中の下書き・使い捨てのスクリプト。変更の拠りどころ（成果物と分けた、AI が読めるテキスト）は「基準文書」とする。向き（新規は文書が正、抽出は成果物が正）によらず、変更の入力と検証の物差しになる役割で名づけた。`methods.md` の「変更」、`exmem/lessons/change-method.md`、`dev-deliverable-guide.md`（3文書が兼ねる、の1行）を更新。

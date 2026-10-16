@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-16（wrap: 「変更」の areas/projects への適用、基準文書への改称まで）
+更新: 2026-10-16（wrap: open の Project の構造を ai/ と _noai/ の対応に書き直すまで。close の整理は決定のみ）
 
 ## 状態
 
@@ -13,10 +13,12 @@
 - init の項目 5 に `resources_p/`（PC ローカルの resources。ignore、検索の対象に含める）を足した（`6074995`）。works には反映済み（works の `2c9ffea`。ローカルのみ）。残り: なし。範囲外の案は `decisions.md` の同日の項（別リポジトリでの管理）。
 
 - 「変更のやり方」(Must / Want。`methods.md` の「変更」、`change-method`)を足した(`266c361`)。中間成果物は「基準文書」に改称し、`areas/` `projects/` への適用を決めた(`40d8aa6`。置き場は `ai/out/<成果物名>/`、マスク後の語で書く)。
+- `open-hook.md` の「Project の構造」を、`ai/` と `_noai/` への対応に書き直した(`7b2c515`。type 別の置き場、基準文書の置き場)。`_noai/` は残す。`close` はトピック専用に畳む方針を決めた(未実施。Next Actions 9)。
 - init に `init 更新`（雛形の変更をワークスペースに反映。基点つきの3者マージ、`Template-Rev` トレーラー）を足し、ワークスペースの雛形に `README.md` を足した(`316840f` `8b74187`)。
 
 ## Next Actions
 
+9. `open` / `close` の整理の続き(ユーザーの方針、2026-10-16。`decisions.md`)。① `close-hook.md` を削除し、`topics/AGENTS.md` に「トピックを終わらせるとき」の節(`decisions.md` の【汎用】が反映済みか見る、ディレクトリと `topics-index.md` の行を削除、`[[リンク]]` の grep、記録は `wrap`)を足す。`hooks.md` の表と連鎖、`workflow-kit/README.md`、`review-hook.md` の参照を直す。② `open-hook.md` を構造と判断部分だけに縮める(ひな形・Area の一覧・コミットは `room open` の責務)。③ `room close` が要る `ai/out/close.md` の書き方の置き場を、`room-context.md` の `close` の行に移す。①〜③は一緒に差分で出して承認を取る。
 8. 「変更のやり方」(`methods.md` の「変更」、`exmem/lessons/change-method.md`)を、次の変更から使う。3回の `review` の後に、Must(基準文書3・変更6)が重すぎないか・足りないかを見て増減を決める。`areas/` `projects/` での適用は決定済み(2026-10-16。置き場は `ai/out/<成果物名>/`、マスク後の語で書く。`decisions.md`)。最初の業務で使って、置き場が合うかを見る。先送り: 新規作成のフックかモード、変更の伝播・軽重・廃止。
 
 7. `init 更新`（`init-update.md`）を PC1 と PC2 で一度ずつ使い（初回は README の追加も案に出るはず）、衝突の出方と、基点なし（初回）の2者の差分が読めるかを見る。works の既存の `AGENTS.md` は雛形の古い版から作られているので、初回は基点なしになる見込み。
@@ -35,4 +37,6 @@
 ## Open Questions
 
 - 場所: `init-update.md`（7.9k 字） / 問題: 同じ任意の章 `init-workspace.md`（2.6k）の約3倍で、`hook-matrix.md` の重さの基準でも大きい / 案: 使ってみて、手順 1・2 の確認コマンドを `init-update.md` から外せるか見る（`review` で比べる）。
+- 場所: `open-hook.md` の未決 / 問題: リポジトリが正の `src`、remote で動くものは、構造が新規のフルスクラッチ前提で、`ai/out/` に clone すると `restore` が止まる / 案: `repos/` に置いたまま、スナップショットと patch で受け渡す(未検証)。
+- 場所: `room.py` の `restore_project` / 問題: AI が使えない間に人が `_noai/final/` を直すと、次の AI の終了時の復元で無条件に上書きされる(別の話にする、とユーザー。2026-10-16) / 案: 正本の宣言、`raw/` → `mask` → `ai/in/` の戻り方の約束、上書き前の警告。
 - Area の担い手: topic-workflow の Q3 の会話で、AI は「kit の改善という Area は kit 本体・`improvements.md`・`review` が担う」と述べたが、本トピックの決定は「トピックが担う」。後者（ユーザーの合意）を採った。
