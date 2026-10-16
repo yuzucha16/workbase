@@ -44,4 +44,4 @@
 - 改行コードは LF（`.gitattributes` で統一）。
 - コミットメッセージは `[領域] 変更内容` の形式（例: `[exmem] ...`、`[workflow-kit] ...`、`[guides] ...`）。
 - `git add` はパスを指定する（パスなしの `git add -A` と `git add .` は使わない）。コミット・push の前に、`workflow-kit/docs-rules.md` の「コミットと push」を、そのセッションで読んでいなければ読む（身元・トレーラー・機密の検索もそこに従う）。
-- push はユーザーが行う（許可リストなし）。`--force`、`--no-verify`、`--amend`、`reset --hard`、`rebase`、`git add -f`（ignore 済みのファイルの追加）は使わない。
+- push はユーザーが行う（許可リストなし）。禁止のコマンド（`--force` など）は、`workflow-kit/docs-rules.md` の「しないこと」に従う（`settings.json` の deny が機械的に止める）。
