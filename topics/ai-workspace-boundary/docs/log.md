@@ -26,17 +26,18 @@
 0. `room restore` が、人が変えた `_noai/final/` を上書きせず止めるようにした（下の決定）。実機で、止まる・`--force` で通る・AI だけが変えたときは止まらないを確認する。
 1. 項目 1 → 2 → 4 の「実機の確認の残り」を進める。各 `notes/*-handover.md` の「PC で確認すること」を見る。
 2. 小さな不具合: マウントが別の `wsl.exe` から見えない件（対策を実装済み。`--no-launch` 中に別セッションから `/proc/mounts` と `ai/` が見えるか確認する）。
-3. リモート（ssh 先）の dev 用に、部屋専用の SSH 鍵を1本作って試す。対象ホストの権限を絞ったユーザーだけに登録し、`authorized_keys` の `command=` `from=` で絞る。1Password のエージェントは渡さない（interop を切ったままにする）。部屋に鍵を置くことになるので、結果を見て採否を `decisions.md` に書く。比較: `notes/dev-repo-remote/2026-10-16-comparison.md`（project files）。
+3. リモート（ssh 先）の dev 用に、部屋専用の SSH 鍵を1本作って試す（対象ホストの権限を絞ったユーザーだけに登録、`authorized_keys` の `command=` `from=` で絞る。1Password のエージェントは渡さず、interop は切ったまま）。結果を見て採否を `decisions.md` に書く（部屋に鍵を置く決定の変更になる）。
 
 ## 残りの確認・保留
 
+- dev の実装対象がリポジトリ・remote のとき（推奨は未承認）: 公開リポジトリから進める。clone は部屋の `~/tmp/<Project>/`、成果は基準文書と patch、マスク無しの Project は `room restore` を飛ばす（差分で承認を得る）。経緯と比較は `log-history.md` の 2026-10-16。
 - `room start` が `ai/ctx/area-README.md` を写して、部屋の AI が開始時に読めるか（実機。単体テストのみ）。Area の README の書き方（共通ルールの節）の指針は未整備。
 - `type: dev` の Project を1つ、`dev-deliverable-guide.md` どおりに `open` から1巡して、手順の過不足を測る。
 - 実環境の結果を AI に渡す受け取り口（人が置いた結果を `room` がマスクして `ai/in/` へ）を作るか。当面は、人が語を伏せる規約。
 - `room` の単体テストの `SharedPermissionTest` 2件が失敗する（元から。原因は未調査）。
 - `room restore` が `ai/out/<成果物>/` のサブディレクトリを復元できるか、`mapping.json` が無い・版が食い違うときに止まるか（実機）。
 - 文書2本（`guides/explain/ai-room-why.md`、`guides/howto/ai-room-setup.md`）のレビュー（「草稿（未レビュー）」の注記を外す）。
-- 後回し: `areas/dev-env/certs` の移し替え、対応表の保護、Obsidian の AI プラグイン、Codex・Copilot の設定、小さいファイルが多い処理の遅さ（規則で対処済み）。
+- 後回し: 経緯 `log-history.md` の 2026-10-16 を参照。
 
 ## 完了の条件
 
