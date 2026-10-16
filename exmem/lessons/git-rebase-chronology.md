@@ -10,7 +10,7 @@ aliases:
   - rebase の順序確認
   - 分岐した main の rebase
 created: 2026-10-06
-updated: 2026-10-06
+updated: 2026-10-16
 sources:
   - Claude Code conversation "分岐した main の rebase とコンフリクト解消" (2026-10-06)
   - "dotfiles の AGENTS.md の rebase の規則（2026-10-06 に確認）"
@@ -34,7 +34,7 @@ sources:
 
 - 根拠: 確認せずに rebase したあとで、人から順序の確認を求められた。結果は時系列に沿っていて問題なかったが、確認のタイミングが事後だった。
 - 却下案: 規則を残さず口頭の注意だけで済ませる（次のセッションのエージェントに引き継がれないため）。
-- 実物（2026-10-06 確認）: dotfiles の `AGENTS.md` の33行目に、同じ内容の規則がある。
+- 実物（2026-10-06 確認）: dotfiles の `AGENTS.md` に、同じ内容の規則がある。
 
 ## Facts
 

@@ -13,7 +13,7 @@ tags:
 aliases:
   - Zed ACP
 created: 2026-09-26
-updated: 2026-10-08
+updated: 2026-10-16
 sources:
   - Claude Code conversation "Claude Code のセッション履歴の復元" (2026-10-07。Zed のスレッドの復元)
   - Claude Code conversation "Zed の設定を最適化する（目の負担軽減・claude-acp・Obsidian 併用）" (2026-10-04)
@@ -208,7 +208,7 @@ Zed Thread History
   if ([Console]::IsOutputRedirected -or [Console]::IsInputRedirected) { return }
   ```
   該当行だけをコメントアウトしても開通したが、プロンプト装飾や `zoxide init` など他の対話向けの行が同じ問題を起こしうるので、恒久策はガード。
-- 実物との照合（2026-10-02）: `profile.ps1` の2行目にこのガードがある。`profile.ps1` はdotfilesへのシンボリックリンク（`C:\vault\repos\github.com\yuzucha16\dotfiles\profile.ps1`）。ガードの前のコメントは「日対話式」（「非対話式」の誤字）。`PredictionViewStyle` の行はガードの後ろにあり、そのまま残っている。
+- 実物との照合（2026-10-02）: `profile.ps1` の2行目にこのガードがある。`profile.ps1` は dotfiles へのシンボリックリンク（当時のパスは旧 `C:\vault\repos\...`）。ガードの前のコメントは「日対話式」（「非対話式」の誤字）。`PredictionViewStyle` の行はガードの後ろにあり、そのまま残っている。
 - 副作用: プロファイルでPATHや環境変数を設定していると、非対話起動では反映されない。環境変数として設定する。
 - 切り分けで誤誘導されやすかった点: `claude` コマンドが無いこと、Claude Desktopのみのインストール、`CLAUDE_CODE_GIT_BASH_PATH` の設定は、原因ではなかった。`claude-agent-acp` を手動起動しても入力待ちになるだけで、`session/new` まで進まず切り分けにならない。
 - 認証切れの場合はZedがログイン導線を出す。それが出ない「いきなりクラッシュ」は、プロセスの異常終了を疑う。

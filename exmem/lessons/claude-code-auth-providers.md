@@ -14,7 +14,7 @@ aliases:
   - apiKeyHelper
   - OAuth と API キーの切り替え
 created: 2026-10-11
-updated: 2026-10-15
+updated: 2026-10-16
 sources:
   - Claude Code conversation "Claude Code の認証経路とモデル指定" (2026-10-08)
   - Claude Code conversation "Bedrock 設定の生成と OAuth への切り替え" (2026-10-08)
@@ -96,8 +96,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 
 ### この PC の実物（確認: 2026-10-11、根拠: ファイルと環境変数の取得。値は出していない）
 
-- dotfiles の `windows/claude/` に、API キーの復号用 `claude-api-key.{cmd,ps1}`（DPAPI）、Bedrock の生成用 `claude-bedrock-setup.{cmd,ps1}`、`settings-api.json`、ACP 用 `claude-acp-api.{cmd,ps1}` がある。試験は `tests/windows/test_claude_bedrock_setup.ps1` と `test_claude_launchers.ps1`。
-- `~/.claude/settings-api.json` は dotfiles の `windows/claude/settings-api.json` へのシンボリックリンクで、`apiKeyHelper`、`model`（`sonnet`）、`env` のモデルのピン留め（Opus `claude-opus-5-5`、Sonnet `claude-sonnet-5-5`、Haiku `claude-haiku-4-5`）を持つ。Bedrock の設定は `~/.claude/settings-bedrock.json`（この PC 専用。リポジトリには置かない。秘密を含まない）に生成される。
+- 起動関数と設定ファイルの実体（`claude-api-key`、`claude-bedrock-setup`、`settings-api.json`、ACP 用のランチャー）と試験は、dotfiles の `windows/claude/README.md` が正（2026-10-16 に、ファイル一覧とモデルのピン留めの写しを削った）。`settings-api.json` は `~/.claude/` にリンクされ、`apiKeyHelper`、`model`、`env` のモデルのピン留めを持つ。Bedrock の設定は `~/.claude/settings-bedrock.json`（この PC 専用。リポジトリには置かない。秘密を含まない）に生成される。
 - PowerShell のプロファイルの起動関数は `claude-api`（`claude --settings "$HOME\.claude\settings-api.json"`）、`claude-bedrock`、`claude-oauth`、`claude-pick`。
 - 共通の `~/.claude/settings.json` のキーは `theme` と `permissions` だけで、`env`・`apiKeyHelper` は無い。ユーザー環境変数に `ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_USE_BEDROCK` は無い。`~/.claude/settings-api-key.dpapi` と `.credentials.json` がある。
 - Zed 経由の Claude Code（ACP）のプロセスの環境に、値が空の `ANTHROPIC_API_KEY` が存在する（確認: 2026-10-08、根拠: `Get-ChildItem Env:` の実行。転記元の記録で、再確認は未実施）。

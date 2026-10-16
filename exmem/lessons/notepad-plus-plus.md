@@ -11,7 +11,7 @@ aliases:
   - Notepad++の設定
   - Notepad++ config.xml
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-16
 sources:
   - Claude Code conversation "Notepad++ 設定の把握・最適化と config.xml の管理方式" (2026-10-04)
   - Claude Code conversation "dotfiles 整理（不要スクリプト削除と Notepad++ config の雛形方式）" (2026-10-04)
@@ -64,7 +64,7 @@ Notepad++ は「なんでもメモ」と設定ファイルの簡易編集に使�
 - `scoop update` の影響: `config.xml` は引き継がれる。`shortcuts.xml` は新しい版のフォルダに persist 側の古い標準版への hardlink が作られ、リポジトリへの symlink は外れる。`post_install` が同梱プラグイン（`plugins.original`）を `plugins` にコピーし直すので、削除したプラグインは復活する。`contextMenu.xml` は標準に戻る。
 - フォント（PlemolJP Console NF Light、12pt）は、設定ではなくテーマ内の「Global override」で定義されている。`config.xml` の `globalOverride` は `font=yes`、`fontSize=yes`（[[fonts]]）。
 - `Gruvbox light medium.xml` の差分は改行コードだけだった。Notepad++ がリンク経由で書き換えた可能性がある。
-- 2026-10-04 の dotfiles の実物（`windows/notepadpp/`）: `config.min.xml` と `Gruvbox dark medium.xml` のみ。`manifests/links.map` の Notepad++ の行は Gruvbox dark の1つだけ。`20_apps.bat` の雛形コピーは、このPCで動作確認済み。
+- dotfiles の実物（`windows/notepadpp/`、`links.map`、`20_apps.bat` の雛形コピー）は dotfiles が正。2026-10-04 に、このPCで雛形コピーの動作を確認した。
 
 仮説（未確認）:
 

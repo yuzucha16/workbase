@@ -13,7 +13,7 @@ aliases:
   - Claude Codeの履歴の保存場所
   - Claudeチャット履歴の移行
 created: 2026-10-01
-updated: 2026-10-08
+updated: 2026-10-16
 sources:
   - Claude Code conversation "Claude Code のセッション履歴の復元" (2026-10-07。「履歴の移行と再開」)
   - Claude (Claude Code via Zed ACP) conversation "Claudeチャット履歴の保存場所" (2026-10-01)
@@ -145,7 +145,7 @@ Claude Codeを起動して `projects\` に別の名前のフォルダができ�
 
 ## Open Questions
 
-- `~/.claude` の手書き設定のうち、`settings.json` は管理済み（dotfilesの `home/.claude/settings.json` へリンク。WSL・Windowsとも適用済み、2026-10-04 に確認。[[claude-code-permissions]]）。`CLAUDE.md` と `projects\<プロジェクト名>\memory\` をdotfilesで管理するかは未決。
+- `~/.claude` の手書き設定のうち、`settings.json` は管理済み（dotfiles が管理。WSL・Windowsとも適用済み、2026-10-04 に確認。[[claude-code-permissions]]）。`CLAUDE.md` と `projects\<プロジェクト名>\memory\` をdotfilesで管理するかは未決。
 - Claude Desktop の Code 機能から、ローカルの履歴が見えるか。
 - 解決（2026-10-07）: `claude --resume` が通らない原因は何か。picker が SDK 経由のセッションを除外していたことと、`cwd` が旧パスだったこと（「履歴の移行と再開」）。
 
