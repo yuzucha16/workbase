@@ -189,26 +189,14 @@ sudo apt install fonts-noto-cjk fonts-ipafont
 
 ## 7. リポジトリ取得
 
-dotfiles を **所定のパスに** clone する。**リポジトリの公開・非公開は未定**（2026-10-06 時点は非公開）。状況に合わせて、次の A（公開）か B（非公開）に読み替える。運用が決まったら、使わない方を削除する。
-
-**A. 公開リポジトリの場合**（SSH 鍵もサインインも不要。HTTPS で取れる）
+dotfiles を **所定のパスに** clone する。リポジトリは公開なので、SSH 鍵もサインインも不要（HTTPS で取れる）。
 
 ```shell
 sudo apt install -y git curl
 git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
 ```
 
-**B. 非公開リポジトリの場合**（clone に認証が要る。`gh` でサインインする）
-
-```shell
-sudo apt install -y git gh curl
-gh auth login          # GitHub.com → HTTPS → ブラウザ（ワンタイムコード）の順に選ぶ
-gh auth setup-git      # git が gh の認証を使うようにする
-git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
-```
-
-- B は、SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git ~/works/repos/github.com/yuzucha16/dotfiles`。鍵の登録は「10. SSH と GitHub」）。
-- B の `gh auth login` から clone までは、新しい Linux の実機では未確認（Ubuntu 24.04 の apt に `gh` 2.45.0 があることだけ確認済み）。
+- SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git ~/works/repos/github.com/yuzucha16/dotfiles`。鍵の登録は「10. SSH と GitHub」）。
 - `ghq` のルート（`GHQ_ROOT`）は、ネイティブ Linux では `~/works/repos`（`home/.profile` の既定。Windows の `%USERPROFILE%\works\repos` に対応する）。WSL では、WSL 自身の `~/works/repos`（Windows 側を共有せず、`/mnt/c` の上に置かない）
 - git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。対話で作るスクリプトが `scripts/linux/11_git_identity.sh`（次の章）。手で書くなら:
 
@@ -265,7 +253,7 @@ GUI エディタ（Xfce のテキストエディタ、gedit など）で開く�
 
 ## 10. SSH と GitHub
 
-push する場合に設定する（読み取りだけなら不要。ただし非公開リポジトリは、読み取り（clone）にも認証が要る。「7. B」）。
+push する場合に設定する（読み取りだけなら不要）。
 
 ```shell
 ssh-keygen -t ed25519 -C "<comment>"      # 保存先は既定のまま（~/.ssh/id_ed25519）
