@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-16
+
+- works、resources、dotfiles の `AGENTS.md`・README・`docs/log.md` の規則を揃える作業をした（フェーズ1〜3。一律に kit を正とはしない方針で、明らかなずれは事前にユーザーへ確認した）。kit の変更: `docs-rules.md` を読む時機の統一、階層化の規則、機密の項の畳み、workspace 雛形の写しの除去、`review` の入力 6（機密の点検）と入力 8（リポジトリ間の整合）。判断は `docs/decisions.md` の「2026-10-16」。dotfiles 側は README を 34.8KB から 16KB に分割し、`log.md` を 17.9KB から 3.8KB に縮めた。コミット: resources `9c87f10` `2156d92` `2a35149` `3cdeeb1` `286d714`、dotfiles `cc20299` `71e326d` `000125e` `a404711` `293c0a3`、works `142c226`。遠回りの答え: なし。
+
 ### 2026-10-15
 
 - cwd の明文化（topic-workflow の TODO）を、ユーザーがカードで5問選んで決めた（起動場所、読む順番、上の階層からの続き、部屋、`wrap` の書き込み先）。kit 5ファイルを変え（`4997f7a`）、判断は `docs/decisions.md` の「2026-10-15 cwd を明文化した」。
