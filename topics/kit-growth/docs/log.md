@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-15
+更新: 2026-10-16
 
 ## 状態
 
@@ -8,6 +8,7 @@
 - 自動採用（`wrap-hook.md` の節）は、2026-10-15 に畳んだ（判定を前倒し）。
 - cwd（起動する場所）を明文化した（`4997f7a`）: `AGENTS.md` の単位で起動、上の階層からの「続き」は AI が読みに行く、読む順番は 窓口 → `log.md`、部屋は例外、`wrap` は作業した単位の `docs/` を既定に。
 - トークン節約（会話を切る・出力を絞る）の対応を kit と exmem に入れた。`review` が星取り表 `workflow-kit/token-matrix.md`（4観点）で自己採点する。基準値は 切る 16・絞る 24・予算 38・外部化 25、合計 103（`6bd1a2a`）。初回の採点し直しも 103（`70b8e22`）。
+- `again`（言い直し）と `gap`（漏れ）の記録を廃止した（2026-10-16、`139091c`）。言い直しがほぼ起きず、`start` の利用も減ったため。`goal_change` は残した。topic-workflow の kit 取り込みの時機は要再判断（`topics/topic-workflow/topic-workflow-next-steps.md` の5）。
 - `wrap` の空回りを減らした: workbase の `AGENTS.md` に「wrap の記録先」（トピック外の kit 等の変更は kit-growth の `docs/`、遠回りの「少し」「大きく」は `inbox.md`）を定め、`wrap-hook.md` の手順1がリポジトリの既定の対象を見るようにした（ユーザーの選択。案3「依頼文だけ」は見送り）。
 
 ## Next Actions
