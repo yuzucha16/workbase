@@ -10,7 +10,7 @@
 | 2 | 共有知を部屋へ | 済 | 1〜4 済。残り: 5 AI が `wrap` を通せるか。許可の確認（`Read(~/shared/**)` 追加済み）が出なくなるか | PC |
 | 3 | フックの整理 | 済（文書・`room readme`） | 残り: `room init`、`open`〜`close` の1巡 | PC |
 | 4 | `stock` の回収 | 済 | ダミーで済。残り: 部屋の AI が実際に下書きを書く通し | PC |
-| 5 | 部屋の運用 | `room init` 済み（単体テストのみ）。`room reap` 済み（単体テストのみ）。未: `room intake` | `room init` を使い捨ての Area で実機に通す（既存の部屋には触れない） | PC（保留は解除済み。構造の議論は 7b2c515 で合流。案は `notes/ai-room-ops-handover.md` の 5-a〜5-d） |
+| 5 | 部屋の運用 | `room init` 済み（単体テストのみ）。`room reap` 済み（単体テストのみ）。`room intake` は作らない（ユーザー承認 2026-10-16。実 Project の1巡で、人が語を伏せて貼る規約が回らないと分かってから作る）。未: なし | `room init` を使い捨ての Area で実機に通す（既存の部屋には触れない） | PC（保留は解除済み。構造の議論は 7b2c515 で合流。案は `notes/ai-room-ops-handover.md` の 5-a〜5-d） |
 | 6 | Area の切り方 | 済 | — | — |
 | 7 | 雛形・記録 | 済 | 残り: Vault 側 deny の書式 `Read(./projects/**)` が Windows で効くか | PC |
 | 8 | 実 Project での1巡 | — | 未 | PC |
