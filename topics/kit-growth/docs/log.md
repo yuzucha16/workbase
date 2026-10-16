@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-16（「調査のやり方1」と start 調査を足した。room の type に dev-env と dev-test を足した記録を含む）
+更新: 2026-10-16（wrap: 「調査のやり方1」と start 調査を足し、新しい会話で4回、品質を確かめた。確定版の置き場は guides/explain）
 
 ## 状態
 
@@ -16,7 +16,7 @@
 - `open-hook.md` の「Project の構造」を、`ai/` と `_noai/` への対応に書き直した(`7b2c515`。type 別の置き場、基準文書の置き場)。`_noai/` は残す。`close-hook.md` を削除し、トピックの終了は `topics/AGENTS.md` の節に、Project の終了の判断(`ai/out/close.md`)は `room-context.md` に移し、`open-hook.md` を判断部分に縮めた(`c86b4d6`)。
 - init に `init 更新`（雛形の変更をワークスペースに反映。基点つきの3者マージ、`Template-Rev` トレーラー）を足し、ワークスペースの雛形に `README.md` を足した(`316840f` `8b74187`)。
 - room の type に `dev-env`（主にテスト環境）と `dev-test` を足した(`ccfe968`)。`dev` の子でなく独立の type。`dev-env` は「環境の置き場」を立ち上げで聞く。`remote` という type の案は未決。
-- 「調査のやり方1」(Must / Want。`methods.md` の「調査」、`research-method`、`start 調査`)を足した。調査 = 仕込み + 調査プロセス。問いと章立てのひな形は Claude スキルの調査から取った。
+- 「調査のやり方1」(Must / Want。`methods.md` の「調査」、`research-method`、`start 調査`)を足した(`55438b6`)。新しい会話で4回実行して基準と比べ、手順書を直した(`fa18e20` `fa7531c` `9297023` `f628ab9` `608be79`)。確定版の置き場は `guides/explain/<主題>.md`(`a78ef3b`)。
 - topic-workflow を取り込んで close した。トピックの型の正本は `topics/AGENTS.md`（docs-rules に節は足さない）。`wrap` の依頼文は「<単位> の続き」の1行。
 
 ## Next Actions
@@ -43,3 +43,5 @@
 - 場所: `room.py` の `restore_project` / 問題: AI が使えない間に人が `_noai/final/` を直すと、次の AI の終了時の復元で無条件に上書きされる(別の話にする、とユーザー。2026-10-16) / 案: 正本の宣言、`raw/` → `mask` → `ai/in/` の戻り方の約束、上書き前の警告。
 - 場所: `review-hook.md` の消化モード（60行目）/ 問題: 対象が「呼び出し元の `docs/log.md`」で、「<名前> の続き」で読みに行った単位を含むか書かれていない（`wrap` は明記済み）。「続き」なしで言うとリポジトリ直下の `docs/log.md` と読まれうる / 案: 対象を「このセッションで作業した単位の `docs/log.md`」と1行で明記する（`review 消化` で承認を取る）。
 - Area の担い手: topic-workflow の Q3 の会話で、AI は「kit の改善という Area は kit 本体・`improvements.md`・`review` が担う」と述べたが、本トピックの決定は「トピックが担う」。後者（ユーザーの合意）を採った。
+- 場所: `start-hook.md` / 問題: 12,870 字で基準の +19%。次に足すと +20% を超える / 案: 次に足すとき、引数つきモード(解決・改善・調査)の共通の手順を1つの表にまとめて畳む
+- 場所: 調査のやり方1の品質チェック / 問題: 4回目の効果が、具体例の条件の言い切りと3回目の直しで分けられず、実行も1回 / 案: 次の調査で、条件を変えて1回ずつ比べる(`review` の点検 7 に載せる)
