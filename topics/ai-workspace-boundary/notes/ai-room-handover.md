@@ -3,11 +3,11 @@
 - **これは最初の引き継ぎ（2026-10-12 時点の背景と決定）。最新の入口は [[ai-room-start-here]]、状態の正本は `docs/log.md`。**
 - 作成: 2026-10-12（モバイルのセッションでの検討の終了時）。
 - 読む順: この文書 → `docs/log.md`（決定は `docs/decisions.md`、経緯は `docs/log-history.md`） → 必要なら [[ai-room-design]]（詳細）と [[ai-boundary-design]]（初期の案と、その見直し）。
-- 状態: 設計の叩き台まで。**リポジトリにも、ワークスペース（Vault のトップ）にも、まだ何も反映していない**。公式文書の調査はしたが、実機での確認はしていない（→ 2026-10-12 に PC で S1〜S6 を実機で確認し、すべて合格。結果は `docs/log.md`（決定は `docs/decisions.md`、経緯は `docs/log-history.md`） の「実測の結果」。以下の「公式文書で確認した事実」の節は、実測で裏づけられた）。
+- 状態: 設計の叩き台まで。**リポジトリにも、ワークスペース（ルート）にも、まだ何も反映していない**。公式文書の調査はしたが、実機での確認はしていない（→ 2026-10-12 に PC で S1〜S6 を実機で確認し、すべて合格。結果は `docs/log.md`（決定は `docs/decisions.md`、経緯は `docs/log-history.md`） の「実測の結果」。以下の「公式文書で確認した事実」の節は、実測で裏づけられた）。
 
 ## 課題
 
-GitHub への公開・非公開の境界は、workbase とそれ以外の1本だけ。AI は Vault のトップ（`$HOME\works`）で起動するので、非公開側の `areas/` `projects/` `archives/` を全部読める。セキュリティの懸念と、見せたくないファイルが Vault の外に点在して作業効率が落ちた問題を、同時に解きたい。
+GitHub への公開・非公開の境界は、workbase とそれ以外の1本だけ。AI はワークスペースのルートで起動するので、非公開側の `areas/` `projects/` `archives/` を全部読める。セキュリティの懸念と、見せたくないファイルが Vault の外に点在して作業効率が落ちた問題を、同時に解きたい。
 
 ## 前提（ユーザーが提示）
 
@@ -64,7 +64,7 @@ GitHub への公開・非公開の境界は、workbase とそれ以外の1本だ
 
 ## 既存のリポジトリとの関係（調べた範囲）
 
-- workbase にあるのは、フックの手順書（`workflow-kit/`）とナレッジ。Vault のトップ（`areas/` `projects/` `archives/` `docs/`）は PC ごとのローカルで、workbase の外にある。手順書 `open-hook.md` / `close-hook.md` / `wrap-hook.md` / `start-hook.md` と `hooks.md`（呼び出し表の正本）、ワークスペースの雛形 `workflow-kit/templates/workspace/`（`AGENTS.md`、`gitignore.template`、`ignore.template`）が、変更の対象になる。
+- workbase にあるのは、フックの手順書（`workflow-kit/`）とナレッジ。ワークスペースのルート（`areas/` `projects/` `archives/` `docs/`）は PC ごとのローカルで、workbase の外にある。手順書 `open-hook.md` / `close-hook.md` / `wrap-hook.md` / `start-hook.md` と `hooks.md`（呼び出し表の正本）、ワークスペースの雛形 `workflow-kit/templates/workspace/`（`AGENTS.md`、`gitignore.template`、`ignore.template`）が、変更の対象になる。
 - 現在の Project は `docs/` を Project 直下に持つ。P3 では `ai/docs/` に移る。open / close / wrap の「`docs/` の場所」を直す必要がある。
 - `close` は `archives/` への `git mv` を、ディレクトリごとだと `Permission denied` で失敗することがあり、ファイル単位で行う（`close-hook.md` の実測）。マウント中のフォルダの移動は、先にアンマウントする。
 - 共有側（workbase）のルール: ローカルのファイルへ `[[リンク]]` を張らない。機密・会社固有の情報を書かない。コミットは `[領域] 変更内容`。

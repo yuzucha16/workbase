@@ -1,6 +1,6 @@
 # 手順: workbase と dotfiles の切り分け（PC）
 
-状態と要判断は `docs/log.md`、方針は `docs/decisions.md`、ファイルごとの仕分けは [[dotfiles-boundary-inventory]]。ここは PC のセッションで行う手順だけ（番号は `log.md` の項目と同じ）。dotfiles と workbase の両方を開けるところ（Vault のトップか `$HOME\works\repos`）で作業する。
+状態と要判断は `docs/log.md`、方針は `docs/decisions.md`、ファイルごとの仕分けは [[dotfiles-boundary-inventory]]。ここは PC のセッションで行う手順だけ（番号は `log.md` の項目と同じ）。dotfiles と workbase の両方を開けるところ（ワークスペースのルートか `$HOME\works\repos`）で作業する。
 
 ## 2. dotfiles 側の確認（読むだけ）
 
