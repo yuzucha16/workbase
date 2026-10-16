@@ -6,7 +6,7 @@
 - 【汎用】`open` はディレクトリ構造に限定する方針（ひな形・Area の一覧・コミットは `room open` の責務）。Project の構造を、`ai/` と `_noai/` への対応に書き直した（`7b2c515`）: 参考資料 → `ai/in/`、下書き → `ai/work/`、最終版と結論 → `ai/out/<成果物名>/`。`_noai/` は残す（理由: 追跡しない領域を一段で分けられ、type ごとの割り当てが要らない）。
 - 【汎用】基準文書の置き場は `ai/out/<成果物名>/` のまま。`doc` と `research` の基準文書の形は、最初の利用後に決める。
 - 範囲外（先送り）: リポジトリが正の `src` と remote で動くもの（フルスクラッチ前提）。AI が使えない間の引き継ぎ（人が `final/` で続ける場合の正本と戻り方。ユーザーが「別の話にする」）。`room close` の `close.md` の書き方の置き場（Next Actions 9 の③）。
-- 畳んだもの: なし（`open-hook.md` の `drafts/` `refs/` `sources/` `report.md` の旧記述を置き換えた）。`close-hook.md` は、①の実施で畳む。
+- 畳んだもの: なし（`open-hook.md` の `drafts/` `refs/` `sources/` `report.md` の旧記述を置き換えた）。`close-hook.md` は削除した（`c86b4d6`。ユーザーの「反映をお願い」を承認とした）。実測のメモ（ディレクトリごとの `git mv` が `Permission denied`）は、`room close` がファイル単位で移すので、手順書には残さない。`hooks.md` の連鎖と表、`workflow-kit/README.md`、`hook-common.md`、`hook-matrix.md`（`close` の列と行を削除、`open` の基準を 4,687 字に下げた）も合わせた。
 
 ## 2026-10-16 「変更」を `areas/` `projects/` に適用した。「中間成果物」を「基準文書」に改めた（ユーザーの承認）
 
