@@ -3,6 +3,9 @@
 # 共有ナレッジは別リポジトリ（workbase）の clone。このリポジトリでは追跡しない
 /resources/
 
+# PC ローカルの resources。この PC だけの情報を置く（追跡しない）
+/resources_p/
+
 # ghq の root（clone したリポジトリ。それぞれが別の git リポジトリ）
 /repos/
 

@@ -66,10 +66,10 @@
 生成物:
 
 - `.gitignore`: `templates/workspace/gitignore.template` のまま。
-- `.ignore`: `templates/workspace/ignore.template` のまま（`!/resources/`）。
+- `.ignore`: `templates/workspace/ignore.template` のまま（`!/resources/`、`!/resources_p/`）。
 - `.gitattributes`: `templates/workspace/gitattributes.template` のまま（LF 統一）。
 - `AGENTS.md`: `templates/workspace/AGENTS.md` の `< >` を埋めたもの。冒頭は「業務用 PC の作業場。…」、remote は「なし」、固有ルールの1項目目は「このリポジトリに remote を足さない。push しない（…`.git/hooks/pre-push` で止めてある）」。「共通ルール」の節は雛形のまま。固有ルールの最後は「なし」。
-- `CLAUDE.md`（`@AGENTS.md`）、`docs/log.md`、`docs/decisions.md`、`areas/.gitkeep`、`projects/.gitkeep`、`archives/.gitkeep`。
+- `CLAUDE.md`（`@AGENTS.md`）、`docs/log.md`、`docs/decisions.md`、`areas/.gitkeep`、`projects/.gitkeep`、`archives/.gitkeep`。空の `resources_p/`（`.gitkeep` なし。追跡しない）。
 - `git init` 済み。`git remote -v` は空。`.git/hooks/pre-push` がある。初回コミット済み（agent の身元とトレーラー3行つき。生成物の10ファイルだけ（`docs/` の2ファイルを含む）。`areas/` `projects/` `archives/` の既存の中身は追跡していない）。
 
 報告の例:
