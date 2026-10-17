@@ -24,7 +24,6 @@
 `wrap`（`workflow-kit/wrap-hook.md`）は次を使う。
 
 - **既定の対象**: トピックの続きで作業したときは、そのトピックの `docs/`。トピックの外で作業したときは、このリポジトリ直下の `docs/`。`workflow-kit/` `exmem/` `guides/` などの kit 改善の記録は、`topics/kit-growth/docs/`（kit の改善の受け皿）。
-- **遠回りの答え**: 「少し」「大きく」なら、`topics/kit-growth/inbox.md` の「未選別」に、日付と原因を1行で足す。「なし」は記録しない。
 
 ## 共有の範囲
 

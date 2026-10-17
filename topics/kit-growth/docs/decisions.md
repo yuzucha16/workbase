@@ -1,5 +1,12 @@
 # kit-growth: 決定
 
+## 2026-10-17 `wrap` の「終了時の1問」（今日の遠回り）を廃止した（ユーザーの決定）
+
+- 【汎用】出どころは 2026-10-08 の案E（`review` を「負担を減らしているか」を見る場に置き直したときの入力）。廃止の根拠: 答えはほぼ毎回「なし」で、同時期に撤回が起きていた（`exmem/lessons/user-thinking-habits.md`）。振り返りでも、AI が数えた手戻り14件に対し自己申告は「なし4・少し1・未回答1」だった（`retrospective-method.md`）。`review` の入力1が読む `sessions` の `detour` は、workbase に記録先が無かった。
+- 【汎用】`wrap` の報告の項目、`AGENTS.md` の「遠回りの答え」、`hook-common.md` の記録の表の行を削除した。`review` の入力1は「遠回りの事例」（inbox にユーザーが足した行と、Open Questions の改善案の行）に置き換え、番号は変えていない。
+- 【汎用】「前回の `review` から7日以上で勧める」は、`wrap` では報告の「ユーザーに求めること」の追記に移した。前回の日付は、`start` と同じく呼び出し元の見直し記録（`reviews`）の最終行。workbase には `reviews` の記録先が未定義で、全フック共通でもない（勧めるのは `start` と `wrap` だけ）。
+- 取り下げ: Next Actions 12 の「問いの前に AI が撤回の回数を数えて示す」。問いが無くなるため。
+
 ## 2026-10-17 改善案を報告から外して Open Questions に残し、`integrate` も push し、共通の項目を `hook-common.md` に一本化した（ユーザーの決定。直前の項目の続き）
 
 - 【汎用】改善案は報告に載せない。迷った点は `場所 / 問題 / 案` の1行にして `docs/log.md` の Open Questions に足す（`wrap` と同じ流れに全フックを揃えた）。理由: セッションを短くするため。承認は `review 消化` で取るので、「ユーザーの承認なしに kit を書き換えない」は変わらない。規則との整合は確認済み（`hook-common.md` の「承認」「改善」、`docs-rules.md` の log.md の書式）。
