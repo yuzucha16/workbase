@@ -71,6 +71,7 @@ updated: 2026-10-16
 - [[shell-script-testing-wsl]]: WSL でシェルスクリプトを試験する
 - [[terminal-cursor-blink]]: ターミナルのカーソル点滅を止める（DECSCUSR）
 - [[user-manual]]: ユーザー（ee）の取扱説明書: 口癖から読む思考・行動パターン
+- [[user-thinking-habits]]: ユーザー（ee）の思考の癖、その悪影響、AI の補正策（取扱説明書の根拠）
 - [[vscode-workspace]]: VS Codeの拡張機能とWorkspace運用
 - [[windows-cli-pitfalls]]: Windows の PowerShell・バッチ・git 操作の落とし穴
 - [[workflow-kit]]: 作業ログとナレッジ化フックの共通機能（workflow-kit）
