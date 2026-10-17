@@ -1,12 +1,12 @@
 # init: 雛形の反映（`init 更新`）
 
-`init-hook.md` のモード。`init 更新`（別名「雛形を反映して」）と言われたときだけ読む。項目 5 で作ったワークスペースのトップに、その後の雛形（`templates/workspace/`）の変更を反映する。入力、自己点検、報告の型は、下に書いたもの以外は `init-hook.md` に従う。
+`init-hook.md` のモード。`init 更新`（別名「雛形を反映して」）と言われたときだけ読む。項目 5 で作った works のトップに、その後の雛形（`templates/workspace/`）の変更を反映する。入力、自己点検、報告の型は、下に書いたもの以外は `init-hook.md` に従う。
 
 前に反映した版の雛形（**基点**）から、新しい雛形（`resources/` の HEAD）への変更だけを、ローカルのファイルに当てる（3者マージ）。ローカルで埋めた行や足した行は、そのまま残る。まず案を出し、承認を得てから書く（`init-hook.md` の「既存のファイルは、上書きしない」の具体化）。
 
 ## 場所と対象
 
-- 起動する場所は、ワークスペースのトップ（`AGENTS.md` と `resources/` がある単位）。`resources/` の中で言われたときは、対象をワークスペースのトップ（`resources/` の親）とする。
+- 起動する場所は、works のトップ（`AGENTS.md` と `resources/` がある単位）。`resources/` の中で言われたときは、対象を works のトップ（`resources/` の親）とする。
 - 対象は、次の表のファイルだけ。`docs/` の中身、`areas/` `projects/` `archives/`、`_noai/`、`resources/`、`resources_p/` の中身、`.obsidian` は、読まない・書かない。
 - `resources/` の pull はしない（人が行う）。push もしない。
 
@@ -27,11 +27,11 @@
 1. **確認する**（変更しない）。
    - `resources/` に未コミットの変更が無い（`git -C resources status --porcelain` が空）。あれば止まる（その状態の雛形は、後から再現できない）。
    - 新しい版: `git -C resources rev-parse --short HEAD`。
-   - 基点: ワークスペースのコミットの、最新の `Template-Rev` トレーラー（`git log --format='%(trailers:key=Template-Rev,valueonly)' | grep -m1 .`）。無ければ、最初のコミットの `Kit-Rev`（`git log --reverse --format='%(trailers:key=Kit-Rev,valueonly)' | grep -m1 .`）を候補にする。末尾が `-dirty` の候補や、`resources/` に無いハッシュ（`git -C resources cat-file -e <基点>^{commit}` が失敗）は使わない。
+   - 基点: works のコミットの、最新の `Template-Rev` トレーラー（`git log --format='%(trailers:key=Template-Rev,valueonly)' | grep -m1 .`）。無ければ、最初のコミットの `Kit-Rev`（`git log --reverse --format='%(trailers:key=Kit-Rev,valueonly)' | grep -m1 .`）を候補にする。末尾が `-dirty` の候補や、`resources/` に無いハッシュ（`git -C resources cat-file -e <基点>^{commit}` が失敗）は使わない。
    - 基点 = 新しい版なら、「反映するものなし」と報告して終わる。
    - 雛形の変更の一覧: `git -C resources diff --stat <基点> HEAD -- workflow-kit/templates/workspace/ workflow-kit/init-workspace.md`。上の表に無い雛形が増えていたら、止まって報告する（表を先に直す）。`init-workspace.md` の変更は、ファイル以外の手順（ディレクトリの作成など）の変更なので、手順 4 で拾う。
    - 対象のローカルのファイルに、未コミットの変更が無い（`git status --porcelain -- <ファイル>`）。あれば、そのファイルは案だけ出して書かない。
-2. **案を作る**（変更しない）。作業用のファイルは、ワークスペースの外（OS の一時ディレクトリ）に置き、終わったら消す。
+2. **案を作る**（変更しない）。作業用のファイルは、works の外（OS の一時ディレクトリ）に置き、終わったら消す。
    - 基点の雛形と新しい雛形を取り出す（`git -C resources show <版>:workflow-kit/templates/workspace/<雛形>`）。
    - 3者マージ: `git merge-file -p <ローカル> <基点の雛形> <新しい雛形>`（ローカルを書き換えない）。終了コードが衝突の数。結果とローカルの差分（`diff -u`）が、そのファイルの案。
    - 衝突した箇所は、自動で決めない。両方を示して、ユーザーに選んでもらう。
@@ -40,7 +40,7 @@
 4. **足りない生成物を確かめる。** 新しい `init-workspace.md` の「生成する」のうち、ファイル以外（`areas/` などの `.gitkeep`、`resources_p/` など）で、無いものを案に足す。既存は上書きしない。
 5. **案を報告して、承認を待つ。** ファイルごとに、差分、衝突、消さなかった `deny` を示す。承認の前に書かない。
 6. **承認されたものを書く。** 承認されなかったファイルは、そのままにする。
-7. **自己点検を通す**（下の節と、`init-hook.md` の自己点検の「ワークスペースを生成した場合」のうち、ファイルの有無と ignore の確認）。
+7. **自己点検を通す**（下の節と、`init-hook.md` の自己点検の「works を生成した場合」のうち、ファイルの有無と ignore の確認）。
 8. **コミットする**（`docs-rules.md` の「コミットと push」に従う）。追加するのは、手順 6 で書いた追跡対象のファイルだけ（パス指定）。メッセージは `[works] init 更新: 雛形を <基点>..<新しい版> に合わせる`。トレーラーは、通常の2行に加えて `Template-Rev: <新しい版>`（次回の基点になる）。承認されたファイルが1つも無いときはコミットしない（`Template-Rev` も残らないので、次回も同じ基点から案が出る）。一部だけ承認されたときも、`Template-Rev` は新しい版にし、承認されなかった変更を報告に残す（次回の案には出ないため）。
 
 ## 報告の型

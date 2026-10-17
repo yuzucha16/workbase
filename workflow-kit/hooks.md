@@ -4,7 +4,7 @@
 
 | 合言葉 | 別名（日本語） | 読むファイル | 寿命・時機 | 要点 |
 |---|---|---|---|---|
-| `init` | 「workflowを導入して」 | `init-hook.md` | ワークスペース | 作業ディレクトリへの導入の入口（Vault のトップの生成を含む）。`init 更新`（「雛形を反映して」）で、雛形の変更をワークスペースに反映する |
+| `init` | 「workflowを導入して」 | `init-hook.md` | works | 作業ディレクトリへの導入の入口（works のトップの生成を含む）。`init 更新`（「雛形を反映して」）で、雛形の変更を works に反映する |
 | `open` | | `open-hook.md` | Project の開始 | 目的と完了条件を聞いて README 本文を下書きし、`start` を呼ぶ。Project の構造の表は `project-structure.md`（ひな形は `room open`） |
 | `start` | 「作業を始めて」 | `start-hook.md` | セッションの開始 | 開始インタビュー。`start 解決` / `start 改善` / `start 調査` で、進め方を選んで始める |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push を、順序を固定して行う |
@@ -33,7 +33,7 @@
 
 2026-10-17 ユーザーの決定（r/w 属性での管理）。フックを実行できる場所は、**この表だけが正本**（各フックと `hook-matrix.md` に、実行できる場所を写さない）。
 
-- **領域** は4つ: works（ワークスペース。Vault 側の AI が扱うのは自分の `docs/` などの管理だけで、`projects/` `areas/` `archives/` の中身は room の作業）、workbase、dotfiles、room（AI 作業部屋。WSL のユーザーランド）。領域 = cwd（リポジトリのトップ。room は `/mnt/room/<名>`）。works・workbase・dotfiles は、トップに `AGENTS.md` `CLAUDE.md` `README.md` と `docs/` を持つ（下の契約）。room の `AGENTS.md` に当たるのは、`~/shared` の写し。
+- **領域** は4つ: works（この領域の AI が扱うのは自分の `docs/` などの管理だけで、`projects/` `areas/` `archives/` の中身は room の作業）、workbase、dotfiles、room（AI 作業部屋。WSL のユーザーランド）。領域 = cwd（リポジトリのトップ。room は `/mnt/room/<名>`）。works・workbase・dotfiles は、トップに `AGENTS.md` `CLAUDE.md` `README.md` と `docs/` を持つ（下の契約）。room の `AGENTS.md` に当たるのは、`~/shared` の写し。
 - **表の見方**: そのフックを、その領域で起動したときの、その領域への権限。r 読める、w 書ける、－ 行わない（実行を弾く。理由を伝えて止まる）。
 
 | フック | works | workbase | dotfiles | room |

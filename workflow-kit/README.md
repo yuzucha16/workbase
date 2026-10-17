@@ -8,7 +8,7 @@
 
 フックは、寿命の階層ごとに、開始と終了の対にする。呼び出し名は英語の短い名前を主にし、日本語の言葉は別名として当面残す（別名は、いま決まっているものだけ。増減は後で揃える）。
 
-呼び出し表は `hooks.md` に移した（2026-10-08。写しを作らない）。寿命の階層: ワークスペース `init`、Project `open`（終了は `room close`）、セッション `start`・`wrap`、随時 `stock`・`integrate`、週1回の目途 `review`。
+呼び出し表は `hooks.md` に移した（2026-10-08。写しを作らない）。寿命の階層: works `init`、Project `open`（終了は `room close`）、セッション `start`・`wrap`、随時 `stock`・`integrate`、週1回の目途 `review`。
 
 連鎖は `init`、`open → [start → 作業 → wrap]×N`。`stock` と `integrate` は随時。
 
@@ -25,7 +25,7 @@
 - ナレッジ: 育てて、次の作業で使う共有知。置き場は `resources/exmem`。
 - 作業ログ: 各作業ディレクトリの `docs/`。現在状態、判断の根拠、次にやること。日報・週報・仕様書などの文書の入力にもなる。
 
-この仕組みは、dotfiles、その他のリポジトリ、ワークスペース（Vault のトップ）、`projects/` `areas/` 配下など、どの作業ディレクトリでも同じ。各ディレクトリはコピーを持たず、このディレクトリを参照する。直せば全体に効く。
+この仕組みは、dotfiles、その他のリポジトリ、works、`projects/` `areas/` 配下など、どの作業ディレクトリでも同じ。各ディレクトリはコピーを持たず、このディレクトリを参照する。直せば全体に効く。
 
 ## 場所
 
@@ -38,11 +38,11 @@
 
 ユーザーが「workflowを導入して」と言ったら、エージェントは `init-hook.md` に従う。入力は4項目（対象ディレクトリ、目的、読む順番の固有項目、固有ルール）。生成物は `AGENTS.md`、`CLAUDE.md`（`@AGENTS.md`）、`docs/log.md`、`docs/decisions.md`。既存のファイルは上書きせず、差分案を示して承認を得る。導入項目は `init-hook.md` の一覧で管理し、新しい機能はその一覧に足す。
 
-### ワークスペース（Vault のトップ）を作る
+### works を作る
 
-新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`init-hook.md` の項目 5 に従う。`workbase` の中で、対象を指定せずに言うと、項目 5 とみなして、既定値（対象 `$HOME\works`、業務用、remote なし、初回コミットする）で作る。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、ワークスペース用の `AGENTS.md`、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
+新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`init-hook.md` の項目 5 に従う。`workbase` の中で、対象を指定せずに言うと、項目 5 とみなして、既定値（対象 `$HOME\works`、業務用、remote なし、初回コミットする）で作る。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、works 用の `AGENTS.md`、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
 
-呼べるのは、`init-hook.md` を参照している `AGENTS.md` の配下（`workbase` の中と、ワークスペースの中）と、ユーザーがパスを指示したとき。他の場所からの入口は、Claude 用スキル（TODO）。
+呼べるのは、`init-hook.md` を参照している `AGENTS.md` の配下（`workbase` の中と、works の中）と、ユーザーがパスを指示したとき。他の場所からの入口は、Claude 用スキル（TODO）。
 
 ### 「ナレッジ化して」を使う
 
@@ -66,7 +66,7 @@
 | `integrate-hook.md` | 「inboxを整理して」の手順（統合、照合の報告、コミット）・報告の型 |
 | `review-hook.md` | `review`（別名「見直して」）の手順: 遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
 | `init-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
-| `init-workspace.md` | init の導入項目 5（ワークスペースの生成）の作り方。項目 5 のときだけ読む |
+| `init-workspace.md` | init の導入項目 5（works の生成）の作り方。項目 5 のときだけ読む |
 | `init-restore.md` | init の導入項目 4（履歴からの復元）の作り方。項目 4 のときだけ読む |
 | `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、聞き取り、README 本文の下書き |
 | `project-structure.md` | Project の構造: 固定の核（`ai/` と `_noai/`）、type ごとの置き場、基準文書の置き場。`open` の type の決定と、置き場に迷ったときに読む |
@@ -75,9 +75,10 @@
 | `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
 | `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `topics/kit-growth/docs/decisions.md`） |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
+| `tools/check_inbox.py`、`tools/find_knowledge.py` | 上の2つの Python 版（標準ライブラリだけ。`pwsh` が無い環境、例: AI 作業部屋用）。出力は同じ（確認: 2026-10-17、現在のメモと検索で一致。違いは、`check_inbox.py` が英小文字の検査で大文字を通さないこと）。点検の項目を変えるときは、両方を直す |
 | `tools/find-knowledge.ps1` | `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。ファイルの大きさと、ヒットした見出しの節の行の範囲を返す。読み取り専用。PowerShell 7） |
 | `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検、`hooks.md` と README の表にフックが過不足なく載っているかの点検（フックの追加・削除の漏れ止め。PowerShell 7） |
-| `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` はワークスペース（Vault のトップ）用（`AGENTS.md`、`gitignore.template`、`claude-settings.template.json`、`ignore.template`、`gitattributes.template`、`pre-push.template`）。`topic/` はトピックの窓口の雛形（`start-here.template.md`） |
+| `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` は works 用（`AGENTS.md`、`gitignore.template`、`claude-settings.template.json`、`ignore.template`、`gitattributes.template`、`pre-push.template`）。`topic/` はトピックの窓口の雛形（`start-here.template.md`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
 | `AGENTS.md` | このディレクトリ自体を編集するときのルール |
 
