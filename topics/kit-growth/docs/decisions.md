@@ -1,5 +1,14 @@
 # kit-growth: 決定
 
+## 2026-10-17 フックを領域 × r/w 属性で管理し、領域をまたぐ書き込みは3つの型だけにした（ユーザーの決定。重複記載を整理）
+
+- 【汎用】領域は works、workbase、dotfiles、room の4つ（領域 = cwd）。`hooks.md` の「領域とフックの権限」に r/w 表を置き、実行できる場所の正本にした。`hook-matrix.md` の cwd の3行は、この表との一致を見る1行にまとめ、`open-hook.md` `init-hook.md` の実行場所の記述は表を指す形に畳んだ。
+- 【汎用】跨ぎは無くさず、型を3つにした: 読みは自由、作業対象の `docs/` はそのセッションが書く、集約の窓口（`exmem/inbox/`、`topics/kit-growth/inbox.md`）にだけ他の領域から書いてよい。room は物理的に跨げないので、窓口への下書きは `ai/out/stock/` と `ai/docs/log.md` に残して人が運ぶ。窓口は種類で2つのまま。
+- 【汎用】`init` の初回（workbase の clone から works を作る）は例外。dotfiles にも `AGENTS.md` と `docs/` を置く。遠回りの答えは、他の領域から kit-growth の窓口に直接書いてよい。
+- 【汎用】部屋の `wrap` は、コミットと push を行わず、知識化は `ai/out/stock/` の下書きに一本化する（`room-context.md`）。`ROOM.md` の stock の書き方を、`room-context.md` の frontmatter（`base_commit` `observed`）に合わせた（`room.py`）。
+- 根拠: 実行単位を人が覚えられず、実行できる場所が4か所に散っていた（調査: プロジェクトの共有フォルダ `notes/room-hook-constraints/`）。却下案: 跨ぎの禁止（作業したセッションが触った領域の docs を書くのが一番正確で、窓口経由は二度手間）。
+- 残り: `room/` を共有知の写しから外すか（意図の根拠が記録に無い。ユーザー未決）、点検スクリプトの Python 版（部屋に `pwsh` が無い）、窓口の統合の要否。
+
 ## 2026-10-17 クラウドの環境でも、作業ブランチから `main` に直接 push する（ユーザーの決定）
 
 - 【汎用】`docs-rules.md` の push の条件 2 に、作業ブランチが指定された環境では `git push origin HEAD:main` で push してよい、を足した。条件 1 の公開範囲の確認は、`gh` が無ければ GitHub の API（MCP など）で行ってよい、にした。理由: ブランチ戦略がまだ無いので、基本は `main` に直接入れる（ユーザーの発言）。クラウドのセッションは指定ブランチに push して止まり、`main` に入らないことがあった（直前のスレッドで発生）。技術的な制限ではなく、セッションの指示と条件 2・条件 1（`gh` 必須）の組み合わせが原因。

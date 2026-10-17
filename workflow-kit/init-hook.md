@@ -37,7 +37,7 @@
 - コミットは `docs-rules.md` の「コミットと push」に従う（項目 5 の初回コミットは、`init-workspace.md` の「初回コミットをする」）。push はしない（ユーザーが行う）。
 - 対象の `docs/` が、`.gitignore` の既定でローカル専用になる場合は、その旨を報告に書く（確認: `git check-ignore -v <パス>`）。ローカル専用の `docs/` は、他のPCに届かない。
 - 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`.gitattributes`、`areas/` `projects/` `archives/`、`resources_p/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
-- このフックが呼べるのは、`hooks.md` を参照している `AGENTS.md` の配下（共有リポジトリ `workbase` の中と、ワークスペースの中）と、ユーザーがこのファイルのパスを指示したとき。新しい PC でワークスペースを作るときは、`workbase` の clone の中で呼ぶ。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
+- このフックを呼べる領域は、`hooks.md` の「領域とフックの権限」に従う。ユーザーがこのファイルのパスを指示したときも呼べる。新しい PC でワークスペースを作るときは、`workbase` の clone の中で呼ぶ（初回の例外）。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
 
 ## 入力
 
