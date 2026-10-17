@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-17（start のやり方・モードの項目の整理）
+- 決定は `decisions.md` の先頭の項。項目 11 の解決済みの記述を外し、Open Questions の 2 件（`method-creation.md` の 5〜12、調査1の 4 回目の効果）を閉じ、項目 15 の案 B を承認した。
+
 ### 2026-10-17（施策1の採用、部屋の共有知から room のコードを外した、用語の置き換えの続き）
 - 決定と確認は `decisions.md` の同日の項（先頭）。施策1を `user-manual.md` に足した。`room.py` が `workflow-kit/room/` の `README.md` 以外を送らないようにし、単体テストを足した（変更前から失敗している 2 件を除き通過）。`exmem/lessons/` の現在形の記述 5 ファイルで、「Vault」「ワークスペース」を works にした。
 - 未実施: `topics/ai-workspace-boundary/` のノートの語（約 80 件）。そのトピックを使うときに直す。
