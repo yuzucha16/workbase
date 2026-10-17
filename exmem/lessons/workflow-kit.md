@@ -13,7 +13,7 @@ aliases:
   - ナレッジ化して
   - 改善の受け皿
 created: 2026-10-04
-updated: 2026-10-15
+updated: 2026-10-17
 sources:
   - Claude Code conversation "フック名の体系とスレッド・セッションの定義" (2026-10-08。「フック名の体系」)
   - Claude Code conversation "フックの権限移譲の影響分析と実装" (2026-10-08。「権限移譲の線引き」)
@@ -241,7 +241,7 @@ sources:
 
 ## フック名の体系（2026-10-08 追記）
 
-AI に作業の手順を呼び出させるフックの名前を、寿命（ワークスペース、Project、セッション、随時）ごとの開始と終了の対にそろえた考え方。今の名前と呼び出し表の正本は kit の `hooks.md`、体系は kit の `README.md` の「フックの体系」。2026-10-15 に、この節の Decisions・Facts・Open Questions・Next Actions を畳んだ（kit の正本と重なるか、置き換わった記録のため。全文は畳む前のコミット `33e9fe3` の、このファイルにある）。
+AI に作業の手順を呼び出させるフックの名前を、寿命（works、Project、セッション、随時）ごとの開始と終了の対にそろえた考え方。今の名前と呼び出し表の正本は kit の `hooks.md`、体系は kit の `README.md` の「フックの体系」。2026-10-15 に、この節の Decisions・Facts・Open Questions・Next Actions を畳んだ（kit の正本と重なるか、置き換わった記録のため。全文は畳む前のコミット `33e9fe3` の、このファイルにある）。
 
 ### Principles（フック名）
 
