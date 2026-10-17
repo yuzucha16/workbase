@@ -31,9 +31,9 @@ kit と exmem のルール・仕組みが、トークン消費を抑える4つ�
 | 6 | 呼び出し表は `hooks.md` が正本、写しはポインタ1行だけ（`hooks.md`、`workflow-kit/AGENTS.md`） | 常駐 | | | ○ | |
 | 7 | フック本体 5,000 字の目安、Want の行を増やさない（`hook-matrix.md`「肥大化の抑制」） | 手順 | | | ◎ | |
 | 8 | `review` が字数を測り直し、開始時の読み込み字数を入力にする（`review-hook.md`「入力」「網羅度を確認する」） | 手順 | | | ○ | |
-| 9 | `wrap`: `log.md` を次の会話が読むだけで再開できる形に上書きし、コミットと push。報告の型「次の会話への依頼文」で、会話を切り（`--resume` しない）、「<単位> の続き」の1行を出す（`wrap-hook.md`） | 手順 | ◎ | | ○ | ◎ |
+| 9 | `wrap`: `log.md` を次の会話が読むだけで再開できる形に上書きし、コミットと push。共通の項目「次にやること」（`hook-common.md`）で、続けるか切るかを推奨し、切るときは「<単位> の続き」の1行を出す（間があいた会話は `--resume` しない。`wrap-hook.md` は切るが既定） | 手順 | ◎ | | ○ | ◎ |
 | 10 | `wrap` の改善の観点に「コンテキストが膨らんだ箇所」（`wrap-hook.md`「このフックの改善」） | 手順 | △ | △ | | |
-| 11 | `start`: 事前確認は `log.md` の Next Actions と Open Questions だけ。再開は `--resume` で続けず、新しい会話で始める（`start-hook.md`） | 手順 | ◎ | | ○ | ○ |
+| 11 | `start`: 事前確認は `log.md` の Next Actions と Open Questions だけ。再開は、間があいた古い会話を `--resume` で続けず、新しい会話で始める（`start-hook.md`） | 手順 | ◎ | | ○ | ○ |
 | 12 | `AGENTS.md` を置いた単位で起動し、cwd から上の `CLAUDE.md` だけが載る（`hooks.md`「起動する場所（cwd）」） | 常駐 | | | ○ | |
 | 13 | `review` の入力「重い会話」: 入力の最大トークンが大きい会話を見る（`review-hook.md`） | 手順 | ○ | | | |
 | 14 | AI 作業部屋は起動のたびに新しい会話で、`~/.claude/CLAUDE.md` は案内だけ。読む順は `ROOM.md` → 窓口の写し → `ai/docs/log.md`（`room/README.md`、`room-context.md`） | 強制 | ○ | | ○ | ◎ |
