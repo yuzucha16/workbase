@@ -16,7 +16,7 @@ aliases:
   - サンドボックス運用
   - 自走期間
 created: 2026-10-02
-updated: 2026-10-16
+updated: 2026-10-17
 sources:
   - Claude Code conversation "Claude Code 権限制御の設計と dotfiles への共通土台の配備" (2026-10-02)
   - "dotfiles（claude/、_scripts/links.map、l1_copy_dotfiles.sh、コミット d4878a5 / b0cca61）、%USERPROFILE%\\.claude\\settings.json、WSLの ~/.claude/settings.json（2026-10-02 に確認）"
@@ -77,7 +77,7 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 - 決めたこと: コミットは、すべての作業ディレクトリで、エージェントに任せる。push と GitHub 側のリポジトリ作成は委譲せず、コマンドを案内する。許可の範囲は、自分が変更・生成したファイルだけをパス指定で追加すること。事前に、意図したファイルだけか、`user.email` が仮値でないか、機密が混ざっていないかを確認する。禁止は `--amend`、`reset --hard`、`rebase`、`--force`、`--no-verify`、`git add -f`、push。
 - 根拠: 上の方針（取返し可は allow、不可は確認）と同じ。コミットはローカルで戻せ、機密や確認していない既存ファイルを巻き込まない範囲に絞れる。allow は既にある（`git add *`、`git commit *`。2026-10-05 に設定ファイルで確認）。
 - 却下案: 委譲しない（従来）、push も委譲する（外向きで、毎回の確認が要る）。
-- 運用の詳細（ワークスペースの初回コミット、inbox のメモはコミットしない）は [[workflow-kit]]。
+- 運用の詳細（works の初回コミット、inbox のメモはコミットしない）は [[workflow-kit]]。
 
 ### 配備方法
 

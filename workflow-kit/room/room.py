@@ -577,6 +577,13 @@ def snapshot_readme(p):
 
 SHARE_PATHS = ("AGENTS.md", "workflow-kit", "exmem/AGENTS.md", "exmem/README.md", "exmem/exmem-index.md", "exmem/tags.md", "exmem/lessons", "guides")
 SHARE_SKIP = {".git", ".venv", "__pycache__", "node_modules"}
+# 部屋の AI に送らない: room 自身のコード・テスト・設定（人の側の道具）。README.md だけ、参照が切れないよう送る
+SHARE_ROOM_DIR = "workflow-kit/room"
+SHARE_ROOM_KEEP = {"workflow-kit/room/README.md"}
+
+
+def share_skipped(arc):
+    return arc.startswith(SHARE_ROOM_DIR + "/") and arc not in SHARE_ROOM_KEEP
 SHARE_DEST = "shared"  # 部屋の一般ユーザーの ~/shared
 
 ROOM_GUIDE = """# 共有知の写し（読み取り専用）
@@ -616,8 +623,9 @@ def build_share_tar(root, extra=None):
             if path.is_dir():
                 tf.addfile(ti)
                 for ch in sorted(path.iterdir()):
-                    if ch.name not in SHARE_SKIP:
-                        add(ch, f"{arc}/{ch.name}")
+                    child = f"{arc}/{ch.name}"
+                    if ch.name not in SHARE_SKIP and not share_skipped(child):
+                        add(ch, child)
             else:
                 with open(path, "rb") as f:
                     tf.addfile(ti, f)

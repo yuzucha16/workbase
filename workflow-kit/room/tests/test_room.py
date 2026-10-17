@@ -803,5 +803,28 @@ class WslQuotingTest(unittest.TestCase):
             self.assertTrue(text.startswith("set -e\n"))
 
 
+class ShareTarTest(unittest.TestCase):
+    def test_room_code_is_not_shared_but_readme_is(self):
+        import io
+        import tarfile
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "AGENTS.md").write_text("a", encoding="utf-8")
+            kit = root / "workflow-kit"
+            (kit / "room" / "tests").mkdir(parents=True)
+            (kit / "hooks.md").write_text("h", encoding="utf-8")
+            for rel in ("room/README.md", "room/room.py", "room/maskkit.py", "room/pyproject.toml", "room/tests/test_x.py"):
+                (kit / rel).write_text("x", encoding="utf-8")
+            with tarfile.open(fileobj=io.BytesIO(__import__("gzip").decompress(room.build_share_tar(root))), mode="r") as tf:
+                names = set(tf.getnames())
+        self.assertIn("workflow-kit/hooks.md", names)
+        self.assertIn("workflow-kit/room/README.md", names)
+        self.assertNotIn("workflow-kit/room/room.py", names)
+        self.assertNotIn("workflow-kit/room/maskkit.py", names)
+        self.assertNotIn("workflow-kit/room/pyproject.toml", names)
+        self.assertNotIn("workflow-kit/room/tests", names)
+        self.assertNotIn("workflow-kit/room/tests/test_x.py", names)
+
+
 if __name__ == "__main__":
     unittest.main()

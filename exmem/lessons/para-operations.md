@@ -14,7 +14,7 @@ aliases:
   - 開始インタビュー
   - 質問の指標
 created: 2026-10-06
-updated: 2026-10-10
+updated: 2026-10-17
 sources:
   - Claude Code conversation "PARA の運用と質問・提案の指標" (2026-10-06)
 ---
@@ -79,10 +79,10 @@ PARA の `projects/` と `areas/` の役割・判断基準・構造・フック�
 1. 呼び出しの言葉: 「作業を始めて」とは別にする（決定済み）。言葉は未定（例: 「タスクを切り出して」）。
 2. 入力: Area の `README.md` のタスク候補から1件を選ぶ。タスク候補の書式（タスク名、ゴール、期限）は、Area の雛形と合わせて決める。
 3. Project の作業ディレクトリの雛形: `projects/<名>/README.md`（frontmatter: `type: project`、`status`、`area`、`review`。期限と完了条件を足すか）、`docs/log.md`、`docs/decisions.md`。`init` の項目1〜3と同じ形にするか、軽い雛形にするか。
-4. Project ごとの `AGENTS.md`: 置くか。提案（AI の提案。未承認）: 置かない（Claude Code は親ディレクトリの `CLAUDE.md` も読むので、Vault のトップの規則が効く）。
+4. Project ごとの `AGENTS.md`: 置くか。提案（AI の提案。未承認）: 置かない（Claude Code は親ディレクトリの `CLAUDE.md` も読むので、works のトップの規則が効く）。
 5. Area から渡すもの: 完了条件の1文を open のときに必須にするか。関連する決定や資料は、コピーせずにリンクで渡すか。
 6. Area 側の後処理: タスク候補から、その行を消すか、Project へのリンクに置き換えるか（一覧は Bases が集めるので、二重に持たない）。
-7. 命名: `projects/<名>/` の名前の規則（Area 名を前に付けるか、日付を付けるか）。ファイル名は Vault の中で一意に保つ。
+7. 命名: `projects/<名>/` の名前の規則（Area 名を前に付けるか、日付を付けるか）。ファイル名は works の中で一意に保つ。
 8. 上限: open のときに、進行中の Project が上限（3件、暫定）を超えないか点検するか。
 9. 接続: open の直後に、そのまま開始インタビュー（`start`）に入るか。
 10. 記録: open をイベントログ（`docs/metrics/`）に残すか。
@@ -103,8 +103,8 @@ PARA の `projects/` と `areas/` の役割・判断基準・構造・フック�
 
 - Area の雛形を決める（叩き台: `README.md` に `type: area` と `status`、案件の概要・目的、タスク候補、Project 一覧の Bases。`docs/log.md`、`docs/decisions.md`。2026-10-07 時点）。
 - その後に、open の雛形と手順書（上の論点）、続けて close の雛形（status の更新、`archives/` への移動、【案件】の残りの点検、【汎用】のナレッジ化）を決める。
-- 3ラベルを `docs-rules.md` の【汎用】【この件】に足すか、Vault ローカルの規則で試すかを決める。kit を変えるときは承認を取る。
-- Vault 側の手順書（`project-open.md`、`project-close.md`）と既存の Area・Project を、上の決定と照合する。Area の定義と Decisions を書き換える。
+- 3ラベルを `docs-rules.md` の【汎用】【この件】に足すか、works ローカルの規則で試すかを決める。kit を変えるときは承認を取る。
+- works 側の手順書（`project-open.md`、`project-close.md`）と既存の Area・Project を、上の決定と照合する。Area の定義と Decisions を書き換える。
 - 2回目の Project を、新しいセッションで「作業を始めて」から開始し、`live` のデータを溜める（2026-10-06 時点）。
 
 ## Related
