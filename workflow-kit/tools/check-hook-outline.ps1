@@ -6,7 +6,7 @@
 .DESCRIPTION
   共通部: 目的と契機 → 場所と書き込みの制約 → 手順 → 報告の型（H2）。
   固有の章は、報告の型より後ろに置く（例外: 導入項目の一覧、入力）。「このフックの改善」は任意で、固有の確認項目があるフックだけが持つ（持つなら hook-common.md を指す）。
-  あわせて共通部の中身（hook-common.md）を見る: 冒頭の hooks.md、報告の型の改善案、改善の章の hook-common.md への参照。
+  あわせて共通部の中身（hook-common.md）を見る: 冒頭の hooks.md、報告の型の共通項目への参照（改善案は載せない）、改善の章の hook-common.md への参照。
   これ以外の章（実測、未決、各フック固有の仕様など）は固有部で、点検しない。
   新しいフックを足すときも、この5章を同じ名前・順序で置く。
   手順の参照は、番号でなく手順の見出しの名前で書く（番号参照が無いこと、名前の実在を見る）。
@@ -43,7 +43,7 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   $missing = @($common | Where-Object { $_ -notin $found })
   $dup = @($found | Group-Object | Where-Object Count -gt 1 | ForEach-Object Name)
   $ordered = ($found -join ',') -eq (($common | Where-Object { $_ -in $found }) -join ',')
-  # 共通部の中身（hook-common.md）: 冒頭の定型、報告の型の改善案、改善の章の参照
+  # 共通部の中身（hook-common.md）: 冒頭の定型、報告の型の共通項目への参照、改善の章の参照
   $raw = Get-Content -LiteralPath $f.FullName -Raw -Encoding utf8
   $head = ($raw -split '(?m)^## ', 2)[0]
   $body = @{}
@@ -62,7 +62,7 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   $dead = @($refs | Where-Object { $r = $_; -not ($titles | Where-Object { $_.StartsWith($r) }) } | Sort-Object -Unique)
   if ($dead) { $content += "手順の参照先が無い: $($dead -join '、')" }
   if (-not $head.Contains('`hooks.md`')) { $content += '冒頭に正本 hooks.md の記載が無い' }
-  if (-not $body['報告の型'].Contains('改善案')) { $content += '報告の型に「改善案」が無い' }
+  if (-not $body['報告の型'].Contains('hook-common.md')) { $content += '報告の型が hook-common.md の共通の項目を指していない' }
   $imp = [regex]::Match($raw, '(?ms)^## このフックの改善[^\r\n]*\r?\n(.*?)(?=^## |\z)')
   if ($imp.Success -and -not $imp.Groups[1].Value.Contains('hook-common.md')) { $content += '改善の章が hook-common.md を指していない' }
   if ($common_text -notmatch ('(?m)^\| `' + $f.BaseName.Replace('-hook','') + '` \|')) { $content += 'hook-common.md の記録の表に行が無い' }
@@ -72,11 +72,11 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   # 目的と契機: 目的 → 契機 → 前提（前提は任意）の順
   $labels = @([regex]::Matches($body['目的と契機'], '(?m)^- \*\*([^*]+)\*\*') | ForEach-Object { $_.Groups[1].Value })
   if (($labels -join ',') -notin '目的,契機', '目的,契機,前提') { $content += "目的と契機の項目が「目的 → 契機 → 前提（任意）」でない: $($labels -join ' → ')" }
-  # 報告の型: 番号つきリスト（太字のラベル）で、連番、最後が「改善案」
+  # 報告の型: 固有の項目は番号つきリスト（太字のラベル）で、連番。改善案は載せない
   $items = @([regex]::Matches($body['報告の型'], '(?m)^([0-9]+)\. \*\*([^*]+)\*\*'))
   if (-not $items) { $content += '報告の型が番号つきリスト（太字のラベル）でない' }
   elseif ((($items | ForEach-Object { $_.Groups[1].Value }) -join ',') -ne ((1..$items.Count) -join ',')) { $content += '報告の型の番号が連番でない' }
-  elseif ($items[-1].Groups[2].Value -ne '改善案') { $content += '報告の型の最後が「改善案」でない' }
+  elseif ($items | Where-Object { $_.Groups[2].Value -eq '改善案' }) { $content += '報告の型に「改善案」を載せない（hook-common.md の「改善」）' }
   if ($missing -or $dup -or -not $ordered -or $content) {
     $fail++
     $msg = @()
