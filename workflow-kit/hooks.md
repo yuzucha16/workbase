@@ -29,6 +29,31 @@
 | `room open` / `start` / `close` | Project のひな形、起動の準備（マスク、写しの送付、マウント）と回収（復元）、Area への引き渡しと `archives/` への移動 |
 | `room mask` / `restore` / `readme` / `umount` | マスクと復元の単独実行、AI の下書きの README への反映、残ったマウントの解除 |
 
+## 領域とフックの権限（r/w 表）
+
+2026-10-17 ユーザーの決定（r/w 属性での管理）。フックを実行できる場所は、**この表だけが正本**（各フックと `hook-matrix.md` に、実行できる場所を写さない）。
+
+- **領域** は4つ: works（ワークスペース。Vault 側の AI が扱うのは自分の `docs/` などの管理だけで、`projects/` `areas/` `archives/` の中身は room の作業）、workbase、dotfiles、room（AI 作業部屋。WSL のユーザーランド）。領域 = cwd（リポジトリのトップ。room は `/mnt/room/<名>`）。works・workbase・dotfiles は、トップに `AGENTS.md` `CLAUDE.md` `README.md` と `docs/` を持つ（下の契約）。room の `AGENTS.md` に当たるのは、`~/shared` の写し。
+- **表の見方**: そのフックを、その領域で起動したときの、その領域への権限。r 読める、w 書ける、－ 行わない（実行を弾く。理由を伝えて止まる）。
+
+| フック | works | workbase | dotfiles | room |
+|---|---|---|---|---|
+| `init` | w | r | w | － |
+| `open` | － | － | － | rw |
+| `start` | rw | rw | rw | rw |
+| `wrap` | rw | rw | rw | rw（コミット・push は人） |
+| `stock` | w | rw | w | w |
+| `integrate` | － | rw | － | － |
+| `review` | rw | rw | rw | － |
+
+- `init` の works は、works が無い初回だけ、workbase の clone の中から書く（例外。ユーザーの決定）。以後は works の中で起動する。
+- `stock` の w は、窓口への書き込み（下の型3）。room は `ai/out/stock/` に置くだけで、運ぶのは人（`room stock`）。
+- **跨ぎ**（起動した領域の外）の型は3つだけ。これ以外の跨ぎ書き込みは行わない。
+  1. 読み: どの領域でも、r は自由（lessons、methods、他のリポジトリの点検）。
+  2. 作業対象の `docs/`: このセッションで作業した領域の `docs/` に、作業したセッション自身が書く（`wrap`）。報告に、触った領域と更新した `docs/` を挙げる。
+  3. 集約の窓口: workbase の `exmem/inbox/`（知識。`stock`）と `topics/kit-growth/inbox.md`（kit の改善と「遠回り」の答え）にだけ、他の領域から書いてよい。
+- room は物理的に跨げない（`ai/` だけがマウントされる）。窓口への下書きは `ai/out/stock/` と `ai/docs/log.md` に残し、人が運ぶ（PC1 は記憶かキャプチャ）。
+
 ## 作業ディレクトリへの契約（手順書が前提にするもの）
 
 手順書は、次だけを前提にする。これ以外の作業側のファイル名・列・スクリプトを、手順書に書かない（共有側は公開されているので、作業側の構造を載せない）。
@@ -42,4 +67,4 @@
 
 - Claude は、リポジトリのトップ（`AGENTS.md` を置いた単位）で起動する。Claude Code は cwd から上の `CLAUDE.md` を自動で読むので、起動した単位の規則が前提になる。
 - 開始時に読む順番と、上の階層で起動して「<名前> の続き」と言われたときの扱いは、`docs-rules.md` の「読む順番」に1か所で定める（ここに写さない）。
-- 例外は AI 作業部屋。`room start` が cwd を `/mnt/room/<名>` に固定する。読む順番は `room-context.md`。
+- 例外は AI 作業部屋。`room start` が cwd を `/mnt/room/<名>` に固定する。読む順番は `room-context.md`。どのフックをどの領域で起動できるかは、上の「領域とフックの権限」。

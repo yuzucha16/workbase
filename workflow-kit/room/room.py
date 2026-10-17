@@ -592,10 +592,10 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 - 知識: `~/shared/exmem/exmem-index.md`→ `~/shared/exmem/lessons/*.md`
 - 手順書・理解ガイド: `~/shared/guides/guides-index.md`
 
-共有知へ戻したい知見（`stock`）は、直接書かず、`ai/out/stock/` に下書きを書く。下書きの先頭に次を入れる:
+共有知へ戻したい知見（`stock`）は、直接書かず、`ai/out/stock/` に下書きを書く。下書きの frontmatter に次を足す:
 
-- 基準コミット: {commit}
-- 観測日: 書いた日
+- `base_commit: {commit}`
+- `observed: 書いた日（YYYY-MM-DD）`
 
 人が確認して `exmem/inbox/` へ運ぶ。
 """
