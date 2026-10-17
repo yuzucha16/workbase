@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-17（start のやり方・モードの項目を整理した。項目 15 は案 B で承認）
+更新: 2026-10-17（初回の review を実施した。`846c3d7`）
 
 ## 状態
 
@@ -25,7 +25,7 @@
 - topic-workflow を取り込んで close した。トピックの型の正本は `topics/AGENTS.md`（docs-rules に節は足さない）。`wrap` の依頼文は「<単位> の続き」の1行。
 - 取扱説明書の「失敗の分析が薄い」に、失敗の振り返りの原則を足した(`user-manual.md`。cwd 前提の取り消しの件で試行)。撤回・取り消しの理由は事実と推測を分け、正本を1か所にする、を `docs-rules.md` に足した。施策1(実現方法を任せる依頼で、実装前に場所・手段・呼び出し元を3行で見せる)は後段に回した(`decisions.md`)。
 - フックの報告の型を、共通の項目（最初に「ユーザーに求めること」「コミット」、最後に「次にやること」）と固有の項目に分けた。改善案は報告に載せず Open Questions に残す。`integrate` も push する。続ける・切るの暫定の数値は、間5分、約10万トークン、約2万トークン。正本は `hook-common.md` の「報告の型」「改善」、経緯は `decisions.md`（2026-10-17 の5項目）。
-- `review` の前回の日付は `[review]` コミットから取る（`review-hook.md` の手順「コミットする」。まだ `[review]` のコミットは無い）。`open`（2,924 字）・`start`（4,827 字）を、`project-structure.md` と `start-work-types.md` への分割で字数の目安内にした。点検スクリプトは FAIL なし。
+- `review` の前回の日付は `[review]` コミットから取る（`review-hook.md` の手順「コミットする」。初回は `846c3d7`）。`open`（2,924 字）・`start`（4,827 字）を、`project-structure.md` と `start-work-types.md` への分割で字数の目安内にした。点検スクリプトは FAIL なし。
 - `pwsh` が無い環境用に、`tools/check_inbox.py` `find_knowledge.py` を足した。works を指す語は「works」に統一した（kit、ルート、`guides/`、`exmem/lessons/` の現在形の記述。`topics/` のノートは未）。部屋へ送る共有知から、`room/` のコード・テストを外した（`README.md` は送る）。施策1を `user-manual.md` に足した。
 - 2026-10-17 の作業は `807dd29` まで push 済み（`main`）。決定は `decisions.md` の同日の 4 項、経緯は `log-history.md`。
 
@@ -34,7 +34,7 @@
 24. 続ける・切るの暫定の数値（間5分、約10万トークン、約2万トークン）が実測に合うか、`review` の入力 5（重い会話）で見る。数値はユーザーが承認済み（2026-10-17。暫定）。`exmem/inbox/` に未統合のメモが1件（`2026-10-17-session-cut-cache-thresholds.md`）。
 26. WSL の部屋で `room start` を実行し、`~/shared/workflow-kit/room/` に `README.md` だけが入ることを確かめる(2026-10-17 に `room.py` を変更。この環境では単体テストのみ。別セッション)。
 25. 移した先（`project-structure.md`、`start-work-types.md`）を、次に `open` / `start` で type を決める・項目を埋めるときに読み忘れないか見る。
-23. 前回の `review` の日付の元は `[review]` コミットに決めた。次の `review` の初回で、`[review]` コミットを作り、`start` と `wrap` が日付を取れるか確かめる(まだ `[review]` のコミットが無く、取れない状態)。
+23. `[review]` のコミットが作られた（`846c3d7`）。次の `start` と `wrap` が、日付を取れて7日の判定ができるか確かめる。`wrap` の報告で、`review` を7日後に勧める。`review` の次回の目途は 2026-10-24。
 
 20. 領域 × r/w 表（`hooks.md`）を使いながら確かめる。部屋の AI が `wrap` の差し替え（コミットを行わない、知識化は `ai/out/stock/` の下書き）と、`ROOM.md` の stock の書き方（frontmatter）に従えるか。`check-hook-outline.ps1` は実行して FAIL なし(2026-10-17)。この項は別セッションに回した(ユーザーの指示)。
 18. 用語は決まった(2026-10-17): 「領域」、works を指す語は「works」。置き換えは、kit、ルート、`guides/`、`exmem/lessons/` の現在形の記述（`ai-isolated-work-room.md` `para-operations.md` など 5 ファイル）を済ませた。残り: `topics/ai-workspace-boundary/` のノート（約 80 件。設計時点の記述が多い）、`exmem/lessons/` の Obsidian の意味や日付つきの事実（旧パス `C:\vault\notes` など。これは置き換えない）、`room.py` の画面メッセージ、`improvements.md`（凍結）。次に `init 更新` を実行すると、雛形の語が works に反映される。ノートは、そのトピックを使うときに直す（まとめて直さない）。
@@ -50,7 +50,7 @@
 
 7. `init 更新`（`init-update.md`）を PC1 と PC2 で一度ずつ使い（初回は README の追加も案に出るはず）、衝突の出方と、基点なし（初回）の2者の差分が読めるかを見る。works の既存の `AGENTS.md` は雛形の古い版から作られているので、初回は基点なしになる見込み。
 
-6. 次の `review` で、重さの基準と比べる初回と、各フックの領域の権限の期待の点検（`hook-matrix.md` の1行。確認日 2026-10-17。旧: cwd の3行）の初回を実施する。3回後に N（字数 +20%、項目数 +2）を決め直す。`wrap` の読み込み字数（`docs-rules.md` の節だけ読む効果）も測り直す。
+6. 初回の `review` は済んだ（2026-10-17。重さの基準は +20% 以上が `hooks.md` と `hook-common.md` のみ、基準を更新）。次の `review` で、入力 7（変更・調査・振り返りのやり方の Must）の点検と、入力 8（3 リポジトリの基準。まだ無い）の作成と、reviews の記録先の決定を行う。元の項目: 重さの基準と比べる初回と、各フックの領域の権限の期待の点検（`hook-matrix.md` の1行。確認日 2026-10-17。旧: cwd の3行）の初回を実施する。3回後に N（字数 +20%、項目数 +2）を決め直す。`wrap` の読み込み字数（`docs-rules.md` の節だけ読む効果）も測り直す。
 
 
 1. PC1 の印象を `inbox.md` に入れ始める（モバイル。随時）。
