@@ -1,5 +1,11 @@
 # kit-growth: 決定
 
+## 2026-10-17 works を指す語を「個人ワークスペース」にした。`open` と `start` を分割して畳んだ（ユーザーの決定）
+
+- 【汎用】works を指す語は「個人ワークスペース」。根拠: 「Vault」は Obsidian に寄りすぎ、「works」はプレースホルダー（ディレクトリ名）に寄る。「ワークスペース」単体は「AI workspace」（AI 作業部屋）と重複する。未実施: 既存の語の置き換え（`kit` 内の出現: ワークスペース 57、Vault 96、works 146 件。Obsidian の意味の Vault と、パス名の `works` は置き換えない）。
+- 【この件】`open-hook.md` の「Project の構造」を `project-structure.md` へ、`start-hook.md` の「作業の種類の差分」を `start-work-types.md` へ、本文を原文のまま移した（案A。ユーザーの承認「分割が大事」）。`open` の「未決」から、`log.md` の Open Questions と重複する 2 項（`remote` の type、リポジトリが正の `src`）を削った。`open` 5,596 → 2,924 字、`start` 5,637 → 4,827 字。基準（`hook-matrix.md`）は移した後の値に更新。点検スクリプトは FAIL・NOTE なし（exit 0）。弱点: 移した分の総量は変わらない。移した先は、type を決めるとき・項目を埋めるときに読むので、読み忘れると置き場や聞く項目が漏れる。
+- 参照を直したもの: `README.md`、`hooks.md`、`templates/project/README.template.md`（コメントの参照だけ）、`open-hook.md` 手順「聞く」。
+
 ## 2026-10-17 `review` の前回の日付を `[review]` コミットから取る。点検スクリプトの FAIL 4 件を案Aで直した。用語「領域」を採った（ユーザーの決定）
 
 - 【汎用】`start` の事前確認と `wrap` の「ユーザーに求めること」が見る「前回の `review` の日付」は、`[review]` で始まる最後のコミットの日付（`git log --grep='^\[review\]' -1 --format=%cs`、`resources/` で実行）。`review` のコミットは `[review] 内容` にする。根拠: `token-matrix.md` の点の履歴は、手順7の採点をした回だけ増えるので、採点を飛ばした回が 7 日の判定から漏れる。コミット日は、実施した回をすべて拾える。却下案: 点の履歴の最終行（上の漏れ）。AI の追加（ユーザーは未確認）: 直す・畳むものが無い週も `--allow-empty` で `[review] 今週は無し` を残す。

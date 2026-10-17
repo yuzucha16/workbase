@@ -7,6 +7,9 @@
 - `tools/check-hook-outline.ps1` を `pwsh` で初めて実行した（確認: 実行出力）。FAIL 4 件: ① `init-hook.md` の見出しが「目的 → 契機 → モード」で、スクリプトは「前提」しか許さない。② `wrap-hook.md` の「事前確認」の参照にフックのファイル名が無い（`start` の手順を指す）。③④ `room-context.md:21` の手順「コミットする」「昇格の案を出す」にも同様。NOTE: `open-hook.md` 5,596 字、`start-hook.md` 5,637 字が目安 5,000 字超。いずれも手順書・スクリプトは未変更(承認待ち)。
 - 23 は、ユーザーが `review` のコミット日を有力と判断。決定は未確定。
 
+### 2026-10-17（`open` と `start` を分割して畳んだ。works を指す語を「個人ワークスペース」にした）
+- ユーザーの決定と数値は `decisions.md` の同日の項。`project-structure.md` と `start-work-types.md` を新設（原文のまま）、`open` 2,924 字・`start` 4,827 字、点検スクリプトは FAIL・NOTE なし（確認: pwsh の実行出力、exit 0）。`log.md` の Open Question（`start-hook.md` の字数）を解消。push は未実施（ユーザーが後でまとめて行う）。
+
 ### 2026-10-17（review のコミット日の約束、点検スクリプトの FAIL の解消、用語「領域」）
 - ユーザーの決定（`decisions.md` の同日の項）: 前回の `review` の日付は `[review]` コミットから取る。点検スクリプトの FAIL は案Aで直す。用語は「領域」。21/20 の残りと 20 の部屋の確認は別セッションへ。
 - 直したもの: `review-hook.md` の手順「コミットする」（`[review]` 接頭辞、`--allow-empty`、日付の取り方）、`start-hook.md` `wrap-hook.md` の日付の元、`check-hook-outline.ps1`（「モード」の許可、他フック参照の除外）、`room-context.md` `wrap-hook.md` の手順参照。pwsh で再実行し FAIL なし（確認: 実行出力）。NOTE は `open` 5,596 字、`start` 5,681 字。

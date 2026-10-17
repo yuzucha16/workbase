@@ -68,7 +68,9 @@
 | `init-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
 | `init-workspace.md` | init の導入項目 5（ワークスペースの生成）の作り方。項目 5 のときだけ読む |
 | `init-restore.md` | init の導入項目 4（履歴からの復元）の作り方。項目 4 のときだけ読む |
-| `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、聞き取り、README 本文の下書き。Project の構造 |
+| `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、聞き取り、README 本文の下書き |
+| `project-structure.md` | Project の構造: 固定の核（`ai/` と `_noai/`）、type ごとの置き場、基準文書の置き場。`open` の type の決定と、置き場に迷ったときに読む |
+| `start-work-types.md` | 作業の種類の差分（開発、文書作成）: `start-hook.md` の手順「項目を埋める」で、共通の項目に加えて聞く項目 |
 | `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 構成、文書、テスト、変更の依頼、立ち上げ・完了のチェック。`dev-env` `dev-test` の差分も持つ。`type` が `dev` `dev-env` `dev-test` の `open` / `start` のときだけ読む |
 | `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
 | `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `topics/kit-growth/docs/decisions.md`） |
