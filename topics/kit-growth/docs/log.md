@@ -31,9 +31,9 @@
 24. 続ける・切るの暫定の数値（間5分、約10万トークン、約2万トークン）が実測に合うか、`review` の入力 5（重い会話）で見る。数値はユーザーが承認済み（2026-10-17。暫定）。`exmem/inbox/` に未統合のメモが1件（`2026-10-17-session-cut-cache-thresholds.md`）。
 23. `review` の「前回の日付」の元（`reviews` の最終行）が workbase に未定義。`start` の事前確認と `wrap` の追記が、実際にどの記録を見て7日を判断するか決める（候補: `token-matrix.md` の点の履歴の最終行、または `review` のコミット日）。
 
-21. `tools/check-hook-outline.ps1` を `pwsh` で実行して確かめる（2026-10-17 に、改善案を載せないことと共通の項目を指していることの点検へ書き換えたが、環境に `pwsh` が無く未実行）。あわせて、`open`・`start` が字数の目安 5,000 字を超えているので、次の `review` で畳む候補にする。
+21. `tools/check-hook-outline.ps1` を実行した(2026-10-17)。FAIL 4 件の扱いを決める: ① `init-hook.md` の「目的 → 契機 → モード」(スクリプトが「モード」を許すよう直すか、見出しを直す) ② `wrap-hook.md` の「事前確認」と `room-context.md:21` の2手順(フックのファイル名を添えるか、スクリプトの判定を緩める)。`open`(5,596 字)・`start`(5,637 字)は目安超えで、次の `review` で畳む候補。
 
-20. 領域 × r/w 表（`hooks.md`）を使いながら確かめる。部屋の AI が `wrap` の差し替え（コミットを行わない、知識化は `ai/out/stock/` の下書き）と、`ROOM.md` の stock の書き方（frontmatter）に従えるか。`pwsh` のある端末で `check-hook-outline.ps1` を一度実行する（2026-10-17 は pwsh が無く未実行）。
+20. 領域 × r/w 表（`hooks.md`）を使いながら確かめる。部屋の AI が `wrap` の差し替え（コミットを行わない、知識化は `ai/out/stock/` の下書き）と、`ROOM.md` の stock の書き方（frontmatter）に従えるか。`check-hook-outline.ps1` は実行済み(21 を参照)。
 19. 窓口を2つ（`exmem/inbox/`、`topics/kit-growth/inbox.md`）のままにするか決める（AI の勧めは2つのまま。性質が違い、処理も `integrate` と `review` で別）。
 18. 用語を決める。「領域」（`hooks.md` で使用）でよいか。works を指す語（ワークスペース、Vault、works）を1つにする。
 17. 点検スクリプトの Python 版を作るか決める（`check-inbox.ps1`、`find-knowledge.ps1`）。部屋に `pwsh` が無く、`stock` の点検と検索が部屋で使えない。uv と Python は部屋にある。足すと共有知が約 30 KB 増える。
@@ -62,7 +62,6 @@
 - 場所: `init-update.md`（7.9k 字） / 問題: 同じ任意の章 `init-workspace.md`（2.6k）の約3倍で、`hook-matrix.md` の重さの基準でも大きい / 案: 使ってみて、手順 1・2 の確認コマンドを `init-update.md` から外せるか見る（`review` で比べる）。
 - 場所: `open-hook.md` の未決 / 問題: リポジトリが正の `src`、remote で動くものは、構造が新規のフルスクラッチ前提で、`ai/out/` に clone すると `restore` が止まる / 案: `repos/` に置いたまま、スナップショットと patch で受け渡す(未検証)。
 - 場所: `room.py` の `restore_project` / 問題: AI が使えない間に人が `_noai/final/` を直すと、次の AI の終了時の復元で無条件に上書きされる(別の話にする、とユーザー。2026-10-16) / 案: 正本の宣言、`raw/` → `mask` → `ai/in/` の戻り方の約束、上書き前の警告。
-- 場所: `review-hook.md` の消化モード（60行目）/ 問題: 対象が「呼び出し元の `docs/log.md`」で、「<名前> の続き」で読みに行った単位を含むか書かれていない（`wrap` は明記済み）。「続き」なしで言うとリポジトリ直下の `docs/log.md` と読まれうる / 案: 対象を「このセッションで作業した単位の `docs/log.md`」と1行で明記する（`review 消化` で承認を取る）。
 - Area の担い手: topic-workflow の Q3 の会話で、AI は「kit の改善という Area は kit 本体・`improvements.md`・`review` が担う」と述べたが、本トピックの決定は「トピックが担う」。後者（ユーザーの合意）を採った。
 - 場所: `method-creation.md` / 問題: 5〜12 の AI の追加は叩き台で、ユーザー未確認 / 案: 次にやり方を作るときに使い、足りない点・重い点を記録する
 - 場所: `start-hook.md` / 問題: 5,424 字で基準 4,434 の +22%（2026-10-17 に `*-hook.md` の文字数で測り直した。以前の 12,870 は、バイト数と見られる。この環境の `wc -m` も 12,870 を返したが、文字数は 5,424）。調査2を足した後も増やしていないが、+20% を超えたまま / 案: 次に足すとき、引数つきモード(解決・改善・調査)の共通の手順を1つの表にまとめて畳む
