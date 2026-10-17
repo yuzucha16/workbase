@@ -58,7 +58,8 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   # 手順の参照は番号でなく見出し（太字）の名前で書く。番号参照が無く、名前が同じファイルの手順に実在すること
   if ($raw -match '手順 ?[0-9０-９]|手順の ?[0-9０-９]|」の [0-9０-９] ') { $content += '手順を番号で参照している（手順「名前」で書く）' }
   $titles = @([regex]::Matches($raw, '(?m)^\s*[0-9]+\. \*\*(.+?)\*\*') | ForEach-Object { $_.Groups[1].Value.TrimEnd('。', ':', '：') })
-  $refs = @([regex]::Matches($raw, '手順「([^」]+)」|「手順」の「([^」]+)」') | ForEach-Object { if ($_.Groups[1].Success) { $_.Groups[1].Value } else { $_.Groups[2].Value } })
+  # 他のフックのファイル名つきの参照（`xxx-hook.md` の手順「名前」）は、そのファイルの手順を指すので、ここでは数えない
+  $refs = @([regex]::Matches($raw, '(?<!-hook\.md`?\s*の)手順「([^」]+)」|「手順」の「([^」]+)」') | ForEach-Object { if ($_.Groups[1].Success) { $_.Groups[1].Value } else { $_.Groups[2].Value } })
   $dead = @($refs | Where-Object { $r = $_; -not ($titles | Where-Object { $_.StartsWith($r) }) } | Sort-Object -Unique)
   if ($dead) { $content += "手順の参照先が無い: $($dead -join '、')" }
   if (-not $head.Contains('`hooks.md`')) { $content += '冒頭に正本 hooks.md の記載が無い' }
@@ -69,9 +70,9 @@ foreach ($f in Get-ChildItem -Path $kitRoot -Filter '*-hook.md' | Sort-Object Na
   # 見出し（H2）に括弧の注記を付けない（日付・決定者・出典は本文の1行目に書く）
   $annot = @($h2 | Where-Object { $_ -match '[（(]' })
   if ($annot) { $content += "見出しに括弧の注記がある: $($annot -join '、')" }
-  # 目的と契機: 目的 → 契機 → 前提（前提は任意）の順
+  # 目的と契機: 目的 → 契機 → 前提 → モード（前提とモードは任意）の順
   $labels = @([regex]::Matches($body['目的と契機'], '(?m)^- \*\*([^*]+)\*\*') | ForEach-Object { $_.Groups[1].Value })
-  if (($labels -join ',') -notin '目的,契機', '目的,契機,前提') { $content += "目的と契機の項目が「目的 → 契機 → 前提（任意）」でない: $($labels -join ' → ')" }
+  if (($labels -join ',') -notin '目的,契機', '目的,契機,前提', '目的,契機,モード', '目的,契機,前提,モード') { $content += "目的と契機の項目が「目的 → 契機 → 前提（任意）→ モード（任意）」でない: $($labels -join ' → ')" }
   # 報告の型: 固有の項目は番号つきリスト（太字のラベル）で、連番。改善案は載せない
   $items = @([regex]::Matches($body['報告の型'], '(?m)^([0-9]+)\. \*\*([^*]+)\*\*'))
   if (-not $items) { $content += '報告の型が番号つきリスト（太字のラベル）でない' }
