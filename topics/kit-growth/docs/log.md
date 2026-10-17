@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-17（「振り返りのやり方1」を足した）
+更新: 2026-10-17（失敗の振り返りを cwd の件で試行し、取扱説明書に反映した）
 
 ## 状態
 
@@ -23,9 +23,11 @@
 - 取扱説明書（`exmem/lessons/user-manual.md`）に、思考の癖の補正策を Principles として足し、根拠の分析を `exmem/lessons/user-thinking-habits.md` に置いた(`aeb68e9`)。補正策(削る提案には今の役目を先に挙げる、推奨に最大の弱点を添える、wrap で撤回の回数を数える等)は、他のセッションで徐々に手順書へ反映する(ユーザー)。
 - 「振り返りのやり方1」(業務の進め方・成果物を、評価軸を先に決めて、良い点と悪い点の各最大3個で評価する。`methods.md` の「改善」の改善4、`exmem/lessons/retrospective-method.md`、`start 改善`)を足した。品質チェック3回(迷った点 14 → 10 → 6)の記録は `records/retrospective-method-record.md`。`start-hook.md` は変更なし。
 - topic-workflow を取り込んで close した。トピックの型の正本は `topics/AGENTS.md`（docs-rules に節は足さない）。`wrap` の依頼文は「<単位> の続き」の1行。
+- 取扱説明書の「失敗の分析が薄い」に、失敗の振り返りの原則を足した(`user-manual.md`。cwd 前提の取り消しの件で試行)。撤回・取り消しの理由は事実と推測を分け、正本を1か所にする、を `docs-rules.md` に足した。施策1(実現方法を任せる依頼で、実装前に場所・手段・呼び出し元を3行で見せる)は後段に回した(`decisions.md`)。
 
 ## Next Actions
 
+14. 失敗の振り返りの施策1(実装前に場所・手段・呼び出し元を3行で見せる)を、同型の取り消し(前提の見落とし)がもう1件出たときに入れるか決める。`.obsidian` の見落とし(2026-10-05)が同じ形かを、先に確かめる。
 13. 「振り返りのやり方1」(`methods.md` の改善4、`retrospective-method.md`)を、次の振り返りの依頼から使う(題材 B = 業務の対象でも)。評価軸の選び方の指針が要るか、各最大3個が適切かを、`records/retrospective-method-record.md` に足す。3回の `review` の後に Must の増減を決める。
 12. `user-manual.md` の補正策(2026-10-17)を、使いながら手順書に反映する。候補: `wrap` に撤回・頭を冷やした回数の集計を足す(遠回りの問いの前)、削除・統合の提案での役目の列挙、決定の推奨に弱点を添える。PC1・PC2 の会話からの同じ分析は、`user-thinking-habits.md` の Open Questions。
 11. 「調査のやり方1」「調査のやり方2」(`methods.md` の「調査」、`exmem/lessons/research-method.md` / `research-method-2.md`、`start 調査`)を、次の調査・手順書から使う。調査2は事例が SSH 鍵の1つだけで、実機も未検証。確定版の手順書の置き場は未決。3回の `review` の後に、Must(仕込み3・プロセス6)の増減を決める。仕込みとプロセスの境目(4を想定読者として仕込みに移した案)は承認済み。pwsh のある PC で `tools/check-hook-outline.ps1` を実行する。先送り: 読者が変わる業務の調査(`research` type)、値の更新。確定版の置き場は `guides/explain/<主題>.md`(決定済み)。最初の確定(Claude スキルの成果物を移すか)は未定。品質チェック(新しい会話で3回実行し、基準と比較)は実施済み。3回目の直しは未検証で、`start-hook.md` は +17%(+20% の手前)なので、次に足すときは畳む。
