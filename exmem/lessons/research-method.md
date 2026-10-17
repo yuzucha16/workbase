@@ -106,3 +106,4 @@ sources:
 - [[reference-doc-types]]
 - [[accretion-without-pruning]]
 - [[method-creation]]
+- [[research-method-record]]（品質チェックの記録）
