@@ -60,7 +60,7 @@ sources:
   3. 基準と比べる。観点を決め（章立て、出典、事実と所感の分離など。基準から取る）、○△× の表にする。
   4. 差ごとに、原因を手順書の欠け・曖昧さに帰して、手順書を直す。実行者が迷った点も直す。
   5. 直したら、次の会話で2〜4を繰り返す。
-  6. 比較表と各回の成果物を残す（調査のやり方では、プロジェクトの `notes/claude-skills/qa/`）。
+  6. 比較表と各回の直しを、改善記録に残す（`topics/kit-growth/records/<名前>-record.md`。書式と索引は [[kit-records-index]]）。大きい成果物は repo に入れず、置き場だけを記録に書く。実運用の振り返りも同じ記録に足す。
 - **登録の作業**（`hook-common.md` の「フックを足す・消すとき」を参照）: `methods.md` の表と、必要なら `start` のモード（`start-hook.md` の「引数つきモード」）、`hooks.md` の行、`hook-matrix.md` の「review の点検」7、`exmem-index.md`、このノートの事例の表、`topics/kit-growth/docs/decisions.md`。`start-hook.md` は基準の +20% を超えないようにする（超えるなら畳む）。
 - 事例での直しの例（調査のやり方）: 「具体例」とだけ書くと公式の例で終わった → 人気の上位5とジャンル別を書いた。人気順の取り方で結果が割れた → 指標・対象の種類・件数を仕込みで言い切った。出典番号の欠番 → 連番にした。
 
@@ -85,6 +85,7 @@ sources:
 
 - [[change-method]]
 - [[research-method]]
+- [[kit-records-index]]
 - [[problem-solving-analogy]]
 - [[problem-solving-iterative-revision]]
 - [[improvement-quantified-options]]
