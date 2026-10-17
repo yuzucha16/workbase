@@ -107,3 +107,4 @@ sources:
 - [[accretion-without-pruning]]
 - [[method-creation]]
 - [[research-method-record]]（品質チェックの記録）
+- [[research-method-2]]（手順を調べる調査）
