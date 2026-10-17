@@ -1,4 +1,4 @@
-# ワークスペース（Vault のトップ）の .gitignore の雛形。導入時に、ワークスペースのルートへ `.gitignore` として置く。
+# works の .gitignore の雛形。導入時に、works のルートへ `.gitignore` として置く。
 
 # 共有ナレッジは別リポジトリ（workbase）の clone。このリポジトリでは追跡しない
 /resources/

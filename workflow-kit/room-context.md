@@ -48,4 +48,4 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
 | `stock` | 下書きまで | `room stock <名>`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
 
-`integrate` `review` `init` は、部屋では行わない（`hooks.md` の r/w 表で －。`integrate` `review` は Vault 側の workbase の作業、部屋の作成は `room init`）。
+`integrate` `review` `init` は、部屋では行わない（`hooks.md` の r/w 表で －。`integrate` `review` は works 側の workbase の作業、部屋の作成は `room init`）。

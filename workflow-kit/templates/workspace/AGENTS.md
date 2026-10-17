@@ -1,8 +1,8 @@
 # AGENTS.md
 
-<このワークスペースの役割を1〜2行で。例: 業務用 PC の作業場。PARA でこの PC のローカルの作業を管理し、共有ナレッジ（`resources/`）を参照する。>
+<この works の役割を1〜2行で。例: 業務用 PC の作業場。PARA でこの PC のローカルの作業を管理し、共有ナレッジ（`resources/`）を参照する。>
 
-Obsidian の Vault のトップ。この PC だけのローカルなリポジトリ（remote: <なし / 非公開リポジトリの URL>）。共有ナレッジは `resources/`（別リポジトリ `workbase` の clone）にあり、Vault 全体の規約は `resources/AGENTS.md`。
+works（Obsidian の Vault）のトップ。この PC だけのローカルなリポジトリ（remote: <なし / 非公開リポジトリの URL>）。共有ナレッジは `resources/`（別リポジトリ `workbase` の clone）にあり、works 全体の規約は `resources/AGENTS.md`。
 
 ## 共通ルール
 
@@ -12,7 +12,7 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 
 ## 読む順番
 
-1. `README.md`（窓口。構成と管理。Vault 全体の規約は `resources/AGENTS.md`。`resources/` の作業のときに読む）
+1. `README.md`（窓口。構成と管理。works 全体の規約は `resources/AGENTS.md`。`resources/` の作業のときに読む）
 2. `docs/log.md`（開始時に読むのはここまで。「期日」の節があれば、今日以前または3日以内の項目を、最初の返答で知らせて判断を求める）
 3. `docs/decisions.md` と `docs/log-history.md` は開始時に読まない。何かを決める・変える前に `decisions.md` を検索する。経緯が要るときは `log-history.md` を検索する。
 
@@ -20,17 +20,17 @@ Obsidian の Vault のトップ。この PC だけのローカルなリポジト
 
 ## 構成と管理
 
-構成の表は `README.md`（`areas/` `projects/` `archives/`、`docs/`、`resources/`、`repos/`、`.obsidian/` など）。`resources/` と `repos/` の各リポジトリは別の git リポジトリで、git 操作はそれぞれの中で行い、作業の前にその `AGENTS.md` を読む。`resources_p/` は PC ローカルの resources（この PC だけの情報の置き場。追跡しない。Vault 側の AI は読み書きしてよく、`areas/` などのような deny はしない）。
+構成の表は `README.md`（`areas/` `projects/` `archives/`、`docs/`、`resources/`、`repos/`、`.obsidian/` など）。`resources/` と `repos/` の各リポジトリは別の git リポジトリで、git 操作はそれぞれの中で行い、作業の前にその `AGENTS.md` を読む。`resources_p/` は PC ローカルの resources（この PC だけの情報の置き場。追跡しない。works 側の AI は読み書きしてよく、`areas/` などのような deny はしない）。
 
 ## AI 作業部屋（`projects/` `areas/` `archives/` を扱うとき）
 
-- この 3 つの中の作業は、AI 作業部屋（専用の WSL ディストリビューション）の中で行う。Vault 側の AI（この `AGENTS.md` を読む AI）は、`projects/` `areas/` `archives/` を読まない・編集しない。`.claude/settings.json` で `Read` と `Edit` を deny している（雛形: `resources/workflow-kit/templates/workspace/claude-settings.template.json`。安全網であって境界の保証ではない。効くのは、このリポジトリのトップで起動したときだけ）。
+- この 3 つの中の作業は、AI 作業部屋（専用の WSL ディストリビューション）の中で行う。works 側の AI（この `AGENTS.md` を読む AI）は、`projects/` `areas/` `archives/` を読まない・編集しない。`.claude/settings.json` で `Read` と `Edit` を deny している（雛形: `resources/workflow-kit/templates/workspace/claude-settings.template.json`。安全網であって境界の保証ではない。効くのは、このリポジトリのトップで起動したときだけ）。
 - `.claude/` は、プロジェクト固有の規則が要るリポジトリだけ `settings.json` を置いて追跡する。`settings.local.json` は、どのリポジトリでも追跡しない。
 - `room`（`resources/workflow-kit/room/`）は人が端末で実行する。AI は実行しない。
 - 部屋の使い方と読み替えは `resources/workflow-kit/room/README.md` と `resources/workflow-kit/room-context.md`。
 - `.gitignore` に `**/_noai/`（AI に見せない領域。追跡しない）と `!**/ai/out/` を入れる（雛形: `gitignore.template`）。
 
-## このワークスペース固有のルール
+## この works 固有のルール
 
 - <remote の方針に合わせて書く。remote が無いとき: このリポジトリに remote を足さない。push しない（誤って push しないよう、`.git/hooks/pre-push` で止めてある）。>
 - ローカル側から共有側（`resources/`）への `[[リンク]]` は張ってよい。共有側のノートから、ローカル側（`areas/` `projects/` `archives/` `resources_p/`）へは張らない。他の PC でリンク切れになる。

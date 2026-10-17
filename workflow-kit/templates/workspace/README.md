@@ -1,8 +1,8 @@
-# <ワークスペース名>
+# <works の名前>
 
-<このワークスペースの役割を1〜2行で。`AGENTS.md` の冒頭と同じでよい。>
+<この works の役割を1〜2行で。`AGENTS.md` の冒頭と同じでよい。>
 
-Obsidian の Vault のトップ。この PC だけのローカルなリポジトリ。規約は `AGENTS.md`、Vault 全体の規約は `resources/AGENTS.md`。
+works（Obsidian の Vault）のトップ。この PC だけのローカルなリポジトリ。規約は `AGENTS.md`、works 全体の規約は `resources/AGENTS.md`。
 
 ## 構成
 

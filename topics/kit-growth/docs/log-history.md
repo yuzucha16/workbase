@@ -7,6 +7,11 @@
 - `tools/check-hook-outline.ps1` を `pwsh` で初めて実行した（確認: 実行出力）。FAIL 4 件: ① `init-hook.md` の見出しが「目的 → 契機 → モード」で、スクリプトは「前提」しか許さない。② `wrap-hook.md` の「事前確認」の参照にフックのファイル名が無い（`start` の手順を指す）。③④ `room-context.md:21` の手順「コミットする」「昇格の案を出す」にも同様。NOTE: `open-hook.md` 5,596 字、`start-hook.md` 5,637 字が目安 5,000 字超。いずれも手順書・スクリプトは未変更(承認待ち)。
 - 23 は、ユーザーが `review` のコミット日を有力と判断。決定は未確定。
 
+### 2026-10-17（Python 版の点検スクリプト、用語を works に統一、窓口は2つのまま）
+- 決定と数値は `decisions.md` の同日の 2 項。`check_inbox.py` `find_knowledge.py` を足し、ps1 版と出力が一致することを確認。works を指す語は「works」に変更し、kit・ルート・`guides/` で置き換えた。点検スクリプトは FAIL なし（exit 0）。
+- 14 の調査: `.obsidian` の 2 件（`app-config-placement.md` の Gotchas＝前提の見落とし、`human-ai-decision-loop.md`＝先行する決定の見落とし）。前者が cwd の件と同型の候補。判断はユーザー。
+- 16 の説明（メリット・デメリット）: 外すと、部屋へ送る tar が約 142 KB（`room.py` 58 KB、`maskkit.py` 27 KB、テスト 68 KB のうち、README を除く分）小さくなり、部屋の AI の検索に出るノイズが減る。デメリットは、`room/README.md`（10 KB）へ張った参照が部屋の中で切れること、部屋の AI が `room` コマンドの挙動を読んで答えられなくなること。中間案: コードとテストだけ外し、`README.md` は残す。決定は未了。
+
 ### 2026-10-17（`open` と `start` を分割して畳んだ。works を指す語を「個人ワークスペース」にした）
 - ユーザーの決定と数値は `decisions.md` の同日の項。`project-structure.md` と `start-work-types.md` を新設（原文のまま）、`open` 2,924 字・`start` 4,827 字、点検スクリプトは FAIL・NOTE なし（確認: pwsh の実行出力、exit 0）。`log.md` の Open Question（`start-hook.md` の字数）を解消。push は未実施（ユーザーが後でまとめて行う）。
 

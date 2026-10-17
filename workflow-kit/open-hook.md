@@ -8,7 +8,7 @@
 
 - **目的**: `open` は Project の主題と完了条件を決めて、README 本文を下書きする。続けて `start`（`start-hook.md`）を呼び、その日のゴールと前提を決める。ひな形（`README.md`、`ai/`、`_noai/`）、Area の一覧、状態、コミットは、人が行う `room open` / `room readme` の責務で、この手順書は持たない（`room-context.md`、`room/README.md`）。
 - **契機**: Project を新しく始めるときに、ユーザーが言う、または `start` が、進行中の Project が無いと判断したときに案内する。小さな再開では、`open` は不要。
-- **前提**: ワークスペース（PARA 構成。`areas/` `projects/` `archives/`）があり、人が `room open <名>` で Project のひな形を作ってある。
+- **前提**: works（PARA 構成。`areas/` `projects/` `archives/`）があり、人が `room open <名>` で Project のひな形を作ってある。
 
 ## 場所と書き込みの制約
 
@@ -17,13 +17,13 @@
 
 ## 手順
 
-1. **対象を決める**: 候補（Area の README の「次の Project の候補」、`ai/docs/log.md` の Next Actions）から選ぶ。新しい題材なら、どの Area に属するかを決める（Area の上限は、ワークスペースの規約に従う。暫定: 5件）。
+1. **対象を決める**: 候補（Area の README の「次の Project の候補」、`ai/docs/log.md` の Next Actions）から選ぶ。新しい題材なら、どの Area に属するかを決める（Area の上限は、works の規約に従う。暫定: 5件）。
 2. **判断基準で検査する**:
    - 完了条件を、1文で書けるか（書けなければ Project ではなく Area）。
    - 見直し日を置けるか。成果物が1つに特定できるか（複数なら Project を分ける）。
    - 進行中の Project の上限を超えないか（暫定: 3件）。
 3. **聞く**（選択式。答えが1つに定まるものは宣言する）: 種類 `type`（`doc` `dev` `dev-env` `dev-test` `research`。成果物の種類で決める。Area は既定値のヒント。環境やテストだけが成果物なら `dev` でなく `dev-env` `dev-test`）、主題（言語や方式など）、完了条件の種類、見直し日。開発系（`dev` `dev-env` `dev-test`）の Project は、`start-work-types.md` の「開発」の項目を、**実装の前に**ここで聞く。
-4. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`）を書く。完了条件は、ユーザーが承認してから書く（承認の前に「ユーザー承認: 日付」を書かない）。Project の名前の案（`<動詞か領域>-<主題>`、例: `learn-c-pool-allocator`。ワークスペース内で一意）を添える。
+4. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`）を書く。完了条件は、ユーザーが承認してから書く（承認の前に「ユーザー承認: 日付」を書かない）。Project の名前の案（`<動詞か領域>-<主題>`、例: `learn-c-pool-allocator`。works 内で一意）を添える。
 5. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。呼び出し元に `events` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
 6. **`start` を呼ぶ**。
 
