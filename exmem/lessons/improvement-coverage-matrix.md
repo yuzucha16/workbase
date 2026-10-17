@@ -11,7 +11,7 @@ aliases:
   - 星取り表
   - 修正・削除・追加
 created: 2026-10-15
-updated: 2026-10-15
+updated: 2026-10-17
 sources:
   - Claude Code conversation "トークン消費量を抑えるプロセス・考え方" (2026-10-08〜15)
 ---
@@ -93,3 +93,4 @@ sources:
 - [[abstract-concrete-matrix-review]]: 項目 × 対象の横並びの表（星取り表の元になった整理の方法）
 - [[accretion-without-pruning]]: 足すなら畳む（追加と削除を対にする理由）
 - [[session-handoff]]、[[ai-harness-concepts]]: 実例の題材（会話を切る、コンテキストの管理）
+- [[method-creation]]

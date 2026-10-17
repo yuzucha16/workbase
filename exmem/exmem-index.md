@@ -54,6 +54,7 @@ updated: 2026-10-16
 - [[obsidian-appearance]]: Obsidian のファイル一覧の色分けと、CSS で変えられない範囲
 - [[obsidian-vault]]: Obsidian Vault
 - [[office-ai-workspace]]: Office成果物をAIで作る作業環境とデータ配置
+- [[method-creation]]: 「〇〇のやり方」の作り方: 2ブロックで型にし、新しい会話で3回確かめて、手順書に取り込む
 - [[para-operations]]: PARA の運用と、AI の質問・提案の指標
 - [[pc-setup-manuals]]: 環境セットアップ手順書（Win11 / Debian系）
 - [[power-automate-office-automation]]: Power Automate / Office Scriptsによる業務自動化

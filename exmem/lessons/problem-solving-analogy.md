@@ -10,7 +10,7 @@ aliases:
   - 問題解決のやり方1
   - アナロジーで解く
 created: 2026-10-13
-updated: 2026-10-14
+updated: 2026-10-17
 sources:
   - Claude Code conversation "AI に見せる領域の分離設計" (2026-10-13)
 ---
@@ -73,3 +73,4 @@ sources:
 - [[improvement-quantified-options]]、[[improvement-expectation-gap]]: 改善のやり方（別系列）
 - [[user-manual]]: AI がどう反応すればうまくいくか
 - [[human-ai-decision-loop]]: 人と AI の判断の進め方
+- [[method-creation]]
