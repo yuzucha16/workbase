@@ -27,6 +27,9 @@
 
 ## Next Actions
 
+22. `integrate` が push しない理由を確かめる（意図なら `integrate-hook.md` に1行書く。取り残しなら `wrap` と同じにする）。`docs-rules.md` の「push」は、許可リストの workbase ならエージェントが push してよい。報告の型の「コミット」に書き方の差が残っている。
+21. `tools/check-hook-outline.ps1` に、報告の型の共通項目（1「ユーザーに求めること」、2「コミット」）の点検を足す（今は `hook-matrix.md` の Must の行を手で見る）。`pwsh` で実行して確かめる。あわせて、`open`・`start` が字数の目安 5,000 字を超えたので、次の `review` で畳む候補にする。
+
 20. 領域 × r/w 表（`hooks.md`）を使いながら確かめる。部屋の AI が `wrap` の差し替え（コミットを行わない、知識化は `ai/out/stock/` の下書き）と、`ROOM.md` の stock の書き方（frontmatter）に従えるか。`pwsh` のある端末で `check-hook-outline.ps1` を一度実行する（2026-10-17 は pwsh が無く未実行）。
 19. 窓口を2つ（`exmem/inbox/`、`topics/kit-growth/inbox.md`）のままにするか決める（AI の勧めは2つのまま。性質が違い、処理も `integrate` と `review` で別）。
 18. 用語を決める。「領域」（`hooks.md` で使用）でよいか。works を指す語（ワークスペース、Vault、works）を1つにする。
