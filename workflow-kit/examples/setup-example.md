@@ -51,11 +51,16 @@
 
 ## 報告の例
 
-1. **ユーザーに求めること**: なし。
-2. **コミット**: なし（コミットしていない）。
-3. **対象**: `C:\work\sample-batch`
-4. **変更したファイル**: 新規に `AGENTS.md`、`CLAUDE.md`、`docs/log.md`、`docs/decisions.md` を作った。既存ファイルへの変更は無い。
-5. **追跡状況**: Git 管理（`.gitignore` で除外されていない）。
+共通の項目:
+
+- **ユーザーに求めること**: なし。
+- **コミット**: なし（コミットしていない）。
+
+固有の項目:
+
+1. **対象**: `C:\work\sample-batch`
+2. **変更したファイル**: 新規に `AGENTS.md`、`CLAUDE.md`、`docs/log.md`、`docs/decisions.md` を作った。既存ファイルへの変更は無い。
+3. **追跡状況**: Git 管理（`.gitignore` で除外されていない）。
 
 ## ワークスペースの生成（項目 5）の例
 
@@ -74,9 +79,14 @@
 
 報告の例:
 
-1. **ユーザーに求めること**: git の身元の設定を促す: `git config --global --get user.name` と `user.email` が未設定（または `example.com` を含む仮値）なら、現在値を示して設定を促す（エージェントのコミットには要らない。ユーザー自身の手動のコミット用）。`.obsidian` は未リンク（dotfiles の `30_link.bat` を実行する。実ディレクトリがあれば先に退避する）。remote が無いので push の案内は無い（remote があるときは、`git push -u origin main` と、既存のコミットがあるときの `git pull --rebase origin main` を書く）。未追跡の既存ファイルは、あれば一覧する（今回は無し）。
-2. **コミット**: 初回コミットを行った（`[works] initial commit: …`。作者は `agent <agent@agent.local>`）。含めなかったファイル: なし。push: しない（remote なし）。
-3. **対象**: `$HOME\works`
-4. **条件**: 対象 `$HOME\works`（既定値）。目的「業務用 PC の作業場。…」（既定値）。PC の役割: 業務用（既定値）。remote: なし（既定値）。初回コミット: する（既定値）。変えたいとき: 役割と目的は `AGENTS.md` の冒頭を直す。remote を足すときは `git remote add origin <URL>` と、`.git/hooks/pre-push` の削除。
-5. **変更したファイル**: 新規に上記のファイルと `.git/` を作った。`resources/` と `.obsidian/` は触っていない。
-6. **追跡状況**: この PC だけのローカルなリポジトリ（remote なし）。`resources/` は別リポジトリ（`workbase`）なので除外した。
+共通の項目:
+
+- **ユーザーに求めること**: git の身元の設定を促す: `git config --global --get user.name` と `user.email` が未設定（または `example.com` を含む仮値）なら、現在値を示して設定を促す（エージェントのコミットには要らない。ユーザー自身の手動のコミット用）。`.obsidian` は未リンク（dotfiles の `30_link.bat` を実行する。実ディレクトリがあれば先に退避する）。remote が無いので push の案内は無い（remote があるときは、`git push -u origin main` と、既存のコミットがあるときの `git pull --rebase origin main` を書く）。未追跡の既存ファイルは、あれば一覧する（今回は無し）。
+- **コミット**: 初回コミットを行った（`[works] initial commit: …`。作者は `agent <agent@agent.local>`）。含めなかったファイル: なし。push: しない（remote なし）。
+
+固有の項目:
+
+1. **対象**: `$HOME\works`
+2. **条件**: 対象 `$HOME\works`（既定値）。目的「業務用 PC の作業場。…」（既定値）。PC の役割: 業務用（既定値）。remote: なし（既定値）。初回コミット: する（既定値）。変えたいとき: 役割と目的は `AGENTS.md` の冒頭を直す。remote を足すときは `git remote add origin <URL>` と、`.git/hooks/pre-push` の削除。
+3. **変更したファイル**: 新規に上記のファイルと `.git/` を作った。`resources/` と `.obsidian/` は触っていない。
+4. **追跡状況**: この PC だけのローカルなリポジトリ（remote なし）。`resources/` は別リポジトリ（`workbase`）なので除外した。
