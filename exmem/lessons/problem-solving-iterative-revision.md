@@ -10,7 +10,7 @@ aliases:
   - 問題解決のやり方2
   - 決定への差し戻し
 created: 2026-10-13
-updated: 2026-10-14
+updated: 2026-10-17
 sources:
   - Claude Code conversation "改善のやり方1" (2026-10-13)
 ---
@@ -71,3 +71,4 @@ sources:
 - [[problem-solving-analogy]]: 問題解決のやり方1
 - [[user-manual]]: 差し戻しの合図と、回数を AI が数える動き
 - [[session-goal-modes]]: ゴールの変更を差し戻しに数える
+- [[method-creation]]

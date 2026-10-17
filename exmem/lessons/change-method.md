@@ -11,7 +11,7 @@ aliases:
   - 基準文書
   - 基点つきの最小変更
 created: 2026-10-16
-updated: 2026-10-16
+updated: 2026-10-17
 sources:
   - Claude Code conversation "init の雛形反映モードの検討" (2026-10-16)
 ---
@@ -70,3 +70,4 @@ sources:
 - [[ai-tool-deliverable-structure]]
 - [[office-ai-workspace]]
 - [[excel-vba-ai-development]]
+- [[method-creation]]

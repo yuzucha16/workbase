@@ -10,7 +10,7 @@ aliases:
   - 改善のやり方1
   - 10・20・30% の選択肢
 created: 2026-10-13
-updated: 2026-10-15
+updated: 2026-10-17
 sources:
   - Claude Code conversation "改善のやり方1" (2026-10-13)
 ---
@@ -82,3 +82,4 @@ sources:
 - [[improvement-expectation-gap]]: 改善のやり方2（数値で表せない改善）
 - [[improvement-coverage-matrix]]: 改善のやり方3（既存の仕組みを、星取り表から修正・削除・追加で直す）
 - [[problem-solving-analogy]]、[[problem-solving-iterative-revision]]: 問題解決の系列
+- [[method-creation]]
