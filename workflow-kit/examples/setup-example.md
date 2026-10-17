@@ -62,9 +62,9 @@
 2. **変更したファイル**: 新規に `AGENTS.md`、`CLAUDE.md`、`docs/log.md`、`docs/decisions.md` を作った。既存ファイルへの変更は無い。
 3. **追跡状況**: Git 管理（`.gitignore` で除外されていない）。
 
-## ワークスペースの生成（項目 5）の例
+## works の生成（項目 5）の例
 
-**内容は架空。** 業務用 PC で、Vault のトップを新しく作る場合。`resources/`（`workbase` の clone）は、dotfiles の `50_repos` が作成済みで、`workbase` の中で、「workflowを導入して」とだけ言った（対象の指定なし）ので、入力はすべて既定値になった。
+**内容は架空。** 業務用 PC で、works のトップを新しく作る場合。`resources/`（`workbase` の clone）は、dotfiles の `50_repos` が作成済みで、`workbase` の中で、「workflowを導入して」とだけ言った（対象の指定なし）ので、入力はすべて既定値になった。
 
 入力: 1. 対象ディレクトリ `$HOME\works`。2. 目的: 業務用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジを参照する。3. 読む順番の固有項目: なし。4. 固有ルール: なし。5. PC の役割: 業務用。6. remote の方針: なし。7. 初回コミット: する。
 

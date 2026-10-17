@@ -15,9 +15,9 @@ tags:
 
 > **状態: 草稿（未レビュー）。別のセッションでレビューする予定。** 手順は、2026-10-12 に実機で通した内容（手作業）。レビュー前の記述は、確認と見直しの対象。
 
-- **ゴール（完了の目安）**: 部屋の中の Claude Code が、Project の `ai/` の中のファイルだけを読み書きでき、`/mnt/c` や Vault の他の場所が見えないこと。作業の成果物が、Vault（Windows 側）にそのまま現れること
+- **ゴール（完了の目安）**: 部屋の中の Claude Code が、Project の `ai/` の中のファイルだけを読み書きでき、`/mnt/c` や works の他の場所が見えないこと。作業の成果物が、works（Windows 側）にそのまま現れること
 - 範囲: 部屋の作成から、Project の作業、`close`、片付けまで。マスク・復元の操作（`room.py`）は範囲外（未実装。付録）
-- **スクリプトとの関係**: 操作を自動化する `room.py`（`open` / `start` / `close` / `umount`。置き場は `workflow-kit/room/`）は、**v0 を実装して、使い捨ての Vault で通した**（2026-10-12）。ただし**マスク・復元は未実装**で、実運用はこれから。このため、5・7 章の手作業を残している（`room.py` の動作の説明も兼ねる）。スクリプトの実運用が安定したら、スクリプトが正になり、この手順書はスクリプトの前後（手動の作業）と注意点だけにする
+- **スクリプトとの関係**: 操作を自動化する `room.py`（`open` / `start` / `close` / `umount`。置き場は `workflow-kit/room/`）は、**v0 を実装して、使い捨ての works で通した**（2026-10-12）。ただし**マスク・復元は未実装**で、実運用はこれから。このため、5・7 章の手作業を残している（`room.py` の動作の説明も兼ねる）。スクリプトの実運用が安定したら、スクリプトが正になり、この手順書はスクリプトの前後（手動の作業）と注意点だけにする
 - 固有情報（勤務先名、顧客名、ユーザー名）は書かない。パスは `$HOME` と `<Area>` `<Project>` で書く
 
 ## 対応バージョン表
@@ -39,7 +39,7 @@ tags:
 | 章 | 内容 | 区分 | 完了の目安 |
 |---|---|---|---|
 | 1 | 前提を確認する | 手動 | WSL2 と Claude のアカウントがある |
-| 2 | Vault 側の準備 | 手動 | `.gitignore`、Area の印、Project のひな形ができた |
+| 2 | works 側の準備 | 手動 | `.gitignore`、Area の印、Project のひな形ができた |
 | 3 | 部屋を作る（Area ごとに1回） | 手動 | `/mnt/c` が空、`cmd.exe` が無い |
 | 4 | 部屋に道具を入れ、ログインする（部屋ごとに1回） | 手動 | 部屋で `claude` が応答する |
 | 5 | Project を部屋で使う（作業のたびに） | 手動（将来は `room start`） | `ai/` だけが見え、成果物が Windows 側に現れる |
@@ -60,15 +60,15 @@ tags:
 
    - 目安: `VERSION` が `2`
 2. Claude のアカウントがある（部屋の Claude Code は、ブラウザ認証（OAuth）でログインする）。Bedrock などの別経路は、未検証（**要確認**）
-3. Vault（PARA 構成）が `$HOME\works` にあり、`areas/` `projects/` `archives/` がある
+3. works（PARA 構成）が `$HOME\works` にあり、`areas/` `projects/` `archives/` がある
 
-## 2. Vault 側の準備
+## 2. works 側の準備
 
-Vault（ローカルの git）に、1回だけ行う。
+works（ローカルの git）に、1回だけ行う。
 
 ### 2.1 `.gitignore` に足す
 
-ワークスペースの `.gitignore` に、次の行を足す。
+works の `.gitignore` に、次の行を足す。
 
 ```
 # 原本・対応表・実データ入りの成果物は追跡しない
@@ -203,7 +203,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
    - 表示される URL を、Windows のブラウザで開いてログインし、表示されたコードを貼り付ける。`interop` を切っているので、ブラウザは自動では開かない（正常）
    - 終わったら `/exit`
-   - 認証情報は、部屋のホーム（`/home/ai/.claude/`）だけにあり、Vault には出ない
+   - 認証情報は、部屋のホーム（`/home/ai/.claude/`）だけにあり、works には出ない
 5. 完了の目安
 
    ```powershell
@@ -269,7 +269,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
    - 目安: `0`、`0`
    - **よく忘れる点**: `rmdir` を忘れると、空のマウント点に Project 名が残り、別の Project の作業中に AI の `ls` で見える。アンマウント直後は、数秒待ってから確認する（直後だと、マウントが1つ残って見えることがある）
    - **PowerShell から `sh` に複数行を標準入力で渡さない**（改行が CRLF になり、`umount` が失敗して、マウントが積み重なる）。1行ずつ `-c` で渡す
-7. 変更を確認して、Vault にコミットする（コミットの規則は Vault の `AGENTS.md` に従う）。`ai/ctx/` は追跡されない
+7. 変更を確認して、works にコミットする（コミットの規則は works の `AGENTS.md` に従う）。`ai/ctx/` は追跡されない
 
 ## 6. Zed から使う
 
@@ -290,7 +290,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
      ```
 
      `zed-remote-server` と Claude のプロセスが、ユーザー `ai` で動いている
-- **やってはいけないこと**: 機密を扱う Project を、Zed で**ローカルのフォルダとして**開かない。Agent も Windows 側で動き、Vault 全体が見える状態に戻るため
+- **やってはいけないこと**: 機密を扱う Project を、Zed で**ローカルのフォルダとして**開かない。Agent も Windows 側で動き、works 全体が見える状態に戻るため
 - 入力（`in/`）の保存は、`Permission denied` になる（読み取り専用にしたため。正常）
 
 ## 7. Project を閉じる
@@ -314,7 +314,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 | 設定 | 内容 | 状態 |
 |---|---|---|
-| Vault 側の許可設定 | ワークスペースの `.claude/settings.json` で、`projects/` `areas/` `archives/` を `Read` と `Edit` の deny にする。Vault 側の AI が、うっかり読むのを防ぐ安全網。境界の保証は部屋が担う（`grep -r` やスクリプトは止まらない） | **未導入**。Windows ネイティブで、絶対パスの deny が効くかは要確認 |
+| works 側の許可設定 | works の `.claude/settings.json` で、`projects/` `areas/` `archives/` を `Read` と `Edit` の deny にする。works 側の AI が、うっかり読むのを防ぐ安全網。境界の保証は部屋が担う（`grep -r` やスクリプトは止まらない） | **未導入**。Windows ネイティブで、絶対パスの deny が効くかは要確認 |
 | ネットワークの絞り込み | 部屋から出られる先を、必要なサイトだけにする | 未検証 |
 | Codex・Copilot | 部屋の中に導入すれば、同じ境界が効く。規約は `AGENTS.md` を正本に、`CLAUDE.md` は `@AGENTS.md` の1行にする | 未検証。エディタ内蔵の Copilot は部屋の外で動くので、機密を扱う Project では使わない |
 | Python のバージョン固定 | 部屋の Python も、`uv python install <バージョン>` で入れて固定する | 未導入 |
@@ -323,7 +323,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 - 部屋を消す: `wsl --unregister room-<Area>`（部屋の中の履歴と認証情報も消える。**消す前に、必要な履歴を `ai/records/` に写す**）
 - 他の部屋・普段使いの環境（例: `Ubuntu-24.04`）には影響しない
-- Vault 側の変更（`.gitignore`、`boundary:`）は、通常の git で戻せる
+- works 側の変更（`.gitignore`、`boundary:`）は、通常の git で戻せる
 
 ## 10. うまくいかないとき
 
@@ -336,7 +336,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 | `umount` が「マウント点が指定されていない」で失敗し、マウントが積み重なる | 標準入力で渡して、改行が CRLF になっていないか。`for i in 1 2 3; do umount <マウント点>; done` で片付ける |
 | 成果物がコミットに入らない | `git check-ignore -v <ファイル>`。グローバル ignore の `out/` が原因なら、2.1 の `!**/ai/out/` |
 | `ai/in/` に書けない | 仕様（読み取り専用）。変更は `work/` か `out/` に書く |
-| Zed で、Vault 全体が見える | ローカルのフォルダとして開いていないか。WSL リモートで開く |
+| Zed で、works 全体が見える | ローカルのフォルダとして開いていないか。WSL リモートで開く |
 | Excel で開いているファイルを上書きできない | Excel の共有ロック。Excel を閉じてから行う |
 | `rg` が何も検索しない | `rg <pattern> .` と、パスを書く |
 | 処理が遅い | 小さいファイルが多い処理は、マウント上で遅い。大量の一時ファイルは、部屋のローカル（`~/tmp/`）に置く |
@@ -346,8 +346,8 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 - **`room.py` の残り**: マスク・復元、【汎用】の下書きの回収、reap、部屋の作成の自動化（`workflow-kit/room/README.md` の「未実装」）。実運用で安定したら、5・7 章を、スクリプトの呼び出しに差し替える
 - workflow-kit の手順書（`open` `start` `wrap` `close`）が、`docs/` を Project 直下と想定している。`ai/docs/` への読み替えと、部屋の中の AI が行う部分・人が行う部分の分担を、手順書に書く
-- workflow-kit のワークスペースの雛形（`gitignore.template`、`AGENTS.md`）への反映（2.1 の `.gitignore`、AI は部屋で使うこと、Zed は WSL リモートで使うこと、AI が書くスクリプトに標準ライブラリと同名を付けないこと）
+- workflow-kit の works の雛形（`gitignore.template`、`AGENTS.md`）への反映（2.1 の `.gitignore`、AI は部屋で使うこと、Zed は WSL リモートで使うこと、AI が書くスクリプトに標準ライブラリと同名を付けないこと）
 - マスク・復元（`mask.toml`、zip レベルの置換、置換後の点検）は、ダミーデータでの試験が未了
 - 部屋の会話履歴の片付け（reap）の手順と、期限の設定の置き場
-- 対応表の保護（Vault が漏れた場合の対策）は、運用しながら決める
+- 対応表の保護（works が漏れた場合の対策）は、運用しながら決める
 - Bedrock 経由の接続、docx・pptx のマスク、ネットワークの絞り込みは、未検証

@@ -1,8 +1,16 @@
 # kit-growth: 決定
 
+## 2026-10-17 窓口は2つのまま。点検スクリプトの Python 版を作った。やり方を作る最初の確認を足した（ユーザーの決定）
+
+- 【汎用】窓口は `exmem/inbox/`（知識）と `topics/kit-growth/inbox.md`（改善の印象）の2つのまま。ユーザーの決定。迷っていたのは操作の取り違え（モバイル）で、今は問題なし。
+- 【汎用】`check_inbox.py` と `find_knowledge.py` を `workflow-kit/tools/` に足した（標準ライブラリだけ）。`pwsh` が無い環境（クラウド、AI 作業部屋）で `stock` の点検と検索を使える。確認: 現在の inbox のメモ 2 件と 3 つの検索（`--body` あり・なし）で、ps1 版と出力が一致。違いは、`check_inbox.py` が英小文字の検査で大文字を通さないこと（ps1 版は大文字小文字を区別しない）。共有知が約 17 KB 増えた。点検の項目を変えるときは両方を直す（`README.md` に書いた）。
+- 【汎用】`method-creation.md` の Principles に 13 を足した: やり方を作る最初に、何を調べる・作るやり方か、`methods.md` のどの区分の何番かを、1 問で確かめる。ユーザーが承認。後出しになった原因は、モバイル操作のミスによる言い間違い。
+- Open Question「Area の担い手」を閉じた（決定済み: トピックが担う）。
+
 ## 2026-10-17 works を指す語を「個人ワークスペース」にした。`open` と `start` を分割して畳んだ（ユーザーの決定）
 
-- 【汎用】works を指す語は「個人ワークスペース」。根拠: 「Vault」は Obsidian に寄りすぎ、「works」はプレースホルダー（ディレクトリ名）に寄る。「ワークスペース」単体は「AI workspace」（AI 作業部屋）と重複する。未実施: 既存の語の置き換え（`kit` 内の出現: ワークスペース 57、Vault 96、works 146 件。Obsidian の意味の Vault と、パス名の `works` は置き換えない）。
+- 【汎用】works を指す語は、最初「個人ワークスペース」と決めた（根拠: 「Vault」は Obsidian に寄りすぎ、「works」はプレースホルダー寄り、「ワークスペース」単体は「AI workspace」と重複する）。**同日のうちに「works」に変更した（ユーザーの決定）**。理由: 影響範囲を考えて、プレースホルダーに寄せる。今のところ一意の表現である。「個人ワークスペース」は、まだ手順書に反映していなかったため、実害は無い。
+- 【汎用】置き換えは、kit（`workflow-kit/` の `improvements.md`（凍結）と `room.py` を除く）、ルートの `AGENTS.md` `README.md`、`exmem/README.md`、`guides/` に適用した。「ワークスペース」「Vault」→「works」。Obsidian の意味の箇所は「works（Obsidian の Vault）」と書いた。雛形（`templates/workspace/`）も変わったので、次の `init 更新` で既存の works に反映される。`exmem/lessons/` と `topics/` のノートは、Obsidian の意味や日付つきの事実が混ざるので、ファイルごとに見て決める（未実施）。
 - 【この件】`open-hook.md` の「Project の構造」を `project-structure.md` へ、`start-hook.md` の「作業の種類の差分」を `start-work-types.md` へ、本文を原文のまま移した（案A。ユーザーの承認「分割が大事」）。`open` の「未決」から、`log.md` の Open Questions と重複する 2 項（`remote` の type、リポジトリが正の `src`）を削った。`open` 5,596 → 2,924 字、`start` 5,637 → 4,827 字。基準（`hook-matrix.md`）は移した後の値に更新。点検スクリプトは FAIL・NOTE なし（exit 0）。弱点: 移した分の総量は変わらない。移した先は、type を決めるとき・項目を埋めるときに読むので、読み忘れると置き場や聞く項目が漏れる。
 - 参照を直したもの: `README.md`、`hooks.md`、`templates/project/README.template.md`（コメントの参照だけ）、`open-hook.md` 手順「聞く」。
 

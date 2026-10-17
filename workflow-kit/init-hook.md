@@ -1,12 +1,12 @@
 # init フック（別名「workflowを導入して」）
 
-呼び出し名は init（ワークスペースの導入）。別名は「workflowを導入して」。呼び出し表の正本は `hooks.md`。以下の「workflowを導入して」は、init と読み替える。
+呼び出し名は init（works の導入）。別名は「workflowを導入して」。呼び出し表の正本は `hooks.md`。以下の「workflowを導入して」は、init と読み替える。
 
 ## 目的と契機
 
 - **目的**: 作業ディレクトリに、workflow-kit の共通機能を導入するためのフック。
 - **契機**: ユーザーが「workflowを導入して」と言ったときだけ実行する（自発的には導入しない）。
-- **モード**: `init 更新`（別名「雛形を反映して」）と言われたときは、`init-update.md` を読み、そこに従う（項目 5 で作ったワークスペースに、その後の雛形の変更を反映する）。下の入力と手順は使わない。
+- **モード**: `init 更新`（別名「雛形を反映して」）と言われたときは、`init-update.md` を読み、そこに従う（項目 5 で作った works に、その後の雛形の変更を反映する）。下の入力と手順は使わない。
 
 ## 導入項目の一覧
 
@@ -19,7 +19,7 @@
 | 3 | 「ナレッジ化して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 必須 | `stock-hook.md` |
 | 6 | 「終了処理して」「inboxを整理して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 「終了処理して」は必須 | `wrap-hook.md`、`integrate-hook.md` |
 | 4 | 履歴からの復元 | `docs/` の Log と判断記録の補完 | 任意 | `init-restore.md` |
-| 5 | ワークスペース（Vault のトップ）の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`README.md`、`AGENTS.md`（ワークスペース用）、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
+| 5 | works の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`README.md`、`AGENTS.md`（works 用）、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
 | 7 | 雛形の反映（`init 更新`） | 雛形の変更を当てた `AGENTS.md`、ignore、`.claude/settings.json` など。コミットの `Template-Rev` | 任意（雛形が更新されたとき） | `init-update.md` |
 
 ### 導入項目を足すとき
@@ -36,8 +36,8 @@
 - **既存のファイルは、上書きしない。** 既存があれば、差分の案を示して承認を得る。承認の前に変更しない。
 - コミットは `docs-rules.md` の「コミットと push」に従う（項目 5 の初回コミットは、`init-workspace.md` の「初回コミットをする」）。push はしない（ユーザーが行う）。
 - 対象の `docs/` が、`.gitignore` の既定でローカル専用になる場合は、その旨を報告に書く（確認: `git check-ignore -v <パス>`）。ローカル専用の `docs/` は、他のPCに届かない。
-- 項目 5（ワークスペースの生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`.gitattributes`、`areas/` `projects/` `archives/`、`resources_p/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
-- このフックを呼べる領域は、`hooks.md` の「領域とフックの権限」に従う。ユーザーがこのファイルのパスを指示したときも呼べる。新しい PC でワークスペースを作るときは、`workbase` の clone の中で呼ぶ（初回の例外）。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
+- 項目 5（works の生成）だけは、上の書き込み先に加えて、対象の `.gitignore`、`.ignore`、`.gitattributes`、`areas/` `projects/` `archives/`、`resources_p/`、`.git/`（`git init` と `.git/hooks/pre-push`）に書く。`resources/` と `.obsidian/` は作らない・書き換えない（`resources/` は別リポジトリの clone、`.obsidian/` は dotfiles が張るジャンクション）。
+- このフックを呼べる領域は、`hooks.md` の「領域とフックの権限」に従う。ユーザーがこのファイルのパスを指示したときも呼べる。新しい PC で works を作るときは、`workbase` の clone の中で呼ぶ（初回の例外）。それ以外の場所からの入口は、Claude 用スキル（未作成。TODO）。
 
 ## 入力
 
@@ -50,7 +50,7 @@
 
 ### 既定値（項目 5）
 
-「workflowを導入して」が、**`workbase` の clone の中**（`resources/.git` があり、`origin` が `workbase`）で、**対象のパスを指定されずに**言われたときは、項目 5（ワークスペースの生成）とみなす。質問せずに、次の既定値で行う。ユーザーが言葉で指定した項目は、それを優先する。
+「workflowを導入して」が、**`workbase` の clone の中**（`resources/.git` があり、`origin` が `workbase`）で、**対象のパスを指定されずに**言われたときは、項目 5（works の生成）とみなす。質問せずに、次の既定値で行う。ユーザーが言葉で指定した項目は、それを優先する。
 
 | 入力 | 既定値 |
 |---|---|
@@ -62,9 +62,9 @@
 | remote の方針 | なし |
 | 初回コミット | する |
 
-`workbase` の外（作業ディレクトリの中）で言われたときは、従来どおり、その作業ディレクトリに項目 1〜3 を導入する。対象が既にワークスペース（`.git` があり、コミットがある）なら、生成せず、その旨を報告する。
+`workbase` の外（作業ディレクトリの中）で言われたときは、従来どおり、その作業ディレクトリに項目 1〜3 を導入する。対象が既に works（`.git` があり、コミットがある）なら、生成せず、その旨を報告する。
 
-項目 5（ワークスペースの生成）のときは、上の4項目（対象ディレクトリは、ワークスペースのルート。通常は Vault のトップ）に加えて、次の3項目を受け取る。
+項目 5（works の生成）のときは、上の4項目（対象ディレクトリは、works のルート。通常は works のトップ）に加えて、次の3項目を受け取る。
 
 5. PC の役割（例: 業務用 / 個人用）
 6. remote の方針（なし / 非公開リポジトリの URL）。業務用の既定は「なし」
@@ -81,7 +81,7 @@
    - `CLAUDE.md`: `@AGENTS.md` の1行。既存があれば、`@AGENTS.md` が入っているかを確認し、無ければ差分案を示す。
    - `docs/log.md`、`docs/decisions.md`: `templates/` から作り、冒頭の説明に目的を入れる。既存があれば触らない。
 4. **任意: 履歴から復元する**（ユーザーが望むときだけ。`init-restore.md` を読む）。
-5. **任意: ワークスペースを生成する**（トップを作るときだけ。`init-workspace.md` を読む）。
+5. **任意: works を生成する**（トップを作るときだけ。`init-workspace.md` を読む）。
 6. **「自己点検」を通す**（下の節）。
 7. **報告する**（下の「報告の型」）。
 
@@ -89,7 +89,7 @@
 
 共通の項目（`hook-common.md` の「報告の型」。ユーザーに求めること、コミットを先に、次にやることを最後に）を報告する。このフックでの追記:
 
-- **ユーザーに求めること**: 既存ファイルの差分案（承認待ち）、`docs/` を共有するか（ローカル専用だったとき）、導入する単位（サブディレクトリで、親への導入を提案するとき）。ワークスペースの生成のとき（項目 5）は、手作業が要ること（`resources/` の clone、実ディレクトリの `.obsidian` の退避、push、未追跡の既存ファイルの扱い）も挙げる。
+- **ユーザーに求めること**: 既存ファイルの差分案（承認待ち）、`docs/` を共有するか（ローカル専用だったとき）、導入する単位（サブディレクトリで、親への導入を提案するとき）。works の生成のとき（項目 5）は、手作業が要ること（`resources/` の clone、実ディレクトリの `.obsidian` の退避、push、未追跡の既存ファイルの扱い）も挙げる。
   - **git の身元の設定をユーザーに促す**（項目 5 のとき、必ず書く）。`git config --global --get user.name` と `user.email` を確認し、未設定または仮値（`example.com` を含むもの）なら、現在値を示して設定を促す。設定済みなら、その旨を1行書く。エージェントのコミットは agent の身元を使うので、この設定が無くても導入は止まらない。ユーザー自身が、この PC で手動のコミットをするときに要る。設定は、ユーザーが行う（エージェントは `git config` を書き換えない）。コマンド例: `git config --global user.name "<名前>"`、`git config --global user.email "<メール>"`（勤務先の PC では、勤務先で使うアドレスの扱いを確認する）。
 - **コミット**: 項目 5 の初回コミットのときは、含めなかったファイル（未追跡の既存ファイル）も書く。このフックは push しないので、remote があれば push のコマンドを書く。
 
@@ -123,4 +123,4 @@
 - [ ] 共有したくない値が無い
 - [ ] 追跡状況（共有かローカル専用か）を報告に書いた
 - [ ] 復元した場合は、出典・範囲・「不明」の明記がある
-- [ ] ワークスペースを生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` がワークスペース用の雛形で、共通規約を複製していない。PARA の3フォルダと `README.md` がある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー2行（`Agent` `Kit-Rev`。`Workflow-Kit` は 2026-10-08 に廃止）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
+- [ ] works を生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` が works 用の雛形で、共通規約を複製していない。PARA の3フォルダと `README.md` がある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー2行（`Agent` `Kit-Rev`。`Workflow-Kit` は 2026-10-08 に廃止）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した

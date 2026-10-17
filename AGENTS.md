@@ -5,7 +5,7 @@
 
 ノートの読み書きは、エージェントがファイルを直接行う。人間は Obsidian で閲覧・編集する。
 
-構成は `README.md`。このリポジトリは単独で clone しても自己完結する。作業ディレクトリに期待することは、`workflow-kit/hooks.md` の「契約」だけ。通常は Obsidian Vault の `resources/` として clone して使う。Vault 全体（PARA の各区分、PC ごとのローカルの作業）は、このリポジトリの外にある。
+構成は `README.md`。このリポジトリは単独で clone しても自己完結する。作業ディレクトリに期待することは、`workflow-kit/hooks.md` の「契約」だけ。通常は works（Obsidian の Vault）の `resources/` として clone して使う。works 全体（PARA の各区分、PC ごとのローカルの作業）は、このリポジトリの外にある。
 
 ## 共通ルール
 
