@@ -61,6 +61,7 @@ updated: 2026-10-16
 - [[problem-solving-analogy]]: 問題解決のやり方1: 一般化して、類似問題の解き方を借りる
 - [[problem-solving-iterative-revision]]: 問題解決のやり方2: 前提を書き戻して、決定に差し戻す反復
 - [[research-method]]: 調査のやり方1: 問いを構造化し、読者を決めて、一次情報から事実と所感を分けてまとめる（Must / Want）
+- [[research-method-2]]: 調査のやり方2: 手順を調べ、前提と骨格を固定して、実行できる手順書にまとめる（Must / Want）
 - [[reference-doc-types]]: 人が見る文書の3種類（手順書・理解ガイド・クイックリファレンス）の作り方
 - [[scoop-app-management]]: Windows のアプリを scoop で管理し、管理外を最小にする
 - [[session-handoff]]: スレッド（セッション）を切り替える作法
