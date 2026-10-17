@@ -32,7 +32,7 @@ updated: <YYYY-MM-DD>
 - <未決の事項>
 
 <!--
-構造（open-hook.md「Project の構造」）:
+構造（project-structure.md）:
 - 固定: README.md、ai/{docs,in,work,out,records}（`room open` が作る）、_noai/（原本・対応表・復元済みの成果物。追跡しない）
 - doc: ai/in/ に渡された資料、ai/work/ に版ごとの下書き、ai/out/<成果物名>/ に最終版
 - dev: ai/out/<成果物名>/ に src/、tests/、tools/、ビルド設定（dev-deliverable-guide.md）
