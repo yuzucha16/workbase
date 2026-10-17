@@ -16,7 +16,7 @@ aliases:
   - AI スコープの分離
   - 許可リスト方式の隔離
 created: 2026-10-13
-updated: 2026-10-15
+updated: 2026-10-17
 sources:
   - Claude Code conversation "他環境の AI 開発環境プレイブックの取り込み" (2026-10-15)
   - Claude Code conversation "AI に見せる領域の分離設計" (2026-10-13)
@@ -32,7 +32,7 @@ sources:
 ## Principles
 
 - 「全部見える・一部隠す」（禁止リスト）でなく、「何も見えない・渡したものだけ見える」（許可リスト）にする。理由: 禁止リストは、漏れ（`grep -r`、スクリプトの中、別のツール）を防げない。
-- 境界は OS 層（別の WSL ディストリビューション、`automount` と `interop` を無効、AI は一般ユーザー）に置く。AI の権限設定（deny）は、Vault 側の安全網にとどめ、境界の保証としない。理由: 権限設定は AI のツール経由しか止められない。
+- 境界は OS 層（別の WSL ディストリビューション、`automount` と `interop` を無効、AI は一般ユーザー）に置く。AI の権限設定（deny）は、works 側の安全網にとどめ、境界の保証としない。理由: 権限設定は AI のツール経由しか止められない。
 - AI に渡すものは、マスクしたコピーにする。原本・対応表・復元済みの成果物は、AI から見えない場所（`_noai/`）に置き、git で追跡しない。
 - 副作用のある手順（マウント、マスク、復元、移動、コミット）はスクリプトが行い、AI には実行させない。AI は判断（聞き取り、確認、下書き）を、決まったファイルに書いて渡す。2つの層の接点は、ファイルの受け渡しだけ。
 - 外へ出すのは下書きだけにして、人の確認を通す。公開されうる共有知（workbase）へ、対応表の語を含むものを入れない。
@@ -78,7 +78,7 @@ sources:
 
 ## Facts
 
-- Area の README の大きさは 1.3〜2.2 KB だった（確認: 2026-10-15、根拠: Vault の `areas/*/README.md` のファイルサイズを測った）。
+- Area の README の大きさは 1.3〜2.2 KB だった（確認: 2026-10-15、根拠: works の `areas/*/README.md` のファイルサイズを測った）。
 - `ai/ctx/` は `.gitignore` の `**/ai/ctx/` で追跡されず、`room start` の終了時に削除される（確認: 2026-10-15、根拠: `room.py` と `.gitignore` の雛形を読んだ）。
 - `room start` が Area の README を `ai/ctx/area-README.md` に写し、読み取り専用になる。単体テスト2件が通る（確認: 2026-10-15、根拠: `room` の単体テストを実行）。統合時にも `room.py` の `_snapshot(area_readme, ctx_dir / "area-README.md")` と `room/README.md` の `start` の記述を確認した（2026-10-15）。
 - 部屋の AI が、開始時に `ai/ctx/area-README.md` を実際に読めるか（仮説）。実際の WSL では確かめていない。
@@ -104,8 +104,8 @@ sources:
 
 - 状況: 個人のグローバル ignore の `out/` が、`ai/out/` の新しい成果物を無視した
   - 原因: リポジトリの `.gitignore` より、グローバルの ignore が効いた
-  - 解決: ワークスペースの `.gitignore` に `!**/ai/out/` を足して打ち消す
-- 状況: Zed を部屋ではなくローカルのフォルダで開くと、エージェントが Windows 側で動き、Vault 全体が見える
+  - 解決: works の `.gitignore` に `!**/ai/out/` を足して打ち消す
+- 状況: Zed を部屋ではなくローカルのフォルダで開くと、エージェントが Windows 側で動き、works 全体が見える
   - 原因: Zed のエージェントは、開いたフォルダのある側で動く
   - 解決: Zed は WSL リモート接続でだけ使う
 - 状況: 部屋へ共有知の写しを送る処理が `mkdir: cannot create directory ''` で止まった

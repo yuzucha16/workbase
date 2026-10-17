@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-17（施策1の採用、部屋の共有知から room のコードを外した、用語の置き換えの続き）
+- 決定と確認は `decisions.md` の同日の項（先頭）。施策1を `user-manual.md` に足した。`room.py` が `workflow-kit/room/` の `README.md` 以外を送らないようにし、単体テストを足した（変更前から失敗している 2 件を除き通過）。`exmem/lessons/` の現在形の記述 5 ファイルで、「Vault」「ワークスペース」を works にした。
+- 未実施: `topics/ai-workspace-boundary/` のノートの語（約 80 件）。そのトピックを使うときに直す。
+
 ### 2026-10-17（review の消化モードの対象を明記した。点検スクリプトを pwsh で実行した）
 - `review-hook.md` の消化モードの対象を、「このセッションで作業した単位（「<名前> の続き」で読みに行った単位を含む。無ければ呼び出し元）の `docs/log.md`」に直した。ユーザーが承認（本日）。Open Question を解消。
 - `tools/check-hook-outline.ps1` を `pwsh` で初めて実行した（確認: 実行出力）。FAIL 4 件: ① `init-hook.md` の見出しが「目的 → 契機 → モード」で、スクリプトは「前提」しか許さない。② `wrap-hook.md` の「事前確認」の参照にフックのファイル名が無い（`start` の手順を指す）。③④ `room-context.md:21` の手順「コミットする」「昇格の案を出す」にも同様。NOTE: `open-hook.md` 5,596 字、`start-hook.md` 5,637 字が目安 5,000 字超。いずれも手順書・スクリプトは未変更(承認待ち)。
