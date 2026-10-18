@@ -65,7 +65,7 @@
 
 - 場所: 実機の通し（2026-10-18）で気づいた点 / 問題: `restore` の上書きの保護（`final-manifest.json`）は、今回試していない / 案: 次の実機で試す。
 - 場所: Stop フックの記録の置き場 / 問題: 既定は `~/claude-records/`。部屋の中だけ `$CLAUDE_PROJECT_DIR/records`（`ai/records/`）にするかが未決 / 案: 実機確認（29）の後に決める。
-- 場所: 全フックの改善の表（`notes/hook-improvement-matrix/2026-10-18-matrix.md`、`2026-10-18-candidates.md`）の未実施分 / 問題: 残り: 1-7〜1-10、2-2、2-3、2-11/3-3、3-1b、3-4、N9（それ以外は実施済み。候補一覧メモの推奨順は完了） / 案: 次の `review` で選ぶ。
+- 場所: 全フックの改善の表（`notes/hook-improvement-matrix/2026-10-18-matrix.md`、`2026-10-18-candidates.md`）の未実施分 / 問題: 残り: 2-11/3-3（`open` `start` の「未決」「実測」の章を kit-growth へ）と 1-8（要確認）だけ（1-7、1-9、N9 は「足さない」と決めた。それ以外は実施済み） / 案: 次の `review` で選ぶ。
 - 場所: `open-hook.md` の未決の `remote` の type / 問題: WSL から SSH で user 権限のリモート(Docker を含む)を AI が操作する使い方を、`dev` でも使える type にするか。接続の安全(鍵、権限、記録)は `topics/ai-workspace-boundary/` の設計と重なる / 案: 実測の後に決める。【保留 〜2026-11-02】（2026-10-18 `review 消化` でユーザーが保留、期限 11/02。項目 10 の `dev-env` の実使用の後に決める）。
 - 場所: `open-hook.md` の未決 / 問題: リポジトリが正の `src`、remote で動くものは、構造が新規のフルスクラッチ前提で、`ai/out/` に clone すると `restore` が止まる / 案: `repos/` に置いたまま、スナップショットと patch で受け渡す(未検証)。
 - 場所: `room.py` の `restore_project` / 問題: AI が使えない間に人が `_noai/final/` を直すと、次の AI の終了時の復元で無条件に上書きされる(別の話にする、とユーザー。2026-10-16) / 案: 正本の宣言、`raw/` → `mask` → `ai/in/` の戻り方の約束、上書き前の警告。【保留 〜2026-11-05】（2026-10-18 `review 消化` でユーザーが保留。`_noai/final/` は最終調整で人が触る想定だが、git 管理下にあるので戻せる。次の実機で `final-manifest.json` の保護を試してから決める）。
