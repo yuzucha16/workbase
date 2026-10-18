@@ -26,6 +26,7 @@
 4. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`）を書く。完了条件は、ユーザーが承認してから書く（承認の前に「ユーザー承認: 日付」を書かない）。Project の名前の案（`<動詞か領域>-<主題>`、例: `learn-c-pool-allocator`。works 内で一意）を添える。
 5. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。呼び出し元に `events` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
 6. **`start` を呼ぶ**。
+7. **報告する**（下の「報告の型」。`start` を呼んだこと、または呼ばなかった理由を含む）。
 
 ## 報告の型
 

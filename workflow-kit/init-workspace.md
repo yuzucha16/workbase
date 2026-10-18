@@ -20,7 +20,7 @@ works のトップを、この PC だけのローカルなリポジトリとし�
    - コミットの前の確認（`docs-rules.md` の ① 〜 ③）に加えて、`resources/`、`resources_p/`、`.obsidian` がステージされていないこと。外れたら、ステージを戻して（`git reset -q -- <パス>`）、コミットせずに報告する。
    - 身元とトレーラーは、`docs-rules.md` の「コミットの身元とトレーラー」に従う（agent の身元を `-c` で渡す。`git config` は変えない）。
    - メッセージ: `[works] initial commit: PC-local vault top (PARA, docs, AGENTS.md, ignore rules)`。
-   - push はしない。remote があるときは、報告に push のコマンド（`git push -u origin main`）を書き、リモートに既存のコミットがあると拒否されるので、その場合は先に `git pull --rebase origin main` が要る旨を添える。
+   - push は `hook-common.md` の「コミットと push」に従う。許可リストに無いリポジトリ（works は通常そうなる）で remote があるときは、報告に push のコマンド（`git push -u origin main`）を書き、リモートに既存のコミットがあると拒否されるので、その場合は先に `git pull --rebase origin main` が要る旨を添える。
 
 ## 既定値
 
@@ -38,4 +38,4 @@ works のトップを、この PC だけのローカルなリポジトリとし�
 
 ## 自己点検（項目 5）
 
-- [ ] works を生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` が works 用の雛形で、共通規約を複製していない。PARA の3フォルダと `README.md` がある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー2行（`Agent` `Kit-Rev`。`Workflow-Kit` は 2026-10-08 に廃止）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
+- [ ] works を生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` が works 用の雛形で、共通規約を複製していない。PARA の3フォルダと `README.md` がある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー2行（`Agent` `Kit-Rev`。`Workflow-Kit` は 2026-10-08 に廃止）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push は `hook-common.md` の規則どおり（許可リストに無いリポジトリは push していない）。既定値を使った項目は、報告の「条件」に「既定値」と明記した

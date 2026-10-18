@@ -9,7 +9,8 @@
 
 ## 場所と書き込みの制約
 
-- exmem: `$HOME\works\resources\exmem`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/exmem`）。
+- 起動できる領域は `hooks.md` の「領域とフックの権限」に従う（部屋での扱いは `room-context.md`）。
+- exmem の場所は `hooks.md` の「exmem の場所」。
 - 書き込み先: `exmem/lessons/`、`exmem/exmem-index.md`（索引）、`exmem/tags.md`、統合したメモの削除。作業ディレクトリの `docs/` は書き換えない。
 - コミットと push は `hook-common.md` の「コミットと push」に従う。コミット済みのメモ（使い捨ての環境で作られたもの）は、`git rm` で削除してコミットする。
 
