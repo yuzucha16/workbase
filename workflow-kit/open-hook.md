@@ -22,7 +22,7 @@
    - 完了条件を、1文で書けるか（書けなければ Project ではなく Area）。
    - 見直し日を置けるか。成果物が1つに特定できるか（複数なら Project を分ける）。
    - 進行中の Project の上限を超えないか（暫定: 3件）。
-3. **聞く**（選択式。答えが1つに定まるものは宣言する）: 種類 `type`（`doc` `dev` `dev-env` `dev-test` `research`。成果物の種類で決める。Area は既定値のヒント。環境やテストだけが成果物なら `dev` でなく `dev-env` `dev-test`）、主題（言語や方式など）、完了条件の種類、見直し日。開発系（`dev` `dev-env` `dev-test`）の Project は、`start-work-types.md` の「開発」の項目を、**実装の前に**ここで聞く。
+3. **聞く**（選択式。答えが1つに定まるものは宣言する）: 種類 `type`（`doc` `dev` `dev-env` `dev-test` `research`。成果物の種類で決める。Area は既定値のヒント。環境やテストだけが成果物なら `dev` でなく `dev-env` `dev-test`）、主題（言語や方式など）、完了条件の種類、見直し日。type ごとの置き場、固定の核、基準文書の置き場は `project-structure.md`（type を決めるときと、`ai/` の置き場に迷ったときに読む）。開発系（`dev` `dev-env` `dev-test`）の Project は、`start-work-types.md` の「開発」の項目を、**実装の前に**ここで聞く。
 4. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`）を書く。完了条件は、ユーザーが承認してから書く（承認の前に「ユーザー承認: 日付」を書かない）。Project の名前の案（`<動詞か領域>-<主題>`、例: `learn-c-pool-allocator`。works 内で一意）を添える。
 5. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。呼び出し元に `events` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
 6. **`start` を呼ぶ**。
@@ -38,10 +38,6 @@
 
 1. **下書き**: `ai/out/readme-draft.md`、種類（`type`）、完了条件、見直し日。
 2. **`start` の呼び出し**: 呼んだこと（または呼ばなかった理由）。
-
-## Project の構造
-
-type ごとの置き場、固定の核、基準文書の置き場は `project-structure.md`（`open` の手順「聞く」で type を決めるときと、`ai/` の置き場に迷ったときに読む）。
 
 ## 実測から分かっていること
 
