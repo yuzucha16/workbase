@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-18（`review 消化`: 完了項目の整理と「間」の TTL 基準化）
+- ユーザーの承認で、Next Actions 3（token-matrix の初回採点。`70b8e22`）と 23（`[review]` コミットの日付取得。`846c3d7` `48c1e27` で取れている）を消し、6 と 9 の済んだ部分を削った。6 の「入力 8 の基準がまだ無い」は事実と違った（基準は `docs/alignment-baseline.md`）。Open Questions の全フック改善表は、残りだけを書く形に縮めた。
+- 続ける・切るの「間5分」を TTL（サブスク1時間、API キー5分）基準に直した。`workflow-kit/hook-common.md` の「次にやること」、`token-matrix.md` の「切る」の定義、`exmem/lessons/session-handoff.md` の Principles と Decisions（切る式 H − B と残りターン数を含む）。Open Questions 2 件（間5分、理由の文言）を閉じた。決定の根拠は `session-handoff.md` の Decisions。
+- 残り: 項目 24 のローカル TTL の実機確認と再実験。
 ### 2026-10-18（kit 改善の docs を直下の `docs/` に統合した）
 - `topics/kit-growth/docs/` の `log.md` `decisions.md` `log-history.md` を、直下の `docs/` に統合した（案 A。ユーザーの決定。圧縮は別作業）。きっかけは、`review 消化` が `topics/` に届かないという質問。調べると、kit-growth を `topics/` に置いた理由（窓口）と docs の置き場を区別していなかったことが原因だった。判断は `decisions.md` の「kit 改善の docs を … 統合した」。以降の項（2026-10-18 以前）は、統合前の kit-growth の経緯と直下の経緯を、日付順に並べたもの。
 - 統合の後、ユーザーの依頼で Next Actions 30「承認プロセスの見直し」を足した。ユーザーはモバイルの小さい画面で読むため承認項目を見逃しやすく、見落としによる決定の覆し（今回の docs 統合が一例）を減らしたい。調査と案は未着手。
