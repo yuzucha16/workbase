@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-18（Next Actions 28 を閉じた: 画面に出る量の抑制）
+- ユーザーが、Zed の agent では `/focus` を入力できず、端末でも使えなかった（実機）ので、28 を閉じると決めた。画面に出る量を減らす手段は、これ以上追わない（`bashEditDiffEnabled: false` の検討も打ち切り）。Stop フックの記録（保存側）には影響しない。S3（キャッシュの間を記録に足す案）は 29 に移した。`exmem/lessons/claude-code-storage.md` の Next Actions の `/focus` の項と Open Questions の `/focus` の項は、更新していない（`wrap` は exmem に書かない）。
 ### 2026-10-18（`rebase` の許可: Next Actions 32 を閉じた）
 - ユーザーの依頼で、スクリーニングのサブエージェントを1回起動した（推奨は保留。弱点は deny の置き場が未確認）。ユーザーが、禁止が2つの論点（履歴の整理と、分岐の解消）を一緒にしていたと指摘し、分岐の修正と衝突の解消に限り許可すると決めた（型 D）。`docs-rules.md` に「`rebase` の許可」を足し、push 条件 3 の食い違いを直した。deny は dotfiles の `home/.claude/settings.json` にあり、エージェントは自分の権限設定を書き換えられない（分類器が止めた）ので、ユーザーが `git rebase*` の 4 行を、`-i` `--interactive` `--exec` `-x` `--root` 付きの 20 行に直し、AI が diff を確かめた（1 回目は `--interactive` のダッシュが 1 本足りず、`--x*` のタイプミスがあった）。実機で `rebase --continue` は通り、`rebase --abort -i` は止まった。決定は `decisions.md` の同日の項。
 ### 2026-10-18（Stop フックを1つにまとめる決定）
