@@ -17,9 +17,9 @@
 | 1 | 共通ルールの参照 | `AGENTS.md`、`CLAUDE.md` | 必須 | `templates/AGENTS.md` |
 | 2 | 作業ログと判断ログ | `docs/log.md`、`docs/decisions.md` | 必須 | `docs-rules.md` |
 | 3 | 「ナレッジ化して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 必須 | `stock-hook.md` |
-| 6 | 「終了処理して」「inboxを整理して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 「終了処理して」は必須 | `wrap-hook.md`、`integrate-hook.md` |
 | 4 | 履歴からの復元 | `docs/` の Log と判断記録の補完 | 任意 | `init-restore.md` |
 | 5 | works の生成 | `.gitignore`、`.ignore`、`.gitattributes`、`README.md`、`AGENTS.md`（works 用）、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init` | 任意（トップを作るときだけ。1〜3 も合わせて導入する） | `templates/workspace/`、`init-workspace.md` |
+| 6 | 「終了処理して」「inboxを整理して」 | なし（`hooks.md` の表で呼べる。`AGENTS.md` の共通ルールのポインタが入口） | 「終了処理して」は必須 | `wrap-hook.md`、`integrate-hook.md` |
 | 7 | 雛形の反映（`init 更新`） | 雛形の変更を当てた `AGENTS.md`、ignore、`.claude/settings.json` など。コミットの `Template-Rev` | 任意（雛形が更新されたとき） | `init-update.md` |
 
 ### 導入項目を足すとき
