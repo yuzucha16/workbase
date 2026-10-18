@@ -338,7 +338,9 @@ def unexpected_ignored(ctx, p):
     return res
 
 
-def commit_paths(ctx, paths, message, extra_allowed=()):
+def commit_paths(ctx, paths, message, extra_allowed=(), only=False):
+    """paths をステージしてコミットする。対象外のステージ済みの変更があるときは、既定では止まる。
+    only=True は、止まらずに、対象のパスだけをコミットする（対象外の変更はステージに残る。init と open の初期状態用）。"""
     git(ctx.vault, "add", "-A", "--", *paths)
     staged = [l for l in git(ctx.vault, "diff", "--cached", "--name-only").splitlines() if l]
     if not staged:
@@ -347,10 +349,15 @@ def commit_paths(ctx, paths, message, extra_allowed=()):
     allowed = tuple(p.rstrip("/") + "/" for p in (*paths, *extra_allowed))
     exact = {p.rstrip("/") for p in (*paths, *extra_allowed)}  # ファイルそのものを指すパス
     stray = [f for f in staged if f not in exact and not f.startswith(allowed)]
-    if stray:  # 並行する作業のステージ済みの変更を、巻き込まない
+    if stray and not only:  # 並行する作業のステージ済みの変更を、巻き込まない
         raise RoomError("対象外のファイルがステージされている。コミットしない:\n  " + "\n  ".join(stray))
-    ctx.say("ステージ済み: " + str(len(staged)) + " ファイル")
-    git(ctx.vault, "commit", "-m", message)
+    if stray:
+        ctx.say("注意: 対象外のステージ済みの変更は、コミットに含めない（ステージに残す）:\n  " + "\n  ".join(stray))
+        ctx.say("ステージ済み（対象）: " + str(len(staged) - len(stray)) + " ファイル")
+        git(ctx.vault, "commit", "-m", message, "--", *paths, *extra_allowed)
+    else:
+        ctx.say("ステージ済み: " + str(len(staged)) + " ファイル")
+        git(ctx.vault, "commit", "-m", message)
     ctx.say("コミットした: " + git(ctx.vault, "log", "--oneline", "-1").strip())
 
 
@@ -462,7 +469,7 @@ def cmd_open(ctx, a):
         ctx.say(f"注意: 部屋（{p.distro}）がまだ無い。guides/howto/ai-room-setup.md の 3 章で作る")
     ctx.say(f"作った: projects/{a.name}（ai/ と _noai/）。README の <...> を埋める")
     if a.commit:  # 初期状態を、戻る起点としてコミットする（既定。--no-commit で省く）
-        commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）")
+        commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）", only=True)
 
 
 # ---------- init（部屋を作る。手順は ai-room-setup.md の 3〜4 章） ----------
@@ -553,7 +560,7 @@ def cmd_init(ctx, a):
             f"  確認: wsl -d {distro} -- bash -ic 'cd ~ && claude -p \"Reply with exactly: ok\"'")
     rel = f"areas/{a.area}/README.md"
     if getattr(a, "commit", False) and git(ctx.vault, "status", "--porcelain", "--", rel).strip():
-        commit_paths(ctx, [rel], f"[room] init {a.area}（Area の作成、boundary: {read_frontmatter(area_readme).get('boundary')}）")
+        commit_paths(ctx, [rel], f"[room] init {a.area}（Area の作成、boundary: {read_frontmatter(area_readme).get('boundary')}）", only=True)
 
 
 # ---------- start ----------
