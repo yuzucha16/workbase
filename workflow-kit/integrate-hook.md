@@ -1,6 +1,6 @@
 # integrate フック（別名「inboxを整理して」）
 
-呼び出し名は integrate（随時。exmem 側）。別名は「inboxを整理して」。呼び出し表の正本は `hooks.md`。以下の「inboxを整理して」は、integrate と読み替える。
+呼び出し名は integrate。別名は「inboxを整理して」。呼び出し表の正本は `hooks.md`。以下の「inboxを整理して」は、integrate と読み替える。
 
 ## 目的と契機
 
