@@ -43,9 +43,9 @@
 
 ## Next Actions
 
-35. ユーザーの要望: `guides/howto/` に、スクリプト版と手動版の実例のコマンド集（pilot / pilot2 の通し）を、`ai-room-setup.md` と同列に置く。構成案を出して合意を得てから書く（`guides/AGENTS.md` の「新しい手順書を作る流れ」）。Open Questions の同名の項を先に決める。
-34. ユーザーの要望: `room init` が正常に終わったら、初回のコミットを行う（`--commit` の形に揃えるか、既定にするか）。Open Questions を先に決める。
-33. ユーザーの要望: `room init` に、Area の作成（`areas/<Area>/` と README の `boundary:`）を含める。Open Questions を先に決める。
+35. `guides/` の延長で、プレースホルダーでなく実際の名前（Area `pilot2`、Project `pilot2-1` など）で、1手ずつ説明する手順書を書く（スクリプト版と手動版。ユーザーの決定 2026-10-18。コマンド集ではない）。置き場（`howto/` の別ファイル）と構成案を先に出して合意を得る（`guides/AGENTS.md`）。`guides/AGENTS.md` の「プレースホルダーにする」規則との関係（実名は試験用の名前で、個人・PC 固有の値ではない）を、構成案で確かめる。
+34. `room init` が作ったものは、コミットして戻る起点にする（ユーザーの決定 2026-10-18。部屋の作成の後に、`areas/<Area>/` の作成と、そのコミット）。範囲（`init` だけか、`open` など他のコマンドが作るものも既定でコミットか）と、`--commit` との関係をユーザーに確認してから実装する。
+33. `room init <Area> --boundary <印>` で、`areas/<Area>/README.md` が無いときだけ作る（ユーザーの決定 2026-10-18。印の無い指定は止まる。既定値は入れない。Area が既にあるときは今の動作のまま）。
 31. `review 消化` の残り（2026-10-18。1・2 のリストと、起票が古い 1・30 の扱いは済み。実機の確認項目 7、8、10、11、20、29 は別チャットで行う。ユーザー）: Open Questions の `remote` の type、`init-update.md` の大きさ、restore の上書きを、1 件ずつ聞いて閉じるか期限をつける。
 30. 承認プロセス（2026-10-18 に仕様化し、`approval-screening.md` 等に反映済み。`20f4393`）を、使いながら確かめる。確かめること: 次の `review 消化` でサブエージェントを起動できるか（実機で未確認）、1件あたりの出力がモバイルで読める長さか、待ち行列が溜まって消化が重くならないか、覆した決定に型 A〜E が付くか。型の割り当て（A〜E）は AI の読みなので、ずれがあれば直す。`hook-matrix.md` の `hook-common.md` の基準（5,474 字）は 5,874 字に増えた（+7%。更新は次の `review`）。
 29. Stop フックで、セッションの費用と ID を記録する手順（`notes/stop-hook-record/2026-10-17-procedure.md`、プロジェクトの共有フォルダ）を、Zed を使う PC で実機確認する（端末の `claude -p` と、Zed の1往復。2026-10-17 時点）。確認の後に、キャッシュの間を記録に足す案（`2026-10-18-cache-insights.md` の S3）を決める。
@@ -67,10 +67,7 @@
 
 ## Open Questions
 
-- 場所: `room init` に Area の作成を含める（33） / 問題: やる必要があるか。`boundary:` は顧客・機密度の境界を人が決める印で、既定の `internal` を自動で入れると、考える機会が無くなり、`room open` の `boundary:` 確認が形だけになる / 案: `room init <Area> --boundary <印>` を必須にし、`areas/<Area>/README.md` が無いときだけ作る。印の無い指定は止まる。`--boundary` なしで Area が既にある場合は、今の動作のまま。
-- 場所: `room init` の初回コミット（34） / 問題: やる必要があるか。部屋（WSL）は git の外で、works に残る変更は 33 で作る Area の README だけ。33 をやらないなら、コミットする物が無い / 案: 33 とセットで、`--commit` を付けたときだけ（他の `room` コマンドと同じ）。メッセージは `[room] init <Area>`。
-- 場所: 実例のコマンド集（35） / 問題: `guides/AGENTS.md` は「1ファイル=1系統」「スクリプトの中身を写さない（古くなる）」。手動版は `ai-room-setup.md` と重なる。実名（Area、Project）を入れると、PC 固有の値になる / 案: `ai-room-setup.md` は手順の説明、実例は `quickref/` 型（やりたいこと｜コマンド｜注意）か、`howto/` の別ファイル（スクリプト版 1、手動版 1）か。構成案を先に出して決める。
-- 場所: 実機の通し（2026-10-18）で気づいた点（AI の候補） / 問題: ①`restore` が、AI が本文に書いた `⟦CUST_nnn⟧` の説明で止まる（仕様どおりの停止。AI への指示で防ぐか、`restore` が説明用の記述を許すか）。②新しい Project のたびに、Claude Code の信頼の確認が出る。③Zed を `/home/ai` で使うと、履歴が `-home-ai` に残り、どの Project にも属さず `reap` されない。④`close` が、README がひな形のままでも通る。⑤`room/README.md` の「`reap` は未実装」と「`init` は実機未確認」が古い。⑥`restore` の上書きの保護（`final-manifest.json`）は、今回試していない / 案: ①〜④ はやる必要があるかを `review 消化` で聞く。⑤ はユーザーの承認後に直す。⑥ は次の実機で試す。
+- 場所: 実機の通し（2026-10-18）で気づいた点（AI の候補） / 問題: ①`restore` が、AI が本文に書いた `⟦CUST_nnn⟧` の説明で止まる（仕様どおりの停止。AI への指示で防ぐか、`restore` が説明用の記述を許すか）。②新しい Project のたびに、Claude Code の信頼の確認が出る。③Zed を `/home/ai` で使うと、履歴が `-home-ai` に残り、どの Project にも属さず `reap` されない。④`close` が、README がひな形のままでも通る。⑤（済み: `room/README.md` の古い記述を直した）。⑥`restore` の上書きの保護（`final-manifest.json`）は、今回試していない / 案: ①〜④ はやる必要があるかを `review 消化` で聞く。⑥ は次の実機で試す。
 - 場所: Stop フックの記録の置き場 / 問題: 既定は `~/claude-records/`。部屋の中だけ `$CLAUDE_PROJECT_DIR/records`（`ai/records/`）にするかが未決 / 案: 実機確認（29）の後に決める。
 - 場所: 全フックの改善の表（`notes/hook-improvement-matrix/2026-10-18-matrix.md`、`2026-10-18-candidates.md`）の未実施分 / 問題: 残り: 1-7〜1-10、2-2、2-3、2-11/3-3、3-1b、3-4、N9（それ以外は実施済み。候補一覧メモの推奨順は完了） / 案: 次の `review` で選ぶ。
 - 場所: `open-hook.md` の未決の `remote` の type / 問題: WSL から SSH で user 権限のリモート(Docker を含む)を AI が操作する使い方を、`dev` でも使える type にするか。接続の安全(鍵、権限、記録)は `topics/ai-workspace-boundary/` の設計と重なる / 案: 実測の後に決める。
