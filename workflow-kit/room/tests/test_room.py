@@ -755,7 +755,7 @@ class SharedPermissionTest(unittest.TestCase):
             (home / ".claude").mkdir()
             (home / ".claude/settings.json").write_text(
                 json.dumps({"model": "x", "permissions": {"allow": ["Bash(ls)"], "deny": ["Read(~/.ssh/**)"]}}), encoding="utf-8")
-            env = dict(os.environ, HOME=str(home))
+            env = dict(os.environ, HOME=str(home), USERPROFILE=str(home))  # Windows の expanduser は USERPROFILE を見る
             for _ in range(2):
                 subprocess.run([sys.executable, "-c", room.SHARED_RULE_PY], env=env, check=True)
             d = json.loads((home / ".claude/settings.json").read_text(encoding="utf-8"))
@@ -765,7 +765,7 @@ class SharedPermissionTest(unittest.TestCase):
 
     def test_snippet_creates_file_when_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
-            env = dict(os.environ, HOME=tmp)
+            env = dict(os.environ, HOME=tmp, USERPROFILE=tmp)  # Windows の expanduser は USERPROFILE を見る
             subprocess.run([sys.executable, "-c", room.SHARED_RULE_PY], env=env, check=True)
             d = json.loads((Path(tmp) / ".claude/settings.json").read_text(encoding="utf-8"))
             self.assertEqual(d["permissions"]["allow"], ["Read(~/shared/**)"])
