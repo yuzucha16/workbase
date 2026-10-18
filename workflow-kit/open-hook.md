@@ -1,6 +1,6 @@
 # `open` フック
 
-呼び出し名は `open`（Project の開始）。別名は無い。呼び出し表の正本は `hooks.md`（体系の経緯は `README.md` の「フックの体系」）。
+呼び出し名は `open`。別名は無い。呼び出し表の正本は `hooks.md`（体系の経緯は `README.md` の「フックの体系」）。
 
 実測で直して育てる。
 
@@ -12,7 +12,7 @@
 
 ## 場所と書き込みの制約
 
-- 書き込み先は、`ai/out/readme-draft.md`（README の本文だけ。frontmatter を含めない）と、呼び出し元の記録（`ai/docs/log.md`、`ai/docs/decisions.md`、`events`。手順「記録する」）だけ。Project と Area の `README.md` は書き込めない（`ai/ctx/` の写しを読む）。
+- 書き込み先: `ai/out/readme-draft.md`（README の本文だけ。frontmatter を含めない）と、呼び出し元の記録（`ai/docs/log.md`、`ai/docs/decisions.md`、`events`。手順「記録する」）だけ。Project と Area の `README.md` は書き込めない（`ai/ctx/` の写しを読む）。
 - 実行する場所: AI 作業部屋の中だけ（`hooks.md` の「領域とフックの権限」。works などでは行わない）。反映は人が `room readme <名>` で行う。`archives/` は触らない。
 
 ## 手順
@@ -26,19 +26,19 @@
 4. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`）を書く。完了条件は、ユーザーが承認してから書く（承認の前に「ユーザー承認: 日付」を書かない）。Project の名前の案（`<動詞か領域>-<主題>`、例: `learn-c-pool-allocator`。works 内で一意）を添える。
 5. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。呼び出し元に `events` があるときは、質問ごとの行を足す（回答を受けた同じターンで）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
 6. **`start` を呼ぶ**。
-7. **報告する**（下の「報告の型」。`start` を呼んだこと、または呼ばなかった理由を含む）。
+7. **報告する**（下の「報告の型」）。
 
 ## 報告の型
 
 共通の項目（`hook-common.md` の「報告の型」。ユーザーに求めること、コミットを先に、次にやることを最後に）を報告する。このフックでの追記:
 
 - **ユーザーに求めること**: 人が `room readme <名>` で下書きを反映すること。未承認の完了条件があれば、その確認。
+- **次にやること**: `start` を呼んだこと、または呼ばなかった理由。
 - **コミット**: このフックはコミットしない（人が行う `room open` / `room readme`）ので、「なし」と書く。
 
 続けて、固有の項目を次の順で報告する。
 
 1. **下書き**: `ai/out/readme-draft.md`、種類（`type`）、完了条件、見直し日。
-2. **`start` の呼び出し**: 呼んだこと（または呼ばなかった理由）。
 
 ## 実測から分かっていること
 

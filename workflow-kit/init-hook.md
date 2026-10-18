@@ -1,6 +1,6 @@
 # init フック（別名「workflowを導入して」）
 
-呼び出し名は init（works の導入）。別名は「workflowを導入して」。呼び出し表の正本は `hooks.md`。以下の「workflowを導入して」は、init と読み替える。
+呼び出し名は init。別名は「workflowを導入して」。呼び出し表の正本は `hooks.md`。以下の「workflowを導入して」は、init と読み替える。
 
 ## 目的と契機
 
@@ -32,7 +32,7 @@
 
 ## 場所と書き込みの制約
 
-- 書き込み先は、対象ディレクトリの中の `AGENTS.md`、`CLAUDE.md`、`docs/` だけ。`exmem` やその他は触らない。
+- 書き込み先: 対象ディレクトリの中の `AGENTS.md`、`CLAUDE.md`、`docs/` だけ。`exmem` やその他は触らない。
 - **既存のファイルは、上書きしない。** 既存があれば、差分の案を示して承認を得る。承認の前に変更しない。
 - コミットと push は `hook-common.md` の「コミットと push」に従う（項目 5 の初回コミットは、`init-workspace.md` の「初回コミットをする」）。
 - 対象の `docs/` が、`.gitignore` の既定でローカル専用になる場合は、その旨を報告に書く（確認: `git check-ignore -v <パス>`）。ローカル専用の `docs/` は、他のPCに届かない。
