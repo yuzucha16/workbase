@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-18（実機の通しの後始末と、要望 3 件の決定）
+- ユーザーの承認で、試験の部屋 `room-pilot` と `room-pilot2` を `wsl --unregister` で消し（`Ubuntu-24.04` は残る）、未追跡の試験メモ `exmem/inbox/2026-10-18-masking-notes.md` を消した。`room/README.md` の古い記述（`init` の実機未確認、`sleep infinity` の未確認、「未実装」の節、状態の行）を直した。
+- 要望 3 件の方針を決めた（`decisions.md` の同日の項）: `room init` に Area の作成（`--boundary` 必須）、`init` が作ったものはコミットして起点にする（範囲は確認中）、実名で1手ずつ説明する手順書。Open Questions の3項は、決まったので `log.md` から外し、Next Actions 33〜35 に書き換えた。
+
 ### 2026-10-18（room の実機の通しと、バグ 2 件の修正。ユーザーの要望 3 件）
 - ユーザーが、room の実機確認をまとめて行った。手作業版（部屋 `room-pilot`、Project `pilot-1`。`ai-room-setup.md` の第2・5・7章）と、スクリプト版（部屋 `room-pilot2`、`room init pilot2` から。Project `pilot2-1`、`pilot2-2`）。AI は `room` を実行せず、手順のサンプルを出し、出力を読んだ（`room/README.md` の「AI には実行させない」）。
 - 通ったもの: `init`（分離の確認、道具の導入、ログインは人）、`open`、`mask`（ダミーの xlsx・csv）、`start`（端末版、`--no-launch` + Zed の WSL リモート）、`restore`、`readme`、`stock`、`close`（Zed を開いたままでも。部屋にマウントが残っていなければ通る）、`reap`、Excel（ピボットの更新、シート名、コメント。問題なし）。項目 26（`~/shared/workflow-kit/room/` に `README.md` だけ。`~/.claude/settings.json` に `Read(~/shared/**)`）と、項目 9（`close.md` の書き方で足りた）を閉じた。
