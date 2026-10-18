@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】`review 消化` の出力を「すでに close → すぐ close → 起票が古い」の3リストにした（2026-10-18）
+- 決めたこと: 消化モードは、この順でリスト化し、ユーザーが上から順に対応する。`review-hook.md` の「消化モード」に反映した。
+- 根拠: ユーザーの指示。冒頭依頼の形で毎回動かしたい。
+- 却下案: 旧3区分（完了している可能性／すぐ完了／それ以外）。「それ以外」が大きく、古い項目が埋もれた。
+
 ### 【汎用】kit 改善の docs を `topics/kit-growth/docs/` から直下の `docs/` に統合した（2026-10-18）
 - 決めたこと: kit-growth の `log.md` `decisions.md` `log-history.md` を、直下の `docs/` に統合した（移すだけ。圧縮は別作業）。`topics/kit-growth/` には、窓口、`inbox.md`、`records/`、handover を残す。`wrap` の既定の記録先、`review 消化`、`start` の 10 件超の判定は、kit の改善も直下の `docs/` を見る。
 - 根拠: ユーザーの決定（案 A）。kit-growth を `topics/` に置いた理由（モバイルと PC2 から届く窓口）と、docs の置き場は別の論点だったが、区別せずに docs ごと窓口に寄せていた。直下の `docs/` も同じ workbase にあり、同じ端末から届く。そのため、置き場を分ける理由が無く、`review 消化` などの既定の対象（直下）から kit の backlog が外れていた。
