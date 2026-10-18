@@ -52,15 +52,7 @@
 
 「workflowを導入して」が、**`workbase` の clone の中**（`resources/.git` があり、`origin` が `workbase`）で、**対象のパスを指定されずに**言われたときは、項目 5（works の生成）とみなす。質問せずに、次の既定値で行う。ユーザーが言葉で指定した項目は、それを優先する。
 
-| 入力 | 既定値 |
-|---|---|
-| 対象ディレクトリ | `$HOME\works`（Windows と WSL の標準の場所。ネイティブ Linux では、対象を言葉で指定する。例: `~/works`） |
-| 目的 | 業務用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジ（`resources/`）を参照する。 |
-| 読む順番の固有項目 | なし |
-| 固有ルール | なし |
-| PC の役割 | 業務用 |
-| remote の方針 | なし |
-| 初回コミット | する |
+既定値の表は `init-workspace.md` の「既定値」。
 
 `workbase` の外（作業ディレクトリの中）で言われたときは、従来どおり、その作業ディレクトリに項目 1〜3 を導入する。対象が既に works（`.git` があり、コミットがある）なら、生成せず、その旨を報告する。
 
@@ -123,4 +115,4 @@
 - [ ] 共有したくない値が無い
 - [ ] 追跡状況（共有かローカル専用か）を報告に書いた
 - [ ] 復元した場合は、出典・範囲・「不明」の明記がある
-- [ ] works を生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` が works 用の雛形で、共通規約を複製していない。PARA の3フォルダと `README.md` がある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー2行（`Agent` `Kit-Rev`。`Workflow-Kit` は 2026-10-08 に廃止）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
+- [ ] works を生成した場合（項目 5）: `init-workspace.md` の「自己点検（項目 5）」をすべて確認した
