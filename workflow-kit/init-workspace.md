@@ -1,6 +1,6 @@
 # init: works の生成（項目 5）
 
-`init-hook.md` の導入項目 5 の作り方。項目 5 のときだけ読む。入力、自己点検、報告の型は `init-hook.md` に従う。項目 5 は任意（トップを作るときだけ。1〜3 も合わせて導入する）。
+`init-hook.md` の導入項目 5 の作り方。項目 5 のときだけ読む。入力と報告の型は `init-hook.md` に従う（既定値と、項目 5 の自己点検は、このファイルの末尾）。項目 5 は任意（トップを作るときだけ。1〜3 も合わせて導入する）。
 
 works のトップを、この PC だけのローカルなリポジトリとして作る。共有ナレッジ（`resources/` = `workbase`）は、トップが参照するだけで、トップの管理に入れない。骨組みはこのフックで作り、PC ごとの違いは中身（PARA、`docs/`、固有ルール）に限る。決まった配置（リンクと clone）は、dotfiles（`30_link`、`50_repos`）が行う。
 
@@ -21,3 +21,21 @@ works のトップを、この PC だけのローカルなリポジトリとし�
    - 身元とトレーラーは、`docs-rules.md` の「コミットの身元とトレーラー」に従う（agent の身元を `-c` で渡す。`git config` は変えない）。
    - メッセージ: `[works] initial commit: PC-local vault top (PARA, docs, AGENTS.md, ignore rules)`。
    - push はしない。remote があるときは、報告に push のコマンド（`git push -u origin main`）を書き、リモートに既存のコミットがあると拒否されるので、その場合は先に `git pull --rebase origin main` が要る旨を添える。
+
+## 既定値
+
+`init-hook.md` の入力で、項目 5 とみなしたときの既定値（質問せずに使う。ユーザーが言葉で指定した項目は、それを優先する）。
+
+| 入力 | 既定値 |
+|---|---|
+| 対象ディレクトリ | `$HOME\works`（Windows と WSL の標準の場所。ネイティブ Linux では、対象を言葉で指定する。例: `~/works`） |
+| 目的 | 業務用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジ（`resources/`）を参照する。 |
+| 読む順番の固有項目 | なし |
+| 固有ルール | なし |
+| PC の役割 | 業務用 |
+| remote の方針 | なし |
+| 初回コミット | する |
+
+## 自己点検（項目 5）
+
+- [ ] works を生成した場合（項目 5）: `.gitattributes` がある。`.gitignore` に `/resources/` と `/.obsidian` があり、`.ignore` に `!/resources/` がある（トップで `resources/` の中の語を Grep して、ヒットすることを確認する）。`resources/` と `.obsidian/` に何も書いていない。remote が方針どおり（「なし」なら `git remote -v` が空で、`pre-push` がある）。`AGENTS.md` が works 用の雛形で、共通規約を複製していない。PARA の3フォルダと `README.md` がある。初回コミットは、生成物だけ（`git show --stat HEAD` で確認）で、PARA の既存の中身と `resources/` `.obsidian` を含まない。初回コミットが agent の身元（`agent <agent@agent.local>`）で、トレーラー2行（`Agent` `Kit-Rev`。`Workflow-Kit` は 2026-10-08 に廃止）が付いている（`git log -1 --format=fuller` で確認）。`git config` を書き換えていない。push していない。既定値を使った項目は、報告の「条件」に「既定値」と明記した
