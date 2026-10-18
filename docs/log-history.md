@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-18（実名の手順書 2 本を草稿として書いた。`init` の既定コミットが、取り残しのステージで止まった件）
+- ユーザーが、`init pilot3` と `open pilot3-1` を実機で試した。ステージはされたが、コミットされなかった。原因（確認済み）: 前の `close`（`pilot2-1`）で、`projects/pilot2-1/ai/records/room-log.md` の削除がステージされたまま残っていて、`commit_paths` の対象外チェック（並行する作業のステージ済みの変更を巻き込まない）が止めた。設計どおりの停止で、バグではない。ただし、`init` `open` の「戻る起点」が、取り残しのステージで黙って作れなくなる。改善案（未承認）: 対象外のステージがあっても、`git commit -- <パス>` で対象のパスだけをコミットする。
+- ユーザーの決定（置き場と名前、内容）で、`guides/howto/ai-room-setup-script.md`（スクリプト版。`pilot2`）と `ai-room-setup-manual.md`（手動版。`pilot`。マウント・アンマウント、アンマウントできないとき、Zed の接続、`close` の副作用のコマンドを含む）を、今回の実機の通しの内容で書いた。`guides-index.md` に足した。`init --boundary` の Area 作成と既定コミットは、実機未確認と明記した。
+
 ### 2026-10-18（`room init` に Area の作成、`init` と `open` の初期状態の既定コミット。Next Actions 33・34 を閉じた）
 - ユーザーが、コミットの範囲を `init` と `open` に決めた（`start` は複雑になるので対象外。AI は `start` の起動前に新しい追跡ファイルだけをコミットする案と、`ai/in/` の除外を勧めたが採らなかった）。決定は `decisions.md` の同日の項。
 - 実装（`room.py`）: `init <Area> --boundary <印>` が `areas/<Area>/README.md` を作る（印が無ければ止まる。Area があり `boundary:` があれば何もしない）。`init` は終わりに Area の README だけを、`open` は Project のひな形と Area の README だけを、既定でコミットする（`--no-commit` で省く。`open` の `--commit` は互換のため残した）。`commit_paths` が、ファイルそのものを指すパスを許すようにした。単体テスト 5 本を足し、65 本中の失敗は直前から変わらない 2 本（`SharedPermissionTest`。この変更と無関係）。実機は未確認。

@@ -39,6 +39,8 @@ updated: 2026-10-16
 | AI に見せたくないファイルを、設定で隠す方式（禁止リスト）でなく、渡したものだけ見せる方式（許可リスト）にする理由を思い出す | [[ai-room-why#2. 理解のための基礎知識]] | 理解ガイド |
 | 部屋で AI を使っていて、`Permission denied`、成果物がコミットに入らない、マウントが残る、などで困った | [[ai-room-why#3. チェックリスト（症状・疑問 → 原因 → 対処）]]、[[ai-room-setup#10. うまくいかないとき]] | 理解ガイド・手順書 |
 | WSL に AI 作業部屋を作り、Project の `ai/` だけを渡して Claude Code で作業する | [[ai-room-setup]] | 手順書 |
+| 実際の名前（`pilot2` `pilot2-1`）で、`room.py` を1手ずつ通して、部屋の作成から `close` まで行う | [[ai-room-setup-script]] | 手順書 |
+| 実際の名前（`pilot` `pilot-1`）で、`room.py` を使わずに、マウント・アンマウントを含めて手作業で通す | [[ai-room-setup-manual]] | 手順書 |
 | 部屋で作業した Project を閉じて、`archives/` に移す | [[ai-room-setup#7. Project を閉じる]] | 手順書 |
 
 ### 仕組みを見直す
@@ -70,7 +72,7 @@ updated: 2026-10-16
 
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
-| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[bedrock-first-hello]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
+| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[bedrock-first-hello]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
 | 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[review-hook-why]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
