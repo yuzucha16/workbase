@@ -54,6 +54,10 @@
   3. 集約の窓口: workbase の `exmem/inbox/`（知識。`stock`）と `topics/kit-growth/inbox.md`（kit の改善と、使った印象）にだけ、他の領域から書いてよい。
 - room は物理的に跨げない（`ai/` だけがマウントされる）。窓口への下書きは `ai/out/stock/` と `ai/docs/log.md` に残し、人が運ぶ（PC1 は記憶かキャプチャ）。
 
+## exmem の場所
+
+`stock` `integrate` が書く exmem の場所（2026-10-18。各フックに同じ文を置かず、ここだけに書く）: `$HOME\works\resources\exmem`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/exmem`）。
+
 ## 作業ディレクトリへの契約（手順書が前提にするもの）
 
 手順書は、次だけを前提にする。これ以外の作業側のファイル名・列・スクリプトを、手順書に書かない（共有側は公開されているので、作業側の構造を載せない）。
