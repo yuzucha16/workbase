@@ -2,6 +2,15 @@
 
 ## Log
 
+### 2026-10-18（room の実機の通しと、バグ 2 件の修正。ユーザーの要望 3 件）
+- ユーザーが、room の実機確認をまとめて行った。手作業版（部屋 `room-pilot`、Project `pilot-1`。`ai-room-setup.md` の第2・5・7章）と、スクリプト版（部屋 `room-pilot2`、`room init pilot2` から。Project `pilot2-1`、`pilot2-2`）。AI は `room` を実行せず、手順のサンプルを出し、出力を読んだ（`room/README.md` の「AI には実行させない」）。
+- 通ったもの: `init`（分離の確認、道具の導入、ログインは人）、`open`、`mask`（ダミーの xlsx・csv）、`start`（端末版、`--no-launch` + Zed の WSL リモート）、`restore`、`readme`、`stock`、`close`（Zed を開いたままでも。部屋にマウントが残っていなければ通る）、`reap`、Excel（ピボットの更新、シート名、コメント。問題なし）。項目 26（`~/shared/workflow-kit/room/` に `README.md` だけ。`~/.claude/settings.json` に `Read(~/shared/**)`）と、項目 9（`close.md` の書き方で足りた）を閉じた。
+- 直したバグ: ① `--no-launch` の待ちで Enter が戻らない（`d6c97d8`。`keepalive` をコンソールから切り離す。ユーザーが承認）。② `reap` が、削除に成功しても「消せなかった（）」と判定する（`086381c`。ユーザーが承認。テストに `|| true` の形を足した）。Gotchas に3件（`decisions.md`）。
+- 手順の誤解: Zed を Windows のローカルのフォルダで開いていて、Agent が Windows 側で動いた。ユーザーの操作の取り違えで、`room start` の経路の不具合ではない。見分け方を Gotchas に足した。
+- 未確認: 項目 20、10、`base_stale`、`restore` の上書き保護（`final-manifest.json`）、Zed を開いたままのアンマウント（今回は掴むプロセスが無かった）。`pilot2-2` の1・2回目の `start` の履歴が部屋に残っていない件（原因不明。3回目以降は `-mnt-room-pilot2-2` ができた）。
+- ユーザーの要望 3 件を Next Actions 33〜35 に、「やる必要があるのか」の点を Open Questions に足した。①`room init` に Area の作成（`boundary:` を含む）、②`room init` の初回コミット、③スクリプト版・手動版の実例のコマンド集（`guides/howto/`）。AI の候補 6 件も同じ項に足した。
+- 試験の後始末は未実施: 部屋 `room-pilot` と `room-pilot2`（`wsl --unregister`）、`exmem/inbox/2026-10-18-masking-notes.md`（未追跡の試験メモ）。いずれもユーザーの確認が要る。
+
 ### 2026-10-18（Next Actions 28 を閉じた: 画面に出る量の抑制）
 - ユーザーが、Zed の agent では `/focus` を入力できず、端末でも使えなかった（実機）ので、28 を閉じると決めた。画面に出る量を減らす手段は、これ以上追わない（`bashEditDiffEnabled: false` の検討も打ち切り）。Stop フックの記録（保存側）には影響しない。S3（キャッシュの間を記録に足す案）は 29 に移した。`exmem/lessons/claude-code-storage.md` の Next Actions の `/focus` の項と Open Questions の `/focus` の項は、更新していない（`wrap` は exmem に書かない）。
 ### 2026-10-18（`rebase` の許可: Next Actions 32 を閉じた）

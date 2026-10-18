@@ -342,3 +342,7 @@
 - 【汎用】`review` に各フックの cwd の期待の点検を含めた(2026-10-16 ユーザーの承認)。`hook-matrix.md` に Must の3行(起動する単位、書き込み先のリポジトリ、起動した単位と書き込み先が違うときの扱い)を足し、2026-10-16 の全フックの状態を記録した。次回の `review` から、この行を各フックの手順書と比べる。あわせて、`review-hook.md` の手順「網羅度を確認する」の本文(点検①〜⑤)を、`hook-matrix.md` の「review の点検」へ移し(表と点検を1か所に)、cwd の点検を追加した。入力の数は増やさない。手順書側は参照1行に畳んだ(review の字数は 4,623 から 4,183)。
 
 ## Gotchas
+
+- 【汎用】Windows の `subprocess.Popen` で、`wsl.exe -- sleep infinity` を同じコンソールにつないだまま待つと、同じ端末の `input()` に Enter が届かないことがある（実機: 2026-10-18、`room start --no-launch`。部屋ごと止めると Enter で戻った）。`creationflags` に `CREATE_NEW_PROCESS_GROUP | DETACHED_PROCESS` を付けて切り離すと、Enter で戻った（`d6c97d8`）。原因は、コンソールの入力の取り合いという推測で、1回の確認。
+- 【汎用】`wsl.exe -- sh -s` に渡すスクリプトの終了コードは、最後のコマンドで決まる。確認用の `ls -d <消したはずのパス>` を最後に置くと、削除が成功しても終了コード 2 で、成功が失敗と判定される（実機: 2026-10-18、`room reap`。エラーの括弧の中が空だったのが手がかり）。確認の行は `|| true` で終え、成否は出力の有無で見る（`086381c`）。差し替えた WSL の単体テストでは終了コードの挙動を再現できず、スクリプトの文字列の形でしか確かめられない。
+- 【汎用】Zed を、Windows のフォルダをローカルで開いたまま使うと、Agent（`claude-acp`）が Windows 側で動き、パスと PowerShell が Windows 形式になる。部屋の側で動かすには、WSL リモートで `room-<Area>` に接続し、フォルダは部屋の中のパス（`/mnt/room/<Project>`）を指定する。画面の左下の `WSL: room-<Area>`、プロンプトの `ai@...:/mnt/room/...`、部屋の中のプロセス（`zed-remote-server`、`claude-agent` がユーザー `ai`）で見分ける（実機: 2026-10-18）。Windows 側の `claude-acp` が `projects\<名>\ai` を掴むと、`close` のあとの `Remove-Item` が `being used` で失敗する。
