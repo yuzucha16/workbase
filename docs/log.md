@@ -44,7 +44,7 @@
 31. `review 消化` の残り（2026-10-18。1・2 のリストと、起票が古い 1・30 の扱いは済み。実機の確認項目 7、8、9、10、11、20、26、29 は別チャットで行う。ユーザー）: Open Questions の `remote` の type、`init-update.md` の大きさ、restore の上書きを、1 件ずつ聞いて閉じるか期限をつける。
 30. 承認プロセス（2026-10-18 に仕様化し、`approval-screening.md` 等に反映済み。`20f4393`）を、使いながら確かめる。確かめること: 次の `review 消化` でサブエージェントを起動できるか（実機で未確認）、1件あたりの出力がモバイルで読める長さか、待ち行列が溜まって消化が重くならないか、覆した決定に型 A〜E が付くか。型の割り当て（A〜E）は AI の読みなので、ずれがあれば直す。`hook-matrix.md` の `hook-common.md` の基準（5,474 字）は 5,874 字に増えた（+7%。更新は次の `review`）。
 29. Stop フックで、セッションの費用と ID を記録する手順（`notes/stop-hook-record/2026-10-17-procedure.md`、プロジェクトの共有フォルダ）を、Zed を使う PC で実機確認する（端末の `claude -p` と、Zed の1往復。2026-10-17 時点）。
-28. 別セッションの「Stop による標準出力量の抑制」の検討と、この手順を1つの Stop フックにまとめるか決める（ユーザーの希望。2026-10-17 時点）。
+28. 画面に出る量（標準出力）を減らす別の話: Stop フックでは変えられない。`/focus` を試す、`bashEditDiffEnabled: false` を検討する（`claude-code-storage.md` の Next Actions）。1つにまとめる件は決定済み（`decisions.md` の 2026-10-18）。キャッシュの間を記録に足す案（S3）は、29 の実機確認の後に決める。
 24. 続ける・切るの暫定の数値（約10万トークン、約2万トークン）は、クラウドの実験（2026-10-17。1回ずつ）で考え方が合うと確かめた。「間」は TTL 基準に直した（2026-10-18。`hook-common.md`、`session-handoff.md` の Decisions）。残り: ユーザーの PC で TTL を確認し（`claude -p "hello" --output-format json` の `usage.cache_creation`）、本物のフック列で3回以上再実験する。
 26. WSL の部屋で `room start` を実行し、`~/shared/workflow-kit/room/` に `README.md` だけが入ることを確かめる(2026-10-17 に `room.py` を変更。この環境では単体テストのみ。別セッション)。
 
@@ -66,7 +66,7 @@
 
 ## Open Questions
 
-- 場所: Stop フックの記録（`notes/stop-hook-record/stop-record.py`） / 問題: 費用と応答本文の記録を、同じ1つのスクリプトにまとめてよいか決まっていない（記録の置き場は `~/claude-records/`。部屋の中は `$CLAUDE_PROJECT_DIR/records` の案もある） / 案: AI の提案は1つにまとめる。
+- 場所: Stop フックの記録の置き場 / 問題: 既定は `~/claude-records/`。部屋の中だけ `$CLAUDE_PROJECT_DIR/records`（`ai/records/`）にするかが未決 / 案: 実機確認（29）の後に決める。
 - 場所: 全フックの改善の表（`notes/hook-improvement-matrix/2026-10-18-matrix.md`、`2026-10-18-candidates.md`）の未実施分 / 問題: 残り: 1-7〜1-10、2-2、2-3、2-11/3-3、3-1b、3-4、N9（それ以外は実施済み。候補一覧メモの推奨順は完了） / 案: 次の `review` で選ぶ。
 - 場所: `open-hook.md` の未決の `remote` の type / 問題: WSL から SSH で user 権限のリモート(Docker を含む)を AI が操作する使い方を、`dev` でも使える type にするか。接続の安全(鍵、権限、記録)は `topics/ai-workspace-boundary/` の設計と重なる / 案: 実測の後に決める。
 - 場所: `init-update.md`（7.9k 字） / 問題: 同じ任意の章 `init-workspace.md`（2.6k）の約3倍で、`hook-matrix.md` の重さの基準でも大きい / 案: 使ってみて、手順 1・2 の確認コマンドを `init-update.md` から外せるか見る（`review` で比べる）。
