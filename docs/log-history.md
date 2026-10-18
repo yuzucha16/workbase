@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-18（`rebase` の許可: Next Actions 32 を閉じた）
+- ユーザーの依頼で、スクリーニングのサブエージェントを1回起動した（推奨は保留。弱点は deny の置き場が未確認）。ユーザーが、禁止が2つの論点（履歴の整理と、分岐の解消）を一緒にしていたと指摘し、分岐の修正と衝突の解消に限り許可すると決めた（型 D）。`docs-rules.md` に「`rebase` の許可」を足し、push 条件 3 の食い違いを直した。deny は dotfiles の `home/.claude/settings.json` にあり、エージェントは自分の権限設定を書き換えられない（分類器が止めた）ので、ユーザーが `git rebase*` の 4 行を、`-i` `--interactive` `--exec` `-x` `--root` 付きの 20 行に直し、AI が diff を確かめた（1 回目は `--interactive` のダッシュが 1 本足りず、`--x*` のタイプミスがあった）。実機で `rebase --continue` は通り、`rebase --abort -i` は止まった。決定は `decisions.md` の同日の項。
 ### 2026-10-18（`review 消化` の 2 回目: 閉じた項目と統合）
 - ユーザーの承認で、Next Actions 18（用語の置き換え。残りの `topics/` のノートは「使うときに直す」方針で足りる）、25（移した先を読み忘れないか。次に使うときに見る性質）、27（今回の揃えの確認。`pwsh` の部分は、この PC で `check-hook-outline.ps1` と Python 版がどちらも全 OK・exit 0 で済んだ）を `log.md` から消した。
 - 12 と 14（どちらも `user-manual.md` の補正策の反映）を 12 に統合した。24 の「`exmem/inbox/` に未統合のメモが 1 件」（`465bd86` で統合済み）と、Open Questions の全フック改善表の「`pwsh` 版と Python 版の結果が同じか見る」を削った。31 の対象から 18・12・14 を外した。
