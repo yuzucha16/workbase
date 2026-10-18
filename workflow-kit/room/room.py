@@ -607,7 +607,7 @@ def snapshot_readme(p):
     return area_readme.stat().st_size
 
 
-# ---------- 共有知の写し（方式 A。ai-room-shared-knowledge-sync.md） ----------
+# ---------- 共有知の写し（方式 A。考え方は guides/explain/ai-room-why.md の「共有知との行き来」） ----------
 
 SHARE_PATHS = ("AGENTS.md", "workflow-kit", "exmem/AGENTS.md", "exmem/README.md", "exmem/exmem-index.md", "exmem/tags.md", "exmem/lessons", "guides")
 SHARE_SKIP = {".git", ".venv", "__pycache__", "node_modules"}
@@ -837,7 +837,7 @@ def cmd_start(ctx, a):
         commit_paths(ctx, [f"projects/{p.name}"], f"[room] {p.name}: start {ctx.now()}")
 
 
-# ---------- マスクと復元（maskkit。仕様は ai-room-mask-spec.md） ----------
+# ---------- マスクと復元（maskkit。仕様は mask-spec.md） ----------
 
 def noai_dir(p):
     return p.dir / "_noai"

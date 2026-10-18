@@ -14,7 +14,6 @@ updated: 2026-10-16
 
 | トピック | 型 | 窓口 | あなた待ち |
 |---|---|---|---|
-| `ai-workspace-boundary/` | Project（優先順位 1〜7 が PC で確認済みで close） | [[ai-room-start-here]] | 0 |
 | `kit-growth/` | Area（workflow-kit の育て方） | [[kit-growth-start-here]] | 0 |
 
 型と書き方、終わらせ方の規則は `AGENTS.md`。
