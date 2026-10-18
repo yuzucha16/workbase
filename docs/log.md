@@ -8,7 +8,7 @@
 |---|---|---|---|
 | なし | | | |
 
-更新: 2026-10-18（承認プロセスを仕様化した（30）。`review 消化` の 3 回目で、1 を閉じ、32 に `rebase` の許可を足した。その前: 2 回目で、18・25・27 を閉じ、12 と 14 を統合し、24 と Open Questions の済んだ部分を削った。その前: 取扱説明書に、この PC のログからの 2 回目の分析の補正策を足した。その前: `review 消化` で、完了した項目を消し、「間」を TTL 基準に直した。その前: Next Actions 30 に承認プロセスの見直しを足した。kit 改善の docs を直下に統合した。その前の更新: 2026-10-18（全フックの改善表から、横並びの揃えを実施した。点検の Python 版を足した。その前: キャッシュの実験））
+更新: 2026-10-18（room の実機の通しをした（`init` → `open` → `mask` → `start` → `restore` → `readme` → `stock` → `close` → `reap`、手作業版も）。バグ 2 件（待ちの Enter、`reap`）を直し、26 と 9 を閉じた。ユーザーの要望 3 件を 33〜35 に、判断が要る点を Open Questions に足した。その前: 承認プロセスを仕様化した（30）。`review 消化` の 3 回目で、1 を閉じ、32 に `rebase` の許可を足した。その前: 2 回目で、18・25・27 を閉じ、12 と 14 を統合し、24 と Open Questions の済んだ部分を削った。その前: 取扱説明書に、この PC のログからの 2 回目の分析の補正策を足した。その前: `review 消化` で、完了した項目を消し、「間」を TTL 基準に直した。その前: Next Actions 30 に承認プロセスの見直しを足した。kit 改善の docs を直下に統合した。その前の更新: 2026-10-18（全フックの改善表から、横並びの揃えを実施した。点検の Python 版を足した。その前: キャッシュの実験））
 
 ## 状態
 
@@ -39,14 +39,17 @@
 - 仕組みの決定は、作業中に承認を求めず、`review 消化` で待ち行列 → サブエージェントのスクリーニング → 最終判断の3段で承認する（2026-10-18。`approval-screening.md`、決定は `decisions.md` の同日の項）。仮決めは `【仮 〜日付】`（7日、延長1回）。
 - キャッシュの実験をクラウドで実施した（Project の共有フォルダ `notes/token-saving/` の 2026-10-17 の 4 ファイルと `2026-10-18-cache-insights.md`）。5分TTL で6分あけると同じ作業が3.2倍、会話を分けても1.1倍、フック1回の読み込みは3〜6円。サブスクの主な会話の TTL は1時間、API キーは5分（公式 docs）。続ける・切るの数値の考え方（H − B、残りターン数）は実測と合った。決定は無し（改善案は Open Questions）。メモは `exmem/inbox/2026-10-18-prompt-cache-gap-cost.md`（`fb19ac2`）。
 
+- room の実機の通しは済んだ（2026-10-18。`init`、`open`、`mask`、`start`（端末版と `--no-launch`）、`restore`、`readme`、`stock`、`close`、`reap`、Excel、手作業版）。直したバグは `d6c97d8`（待ちの Enter が `input()` に届かない。`keepalive` をコンソールから切り離した）と `086381c`（`reap` の確認の `ls` が、削除の成功を失敗と判定した）。未確認: 項目 20、10、`base_stale`、Zed を開いたままのアンマウント（今回は部屋に掴むプロセスが無く通っただけ）。
+
 ## Next Actions
 
-31. `review 消化` の残り（2026-10-18。1・2 のリストと、起票が古い 1・30 の扱いは済み。実機の確認項目 7、8、9、10、11、20、26、29 は別チャットで行う。ユーザー）: Open Questions の `remote` の type、`init-update.md` の大きさ、restore の上書きを、1 件ずつ聞いて閉じるか期限をつける。
+35. ユーザーの要望: `guides/howto/` に、スクリプト版と手動版の実例のコマンド集（pilot / pilot2 の通し）を、`ai-room-setup.md` と同列に置く。構成案を出して合意を得てから書く（`guides/AGENTS.md` の「新しい手順書を作る流れ」）。Open Questions の同名の項を先に決める。
+34. ユーザーの要望: `room init` が正常に終わったら、初回のコミットを行う（`--commit` の形に揃えるか、既定にするか）。Open Questions を先に決める。
+33. ユーザーの要望: `room init` に、Area の作成（`areas/<Area>/` と README の `boundary:`）を含める。Open Questions を先に決める。
+31. `review 消化` の残り（2026-10-18。1・2 のリストと、起票が古い 1・30 の扱いは済み。実機の確認項目 7、8、10、11、20、29 は別チャットで行う。ユーザー）: Open Questions の `remote` の type、`init-update.md` の大きさ、restore の上書きを、1 件ずつ聞いて閉じるか期限をつける。
 30. 承認プロセス（2026-10-18 に仕様化し、`approval-screening.md` 等に反映済み。`20f4393`）を、使いながら確かめる。確かめること: 次の `review 消化` でサブエージェントを起動できるか（実機で未確認）、1件あたりの出力がモバイルで読める長さか、待ち行列が溜まって消化が重くならないか、覆した決定に型 A〜E が付くか。型の割り当て（A〜E）は AI の読みなので、ずれがあれば直す。`hook-matrix.md` の `hook-common.md` の基準（5,474 字）は 5,874 字に増えた（+7%。更新は次の `review`）。
 29. Stop フックで、セッションの費用と ID を記録する手順（`notes/stop-hook-record/2026-10-17-procedure.md`、プロジェクトの共有フォルダ）を、Zed を使う PC で実機確認する（端末の `claude -p` と、Zed の1往復。2026-10-17 時点）。確認の後に、キャッシュの間を記録に足す案（`2026-10-18-cache-insights.md` の S3）を決める。
 24. 続ける・切るの暫定の数値（約10万トークン、約2万トークン）は、クラウドの実験（2026-10-17。1回ずつ）で考え方が合うと確かめた。「間」は TTL 基準に直した（2026-10-18。`hook-common.md`、`session-handoff.md` の Decisions）。残り: ユーザーの PC で TTL を確認し（`claude -p "hello" --output-format json` の `usage.cache_creation`）、本物のフック列で3回以上再実験する。
-26. WSL の部屋で `room start` を実行し、`~/shared/workflow-kit/room/` に `README.md` だけが入ることを確かめる(2026-10-17 に `room.py` を変更。この環境では単体テストのみ。別セッション)。
-
 20. 領域 × r/w 表（`hooks.md`）を使いながら確かめる。部屋の AI が `wrap` の差し替え（コミットを行わない、知識化は `ai/out/stock/` の下書き）と、`ROOM.md` の stock の書き方（frontmatter）に従えるか。`check-hook-outline.ps1` は実行して FAIL なし(2026-10-17)。この項は別セッションに回した(ユーザーの指示)。
 15. 振り返りを「定期（改善4。進め方・成果物）」と「突発・なぜなぜ（改善5）」に分けた(2026-10-17。`retrospective-method-2.md` は叩き台)。残り: 改善5 の品質チェック3回(基準は試行の出力 `notes/retrospective-method/2026-10-17-trial-this-thread.md`)、改善4 の「定期」としての使い方(前回の日付から今日まで、前回の軸の引き継ぎ)の反映、ID・検証項目の形の確認。
 13. 「振り返りのやり方1」(`methods.md` の改善4、`retrospective-method.md`)を、次の振り返りの依頼から使う(題材 B = 業務の対象でも)。評価軸の選び方の指針が要るか、各最大3個が適切かを、`records/retrospective-method-record.md` に足す。3回の `review` の後に Must の増減を決める。
@@ -54,7 +57,6 @@
 11. 「調査のやり方1」「調査のやり方2」(`methods.md` の「調査」、`exmem/lessons/research-method.md` / `research-method-2.md`、`start 調査`)を、次の調査・手順書から使う。調査2は事例が SSH 鍵の1つだけで、実機も未検証。3回の `review` の後に、Must(仕込み3・プロセス6)の増減を決める。仕込みとプロセスの境目(4を想定読者として仕込みに移した案)は承認済み。先送り: 読者が変わる業務の調査(`research` type)、値の更新。確定版の置き場は `guides/explain/<主題>.md`(決定済み)。最初の確定(Claude スキルの成果物を移すか)は未定。品質チェック(新しい会話で3回実行し、基準と比較)は実施済み。3回目の直しは未検証で、`start-hook.md` は +17%(+20% の手前)なので、次に足すときは畳む。
 
 10. `dev-env` / `dev-test` を、最初の Project で1回使い、置き場の表と完了条件の例が合うかを見る(`dev-deliverable-guide.md` の末尾の節)。使った後に `remote` の type の要否を決める。
-9. 次に `room close` を実機で通すとき、`room-context.md` の `close.md` の書き方で足りるかを見る(`open` / `close` の整理は `c86b4d6` で済み)。
 8. 「変更のやり方」(`methods.md` の「変更」、`exmem/lessons/change-method.md`)を、次の変更から使う。3回の `review` の後に、Must(基準文書3・変更6)が重すぎないか・足りないかを見て増減を決める。`areas/` `projects/` での適用は決定済み(2026-10-16。置き場は `ai/out/<成果物名>/`、マスク後の語で書く。`decisions.md`)。最初の業務で使って、置き場が合うかを見る。先送り: 新規作成のフックかモード、変更の伝播・軽重・廃止。
 
 7. `init 更新`（`init-update.md`）を PC1 と PC2 で一度ずつ使い（初回は README の追加も案に出るはず）、衝突の出方と、基点なし（初回）の2者の差分が読めるかを見る。works の既存の `AGENTS.md` は雛形の古い版から作られているので、初回は基点なしになる見込み。
@@ -65,6 +67,10 @@
 
 ## Open Questions
 
+- 場所: `room init` に Area の作成を含める（33） / 問題: やる必要があるか。`boundary:` は顧客・機密度の境界を人が決める印で、既定の `internal` を自動で入れると、考える機会が無くなり、`room open` の `boundary:` 確認が形だけになる / 案: `room init <Area> --boundary <印>` を必須にし、`areas/<Area>/README.md` が無いときだけ作る。印の無い指定は止まる。`--boundary` なしで Area が既にある場合は、今の動作のまま。
+- 場所: `room init` の初回コミット（34） / 問題: やる必要があるか。部屋（WSL）は git の外で、works に残る変更は 33 で作る Area の README だけ。33 をやらないなら、コミットする物が無い / 案: 33 とセットで、`--commit` を付けたときだけ（他の `room` コマンドと同じ）。メッセージは `[room] init <Area>`。
+- 場所: 実例のコマンド集（35） / 問題: `guides/AGENTS.md` は「1ファイル=1系統」「スクリプトの中身を写さない（古くなる）」。手動版は `ai-room-setup.md` と重なる。実名（Area、Project）を入れると、PC 固有の値になる / 案: `ai-room-setup.md` は手順の説明、実例は `quickref/` 型（やりたいこと｜コマンド｜注意）か、`howto/` の別ファイル（スクリプト版 1、手動版 1）か。構成案を先に出して決める。
+- 場所: 実機の通し（2026-10-18）で気づいた点（AI の候補） / 問題: ①`restore` が、AI が本文に書いた `⟦CUST_nnn⟧` の説明で止まる（仕様どおりの停止。AI への指示で防ぐか、`restore` が説明用の記述を許すか）。②新しい Project のたびに、Claude Code の信頼の確認が出る。③Zed を `/home/ai` で使うと、履歴が `-home-ai` に残り、どの Project にも属さず `reap` されない。④`close` が、README がひな形のままでも通る。⑤`room/README.md` の「`reap` は未実装」と「`init` は実機未確認」が古い。⑥`restore` の上書きの保護（`final-manifest.json`）は、今回試していない / 案: ①〜④ はやる必要があるかを `review 消化` で聞く。⑤ はユーザーの承認後に直す。⑥ は次の実機で試す。
 - 場所: Stop フックの記録の置き場 / 問題: 既定は `~/claude-records/`。部屋の中だけ `$CLAUDE_PROJECT_DIR/records`（`ai/records/`）にするかが未決 / 案: 実機確認（29）の後に決める。
 - 場所: 全フックの改善の表（`notes/hook-improvement-matrix/2026-10-18-matrix.md`、`2026-10-18-candidates.md`）の未実施分 / 問題: 残り: 1-7〜1-10、2-2、2-3、2-11/3-3、3-1b、3-4、N9（それ以外は実施済み。候補一覧メモの推奨順は完了） / 案: 次の `review` で選ぶ。
 - 場所: `open-hook.md` の未決の `remote` の type / 問題: WSL から SSH で user 権限のリモート(Docker を含む)を AI が操作する使い方を、`dev` でも使える type にするか。接続の安全(鍵、権限、記録)は `topics/ai-workspace-boundary/` の設計と重なる / 案: 実測の後に決める。
