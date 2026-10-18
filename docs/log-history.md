@@ -5,7 +5,7 @@
 ### 2026-10-18（`review 消化` 4 回目: 7 を閉じ、重複を整理し、実機の通しの改善 4 件を Next Actions 37 にした）
 - 承認待ちの決定は無く、サブエージェントは起動しなかった（Open Questions は判断を聞く質問のみ）。ユーザーの指示で、Next Actions 7（`init 更新` を PC1・PC2 で使う）を完了として消した。Open Questions「キャッシュの実験」は Next Actions 24 の残りと同内容なので消した。35 の「残り: ユーザーのレビュー」は 36 と重複するので外した。
 - 実機の通しで気づいた点 ①〜④（`restore` の説明用 `⟦CUST_nnn⟧`、信頼の確認、Zed の `-home-ai` の履歴、`close` の README ひな形）は、ユーザーが「やる」と決め、Next Actions 37 に移した。⑥（`restore` の上書きの保護）は Open Questions に残した。
-- Next Actions 31 の残り（`remote` の type、`init-update.md` の大きさ、restore の上書き）は、この後に 1 件ずつ聞く。
+- Next Actions 31 の残りを 1 件ずつ聞いた。`remote` の type は【保留 〜2026-11-02】（項目 10 の `dev-env` の実使用の後に決める）。`init-update.md` の大きさ（7.9k 字。`init-workspace.md` の約 3 倍）は閉じた。理由: 使用頻度が低く、大きくても実害は少ない。`start` のモード管理が固まったときに、`init` もそれに倣う形にする（ユーザーの方針。いまは行動なし）。restore の上書きは【保留 〜2026-11-05】（`_noai/final/` は最終調整で人が触る想定。git 管理下なので戻せる。次の実機で `final-manifest.json` の保護を試してから決める）。これで Next Actions 31 を閉じた。
 
 ### 2026-10-18（`init` `open` のコミットを、取り残しのステージで止めない。手順書のレビューを Next Actions 36 に積んだ）
 - ユーザーが改善案を承認し、`commit_paths` に `only=True` を足した。`init` と `open` は、対象外のステージ済みの変更があっても止まらず、対象のパスだけをコミットする（対象外はステージに残る）。`start` `readme` `close` は、従来どおり止まる（既存のテストと意図を保つ）。単体テスト 1 本を足し、66 本中の失敗は同じ 2 本（`SharedPermissionTest`）。手順書のスクリプト版（3 章、9 章）と `room/README.md` を合わせて直した。決定は `decisions.md` の同日の項の追補。実機は未確認。
