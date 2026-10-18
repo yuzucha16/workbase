@@ -12,7 +12,7 @@ aliases:
   - WSLのファイル配置
   - Windows側とWSL側の置き場所
 created: 2026-10-02
-updated: 2026-10-16
+updated: 2026-10-18
 sources:
   - ChatGPT conversation "ZedとWSLのファイル配置方針" (2026-10-02)
   - "%APPDATA%\\Zed\\settings.json、C:\\vault の構成（2026-10-02 に確認）"
@@ -69,7 +69,7 @@ ZedからWSLを使う開発環境で、プロジェクトや各種ファイル�
 - 現在Windows側にあるリポジトリ（`C:\vault\repos`）を、この方針でWSL側へ移すのか。それとも「Windowsで編集するリポジトリ」と「WSL側の開発用リポジトリ」を分けるのか。vaultとdotfilesは、Windows側から使う前提（ジャンクション・シンボリックリンク）なので、移すと崩れる（[[obsidian-vault]]）。（2026-10-05 の修正: vault のトップは実ディレクトリになり、ジャンクションは `.obsidian` だけになったので、vault については記述が古い。dotfiles の `links.map` は Windows のリンクを使う前提のまま。）
 - Windows側のアプリと頻繁に編集・同期するプロジェクトはあるか。
 - 解決（2026-10-06）: WSLのディストロ名は Ubuntu-24.04、ユーザー名は Windows と違う（確認: `wsl -l -q` と `$USER`）。標準のプロジェクトディレクトリは、`~/works/repos`（ghq の root）にそろえると決めたが、この PC の WSL は未移行で、実際は `~/vault/repos`（[[obsidian-vault]] の「置き場を `$HOME\works` へ移す」）。
-- WSL のユーザー名が Windows と違うので、`/mnt/c/Users/$USER/...` の組み立ては外れる。Windows のパスは、環境変数と `WSLENV` の `/p` で渡す設計だが、実機では渡っていない（同上）。
+- WSL のユーザー名が Windows と違うので、`/mnt/c/Users/$USER/...` の組み立ては外れる。Windows のパスは、環境変数と `WSLENV` の `/p` で渡す設計。`WSLENV` の区切りは `:`（`;` では渡らない。2026-10-18 に実機で確認。詳細は `obsidian-vault.md`）。
 
 ## Next Actions
 
