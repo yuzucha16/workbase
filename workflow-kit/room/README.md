@@ -2,7 +2,7 @@
 
 AI 作業部屋の操作（`open` / `start` / `close` / `umount` / `mask` / `restore`）。人が Windows で実行する。**AI には実行させない**（原本と対応表を読む工程（マスク・復元）を含むため）。設計の理由は `guides/explain/ai-room-why.md`、手作業の手順は `guides/howto/ai-room-setup.md`。
 
-状態: v0（2026-10-12）に、マスク・復元（`maskkit.py`）を足した（2026-10-13、モバイルで実装。**合成データの単体テストのみ。実際の Excel・WSL では未確認**）。実際の WSL（部屋）で、使い捨ての works を使って `open → start → close` を通した。
+状態: v0（2026-10-12）に、マスク・復元（`maskkit.py`）を足した（2026-10-13、モバイルで実装。**合成データの単体テストのみ**。2026-10-18 に、実際の Excel と WSL の部屋で、ダミーのデータを使って確認した）。実際の WSL（部屋）で、`init → open → mask → start → restore → readme → stock → close → reap` を通した（2026-10-18）。
 
 ## 使い方
 
@@ -20,7 +20,7 @@ uv run room.py umount --area <Area>
 
 | コマンド | すること |
 |---|---|
-| `init` | Area の部屋 `room-<Area>` を作る（実機は未確認）: `boundary:` の確認 → `wsl --install Ubuntu-24.04 --name … --no-launch` → 一般ユーザー `ai` → `/etc/wsl.conf`（automount・interop 無効）→ 分離の確認（`ai` / `/mnt/c` 空 / `cmd.exe` 無し / sudo 不可。外れたら道具を入れずに止まる）→ curl・rg・uv・Claude Code → 道具の確認。**ログインは人**（手順を表示する）。部屋がすでにあれば止まる。作りかけは `--resume`（設定と道具の入れ直し） |
+| `init` | Area の部屋 `room-<Area>` を作る（実機で確認済み: 2026-10-18）: `boundary:` の確認 → `wsl --install Ubuntu-24.04 --name … --no-launch` → 一般ユーザー `ai` → `/etc/wsl.conf`（automount・interop 無効）→ 分離の確認（`ai` / `/mnt/c` 空 / `cmd.exe` 無し / sudo 不可。外れたら道具を入れずに止まる）→ curl・rg・uv・Claude Code → 道具の確認。**ログインは人**（手順を表示する）。部屋がすでにあれば止まる。作りかけは `--resume`（設定と道具の入れ直し） |
 | `reap [名前]` | close から期限（`reap_after`。既定14日）が来て、まだ `reaped` の無い `archives/` の Project について、部屋の会話履歴（`~/.claude/projects/-mnt-room-<名>/`）と `~/tmp/<名>` を消し、README に `reaped: <日付>` を付ける。会話履歴は写さずに消す（復元は `exmem` や `ai/docs/` の記録で）。名前なしは期限切れの一覧を出して承認を求める（`--yes` で省略）。名前ありで期限前なら `--force`。名前が英数字・`_`・`-` 以外なら止まる。`close` の終わりにも一覧を出す（端末のときは承認を求める）。Windows 側の `archives/` は消さない |
 | `open` | works の `.gitignore`（`**/_noai/` と `!**/ai/out/`）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final}` を作り、Area の一覧に足す |
 | `start` | `area:` とディストロ名の一致、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴（manifest）を確認 → Project の README と所属する Area の README の写しを `ai/ctx/`（`README.md`、`area-README.md`）に置く（Area の README が 16 KiB を超えると知らせる）→ `ai/` を `/mnt/room/<名>` に root でマウントし、`in/` を読み取り専用に → 部屋で AI を起動（一般ユーザー）→ **必ず**アンマウントして、マウント点を消し、残りを確認 → 変更の一覧と、追跡されずに無視されているファイルの警告 |
@@ -32,7 +32,7 @@ uv run room.py umount --area <Area>
 | `stock` | 部屋の AI の【汎用】の下書き（`ai/out/stock/*.md`）を、**1件ずつ人が確認して**（`--yes` で省略）`resources/exmem/inbox/` に運ぶ。frontmatter に `base_commit` と `observed` が要る。対応表の語を含む下書きは運ばない。基準以降に統合先の `lessons/` が変わっていれば、frontmatter に `base_stale` を足す。運んだものは manifest の `stock` に記録し（同じ内容は二度運ばない）、未追跡のまま残す（コミットしない: `stock-hook.md` の方針） |
 | `umount` | 部屋に残った `/mnt/room/*` のマウントを外す |
 
-`start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。待つ間、部屋が止まってマウントが消えないよう、部屋で `sleep infinity` を動かす（実機で未確認）。
+`start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。待つ間、部屋が止まってマウントが消えないよう、部屋で `sleep infinity` を動かす（実機で確認済み: 2026-10-18。待つ間マウントは残り、Enter で戻る。`wsl.exe` はコンソールから切り離して起こす）。
 
 ## 実装の決まり
 
@@ -70,5 +70,5 @@ WSL は差し替えて、一時ディレクトリの git で行う（実際の�
 
 ## 未実装
 
-- reap（期限切れの会話履歴を記録に写して消す）
-- 部屋の作成（ディストロ、`wsl.conf`、道具、ログイン）の自動化
+- reap で、消す前に会話履歴を記録に写す（今は写さずに消す）
+- 部屋の作成のうち、ログイン（人の操作）の自動化
