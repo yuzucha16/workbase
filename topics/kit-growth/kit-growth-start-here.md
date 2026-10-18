@@ -17,7 +17,7 @@ PC1 で使った印象が出たら、モバイルで壁打ちして `inbox.md`�
 
 ## 読む順
 
-1. `docs/log.md`（現在状態）
+1. 直下の `docs/log.md`（現在状態。kit の改善の docs は、2026-10-18 から workbase 直下の `docs/` にある）
 2. `inbox.md`（未選別の印象）
-3. `docs/decisions.md`
+3. 直下の `docs/decisions.md`
 4. `records/kit-records-index.md`（やり方・モードの品質チェックと振り返りの記録。測ったことはここに足す）
