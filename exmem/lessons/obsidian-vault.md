@@ -15,7 +15,7 @@ aliases:
   - Obsidianの設定
   - vaultのバックアップ
 created: 2026-10-01
-updated: 2026-10-16
+updated: 2026-10-18
 sources:
   - Claude Code conversation "exmemの整理" (2026-09-26〜2026-10-01)
   - Claude Code conversation "ディレクトリ構造の見直し" (2026-10-02〜2026-10-03)
@@ -138,7 +138,7 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 
 **Facts**
 
-- `WORKS_DIR` を `WSLENV` の `WORKS_DIR/p` で WSL に渡す実装は、一時ディレクトリと偽の HOME の試験でだけ確認していた。**実機では渡っていなかった**（確認: 2026-10-06、根拠: Windows 側で `WORKS_DIR=C:\Users\<Windows のユーザー名>\works`、`WSLENV=CERTS_DIR/p;WORKS_DIR/p` を確認したうえで、`wsl -e bash -c 'printenv WORKS_DIR CERTS_DIR'` が何も出さず rc=1。WSL 側の `WSLENV` は同じ値で見えている。原因は未特定。エージェントのツール経由で起動した PowerShell からの確認で、ユーザーの通常のターミナルでは未確認）。
+- `WORKS_DIR` を `WSLENV` の `WORKS_DIR/p` で WSL に渡す実装は、一時ディレクトリと偽の HOME の試験でだけ確認していた。**実機では渡っていなかった**（確認: 2026-10-06、根拠: Windows 側で `WORKS_DIR=C:\Users\<Windows のユーザー名>\works`、`WSLENV=CERTS_DIR/p;WORKS_DIR/p` を確認したうえで、`wsl -e bash -c 'printenv WORKS_DIR CERTS_DIR'` が何も出さず rc=1。WSL 側の `WSLENV` は同じ値で見えている）。**原因は `WSLENV` の区切りが `;` だったこと**（確認: 2026-10-18、根拠: 同じ `WSLENV` の値で区切りだけを `;` と `:` に変えて `printenv` を比べた。`;` では何も渡らず、`:` では `/mnt/c/Users/<名前>/works` と `/mnt/c/Users/<名前>/.certs` が渡った）。`WSLENV` の区切りは `:` を使う（`;` は Windows の `PATH` の区切りで、`WSLENV` では効かない）。`10_env.bat` を `:` に直し、この PC の User の `WSLENV` を `CERTS_DIR/p:WORKS_DIR/p` に直して、`wsl --shutdown` の後に渡ることを確認した（確認: 2026-10-18、根拠: `printenv WORKS_DIR CERTS_DIR` が rc=0）。
 - 渡らないときの `~/.profile` の既定値 `/mnt/c/Users/$USER/works` は外れる（確認: 2026-10-06、根拠: Ubuntu-24.04 のログインシェルが `WORKS_DIR=/mnt/c/Users/<WSL のユーザー名>/works` を返した。Windows のユーザー名とは違う）。
 - この PC の WSL（Ubuntu-24.04）は、未移行（確認: 2026-10-06、根拠: `~/works` は無く、`GHQ_ROOT=/home/<WSL のユーザー名>/vault/repos`。`~/.profile` などは旧 `/mnt/c/vault/repos/…/dotfiles/home/` へのシンボリックリンク。`C:\vault` を残しているので、リンクは切れていない）。
 
@@ -297,7 +297,7 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 - 解決（2026-10-05、Windows のみ）: `50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、既にあれば skip）を足した。Linux は未対応（TODO）。
 - 旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか（2026-10-05 時点で未決）。あわせて、旧 GitHub リポジトリを削除する時期（残し続けるか）、`git bundle` の保存先（Vault のディスクの外）と世代管理、旧 clone を消すときに Claude の履歴キー4つを残すか、バックアップを定期実行する仕組みを入れるか（2026-10-06 に追加）。
 - 解決（2026-10-06）: 他の PC で新規にトップを作るときの `certs` の置き場は、`$HOME\.certs` に変えたので、「workflowを導入して」の生成に含めない（作成は dotfiles の `10_env.bat`）。
-- `WSLENV` の `名前/p` は、Windows のパスを WSL のパスに変換して渡す指定（仮説）。2026-10-06 の実機では、`WSLENV=CERTS_DIR/p;WORKS_DIR/p` が WSL に見えるのに、`WORKS_DIR` も `CERTS_DIR` も渡っていなかった（上の「置き場を `$HOME\works` へ移す」の Facts）。原因の切り分け（ユーザーの通常のターミナルから渡るか、WSL の再起動で変わるか）は未実施。
+- 解決（2026-10-18）: `WSLENV` の `名前/p` は、Windows のパスを WSL のパスに変換して渡す指定で、実機で動いた。2026-10-06 に渡らなかった原因は、区切りが `;` だったこと（上の「置き場を `$HOME\works` へ移す」の Facts）。他の PC は、`10_env.bat` の再実行まで `;` のままなので、渡らない（`10_env.bat` は `;` を `:` に直す）。
 - 既存の WSL の `~/vault`（旧 `GHQ_ROOT`。`ghq` の clone を含む）の中身を、`~/works` へ移すか。WSL の dotfiles のリンク（旧 `/mnt/c/vault/repos/…` を指す）を張り直すか。`C:\vault` を消す前に決める。
 - 新しい業務用 PC で、dotfiles の `50_repos` から「workflowを導入して」までの順で、この構造を再現して確認する。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
@@ -315,7 +315,7 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 - `vault-backup.bat` を作り、ジャンクションの扱いを決めて `schtasks` に登録する（取りこぼし防止設定をオン）。
 - 別フォルダへ復元し、Obsidianで開けるか確認する。
 - `10_env.bat` を再実行し、新しいターミナルと WSL の新しいセッションで、`CERTS_DIR`（`%USERPROFILE%\.certs`）と `WSLENV` が期待どおりになることを確認する。2026-10-06 時点のこの PC は未移行で、`CERTS_DIR` は旧置き場を指し、`WSLENV` は空、`~\.certs` は無い（確認: 2026-10-06、根拠: 環境変数の取得と `Test-Path`）。
-- ユーザーの通常のターミナルを開き直して、WSL で `echo $WORKS_DIR $GHQ_ROOT` を確認する。渡っていなければ、`WSLENV` の `/p` 指定の原因を調べる。WSL の dotfiles を新パスで張り直す（2026-10-06 時点）。
+- WSL の dotfiles を新パスで張り直す（2026-10-06 時点）。`WORKS_DIR` は 2026-10-18 に渡るようになった。同日のログインシェルで `GHQ_ROOT` は空だった（未調査）。他の PC では、`10_env.bat` を再実行して `WSLENV` の `;` を `:` に直す。
 - 旧 clone で `git bundle create <名前>.bundle --all` を作り、`git bundle verify` で検証して、Vault のディスクの外にも置く（2026-10-06 時点）。
 - 旧 clone の未追跡のメモを、統合先のノートと突き合わせる。統合済みなら捨てる。
 - 他の PC に旧リポジトリの clone が無いことを確認する（2026-10-06 時点のユーザーの発言では、他の PC にはまだ環境を作っていない）。
