@@ -191,6 +191,19 @@ class InitTest(unittest.TestCase):
             self.assertEqual(self.git_out(v, "rev-parse", "HEAD"), before)
             self.assertIn("areas/area-y/", self.git_out(v, "status", "--porcelain"))
 
+    def test_init_and_open_commit_only_their_paths_when_other_changes_are_staged(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            (v / "other.txt").write_text("取り残し\n", encoding="utf-8")
+            sh(v, "add", "other.txt")
+            room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=True))
+            self.assertEqual(self.git_out(v, "show", "--name-only", "--format=", "HEAD").split(), ["areas/area-y/README.md"])
+            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+            files = self.git_out(v, "show", "--name-only", "--format=", "HEAD").split()
+            self.assertNotIn("other.txt", files)
+            self.assertIn("projects/proj-a/README.md", files)
+            self.assertEqual(self.git_out(v, "diff", "--cached", "--name-only").split(), ["other.txt"])  # ステージに残る
+
     def test_open_commits_initial_state_without_other_area_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
