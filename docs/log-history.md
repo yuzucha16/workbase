@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-18（`review 消化` の出力を3リストの順に固定した）
+- ユーザーの指示で、`review-hook.md` の「消化モード」を、「すでに close していそうなアイテム」「すぐに close できそうなアイテム」「起票が古いアイテム」の順のリストに直した（旧: 3区分と「それ以外」の2分割）。決定は `decisions.md` の同日の項。
 ### 2026-10-18（`review 消化`: 完了項目の整理と「間」の TTL 基準化）
 - ユーザーの承認で、Next Actions 3（token-matrix の初回採点。`70b8e22`）と 23（`[review]` コミットの日付取得。`846c3d7` `48c1e27` で取れている）を消し、6 と 9 の済んだ部分を削った。6 の「入力 8 の基準がまだ無い」は事実と違った（基準は `docs/alignment-baseline.md`）。Open Questions の全フック改善表は、残りだけを書く形に縮めた。
 - 続ける・切るの「間5分」を TTL（サブスク1時間、API キー5分）基準に直した。`workflow-kit/hook-common.md` の「次にやること」、`token-matrix.md` の「切る」の定義、`exmem/lessons/session-handoff.md` の Principles と Decisions（切る式 H − B と残りターン数を含む）。Open Questions 2 件（間5分、理由の文言）を閉じた。決定の根拠は `session-handoff.md` の Decisions。
