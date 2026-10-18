@@ -17,9 +17,9 @@ updated: 2026-10-17
 | 書くこと | 置き場 |
 |---|---|
 | 測ったこと（比較表、各回の直し、残るブレ） | `records/<名前>-record.md`（この場所） |
-| 決めたこと（ユーザーの承認つき） | `docs/decisions.md` |
-| 経緯 | `docs/log-history.md` |
-| 現在状態と次にやること | `docs/log.md` |
+| 決めたこと（ユーザーの承認つき） | 直下の `docs/decisions.md` |
+| 経緯 | 直下の `docs/log-history.md` |
+| 現在状態と次にやること | 直下の `docs/log.md` |
 | 使った印象（未選別） | `inbox.md` |
 
 ## 書き方
