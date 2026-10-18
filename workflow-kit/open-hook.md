@@ -2,8 +2,6 @@
 
 呼び出し名は `open`。別名は無い。呼び出し表の正本は `hooks.md`（体系の経緯は `README.md` の「フックの体系」）。
 
-実測で直して育てる。
-
 ## 目的と契機
 
 - **目的**: `open` は Project の主題と完了条件を決めて、README 本文を下書きする。続けて `start`（`start-hook.md`）を呼び、その日のゴールと前提を決める。ひな形（`README.md`、`ai/`、`_noai/`）、Area の一覧、状態、コミットは、人が行う `room open` / `room readme` の責務で、この手順書は持たない（`room-context.md`、`room/README.md`）。
@@ -13,6 +11,7 @@
 ## 場所と書き込みの制約
 
 - 書き込み先: `ai/out/readme-draft.md`（README の本文だけ。frontmatter を含めない）と、呼び出し元の記録（`ai/docs/log.md`、`ai/docs/decisions.md`、`events`。手順「記録する」）だけ。Project と Area の `README.md` は書き込めない（`ai/ctx/` の写しを読む）。
+- 既存のファイル: `ai/out/readme-draft.md` が既にあれば、読んでから更新する（人が `room readme <名>` で反映するまでは下書き）。`ai/docs/` の記録は追記する。
 - 実行する場所: AI 作業部屋の中だけ（`hooks.md` の「領域とフックの権限」。works などでは行わない）。反映は人が `room readme <名>` で行う。`archives/` は触らない。
 
 ## 手順
@@ -47,7 +46,7 @@
 
 ## 未決
 
-- `doc` と `research` の基準文書の形（2026-10-16）。置き場と最小の中身（Must の3項目）は `change-method.md` で決まっているが、type 別の書き方は、最初の利用の後に決める（`dev` だけ、3文書が兼ねる）。
+- `doc` と `research` の基準文書の形。置き場と最小の中身（Must の3項目）は `change-method.md` で決まっているが、type 別の書き方は、最初の利用の後に決める（`dev` だけ、3文書が兼ねる）。
 - Area が無い題材のときの、Area の作り方（基準: 終わりのない責任領域か）。
 - 上限（Project 3件、Area 5件）の見直し。
-- Project の構造（type は5種、`ai/work/` の下書きの分離）の実測。`dev-env` と `dev-test` は2026-10-16 に足した叩き台で、実測が無い。`research` と、`dev` と `doc` の混合の Project の扱い。
+- Project の構造（type は5種、`ai/work/` の下書きの分離）の実測。`dev-env` と `dev-test` は叩き台で、実測が無い。`research` と、`dev` と `doc` の混合の Project の扱い。

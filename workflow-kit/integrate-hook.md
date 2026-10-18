@@ -12,6 +12,7 @@
 - 起動できる領域は `hooks.md` の「領域とフックの権限」に従う（部屋での扱いは `room-context.md`）。
 - exmem の場所は `hooks.md` の「exmem の場所」。
 - 書き込み先: `exmem/lessons/`、`exmem/exmem-index.md`（索引）、`exmem/tags.md`、統合したメモの削除。作業ディレクトリの `docs/` は書き換えない。
+- 既存のファイル: 統合先の `lessons/` は、メモの内容を追記・更新する。統合したメモは削除する。
 - コミットと push は `hook-common.md` の「コミットと push」に従う。コミット済みのメモ（使い捨ての環境で作られたもの）は、`git rm` で削除してコミットする。
 
 ## 手順
@@ -39,7 +40,7 @@
 
 1. inbox のメモから Principles / Decisions / Gotchas / 事実 / Open Questions を抜き出す。
 2. **実物と照合する。** メモの内容は会話から生まれたもので、実物と食い違うことがある。設定ファイル・コード・コマンド出力など確認できるものは実際に見て、一致すれば「確認済み」、食い違えば実物を正として記録し、食い違いを `Open Questions` に残す。確認できないものは仮説として書く。
-3. **基準が古いメモ（`base_stale`）の扱い。** 部屋（AI 作業部屋）から運ばれたメモには、frontmatter に `base_commit`（書いた時点の workbase のコミット）と `observed`（観測した日）が付く。`base_stale` が付いたメモは、統合先の `lessons/` が基準以降に変わっている。`base_commit` の版（`git show <base_commit>:<パス>`）・メモ・最新の版の3点で比べ、メモの内容が最新の版と食い違うときは、最新の版を正として統合せず、食い違いを統合先の `Open Questions` に書く。食い違いが無ければ、そのまま統合してよい。複数のメモを並べるときは、到着順でなく `observed` の順にする。印が無いメモは、今までどおり統合する。（2026-10-13 ユーザーの承認。経緯は `room/README.md` の `stock`）
+3. **基準が古いメモ（`base_stale`）の扱い。** 部屋（AI 作業部屋）から運ばれたメモには、frontmatter に `base_commit`（書いた時点の workbase のコミット）と `observed`（観測した日）が付く。`base_stale` が付いたメモは、統合先の `lessons/` が基準以降に変わっている。`base_commit` の版（`git show <base_commit>:<パス>`）・メモ・最新の版の3点で比べ、メモの内容が最新の版と食い違うときは、最新の版を正として統合せず、食い違いを統合先の `Open Questions` に書く。食い違いが無ければ、そのまま統合してよい。複数のメモを並べるときは、到着順でなく `observed` の順にする。印が無いメモは、今までどおり統合する。（経緯は `room/README.md` の `stock`）
 4. タグを `tags.md` の語彙に正規化する。
 5. 該当する `lessons/*.md` に統合する。該当がなければ新しいファイルを作る。
 6. 統合先の `lessons/` のノートの `Open Questions` / `Next Actions` を更新する（未完の項目の置き場）。

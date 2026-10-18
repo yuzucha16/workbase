@@ -76,7 +76,7 @@ Get-ChildItem *-hook.md | ForEach-Object { '{0} {1}' -f $_.Name, (Get-Content $_
 
 `review-hook.md` の手順「網羅度を確認する」が、この節を実行する（2026-10-16 に、手順の本文から移した。点検の項目が増えたため、この表と点検を1か所にまとめた）。
 
-1. `pwsh -NoProfile -File <kit>/tools/check-hook-outline.ps1` を実行する（FAIL は Must の違反）。
+1. `pwsh -NoProfile -File <kit>/tools/check-hook-outline.ps1`（`pwsh` が無い環境は `python <kit>/tools/check_hook_outline.py`）を実行する（FAIL は Must の違反）。
 2. 表の字数の行を、測り直して更新する（測定は表の冒頭）。
 3. 区分が Must の行に、— のフックが無いか見る（点検スクリプトが見ない行も含む）。満たさないフックがあれば、直す案を出す。
 4. **領域の権限の期待**: 「領域の権限の期待」の行を、`hooks.md` の「領域とフックの権限」の表と、各フックの「場所と書き込みの制約」で比べる。次を見直しとして挙げる: 手順書の記述が表と違うフック、書き込み先が増えたのに表が古いフック、表の型（読み・作業対象の `docs/`・窓口）に当たらない跨ぎ書き込みが書かれているフック。直したら、行の確認日を更新する。
