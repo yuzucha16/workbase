@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-17（初回の review を実施した。`846c3d7`。その後、inbox を空にし、振り返りを定期と突発に分けた）
+更新: 2026-10-18（キャッシュの実験を実施し、続ける・切るの数値の根拠を確かめた。その前: 初回の review `846c3d7`、inbox を空にした、振り返りを定期と突発に分けた）
 
 ## 状態
 
@@ -28,10 +28,11 @@
 - `review` の前回の日付は `[review]` コミットから取る（`review-hook.md` の手順「コミットする」。初回は `846c3d7`）。`open`（2,924 字）・`start`（4,827 字）を、`project-structure.md` と `start-work-types.md` への分割で字数の目安内にした。点検スクリプトは FAIL なし。
 - `pwsh` が無い環境用に、`tools/check_inbox.py` `find_knowledge.py` を足した。works を指す語は「works」に統一した（kit、ルート、`guides/`、`exmem/lessons/` の現在形の記述。`topics/` のノートは未）。部屋へ送る共有知から、`room/` のコード・テストを外した（`README.md` は送る）。施策1を `user-manual.md` に足した。
 - 2026-10-17 の作業は `807dd29` まで push 済み（`main`）。決定は `decisions.md` の同日の 4 項、経緯は `log-history.md`。
+- キャッシュの実験をクラウドで実施した（Project の共有フォルダ `notes/token-saving/` の 2026-10-17 の 4 ファイルと `2026-10-18-cache-insights.md`）。5分TTL で6分あけると同じ作業が3.2倍、会話を分けても1.1倍、フック1回の読み込みは3〜6円。サブスクの主な会話の TTL は1時間、API キーは5分（公式 docs）。続ける・切るの数値の考え方（H − B、残りターン数）は実測と合った。決定は無し（改善案は Open Questions）。メモは `exmem/inbox/2026-10-18-prompt-cache-gap-cost.md`（`fb19ac2`）。
 
 ## Next Actions
 
-24. 続ける・切るの暫定の数値（間5分、約10万トークン、約2万トークン）が実測に合うか、`review` の入力 5（重い会話）で見る。数値はユーザーが承認済み（2026-10-17。暫定）。`exmem/inbox/` に未統合のメモが1件（`2026-10-17-session-cut-cache-thresholds.md`）。
+24. 続ける・切るの暫定の数値（約10万トークン、約2万トークン）は、クラウドの実験（2026-10-17。1回ずつ）で考え方が合うと確かめた。「間5分」は、サブスクでは1時間にそろえる必要がある（Open Questions）。残り: ユーザーの PC で TTL を確認し（`claude -p "hello" --output-format json` の `usage.cache_creation`）、本物のフック列で3回以上再実験する。`exmem/inbox/` に未統合のメモが1件（`2026-10-18-prompt-cache-gap-cost.md`）。
 26. WSL の部屋で `room start` を実行し、`~/shared/workflow-kit/room/` に `README.md` だけが入ることを確かめる(2026-10-17 に `room.py` を変更。この環境では単体テストのみ。別セッション)。
 25. 移した先（`project-structure.md`、`start-work-types.md`）を、次に `open` / `start` で type を決める・項目を埋めるときに読み忘れないか見る。
 23. `[review]` のコミットが作られた（`846c3d7`）。次の `start` と `wrap` が、日付を取れて7日の判定ができるか確かめる。`wrap` の報告で、`review` を7日後に勧める。`review` の次回の目途は 2026-10-24。
@@ -62,3 +63,7 @@
 - 場所: `init-update.md`（7.9k 字） / 問題: 同じ任意の章 `init-workspace.md`（2.6k）の約3倍で、`hook-matrix.md` の重さの基準でも大きい / 案: 使ってみて、手順 1・2 の確認コマンドを `init-update.md` から外せるか見る（`review` で比べる）。
 - 場所: `open-hook.md` の未決 / 問題: リポジトリが正の `src`、remote で動くものは、構造が新規のフルスクラッチ前提で、`ai/out/` に clone すると `restore` が止まる / 案: `repos/` に置いたまま、スナップショットと patch で受け渡す(未検証)。
 - 場所: `room.py` の `restore_project` / 問題: AI が使えない間に人が `_noai/final/` を直すと、次の AI の終了時の復元で無条件に上書きされる(別の話にする、とユーザー。2026-10-16) / 案: 正本の宣言、`raw/` → `mask` → `ai/in/` の戻り方の約束、上書き前の警告。
+- 場所: `hook-common.md` の「続ける」「切る」の「間5分」 / 問題: サブスクの主な会話の TTL は1時間（クラウドの記録と公式 docs）で、API キーは5分。5分固定だと、サブスクでは切りすぎる / 案: 「間が TTL（サブスク1時間、API キー5分）を超えた」に直す。
+- 場所: `exmem/lessons/session-handoff.md` の最初の Principle と `token-matrix.md` の「切る」の定義 / 問題: 「履歴は毎ターン再送される」だけでは、読み出しが約1/20の単価であることと合わない。実測の本体は、間が TTL を超えたときの書き直し（3.2倍） / 案: 理由を「間が TTL を超えると履歴を書き直す。積んだ分は毎ターン読まれる」に直し、切る式（TTL 切れ後は H − B、TTL 内は残りターン数）を Decisions に足す（統合のとき）。
+- 場所: `token-matrix.md` と `review` の入力 5（重い会話） / 問題: 4観点に、間と先頭の安定が無い。入力 5 は大きい会話を見るだけで、書き直した量が見えない / 案: 第5の観点「温存」を足し、入力 5 を「TTL を超えて空いた後の書き込み量」に変える（Python スクリプト。費用を記録する Stop フックの inbox のメモと一緒に検討）。
+- 場所: キャッシュの実験（クラウド、1回ずつ） / 問題: クラウドは先頭が大きく、ローカルの既定の TTL も未確認 / 案: ユーザーの PC で TTL を確認し、本物のフック列で3回以上繰り返す。
