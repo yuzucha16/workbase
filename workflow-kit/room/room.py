@@ -345,7 +345,8 @@ def commit_paths(ctx, paths, message, extra_allowed=()):
         ctx.say("コミットする変更が無い")
         return
     allowed = tuple(p.rstrip("/") + "/" for p in (*paths, *extra_allowed))
-    stray = [f for f in staged if not f.startswith(allowed)]
+    exact = {p.rstrip("/") for p in (*paths, *extra_allowed)}  # ファイルそのものを指すパス
+    stray = [f for f in staged if f not in exact and not f.startswith(allowed)]
     if stray:  # 並行する作業のステージ済みの変更を、巻き込まない
         raise RoomError("対象外のファイルがステージされている。コミットしない:\n  " + "\n  ".join(stray))
     ctx.say("ステージ済み: " + str(len(staged)) + " ファイル")
@@ -460,8 +461,8 @@ def cmd_open(ctx, a):
     if p.distro not in ctx.wsl.distros():
         ctx.say(f"注意: 部屋（{p.distro}）がまだ無い。guides/howto/ai-room-setup.md の 3 章で作る")
     ctx.say(f"作った: projects/{a.name}（ai/ と _noai/）。README の <...> を埋める")
-    if a.commit:
-        commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}"], f"[room] {a.name} を open（Area {a.area}）")
+    if a.commit:  # 初期状態を、戻る起点としてコミットする（既定。--no-commit で省く）
+        commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）")
 
 
 # ---------- init（部屋を作る。手順は ai-room-setup.md の 3〜4 章） ----------
@@ -489,13 +490,33 @@ def step_script(ctx, distro, title, text, root=False):
     return out
 
 
+AREA_README_TEMPLATE = """---
+status: active
+boundary: {boundary}
+updated: {today}
+---
+
+# {area}
+"""
+
+
 def cmd_init(ctx, a):
     """Area の部屋（専用ディストロ）を作り、道具を入れる。ログインは人が行う。"""
+    boundary_arg = getattr(a, "boundary", None)
     area_readme = ctx.vault / "areas" / a.area / "README.md"
     if not area_readme.exists():
-        raise RoomError(f"Area が無い: areas/{a.area}")
-    if not read_frontmatter(area_readme).get("boundary"):
-        raise RoomError("Area に boundary: が無い。`room open` の --boundary か、README の frontmatter で付ける")
+        if not boundary_arg:
+            raise RoomError(f"Area が無い: areas/{a.area}。作るなら --boundary <印> を付ける（例: internal、顧客を表す名前。既定値は無い）")
+        area_readme.parent.mkdir(parents=True, exist_ok=True)
+        area_readme.write_text(AREA_README_TEMPLATE.format(area=a.area, boundary=boundary_arg, today=ctx.today()),
+                               encoding="utf-8", newline="\n")
+        ctx.say(f"Area を作った: areas/{a.area}（boundary: {boundary_arg}）")
+    elif not read_frontmatter(area_readme).get("boundary"):
+        if not boundary_arg:
+            raise RoomError("Area に boundary: が無い。--boundary <印> で付ける（README の frontmatter でもよい）")
+        area_readme.write_text(update_frontmatter(area_readme.read_text(encoding="utf-8"), {"boundary": boundary_arg}),
+                               encoding="utf-8", newline="\n")
+        ctx.say(f"Area に boundary: {boundary_arg} を付けた")
     distro = f"room-{a.area}"
     exists = distro in ctx.wsl.distros()
     if exists and not a.resume:
@@ -530,6 +551,9 @@ def cmd_init(ctx, a):
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
             f"  wsl -d {distro}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
             f"  確認: wsl -d {distro} -- bash -ic 'cd ~ && claude -p \"Reply with exactly: ok\"'")
+    rel = f"areas/{a.area}/README.md"
+    if getattr(a, "commit", False) and git(ctx.vault, "status", "--porcelain", "--", rel).strip():
+        commit_paths(ctx, [rel], f"[room] init {a.area}（Area の作成、boundary: {read_frontmatter(area_readme).get('boundary')}）")
 
 
 # ---------- start ----------
@@ -1228,7 +1252,8 @@ def build_parser():
     o.add_argument("name"); o.add_argument("--area", required=True)
     o.add_argument("--type", default="doc", choices=["doc", "dev", "dev-env", "dev-test", "research"])
     o.add_argument("--boundary", help="Area に boundary: が無いときに付ける印")
-    o.add_argument("--commit", action="store_true")
+    o.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
+    o.add_argument("--no-commit", dest="commit", action="store_false", help="初期状態をコミットしない（既定はコミットする）")
     s = sub.add_parser("start", help="チェック → マウント → AI を起動 → アンマウント → 回収")
     s.add_argument("name")
     s.add_argument("--cmd", default="claude", help="部屋で実行するコマンド（既定: claude）")
@@ -1248,6 +1273,8 @@ def build_parser():
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
     i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")
+    i.add_argument("--boundary", help="Area が無い（または boundary: が無い）ときに付ける印（例: internal、顧客を表す名前。既定値は無い）")
+    i.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="Area の作成をコミットしない（既定はコミットする）")
     rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
     rp.add_argument("name", nargs="?"); rp.add_argument("--yes", action="store_true")
     rp.add_argument("--force", action="store_true", help="期限前でも消す（名前を指定したとき）")

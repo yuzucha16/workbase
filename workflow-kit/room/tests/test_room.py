@@ -153,6 +153,54 @@ class InitTest(unittest.TestCase):
                 room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=False))
             self.assertFalse(any("apt-get" in s[1] for s in wsl.scripts))
 
+    def git_out(self, v, *args):
+        return subprocess.run(["git", "-C", str(v), *args], check=True, capture_output=True, text=True, encoding="utf-8").stdout
+
+    def test_init_creates_area_with_boundary_and_commits_only_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            (v / "areas" / "area-x" / "memo.md").write_text("別の編集\n", encoding="utf-8")  # 巻き込まれてはいけない
+            wsl = FakeWsl(distros=())
+            room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=True))
+            text = (v / "areas" / "area-y" / "README.md").read_text(encoding="utf-8")
+            self.assertIn("boundary: internal", text)
+            self.assertEqual(self.git_out(v, "show", "--name-only", "--format=", "HEAD").split(), ["areas/area-y/README.md"])
+            self.assertIn("?? areas/area-x/memo.md", self.git_out(v, "status", "--porcelain"))
+
+    def test_init_without_boundary_does_not_create_area(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            wsl = FakeWsl(distros=())
+            with self.assertRaises(room.RoomError):
+                room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-y", resume=False, boundary=None, commit=True))
+            self.assertFalse((v / "areas" / "area-y").exists())
+            self.assertFalse(hasattr(wsl, "installed"))
+
+    def test_init_existing_area_makes_no_commit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            before = self.git_out(v, "rev-parse", "HEAD")
+            room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-x", resume=False, boundary=None, commit=True))
+            self.assertEqual(self.git_out(v, "rev-parse", "HEAD"), before)
+
+    def test_init_no_commit_leaves_area_uncommitted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            before = self.git_out(v, "rev-parse", "HEAD")
+            room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=False))
+            self.assertEqual(self.git_out(v, "rev-parse", "HEAD"), before)
+            self.assertIn("areas/area-y/", self.git_out(v, "status", "--porcelain"))
+
+    def test_open_commits_initial_state_without_other_area_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            (v / "areas" / "area-x" / "memo.md").write_text("別の編集\n", encoding="utf-8")
+            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+            files = self.git_out(v, "show", "--name-only", "--format=", "HEAD").split()
+            self.assertIn("areas/area-x/README.md", files)
+            self.assertIn("projects/proj-a/README.md", files)
+            self.assertNotIn("areas/area-x/memo.md", files)
+
     def test_init_resume_needs_existing_room(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)

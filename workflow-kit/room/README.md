@@ -8,7 +8,8 @@ AI 作業部屋の操作（`open` / `start` / `close` / `umount` / `mask` / `res
 
 ```powershell
 cd <このディレクトリ>
-uv run room.py open <Project> --area <Area> [--type doc|dev|dev-env|dev-test|research] [--boundary <印>] [--commit]
+uv run room.py init <Area> [--boundary <印>] [--resume] [--no-commit]
+uv run room.py open <Project> --area <Area> [--type doc|dev|dev-env|dev-test|research] [--boundary <印>] [--no-commit]
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--adopt] [--commit]
 uv run room.py close <Project> [--commit]
 uv run room.py umount --area <Area>
@@ -16,11 +17,11 @@ uv run room.py umount --area <Area>
 
 - works は `$ROOM_VAULT`、無ければ `~/works`。`--vault <パス>` で指定できる（`--vault` はサブコマンドの前に書く）。`close` から reap までの日数は `--reap-days`（既定 14。`$ROOM_REAP_DAYS` でも指定できる）。
 - 部屋（WSL のディストリビューション）は `room-<Area>`。`room init <Area>` で作る（手作業の手順は `guides/howto/ai-room-setup.md` の 3・4 章）。
-- コミットは、`--commit` を付けたときだけ。対象のパス以外がステージされていたら、コミットしない。
+- コミット: `init`（Area の作成）と `open`（Project のひな形と Area の一覧）は、**初期状態として既定でコミットする**（戻る起点。`--no-commit` で省く。2026-10-18）。`start` `readme` `close` は、`--commit` を付けたときだけ。対象のパス以外がステージされていたら、コミットしない。
 
 | コマンド | すること |
 |---|---|
-| `init` | Area の部屋 `room-<Area>` を作る（実機で確認済み: 2026-10-18）: `boundary:` の確認 → `wsl --install Ubuntu-24.04 --name … --no-launch` → 一般ユーザー `ai` → `/etc/wsl.conf`（automount・interop 無効）→ 分離の確認（`ai` / `/mnt/c` 空 / `cmd.exe` 無し / sudo 不可。外れたら道具を入れずに止まる）→ curl・rg・uv・Claude Code → 道具の確認。**ログインは人**（手順を表示する）。部屋がすでにあれば止まる。作りかけは `--resume`（設定と道具の入れ直し） |
+| `init` | Area の部屋 `room-<Area>` を作る（実機で確認済み: 2026-10-18。Area の作成とコミットは単体テストのみ）: `areas/<Area>/README.md` が無ければ `--boundary <印>` で作る（既定値は無い。印が無ければ止まる）→ `boundary:` の確認 → `wsl --install Ubuntu-24.04 --name … --no-launch` → 一般ユーザー `ai` → `/etc/wsl.conf`（automount・interop 無効）→ 分離の確認（`ai` / `/mnt/c` 空 / `cmd.exe` 無し / sudo 不可。外れたら道具を入れずに止まる）→ curl・rg・uv・Claude Code → 道具の確認。**ログインは人**（手順を表示する）。部屋がすでにあれば止まる。作りかけは `--resume`（設定と道具の入れ直し）。終わりに、Area の README の変更だけをコミットする |
 | `reap [名前]` | close から期限（`reap_after`。既定14日）が来て、まだ `reaped` の無い `archives/` の Project について、部屋の会話履歴（`~/.claude/projects/-mnt-room-<名>/`）と `~/tmp/<名>` を消し、README に `reaped: <日付>` を付ける。会話履歴は写さずに消す（復元は `exmem` や `ai/docs/` の記録で）。名前なしは期限切れの一覧を出して承認を求める（`--yes` で省略）。名前ありで期限前なら `--force`。名前が英数字・`_`・`-` 以外なら止まる。`close` の終わりにも一覧を出す（端末のときは承認を求める）。Windows 側の `archives/` は消さない |
 | `open` | works の `.gitignore`（`**/_noai/` と `!**/ai/out/`）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final}` を作り、Area の一覧に足す |
 | `start` | `area:` とディストロ名の一致、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴（manifest）を確認 → Project の README と所属する Area の README の写しを `ai/ctx/`（`README.md`、`area-README.md`）に置く（Area の README が 16 KiB を超えると知らせる）→ `ai/` を `/mnt/room/<名>` に root でマウントし、`in/` を読み取り専用に → 部屋で AI を起動（一般ユーザー）→ **必ず**アンマウントして、マウント点を消し、残りを確認 → 変更の一覧と、追跡されずに無視されているファイルの警告 |
