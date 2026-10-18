@@ -107,7 +107,7 @@ notepad $HOME\works\projects\pilot2-1\README.md
 git -C $HOME\works status --short      # _noai/ が出ない
 ```
 
-- **よく忘れる点**: 作業ツリーにステージ済みの別の変更があると、コミットは**されずに**止まる（対象外のファイルを巻き込まないため。メッセージは「対象外のファイルがステージされている」）。先にそれをコミットするか戻してから、`git commit -m "[room] ..." -- <対象のパス>` で行う
+- **よく忘れる点**: ステージ済みの別の変更（前の `close` の取り残しなど）があっても、`init` `open` は止まらず、対象のパスだけをコミットする。取り残しはステージに残るので、あとで別にコミットする（「注意: 対象外のステージ済みの変更は、コミットに含めない」と出る）。`start` `readme` `close` の `--commit` は、対象外のステージがあると止まる
 
 ## 4. マスクする（`mask`。任意）
 
@@ -223,5 +223,5 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 | `復元を止めた … 壊れたプレースホルダー` | AI が `⟦CUST_nnn⟧` のような説明を本文に書いた | `ai/out/` のその文を、記号を含まない表現に直し、`restore` を再実行する |
 | `reap` が `消せなかった（）` | 古い `room.py` のバグ（`086381c` で直した） | 最新の `room.py` を使う |
 | `Remove-Item` が `being used` | Windows 側の Zed の Agent などが、`projects\<名>\ai` を掴んでいる | Zed のウィンドウを閉じ、`claude-acp` のプロセスを終了する |
-| `init` / `open` のコミットがされない | ステージ済みの別の変更がある | 3 章の「よく忘れる点」 |
+| `close --commit` / `start --commit` が「対象外のファイルがステージされている」で止まる | ステージ済みの別の変更がある | 先にそれをコミットするか、`git restore --staged <パス>` で戻す（`init` `open` は止まらない。3 章） |
 | マウントが残る | `start` が途中で止まった | `uv run room.py umount --area pilot2`。残れば `wsl --terminate room-pilot2` |
