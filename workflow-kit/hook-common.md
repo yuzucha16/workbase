@@ -84,7 +84,7 @@ H2 の見出しは名前だけにする（括弧の注記を付けない）。�
 
 | フック | 書く記録 | 手順 |
 |---|---|---|
-| `init` | なし | |
+| `init` | `events`: 質問ごとの行（`kind=interview`） | `init-hook.md` の手順「入力を受け取る」 |
 | `open` | `events`: 質問ごとの行 | 手順「記録する」 |
 | `start` | `events`: 質問ごとの行（`kind=interview`）、探索型でゴールが変わったとき（`kind=goal_change`） | 手順「記録する」 |
 | `wrap` | なし | |
@@ -100,4 +100,4 @@ H2 の見出しは名前だけにする（括弧の注記を付けない）。�
 4. 上の「記録」の表に行を足す・消す。
 5. `hook-matrix.md` の列（フック名）と、各行の値、字数を更新する。章や方針を変えたときも同じ。
 6. 改善の受け皿（`topics/kit-growth/docs/decisions.md`）に1行足す（`improvements.md` は凍結）。
-7. `pwsh -NoProfile -File tools/check-hook-outline.ps1` を実行する。1〜4 のうち、表の過不足、章立て、冒頭の定型、記録の表の行、`hook-matrix.md` の列は、ここで漏れが分かる。
+7. `pwsh -NoProfile -File tools/check-hook-outline.ps1`（`pwsh` が無い環境は `python tools/check_hook_outline.py`）を実行する。1〜4 のうち、表の過不足、章立て、冒頭の定型、記録の表の行、`hook-matrix.md` の列は、ここで漏れが分かる。

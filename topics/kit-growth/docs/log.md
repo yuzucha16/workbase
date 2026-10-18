@@ -1,6 +1,6 @@
 # kit-growth: 現在状態
 
-更新: 2026-10-18（キャッシュの実験を実施し、続ける・切るの数値の根拠を確かめた。その前: 初回の review `846c3d7`、inbox を空にした、振り返りを定期と突発に分けた）
+更新: 2026-10-18（全フックの改善表から、横並びの揃えを実施した。点検の Python 版を足した。その前: キャッシュの実験）
 
 ## 状態
 
@@ -32,6 +32,7 @@
 
 ## Next Actions
 
+27. 今回の揃え（2026-10-18。`decisions.md` の同日の3項）を、次の `init` / `start` / `review` で使いながら確かめる。`init` の質問が選択式になったか、`review` の入力 7 が差分なしで「変化なし」になるか、`init` のコミット・push が通るか。`pwsh` のある端末で `check-hook-outline.ps1` を実行する。
 24. 続ける・切るの暫定の数値（約10万トークン、約2万トークン）は、クラウドの実験（2026-10-17。1回ずつ）で考え方が合うと確かめた。「間5分」は、サブスクでは1時間にそろえる必要がある（Open Questions）。残り: ユーザーの PC で TTL を確認し（`claude -p "hello" --output-format json` の `usage.cache_creation`）、本物のフック列で3回以上再実験する。`exmem/inbox/` に未統合のメモが1件（`2026-10-18-prompt-cache-gap-cost.md`）。
 26. WSL の部屋で `room start` を実行し、`~/shared/workflow-kit/room/` に `README.md` だけが入ることを確かめる(2026-10-17 に `room.py` を変更。この環境では単体テストのみ。別セッション)。
 25. 移した先（`project-structure.md`、`start-work-types.md`）を、次に `open` / `start` で type を決める・項目を埋めるときに読み忘れないか見る。
@@ -59,7 +60,7 @@
 
 ## Open Questions
 
-- 場所: 全フックの改善の表（`notes/hook-improvement-matrix/2026-10-18-matrix.md`、`2026-10-18-candidates.md`）の未実施分 / 問題: 実施済み: 5項目、1-1〜1-5、2-4、2-8、3-6、3-7、3-9〜3-11。実施済みに N1〜N3、N10、N12 も追加。残り: 1-7〜1-10、2-2、2-3、2-11/3-3、3-1b、3-4、N4〜N9、N11 / 案: 次の `review` で選ぶ。`check-hook-outline.ps1` を `pwsh` のある端末で実行して、今回の変更で FAIL が出ないか見る。
+- 場所: 全フックの改善の表（`notes/hook-improvement-matrix/2026-10-18-matrix.md`、`2026-10-18-candidates.md`）の未実施分 / 問題: 実施済み: 5項目、1-1〜1-5、2-4、2-8、3-6、3-7、3-9〜3-11。実施済みに N1〜N8、N10〜N12 も追加（候補一覧メモの推奨順は完了）。残り: 1-7〜1-10、2-2、2-3、2-11/3-3、3-1b、3-4、N9 / 案: 次の `review` で選ぶ。`check-hook-outline.ps1` を `pwsh` のある端末で実行して、Python 版（`check_hook_outline.py`。この環境で全 OK）と結果が同じか見る。
 - 場所: `open-hook.md` の未決の `remote` の type / 問題: WSL から SSH で user 権限のリモート(Docker を含む)を AI が操作する使い方を、`dev` でも使える type にするか。接続の安全(鍵、権限、記録)は `topics/ai-workspace-boundary/` の設計と重なる / 案: 実測の後に決める。
 - 場所: `init-update.md`（7.9k 字） / 問題: 同じ任意の章 `init-workspace.md`（2.6k）の約3倍で、`hook-matrix.md` の重さの基準でも大きい / 案: 使ってみて、手順 1・2 の確認コマンドを `init-update.md` から外せるか見る（`review` で比べる）。
 - 場所: `open-hook.md` の未決 / 問題: リポジトリが正の `src`、remote で動くものは、構造が新規のフルスクラッチ前提で、`ai/out/` に clone すると `restore` が止まる / 案: `repos/` に置いたまま、スナップショットと patch で受け渡す(未検証)。
