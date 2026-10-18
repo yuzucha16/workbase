@@ -8,7 +8,7 @@
 |---|---|---|---|
 | なし | | | |
 
-更新: 2026-10-19（`review 消化` の 5 回目: 7・11・30・31 を閉じ、`remote` の type と restore の上書きを保留にした。全フックの横並びの改善表を完了とし、表を `topics/kit-growth/records/` に移した。経緯は `log-history.md` の 2026-10-18 と 2026-10-19）
+更新: 2026-10-19（`review 消化` の 6 回目: 6・35・36 を閉じ、N を +50% / +3 に決め直した。Open Questions の 2 件を 10-25 まで保留。経緯は `log-history.md` の 2026-10-19）
 
 ## 状態
 
@@ -45,8 +45,6 @@
 ## Next Actions
 
 37. 実機の通しで気づいた room の改善 4 件に対応する（2026-10-18 `review 消化` でユーザーが「やります」）。①`restore` が、AI が本文に書いた `⟦CUST_nnn⟧` の説明で止まる（AI への指示で防ぐか、`restore` が説明用の記述を許すか）。②新しい Project のたびに Claude Code の信頼の確認が出る。③Zed を `/home/ai` で使うと、履歴が `-home-ai` に残り、どの Project にも属さず `reap` されない。④`close` が、README がひな形のままでも通る。方法は決めていない（実装前に場所・手段・呼び出し元を 3 行で見せる）。
-36. 実名の手順書 2 本（`ai-room-setup-script.md`、`ai-room-setup-manual.md`）を、別のセッションでレビューする（ユーザーの指示 2026-10-18）。見ること: 手順と目安の出力が実機と合うか、マウント周りが足りているか、`ai-room-setup.md` との重複、実名の扱い（`guides/AGENTS.md` の「プレースホルダーにする」規則との関係。試験用の名前で、個人・PC 固有の値ではない）。
-35. 実名で1手ずつ説明する手順書 `guides/howto/ai-room-setup-script.md`（`pilot2`）と `ai-room-setup-manual.md`（`pilot`。マウント・アンマウントを含む）を、草稿として書いた（2026-10-18。ユーザーの決定: 置き場と名前、内容）。残り: 次の実機の通しで `init --boundary` と `init` `open` の既定コミットを確かめ、script 版の「手で Area を作る場合」と「実機で確認していないこと」を外す。`ai-room-setup.md` との重複（どれを正にするか）は、使いながら見直す。
 29. Stop フックで、セッションの費用と ID を記録する手順（`notes/stop-hook-record/2026-10-17-procedure.md`、プロジェクトの共有フォルダ）を、Zed を使う PC で実機確認する（端末の `claude -p` と、Zed の1往復。2026-10-17 時点）。確認の後に、キャッシュの間を記録に足す案（`2026-10-18-cache-insights.md` の S3）を決める。
 24. 続ける・切るの暫定の数値（約10万トークン、約2万トークン）は、クラウドの実験（2026-10-17。1回ずつ）で考え方が合うと確かめた。「間」は TTL 基準に直した（2026-10-18。`hook-common.md`、`session-handoff.md` の Decisions）。残り: ユーザーの PC で TTL を確認し（`claude -p "hello" --output-format json` の `usage.cache_creation`）、本物のフック列で3回以上再実験する。
 20. 領域 × r/w 表（`hooks.md`）を使いながら確かめる。部屋の AI が `wrap` の差し替え（コミットを行わない、知識化は `ai/out/stock/` の下書き）と、`ROOM.md` の stock の書き方（frontmatter）に従えるか。`check-hook-outline.ps1` は実行して FAIL なし(2026-10-17)。この項は別セッションに回した(ユーザーの指示)。
@@ -57,15 +55,12 @@
 10. `dev-env` / `dev-test` を、最初の Project で1回使い、置き場の表と完了条件の例が合うかを見る(`dev-deliverable-guide.md` の末尾の節)。使った後に `remote` の type の要否を決める。
 8. 「変更のやり方」(`methods.md` の「変更」、`exmem/lessons/change-method.md`)を、次の変更から使う。3回の `review` の後に、Must(基準文書3・変更6)が重すぎないか・足りないかを見て増減を決める。`areas/` `projects/` での適用は決定済み(2026-10-16。置き場は `ai/out/<成果物名>/`、マスク後の語で書く。`decisions.md`)。最初の業務で使って、置き場が合うかを見る。先送り: 新規作成のフックかモード、変更の伝播・軽重・廃止。
 
-6. `review` を 3 回実施した後（済み: 2026-10-17、2026-10-18 の 2 回。入力 8 の基準は `docs/alignment-baseline.md`）に、N（字数 +20%、項目数 +2）を決め直す。`wrap` の読み込み字数（`docs-rules.md` の節だけ読む効果）も測り直す。reviews の記録先は未決。
-
-
 
 ## Open Questions
 
 - 場所: 実機の通し（2026-10-18）で気づいた点 / 問題: `restore` の上書きの保護（`final-manifest.json`）は、今回試していない / 案: 次の実機で試す。
-- 場所: Stop フックの記録の置き場 / 問題: 既定は `~/claude-records/`。部屋の中だけ `$CLAUDE_PROJECT_DIR/records`（`ai/records/`）にするかが未決 / 案: 実機確認（29）の後に決める。
+- 場所: Stop フックの記録の置き場 / 問題: 既定は `~/claude-records/`。部屋の中だけ `$CLAUDE_PROJECT_DIR/records`（`ai/records/`）にするかが未決 / 案: 実機確認（29）の後に決める。【保留 〜2026-10-25】（2026-10-19 `review 消化` でユーザーが保留。スクリーニング: `ai/records/` の用途とマスクの整合が未確認）。
 - 場所: `open-hook.md` の未決の `remote` の type / 問題: WSL から SSH で user 権限のリモート(Docker を含む)を AI が操作する使い方を、`dev` でも使える type にするか。接続の安全(鍵、権限、記録)は `topics/ai-workspace-boundary/` の設計と重なる / 案: 実測の後に決める。【保留 〜2026-11-02】（2026-10-18 `review 消化` でユーザーが保留、期限 11/02。項目 10 の `dev-env` の実使用の後に決める）。
 - 場所: `open-hook.md` の未決 / 問題: リポジトリが正の `src`、remote で動くものは、構造が新規のフルスクラッチ前提で、`ai/out/` に clone すると `restore` が止まる / 案: `repos/` に置いたまま、スナップショットと patch で受け渡す(未検証)。
 - 場所: `room.py` の `restore_project` / 問題: AI が使えない間に人が `_noai/final/` を直すと、次の AI の終了時の復元で無条件に上書きされる(別の話にする、とユーザー。2026-10-16) / 案: 正本の宣言、`raw/` → `mask` → `ai/in/` の戻り方の約束、上書き前の警告。【保留 〜2026-11-05】（2026-10-18 `review 消化` でユーザーが保留。`_noai/final/` は最終調整で人が触る想定だが、git 管理下にあるので戻せる。次の実機で `final-manifest.json` の保護を試してから決める）。
-- 場所: `token-matrix.md` と `review` の入力 5（重い会話） / 問題: 4観点に、間と先頭の安定が無い。入力 5 は大きい会話を見るだけで、書き直した量が見えない / 案: 第5の観点「温存」を足し、入力 5 を「TTL を超えて空いた後の書き込み量」に変える（Python スクリプト。費用を記録する Stop フックの inbox のメモと一緒に検討）。
+- 場所: `token-matrix.md` と `review` の入力 5（重い会話） / 問題: 4観点に、間と先頭の安定が無い。入力 5 は大きい会話を見るだけで、書き直した量が見えない / 案: 第5の観点「温存」を足し、入力 5 を「TTL を超えて空いた後の書き込み量」に変える（Python スクリプト。費用を記録する Stop フックの inbox のメモと一緒に検討）。【保留 〜2026-10-25】（2026-10-19 `review 消化` でユーザーが保留。スクリーニング: 型 B・D・E。入力 5 の今の役目の引き継ぎと基準値 103 の再設定を付け、分割して出し直す）。

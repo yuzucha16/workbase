@@ -15,7 +15,6 @@ tags:
 
 - **ゴール（完了の目安）**: 部屋の中の Claude Code が、`/mnt/room/pilot2-1`（Project の `ai/`）だけを読み書きでき、成果物が works に現れる。`close` で `archives/pilot2-1/` に移り、会話履歴を `reap` で消せる
 - **実名について**: `pilot2` `pilot2-1` `pilot2-2` は試験用の名前。自分の Area と Project の名前に置き換えて読む。名前は英数字・`_`・`-` だけにする（`reap` が止まるため）
-- **実機で確認していないこと**: 2 章の `--boundary` での Area の作成と、`init` `open` の初期状態の既定コミット（単体テストのみ。2026-10-18 に実装。実機の確認は次の通しで行う）。それまでは、2 章の「手で Area を作る場合」を使ってよい
 - パスは `$HOME` で書く。固有情報（勤務先名、顧客名）は書かない
 
 ## 対応バージョン表
@@ -67,14 +66,6 @@ uv run room.py init pilot2 --boundary internal
 - 分離の確認が `user=ai, c=0, cmd=no, sudo=no` から外れると、**道具を入れずに止まる**（想定の動作）
 - 終わりに、Area の README だけを、既定でコミットする（`--no-commit` で省く）
 - 途中で止まったら、同じコマンドに `--resume` を付ける（設定と道具の入れ直し）
-
-**手で Area を作る場合**（`--boundary` の実機確認が済むまで）:
-
-```powershell
-New-Item -ItemType Directory -Force $HOME\works\areas\pilot2 | Out-Null
-"---`nboundary: internal`n---`n# pilot2`n" | Set-Content $HOME\works\areas\pilot2\README.md -Encoding utf8
-uv run room.py init pilot2
-```
 
 **ログイン（人の操作）**:
 
