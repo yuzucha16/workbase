@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-18（`room init` に Area の作成、`init` と `open` の初期状態の既定コミット。Next Actions 33・34 を閉じた）
+- ユーザーが、コミットの範囲を `init` と `open` に決めた（`start` は複雑になるので対象外。AI は `start` の起動前に新しい追跡ファイルだけをコミットする案と、`ai/in/` の除外を勧めたが採らなかった）。決定は `decisions.md` の同日の項。
+- 実装（`room.py`）: `init <Area> --boundary <印>` が `areas/<Area>/README.md` を作る（印が無ければ止まる。Area があり `boundary:` があれば何もしない）。`init` は終わりに Area の README だけを、`open` は Project のひな形と Area の README だけを、既定でコミットする（`--no-commit` で省く。`open` の `--commit` は互換のため残した）。`commit_paths` が、ファイルそのものを指すパスを許すようにした。単体テスト 5 本を足し、65 本中の失敗は直前から変わらない 2 本（`SharedPermissionTest`。この変更と無関係）。実機は未確認。
+- `room/README.md` の使い方、コミットの記述、`init` の行を直した。
+
 ### 2026-10-18（実機の通しの後始末と、要望 3 件の決定）
 - ユーザーの承認で、試験の部屋 `room-pilot` と `room-pilot2` を `wsl --unregister` で消し（`Ubuntu-24.04` は残る）、未追跡の試験メモ `exmem/inbox/2026-10-18-masking-notes.md` を消した。`room/README.md` の古い記述（`init` の実機未確認、`sleep infinity` の未確認、「未実装」の節、状態の行）を直した。
 - 要望 3 件の方針を決めた（`decisions.md` の同日の項）: `room init` に Area の作成（`--boundary` 必須）、`init` が作ったものはコミットして起点にする（範囲は確認中）、実名で1手ずつ説明する手順書。Open Questions の3項は、決まったので `log.md` から外し、Next Actions 33〜35 に書き換えた。
