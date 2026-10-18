@@ -17,7 +17,7 @@
 - **`end` にしない理由**: 「会話を終える」と取られやすいので、`wrap` にした（ユーザー）。
 - **旧ファイル名**: `closing-hook.md`、`knowledge-hook.md`、`setup-hook.md` は、2026-10-08 に削除した（新名は `wrap-hook.md`、`stock-hook.md`、`init-hook.md`）。以下の履歴の旧名は、読み替える。
 - **フックの章立て**: 共通部は H2 の `目的と契機` → `場所と書き込みの制約` → `手順` → `報告の型`（この順。新しいフックにも置く）。共通部の中身（冒頭の定型、目的と契機、章の並び、手順の参照、改善、承認、記録、フックを足す・消すとき）は `hook-common.md`。それ以外の章は、フック固有の部分で、共通部の後ろに置く（例外: `入力`、init の `導入項目の一覧`）。`このフックの改善` は、固有の確認項目があるフックだけが持つ任意の章。`tools/check-hook-outline.ps1` で点検する。
-- **実測が少ないフック（`start` `open`）**: 叩き台として扱い、実測で直して育てる。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。改善の流れは `hook-common.md`。
+- **実測が少ないフック（`start` `open`）**: 叩き台として扱い、実測で直して育てる。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。`start 解決` / `start 改善` / `start 調査` は試験運用（実測してから、インタビューとの関係を決める）。フックの成熟度は、ここだけに書く。改善の流れは `hook-common.md`。
 ## 目的
 
 ナレッジと作業ログを分ける。
@@ -77,7 +77,7 @@
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
 | `tools/check_inbox.py`、`tools/find_knowledge.py` | 上の2つの Python 版（標準ライブラリだけ。`pwsh` が無い環境、例: AI 作業部屋用）。出力は同じ（確認: 2026-10-17、現在のメモと検索で一致。違いは、`check_inbox.py` が英小文字の検査で大文字を通さないこと）。点検の項目を変えるときは、両方を直す |
 | `tools/find-knowledge.ps1` | `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。ファイルの大きさと、ヒットした見出しの節の行の範囲を返す。読み取り専用。PowerShell 7） |
-| `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検、`hooks.md` と README の表にフックが過不足なく載っているかの点検（フックの追加・削除の漏れ止め。PowerShell 7） |
+| `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検、`hooks.md` と README の表にフックが過不足なく載っているかの点検（フックの追加・削除の漏れ止め。PowerShell 7）。Python 版は `tools/check_hook_outline.py`（`pwsh` が無い環境用。点検は同じ。どちらかを直したら合わせる） |
 | `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` は works 用（`AGENTS.md`、`gitignore.template`、`claude-settings.template.json`、`ignore.template`、`gitattributes.template`、`pre-push.template`）。`topic/` はトピックの窓口の雛形（`start-here.template.md`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
 | `AGENTS.md` | このディレクトリ自体を編集するときのルール |
