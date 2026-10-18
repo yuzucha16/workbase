@@ -5,7 +5,7 @@
 ### 2026-10-18（`topics/ai-workspace-boundary/` の残件を root に一本化した。クローズの確認）
 - ユーザーの依頼で、トピックを close できるか確認した。完了条件の優先順位 1〜7 は、10-18 の通しでほぼ満たす。残りは Next Actions 39 に移した。ユーザーの決定: 無理に close せず、作業をキリの良いところまで進め、root の docs に一本化し、まとめて動作確認する。omit: 部屋専用の SSH 鍵、Zed を開いたままのアンマウント、リポジトリ・remote の dev の案。外した（通っていると見た）: 別の `wsl.exe` からのマウント、`ai/out/` のサブディレクトリの `restore`。
 - トピックの `docs/log.md` を 10-18 の通しに合わせて直した（`4cc9f7a`）。`SharedPermissionTest` 2 件の原因は、Windows の `os.path.expanduser` が `HOME` でなく `USERPROFILE` を見ること。テストの環境変数に `USERPROFILE` を足し、Linux で全 55 件が通った（Windows は未確認）。
-- 参照が残る場所（削除の前に直す）: `workflow-kit/room/README.md:56`、`maskkit.py:4`、`room.py` のコメント 2 か所が、トピック内のノート名を指す。
+- ユーザーの承認（案 A）で、トピックの Markdown を移管して削除した。`ai-room-mask-spec.md` は `workflow-kit/room/mask-spec.md` に移し（参照 4 か所を直した）、設計の要点は `guides/explain/ai-room-why.md` に、決定は `docs/decisions.md` の「AI 作業部屋の決定」に統合した（`restore` の保護とマスクの一致の決定は `exmem/lessons/ai-isolated-work-room.md` にも足した）。設計ノート、handover 6 本、`ai-boundary-design`、`ai-room-local-state`、`log-history.md` は移さず削除した（履歴は git。`ai-room-start-here.md` と `topics-index.md` の行も削除）。handover の「PC で確認すること」の漏れは、Next Actions 39 の ⑧ に足した。
 
 ### 2026-10-19（改善4 の読後の指摘を受け、手順書を v5 に直した。Next Actions 38 の前半）
 - ユーザーが第1回の記録を読み、「分析は芯を食っているが、のっぺりしている（目標が無く、現状・ギャップ・次の行動につながらない。活動と成果物が混じる）」「構造化されていない（抽象の仕組みと具体の事象が混じる）」「事実の一覧は分かりやすい（手戻りが一目瞭然）」「詰め込みすぎ」と評した。
@@ -102,7 +102,7 @@
 
 ### 2026-10-17（施策1の採用、部屋の共有知から room のコードを外した、用語の置き換えの続き）
 - 決定と確認は `decisions.md` の同日の項（先頭）。施策1を `user-manual.md` に足した。`room.py` が `workflow-kit/room/` の `README.md` 以外を送らないようにし、単体テストを足した（変更前から失敗している 2 件を除き通過）。`exmem/lessons/` の現在形の記述 5 ファイルで、「Vault」「ワークスペース」を works にした。
-- 未実施: `topics/ai-workspace-boundary/` のノートの語（約 80 件）。そのトピックを使うときに直す。
+- 未実施: `topics/ai-workspace-boundary/` のノートの語（約 80 件）。そのトピックは 2026-10-18 に削除した（移管のとき `ai-room-why.md` は新しい語で書いた）。
 
 ### 2026-10-17（review の消化モードの対象を明記した。点検スクリプトを pwsh で実行した）
 - `review-hook.md` の消化モードの対象を、「このセッションで作業した単位（「<名前> の続き」で読みに行った単位を含む。無ければ呼び出し元）の `docs/log.md`」に直した。ユーザーが承認（本日）。Open Question を解消。
