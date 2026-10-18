@@ -1,7 +1,7 @@
 """maskkit: マスクと復元（標準ライブラリだけ）。
 
 人が実行する（`room.py` から呼ばれる）。AI には実行させない（原本と対応表を読むため）。
-仕様は topics/ai-workspace-boundary/notes/ai-room-mask-spec.md（引き継ぎ中）。
+仕様は mask-spec.md（同じディレクトリ）。
 
 - mask.toml（人が書く）: 種類ごとの語と表記ゆれ、列の指定
 - mapping.json（このモジュールが書く。追記専用）: プレースホルダーの番号と正式名
