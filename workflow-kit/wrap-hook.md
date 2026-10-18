@@ -9,8 +9,9 @@
 
 ## 場所と書き込みの制約
 
+- 起動できる領域は `hooks.md` の「領域とフックの権限」に従う（部屋での扱いは `room-context.md`）。
 - 書き込み先は、`docs/`（`docs-rules.md`）と、作業ディレクトリのコミットだけ。`exmem/lessons/` などは触らない（統合は `integrate-hook.md`）。`exmem/inbox/` のメモを作るのは `stock-hook.md`（このフックは作らない）。
-- コミットと push は `hook-common.md` の「コミットと push」に従う。部屋での差し替え（コミット・push は人が行う）は `room-context.md`。
+- コミットと push は `hook-common.md` の「コミットと push」に従う（部屋では、コミットと push は人が行う）。
 - 手順の途中で承認が要るもの（既存ファイルの差分、リスクや制約が生まれる変更）は、`docs-rules.md` に従って、先にユーザーへ確認する。
 
 ## 手順
