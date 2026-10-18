@@ -23,7 +23,7 @@
 
 `wrap`（`workflow-kit/wrap-hook.md`）は次を使う。
 
-- **既定の対象**: トピックの続きで作業したときは、そのトピックの `docs/`。トピックの外で作業したときは、このリポジトリ直下の `docs/`。`workflow-kit/` `exmem/` `guides/` などの kit 改善の記録は、`topics/kit-growth/docs/`（kit の改善の受け皿）。
+- **既定の対象**: トピックの続きで作業したときは、そのトピックの `docs/`。トピックの外で作業したときは、このリポジトリ直下の `docs/`。`workflow-kit/` `exmem/` `guides/` などの kit 改善の記録も、このリポジトリ直下の `docs/`（2026-10-18 に `topics/kit-growth/docs/` から統合した）。`topics/kit-growth/` には、窓口、`inbox.md`、`records/` を置く。
 
 ## 共有の範囲
 
