@@ -66,8 +66,11 @@ class Wsl:
 
     def keepalive(self, distro):
         """部屋のディストリビューションが、wsl.exe のセッションが無いまま止まらないように、長く動くプロセスを1つ起こす。止めるには .terminate()。"""
+        # コンソールから切り離す（同じコンソールにつながると、待ちの input() に Enter が届かないことがある。2026-10-18 に実機で、切り離すと Enter で戻ることを確認）
+        flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | getattr(subprocess, "DETACHED_PROCESS", 0)
         return subprocess.Popen(["wsl.exe", "-d", distro, "--", "sleep", "infinity"],
-                                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                creationflags=flags)
 
     def interactive(self, distro, command):
         """端末をつないだまま、一般ユーザーで実行する。"""
