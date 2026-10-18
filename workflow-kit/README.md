@@ -71,9 +71,9 @@
 | `init-restore.md` | init の導入項目 4（履歴からの復元）の作り方。項目 4 のときだけ読む |
 | `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、聞き取り、README 本文の下書き |
 | `project-structure.md` | Project の構造: 固定の核（`ai/` と `_noai/`）、type ごとの置き場、基準文書の置き場。`open` の type の決定と、置き場に迷ったときに読む |
-| `start-work-types.md` | 作業の種類の差分（開発、文書作成）: `start-hook.md` の手順「項目を埋める」で、共通の項目に加えて聞く項目 |
+| `start-work-types.md` | 作業の種類の差分（開発、文書作成）: `start-hook.md` の手順「項目を埋める」で、インタビューの項目に加えて聞く項目 |
 | `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 構成、文書、テスト、変更の依頼、立ち上げ・完了のチェック。`dev-env` `dev-test` の差分も持つ。`type` が `dev` `dev-env` `dev-test` の `open` / `start` のときだけ読む |
-| `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: 共通の項目と作業の種類の差分でゴールと前提をそろえる |
+| `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: インタビューの項目と作業の種類の差分でゴールと前提をそろえる |
 | `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `docs/decisions.md`） |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
 | `tools/check_inbox.py`、`tools/find_knowledge.py` | 上の2つの Python 版（標準ライブラリだけ。`pwsh` が無い環境、例: AI 作業部屋用）。出力は同じ（確認: 2026-10-17、現在のメモと検索で一致。違いは、`check_inbox.py` が英小文字の検査で大文字を通さないこと）。点検の項目を変えるときは、両方を直す |
