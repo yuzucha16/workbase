@@ -43,8 +43,7 @@
 
 31. `review 消化` の残り（2026-10-18。1・2 のリストと、起票が古い 1・30 の扱いは済み。実機の確認項目 7、8、9、10、11、20、26、29 は別チャットで行う。ユーザー）: Open Questions の `remote` の type、`init-update.md` の大きさ、restore の上書きを、1 件ずつ聞いて閉じるか期限をつける。
 30. 承認プロセス（2026-10-18 に仕様化し、`approval-screening.md` 等に反映済み。`20f4393`）を、使いながら確かめる。確かめること: 次の `review 消化` でサブエージェントを起動できるか（実機で未確認）、1件あたりの出力がモバイルで読める長さか、待ち行列が溜まって消化が重くならないか、覆した決定に型 A〜E が付くか。型の割り当て（A〜E）は AI の読みなので、ずれがあれば直す。`hook-matrix.md` の `hook-common.md` の基準（5,474 字）は 5,874 字に増えた（+7%。更新は次の `review`）。
-29. Stop フックで、セッションの費用と ID を記録する手順（`notes/stop-hook-record/2026-10-17-procedure.md`、プロジェクトの共有フォルダ）を、Zed を使う PC で実機確認する（端末の `claude -p` と、Zed の1往復。2026-10-17 時点）。
-28. 画面に出る量（標準出力）を減らす別の話: Stop フックでは変えられない。`/focus` を試す、`bashEditDiffEnabled: false` を検討する（`claude-code-storage.md` の Next Actions）。1つにまとめる件は決定済み（`decisions.md` の 2026-10-18）。キャッシュの間を記録に足す案（S3）は、29 の実機確認の後に決める。
+29. Stop フックで、セッションの費用と ID を記録する手順（`notes/stop-hook-record/2026-10-17-procedure.md`、プロジェクトの共有フォルダ）を、Zed を使う PC で実機確認する（端末の `claude -p` と、Zed の1往復。2026-10-17 時点）。確認の後に、キャッシュの間を記録に足す案（`2026-10-18-cache-insights.md` の S3）を決める。
 24. 続ける・切るの暫定の数値（約10万トークン、約2万トークン）は、クラウドの実験（2026-10-17。1回ずつ）で考え方が合うと確かめた。「間」は TTL 基準に直した（2026-10-18。`hook-common.md`、`session-handoff.md` の Decisions）。残り: ユーザーの PC で TTL を確認し（`claude -p "hello" --output-format json` の `usage.cache_creation`）、本物のフック列で3回以上再実験する。
 26. WSL の部屋で `room start` を実行し、`~/shared/workflow-kit/room/` に `README.md` だけが入ることを確かめる(2026-10-17 に `room.py` を変更。この環境では単体テストのみ。別セッション)。
 
