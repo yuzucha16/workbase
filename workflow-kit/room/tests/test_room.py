@@ -190,6 +190,8 @@ class ReapTest(unittest.TestCase):
             self.assertIn("-mnt-room-old", text)
             self.assertIn("$HOME/tmp/old", text)
             self.assertNotIn("-mnt-room-old-", text)
+            # 確認の ls は、対象が消えていると終了コード 2 を返す。スクリプト全体が失敗にならないよう || true で終える（実機で発見: 2026-10-18）
+            self.assertTrue(text.rstrip().endswith("|| true"))
             self.assertIn("reaped: 2026-10-12", (v / "archives/old/README.md").read_text(encoding="utf-8"))
             self.assertEqual(room.find_reapable(c), [])
 

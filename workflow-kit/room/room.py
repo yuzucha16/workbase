@@ -1162,7 +1162,7 @@ def reap_project(ctx, name, area):
     else:
         hist, tmp = f"-mnt-room-{name}", name
         script = (f'rm -rf -- "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}"\n'
-                  f'ls -d "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}" 2>/dev/null\n')
+                  f'ls -d "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}" 2>/dev/null || true\n')
         rc, out, err = ctx.wsl.script(distro, script)
         if rc != 0 or out.strip():
             raise RoomError(f"{name}: 消せなかった（{(err or out).strip()[-300:]}）")
