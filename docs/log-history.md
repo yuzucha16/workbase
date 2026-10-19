@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-19（Next Actions 4 の ②④⑦ を完了として削除）
+- ユーザーが完了と申告: ② Windows で Vault 側 deny `Read(./projects/**)` が効くか、④ `ai/ctx/area-README.md` を部屋の AI が読めるか、⑦ `ai-room-why.md` と `ai-room-setup.md` のレビュー。`log.md` の項目 4 からこの 3 つだけ消した。ガイド側の「草稿（未レビュー）」の注記（`ai-room-setup.md` の冒頭など）は、指示の範囲外なので残してある。
+
 ### 2026-10-19（review 消化: R-08 を採用）
 - サブエージェントのスクリーニング: 型 D（弱）、覆す可能性は中、推奨は保留（代替案 1 に絞るなら正式化）。ユーザーが代替案 1 で採用した。`ai-room-setup.md` の 1 章の先頭に、環境の前提の 3 行（TLS 検査、`WSLENV`、Node.js）を足した。コードは変えない。検証は新しい PC か部屋の初回の `init`（Next Actions 3）。
 
