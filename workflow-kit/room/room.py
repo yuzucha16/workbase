@@ -1192,10 +1192,21 @@ def append_inbox(text, name, date, items, source):
     return "\n".join(lines), len(new)
 
 
+README_PLACEHOLDERS = ("<目的を1〜2文", "<1文。ユーザーが承認", "<最終成果物>", "<やらないこと>")
+
+
+def readme_placeholders(text):
+    """README に残っている、ひな形（README_TEMPLATE）の <...> の行。"""
+    return [line.strip() for line in text.splitlines() if any(m in line for m in README_PLACEHOLDERS)]
+
+
 def cmd_close(ctx, a):
     p = Project.load(ctx, a.name)
     if p.fm.get("status") != "active":
         raise RoomError(f"Project が active でない: status={p.fm.get('status')}")
+    left = readme_placeholders(p.readme.read_text(encoding="utf-8"))
+    if left:
+        raise RoomError("README がひな形のまま（<...> が残っている）。埋めてから close する:\n  " + "\n  ".join(left))
     check_gitignore(ctx)
     check_area(p)
     check_distro(ctx, p)
