@@ -84,6 +84,10 @@ class FakeWsl:
         self.pushes.append((distro, data, script))
         return 0, "", ""
 
+    def shell(self, distro):
+        self.shells = getattr(self, "shells", []) + [distro]
+        return 0
+
     def interactive(self, distro, command):
         self.interactive_calls.append((distro, command))
         if self.on_interactive:
@@ -226,6 +230,20 @@ class AwsKeyTest(unittest.TestCase):
                 with self.assertRaises(room.RoomError):
                     self.run_cmd(self.ctx(tmp, list(answers), list(secrets), wsl), area=area, profile=profile)
                 self.assertEqual(wsl.pushes, [])
+
+
+class ShellTest(unittest.TestCase):
+    def test_shell_enters_the_room_and_refuses_a_missing_room(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            room.cmd_shell(ctx_for(make_vault(tmp), wsl), argparse.Namespace(area="area-x"))
+            self.assertEqual(wsl.shells, ["room-area-x"])
+            with self.assertRaises(room.RoomError):
+                room.cmd_shell(ctx_for(Path(tmp), FakeWsl()), argparse.Namespace(area="no-room"))
+
+    def test_aws_key_script_stops_when_files_are_not_owned_by_the_user(self):
+        self.assertIn("[ -O", room.aws_credentials_script("n1"))
+        self.assertIn("chown -R ai:ai", room.aws_credentials_script("n1"))
 
 
 class InitTest(unittest.TestCase):
