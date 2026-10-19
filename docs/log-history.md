@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-19（room の改善 3 件を実装）
+- ユーザーが 3 行の案を承認（① と ③ は案どおり、② は「信頼済みにする」）。① `room.py` の `ROOM_GUIDE` に `⟦ ⟧` を説明文で書かない指示、`maskkit.py` の停止メッセージに「括弧を外す」。② `install_project_trust`: `room start` が部屋の `~/.claude.json` に `projects["/mnt/room/<名>"].hasTrustDialogAccepted` を書く（検査は緩めない。Claude Code の安全装置を外す決定なので、見直しの条件: 部屋に人が持ち込んだ設定ファイルが入る運用になったとき）。③ `reap_project` が `-home-ai` の残りを警告する（消さない）。
+- テスト: 92 件中 `CaCertTest` の 2 件が失敗（変更前から。`openssl` 無し）。新規 5 件は OK。実機では未確認（`log.md` の項目 4）。
+
 ### 2026-10-19（Stop フックの 0 バイトの原因、補正策の kit 反映、項目 7 の整理）
 - `replies/<日付>.md` が 0 バイト: 環境変数 `PYTHONIOENCODING=utf-8:surrogateescape` の下で標準入力に不正なバイトが入ると、`open` の後の `write` で例外になり空ファイルだけが残る（lone surrogate で再現）。`stop-record.py` の `open` に `errors="replace"` を足した（実機の次のターンで確認）。
 - ユーザーが承認: `user-manual.md` の補正策のうち、commit 前の帰属の分離を `docs-rules.md` の「コミットと push」に、承認の添え書き（効果・期日・戻し方、推奨の最大の弱点）を `hook-common.md` の「承認」に、1項ずつ足した。残り4つ（目的の復唱、前提の確認、rename の副作用、見た目の omit）は、会話中の動き方なので `user-manual.md` のままにした。

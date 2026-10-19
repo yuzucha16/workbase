@@ -719,6 +719,8 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 - `observed: 書いた日（YYYY-MM-DD）`
 
 人が確認して `exmem/inbox/` へ運ぶ。
+
+`ai/out/` の文書に、`⟦` と `⟧` を、マスクの記号以外の用途で書かない。説明文でプレースホルダーの形を示すときは、「CUST_001 の形」のように括弧なしで書く（`⟦CUST_nnn⟧` のような書き方は、復元が壊れた記号として止まる）。
 """
 
 
@@ -824,6 +826,31 @@ def install_shared_permission(ctx, p):
         raise RoomError(f"部屋の ~/.claude/settings.json に ~/shared の許可を足せなかった: {err.strip() or out.strip()}")
 
 
+TRUST_PY = """import json, os
+f = os.path.expanduser("~/.claude.json")
+d = {{}}
+if os.path.exists(f) and os.path.getsize(f) > 0:
+    with open(f, encoding="utf-8") as fh:
+        d = json.load(fh)
+d.setdefault("projects", {{}}).setdefault({path}, {{}})["hasTrustDialogAccepted"] = True
+with open(f, "w", encoding="utf-8", newline="\\n") as fh:
+    json.dump(d, fh, ensure_ascii=False, indent=2)
+    fh.write("\\n")
+"""
+
+
+def install_project_trust(ctx, p):
+    """部屋の一般ユーザーの ~/.claude.json で、この Project のマウント先を信頼済みにする（新しい Project のたびの「信頼しますか」を省く。
+    部屋の ai/ は AI が書く領域で、人が持ち込んだ設定ファイルは来歴チェックを通ったものだけ）。"""
+    script = ("set -e\n"
+              "python3 - <<'ROOM_TRUST_EOF'\n"
+              f"{TRUST_PY.format(path=json.dumps(p.mount_point))}"
+              "ROOM_TRUST_EOF\n")
+    rc, out, err = ctx.wsl.script(p.distro, script)
+    if rc != 0:
+        raise RoomError(f"部屋の ~/.claude.json に信頼の記録を足せなかった: {err.strip() or out.strip()}")
+
+
 def push_shared(ctx, p):
     """workbase の写しを、部屋の ~/shared に読み取り専用で送り、基準コミットを manifest に記録する。送ったら True。"""
     root = share_root(ctx)
@@ -881,6 +908,7 @@ def cmd_start(ctx, a):
                 "完了した Project の一覧などを畳むことを検討する")
     if push_shared(ctx, p):
         checks += "、共有知の写し送付"
+    install_project_trust(ctx, p)
     ctx.say(f"チェック OK（{checks}）")
     result = "不明"
     try:
@@ -1268,6 +1296,7 @@ def cmd_close(ctx, a):
 # ---------- reap（閉じた Project が部屋に残した跡を、期限で片付ける） ----------
 
 REAP_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
+HOME_HISTORY = "-home-ai"  # /home/ai を作業ディレクトリにしたときの会話履歴の名前
 
 
 def find_reapable(ctx, today=None):
@@ -1294,6 +1323,11 @@ def reap_project(ctx, name, area):
         ctx.say(f"  {name}: 部屋 {distro} が無い。消すものは無いとして、reaped を付ける")
     else:
         hist, tmp = f"-mnt-room-{name}", name
+        # Zed などで /home/ai を開くと、履歴は Project に紐づかない -home-ai に残る。どの Project のものか分からないので消さず、知らせる
+        _rc, left, _err = ctx.wsl.script(distro, f'test -d "$HOME/.claude/projects/{HOME_HISTORY}" && echo remain || true\n')
+        if left.strip():
+            ctx.say(f"  警告: 部屋に {HOME_HISTORY}（/home/ai を開いたときの会話履歴）が残っている。Project に紐づかないので消さない。"
+                    "内容を確認して、手で消す")
         script = (f'rm -rf -- "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}"\n'
                   f'ls -d "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}" 2>/dev/null || true\n')
         rc, out, err = ctx.wsl.script(distro, script)
