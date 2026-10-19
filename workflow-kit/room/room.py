@@ -71,6 +71,10 @@ class Wsl:
     def terminate(self, distro):
         return subprocess.run(["wsl.exe", "--terminate", distro], capture_output=True, env=wsl_env()).returncode
 
+    def shell(self, distro):
+        """部屋に入る（対話）。WSLENV を外すので、起動のたびの「failed to translate」が出ない。"""
+        return subprocess.run(["wsl.exe", "-d", distro], env=wsl_env()).returncode
+
     def keepalive(self, distro):
         """部屋のディストリビューションが、wsl.exe のセッションが無いまま止まらないように、長く動くプロセスを1つ起こす。止めるには .terminate()。"""
         # コンソールから切り離す（同じコンソールにつながると、待ちの input() に Enter が届かないことがある。2026-10-18 に実機で、切り離すと Enter で戻ることを確認）
@@ -613,7 +617,7 @@ def cmd_init(ctx, a):
                       'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\n')
     ctx.say(ver.rstrip())
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
-            f"  wsl -d {distro}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
+            f"  room shell {a.area}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
             f"  Bedrock を使うなら: room aws-key {a.area} --profile <名前>（キーを入れる）\n"
             f"  確認: wsl -d {distro} -- bash -ic 'cd ~ && claude -p \"Reply with exactly: ok\"'")
     rel = f"areas/{a.area}/README.md"
@@ -1315,7 +1319,10 @@ AWS_TOKEN_RE = re.compile(r"^\S{20,}$")
 def aws_credentials_script(profile):
     """標準入力の [profile] の節で、~/.aws/credentials の同名の節を置き換える（ほかの節は残す。権限 600）。"""
     p = shlex.quote(f"[{profile}]")
-    return (f"umask 077; mkdir -p \"$HOME/.aws\"; f=\"$HOME/.aws/credentials\"; touch \"$f\"; chmod 600 \"$f\"\n"
+    return (f"f=\"$HOME/.aws/credentials\"\n"
+            "for x in \"$HOME/.aws\" \"$f\"; do [ ! -e \"$x\" ] || [ -O \"$x\" ] || "
+            "{ echo \"所有者が一般ユーザーではない: $x（root のシェルで作った可能性。wsl -d <部屋> -u root -- chown -R ai:ai /home/ai/.aws で直す）\" >&2; exit 3; }; done\n"
+            f"umask 077; mkdir -p \"$HOME/.aws\"; touch \"$f\"; chmod 600 \"$f\"\n"
             f"t=$(mktemp) && cat > \"$t\" && "
             f"awk -v p={p} '/^\\[/{{s=($0==p)}} !s' \"$f\" > \"$f.new\" && cat \"$t\" >> \"$f.new\" && "
             f"mv \"$f.new\" \"$f\"; rm -f \"$t\"; chmod 600 \"$f\"")
@@ -1343,6 +1350,14 @@ def cmd_aws_key(ctx, a):
         raise RoomError(f"~/.aws/credentials に書けなかった（終了コード {rc}）: {err.strip()[-300:]}")
     ctx.say(f"書いた: {distro} の ~/.aws/credentials の [{a.profile}]（権限 600、{'一時キー' if token else '長期キー'}）。AI からは読める場所なので、"
             "Bedrock の権限だけのユーザーにし、予算アラートを置く。環境変数側は AWS_PROFILE=" + a.profile)
+
+
+def cmd_shell(ctx, a):
+    """部屋に入る。Windows の WSLENV に /p 付きのパスがあると、automount を切った部屋では、入るたびに「failed to translate」が出る。WSLENV を外して入る。"""
+    distro = f"room-{a.area}"
+    if distro not in ctx.wsl.distros():
+        raise RoomError(f"部屋が無い: {distro}。先に room init {a.area}")
+    ctx.wsl.shell(distro)
 
 
 # ---------- main ----------
@@ -1384,6 +1399,8 @@ def build_parser():
     i.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="Area の作成をコミットしない（既定はコミットする）")
     ak = sub.add_parser("aws-key", help="部屋の ~/.aws/credentials に、Bedrock 用のキーを入れる（入力は画面に出ない）")
     ak.add_argument("area"); ak.add_argument("--profile", required=True, help="プロファイル名（例: n1-trial）。同名の節は置き換える")
+    sh = sub.add_parser("shell", help="部屋に入る（WSLENV を外すので「failed to translate」が出ない）")
+    sh.add_argument("area")
     rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
     rp.add_argument("name", nargs="?"); rp.add_argument("--yes", action="store_true")
     rp.add_argument("--force", action="store_true", help="期限前でも消す（名前を指定したとき）")
@@ -1397,7 +1414,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
-        {"init": cmd_init, "aws-key": cmd_aws_key, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
+        {"init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
          "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
