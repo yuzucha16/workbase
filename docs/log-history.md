@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-10-19（PC1 で `room init` の `curl` が証明書エラー。`room` に `--ca-cert`、Node.js、`aws-key`、`shell` を足し、手順書を直した）
+- ユーザーの報告: PC1 で `room init` の `curl` が SSL 証明書エラー（終了コード 60）。実機で切り分けた: `WSLENV` 経由の壊れた証明書パスの変数（`failed to translate`）が部屋に残り、部屋から見える証明書の発行元は勤務先名（TLS 検査）。変数を外しても失敗し、勤務先のルート証明書が部屋に無いのが主因。ユーザーの承認で、`WSLENV` を外す処理と `init --ca-cert`（`99d8f8d`）を足した。通った。
+- Zed の Agent で Bedrock につなぐ過程: 部屋に Node.js が無く（apt は 18、Agent は 22 以上）、`init` に Node.js 24 の導入を足した（`b406e36`。公式の tarball、チェックサム確認つき。この環境で展開を実行して確認）。Zed の Agent に、手で `export` した環境変数が届かない仕組みを説明し、`agent_servers` の `env`（秘密なし）と `~/.aws/credentials`（秘密）に分けた。`aws-key`（秘密は標準入力、`80229a7`）と `shell`（`WSLENV` を外して入る、`94fa815`）を足した。ユーザーが Zed の認証を、手書きの `credentials` で通した。
+- 未解決: `aws-key` の `touch` が失敗する（Next Actions 40）。所有者の件は、ユーザーが取り下げた。
+- 手順書: `ai-room-setup-script.md` に 2.1（Bedrock）と 9 章の行を足し、`ai-room-setup.md` に注記と 9・10 章の行を足した。`ai-room-setup-manual.md` は更新していない（手作業版。`init` の追加分は反映していない）。
+- 相談: 部屋を works 単位にする案は様子見。Ubuntu 26.04 LTS に上げたい（長く使うため）は、確認の途中でユーザーが調査を止めた。未回答（懸念点は、`wsl --list --online` に名前があるか、`room.py` の `ROOM_BASE`、新しい部屋への入れ替え）。
+- 遠回り: 所有者の見立てを、確認前に断定に近い形で出し、取り下げになった 1 回。
+
 ### 2026-10-18（`topics/ai-workspace-boundary/` の残件を root に一本化した。クローズの確認）
 - ユーザーの依頼で、トピックを close できるか確認した。完了条件の優先順位 1〜7 は、10-18 の通しでほぼ満たす。残りは Next Actions 39 に移した。ユーザーの決定: 無理に close せず、作業をキリの良いところまで進め、root の docs に一本化し、まとめて動作確認する。omit: 部屋専用の SSH 鍵、Zed を開いたままのアンマウント、リポジトリ・remote の dev の案。外した（通っていると見た）: 別の `wsl.exe` からのマウント、`ai/out/` のサブディレクトリの `restore`。
 - トピックの `docs/log.md` を 10-18 の通しに合わせて直した（`4cc9f7a`）。`SharedPermissionTest` 2 件の原因は、Windows の `os.path.expanduser` が `HOME` でなく `USERPROFILE` を見ること。テストの環境変数に `USERPROFILE` を足し、Linux で全 55 件が通った（Windows は未確認）。
