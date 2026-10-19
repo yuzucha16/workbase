@@ -14,6 +14,7 @@ import os
 import re
 import shlex
 import shutil
+import ssl
 import stat
 import subprocess
 import sys
@@ -38,31 +39,36 @@ class RoomError(Exception):
 
 # ---------- 外部コマンド ----------
 
+def wsl_env():
+    """wsl.exe に渡す環境。WSLENV を外す（部屋へ Windows の環境変数を渡さない。automount を切った部屋では、/p 付きのパスが変換できず、壊れた SSL_CERT_FILE などが残って curl が証明書エラー（60）になる）。"""
+    return {k: v for k, v in os.environ.items() if k.upper() != "WSLENV"}
+
+
 class Wsl:
     """wsl.exe の呼び出し。コマンドは標準入力で、LF 固定で渡す（CRLF だと umount などが壊れる）。"""
 
     def distros(self):
-        raw = subprocess.run(["wsl.exe", "-l", "-q"], capture_output=True).stdout
+        raw = subprocess.run(["wsl.exe", "-l", "-q"], capture_output=True, env=wsl_env()).stdout
         text = raw.replace(b"\x00", b"").decode("utf-8", "ignore")
         return [l.strip() for l in text.splitlines() if l.strip()]
 
     def script(self, distro, text, root=False):
         cmd = ["wsl.exe", "-d", distro] + (["-u", "root"] if root else []) + ["--", "sh", "-s"]
-        r = subprocess.run(cmd, input=text.replace("\r\n", "\n").encode("utf-8"), capture_output=True)
+        r = subprocess.run(cmd, input=text.replace("\r\n", "\n").encode("utf-8"), capture_output=True, env=wsl_env())
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
     def push(self, distro, data, script):
         """data（バイト列）を標準入力で渡して、script を一般ユーザーで実行する（共有知の写しを送る）。"""
         cmd = ["wsl.exe", "-d", distro, "--", "sh", "-c", script]
-        r = subprocess.run(cmd, input=data, capture_output=True)
+        r = subprocess.run(cmd, input=data, capture_output=True, env=wsl_env())
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
     def install(self, distro, base):
         """base（例: Ubuntu-24.04）から、名前 distro のディストリビューションを作る（起動しない）。"""
-        return subprocess.run(["wsl.exe", "--install", base, "--name", distro, "--no-launch"]).returncode
+        return subprocess.run(["wsl.exe", "--install", base, "--name", distro, "--no-launch"], env=wsl_env()).returncode
 
     def terminate(self, distro):
-        return subprocess.run(["wsl.exe", "--terminate", distro], capture_output=True).returncode
+        return subprocess.run(["wsl.exe", "--terminate", distro], capture_output=True, env=wsl_env()).returncode
 
     def keepalive(self, distro):
         """部屋のディストリビューションが、wsl.exe のセッションが無いまま止まらないように、長く動くプロセスを1つ起こす。止めるには .terminate()。"""
@@ -70,11 +76,11 @@ class Wsl:
         flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | getattr(subprocess, "DETACHED_PROCESS", 0)
         return subprocess.Popen(["wsl.exe", "-d", distro, "--", "sleep", "infinity"],
                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                                creationflags=flags)
+                                creationflags=flags, env=wsl_env())
 
     def interactive(self, distro, command):
         """端末をつないだまま、一般ユーザーで実行する。"""
-        return subprocess.run(["wsl.exe", "-d", distro, "--", "bash", "-ic", command]).returncode
+        return subprocess.run(["wsl.exe", "-d", distro, "--", "bash", "-ic", command], env=wsl_env()).returncode
 
 
 def git(vault, *args, check=True):
@@ -497,6 +503,27 @@ def step_script(ctx, distro, title, text, root=False):
     return out
 
 
+CA_MAX_CERTS = 5  # need to know: 勤務先のルート証明書など、少数だけ。OS の証明書ストア丸ごとは入れない
+CA_DEST = "/usr/local/share/ca-certificates/room-extra-ca.crt"
+
+
+def load_ca_cert(path):
+    """--ca-cert のファイルを検査して、(PEM テキスト, [(SHA-256, ...)]) を返す。秘密鍵が混ざる・多すぎる・証明書が無いときは止まる。"""
+    try:
+        text = Path(path).read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as e:
+        raise RoomError(f"--ca-cert を読めない（{path}）: {e}")
+    if "PRIVATE KEY" in text:
+        raise RoomError("--ca-cert に秘密鍵が混ざっている。証明書だけのファイルを指定する")
+    blocks = re.findall(r"-----BEGIN CERTIFICATE-----.+?-----END CERTIFICATE-----", text, re.S)
+    if not blocks:
+        raise RoomError("--ca-cert に PEM 形式の証明書が無い（.cer が DER 形式なら、PEM に変換する）")
+    if len(blocks) > CA_MAX_CERTS:
+        raise RoomError(f"--ca-cert の証明書が {len(blocks)} 枚ある（上限 {CA_MAX_CERTS}）。必要な勤務先のルート証明書だけのファイルにする")
+    prints = [hashlib.sha256(ssl.PEM_cert_to_DER_cert(b)).hexdigest() for b in blocks]
+    return "\n".join(blocks) + "\n", prints
+
+
 AREA_README_TEMPLATE = """---
 status: active
 boundary: {boundary}
@@ -524,6 +551,8 @@ def cmd_init(ctx, a):
         area_readme.write_text(update_frontmatter(area_readme.read_text(encoding="utf-8"), {"boundary": boundary_arg}),
                                encoding="utf-8", newline="\n")
         ctx.say(f"Area に boundary: {boundary_arg} を付けた")
+    ca_cert = getattr(a, "ca_cert", None)
+    ca_pem, ca_prints = load_ca_cert(ca_cert) if ca_cert else (None, [])  # 部屋を触る前に、検査で止める
     distro = f"room-{a.area}"
     exists = distro in ctx.wsl.distros()
     if exists and not a.resume:
@@ -548,6 +577,12 @@ def cmd_init(ctx, a):
     ctx.say("道具を入れる（curl、rg、uv、Claude Code。配布元のスクリプトをそのまま実行する）")
     step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep）",
                 "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep\n", root=True)
+    if ca_pem:
+        ctx.say("証明書を入れる（root 所有。ai は読めるが書き換えられない）")
+        for p in ca_prints:
+            ctx.say(f"  SHA-256 {p}")
+        step_script(ctx, distro, "update-ca-certificates",
+                    f"cat > {CA_DEST} <<'EOF'\n{ca_pem}EOF\nchmod 644 {CA_DEST}\nupdate-ca-certificates\n", root=True)
     step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
     step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
     step_script(ctx, distro, "PATH",
@@ -1280,6 +1315,7 @@ def build_parser():
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
     i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")
+    i.add_argument("--ca-cert", help="部屋に入れる勤務先のルート証明書（PEM、最大5枚）。TLS 検査のあるネットワークで curl が証明書エラー（60）になるときに指定する。既定は入れない")
     i.add_argument("--boundary", help="Area が無い（または boundary: が無い）ときに付ける印（例: internal、顧客を表す名前。既定値は無い）")
     i.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="Area の作成をコミットしない（既定はコミットする）")
     rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
