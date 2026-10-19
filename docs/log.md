@@ -38,3 +38,4 @@
 - `repos/` の受け渡し（スナップショットと patch。未検証）: `remote` の type と `dev-env` の実使用の後に決める。【保留 〜2026-11-05】
 - `restore_project` が `_noai/final/` の人の変更を上書きする件（2026-10-18 の通しで未試験）: 正本の宣言と上書き前の警告を、次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】
 - `token-matrix.md` と `review` の入力 5: 第5の観点「温存」を足し、入力 5 を「TTL を超えて空いた後の書き込み量」に変えるか。今の役目の引き継ぎと基準値 103 の再設定を付け、分割して出し直す。【保留 〜2026-10-25】
+- `workflow-kit/` / 計画のやり方（`start 計画`。6R → 憲章 → 成果物 WBS → マイルストーン）の取り込み / 案: `topics/kit-growth/records/planning-method-record.md` の骨子を、`workflow-kit/` の新ファイルと `methods.md` の新区分「計画」に、試験運用で昇格する。ユーザーの決定（2026-10-19）は同記録に書いた。先行する決定: `start` の引数つきモードは試験運用（`docs/decisions.md` 2026-10-16）。`start` のインタビュー・`open`・基準文書・改善4は触らない。3層（`approval-screening.md`）を通すまで未反映。6R 自体は3層に乗せない。
