@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-19（`room` のマスクに pptx と md・txt を足し、Project に `data:` を持たせた。PC1 での使い方の相談から）
+- ユーザーの相談: PC1 で試すと、マスクを使う作業と使わない作業がある。使わないときの `ai/` `_noai/` の使い方が分からず、ディレクトリが深くなる。主な用途は、顧客情報を含む資料（議事録・戦略・設計書。pptx とテキストが主、xlsx も一部）の要点・課題・アクション抽出で、読み手が本人だけなのでマスクだけで復元は要らない。
+- 調べた事実: マスクの対象は csv と xlsx だけ、復元は `start` の終わりに自動で、`ai/out/` の形式が未知だと止まる。`_noai/` の使い方は、マスクしない場合を想定していなかった。
+- ユーザーの決定: ① pptx と md・txt を足す（docx は不要）。② `data:`（none / mask / restore）を持たせる。省略時は全 type で none。`dev` は none だけが仕様で、他は警告。③ `_noai` の名前は変えず、`user/` を予約名で足す。④ Area 共通のマスク表は `areas/<Area>/_noai/` に置いて、コピーで使う（仕様は足さない）。実機の確認と文書の反映は他のセッションで（Next Actions 42）。
+- 実装: `5f98702`（`data:` と `_noai/user/`、pptx・md・txt、86 テスト）、`aef4dab`（省略時を none に）。pptx は run をまたぐ語を段落の先頭の run に寄せて置換し、縮小画像を削除する。
+- 遠回り: 「Area の README に共通のマスク語を書く」案を出したが、Area の README は部屋の AI が読む写しになるので、語が漏れる。確認の途中で自分で取り下げた。
+
 ### 2026-10-19（PC1 で `room init` の `curl` が証明書エラー。`room` に `--ca-cert`、Node.js、`aws-key`、`shell` を足し、手順書を直した）
 - ユーザーの報告: PC1 で `room init` の `curl` が SSL 証明書エラー（終了コード 60）。実機で切り分けた: `WSLENV` 経由の壊れた証明書パスの変数（`failed to translate`）が部屋に残り、部屋から見える証明書の発行元は勤務先名（TLS 検査）。変数を外しても失敗し、勤務先のルート証明書が部屋に無いのが主因。ユーザーの承認で、`WSLENV` を外す処理と `init --ca-cert`（`99d8f8d`）を足した。通った。
 - Zed の Agent で Bedrock につなぐ過程: 部屋に Node.js が無く（apt は 18、Agent は 22 以上）、`init` に Node.js 24 の導入を足した（`b406e36`。公式の tarball、チェックサム確認つき。この環境で展開を実行して確認）。Zed の Agent に、手で `export` した環境変数が届かない仕組みを説明し、`agent_servers` の `env`（秘密なし）と `~/.aws/credentials`（秘密）に分けた。`aws-key`（秘密は標準入力、`80229a7`）と `shell`（`WSLENV` を外して入る、`94fa815`）を足した。ユーザーが Zed の認証を、手書きの `credentials` で通した。
