@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-19（日次の振り返り（改善4）と、その施策 R-13・14 の `review 消化`）
+- ユーザーが `start 改善4 本日のdaily振り返り` と言い、対象は活動のみ、出力先は `topics/kit-growth/records/` と選んだ。記録: `retrospective-daily-record.md`（手戻り 6 件、良い点 3、悪い点 3、新しい施策 2 件）。改善4 の使用回数は 3/3 になった。Must の増減は `review` で決める（ここでは決めていない）。
+- `review 消化`: R-13・R-14 をサブエージェントでスクリーニングし、ユーザーがどちらも却下した（R-13 は、再現したときに検討する）。理由と見直しの条件は `decisions.md` の同日の項。実例の R-03・R-04 への合流は承認待ちのまま。
+- 遠回り: 軸の宣言の前に、前回の記録と `log-history.md` の冒頭を読んだ（記録の章 7）。
+
 ### 2026-10-19（room の改善 3 件を実装）
 - ユーザーが 3 行の案を承認（① と ③ は案どおり、② は「信頼済みにする」）。① `room.py` の `ROOM_GUIDE` に `⟦ ⟧` を説明文で書かない指示、`maskkit.py` の停止メッセージに「括弧を外す」。② `install_project_trust`: `room start` が部屋の `~/.claude.json` に `projects["/mnt/room/<名>"].hasTrustDialogAccepted` を書く（検査は緩めない。Claude Code の安全装置を外す決定なので、見直しの条件: 部屋に人が持ち込んだ設定ファイルが入る運用になったとき）。③ `reap_project` が `-home-ai` の残りを警告する（消さない）。
 - テスト: 92 件中 `CaCertTest` の 2 件が失敗（変更前から。`openssl` 無し）。新規 5 件は OK。実機では未確認（`log.md` の項目 4）。
