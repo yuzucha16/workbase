@@ -8,7 +8,7 @@
 |---|---|---|---|
 | なし | | | |
 
-更新: 2026-10-19（改善4 の手順書を読後の指摘で v5 に直し、第1回を組み直した。項目 38 は残り 3 点。経緯は `log-history.md` の 2026-10-19）
+更新: 2026-10-19（room の実機の障害 4 件に対応し、手順書を直した。項目 40 は未解決。経緯は `log-history.md` の 2026-10-19）
 
 ## 状態
 
@@ -35,6 +35,7 @@
 - フックの報告の型を、共通の項目（最初に「ユーザーに求めること」「コミット」、最後に「次にやること」）と固有の項目に分けた。改善案は報告に載せず Open Questions に残す。`integrate` も push する。続ける・切るの数値は、間は TTL（サブスク1時間、API キー5分。2026-10-18 に直した）、約10万トークン、約2万トークン。正本は `hook-common.md` の「報告の型」「改善」、経緯は `decisions.md`（2026-10-17 の5項目）。
 - `review` の前回の日付は `[review]` コミットから取る（`review-hook.md` の手順「コミットする」。初回は `846c3d7`）。`open`（2,924 字）・`start`（4,827 字）を、`project-structure.md` と `start-work-types.md` への分割で字数の目安内にした。点検スクリプトは FAIL なし。
 - `pwsh` が無い環境用に、`tools/check_inbox.py` `find_knowledge.py` を足した。works を指す語は「works」に統一した（kit、ルート、`guides/`、`exmem/lessons/` の現在形の記述。`topics/` のノートは未）。部屋へ送る共有知から、`room/` のコード・テストを外した（`README.md` は送る）。施策1を `user-manual.md` に足した。
+- `room init` に `--ca-cert`、Node.js 24、`aws-key`、`shell` を足した（2026-10-19、`80229a7` 前後。PC1 の TLS 検査・WSLENV・Zed の Agent への対応。決定は `decisions.md` の同日の項、手順は `ai-room-setup-script.md` の 2.1）。
 - 2026-10-17 の作業は `807dd29` まで push 済み（`main`）。決定は `decisions.md` の同日の 4 項、経緯は `log-history.md`。
 - 仕組みの決定は、作業中に承認を求めず、`review 消化` で待ち行列 → サブエージェントのスクリーニング → 最終判断の3段で承認する（2026-10-18。`approval-screening.md`、決定は `decisions.md` の同日の項）。仮決めは `【仮 〜日付】`（7日、延長1回）。
 - キャッシュの実験をクラウドで実施した（Project の共有フォルダ `notes/token-saving/` の 2026-10-17 の 4 ファイルと `2026-10-18-cache-insights.md`）。5分TTL で6分あけると同じ作業が3.2倍、会話を分けても1.1倍、フック1回の読み込みは3〜6円。サブスクの主な会話の TTL は1時間、API キーは5分（公式 docs）。続ける・切るの数値の考え方（H − B、残りターン数）は実測と合った。決定は無し（改善案は Open Questions）。メモは `exmem/inbox/2026-10-18-prompt-cache-gap-cost.md`（`fb19ac2`）。
@@ -44,6 +45,7 @@
 
 ## Next Actions
 
+40. `room aws-key` を、実機で通す（2026-10-19）。PC1 で、部屋の `~/.aws/credentials` への `touch` が `ai` で失敗する。原因は未特定（`~/.aws` の所有者が root だった可能性は、ユーザーが取り下げた）。確かめる: `wsl -d room-<Area> -- sh -c 'id; echo $HOME; ls -ld $HOME $HOME/.aws; touch $HOME/.aws/credentials; echo $?'` の出力と、`touch` のエラー文。直したら、`room shell`（`failed to translate` の解消）と、`init` から Node を入れる流れ全体も、実機で確かめる。手書きの `credentials` では、Zed の Agent の Bedrock 認証が通っている。
 39. room の実機の確認の残りを、まとめて PC で行う（旧 `topics/ai-workspace-boundary/` の残件。2026-10-18 に root へ一本化し、トピックは削除した。ユーザーの方針: 作業をキリの良いところまで進め、まとめて確認する）。① 実データで `mask` の警告量を見る。② Windows で Vault 側 deny の書式 `Read(./projects/**)` が効くか（雛形は `templates/workspace/claude-settings.template.json`）。③ `base_stale`（`room.py` の frontmatter 更新）が、共有知の基準が古いときに付くか。④ `room start` が写す `ai/ctx/area-README.md` を、部屋の AI が開始時に読めるか。⑤ `room restore` が、`mapping.json` が無い・食い違うときに止まるか。⑥ `SharedPermissionTest` 2 件を Windows で実行して通るか（原因は Windows の `expanduser` が `HOME` でなく `USERPROFILE` を見ること。テストに足して Linux で通った）。⑦ `guides/explain/ai-room-why.md` と `guides/howto/ai-room-setup.md` のレビュー（「草稿（未レビュー）」の注記を外す。`why` は 2026-10-18 にトピックのノートと照らして更新済み。`setup` は未）。⑧ 部屋の AI が実際に `stock` の下書きを書き、先頭に基準コミットと観測日を付けられるか（`ROOM.md` に従うか。ダミーでは人が置いたファイルで確認済み）。共有知の送付のサイズ（1.5MB、120 ファイル、2026-10-14）は `guides/` と `lessons/` が増えたら測り直す。`review` が読む記録（`events` など）の置き場も未確認。20 と 37 は別項目。ユーザーは、10-18 の通しで通っていると見た 2 件（別の `wsl.exe` からのマウント、`ai/out/` のサブディレクトリの `restore`）と、omit した 3 件（部屋専用の SSH 鍵、Zed を開いたままのアンマウント、リポジトリ・remote の dev の案）を外した。設計と決定は `guides/explain/ai-room-why.md`、`docs/decisions.md`（「AI 作業部屋の決定」）、`exmem/lessons/ai-isolated-work-room.md`、仕様は `workflow-kit/room/mask-spec.md` に移した。
 38. 改善4（振り返り）のモードの直しの続き。済み: 読後の指摘で手順書を v5 にし（【仮 〜10-26】。目標、活動/成果物の分離、具体は ID、11 → 8 章）、第1回の記録を組み直した（材料は集め直していない）。残り: ① v5 で材料を集め直す実行（同じ入力 10-12〜10-19 か、次週 10-26）を、新しい会話で行い、ユーザーが読んで比べる。② 週次の使い方（前回の目標・軸・施策の引き継ぎ。R-2026-10-19-06。引き継ぎの定義のみ反映）を仕上げる。③ 施策 R-2026-10-19-01〜06 の承認。
 37. 実機の通しで気づいた room の改善 4 件に対応する（2026-10-18 `review 消化` でユーザーが「やります」）。①`restore` が、AI が本文に書いた `⟦CUST_nnn⟧` の説明で止まる（AI への指示で防ぐか、`restore` が説明用の記述を許すか）。②新しい Project のたびに Claude Code の信頼の確認が出る。③Zed を `/home/ai` で使うと、履歴が `-home-ai` に残り、どの Project にも属さず `reap` されない。④`close` が、README がひな形のままでも通る。方法は決めていない（実装前に場所・手段・呼び出し元を 3 行で見せる）。

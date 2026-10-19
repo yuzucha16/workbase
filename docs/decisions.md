@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】`room init` に、証明書（`--ca-cert`）、Node.js 24、`aws-key`、`shell` を足した（2026-10-19）
+- 決めたこと: PC1（TLS 検査のあるネットワーク）で `init` の `curl` が証明書エラー（60）で止まった件の対応。① `wsl.exe` に `WSLENV` を渡さない（ユーザーが原因の調査に同意。修正は「承認します」で確定）。② `init --ca-cert <PEM、5枚まで>` で、勤務先のルート証明書を root が `/usr/local/share/ca-certificates/` へ入れる（指定が無ければ入れない。秘密鍵が混ざる・多すぎると、部屋を触る前に止まる。ユーザーの承認）。③ Node.js 24 を、公式の tarball をチェックサム確認つきで `/usr/local` へ（ユーザーの依頼。Zed の Agent の `npx` が 22 以上を要るため）。④ `aws-key <Area> --profile <名前>` で、部屋の `~/.aws/credentials` に、秘密を標準入力で渡す（ユーザーが「credential を作るコマンドを」と依頼）。⑤ `shell <Area>` で、`WSLENV` を外して入る（ユーザーの「failed to translate をなくせますか」への対応。明示の承認は取っていない。次回の確認で外す）。
+- 根拠: 実機で確認した事実は Gotchas の同日 4 項。部屋は `/mnt/c` と interop を切るので、Windows 側の CA bundle を「指定する」ことはできない。証明書を部屋の中へ入れるしかない。却下案: Windows の証明書ストア丸ごと（信頼先が広がる）、環境変数でツールごとに指す（漏れが出て、`ai` が書き換えられる場所に置く）、NodeSource（取得したスクリプトを root で実行する）、長期キーの環境変数での受け渡し（Zed 経由では届かない）。
+- 確認済み: 2026-10-19（PC1。`--ca-cert` の後に curl が通った、Node を入れて Zed の Agent が接続できた、Bedrock の認証が手書きの `credentials` で通った）。未確認: `aws-key`（`touch` の失敗が未解決）、`shell`、`init` から Node を入れる流れ全体。
+- 見直し: 部屋を Area ごとでなく works 単位にする案（証明書と Bedrock の認証を部屋ごとに渡すのが億劫）は様子見（ユーザー、2026-10-19）。
+
 ### 【汎用】【仮 〜2026-10-26】振り返り（改善4）の手順書を v5 にした: 目標を先に置き、活動と成果物を分け、具体と抽象を分け、章を減らす（2026-10-19）
 - 決めたこと: ユーザーの読後の指摘（のっぺりしている、構造化されていない、事実の一覧は分かりやすい、詰め込みすぎ）への対応として、AI が直した仮決め。承認ではない。`retrospective-method.md` の Decisions に内容を書いた（目標を Must に足す、章 4 活動と章 5 成果物に分ける、具体は章 3 の ID だけ、章を 11 → 8、サマリを 300 字の「目標 → 現状 → ギャップ → 施策」）。
 - 今の役目（削った章）: 比較表は「探したが無かった」の確認だったので章 2 の「探索」列に、出典は章 1 に畳んだ。
@@ -431,6 +437,10 @@
 
 ## Gotchas
 
+- 【汎用】automount を切った WSL の部屋で、Windows の `WSLENV` に `/p` 付きのパス（証明書など）があると、変換できず、入るたびに「failed to translate」が出る。しかも `SSL_CERT_FILE` などが壊れたまま部屋に残り、curl が証明書エラー（終了コード 60）になる。`wsl.exe` に渡す環境から `WSLENV` を外す（実機: 2026-10-19、PC1）。部屋の `curl` の発行元を `openssl s_client … | openssl x509 -noout -issuer` で見ると、TLS 検査のプロキシかどうかが分かる。
+- 【汎用】TLS 検査のあるネットワークの部屋では、curl だけでなく、Node（`NODE_EXTRA_CA_CERTS`）、npm（`npm config set cafile`）、AWS CLI（`AWS_CA_BUNDLE`）も、システムの証明書ストアを見ない。ツールごとに、システムのバンドル（`/etc/ssl/certs/ca-certificates.crt`）を指す（実機: curl は `--ca-cert` の後に通った、2026-10-19。npm、Node、AWS の変数は、設定したが単独の効果は未分離）。
+- 【汎用】Ubuntu 24.04 の apt の Node は 18。Zed の Agent（`@agentclientprotocol/claude-agent-acp`、`npx` で起動）は 22 以上を要る。部屋に Node が無いと「npx を知らない」になる（実機: 2026-10-19）。
+- 【汎用】Zed の WSL リモートの Agent には、手で `export` した環境変数が届かない（`bash` が祖先にいないため）。Zed の `agent_servers` の `env` に書いた値は届く。秘密は設定に書かず、`~/.aws/credentials` のようなファイルで渡す（実機: `env` の値は接続で確認。`credentials` を手で書くと認証が通った。2026-10-19）。
 - 【汎用】Windows の `subprocess.Popen` で、`wsl.exe -- sleep infinity` を同じコンソールにつないだまま待つと、同じ端末の `input()` に Enter が届かないことがある（実機: 2026-10-18、`room start --no-launch`。部屋ごと止めると Enter で戻った）。`creationflags` に `CREATE_NEW_PROCESS_GROUP | DETACHED_PROCESS` を付けて切り離すと、Enter で戻った（`d6c97d8`）。原因は、コンソールの入力の取り合いという推測で、1回の確認。
 - 【汎用】`wsl.exe -- sh -s` に渡すスクリプトの終了コードは、最後のコマンドで決まる。確認用の `ls -d <消したはずのパス>` を最後に置くと、削除が成功しても終了コード 2 で、成功が失敗と判定される（実機: 2026-10-18、`room reap`。エラーの括弧の中が空だったのが手がかり）。確認の行は `|| true` で終え、成否は出力の有無で見る（`086381c`）。差し替えた WSL の単体テストでは終了コードの挙動を再現できず、スクリプトの文字列の形でしか確かめられない。
 - 【汎用】Zed を、Windows のフォルダをローカルで開いたまま使うと、Agent（`claude-acp`）が Windows 側で動き、パスと PowerShell が Windows 形式になる。部屋の側で動かすには、WSL リモートで `room-<Area>` に接続し、フォルダは部屋の中のパス（`/mnt/room/<Project>`）を指定する。画面の左下の `WSL: room-<Area>`、プロンプトの `ai@...:/mnt/room/...`、部屋の中のプロセス（`zed-remote-server`、`claude-agent` がユーザー `ai`）で見分ける（実機: 2026-10-18）。Windows 側の `claude-acp` が `projects\<名>\ai` を掴むと、`close` のあとの `Remove-Item` が `being used` で失敗する。
