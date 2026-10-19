@@ -8,7 +8,7 @@
 |---|---|---|---|
 | なし | | | |
 
-更新: 2026-10-19（room の実機の障害 4 件に対応し、手順書を直した。項目 40 は未解決。経緯は `log-history.md` の 2026-10-19）
+更新: 2026-10-19（`room` に `data:` の3つの型と `_noai/user/`、pptx・md・txt のマスクを足した。項目 42 を足した。経緯は `log-history.md` の 2026-10-19）
 
 ## 状態
 
@@ -41,10 +41,12 @@
 - キャッシュの実験をクラウドで実施した（Project の共有フォルダ `notes/token-saving/` の 2026-10-17 の 4 ファイルと `2026-10-18-cache-insights.md`）。5分TTL で6分あけると同じ作業が3.2倍、会話を分けても1.1倍、フック1回の読み込みは3〜6円。サブスクの主な会話の TTL は1時間、API キーは5分（公式 docs）。続ける・切るの数値の考え方（H − B、残りターン数）は実測と合った。決定は無し（改善案は Open Questions）。メモは `exmem/inbox/2026-10-18-prompt-cache-gap-cost.md`（`fb19ac2`）。
 
 - `room init` が Area を作り（`--boundary` 必須。既定値なし）、`init` と `open` の初期状態を既定でコミットするようにした（2026-10-18。`--no-commit` で省く。`start` は対象外）。単体テストのみで、実機は未確認。次の実機で `init <新しい Area> --boundary internal` と `open` を試す。決定は `decisions.md` の同日の項、`room/README.md` に反映済み。
+- `room` に Project の `data:`（`none` / `mask` / `restore`。`open` の省略時は `none`、無い既存の Project は `restore`）と `_noai/user/`（人だけの仮置き）を足し、マスクの対象に pptx と md・txt を足した（2026-10-19。`5f98702` `aef4dab`。`dev` は `none` だけが仕様）。実機の確認と文書の反映は Next Actions 42。
 - room の実機の通しは済んだ（2026-10-18。`init`、`open`、`mask`、`start`（端末版と `--no-launch`）、`restore`、`readme`、`stock`、`close`、`reap`、Excel、手作業版）。直したバグは `d6c97d8`（待ちの Enter が `input()` に届かない。`keepalive` をコンソールから切り離した）と `086381c`（`reap` の確認の `ls` が、削除の成功を失敗と判定した）。未確認: 項目 20、10、`base_stale`、Zed を開いたままのアンマウント（今回は部屋に掴むプロセスが無く通っただけ）。
 
 ## Next Actions
 
+43. `docs/log.md` を整理する（2026-10-19。23 KB で、目安の 4 KB を大きく超える）。現在状態と次にやることだけに絞り、完了した項目と古い経緯は `log-history.md` へ移す（`docs-rules.md` の log.md の書式）。ユーザーの承認が要る削除は、移した先を示してから行う。別の作業として切り出す。
 42. `room` の `data:`（none / mask / restore）と `_noai/user/`、pptx・md・txt のマスクを足した（2026-10-19。`5f98702` `aef4dab`。合成データのテストのみ）。残り: ① PC1 で、実際の資料（議事録・戦略資料の pptx など）を `data: mask` で1件通す（マスク → PowerPoint で開く → `start` が最後まで通る）。② 文書をまとめて直す: 古い `guides/howto/ai-room-setup.md`、`ai-room-setup-script.md`、`guides/explain/ai-room-why.md` に `data:` の3つの型と `_noai/user/` を反映する。「マスクだけで要約を出す」手順書を `guides/howto/` に足す（`guides-index.md` も同じコミットで）。**この使い方の仕様を使わずに省いた（omit）ときは、①②の文書化もしない**（ユーザー、2026-10-19）。③ Area 共通のマスク表の置き場を `areas/<Area>/_noai/` で試す（コピー元にする運用。仕様は足さない。Area の README には語を書かない: `ai/ctx/area-README.md` として部屋の AI に見えるため）。番号のずれや過去ログ検索で困ったら、Area 共通の対応表を仕様に起こすか決める。要約の戻し先は `areas/<Area>/ai/docs/`（仮置き）。
 41. AI 作業部屋の取り組みの振り返り（改善4。2026-10-19。記録は `topics/kit-growth/records/retrospective-ai-room-record.md`）の施策 R-2026-10-19-07〜12 の承認。7（閉じる前の突き合わせ）と 8（`init` の前提の確認）が優先度「高」。併せて、`exmem/inbox/2026-10-19-*` の3件（端末をまたぐ作業、取り組みの閉じ方、クラウドの書き込み権限）の統合と、その Open Questions の提案（`topics/AGENTS.md`、`docs-rules.md` への追記）の承認。
 40. `room aws-key` を、実機で通す（2026-10-19）。PC1 で、部屋の `~/.aws/credentials` への `touch` が `ai` で失敗する。原因は未特定（`~/.aws` の所有者が root だった可能性は、ユーザーが取り下げた）。確かめる: `wsl -d room-<Area> -- sh -c 'id; echo $HOME; ls -ld $HOME $HOME/.aws; touch $HOME/.aws/credentials; echo $?'` の出力と、`touch` のエラー文。直したら、`room shell`（`failed to translate` の解消）と、`init` から Node を入れる流れ全体も、実機で確かめる。手書きの `credentials` では、Zed の Agent の Bedrock 認証が通っている。
