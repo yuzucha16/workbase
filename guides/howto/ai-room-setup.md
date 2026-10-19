@@ -51,6 +51,10 @@ tags:
 
 ## 1. 前提を確認する
 
+0. 環境の前提（`room.py init` が扱うもの。2026-10-19）。新しい PC や部屋で、先に見る
+   - **TLS 検査のあるネットワーク**か: `openssl s_client -connect claude.ai:443 -servername claude.ai </dev/null 2>/dev/null | openssl x509 -noout -issuer` の発行元が、公開の認証局でなければ検査あり。`init --ca-cert <ファイル>` で会社のルート証明書を渡す（[[ai-room-setup-script]] の 2 章）
+   - **`WSLENV`**: Windows 側に `/p` 付きのパスがあると、部屋に入るたびに「failed to translate」が出る（無害）。`room.py shell <Area>` で入る
+   - **Node.js**: Zed の Agent に要る。`init` が Node.js 24 を入れるので、手作業では入れない
 1. WSL2 が使える
 
    ```powershell

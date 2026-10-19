@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-19（review 消化: R-08 を採用）
+- サブエージェントのスクリーニング: 型 D（弱）、覆す可能性は中、推奨は保留（代替案 1 に絞るなら正式化）。ユーザーが代替案 1 で採用した。`ai-room-setup.md` の 1 章の先頭に、環境の前提の 3 行（TLS 検査、`WSLENV`、Node.js）を足した。コードは変えない。検証は新しい PC か部屋の初回の `init`（Next Actions 3）。
+
 ### 2026-10-19（review 消化の続き: リスト 2 の 3 件）
 - Open Questions の「`restore` の上書き保護が未試験」を、`restore_project` の行に統合した（同じ論点。どちらも `final-manifest.json` の実機を待つ）。
 - 施策 R-2026-10-19-08 から、ベースのバージョンの件を切り離した（PC1 の通しは済み、Ubuntu 26.04 は確認済み）。前提の確認（TLS 検査、`WSLENV`、Node.js）だけに絞って出し直し、承認待ち。記録は `retrospective-ai-room-record.md`。
