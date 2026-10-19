@@ -383,6 +383,20 @@ class ReapTest(unittest.TestCase):
             self.assertIn("reaped: 2026-10-12", (v / "archives/old/README.md").read_text(encoding="utf-8"))
             self.assertEqual(room.find_reapable(c), [])
 
+    def test_reap_warns_about_home_history_without_deleting_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            orig = wsl.script
+            wsl.script = lambda d, t, root=False: (0, "remain\n", "") if "-home-ai" in t and t.startswith("test -d") else orig(d, t, root)
+            v = make_vault(tmp)
+            self.archived(v, "old", "2026-10-01")
+            said = []
+            c = ctx_for(v, wsl)
+            c.say = said.append
+            self.assertEqual(room.offer_reap(c, yes=True), 1)
+            self.assertTrue(any("-home-ai" in s and "警告" in s for s in said))
+            self.assertFalse(any("rm -rf" in s[1] and "-home-ai" in s[1] for s in wsl.scripts))
+
     def test_unsafe_name_is_refused(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
@@ -735,6 +749,17 @@ class MaskIntegrationTest(unittest.TestCase):
             self.assertFalse((p / "_noai/final/r.md").exists())
             self.assertFalse(wsl.mounted)
 
+    def test_broken_bracket_in_explanation_stops_with_hint(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p = self.setup_project(tmp, wsl)
+            wsl.on_interactive = lambda: (p / "ai/out/r.md").write_text("形は ⟦CUST_nnn⟧ です\n", encoding="utf-8", newline="\n")
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_start(c, self.args())
+            self.assertIn("括弧を外す", str(cm.exception))
+            self.assertFalse((p / "_noai/final/r.md").exists())
+            self.assertFalse(wsl.mounted)
+
 
 class DataModeTest(unittest.TestCase):
     def open_with(self, tmp, wsl=None, **kw):
@@ -988,6 +1013,35 @@ class SharedPermissionTest(unittest.TestCase):
             (v / "resources/workflow-kit/hooks.md").write_text("h\n", encoding="utf-8")
             room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=False))
             self.assertTrue(any("ROOM_PERM_EOF" in s[1] and s[2] is False for s in wsl.scripts))
+
+
+class ProjectTrustTest(unittest.TestCase):
+    def run_snippet(self, home, path):
+        env = dict(os.environ, HOME=str(home), USERPROFILE=str(home))
+        subprocess.run([sys.executable, "-c", room.TRUST_PY.format(path=json.dumps(path))], env=env, check=True)
+        return json.loads((Path(home) / ".claude.json").read_text(encoding="utf-8"))
+
+    def test_snippet_adds_trust_keeps_existing_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / ".claude.json").write_text(
+                json.dumps({"userID": "u", "projects": {"/mnt/room/a": {"allowedTools": ["x"]}}}), encoding="utf-8")
+            self.run_snippet(tmp, "/mnt/room/b")
+            d = self.run_snippet(tmp, "/mnt/room/b")
+            self.assertEqual(d["userID"], "u")
+            self.assertEqual(d["projects"]["/mnt/room/a"], {"allowedTools": ["x"]})
+            self.assertTrue(d["projects"]["/mnt/room/b"]["hasTrustDialogAccepted"])
+
+    def test_snippet_creates_file_when_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = self.run_snippet(tmp, "/mnt/room/b")
+            self.assertTrue(d["projects"]["/mnt/room/b"]["hasTrustDialogAccepted"])
+
+    def test_start_installs_trust_for_the_mount_point(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=False))
+            self.assertTrue(any("ROOM_TRUST_EOF" in s[1] and "/mnt/room/proj-a" in s[1] for s in wsl.scripts))
 
 
 class KeepaliveTest(unittest.TestCase):
