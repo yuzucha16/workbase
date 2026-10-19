@@ -125,6 +125,66 @@ def opened(tmp, wsl=None):
     return v, c
 
 
+class CaCertTest(unittest.TestCase):
+    def make_cert(self, tmp, n=1):
+        pems = []
+        for i in range(n):
+            subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", str(Path(tmp) / f"k{i}.pem"),
+                            "-out", str(Path(tmp) / f"c{i}.pem"), "-subj", f"/CN=test-ca-{i}", "-days", "1"], check=True, capture_output=True)
+            pems.append((Path(tmp) / f"c{i}.pem").read_text(encoding="utf-8"))
+        f = Path(tmp) / f"bundle{n}.pem"
+        f.write_text("".join(pems), encoding="utf-8")
+        return f
+
+    def test_init_installs_ca_cert_as_root_after_apt_and_before_curl(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = self.make_cert(tmp)
+            wsl = FakeWsl(distros=())
+            room.cmd_init(ctx_for(make_vault(tmp), wsl), argparse.Namespace(area="area-x", resume=False, ca_cert=str(f)))
+            scripts = [(s[1], s[2]) for s in wsl.scripts]
+            idx = lambda key: [i for i, (t, _) in enumerate(scripts) if key in t][0]
+            self.assertLess(idx("apt-get"), idx("update-ca-certificates"))
+            self.assertLess(idx("update-ca-certificates"), idx("astral.sh"))
+            text, root = scripts[idx("update-ca-certificates")]
+            self.assertTrue(root)
+            self.assertIn("BEGIN CERTIFICATE", text)
+
+    def test_init_without_ca_cert_installs_none(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl(distros=())
+            room.cmd_init(ctx_for(make_vault(tmp), wsl), argparse.Namespace(area="area-x", resume=False))
+            self.assertFalse(any("update-ca-certificates" in s[1] for s in wsl.scripts))
+
+    def test_ca_cert_rejects_private_key_too_many_and_non_pem_before_touching_room(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            one = self.make_cert(tmp)
+            with_key = Path(tmp) / "withkey.pem"
+            with_key.write_text(one.read_text(encoding="utf-8") + (Path(tmp) / "k0.pem").read_text(encoding="utf-8"), encoding="utf-8")
+            many = self.make_cert(tmp, n=room.CA_MAX_CERTS + 1)
+            junk = Path(tmp) / "junk.cer"
+            junk.write_bytes(b"\x30\x82\x01")
+            v = make_vault(tmp)
+            for bad in (with_key, many, junk, Path(tmp) / "none.pem"):
+                wsl = FakeWsl(distros=())
+                with self.assertRaises(room.RoomError):
+                    room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=False, ca_cert=str(bad)))
+                self.assertFalse(hasattr(wsl, "installed"))
+
+
+class WslEnvTest(unittest.TestCase):
+    def test_wslenv_is_removed(self):
+        saved = {k: os.environ.get(k) for k in ("WSLENV", "KEEP_ME")}
+        os.environ["WSLENV"] = "SSL_CERT_FILE/p"
+        os.environ["KEEP_ME"] = "1"
+        try:
+            env = room.wsl_env()
+        finally:
+            for k, v in saved.items():
+                os.environ.pop(k, None) if v is None else os.environ.__setitem__(k, v)
+        self.assertNotIn("WSLENV", {k.upper() for k in env})
+        self.assertEqual(env["KEEP_ME"], "1")
+
+
 class InitTest(unittest.TestCase):
     def test_init_creates_room_configures_and_installs(self):
         with tempfile.TemporaryDirectory() as tmp:
