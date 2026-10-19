@@ -171,6 +171,8 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 ## 4. 部屋に道具を入れ、ログインする（部屋ごとに1回）
 
+> `room.py init` は、この章の道具に加えて、Node.js 24（Zed の Agent の `npx` 用）と、勤務先など TLS 検査のあるネットワーク向けの `--ca-cert` も扱う。手作業で進めて `curl` が証明書エラー（終了コード 60）になったら、`init` を使う方が早い（[[ai-room-setup-script]] の 2 章）。
+
 1. 道具を入れる
 
    ```powershell
@@ -329,6 +331,8 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 | 症状 | 確認すること |
 |---|---|
+| `curl` が「SSL certificate problem」（終了コード 60）で止まる（4 章） | TLS 検査のあるネットワークで、勤務先のルート証明書が部屋に無い。または、Windows の `WSLENV` 経由で、壊れた `SSL_CERT_FILE` が残っている | `room.py init --resume --ca-cert <ファイル>`。手作業なら、証明書を `/usr/local/share/ca-certificates/` に root で置き、`update-ca-certificates` を実行する（[[ai-room-setup-script]] の 9 章） |
+| 部屋に入るたびに「failed to translate」が出る | `WSLENV` の `/p` 付きのパスが、`/mnt/c` の無い部屋で変換できない（無害） | `room.py shell <Area>` で入る |
 | 部屋が起動しない | `wsl.conf` の `[user] default=` のユーザーが、存在するか（`wsl -d room-<Area> -u root -- id ai`） |
 | `/mnt/c` が空でない | `wsl.conf` の `automount.enabled` と、`wsl --terminate` をしたか |
 | 部屋に C: が見える | root で実行していないか。既定ユーザーが `ai` か |
@@ -350,4 +354,4 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 - マスク・復元（`mask.toml`、zip レベルの置換、置換後の点検）は、ダミーデータでの試験が未了
 - 部屋の会話履歴の片付け（reap）の手順と、期限の設定の置き場
 - 対応表の保護（works が漏れた場合の対策）は、運用しながら決める
-- Bedrock 経由の接続、docx・pptx のマスク、ネットワークの絞り込みは、未検証
+- docx・pptx のマスク、ネットワークの絞り込みは、未検証。Bedrock 経由の接続は、Zed の Agent で通した（2026-10-19、PC1）。手順は [[ai-room-setup-script]] の 2.1。`aws-key` の実機確認は未了
