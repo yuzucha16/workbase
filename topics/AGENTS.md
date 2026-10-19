@@ -20,6 +20,7 @@
 
 ユーザーが言ったときだけ行う。完了条件の確認、暫定の決定の見直し、未解決の整理は、`review 消化` と `docs/log.md` の Next Actions / Open Questions で行う（専用の手順は持たない）。Area 型のトピックは消さない。
 
+0. 閉じる・完了と判断する前に、トピックの `docs/log.md` の状態表と、上位（root）の `docs/log-history.md` の最新の経緯を突き合わせ、食い違いと結果を報告に書く（古い側で断定しない）。
 1. `docs/decisions.md` の【汎用】が `exmem/lessons/`、kit、`guides/` に反映済みか見る（見るだけ。反映するかの判断はユーザー）。
 2. ディレクトリを削除し、`topics-index.md` の行を消す。
 3. 残ったファイルに、消えたノートへの `[[リンク]]` が無いか、grep で確かめる。
