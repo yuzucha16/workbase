@@ -16,8 +16,9 @@ aliases:
   - サンドボックス運用
   - 自走期間
 created: 2026-10-02
-updated: 2026-10-17
+updated: 2026-10-19
 sources:
+  - Claude Code conversation "AI 作業部屋の取り組みの振り返りとナレッジ化" (2026-10-19)
   - Claude Code conversation "Claude Code 権限制御の設計と dotfiles への共通土台の配備" (2026-10-02)
   - "dotfiles（claude/、_scripts/links.map、l1_copy_dotfiles.sh、コミット d4878a5 / b0cca61）、%USERPROFILE%\\.claude\\settings.json、WSLの ~/.claude/settings.json（2026-10-02 に確認）"
 ---
@@ -43,6 +44,10 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 - 禁止したいことは指示ファイルではなく、権限で強制する。絶対に外さないものだけ `deny` にする。
 - 任意コード実行と等価なものは allow しない（`bun run *` などのタスクランナー、インタプリタのワイルドカード）。
 - 共通の土台はユーザー階層に1つだけ置き、リポジトリごとの差分だけをプロジェクト側に置く。
+- クラウドの AI セッションの既定の制限とリポジトリの規約が食い違うときは、リポジトリ側の恒常許可を Project の指示に明記する。理由: 毎回確認すると作業が止まり、指示に無ければ AI は既定の制限に従う。
+- 恒常許可の手順は、許可リストの規則（`docs-rules.md` の push の節）に従って書く。理由: 条件（公開範囲の確認、先頭が祖先か、機密の検索）を毎回満たせる。
+- 公開リポジトリへの push では、機密の検索を広げる。理由: 世界に読まれる前提で、メールアドレスや環境固有の値も対象にする。
+- 使い捨ての環境では、未 push のコミットは消える。理由: 環境が片付けられると、未 push の作業とメモが失われる。
 
 ## 権限の仕組み（メモ記載。判定順と階層は公式の仕様に沿う）
 
@@ -79,6 +84,11 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 - 却下案: 委譲しない（従来）、push も委譲する（外向きで、毎回の確認が要る）。
 - 運用の詳細（works の初回コミット、inbox のメモはコミットしない）は [[workflow-kit]]。
 
+### workbase は main に直接コミットして push する（ブランチ運用なし）。Project の指示に、承認済みの変更の恒常許可として書く（2026-10-17）
+
+- 根拠: ユーザーが「基本は main に直接」と再確認し、Project の指示に追記した。
+- 却下案: 作業ブランチに push して PR を作る（使われないブランチが増え、PR は頼まれたときだけでよい）。
+
 ### 配備方法
 
 配備の実体（`links.map`、`30_link.*`、サンドボックスのテンプレの場所）は dotfiles の `README.md` が正（2026-10-16 に、ここにあった写しと旧方式の記録を削った）。要点は3つ: Windows はリンクスクリプトで張る。WSL / Linux は stow で `home/` を `~` に展開する。サンドボックスのテンプレは、配置しない雛形としてリンク対象外に置く。
@@ -95,6 +105,14 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 - dotfiles の実物（コミット、`links.map`、スクリプト）は dotfiles が正。2026-10-04 に、Windows の `%USERPROFILE%\.claude\settings.json` と WSL の `~/.claude/settings.json` が、どちらも dotfiles の同じファイルへのシンボリックリンクであることを確認した。
 - dotfilesは `.claude/` をgitignoreしている。`dotfiles/.claude/settings.local.json` には「Yes, don't ask again」で自動追記された1回きりの長い複合コマンドが約30件たまっていた（再利用されない。メモによれば削除済み）。
 - `/fewer-permission-prompts` は履歴（直近50ファイル上限）から読み取り系を抽出するスキル。今回は7ファイル・ほぼPowerShellツール経由で、Bashツールの呼び出しは無かった。履歴の頻出は `git -C <path> status/log/diff`（約42回）、`Select-Object` 系（約70）、`Get-*` 系（約40）、`git add/commit`（約20）、`git push`（4）、`Remove-Item -Recurse/-Force`（約15）。
+
+### クラウドセッションでの push（2026-10-18〜19）
+
+- `git push origin HEAD:main` で main に push できた（確認: 2026-10-18、根拠: 本セッションでの push と `git log`）。
+- 指定ブランチにも同じコミットを push しないと、終了時のフックが「未 push のコミットがある」と指摘する（確認: 2026-10-18、根拠: フックの指摘の後に指定ブランチを push して解消した）。
+- 使い捨ての環境では、`exmem/inbox/` のメモもコミットして push する（確認: 2026-10-19、根拠: `stock-hook.md` の記述）。
+- 指定ブランチの先頭が `origin/main` を含めば、指定ブランチのまま `git push origin HEAD:main` で fast-forward で main に入る。コンテナのローカル `main` は古い履歴のことがあり、checkout しない（確認: 2026-10-18、根拠: 本セッションで `merge-base --is-ancestor` の確認後に push した）。
+- `docs-rules.md` の push の節は、`HEAD:main` に対応済み（確認: 2026-10-19、根拠: 同ファイルの条件 2 を読んだ）。
 
 ### 仮説・未確認
 
@@ -124,6 +142,12 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 - 状況: 長い複合コマンドがそのまま `settings.local.json` に追記され、再利用されない。exmemの `settings.local.json` も同じ状態だった（[[claude-code-project-settings]]）。
 - 対策: 繰り返し使うものは、手で書いた `settings.json` の許可にまとめる。
 
+### 承認済みの変更を main に入れようとして、指定ブランチ以外への push を許可しておらず止まりかけた
+
+- 状況: 承認済みの変更を main に入れようとして止まりかけた。
+- 原因: セッションの指示が「指定ブランチ以外に push しない」で、リポジトリの規約（main に直接）と食い違っていた。
+- 解決: Project の指示に恒常許可を書き、`docs-rules.md` の push の節を `HEAD:main` に対応させた。
+
 ### ツール側の制約
 
 - 既存ファイルはReadしてからWrite / Editする必要がある。セッション中断でPowerShell呼び出しの結果が記録されず、削除が未反映のことがあった（状態を再確認してから再実行する）。
@@ -137,6 +161,7 @@ Claude Codeのyes/no確認（権限プロンプト）がブロッカーになり
 5. `config/` 配下（`.config/git` など）にも、リンク切れの自動削除を広げるか。
 6. 土台のルールが実運用で十分か（プロンプトが減ったかの再計測）。必要なら再度 `/fewer-permission-prompts` を回して追加する。
 7. 土台の `PowerShell(...)` ルールは、実機で期待どおり効いているか（仮説の検証）。
+8. 提案: 恒常許可の書き方の雛形（承認範囲、禁止するコマンド）を、`docs-rules.md` に残す（AI の提案。未承認）。上の「権限移譲」の項目（Decisions のコミットの委譲）と重複しないように置く。
 
 ## Next Actions
 
