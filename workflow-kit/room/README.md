@@ -39,7 +39,7 @@ uv run room.py umount --area <Area>
 
 ## データの扱い（`data:`。2026-10-19）
 
-Project の README の frontmatter `data:` で決める（`open --data`。既定は `type: dev` が `none`、それ以外が `restore`。`data:` が無い既存の Project は `restore`）。`type` とは別の軸。
+Project の README の frontmatter `data:` で決める（`open --data`。既定は全 type で `none`。`data:` が無い既存の Project は、これまでの動きを保つため `restore`）。`type` とは別の軸。
 
 | `data:` | 使う場面 | `_noai/` の中身 | `start` / `mask` / `restore` |
 |---|---|---|---|
