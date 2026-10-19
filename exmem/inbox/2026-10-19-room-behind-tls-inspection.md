@@ -46,7 +46,7 @@ sources:
 2. `WSLENV` の漏れ（failed to translate）→ `WSLENV` を外す
 3. Node が無い／古い（Agent の `npx`）→ Node 22 以上を入れる
 4. Node・npm・AWS SDK の証明書 → システムのバンドルを指す
-5. 資格情報（Bedrock など）→ 別メモ（`2026-10-19-bedrock-credentials-zed-remote.md`）
+5. 資格情報（Bedrock など）。部屋の `claude` は OAuth 以外（IAM アカウント、SSO）の認証を設定できず、環境変数で対応した → 別メモ（`2026-10-19-bedrock-credentials-zed-remote.md`）
 
 ## Gotchas
 - 状況: 部屋に入るたびに「failed to translate」が出る
@@ -57,7 +57,6 @@ sources:
   - 解決: `--ca-cert` で勤務先のルート証明書を入れた。通った
 
 ## Open Questions
-- 「claude 認証」（ユーザーが踏んだ関所の1つ）の詳細。ブラウザの URL とコードによるログイン（interop を切った部屋）が詰まったのか、Bedrock の認証のことか、特定できていない。
 - 部屋を Area ごとでなく works 単位にすると、証明書と Bedrock の認証を渡す手間が減るか（ユーザーは様子見）。
 - Ubuntu 26.04 LTS をベースにしてよいか（長く使うため）。調べる途中で中断した。
 - 提案: 検査のある PC では、`init` が最初に、部屋の curl の発行元を表示して、`--ca-cert` の要否を案内する（AI の提案。未承認）。

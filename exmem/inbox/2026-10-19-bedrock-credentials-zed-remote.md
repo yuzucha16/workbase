@@ -29,6 +29,8 @@ sources:
   - 却下案: 長期キーを環境変数で毎回 `export`（Zed 経由では届かない）、`op`（1Password CLI）を部屋へ持ち込む（解錠済みの `op` から、AI が秘密を引き出せる）。
 
 ## Facts
+- 部屋の `claude` は、OAuth 以外の認証（IAM アカウント、SSO など）を、`claude` の画面の操作では設定できなかった。環境変数を `export` すると対応できた（確認: 2026-10-19、根拠: ユーザーの実機の報告）。
+- Zed の `agent_servers` の `env` の値は、リモートサーバーの起動時にも引き継がれる。手で `export` する環境変数を減らせ、残るのは秘密（アクセスキー）だけになる（確認: 2026-10-19、根拠: ユーザーの実機の報告）。
 - 長期キーのアクセスキー ID と秘密キーを環境変数で `export` すると、`claude` の直叩きでは Bedrock の認証が通った（確認: 2026-10-19、根拠: ユーザーの実機の報告）。
 - Zed の `agent_servers` に custom で `command: npx`、`args: ["-y", "@agentclientprotocol/claude-agent-acp"]` と `env` を書くと、部屋の中で Agent が接続できた（確認: 2026-10-19、根拠: ユーザーの実機の報告と設定のキャプチャ）。
 - `~/.aws/credentials` を手で書くと、Zed の Agent の Bedrock の認証が通った（確認: 2026-10-19、根拠: ユーザーの実機の報告）。
