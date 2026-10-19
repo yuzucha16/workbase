@@ -255,7 +255,7 @@ class Restorer:
             return xml_escape(e["canonical"]) if xml else e["canonical"]
         out = PH_RE.sub(repl, text)
         for m in BROKEN_PH_RE.finditer(out):
-            bad.append("壊れたプレースホルダー（⟦ か ⟧ が残っている）: …" + out[max(0, m.start() - 8):m.end() + 8].replace("\n", " ") + "…")
+            bad.append("壊れたプレースホルダー（⟦ か ⟧ が残っている。説明文で形を示しただけなら、括弧を外す）: …" + out[max(0, m.start() - 8):m.end() + 8].replace("\n", " ") + "…")
             break
         return out, bad
 

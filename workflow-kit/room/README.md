@@ -26,7 +26,7 @@ uv run room.py umount --area <Area>
 | `shell <Area>` | 部屋に入る（`wsl -d room-<Area>` の代わり）。`WSLENV` を外して入るので、Windows の `WSLENV` に `/p` 付きのパスがあっても、入るたびに「failed to translate」が出ない（automount を切った部屋では、そのパスを変換できないため） |
 | `reap [名前]` | close から期限（`reap_after`。既定14日）が来て、まだ `reaped` の無い `archives/` の Project について、部屋の会話履歴（`~/.claude/projects/-mnt-room-<名>/`）と `~/tmp/<名>` を消し、README に `reaped: <日付>` を付ける。会話履歴は写さずに消す（復元は `exmem` や `ai/docs/` の記録で）。名前なしは期限切れの一覧を出して承認を求める（`--yes` で省略）。名前ありで期限前なら `--force`。名前が英数字・`_`・`-` 以外なら止まる。`close` の終わりにも一覧を出す（端末のときは承認を求める）。Windows 側の `archives/` は消さない |
 | `open` | works の `.gitignore`（`**/_noai/` と `!**/ai/out/`）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`（`data:` つき）、`ai/{docs,in,work,out,records}`、`_noai/` の下は `data:` に応じたディレクトリ（下の表）を作り、Area の一覧に足す |
-| `start` | `area:` とディストロ名の一致、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴（manifest）を確認 → Project の README と所属する Area の README の写しを `ai/ctx/`（`README.md`、`area-README.md`）に置く（Area の README が 16 KiB を超えると知らせる）→ `ai/` を `/mnt/room/<名>` に root でマウントし、`in/` を読み取り専用に → 部屋で AI を起動（一般ユーザー）→ **必ず**アンマウントして、マウント点を消し、残りを確認 → 変更の一覧と、追跡されずに無視されているファイルの警告 |
+| `start` | `area:` とディストロ名の一致、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴（manifest）を確認 → Project の README と所属する Area の README の写しを `ai/ctx/`（`README.md`、`area-README.md`）に置く（Area の README が 16 KiB を超えると知らせる）→ 部屋の `~/.claude.json` で `/mnt/room/<名>` を信頼済みにする（信頼の確認を省く。2026-10-19）→ `ai/` を `/mnt/room/<名>` に root でマウントし、`in/` を読み取り専用に → 部屋で AI を起動（一般ユーザー）→ **必ず**アンマウントして、マウント点を消し、残りを確認 → 変更の一覧と、追跡されずに無視されているファイルの警告 |
 | （`start` の中） | 共有知の写し（方式 A）: `<Vault>/resources/` の `AGENTS.md`、`workflow-kit/`（`workflow-kit/room/` は `README.md` だけ。コード・テスト・設定は送らない。2026-10-17）、`exmem/{AGENTS.md,README.md,tags.md,lessons/}`、`guides/` を tar.gz にして、部屋の `~/shared` に読み取り専用で送る（起動のたびに入れ替え。途中では更新しない）。基準コミット（と未コミットの変更の有無）を manifest の `shared` に記録し、`~/shared/ROOM.md` に案内を置く。あわせて、部屋の `~/.claude/CLAUDE.md`（Claude Code が作業ディレクトリによらず読む）に `ROOM.md` への案内を、目印（`room-shared:begin`〜`end`）で囲んだ範囲だけ入れ替えて置く（ほかの内容は変えない）。`resources/` が無ければ送らない。部屋の `~/.claude/CLAUDE.md` に案内を、`~/.claude/settings.json` に `Read(~/shared/**)` の許可（読み取りだけ）を足す |
 | `close` | マウントが無いこと、`ai/out/close.md`（部屋の AI が書く）を確認 → 【案件】を Area の `ai/docs/inbox.md` に追記（重複しない）→ README を `status: done`、`closed`、`reap_after` に → Area の一覧を「完了した Project」に → ファイル単位の `git mv` で `archives/` へ（追跡外の `_noai/` も移す） |
 | `mask` | `_noai/raw/` の新しい・変わった原本（csv・md・txt・xlsx・pptx）を、`_noai/mask.toml` に従ってマスクし `ai/in/` へ。manifest に原本・マスク後・`mask.toml` のハッシュと対応表の版を記録。語が残っていれば止める（`start` の最初でも自動で行う） |
@@ -82,9 +82,11 @@ WSL は差し替えて、一時ディレクトリの git で行う（実際の�
 - xlsx: zip の中の `.xml` / `.rels` / `.vml` を置換。作成者・最終更新者・会社・管理者は常に空にする。プリンタ設定（`printerSettings*.bin`）は削除する。語が複数の書式（run）にまたがる文字列は、1つの run にまとめてから置換する（警告に出る）。点検は全 part と、run を連結した文字列で行う。
 - csv: `utf-8-sig` → `cp932` の順に読み、`utf-8-sig` で書く。
 - 候補: 法人格・敬称・メール・電話・URL・郵便番号の形は、対応表に無くても警告に出す（止めない）。
+- 復元: 説明文などで `⟦` `⟧` が壊れた形（例: `⟦CUST_nnn⟧`）で残ると止まる。部屋の `ROOM.md` に、書かないよう指示してある（2026-10-19）。
 - 復元: csv・md・txt・bas・json・html は文字列、xlsx は zip。`ai/out/close.md` と `ai/out/stock/` は対象外。ピボットは Excel の「すべて更新」が要る（人が PC で）。
 
 ## 未実装
 
 - reap で、消す前に会話履歴を記録に写す（今は写さずに消す）
+- `/home/ai` を開いたときの会話履歴（`-home-ai`）は、Project に紐づかないので `reap` は消さない。残っていれば警告するだけ
 - 部屋の作成のうち、ログイン（人の操作）の自動化
