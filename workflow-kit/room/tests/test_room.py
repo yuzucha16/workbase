@@ -736,6 +736,87 @@ class MaskIntegrationTest(unittest.TestCase):
             self.assertFalse(wsl.mounted)
 
 
+class DataModeTest(unittest.TestCase):
+    def open_with(self, tmp, wsl=None, **kw):
+        v = make_vault(tmp)
+        c = ctx_for(v, wsl)
+        d = dict(name="proj-a", area="area-x", type="doc", boundary=None, commit=True)
+        d.update(kw)
+        room.cmd_open(c, argparse.Namespace(**d))
+        return v, c, v / "projects/proj-a"
+
+    def args(self, **kw):
+        d = dict(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=True)
+        d.update(kw)
+        return argparse.Namespace(**d)
+
+    def test_open_creates_dirs_per_mode(self):
+        for data, want, not_want in (("none", ["user"], ["raw", "map", "final"]),
+                                     ("mask", ["raw", "map", "user"], ["final"]),
+                                     ("restore", ["raw", "map", "final", "user"], [])):
+            with tempfile.TemporaryDirectory() as tmp:
+                _v, _c, p = self.open_with(tmp, data=data)
+                for d in want:
+                    self.assertTrue((p / "_noai" / d).is_dir(), (data, d))
+                for d in not_want:
+                    self.assertFalse((p / "_noai" / d).exists(), (data, d))
+                self.assertIn(f"data: {data}\n", (p / "README.md").read_text(encoding="utf-8"))
+
+    def test_defaults_restore_and_dev_none(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _v, _c, p = self.open_with(tmp)
+            self.assertIn("data: restore\n", (p / "README.md").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as tmp:
+            _v, c, p = self.open_with(tmp, type="dev")
+            self.assertIn("data: none\n", (p / "README.md").read_text(encoding="utf-8"))
+            self.assertFalse(any("警告" in m for m in c.msgs))
+
+    def test_dev_with_mask_warns(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _v, c, p = self.open_with(tmp, type="dev", data="mask")
+            self.assertTrue(any("仕様外" in m for m in c.msgs))
+
+    def test_missing_data_means_restore(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _v, c, p = self.open_with(tmp)
+            text = (p / "README.md").read_text(encoding="utf-8").replace("data: restore\n", "")
+            (p / "README.md").write_text(text, encoding="utf-8", newline="\n")
+            self.assertEqual(room.Project.load(c, "proj-a").data, "restore")
+
+    def test_none_refuses_raw_originals(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _v, c, p = self.open_with(tmp, data="none")
+            (p / "_noai/raw").mkdir()
+            (p / "_noai/raw/a.csv").write_text("x\n", encoding="utf-8")
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_start(c, self.args())
+            self.assertIn("data: none", str(cm.exception))
+
+    def test_mask_only_masks_and_does_not_restore(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            _v, c, p = self.open_with(tmp, wsl, data="mask")
+            (p / "_noai/mask.toml").write_text('[terms.CUST]\nacme = ["アクメ商事"]\n', encoding="utf-8", newline="\n")
+            (p / "_noai/raw/議事録.md").write_text("アクメ商事との定例\n", encoding="utf-8", newline="\n")
+            seen = {}
+
+            def ai():
+                seen["in"] = (p / "ai/in/議事録.md").read_text(encoding="utf-8")
+                (p / "ai/work/要点.md").write_text("⟦CUST_001⟧ の要点\n", encoding="utf-8", newline="\n")
+                (p / "ai/out/tool.py").write_text("print(1)\n", encoding="utf-8", newline="\n")  # 復元できない形式でも止まらない
+            wsl.on_interactive = ai
+            room.cmd_start(c, self.args())
+            self.assertNotIn("アクメ", seen["in"])
+            self.assertFalse((p / "_noai/final").exists())
+            self.assertFalse(wsl.mounted)
+
+    def test_restore_command_refuses_unless_restore_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _v, c, _p = self.open_with(tmp, data="mask")
+            with self.assertRaises(room.RoomError):
+                room.cmd_restore(c, argparse.Namespace(name="proj-a", force=False))
+
+
 class SharedPushTest(unittest.TestCase):
     def test_push_records_base_commit_and_sends_tar(self):
         import io

@@ -30,7 +30,15 @@ MOUNT_ROOT = "/mnt/room"
 ROOM_UID = 1000
 REAP_DAYS_DEFAULT = 14
 GITIGNORE_REQUIRED = ("**/_noai/", "!**/ai/out/")
-AI_DIRS = ("ai/docs", "ai/in", "ai/work", "ai/out", "ai/records", "_noai/raw", "_noai/map", "_noai/final")
+AI_DIRS = ("ai/docs", "ai/in", "ai/work", "ai/out", "ai/records")
+# data: データの扱い。none = マスクしない / mask = マスクだけ（復元しない）/ restore = マスクして復元する。
+# user/ は、人だけが使う仮置き（予約名。room は触らない）。
+DATA_MODES = ("none", "mask", "restore")
+NOAI_DIRS = {
+    "none": ("_noai/user",),
+    "mask": ("_noai/raw", "_noai/map", "_noai/user"),
+    "restore": ("_noai/raw", "_noai/map", "_noai/final", "_noai/user"),
+}
 AI_KEEP = ("ai/in", "ai/work", "ai/records")
 
 
@@ -178,10 +186,16 @@ class Project:
         if not p.readme.exists():
             raise RoomError(f"Project が無い: {p.dir}")
         p.fm = read_frontmatter(p.readme)
+        p.data = p.fm.get("data") or "restore"  # data: が無い既存の Project は、今までどおり復元する
+        if p.data not in DATA_MODES:
+            raise RoomError(f"{p.readme} の data: が不正: {p.data!r}（{' / '.join(DATA_MODES)}）")
         p.area = p.fm.get("area")
         if not p.area:
             raise RoomError(f"{p.readme} の frontmatter に area: が無い")
         return p
+
+    def type_is_dev_nonnone(self):
+        return self.fm.get("type") == "dev" and self.data != "none"
 
     @property
     def distro(self):
@@ -381,6 +395,7 @@ README_TEMPLATE = """---
 status: active
 area: {area}
 type: {type}
+data: {data}
 review: 仮置き（未承認）
 created: {today}
 updated: {today}
@@ -469,11 +484,14 @@ def cmd_open(ctx, a):
     p = Project(ctx, a.name)
     p.area = a.area
     p.dir.mkdir(parents=True)
-    for d in AI_DIRS:
+    data = getattr(a, "data", None) or ("none" if a.type == "dev" else "restore")
+    if a.type == "dev" and data != "none":
+        ctx.say(f"警告: type: dev で data: {data} は仕様外（dev は data: none だけ）。作るが、動作は保証しない")
+    for d in AI_DIRS + NOAI_DIRS[data]:
         (p.dir / d).mkdir(parents=True, exist_ok=True)
     for d in AI_KEEP:
         (p.dir / d / ".gitkeep").write_text("", encoding="utf-8")
-    p.readme.write_text(README_TEMPLATE.format(area=a.area, type=a.type, today=ctx.today(), name=a.name),
+    p.readme.write_text(README_TEMPLATE.format(area=a.area, type=a.type, data=data, today=ctx.today(), name=a.name),
                         encoding="utf-8", newline="\n")
     entry = f"- [[projects/{a.name}/README|{a.name}]]（{ctx.today()} 開始）"
     area_readme.write_text(add_area_entry(area_readme.read_text(encoding="utf-8"), "## 進行中の Project", entry),
@@ -841,7 +859,14 @@ def push_shared(ctx, p):
 def cmd_start(ctx, a):
     p = Project.load(ctx, a.name)
     boundary = preflight(ctx, p)
-    masked = mask_project(ctx, p, yes=a.yes)
+    if p.data == "none":
+        if maskkit.list_files(noai_dir(p) / "raw"):
+            raise RoomError("data: none だが _noai/raw に原本がある。README の data: を mask か restore にする")
+        masked = 0
+    else:
+        masked = mask_project(ctx, p, yes=a.yes)
+    if p.type_is_dev_nonnone():
+        ctx.say(f"警告: type: dev で data: {p.data} は仕様外（dev は data: none だけ）")
     if a.adopt:
         n = adopt_in(ctx, p)
         ctx.say(f"ai/in の {n} ファイルを、この Project の入力として manifest に記録した")
@@ -879,7 +904,7 @@ def cmd_start(ctx, a):
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
-    restored, restore_problems = restore_project(ctx, p)
+    restored, restore_problems = restore_project(ctx, p) if p.data == "restore" else (0, [])
     if restored:
         ctx.say(f"復元した: {restored} ファイル → _noai/final")
     ignored = unexpected_ignored(ctx, p)
@@ -997,6 +1022,8 @@ def restore_project(ctx, p, force=False):
 def cmd_mask(ctx, a):
     p = Project.load(ctx, a.name)
     preflight(ctx, p)
+    if p.data == "none":
+        raise RoomError("data: none の Project はマスクしない（README の data: を mask か restore にする）")
     k = mask_project(ctx, p, yes=a.yes)
     if k == 0:
         ctx.say("マスクするものは無い（原本が無いか、変更が無い）")
@@ -1004,6 +1031,8 @@ def cmd_mask(ctx, a):
 
 def cmd_restore(ctx, a):
     p = Project.load(ctx, a.name)
+    if p.data != "restore":
+        raise RoomError(f"data: {p.data} の Project は復元しない（復元するなら README の data: を restore にする）")
     k, problems = restore_project(ctx, p, force=a.force)
     if problems:
         raise RoomError("復元を止めた（_noai/final は変更していない）:\n  " + "\n  ".join(problems))
@@ -1372,6 +1401,7 @@ def build_parser():
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
     o.add_argument("--type", default="doc", choices=["doc", "dev", "dev-env", "dev-test", "research"])
+    o.add_argument("--data", choices=DATA_MODES, help="データの扱い: none（マスクしない）/ mask（マスクだけ）/ restore（マスクして復元）。既定は type: dev が none、それ以外が restore")
     o.add_argument("--boundary", help="Area に boundary: が無いときに付ける印")
     o.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
     o.add_argument("--no-commit", dest="commit", action="store_false", help="初期状態をコミットしない（既定はコミットする）")
