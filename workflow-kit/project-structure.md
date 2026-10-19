@@ -16,7 +16,7 @@
 | `ai/work/` | 中間成果物、下書き、使い捨てのスクリプト | 読み書き |
 | `ai/out/` | 最終成果物 `<成果物名>/`。予約名: `readme-draft.md` `close.md` `stock/`（成果物の名前にしない） | 読み書き |
 | `ai/records/` | 実行記録、AI への指示の記録 | 読み書き |
-| `_noai/` | 原本 `raw/`、対応表 `map/`、復元済みの成果物 `final/`、`mask.toml`。追跡しない | 見えない |
+| `_noai/` | 原本 `raw/`、対応表 `map/`、復元済みの成果物 `final/`、`mask.toml`、人だけの仮置き `user/`。`data:`（`none` / `mask` / `restore`）に応じて作る（`room/README.md`）。追跡しない | 見えない |
 
 種類別の置き場（同じ表を、`ai/` の下に読み替えたもの。旧: `drafts/` `refs/` `src/` `sources/` `report.md`）:
 

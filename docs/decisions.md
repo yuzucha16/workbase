@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】マスクの対象に pptx と md・txt を足し、Project に `data:`（none / mask / restore）を持たせた（2026-10-19）
+- 決めたこと（ユーザー）: ① マスクの対象に pptx と md・txt を足す（議事録・事業戦略のような資料の要点・アクション抽出が主な用途。docx は不要）。② マスクしない作業、マスクだけで復元しない作業があるので、Project の README に `data:` を持たせる（`none` / `mask` / `restore`。`type` とは別の軸）。③ `type: dev` は `data: none` だけを仕様にし、`mask` / `restore` は仕様外として警告する。④ `_noai/` の名前は変えず、`user/`（人だけの仮置き。予約名）を `raw/` `map/` `final/` に足す。
+- 根拠: 使わない型で `_noai/` の使い方が分からず、ディレクトリが深くなった（ユーザーが PC1 で試して）。マスクだけの作業は、読み手が本人だけなので復元が要らない。`_noai` は境界を名前で示し、`.gitignore` と deny が依存するので、名前は変えない（30 ファイル、約 160 か所）。
+- 実装: `maskkit.py`（pptx は段落の run をまたぐ語を先頭の run に寄せて置換、縮小画像を削除）、`room.py`（`open --data`、`start` / `mask` / `restore` が `data:` で分岐）、テスト。`data:` が無い既存の Project は `restore`。
+- 範囲外（先送り）: `restore` で未知の形式（`.py` など）を、プレースホルダーが無ければそのまま写す直し（`dev` を `none` だけにしたので不要になった）。見直しの条件: `dev` で実データを使う作業が出たとき。実機（PowerPoint の実資料）での確認は未了。
+
 ### 【汎用】`room init` に、証明書（`--ca-cert`）、Node.js 24、`aws-key`、`shell` を足した（2026-10-19）
 - 決めたこと: PC1（TLS 検査のあるネットワーク）で `init` の `curl` が証明書エラー（60）で止まった件の対応。① `wsl.exe` に `WSLENV` を渡さない（ユーザーが原因の調査に同意。修正は「承認します」で確定）。② `init --ca-cert <PEM、5枚まで>` で、会社のルート証明書を root が `/usr/local/share/ca-certificates/` へ入れる（指定が無ければ入れない。秘密鍵が混ざる・多すぎると、部屋を触る前に止まる。ユーザーの承認）。③ Node.js 24 を、公式の tarball をチェックサム確認つきで `/usr/local` へ（ユーザーの依頼。Zed の Agent の `npx` が 22 以上を要るため）。④ `aws-key <Area> --profile <名前>` で、部屋の `~/.aws/credentials` に、秘密を標準入力で渡す（ユーザーが「credential を作るコマンドを」と依頼）。⑤ `shell <Area>` で、`WSLENV` を外して入る（ユーザーの「failed to translate をなくせますか」への対応。明示の承認は取っていない。次回の確認で外す）。
 - 根拠: 実機で確認した事実は Gotchas の同日 4 項。部屋は `/mnt/c` と interop を切るので、Windows 側の CA bundle を「指定する」ことはできない。証明書を部屋の中へ入れるしかない。却下案: Windows の証明書ストア丸ごと（信頼先が広がる）、環境変数でツールごとに指す（漏れが出て、`ai` が書き換えられる場所に置く）、NodeSource（取得したスクリプトを root で実行する）、長期キーの環境変数での受け渡し（Zed 経由では届かない）。

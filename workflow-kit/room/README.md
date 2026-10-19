@@ -9,7 +9,7 @@ AI 作業部屋の操作（`open` / `start` / `close` / `umount` / `mask` / `res
 ```powershell
 cd <このディレクトリ>
 uv run room.py init <Area> [--boundary <印>] [--resume] [--no-commit]
-uv run room.py open <Project> --area <Area> [--type doc|dev|dev-env|dev-test|research] [--boundary <印>] [--no-commit]
+uv run room.py open <Project> --area <Area> [--type doc|dev|dev-env|dev-test|research] [--data none|mask|restore] [--boundary <印>] [--no-commit]
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--adopt] [--commit]
 uv run room.py close <Project> [--commit]
 uv run room.py umount --area <Area>
@@ -25,7 +25,7 @@ uv run room.py umount --area <Area>
 | `aws-key` | `aws-key <Area> --profile <名前>`: 部屋の `~/.aws/credentials` に、Bedrock 用のキーを入れる（同名の節は置き換え、ほかの節は残す。権限 600）。アクセスキー ID は入力、秘密と `AWS_SESSION_TOKEN`（一時キーのときだけ）は画面に出さずに受け取り、標準入力で部屋へ渡す（コマンドラインにも履歴にも残さない）。AI からは読める場所なので、Bedrock の権限だけのユーザーにして、予算アラートを置く。Zed の `agent_servers` の `env` に `AWS_PROFILE=<名前>` を書いて使う（環境変数は Zed 経由では引き継がれないため。実機確認は未了） |
 | `shell <Area>` | 部屋に入る（`wsl -d room-<Area>` の代わり）。`WSLENV` を外して入るので、Windows の `WSLENV` に `/p` 付きのパスがあっても、入るたびに「failed to translate」が出ない（automount を切った部屋では、そのパスを変換できないため） |
 | `reap [名前]` | close から期限（`reap_after`。既定14日）が来て、まだ `reaped` の無い `archives/` の Project について、部屋の会話履歴（`~/.claude/projects/-mnt-room-<名>/`）と `~/tmp/<名>` を消し、README に `reaped: <日付>` を付ける。会話履歴は写さずに消す（復元は `exmem` や `ai/docs/` の記録で）。名前なしは期限切れの一覧を出して承認を求める（`--yes` で省略）。名前ありで期限前なら `--force`。名前が英数字・`_`・`-` 以外なら止まる。`close` の終わりにも一覧を出す（端末のときは承認を求める）。Windows 側の `archives/` は消さない |
-| `open` | works の `.gitignore`（`**/_noai/` と `!**/ai/out/`）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final}` を作り、Area の一覧に足す |
+| `open` | works の `.gitignore`（`**/_noai/` と `!**/ai/out/`）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`（`data:` つき）、`ai/{docs,in,work,out,records}`、`_noai/` の下は `data:` に応じたディレクトリ（下の表）を作り、Area の一覧に足す |
 | `start` | `area:` とディストロ名の一致、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴（manifest）を確認 → Project の README と所属する Area の README の写しを `ai/ctx/`（`README.md`、`area-README.md`）に置く（Area の README が 16 KiB を超えると知らせる）→ `ai/` を `/mnt/room/<名>` に root でマウントし、`in/` を読み取り専用に → 部屋で AI を起動（一般ユーザー）→ **必ず**アンマウントして、マウント点を消し、残りを確認 → 変更の一覧と、追跡されずに無視されているファイルの警告 |
 | （`start` の中） | 共有知の写し（方式 A）: `<Vault>/resources/` の `AGENTS.md`、`workflow-kit/`（`workflow-kit/room/` は `README.md` だけ。コード・テスト・設定は送らない。2026-10-17）、`exmem/{AGENTS.md,README.md,tags.md,lessons/}`、`guides/` を tar.gz にして、部屋の `~/shared` に読み取り専用で送る（起動のたびに入れ替え。途中では更新しない）。基準コミット（と未コミットの変更の有無）を manifest の `shared` に記録し、`~/shared/ROOM.md` に案内を置く。あわせて、部屋の `~/.claude/CLAUDE.md`（Claude Code が作業ディレクトリによらず読む）に `ROOM.md` への案内を、目印（`room-shared:begin`〜`end`）で囲んだ範囲だけ入れ替えて置く（ほかの内容は変えない）。`resources/` が無ければ送らない。部屋の `~/.claude/CLAUDE.md` に案内を、`~/.claude/settings.json` に `Read(~/shared/**)` の許可（読み取りだけ）を足す |
 | `close` | マウントが無いこと、`ai/out/close.md`（部屋の AI が書く）を確認 → 【案件】を Area の `ai/docs/inbox.md` に追記（重複しない）→ README を `status: done`、`closed`、`reap_after` に → Area の一覧を「完了した Project」に → ファイル単位の `git mv` で `archives/` へ（追跡外の `_noai/` も移す） |
@@ -36,6 +36,19 @@ uv run room.py umount --area <Area>
 | `umount` | 部屋に残った `/mnt/room/*` のマウントを外す |
 
 `start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。待つ間、部屋が止まってマウントが消えないよう、部屋で `sleep infinity` を動かす（実機で確認済み: 2026-10-18。待つ間マウントは残り、Enter で戻る。`wsl.exe` はコンソールから切り離して起こす）。
+
+## データの扱い（`data:`。2026-10-19）
+
+Project の README の frontmatter `data:` で決める（`open --data`。既定は `type: dev` が `none`、それ以外が `restore`。`data:` が無い既存の Project は `restore`）。`type` とは別の軸。
+
+| `data:` | 使う場面 | `_noai/` の中身 | `start` / `mask` / `restore` |
+|---|---|---|---|
+| `none` | 機密なし。実データを使わない | `user/` だけ | マスクも復元もしない。`_noai/raw/` に原本があれば止める |
+| `mask` | 顧客情報を含む資料の要約・抽出（読むのは本人だけ） | `raw/` `map/` `user/` | マスクだけ。復元しない（`final/` は無い）。成果物は `ai/work/` でも `ai/out/` でもよい |
+| `restore` | マスクして、あとで実データに戻す | `raw/` `map/` `final/` `user/` | マスクして、終了時に復元（今までどおり） |
+
+- `user/` は人だけが使う仮置き（予約名。`room` は触らない）。`_noai/` 全体が追跡外で、AI にも見せない。
+- `type: dev` は `data: none` だけが仕様。`dev` で `mask` / `restore` にすると、`open` と `start` が警告する（止めない）。
 
 ## 実装の決まり
 
