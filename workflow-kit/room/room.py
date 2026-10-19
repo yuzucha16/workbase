@@ -503,6 +503,22 @@ def step_script(ctx, distro, title, text, root=False):
     return out
 
 
+# Node.js: apt の版は古い（Ubuntu 24.04 は 18）。Zed の ACP エージェント（npx）が 22 以上を要る。公式の tarball を、チェックサムを確かめて /usr/local へ展開する（取得したスクリプトは実行しない）
+NODE_INSTALL = r"""set -e
+if command -v node >/dev/null 2>&1 && node -v | grep -qE '^v(2[2-9]|[3-9][0-9])\.'; then node -v; exit 0; fi
+case "$(uname -m)" in x86_64) A=x64;; aarch64) A=arm64;; *) echo "未対応のアーキテクチャ" >&2; exit 1;; esac
+D=$(mktemp -d); cd "$D"
+B=https://nodejs.org/dist/latest-v24.x
+curl -fsSLO "$B/SHASUMS256.txt"
+F=$(grep -o "node-v24[^ ]*-linux-$A.tar.xz" SHASUMS256.txt | head -1)
+[ -n "$F" ]
+curl -fsSLO "$B/$F"
+grep " $F\$" SHASUMS256.txt | sha256sum -c -
+tar -xJf "$F" -C /usr/local --strip-components=1 --exclude='*.md' --exclude=LICENSE
+cd /; rm -rf "$D"
+"""
+NPM_CAFILE = "npm config set cafile /etc/ssl/certs/ca-certificates.crt\n"  # npm は証明書ストアを見ない。システムのバンドル（入れた勤務先の証明書を含む）を指す
+
 CA_MAX_CERTS = 5  # need to know: 勤務先のルート証明書など、少数だけ。OS の証明書ストア丸ごとは入れない
 CA_DEST = "/usr/local/share/ca-certificates/room-extra-ca.crt"
 
@@ -574,7 +590,7 @@ def cmd_init(ctx, a):
     got = dict(l.strip().split("=", 1) for l in out.splitlines() if "=" in l)
     if got != {"user": "ai", "c": "0", "cmd": "no", "sudo": "no"}:
         raise RoomError(f"分離の確認が目安と違う（{got}）。user=ai, c=0, cmd=no, sudo=no が目安。道具は入れていない")
-    ctx.say("道具を入れる（curl、rg、uv、Claude Code。配布元のスクリプトをそのまま実行する）")
+    ctx.say("道具を入れる（curl、rg、Node.js、uv、Claude Code。配布元のスクリプトをそのまま実行する）")
     step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep）",
                 "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep\n", root=True)
     if ca_pem:
@@ -583,12 +599,14 @@ def cmd_init(ctx, a):
             ctx.say(f"  SHA-256 {p}")
         step_script(ctx, distro, "update-ca-certificates",
                     f"cat > {CA_DEST} <<'EOF'\n{ca_pem}EOF\nchmod 644 {CA_DEST}\nupdate-ca-certificates\n", root=True)
+    step_script(ctx, distro, "Node.js 24（公式の tarball、チェックサム確認つき）", NODE_INSTALL, root=True)
+    step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
     step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
     step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
     step_script(ctx, distro, "PATH",
                 f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
     ver = step_script(ctx, distro, "道具の確認",
-                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nrg --version | head -1\n')
+                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\n')
     ctx.say(ver.rstrip())
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
             f"  wsl -d {distro}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
