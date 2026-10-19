@@ -8,6 +8,7 @@
 - 決めたこと（ユーザー）: ① マスクの対象に pptx と md・txt を足す（議事録・事業戦略のような資料の要点・アクション抽出が主な用途。docx は不要）。② マスクしない作業、マスクだけで復元しない作業があるので、Project の README に `data:` を持たせる（`none` / `mask` / `restore`。`type` とは別の軸。`open` の省略時は全 type で `none`。`data:` が無い既存の Project は、動きを保つため `restore`）。③ `type: dev` は `data: none` だけを仕様にし、`mask` / `restore` は仕様外として警告する。④ `_noai/` の名前は変えず、`user/`（人だけの仮置き。予約名）を `raw/` `map/` `final/` に足す。
 - 根拠: 使わない型で `_noai/` の使い方が分からず、ディレクトリが深くなった（ユーザーが PC1 で試して）。マスクだけの作業は、読み手が本人だけなので復元が要らない。`_noai` は境界を名前で示し、`.gitignore` と deny が依存するので、名前は変えない（30 ファイル、約 160 か所）。
 - 実装: `maskkit.py`（pptx は段落の run をまたぐ語を先頭の run に寄せて置換、縮小画像を削除）、`room.py`（`open --data`、`start` / `mask` / `restore` が `data:` で分岐）、テスト。`data:` が無い既存の Project は `restore`。
+- 運用で試すこと（ユーザー、同日）: Area 共通のマスク表は `areas/<Area>/_noai/` に置き、新しい Project の `mask.toml` へコピーして使う（仕様は足さない）。Area の README に語を書かない（`ai/ctx/area-README.md` として部屋の AI が読むため）。要約の戻し先は `areas/<Area>/ai/docs/`（マスク後の語だけ。仮置き）。マスクの使い方は `restore` と違い、期間ごとの Project に資料を積んで要約・分析し、Area の共通知識に戻す形。
 - 範囲外（先送り）: `restore` で未知の形式（`.py` など）を、プレースホルダーが無ければそのまま写す直し（`dev` を `none` だけにしたので不要になった）。見直しの条件: `dev` で実データを使う作業が出たとき。実機（PowerPoint の実資料）での確認は未了。
 
 ### 【汎用】`room init` に、証明書（`--ca-cert`）、Node.js 24、`aws-key`、`shell` を足した（2026-10-19）
