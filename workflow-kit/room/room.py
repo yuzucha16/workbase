@@ -6,6 +6,7 @@
 """
 import argparse
 import datetime
+import getpass
 import gzip
 import hashlib
 import io
@@ -92,13 +93,16 @@ def git(vault, *args, check=True):
 
 
 class Ctx:
-    def __init__(self, vault, wsl=None, today=None, now=None, say=print, reap_days=REAP_DAYS_DEFAULT, settle=3):
+    def __init__(self, vault, wsl=None, today=None, now=None, say=print, reap_days=REAP_DAYS_DEFAULT, settle=3,
+                 ask=input, ask_secret=getpass.getpass):
         self.vault = Path(vault)
         self.wsl = wsl or Wsl()
         self._today = today
         self._now = now
         self.say = say
         self.reap_days = reap_days
+        self.ask = ask
+        self.ask_secret = ask_secret  # 入力を画面に出さない
         self.settle = settle  # アンマウント直後は、マウントが残って見えることがあるので待つ秒数
 
     def today(self):
@@ -610,6 +614,7 @@ def cmd_init(ctx, a):
     ctx.say(ver.rstrip())
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
             f"  wsl -d {distro}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
+            f"  Bedrock を使うなら: room aws-key {a.area} --profile <名前>（キーを入れる）\n"
             f"  確認: wsl -d {distro} -- bash -ic 'cd ~ && claude -p \"Reply with exactly: ok\"'")
     rel = f"areas/{a.area}/README.md"
     if getattr(a, "commit", False) and git(ctx.vault, "status", "--porcelain", "--", rel).strip():
@@ -1299,6 +1304,47 @@ def cmd_reap(ctx, a):
         ctx.say("期限が来ていて、まだ消していない Project は無い")
 
 
+# ---------- aws-key（部屋の ~/.aws/credentials に、Bedrock 用のキーを入れる） ----------
+
+AWS_PROFILE_RE = re.compile(r"^[A-Za-z0-9_.-]{1,64}$")
+AWS_KEY_ID_RE = re.compile(r"^[A-Z0-9]{16,128}$")
+AWS_SECRET_RE = re.compile(r"^\S{20,}$")
+AWS_TOKEN_RE = re.compile(r"^\S{20,}$")
+
+
+def aws_credentials_script(profile):
+    """標準入力の [profile] の節で、~/.aws/credentials の同名の節を置き換える（ほかの節は残す。権限 600）。"""
+    p = shlex.quote(f"[{profile}]")
+    return (f"umask 077; mkdir -p \"$HOME/.aws\"; f=\"$HOME/.aws/credentials\"; touch \"$f\"; chmod 600 \"$f\"\n"
+            f"t=$(mktemp) && cat > \"$t\" && "
+            f"awk -v p={p} '/^\\[/{{s=($0==p)}} !s' \"$f\" > \"$f.new\" && cat \"$t\" >> \"$f.new\" && "
+            f"mv \"$f.new\" \"$f\"; rm -f \"$t\"; chmod 600 \"$f\"")
+
+
+def cmd_aws_key(ctx, a):
+    """部屋の ~/.aws/credentials に、プロファイルのキーを入れる。秘密は画面に出さず、標準入力で部屋へ渡す（コマンドラインにも履歴にも残さない）。"""
+    distro = f"room-{a.area}"
+    if distro not in ctx.wsl.distros():
+        raise RoomError(f"部屋が無い: {distro}。先に room init {a.area}")
+    if not AWS_PROFILE_RE.match(a.profile):
+        raise RoomError(f"プロファイル名が不正: {a.profile}（英数字、_ . - だけ）")
+    key = ctx.ask("AWS_ACCESS_KEY_ID: ").strip()
+    secret = ctx.ask_secret("AWS_SECRET_ACCESS_KEY（画面に出ない）: ").strip()
+    token = ctx.ask_secret("AWS_SESSION_TOKEN（一時キーのときだけ。長期キーなら空のまま Enter）: ").strip()
+    if not AWS_KEY_ID_RE.match(key):
+        raise RoomError("AWS_ACCESS_KEY_ID の形が違う（英大文字と数字だけ、16 字以上）。何も書き込んでいない")
+    if not AWS_SECRET_RE.match(secret):
+        raise RoomError("AWS_SECRET_ACCESS_KEY の形が違う（空白なし、20 字以上）。何も書き込んでいない")
+    if token and not AWS_TOKEN_RE.match(token):
+        raise RoomError("AWS_SESSION_TOKEN の形が違う。何も書き込んでいない")
+    body = f"[{a.profile}]\naws_access_key_id={key}\naws_secret_access_key={secret}\n" + (f"aws_session_token={token}\n" if token else "")
+    rc, _out, err = ctx.wsl.push(distro, body.encode("utf-8"), aws_credentials_script(a.profile))
+    if rc != 0:
+        raise RoomError(f"~/.aws/credentials に書けなかった（終了コード {rc}）: {err.strip()[-300:]}")
+    ctx.say(f"書いた: {distro} の ~/.aws/credentials の [{a.profile}]（権限 600、{'一時キー' if token else '長期キー'}）。AI からは読める場所なので、"
+            "Bedrock の権限だけのユーザーにし、予算アラートを置く。環境変数側は AWS_PROFILE=" + a.profile)
+
+
 # ---------- main ----------
 
 def build_parser():
@@ -1336,6 +1382,8 @@ def build_parser():
     i.add_argument("--ca-cert", help="部屋に入れる勤務先のルート証明書（PEM、最大5枚）。TLS 検査のあるネットワークで curl が証明書エラー（60）になるときに指定する。既定は入れない")
     i.add_argument("--boundary", help="Area が無い（または boundary: が無い）ときに付ける印（例: internal、顧客を表す名前。既定値は無い）")
     i.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="Area の作成をコミットしない（既定はコミットする）")
+    ak = sub.add_parser("aws-key", help="部屋の ~/.aws/credentials に、Bedrock 用のキーを入れる（入力は画面に出ない）")
+    ak.add_argument("area"); ak.add_argument("--profile", required=True, help="プロファイル名（例: n1-trial）。同名の節は置き換える")
     rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
     rp.add_argument("name", nargs="?"); rp.add_argument("--yes", action="store_true")
     rp.add_argument("--force", action="store_true", help="期限前でも消す（名前を指定したとき）")
@@ -1349,7 +1397,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
-        {"init": cmd_init, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
+        {"init": cmd_init, "aws-key": cmd_aws_key, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
          "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)

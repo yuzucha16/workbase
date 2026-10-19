@@ -185,6 +185,49 @@ class WslEnvTest(unittest.TestCase):
         self.assertEqual(env["KEEP_ME"], "1")
 
 
+class AwsKeyTest(unittest.TestCase):
+    def ctx(self, tmp, answers, secrets, wsl):
+        v = Path(tmp) if (Path(tmp) / "areas").exists() else make_vault(tmp)
+        c = ctx_for(v, wsl)
+        c.ask = lambda _p: answers.pop(0)
+        c.ask_secret = lambda _p: secrets.pop(0)
+        return c
+
+    def run_cmd(self, c, area="area-x", profile="n1-trial"):
+        room.cmd_aws_key(c, argparse.Namespace(area=area, profile=profile))
+
+    def test_key_goes_through_stdin_not_the_command_line_or_messages(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            c = self.ctx(tmp, ["AKIAEXAMPLE0000000"], ["s" * 40, ""], wsl)
+            self.run_cmd(c)
+            distro, data, script = wsl.pushes[0]
+            self.assertEqual(distro, "room-area-x")
+            self.assertIn(b"[n1-trial]", data)
+            self.assertIn(b"aws_secret_access_key=" + b"s" * 40, data)
+            self.assertNotIn(b"aws_session_token", data)
+            self.assertNotIn("s" * 40, script)
+            self.assertIn("chmod 600", script)
+            self.assertFalse(any("s" * 40 in m or "AKIAEXAMPLE" in m for m in c.msgs))
+
+    def test_session_token_is_written_when_given(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            self.run_cmd(self.ctx(tmp, ["AKIAEXAMPLE0000000"], ["s" * 40, "t" * 60], wsl))
+            self.assertIn(b"aws_session_token=" + b"t" * 60, wsl.pushes[0][1])
+
+    def test_bad_input_and_missing_room_write_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for answers, secrets, profile, area in ((["bad key"], ["s" * 40, ""], "n1", "area-x"),
+                                                    (["AKIAEXAMPLE0000000"], ["short", ""], "n1", "area-x"),
+                                                    (["AKIAEXAMPLE0000000"], ["s" * 40, ""], "a b;rm", "area-x"),
+                                                    (["AKIAEXAMPLE0000000"], ["s" * 40, ""], "n1", "no-room")):
+                wsl = FakeWsl()
+                with self.assertRaises(room.RoomError):
+                    self.run_cmd(self.ctx(tmp, list(answers), list(secrets), wsl), area=area, profile=profile)
+                self.assertEqual(wsl.pushes, [])
+
+
 class InitTest(unittest.TestCase):
     def test_init_creates_room_configures_and_installs(self):
         with tempfile.TemporaryDirectory() as tmp:
