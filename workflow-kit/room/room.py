@@ -484,7 +484,7 @@ def cmd_open(ctx, a):
     p = Project(ctx, a.name)
     p.area = a.area
     p.dir.mkdir(parents=True)
-    data = getattr(a, "data", None) or ("none" if a.type == "dev" else "restore")
+    data = getattr(a, "data", None) or "none"
     if a.type == "dev" and data != "none":
         ctx.say(f"警告: type: dev で data: {data} は仕様外（dev は data: none だけ）。作るが、動作は保証しない")
     for d in AI_DIRS + NOAI_DIRS[data]:
@@ -1401,7 +1401,7 @@ def build_parser():
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
     o.add_argument("--type", default="doc", choices=["doc", "dev", "dev-env", "dev-test", "research"])
-    o.add_argument("--data", choices=DATA_MODES, help="データの扱い: none（マスクしない）/ mask（マスクだけ）/ restore（マスクして復元）。既定は type: dev が none、それ以外が restore")
+    o.add_argument("--data", choices=DATA_MODES, help="データの扱い: none（マスクしない）/ mask（マスクだけ）/ restore（マスクして復元）。既定は none")
     o.add_argument("--boundary", help="Area に boundary: が無いときに付ける印")
     o.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
     o.add_argument("--no-commit", dest="commit", action="store_false", help="初期状態をコミットしない（既定はコミットする）")

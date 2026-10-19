@@ -125,7 +125,7 @@ def ctx_for(v, wsl=None):
 def opened(tmp, wsl=None):
     v = make_vault(tmp)
     c = ctx_for(v, wsl)
-    room.cmd_open(c, argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+    room.cmd_open(c, argparse.Namespace(name="proj-a", area="area-x", type="doc", data="restore", boundary=None, commit=True))
     return v, c
 
 
@@ -325,7 +325,7 @@ class InitTest(unittest.TestCase):
             sh(v, "add", "other.txt")
             room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=True))
             self.assertEqual(self.git_out(v, "show", "--name-only", "--format=", "HEAD").split(), ["areas/area-y/README.md"])
-            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="doc", data="restore", boundary=None, commit=True))
             files = self.git_out(v, "show", "--name-only", "--format=", "HEAD").split()
             self.assertNotIn("other.txt", files)
             self.assertIn("projects/proj-a/README.md", files)
@@ -335,7 +335,7 @@ class InitTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             (v / "areas" / "area-x" / "memo.md").write_text("別の編集\n", encoding="utf-8")
-            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="doc", data="restore", boundary=None, commit=True))
             files = self.git_out(v, "show", "--name-only", "--format=", "HEAD").split()
             self.assertIn("areas/area-x/README.md", files)
             self.assertIn("projects/proj-a/README.md", files)
@@ -762,10 +762,12 @@ class DataModeTest(unittest.TestCase):
                     self.assertFalse((p / "_noai" / d).exists(), (data, d))
                 self.assertIn(f"data: {data}\n", (p / "README.md").read_text(encoding="utf-8"))
 
-    def test_defaults_restore_and_dev_none(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            _v, _c, p = self.open_with(tmp)
-            self.assertIn("data: restore\n", (p / "README.md").read_text(encoding="utf-8"))
+    def test_default_is_none_for_every_type(self):
+        for t in ("doc", "research"):
+            with tempfile.TemporaryDirectory() as tmp:
+                _v, _c, p = self.open_with(tmp, type=t)
+                self.assertIn("data: none\n", (p / "README.md").read_text(encoding="utf-8"))
+                self.assertFalse((p / "_noai/raw").exists())
         with tempfile.TemporaryDirectory() as tmp:
             _v, c, p = self.open_with(tmp, type="dev")
             self.assertIn("data: none\n", (p / "README.md").read_text(encoding="utf-8"))
@@ -779,7 +781,7 @@ class DataModeTest(unittest.TestCase):
     def test_missing_data_means_restore(self):
         with tempfile.TemporaryDirectory() as tmp:
             _v, c, p = self.open_with(tmp)
-            text = (p / "README.md").read_text(encoding="utf-8").replace("data: restore\n", "")
+            text = (p / "README.md").read_text(encoding="utf-8").replace("data: none\n", "")
             (p / "README.md").write_text(text, encoding="utf-8", newline="\n")
             self.assertEqual(room.Project.load(c, "proj-a").data, "restore")
 
