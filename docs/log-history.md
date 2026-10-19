@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-19（`room` の Ubuntu 26.04 と `data:` の3つの型の実機確認）
+- ユーザーが PC1 で確認した: ベースの Ubuntu 26.04 の部屋（`init`）と、`data:` の none / mask / restore の通しは OK。`data: mask` の pptx・txt の実データは別セッションで行う（Next Actions 42 に残す）。
+- 見つけた問題: `init office` で `wsl.exe --install` が完了前に戻り、設定が走らなかった。`--resume` で続きは通った。直しは未（Next Actions 44）。
+- 手順書の「実機の通しは未了」の注記を直した（`ai-room-setup.md`、`ai-room-setup-script.md`、`ai-room-setup-manual.md`、`lessons/ai-isolated-work-room.md`）。`aws-key`、`shell` は未確認のまま（項目 40）。
+- 単体テストは、全体で 2 分を超えるほど遅いだけで、止まってはいない（個別の実行で通った）。
+
 ### 2026-10-19（`review 消化`: 振り返りの施策と待ち行列の判断、inbox 6 件の `integrate`）
 - スクリーニング（サブエージェント 3 回）とユーザーの最終判断: `repos/` の受け渡しは保留 〜11-05。R-01・09・10・12 は却下、R-07・11 は採用、R-08 は保留 〜10-23（ベースの件を切り離し、前提の確認だけに絞る）。理由は `decisions.md` の同日の 2 項。
 - 反映: `topics/AGENTS.md` の「トピックを終わらせるとき」に突き合わせ（手順 0）と行き先の表（手順 1）を足した。`docs-rules.md` に恒常許可の書き方を足した（統合先の Open Questions の提案 2 件を、ユーザーが承認）。

@@ -19,7 +19,7 @@ tags:
 
 ## 対応バージョン表
 
-手順の確認日: 2026-10-18（実機。2.1 の Bedrock と `--ca-cert`・Node・`shell` は 2026-10-19、PC1 で一部を確認し、`aws-key` と `shell` は未確認）。Windows、WSL、Claude Code、uv、Zed のバージョンは、[[ai-room-setup]] の「対応バージョン表」を正とする（ここには書かない）。部屋のベースは Ubuntu 26.04（2026-10-19 に 24.04 から変更。実機の通しは未了）（`room.py` の `ROOM_BASE`）。
+手順の確認日: 2026-10-18（実機。2.1 の Bedrock と `--ca-cert`・Node・`shell` は 2026-10-19、PC1 で一部を確認し、`aws-key` と `shell` は未確認）。Windows、WSL、Claude Code、uv、Zed のバージョンは、[[ai-room-setup]] の「対応バージョン表」を正とする（ここには書かない）。部屋のベースは Ubuntu 26.04（2026-10-19 に 24.04 から変更。実機で確認済み: 2026-10-19）（`room.py` の `ROOM_BASE`）。
 
 ## 全体の流れ
 
