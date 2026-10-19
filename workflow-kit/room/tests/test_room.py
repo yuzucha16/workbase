@@ -201,6 +201,12 @@ class InitTest(unittest.TestCase):
                             [i for i, (t, _) in enumerate(scripts) if "/etc/wsl.conf" in t][0])
             self.assertEqual(wsl.terminated, ["room-area-x"])
             self.assertTrue(any("apt-get" in t and root for t, root in scripts))
+            idx = lambda key: [i for i, (t, _) in enumerate(scripts) if key in t][0]
+            node = idx("latest-v24.x")
+            self.assertTrue(scripts[node][1])  # root で入れる
+            self.assertIn("sha256sum -c", scripts[node][0])
+            self.assertLess(node, idx("astral.sh"))
+            self.assertIn("npm config set cafile", scripts[idx("npm config set cafile")][0])
 
     def test_init_refuses_existing_and_bad_isolation_stops_before_tools(self):
         with tempfile.TemporaryDirectory() as tmp:
