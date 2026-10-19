@@ -21,18 +21,17 @@
 ## Next Actions
 
 1. `room aws-key` を実機で通す。PC1 で、部屋の `~/.aws/credentials` への `touch` が `ai` で失敗する。原因は未特定。確かめる: `wsl -d room-<Area> -- sh -c 'id; echo $HOME; ls -ld $HOME $HOME/.aws; touch $HOME/.aws/credentials; echo $?'` の出力と `touch` のエラー文。手書きの `credentials` では、Zed の Agent の Bedrock 認証が通っている。（旧 40）
-2. `data:` の残り（旧 42）: ① `data: mask` の pptx・txt の実データの確認は、別セッションで行う。② 済み（10-19）: 3つの文書に `data:` の3つの型と `_noai/user/` を反映し、手順書 `ai-room-mask-summary.md` を足した（動作確認はユーザーが済み）。③ Area 共通のマスク表の置き場を `areas/<Area>/_noai/` で試す（仕様は足さない。Area の README には語を書かない）。
-3. 施策 R-2026-10-19-08 の検証: 新しい PC か部屋で、`ai-room-setup.md` 1 章の前提の 3 行どおりに、初回の `init` が通るか（採用済み 10-19。旧 41）。
-4. room の実機の確認の残り（旧 39）: ① 実データで `mask` の警告量 ③ `base_stale` ⑤ `restore` が `mapping.json` の欠け・食い違いで止まるか ⑥ `SharedPermissionTest` 2 件（Windows で落ちる既知の件）⑧ 部屋の AI が `stock` の下書きを書けるか。共有知の送付のサイズ（1.5MB、120 ファイル）は、増えたら測り直す。
-5. room の改善 4 件（旧 37）: ① `restore` が `⟦CUST_nnn⟧` の説明で止まる ② 新しい Project のたびの信頼の確認 ③ Zed を `/home/ai` で使うと履歴が `reap` されない ④ `close` が、README がひな形のままでも通る。実装前に場所・手段・呼び出し元を3行で見せる。
-6. 振り返り（旧 38、15、13）: 手順書 v5 で材料を集め直す実行（10-26 か同じ入力）、週次の使い方、施策 02〜05 の承認、改善5 の品質チェック3回、改善4 の使用回数（2/3）。
-7. 暫定の数値（旧 24）: 続ける・切るの約10万 / 約2万トークンを、本物のフック列で3回以上再実験する。Stop フックの費用記録（旧 29）を Zed を使う PC で実機確認する。
-8. 使いながら確かめる（旧 20、12、10、8）: 領域 × r/w 表と部屋の AI の `wrap` の差し替え、`user-manual.md` の補正策の手順書への反映、`dev-env` / `dev-test` の最初の使用、「変更のやり方」の最初の業務での使用。
+2. `data:` の残り（旧 42）: ① `data: mask` の pptx・txt の実データの確認は、別セッションで行う。② Area 共通のマスク表の置き場を `areas/<Area>/_noai/` で試す（仕様は足さない。Area の README には語を書かない）。
+3. room の実機の確認の残り（旧 39）: ① 実データで `mask` の警告量 ③ `base_stale` ⑤ `restore` が `mapping.json` の欠け・食い違いで止まるか ⑧ 部屋の AI が `stock` の下書きを書けるか。共有知の送付のサイズ（1.5MB、120 ファイル）は、増えたら測り直す。
+4. room の改善 3 件（旧 37）: ① `restore` が `⟦CUST_nnn⟧` の説明で止まる ② 新しい Project のたびの信頼の確認 ③ Zed を `/home/ai` で使うと履歴が `reap` されない。実装前に場所・手段・呼び出し元を3行で見せる。（④ `close` の README ひな形検査は 10-19 に実装済み）
+5. 振り返り（旧 38、15、13）: 手順書 v5 で材料を集め直す実行（10-26 か同じ入力）、週次の使い方、施策 02〜05 の承認、改善5 の品質チェック3回、改善4 の使用回数（2/3）。
+6. 暫定の数値（旧 24）: 続ける・切るの約10万 / 約2万トークンを、本物のフック列で3回以上再実験する。Stop フックの費用記録（旧 29）を Zed を使う PC で実機確認する。
+7. 使いながら確かめる（旧 20、12、10、8）: 領域 × r/w 表と部屋の AI の `wrap` の差し替え、`user-manual.md` の補正策の手順書への反映、`dev-env` / `dev-test` の最初の使用、「変更のやり方」の最初の業務での使用。
 
 ## Open Questions
 
-- Stop フックの記録の置き場: 既定は `~/claude-records/`。部屋の中だけ `ai/records/` にするか。実機確認（Next Actions 7）の後に決める。【保留 〜2026-10-25】
-- `remote` の type: 要否は項目 `dev-env` の実使用（Next Actions 8）の後に決める。【保留 〜2026-11-02】
+- Stop フックの記録の置き場: 既定は `~/claude-records/`。部屋の中だけ `ai/records/` にするか。実機確認（Next Actions 6）の後に決める。【保留 〜2026-10-25】
+- `remote` の type: 要否は項目 `dev-env` の実使用（Next Actions 7）の後に決める。【保留 〜2026-11-02】
 - `repos/` の受け渡し（スナップショットと patch。未検証）: `remote` の type と `dev-env` の実使用の後に決める。【保留 〜2026-11-05】
 - `restore_project` が `_noai/final/` の人の変更を上書きする件（2026-10-18 の通しで未試験）: 正本の宣言と上書き前の警告を、次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】
 - `token-matrix.md` と `review` の入力 5: 第5の観点「温存」を足し、入力 5 を「TTL を超えて空いた後の書き込み量」に変えるか。今の役目の引き継ぎと基準値 103 の再設定を付け、分割して出し直す。【保留 〜2026-10-25】
