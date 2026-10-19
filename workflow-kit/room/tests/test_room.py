@@ -1006,11 +1006,29 @@ class KeepaliveTest(unittest.TestCase):
             self.assertTrue(wsl.keep_procs[0].terminated)
 
 
+def fill_readme(p):
+    """open のひな形の <...> を、実際の文に置き換える。"""
+    text = (p / "README.md").read_text(encoding="utf-8")
+    for m in room.README_PLACEHOLDERS:
+        text = "\n".join("記入済み" if m in line else line for line in text.splitlines()) + "\n"
+    (p / "README.md").write_text(text, encoding="utf-8", newline="\n")
+
+
 class CloseTest(unittest.TestCase):
+    def test_close_refuses_template_readme(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            p = v / "projects/proj-a"
+            (p / "ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
+            with self.assertRaisesRegex(room.RoomError, "ひな形のまま"):
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertTrue(p.exists())
+
     def test_close_requires_close_md_and_unmounted(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
             v, c = opened(tmp, wsl)
+            fill_readme(v / "projects/proj-a")
             with self.assertRaises(room.RoomError):
                 room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
             (v / "projects/proj-a/ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
@@ -1023,6 +1041,7 @@ class CloseTest(unittest.TestCase):
             wsl = FakeWsl()
             v, c = opened(tmp, wsl)
             p = v / "projects/proj-a"
+            fill_readme(p)
             (p / "ai/out/close.md").write_text("- 【案件】運用で埋める\n- 【案件】表記ゆれを直す\n", encoding="utf-8")
             (p / "ai/out/final.md").write_text("成果物\n", encoding="utf-8")
             (p / "_noai/raw/orig.csv").write_text("secret\n", encoding="utf-8")
