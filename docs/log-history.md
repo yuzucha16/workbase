@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-19（review 消化の続き: リスト 2 の 3 件）
+- Open Questions の「`restore` の上書き保護が未試験」を、`restore_project` の行に統合した（同じ論点。どちらも `final-manifest.json` の実機を待つ）。
+- 施策 R-2026-10-19-08 から、ベースのバージョンの件を切り離した（PC1 の通しは済み、Ubuntu 26.04 は確認済み）。前提の確認（TLS 検査、`WSLENV`、Node.js）だけに絞って出し直し、承認待ち。記録は `retrospective-ai-room-record.md`。
+- Next Actions 2② を実施した。`ai-room-setup.md`、`ai-room-setup-script.md`、`ai-room-why.md` に `data:` の3つの型と `_noai/user/` を反映し、手順書 `ai-room-mask-summary.md` を足した（`guides-index.md` も同じコミット）。動作確認はユーザーが済み。
+
 ### 2026-10-19（log.md の整理前の全文。Next Actions 43）
 - log.md が 25 KB になったため、現在状態と次にやることだけに縮めた。縮める前の「状態」「Next Actions」「Open Questions」の全文を、次の見出しの下にそのまま残す（見出しだけ `####` に下げた）。
 - ユーザーの指示（2026-10-19）: 項目 44（`init` の `wsl --install` の早戻り）は、次に再現するまで保留にして log.md から消した（事実と案は、上の「room の Ubuntu 26.04 と data: 3型の実機確認」の項と、ここの全文にある）。項目 40 は `room shell` と Node の流れを確認済みで、残りは `aws-key` だけ。

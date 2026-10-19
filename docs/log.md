@@ -6,7 +6,7 @@
 
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
-| 2026-10-23 | 単発 | 施策 R-2026-10-19-08 の出し直し（ベースの件を切り離し、前提の確認だけに絞る） | ユーザー |
+| 2026-10-23 | 単発 | 施策 R-2026-10-19-08（ベースの件を切り離して出し直し済み）の承認 | ユーザー |
 | 2026-10-25 | 単発 | 保留中の Open Questions 2 件（Stop フックの記録の置き場、`token-matrix.md` の観点） | ユーザー |
 | 2026-10-26 | 単発 | 振り返りの手順書 v5 の仮決め（項目 38） | ユーザー |
 | 2026-11-02 | 単発 | `remote` の type の要否（項目 10 の後） | ユーザー |
@@ -22,8 +22,8 @@
 ## Next Actions
 
 1. `room aws-key` を実機で通す。PC1 で、部屋の `~/.aws/credentials` への `touch` が `ai` で失敗する。原因は未特定。確かめる: `wsl -d room-<Area> -- sh -c 'id; echo $HOME; ls -ld $HOME $HOME/.aws; touch $HOME/.aws/credentials; echo $?'` の出力と `touch` のエラー文。手書きの `credentials` では、Zed の Agent の Bedrock 認証が通っている。（旧 40）
-2. `data:` の残り（旧 42）: ① `data: mask` の pptx・txt の実データの確認は、別セッションで行う。② 古い `ai-room-setup.md`、`ai-room-setup-script.md`、`ai-room-why.md` に `data:` の3つの型と `_noai/user/` を反映し、「マスクだけで要約を出す」手順書を `guides/howto/` に足す（`guides-index.md` も同じコミットで）。この使い方の仕様を使わずに省いたときは、①②の文書化もしない（ユーザー）。③ Area 共通のマスク表の置き場を `areas/<Area>/_noai/` で試す（仕様は足さない。Area の README には語を書かない）。
-3. 施策 R-2026-10-19-08 の出し直し（〜10-23。前提の確認だけ。旧 41）。
+2. `data:` の残り（旧 42）: ① `data: mask` の pptx・txt の実データの確認は、別セッションで行う。② 済み（10-19）: 3つの文書に `data:` の3つの型と `_noai/user/` を反映し、手順書 `ai-room-mask-summary.md` を足した（動作確認はユーザーが済み）。③ Area 共通のマスク表の置き場を `areas/<Area>/_noai/` で試す（仕様は足さない。Area の README には語を書かない）。
+3. 施策 R-2026-10-19-08（前提の確認だけに絞って出し直し済み。ベースの件は切り離した）の承認。次の `review 消化` でスクリーニング → 最終判断（〜10-23。旧 41）。
 4. room の実機の確認の残り（旧 39）: ① 実データで `mask` の警告量 ② Windows で Vault 側 deny `Read(./projects/**)` が効くか ③ `base_stale` ④ `ai/ctx/area-README.md` を部屋の AI が読めるか ⑤ `restore` が `mapping.json` の欠け・食い違いで止まるか ⑥ `SharedPermissionTest` 2 件（Windows で落ちる既知の件）⑦ `ai-room-why.md` と `ai-room-setup.md` のレビュー（「草稿（未レビュー）」の注記を外す）⑧ 部屋の AI が `stock` の下書きを書けるか。共有知の送付のサイズ（1.5MB、120 ファイル）は、増えたら測り直す。
 5. room の改善 4 件（旧 37）: ① `restore` が `⟦CUST_nnn⟧` の説明で止まる ② 新しい Project のたびの信頼の確認 ③ Zed を `/home/ai` で使うと履歴が `reap` されない ④ `close` が、README がひな形のままでも通る。実装前に場所・手段・呼び出し元を3行で見せる。
 6. 振り返り（旧 38、15、13）: 手順書 v5 で材料を集め直す実行（10-26 か同じ入力）、週次の使い方、施策 02〜05 の承認、改善5 の品質チェック3回、改善4 の使用回数（2/3）。
@@ -32,9 +32,8 @@
 
 ## Open Questions
 
-- 実機の通し（2026-10-18）で未試験: `restore` の上書き保護（`final-manifest.json`）。次の実機で試す。
 - Stop フックの記録の置き場: 既定は `~/claude-records/`。部屋の中だけ `ai/records/` にするか。実機確認（Next Actions 7）の後に決める。【保留 〜2026-10-25】
 - `remote` の type: 要否は項目 `dev-env` の実使用（Next Actions 8）の後に決める。【保留 〜2026-11-02】
 - `repos/` の受け渡し（スナップショットと patch。未検証）: `remote` の type と `dev-env` の実使用の後に決める。【保留 〜2026-11-05】
-- `restore_project` が `_noai/final/` の人の変更を上書きする件: 正本の宣言と上書き前の警告を、`final-manifest.json` の実機の後に決める。【保留 〜2026-11-05】
+- `restore_project` が `_noai/final/` の人の変更を上書きする件（2026-10-18 の通しで未試験）: 正本の宣言と上書き前の警告を、次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】
 - `token-matrix.md` と `review` の入力 5: 第5の観点「温存」を足し、入力 5 を「TTL を超えて空いた後の書き込み量」に変えるか。今の役目の引き継ぎと基準値 103 の再設定を付け、分割して出し直す。【保留 〜2026-10-25】
