@@ -20,7 +20,7 @@ tags:
 
 ## 対応バージョン表
 
-手順の確認日: 2026-10-18（実機）。Windows、WSL、Claude Code、uv、Zed のバージョンは、[[ai-room-setup]] の「対応バージョン表」を正とする（ここには書かない）。部屋のベースは Ubuntu 24.04。
+手順の確認日: 2026-10-18（実機）。Windows、WSL、Claude Code、uv、Zed のバージョンは、[[ai-room-setup]] の「対応バージョン表」を正とする（ここには書かない）。部屋のベースは Ubuntu 26.04（2026-10-19 に 24.04 から変更。実機の通しは未了）。
 
 ## 全体の流れ
 
@@ -87,7 +87,7 @@ git -C $HOME\works check-ignore -v projects/pilot-1/ai/out/x.xlsx
 ## 3. 部屋を作る
 
 ```powershell
-wsl --install Ubuntu-24.04 --name room-pilot --no-launch      # 数分かかる
+wsl --install Ubuntu-26.04 --name room-pilot --no-launch      # 数分かかる
 wsl -l -v                                                      # room-pilot が出る
 wsl -d room-pilot -u root -- sh -c "useradd -m -u 1000 -s /bin/bash ai; id ai"
 $conf = "[automount]`nenabled=false`nmountFsTab=false`n`n[interop]`nenabled=false`nappendWindowsPath=false`n`n[user]`ndefault=ai`n"
@@ -291,7 +291,7 @@ Remove-Item "$HOME\works\projects\pilot-1\ai\ctx" -Recurse -Force
   ```
 
   - 目安: `-mnt-room-pilot-1` が一覧に無い。`archives/pilot-1/README.md` に `reaped: <日付>` を足す（手で）
-- 部屋ごと消す: `wsl --unregister room-pilot`（部屋の中の履歴と認証情報も消える。必要な履歴は先に `ai/records/` に写す）。ベースの `Ubuntu-24.04` には影響しない
+- 部屋ごと消す: `wsl --unregister room-pilot`（部屋の中の履歴と認証情報も消える。必要な履歴は先に `ai/records/` に写す）。ベースの `Ubuntu-26.04` には影響しない
 
 ## 10. うまくいかないとき
 

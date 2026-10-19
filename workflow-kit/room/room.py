@@ -65,7 +65,7 @@ class Wsl:
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
     def install(self, distro, base):
-        """base（例: Ubuntu-24.04）から、名前 distro のディストリビューションを作る（起動しない）。"""
+        """base（例: Ubuntu-26.04）から、名前 distro のディストリビューションを作る（起動しない）。"""
         return subprocess.run(["wsl.exe", "--install", base, "--name", distro, "--no-launch"], env=wsl_env()).returncode
 
     def terminate(self, distro):
@@ -488,7 +488,7 @@ def cmd_open(ctx, a):
 
 # ---------- init（部屋を作る。手順は ai-room-setup.md の 3〜4 章） ----------
 
-ROOM_BASE = "Ubuntu-24.04"
+ROOM_BASE = "Ubuntu-26.04"
 WSL_CONF = """[automount]
 enabled=false
 mountFsTab=false
@@ -511,7 +511,7 @@ def step_script(ctx, distro, title, text, root=False):
     return out
 
 
-# Node.js: apt の版は古い（Ubuntu 24.04 は 18）。Zed の ACP エージェント（npx）が 22 以上を要る。公式の tarball を、チェックサムを確かめて /usr/local へ展開する（取得したスクリプトは実行しない）
+# Node.js: apt の版は古いことがある（Ubuntu 24.04 は 18）。Zed の ACP エージェント（npx）が 22 以上を要る。公式の tarball を、チェックサムを確かめて /usr/local へ展開する（取得したスクリプトは実行しない）
 NODE_INSTALL = r"""set -e
 if command -v node >/dev/null 2>&1 && node -v | grep -qE '^v(2[2-9]|[3-9][0-9])\.'; then node -v; exit 0; fi
 case "$(uname -m)" in x86_64) A=x64;; aarch64) A=arm64;; *) echo "未対応のアーキテクチャ" >&2; exit 1;; esac

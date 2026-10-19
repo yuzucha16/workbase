@@ -19,7 +19,7 @@ tags:
 
 ## 対応バージョン表
 
-手順の確認日: 2026-10-18（実機。2.1 の Bedrock と `--ca-cert`・Node・`shell` は 2026-10-19、PC1 で一部を確認し、`aws-key` と `shell` は未確認）。Windows、WSL、Claude Code、uv、Zed のバージョンは、[[ai-room-setup]] の「対応バージョン表」を正とする（ここには書かない）。部屋のベースは Ubuntu 24.04（`room.py` の `ROOM_BASE`）。
+手順の確認日: 2026-10-18（実機。2.1 の Bedrock と `--ca-cert`・Node・`shell` は 2026-10-19、PC1 で一部を確認し、`aws-key` と `shell` は未確認）。Windows、WSL、Claude Code、uv、Zed のバージョンは、[[ai-room-setup]] の「対応バージョン表」を正とする（ここには書かない）。部屋のベースは Ubuntu 26.04（2026-10-19 に 24.04 から変更。実機の通しは未了）（`room.py` の `ROOM_BASE`）。
 
 ## 全体の流れ
 
@@ -37,7 +37,7 @@ tags:
 
 ## 1. 前提を確認する
 
-1. WSL2 が使える（`wsl -l -v` の `VERSION` が `2`）。部屋のベースの `Ubuntu-24.04` がある（無ければ `init` が `wsl --install` で入れる）
+1. WSL2 が使える（`wsl -l -v` の `VERSION` が `2`）。部屋のベースの `Ubuntu-26.04` がある（無ければ `init` が `wsl --install` で入れる）
 2. Claude のアカウントがある（部屋の Claude Code は、ブラウザ認証でログインする）
 3. works の `.gitignore` に、次の4行がある
 
@@ -62,7 +62,7 @@ uv run room.py init pilot2 --boundary internal
 ```
 
 - `areas/pilot2/README.md` が無ければ作る（`boundary: internal`）。**印の既定値は無い**。`--boundary` を付けずに Area が無いと、止まる。顧客・機密度が同じ Project は同じ Area にする（印の決め方は [[ai-room-setup]] の 2.2）
-- 部屋 `room-pilot2` を作る（`Ubuntu-24.04` のダウンロードに数分かかる）。一般ユーザー `ai` を作り、`/etc/wsl.conf`（`C:` をマウントしない、Windows のプログラムを起動しない）を書き、分離を確認し、道具（curl、ripgrep、Node.js 24、uv、Claude Code）を入れる。Node は、Zed の Agent（`npx` で起動する）が 22 以上を要るため、公式の tarball をチェックサム確認つきで `/usr/local` に入れる（apt の版は 18 で足りない）。npm の `cafile` は、システムの証明書バンドルに向ける
+- 部屋 `room-pilot2` を作る（`Ubuntu-26.04` のダウンロードに数分かかる）。一般ユーザー `ai` を作り、`/etc/wsl.conf`（`C:` をマウントしない、Windows のプログラムを起動しない）を書き、分離を確認し、道具（curl、ripgrep、Node.js 24、uv、Claude Code）を入れる。Node は、Zed の Agent（`npx` で起動する）が 22 以上を要るため、公式の tarball をチェックサム確認つきで `/usr/local` に入れる（apt の版は 18 で足りない）。npm の `cafile` は、システムの証明書バンドルに向ける
 - 分離の確認が `user=ai, c=0, cmd=no, sudo=no` から外れると、**道具を入れずに止まる**（想定の動作）
 - 終わりに、Area の README だけを、既定でコミットする（`--no-commit` で省く）
 - 途中で止まったら、同じコマンドに `--resume` を付ける（設定と道具の入れ直し）
@@ -228,7 +228,7 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
   Get-Content $HOME\works\archives\pilot2-1\README.md -TotalCount 12   # reaped:
   ```
 
-- 部屋ごと消す: `wsl --unregister room-pilot2`（部屋の中の履歴と認証情報も消える。必要な履歴は先に `ai/records/` に写す）。ベースの `Ubuntu-24.04` には影響しない
+- 部屋ごと消す: `wsl --unregister room-pilot2`（部屋の中の履歴と認証情報も消える。必要な履歴は先に `ai/records/` に写す）。ベースの `Ubuntu-26.04` には影響しない
 - **よく忘れる点**: Zed を `/home/ai` で開いて使った履歴は、`-home-ai` に残り、どの Project にも属さないので `reap` では消えない
 
 ## 9. うまくいかないとき
