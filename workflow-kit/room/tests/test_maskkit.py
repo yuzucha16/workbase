@@ -212,5 +212,97 @@ class XlsxTest(unittest.TestCase):
         self.assertIn("<dc:creator></dc:creator>", core2)
 
 
+def build_pptx(split_runs=False):
+    """アクメ商事を含むスライド・ノート・プロパティ・縮小画像つきの最小 pptx（標準ライブラリで組む）。"""
+    para1 = ('<a:r><a:rPr b="1"/><a:t>アクメ</a:t></a:r><a:r><a:t>商事</a:t></a:r><a:r><a:t>との合意</a:t></a:r>'
+             if split_runs else '<a:r><a:t>アクメ商事との合意</a:t></a:r>')
+    slide = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+             '<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
+             'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree>'
+             f'<p:sp><p:txBody><a:p>{para1}</a:p><a:p><a:r><a:t>担当: 田中太郎 &amp; ベータ工業</a:t></a:r></a:p></p:txBody></p:sp>'
+             '</p:spTree></p:cSld></p:sld>')
+    notes = ('<p:notes xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
+             'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree><p:sp><p:txBody>'
+             '<a:p><a:r><a:t>メモ: アクメ商事の件</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:notes>')
+    core = ('<cp:coreProperties xmlns:cp="x" xmlns:dc="y"><dc:creator>田中太郎</dc:creator>'
+            '<cp:lastModifiedBy>田中太郎</cp:lastModifiedBy></cp:coreProperties>')
+    app = '<Properties><Company>アクメ商事</Company></Properties>'
+    rels = ('<Relationships><Relationship Id="rId1" Type="t" Target="ppt/presentation.xml"/>'
+            '<Relationship Id="rId2" Type="t" Target="docProps/thumbnail.jpeg"/></Relationships>')
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("[Content_Types].xml", "<Types/>")
+        z.writestr("_rels/.rels", rels)
+        z.writestr("ppt/slides/slide1.xml", slide)
+        z.writestr("ppt/notesSlides/notesSlide1.xml", notes)
+        z.writestr("docProps/core.xml", core)
+        z.writestr("docProps/app.xml", app)
+        z.writestr("docProps/thumbnail.jpeg", b"\xff\xd8jpeg")
+    return out.getvalue()
+
+
+class PptxTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.cfg = cfg(self.tmp.name)
+
+    def run_case(self, split):
+        m = mk.Mapping()
+        res = mk.mask_files({"会議.pptx": build_pptx(split)}, self.cfg, m)
+        out = res["outputs"]["会議.pptx"]
+        text = all_text(out)
+        for w in ("アクメ", "田中", "ベータ"):
+            self.assertNotIn(w, text, w)
+        z = zipfile.ZipFile(io.BytesIO(out))
+        self.assertNotIn("docProps/thumbnail.jpeg", z.namelist())
+        self.assertNotIn("thumbnail", z.read("_rels/.rels").decode())
+        self.assertEqual(mk.verify_xlsx(out, mk.Table(m)), [])
+        back, problems = mk.restore_files({"会議.pptx": out}, m)
+        self.assertEqual(problems, [])
+        slide = zipfile.ZipFile(io.BytesIO(back["会議.pptx"])).read("ppt/slides/slide1.xml").decode()
+        self.assertIn("アクメ商事", slide)
+        self.assertIn("田中太郎 &amp; ベータ工業", slide)
+        return res, out
+
+    def test_plain(self):
+        self.run_case(False)
+
+    def test_split_runs_keep_formatting(self):
+        res, out = self.run_case(True)
+        self.assertTrue(any("段落" in w for w in res["warnings"]))
+        slide = zipfile.ZipFile(io.BytesIO(out)).read("ppt/slides/slide1.xml").decode()
+        self.assertIn('<a:rPr b="1"/><a:t>⟦CUST_001⟧</a:t>', slide)  # 先頭の run の書式に置く
+        self.assertIn("<a:t>との合意</a:t>", slide)
+
+    def test_properties_blank(self):
+        res = mk.mask_files({"a.pptx": build_pptx()}, mk.Config({}, {}), mk.Mapping())
+        z = zipfile.ZipFile(io.BytesIO(res["outputs"]["a.pptx"]))
+        self.assertIn("<dc:creator></dc:creator>", z.read("docProps/core.xml").decode())
+        self.assertIn("<Company></Company>", z.read("docProps/app.xml").decode())
+
+
+class TextFilesTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.cfg = cfg(self.tmp.name)
+
+    def test_md_txt_roundtrip(self):
+        raw = {"議事録.md": "# アクメ商事 定例\n- 田中太郎: 見積を出す\n".encode("utf-8"),
+               "メモ.txt": "ベータ工業との件\n".encode("cp932")}
+        m = mk.Mapping()
+        res = mk.mask_files(raw, self.cfg, m)
+        for rel, data in res["outputs"].items():
+            t = data.decode("utf-8")
+            for w in ("アクメ", "田中", "ベータ"):
+                self.assertNotIn(w, t)
+            self.assertFalse(data.startswith(b"\xef\xbb\xbf"))
+        back, problems = mk.restore_files(res["outputs"], m)
+        self.assertEqual(problems, [])
+        self.assertIn("アクメ商事株式会社 定例", back["議事録.md"].decode("utf-8"))
+        self.assertIn("ベータ工業との件", back["メモ.txt"].decode("utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()
