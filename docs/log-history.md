@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-19（review 消化: Next Actions の整理と `room close` のひな形検査）
+- ユーザーが完了と承認: 旧 4 ⑥（`SharedPermissionTest` は e9a2077 で直り、この PC で 3 件 OK）、旧 2 ②（済みの文を削除）、旧 3（R-08 の検証を確認した）。旧 5 ④ は同じセッションで実装: `room close` は、README に `README_TEMPLATE` の `<...>` が残っていれば止まる（`workflow-kit/room/room.py` の `readme_placeholders`。テスト `test_close_refuses_template_readme`）。項目番号を詰めた（旧 5→4、6→5、7→6、8→7）。Open Questions の参照も合わせた。
+- テスト: 72 件中、`CaCertTest` の 2 件が失敗（変更前から。Windows に `openssl` が無い）。それ以外は OK。
+- 待ち行列: 新しい決定は無く、スクリーニングは行わなかった（Open Questions の 5 件は期日つきの保留）。
+
 ### 2026-10-19（Next Actions 4 の ②④⑦ を完了として削除）
 - ユーザーが完了と申告: ② Windows で Vault 側 deny `Read(./projects/**)` が効くか、④ `ai/ctx/area-README.md` を部屋の AI が読めるか、⑦ `ai-room-why.md` と `ai-room-setup.md` のレビュー。`log.md` の項目 4 からこの 3 つだけ消した。ガイド側の「草稿（未レビュー）」の注記（`ai-room-setup.md` の冒頭など）は、指示の範囲外なので残してある。
 
