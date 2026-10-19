@@ -5,7 +5,7 @@
 
 - mask.toml（人が書く）: 種類ごとの語と表記ゆれ、列の指定
 - mapping.json（このモジュールが書く。追記専用）: プレースホルダーの番号と正式名
-- csv と xlsx を対象に、全部の語を1回の走査で、長い語を優先して置換する
+- csv・md・txt（テキスト）と xlsx・pptx（zip）を対象に、全部の語を1回の走査で、長い語を優先して置換する
 - 復元は ai/out の既知の形式だけ。戻らなかったものがあれば、何も書かずに止める
 """
 import csv
@@ -33,6 +33,9 @@ KIND_RE = re.compile(r"^[A-Z][A-Z0-9]*$")
 NAME_KINDS = ("SHEET", "NAME")  # 定義名・シート名に使える ASCII のプレースホルダー
 TEXT_EXT = (".csv", ".md", ".txt", ".bas", ".json", ".html")
 XML_EXT = (".xml", ".rels", ".vml")
+MASK_TEXT_EXT = (".csv", ".md", ".txt")  # マスクできるテキスト
+OOXML_PARA = {".xlsx": None, ".pptx": ("a:p", "a:t")}  # マスクできる zip 形式と、段落の単位（run をまたぐ語を直す）
+THUMBNAIL_REL = re.compile(r'<Relationship\b[^>]*Target="[^"]*docProps/thumbnail[^"]*"[^>]*/>')
 MIN_LEN = 2  # 1文字の語は、置換が広がりすぎるので受け付けない
 
 PH_RE = re.compile(r"⟦([A-Z][A-Z0-9]*)_(\d{3,})⟧|(?<![A-Za-z0-9_])((?:SHEET|NAME)_\d{3,})(?![A-Za-z0-9_])")
@@ -477,11 +480,58 @@ def spanning_hits(text, table):
     return hits
 
 
-def mask_xlsx(data, table, stats):
+def mask_paragraph_runs(text, table, cont, tname, stats):
+    """段落（cont）の中で、語が複数の run（tname）にまたがるとき、先頭の run に置換後の文字を置き、残りの run からは語の分を消す。
+    run の書式は残る（置換後の文字は、語の先頭の run の書式になる）。"""
+    pat = re.compile(rf"<{cont}\b[^>]*>(.*?)</{cont}>", re.S)
+    tpat = re.compile(rf"(<{tname}(?:\s[^>]*)?>)(.*?)(</{tname}>)", re.S)
+
+    def fix(m):
+        body = m.group(1)
+        ts = list(tpat.finditer(body))
+        if len(ts) < 2:
+            return m.group(0)
+        pieces = [xml_unescape(t.group(2)) for t in ts]
+        plain = "".join(pieces)
+        bounds, pos = [], 0
+        for p in pieces:
+            bounds.append((pos, pos + len(p)))
+            pos += len(p)
+        hits = list(table.finditer(plain))
+        if not any(not any(a <= h.start() and h.end() <= b for a, b in bounds) for h in hits):
+            return m.group(0)
+        stats["spanned"] = stats.get("spanned", 0) + 1
+        starts = {h.start(): table.lookup[norm(h.group(0))] for h in hits}
+        covered = [(h.start(), h.end()) for h in hits]
+        new = []
+        for (a, b), piece in zip(bounds, pieces):
+            buf = []
+            for i in range(a, b):
+                if i in starts:
+                    buf.append(starts[i])
+                if not any(x <= i < y for x, y in covered):
+                    buf.append(plain[i])
+            new.append("".join(buf))
+        out, last = [], 0
+        for t, n in zip(ts, new):
+            out.append(body[last:t.start()])
+            out.append(t.group(1) + xml_escape(n) + t.group(3))
+            last = t.end()
+        out.append(body[last:])
+        return m.string[m.start():m.start(1)] + "".join(out) + m.string[m.end(1):m.end()]
+    return pat.sub(fix, text)
+
+
+def mask_ooxml(data, table, stats, para=None):
+    """xlsx / pptx の zip レベルの置換。para: (段落, 文字) のタグ。run をまたぐ語を段落で直す（pptx）。"""
     zin = zipfile.ZipFile(io.BytesIO(data))
     names = zin.namelist()
     printer_parts = {n for n in names if re.match(r"xl/printerSettings/.*\.bin$", n, re.I)}
-    parts = {n: zin.read(n) for n in names if n not in printer_parts}
+    thumbs = {n for n in names if re.match(r"docProps/thumbnail\.", n, re.I)}  # スライド・シートの縮小画像に、語が写っている
+    parts = {n: zin.read(n) for n in names if n not in printer_parts and n not in thumbs}
+    if thumbs and "_rels/.rels" in parts:
+        parts["_rels/.rels"] = THUMBNAIL_REL.sub("", parts["_rels/.rels"].decode("utf-8")).encode("utf-8")
+    stats["removed_thumbs"] = sorted(thumbs)
     # プリンタ設定: 関係と r:id を外す
     removed_ids = {}
     for n in list(parts):
@@ -517,6 +567,8 @@ def mask_xlsx(data, table, stats):
             stats.setdefault("undecodable", []).append(n)
             continue
         text = merge_runs(text, table, stats)
+        if para:
+            text = mask_paragraph_runs(text, table, para[0], para[1], stats)
         text = table.mask_text(text, xml=True)
         if n in ("docProps/core.xml", "docProps/app.xml"):
             for tag, val in _BLANK:
@@ -525,7 +577,7 @@ def mask_xlsx(data, table, stats):
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as zout:
         for n in names:
-            if n in printer_parts:
+            if n in printer_parts or n in thumbs:
                 continue
             zi = zipfile.ZipInfo(n, date_time=(1980, 1, 1, 0, 0, 0))
             zi.compress_type = zipfile.ZIP_DEFLATED
@@ -533,8 +585,12 @@ def mask_xlsx(data, table, stats):
     return out.getvalue()
 
 
+def mask_xlsx(data, table, stats):
+    return mask_ooxml(data, table, stats)
+
+
 def verify_xlsx(data, table):
-    """マスク後の xlsx に、対応表の語が残っていないか（全 part と、run を連結した文字列）。"""
+    """マスク後の xlsx / pptx に、対応表の語が残っていないか（全 part と、run を連結した文字列）。"""
     res = []
     z = zipfile.ZipFile(io.BytesIO(data))
     for n in z.namelist():
@@ -614,6 +670,18 @@ def xlsx_texts(data):
     return "\n".join(texts)
 
 
+def ooxml_texts(data):
+    """pptx の本文（スライド、ノート、コメント）を、候補の探索用に連結する。"""
+    z = zipfile.ZipFile(io.BytesIO(data))
+    texts = []
+    for n in z.namelist():
+        if re.match(r"ppt/(slides|notesSlides|comments|charts)/[^/]+\.xml$", n):
+            t, _e = _decode_part(z.read(n))
+            if t:
+                texts.append(xml_unescape(re.sub(r"<[^>]+>", " ", t)))
+    return "\n".join(texts)
+
+
 # ---------- ディレクトリ単位 ----------
 
 def list_files(base):
@@ -631,25 +699,25 @@ def mask_files(raw_files, config, mapping, only=None):
     未対応の形式、語の残り、があれば MaskError（何も返さない。mapping も保存しない）。
     """
     warns, hints, outs, stats = [], [], {}, {}
-    unsupported = [r for r in raw_files if Path(r).suffix.lower() not in (".csv", ".xlsx")]
+    unsupported = [r for r in raw_files if Path(r).suffix.lower() not in MASK_TEXT_EXT + tuple(OOXML_PARA)]
     if unsupported:
-        raise MaskError("マスクできない形式が原本にある（csv と xlsx だけ）:\n  " + "\n  ".join(sorted(unsupported)))
+        raise MaskError("マスクできない形式が原本にある（" + "・".join(e[1:] for e in MASK_TEXT_EXT + tuple(OOXML_PARA)) + " だけ）:\n  " + "\n  ".join(sorted(unsupported)))
     table = build_mapping(config, mapping, raw_files, warns)
     residual = []
     for rel, data in raw_files.items():
         if only is not None and rel not in only:
             continue
         ext = Path(rel).suffix.lower()
-        if ext == ".csv":
-            text, _enc = decode_text(data)
+        if ext in MASK_TEXT_EXT:
+            text, enc = decode_text(data)
             masked = table.mask_text(text)
             if table.search(masked):
                 residual.append(f"{rel}: {table.search(masked).group(0)}")
             hints.extend(candidate_hints(rel, masked))
-            outs[rel] = masked.encode("utf-8-sig")
+            outs[rel] = masked.encode("utf-8-sig" if ext == ".csv" or enc == "utf-8-sig" else "utf-8")
         else:
             st = {}
-            out = mask_xlsx(data, table, st)
+            out = mask_ooxml(data, table, st, OOXML_PARA[ext])
             stats[rel] = st
             residual.extend(f"{rel}: {r}" for r in verify_xlsx(out, table))
             unins = uninspectable_parts(out)
@@ -657,9 +725,13 @@ def mask_files(raw_files, config, mapping, only=None):
                 warns.append(f"{rel}: 語を検査できない part がある（画像・埋め込みなど。中身を確認する）: " + ", ".join(unins))
             if st.get("merged"):
                 warns.append(f"{rel}: 語が複数の書式（run）にまたがる文字列 {st['merged']} 件を、1つの書式にまとめた")
+            if st.get("spanned"):
+                warns.append(f"{rel}: 語が複数の書式（run）にまたがる段落 {st['spanned']} 件で、置換後の文字を語の先頭の書式にした")
             if st.get("removed_parts"):
                 warns.append(f"{rel}: プリンタ設定を削除した: " + ", ".join(st["removed_parts"]))
-            hints.extend(candidate_hints(rel, xlsx_texts(out)))
+            if st.get("removed_thumbs"):
+                warns.append(f"{rel}: 縮小画像を削除した: " + ", ".join(st["removed_thumbs"]))
+            hints.extend(candidate_hints(rel, xlsx_texts(out) if ext == ".xlsx" else ooxml_texts(out)))
             outs[rel] = out
     if residual:
         raise MaskError("マスク後に、対応表の語が残っている（引き渡しを止める）:\n  " + "\n  ".join(residual))
@@ -679,7 +751,7 @@ def restore_files(out_files, mapping):
         if rel in RESTORE_SKIP or rel.startswith(RESTORE_SKIP_DIRS):
             continue
         ext = Path(rel).suffix.lower()
-        if ext == ".xlsx":
+        if ext in OOXML_PARA:
             out, bad = restore_xlsx(data, rs)
             res[rel] = out
             problems.extend(f"{rel}: {b}" for b in bad)
@@ -690,5 +762,5 @@ def restore_files(out_files, mapping):
             prefer = "utf-8-sig" if ext == ".csv" else ("cp932" if ext == ".bas" else "utf-8")
             res[rel], _used = encode_text(text, prefer)
         else:
-            problems.append(f"{rel}: 復元できない形式（既知の形式: xlsx と " + " ".join(RESTORE_TEXT) + "）")
+            problems.append(f"{rel}: 復元できない形式（既知の形式: xlsx・pptx と " + " ".join(RESTORE_TEXT) + "）")
     return res, problems
