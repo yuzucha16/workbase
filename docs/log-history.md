@@ -13,7 +13,12 @@
 ### 2026-10-18（`topics/ai-workspace-boundary/` の残件を root に一本化した。クローズの確認）
 - ユーザーの依頼で、トピックを close できるか確認した。完了条件の優先順位 1〜7 は、10-18 の通しでほぼ満たす。残りは Next Actions 39 に移した。ユーザーの決定: 無理に close せず、作業をキリの良いところまで進め、root の docs に一本化し、まとめて動作確認する。omit: 部屋専用の SSH 鍵、Zed を開いたままのアンマウント、リポジトリ・remote の dev の案。外した（通っていると見た）: 別の `wsl.exe` からのマウント、`ai/out/` のサブディレクトリの `restore`。
 - トピックの `docs/log.md` を 10-18 の通しに合わせて直した（`4cc9f7a`）。`SharedPermissionTest` 2 件の原因は、Windows の `os.path.expanduser` が `HOME` でなく `USERPROFILE` を見ること。テストの環境変数に `USERPROFILE` を足し、Linux で全 55 件が通った（Windows は未確認）。
-- ユーザーの承認（案 A）で、トピックの Markdown を移管して削除した。`ai-room-mask-spec.md` は `workflow-kit/room/mask-spec.md` に移し（参照 4 か所を直した）、設計の要点は `guides/explain/ai-room-why.md` に、決定は `docs/decisions.md` の「AI 作業部屋の決定」に統合した（`restore` の保護とマスクの一致の決定は `exmem/lessons/ai-isolated-work-room.md` にも足した）。設計ノート、handover 6 本、`ai-boundary-design`、`ai-room-local-state`、`log-history.md` は移さず削除した（履歴は git。`ai-room-start-here.md` と `topics-index.md` の行も削除）。handover の「PC で確認すること」の漏れは、Next Actions 39 の ⑧ に足した。
+- ユーザーの承認（案 A）で、トピックの Markdown を移管して削除した。`ai-room-mask-spec.md` は `workflow-kit/room/mask-spec.md` に移し（参照 4 か所を直した）、設計の要点は `guides/explain/ai-room-why.md` に、決定は `docs/decisions.md` の「AI 作業部屋の決定」に統合した（`restore` の保護とマスクの一致の決定は `exmem/lessons/ai-isolated-work-room.md` にも足した）。設計ノート、handover 5 本、`ai-boundary-design`、`ai-room-local-state`、`log-history.md` は移さず削除した（履歴は git。`ai-room-start-here.md` と `topics-index.md` の行も削除）。handover の「PC で確認すること」の漏れは、Next Actions 39 の ⑧ に足した。
+
+### 2026-10-19（AI 作業部屋の取り組みのナレッジ化と、改善4 の振り返り）
+- ユーザーの依頼で、取り組みの知見を一般化して `exmem/inbox/` に3件足した（端末をまたぐ作業の進め方、取り組みの閉じ方、クラウドの書き込み権限。`1c8d045`）。kit への追記（`topics/AGENTS.md`、`docs-rules.md`）は、各メモの Open Questions の提案にとどめ、承認待ち。
+- 続けて `start 改善` の改善4 を、AI 作業部屋の取り組み（10-12〜10-19）に当てた。記録: `topics/kit-growth/records/retrospective-ai-room-record.md`（手戻り 13 件、良い点 3、悪い点 3、施策 6 件で承認待ち）。使った回数は 2/3。10-17 より前の git は無く、旧トピックの経緯を `git show` で読み直した。
+- 遠回り: 手戻りの母数を定義できず、率を出せなかった。本スレッドの誤判断 2 件（H12、H13）を、手戻りに数えた。
 
 ### 2026-10-19（改善4 の読後の指摘を受け、手順書を v5 に直した。Next Actions 38 の前半）
 - ユーザーが第1回の記録を読み、「分析は芯を食っているが、のっぺりしている（目標が無く、現状・ギャップ・次の行動につながらない。活動と成果物が混じる）」「構造化されていない（抽象の仕組みと具体の事象が混じる）」「事実の一覧は分かりやすい（手戻りが一目瞭然）」「詰め込みすぎ」と評した。
