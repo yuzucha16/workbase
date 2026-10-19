@@ -253,7 +253,7 @@ class InitTest(unittest.TestCase):
             v = make_vault(tmp)
             c = ctx_for(v, wsl)
             room.cmd_init(c, argparse.Namespace(area="area-x", resume=False))
-            self.assertEqual(wsl.installed, ("room-area-x", "Ubuntu-24.04"))
+            self.assertEqual(wsl.installed, ("room-area-x", "Ubuntu-26.04"))
             scripts = [(s[1], s[2]) for s in wsl.scripts]
             conf = [t for t, root in scripts if "/etc/wsl.conf" in t][0]
             self.assertIn("enabled=false", conf)

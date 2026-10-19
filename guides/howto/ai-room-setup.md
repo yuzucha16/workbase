@@ -28,7 +28,7 @@ tags:
 |---|---|---|
 | Windows | 11（Home、ビルド 10.0.26200） | |
 | WSL | 3.0.1.0（Linux カーネル 6.18.40.1） | `wsl --install --name` を使う。古い WSL では使えない可能性がある（**要確認**）。その場合は `wsl --import` |
-| 部屋のディストリビューション | Ubuntu 24.04 LTS | |
+| 部屋のディストリビューション | Ubuntu 26.04 LTS | 2026-10-19 に 24.04 から変更。実機の通しは未了 |
 | Claude Code | 2.1.296（公式のネイティブインストーラ） | |
 | uv | 0.13.0 | Windows 側と部屋の両方。Python のバージョンは uv で固定する |
 | Zed | 1.22.0（scoop 版） | WSL リモートで使う |
@@ -125,7 +125,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 1. ディストリビューションを作る（ダウンロードがあり、数分かかる）
 
    ```powershell
-   wsl --install Ubuntu-24.04 --name room-<Area> --no-launch
+   wsl --install Ubuntu-26.04 --name room-<Area> --no-launch
    wsl -l -v
    ```
 
