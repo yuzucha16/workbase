@@ -19,7 +19,7 @@ tags:
 
 ## 対応バージョン表
 
-手順の確認日: 2026-10-18（実機）。Windows、WSL、Claude Code、uv、Zed のバージョンは、[[ai-room-setup]] の「対応バージョン表」を正とする（ここには書かない）。部屋のベースは Ubuntu 24.04（`room.py` の `ROOM_BASE`）。
+手順の確認日: 2026-10-18（実機。2.1 の Bedrock と `--ca-cert`・Node・`shell` は 2026-10-19、PC1 で一部を確認し、`aws-key` と `shell` は未確認）。Windows、WSL、Claude Code、uv、Zed のバージョンは、[[ai-room-setup]] の「対応バージョン表」を正とする（ここには書かない）。部屋のベースは Ubuntu 24.04（`room.py` の `ROOM_BASE`）。
 
 ## 全体の流れ
 
@@ -62,19 +62,27 @@ uv run room.py init pilot2 --boundary internal
 ```
 
 - `areas/pilot2/README.md` が無ければ作る（`boundary: internal`）。**印の既定値は無い**。`--boundary` を付けずに Area が無いと、止まる。顧客・機密度が同じ Project は同じ Area にする（印の決め方は [[ai-room-setup]] の 2.2）
-- 部屋 `room-pilot2` を作る（`Ubuntu-24.04` のダウンロードに数分かかる）。一般ユーザー `ai` を作り、`/etc/wsl.conf`（`C:` をマウントしない、Windows のプログラムを起動しない）を書き、分離を確認し、道具（curl、ripgrep、uv、Claude Code）を入れる
+- 部屋 `room-pilot2` を作る（`Ubuntu-24.04` のダウンロードに数分かかる）。一般ユーザー `ai` を作り、`/etc/wsl.conf`（`C:` をマウントしない、Windows のプログラムを起動しない）を書き、分離を確認し、道具（curl、ripgrep、Node.js 24、uv、Claude Code）を入れる。Node は、Zed の Agent（`npx` で起動する）が 22 以上を要るため、公式の tarball をチェックサム確認つきで `/usr/local` に入れる（apt の版は 18 で足りない）。npm の `cafile` は、システムの証明書バンドルに向ける
 - 分離の確認が `user=ai, c=0, cmd=no, sudo=no` から外れると、**道具を入れずに止まる**（想定の動作）
 - 終わりに、Area の README だけを、既定でコミットする（`--no-commit` で省く）
 - 途中で止まったら、同じコマンドに `--resume` を付ける（設定と道具の入れ直し）
+- **TLS 検査のあるネットワーク（勤務先など）では、`--ca-cert` を付ける**: `curl` が「SSL certificate problem（終了コード 60）」で止まるときの対処。勤務先のルート証明書（PEM、5枚まで。秘密鍵が混ざると止まる）を指定すると、apt の後・uv の前に、root が `/usr/local/share/ca-certificates/` へ入れる。入れる前に SHA-256 を表示する。`ai` は読めるが書き換えられない。指定しなければ入れない。証明書は、このリポジトリに置かない（公開のため）
+
+  ```powershell
+  uv run room.py init pilot2 --resume --ca-cert <証明書ファイル>.crt
+  ```
+- `room.py` は、`wsl.exe` に `WSLENV` を渡さない。Windows の `WSLENV` に `/p` 付きの証明書パスがあると、`/mnt/c` を切った部屋では変換できず、壊れた `SSL_CERT_FILE` などが残って、curl が証明書エラーになる（実機で確認: 2026-10-19）
 
 **ログイン（人の操作）**:
 
 ```powershell
-wsl -d room-pilot2
+uv run room.py shell pilot2    # wsl -d room-pilot2 の代わり
 ```
 ```bash
 claude        # 表示された URL をブラウザで開いてログインし、コードを貼って /exit
 ```
+
+`shell` は、`WSLENV` を外して部屋に入る。素の `wsl -d room-pilot2` だと、Windows の `WSLENV` に `/p` 付きのパスがあるとき、入るたびに「failed to translate」が出る（動作には影響しない）。
 
 完了の目安:
 
@@ -82,6 +90,25 @@ claude        # 表示された URL をブラウザで開いてログインし�
 wsl -d room-pilot2 -- bash -ic 'cd ~ && claude -p "Reply with exactly: ok"'    # ok
 wsl -d room-pilot2 -- sh -c "id -un; ls /mnt/c | wc -l; command -v cmd.exe || echo no-cmd"    # ai、0、no-cmd
 ```
+
+### 2.1 Bedrock を使うとき（任意）
+
+部屋の Claude Code を、Anthropic のログインでなく Amazon Bedrock につなぐ。AWS CLI は要らない（IAM ユーザーのアクセスキーを、環境変数かファイルで渡せば足りる）。
+
+1. **Bedrock の設定は、Zed の設定の `agent_servers` の `env` に書く**。秘密を含まない値だけ（`CLAUDE_CODE_USE_BEDROCK`、`AWS_REGION`、`AWS_PROFILE`、モデルの ID、`AWS_CA_BUNDLE` と `NODE_EXTRA_CA_CERTS`（`/etc/ssl/certs/ca-certificates.crt`。TLS 検査のあるネットワークで、Node が勤務先のルート証明書を見るため））。エージェントは `command: npx`、`args: ["-y", "@agentclientprotocol/claude-agent-acp"]` の custom で定義する（実機で接続を確認: 2026-10-19）
+2. **アクセスキーは、部屋の `~/.aws/credentials` に、プロファイルとして置く**:
+
+   ```powershell
+   uv run room.py aws-key pilot2 --profile <プロファイル名>
+   ```
+
+   アクセスキー ID は入力、秘密キーと `AWS_SESSION_TOKEN`（一時キーのときだけ）は画面に出さずに受け取り、標準入力で部屋へ渡す（コマンドラインにも履歴にも残さない）。同名の節だけを置き換え、権限は 600。**この手順の実機確認は未了**（次項）
+3. `agent_servers` の `env` の `AWS_PROFILE` に、同じプロファイル名を書く。Zed を部屋に繋ぎ直して、Agent に話しかける
+
+- **なぜ、シェルの `export` では Zed の Agent に届かないか**: 環境変数は、プロセスを作るときに親から子へコピーされるだけ。手で `export` した値は、その `bash` と、そこから起動した `claude` にだけある。Zed の Agent は、Windows の Zed が `wsl.exe` で部屋の `zed-remote-server` を起動し、そのサーバーが起動するので、その `bash` は祖先にいない。Zed の `env` に書いた値は、Zed が直接渡すので届く。秘密（アクセスキー）は、設定ファイルに書かず、`~/.aws/credentials` で渡す（SDK がファイルを読むので、起動のしかたに関係しない）
+- **やってはいけないこと**: 長期のアクセスキーを、git 管理のファイル（dotfiles の Zed の設定を含む）やチャットに書かない。`op`（1Password CLI）を部屋に持ち込まない（[[ai-room-why]]）
+- **よく忘れる点**: `~/.aws/credentials` は、AI から読める場所にある。IAM ユーザーには Bedrock の権限（`bedrock:InvokeModel*`、`ListInferenceProfiles`、`GetInferenceProfile`）だけを付け、予算アラートを置く。長期キーを部屋に置きたくなければ、Windows 側で一時キー（`aws sts get-session-token`）を作り、`AWS_SESSION_TOKEN` つきで入れる。AWS 側の準備は [[bedrock-first-hello]]
+- 未解決（2026-10-19）: `aws-key` の `touch ~/.aws/credentials` が、`ai` で失敗した（原因は未特定。`~/.aws` の所有者が root だった可能性は、本人が取り下げた）。手で `~/.aws/credentials` を書けば、Zed の認証は通る
 
 ## 3. Project を作る（`open`）
 
@@ -208,6 +235,11 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 
 | 症状 | 原因 | 対処 |
 |---|---|---|
+| `init` の `curl` が「SSL certificate problem」（終了コード 60）で止まる | TLS 検査のあるネットワークで、勤務先のルート証明書が部屋に無い。または、`WSLENV` 経由の壊れた `SSL_CERT_FILE` が残っている | `init --resume --ca-cert <ファイル>`（2 章）。`room.py` は `WSLENV` を渡さない |
+| 部屋に入るたびに「failed to translate」が出る | Windows の `WSLENV` の `/p` 付きのパスが、`/mnt/c` の無い部屋で変換できない | `uv run room.py shell <Area>` で入る（動作には影響しない） |
+| Zed の Agent が `npx` を知らない（PATH に無い） | 部屋に Node.js が無い（`init` の古い版は入れない） | `init --resume`（Node 24 を入れる。2 章）。入れる前の部屋には、手で入れてもよい |
+| Zed の Agent で Bedrock の認証が通らない | `agent_servers` の `env` に、`AWS_PROFILE` などが無い。部屋の `~/.aws/credentials` にプロファイルが無い | 2.1 |
+| `aws-key` の `touch` が失敗する | 未特定（2 章 2.1 の未解決） | `wsl -d room-<Area> -- sh -c 'id; echo $HOME; ls -ld $HOME $HOME/.aws'` の出力と、`touch` のエラー文を確かめる |
 | `Area が無い: areas/...` | `init` の引数が Area 名でない（部屋の名前 `room-...` を渡した）、または Area が無い | 引数は Area 名（`pilot2`）。`room-` は付けない。Area が無ければ `--boundary` を付ける |
 | `部屋がすでにある` | 同じ名前の部屋がある | 作りかけなら `--resume`。作り直すなら `wsl --unregister` |
 | `start --no-launch` で Enter で戻らない | 待ちの `input()` に Enter が届かない（コンソールの共有。`d6c97d8` で直した） | `wsl --terminate room-pilot2`。再発したら記録する |
