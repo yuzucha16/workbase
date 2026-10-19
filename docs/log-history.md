@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-19（Stop フックの 0 バイトの原因、補正策の kit 反映、項目 7 の整理）
+- `replies/<日付>.md` が 0 バイト: 環境変数 `PYTHONIOENCODING=utf-8:surrogateescape` の下で標準入力に不正なバイトが入ると、`open` の後の `write` で例外になり空ファイルだけが残る（lone surrogate で再現）。`stop-record.py` の `open` に `errors="replace"` を足した（実機の次のターンで確認）。
+- ユーザーが承認: `user-manual.md` の補正策のうち、commit 前の帰属の分離を `docs-rules.md` の「コミットと push」に、承認の添え書き（効果・期日・戻し方、推奨の最大の弱点）を `hook-common.md` の「承認」に、1項ずつ足した。残り4つ（目的の復唱、前提の確認、rename の副作用、見た目の omit）は、会話中の動き方なので `user-manual.md` のままにした。
+- 部屋の `wrap` の差し替えは机上の点検（ユーザーの指示）: `room-context.md` と `wrap-hook.md` は食い違わない。実機での確認はしていない。`dev-env` / `dev-test` の最初の使用は、ユーザーが完了と申告したので項目 7 から消した。
+
 ### 2026-10-19（review 消化: Next Actions の整理と `room close` のひな形検査）
 - ユーザーが完了と承認: 旧 4 ⑥（`SharedPermissionTest` は e9a2077 で直り、この PC で 3 件 OK）、旧 2 ②（済みの文を削除）、旧 3（R-08 の検証を確認した）。旧 5 ④ は同じセッションで実装: `room close` は、README に `README_TEMPLATE` の `<...>` が残っていれば止まる（`workflow-kit/room/room.py` の `readme_placeholders`。テスト `test_close_refuses_template_readme`）。項目番号を詰めた（旧 5→4、6→5、7→6、8→7）。Open Questions の参照も合わせた。
 - テスト: 72 件中、`CaCertTest` の 2 件が失敗（変更前から。Windows に `openssl` が無い）。それ以外は OK。
