@@ -116,7 +116,8 @@ wsl -d room-pilot2 -- sh -c "id -un; ls /mnt/c | wc -l; command -v cmd.exe || ec
 uv run room.py open pilot2-1 --area pilot2 --type doc
 ```
 
-- `projects/pilot2-1/` に、`README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final}` ができ、Area の README の「進行中の Project」に1行足される。`ai/ctx/` は `start` が作る
+- `--data none|mask|restore` で、データの扱いを決める（省略は `none`。2026-10-19）。`_noai/` の中身が変わる: `none` は `user/` だけ、`mask` は `raw/` `map/` `user/`（復元しない）、`restore` は `raw/` `map/` `final/` `user/`。`user/` は人だけの仮置き（予約名）。`dev` は `none` だけが仕様。マスクだけで要約を出すときは [[ai-room-mask-summary]]。この章以降の `mask` `restore` の例は、`--data restore` で作った Project の話
+- `projects/pilot2-1/` に、`README.md`、`ai/{docs,in,work,out,records}`、`_noai/`（`data:` による。以下は `restore` のとき `_noai/{raw,map,final,user}`）ができ、Area の README の「進行中の Project」に1行足される。`ai/ctx/` は `start` が作る
 - 初期状態を、既定でコミットする（`--no-commit` で省く）。コミットされるのは、Project のひな形と、Area の README だけ（Area のほかのファイルは含めない）
 - **README の本文を書く**（目的、完了条件、成果物、範囲外）。ひな形のままだと、`close` が通ってしまい、【案件】に「ひな形のまま」と出る
 
@@ -129,10 +130,10 @@ git -C $HOME\works status --short      # _noai/ が出ない
 
 ## 4. マスクする（`mask`。任意）
 
-原本（Excel、CSV）を AI に見せず、置き換えた写しだけを渡すとき。ここでは、試験用の `pilot2-2` を使う。
+原本（Excel、CSV、md、txt、pptx）を AI に見せず、置き換えた写しだけを渡すとき（`data: mask` か `restore` の Project。`none` は原本があると止まる）。ここでは、試験用の `pilot2-2` を使う。
 
 ```powershell
-uv run room.py open pilot2-2 --area pilot2 --type doc
+uv run room.py open pilot2-2 --area pilot2 --type doc --data restore
 python tests/dummy_fixture.py $HOME\works\projects\pilot2-2     # _noai/raw/ にダミーの xlsx と csv、_noai/mask.toml
 uv run room.py mask pilot2-2
 Get-ChildItem $HOME\works\projects\pilot2-2\ai\in               # マスク済みの xlsx と csv
@@ -177,7 +178,7 @@ uv run room.py start pilot2-1 --no-launch
 
 ## 6. 回収する（`restore` `readme` `stock`）
 
-`start` の終わりに、`restore` が自動で動く。
+`start` の終わりに、`restore` が自動で動く（`data: restore` のときだけ。`mask` は復元せず、`none` はマスクも復元もしない）。
 
 - 成果物の中のプレースホルダー（`⟦CUST_001⟧` など）を、対応表で実名に戻し、`_noai/final/` に書く（実名入りなので、works のコミットの対象外）
 - **止まる場合**: 戻らないプレースホルダー、未知の形式があると、何も書かずに一覧を出して止まる。AI が本文に `⟦CUST_nnn⟧` のような**書式の説明**を書いたときも止まる（番号が無いため）。直して、`uv run room.py restore pilot2-2` を再実行する
