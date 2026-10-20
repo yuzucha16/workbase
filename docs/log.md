@@ -20,6 +20,7 @@
 - 仕組みの決定は `review 消化` の3段で承認する（`approval-screening.md`）。仮決めは `【仮 〜日付】`。
 - やり方は `methods.md`（変更・調査1・調査2・振り返り1）。作り方は `exmem/lessons/method-creation.md`、改善の記録は `topics/kit-growth/records/`。
 - room（`workflow-kit/room/`）: 実機の通しは済み（2026-10-18）。Ubuntu 26.04 の部屋（`init`）、`data:` の none / mask / restore、`room shell` と Node の流れは、実機で確認済み（ユーザー、2026-10-19）。`room init` の `wsl --install` の早戻りは、次に再現するまで保留（`log-history.md` の同日の項）。
+- 計画のやり方（6R → 憲章 → 成果物 WBS → マイルストーン）: 下書きは `topics/kit-growth/records/planning-method-record.md`（`workflow-kit/` には未反映。3層の前。2026-10-19）。試行の元ファイルは Project の共有フォルダ `notes/planning-method/`（クラウド側の控え。PC 環境からは見えない）。
 
 ## Next Actions
 
@@ -30,6 +31,7 @@
 5. 振り返り（旧 38、15、13）: v5 の材料集めは AI 作業部屋の回を初実行として数えた（ユーザーが読んで比べる）、週次の使い方（引き継ぎは 10-26 の週次で）、改善5 の品質チェック3回。改善4 は 10-20 に定例化し、規模の Must を足した（v6。`decisions.md` の同日の項）。定例の初回（daily 10-20、weekly と monthly 10-26）で、字数が収まったかを `retrospective-method-record.md` に足す。
 6. 暫定の数値（旧 24）: 続ける・切るの約10万 / 約2万トークンを、本物のフック列で3回以上再実験する（`~/claude-records/<フォルダ名>/sessions.jsonl` の記録を集計する）。Stop フックの費用記録（旧 29）は、Zed を使う PC で動作を確認した（10-19。dotfiles の `settings.json` のコマンドは `python "$HOME/.claude/hooks/stop-record.py"`）。`replies/<日付>.md` が 0 バイトだった件は、原因を特定して直した（10-19）: 環境変数 `PYTHONIOENCODING=utf-8:surrogateescape` の下で、標準入力に不正なバイトが入ると、書き込みで例外になり空ファイルだけが残る（lone surrogate で再現）。書き込みの `open` に `errors="replace"` を足した（実機で確認済み: 同日 `replies/2026-10-19.md` に 16 KB が入った。`stop-record.py` は、この PC では `~/.claude/hooks/` と共有フォルダ（`_sharedai`）にあり、公開の dotfiles（`main`）には無い。Zed の PC に置いた版にも同じ修正が要る）。
 7. 使いながら確かめる（旧 8）: 「変更のやり方」の最初の業務での使用。（領域 × r/w 表と部屋の `wrap` の差し替えは机上の点検で閉じた。`user-manual.md` の補正策は、帰属の分離と承認の添え書きを kit に反映した。10-19）
+8. 計画のやり方の取り込み（2026-10-19）: ① `review 消化` で Open Questions の1件を3層に通す。② 通ったら、`workflow-kit/` の新ファイル、`methods.md` の新区分「計画」、`start 計画`、登録の作業（`planning-method-record.md` の一覧）を行う。取り込み前に、下書きの要約が自分たちの言葉かを1回点検する。③ 昇格の後、PC1 で品質チェック3回（2週間の実務の題材、見本なし、短い題材）を行い、同じ記録に足す。④ 取り込み前に閉じる未決 3 件（リーダー兼任、6R の指標、条件付き成果物）は、ユーザーが決定済み。
 
 ## Open Questions
 
