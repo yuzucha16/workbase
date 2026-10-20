@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-20（部屋の変換の道具: v1 を実装し、room run の案を決めた）
+- ユーザーの相談: 部屋の中で pwsh・pandoc（HTML 化、スクリプト実行、Excel）を使いたい。作る側が最後まで持つ方針で、Windows が要る部分だけ人が実行する形にしたい。議論の結果は `decisions.md` の同日の項（v1・v2・v3、`room run` の方針）。
+- 実装: `room.py` の `init` に、変換の道具（LibreOffice の calc・writer・impress、`fonts-noto-cjk`、pandoc、unzip）、日本語優先の `local.conf`、Chromium（Playwright 1.64.1、`/opt/ms-playwright`）と mermaid-cli 12.0.0、`room-mmdc` と `room-chrome` を足した（`73d8089`、`be1808e`、`1b4ef86`、`89f66ba`、`f15d513`）。PlemolJP は実装したが、試験が安定するまで外した。単体テスト 81 件が通る。
+- 実機（PC2 の使い捨ての部屋）: v1 の試験 1〜4 と、`init` の通しが通った。Chromium は、apt が snap のため Playwright 版にした。PC1 は未確認。
+- 遠回り: 叩き台の `room run` のスクリプトの置き場を `ai/out/win/` にしていたが、ユーザーの指摘で `ai/work/` の使い捨てのスクリプトの置き場に直した。Chromium の試験で、`data:` URL の文字コードの指定漏れを失敗と読みかけた（原因は試験の書き方）。
+- 記録: `guides/explain/ai-room-convert-tools.md`（理解ガイド。索引に 3 行）。クラウド側の控えは Project の共有フォルダ `notes/room-tools/`（PC 環境からは見えない）。
+
 ### 2026-10-20（Next Actions 2 ②: Area 共通のマスク表を実際に使い始めた）
 - ユーザーが `areas/office/_noai/mask-common.toml` に実在の語を書き、新しい Project でコピーして使った（ユーザーの申告。AI は中身を読んでいない）。表の存在と、語の無い雛形の状態は、書く前に確認した（ヘッダーの「AI は読まない」に反して一度開いたが、中身はコメントだけだった）。
 - 同日、`data: mask` の txt を実データで確認した（ユーザー。文字コード・改行・語の漏れに問題なし）。最初の実行では、Project の `mask.toml` の語の行がコメントアウトのままで、「対応表の版 0」のまま原本が `ai/in/` にそのまま入った（ユーザーが直して再実行し、正しく動いた）。再発防止に、`mask_files` が語も列の指定も無いときに警告を出すようにした（止めない。`maskkit.py`、テスト `test_empty_config_warns`、`test_maskkit` 16 件 OK）。手順書 `ai-room-mask-summary.md` に追記した。
