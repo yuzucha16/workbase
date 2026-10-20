@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-21（`start 計画`: 会議録のナレッジ化を始め、題材ごとのトピックと `records/` の仕訳を仮決めにした）
+- ユーザーの要求: 顧客を含む打合せ内容を知識化したい（AI 向け = lessons、私向け = explain と同じ扱い・方針・ルール）。すり合わせ4回で、置き場（規則だけ workbase、中身は works 側の Area。Project を跨げるため）、入力（自動の文字起こしと自分の議事録）、「同じ」の範囲（型・タグ・索引・昇格の流れまで）、2系統の扱い（手段だった。1ファイル2層 + Bases の一覧）、顧客名（Area 内は書く、AI に渡すときはマスク）を決めた。6R・憲章・WBS・マイルストーンは作成済みで、ユーザーの反対なし。
+- 置き場は、ユーザーの記憶の曖昧さで2回動いた（`kit-growth/plans/` → `planning-method/records/` → 各トピックの `records/`）。結果として `topics/private-knowledge/` を作り、`usage-viz/` と `stock-modes/` を `planning-method` から切り出した。仕訳は2か所（測ったことは `kit-growth/records/`、各トピックの出力はそのトピックの `records/`）。仮決め 〜2026-10-28（`decisions.md` の同日の項）。`start-plan.md` の置き場の表は、正式化のときに直す（kit の変更で承認が要る）。
+- 裏づけ5件の確認（`topics/private-knowledge/records/private-knowledge-checks.md`）: works の `stock` / `integrate` は広げにくく、既存の `data: mask` の型（議事録の要約・抽出）と Area の `ai/docs/inbox.md` に載せる案が有力。Bases は1行が1ファイルのため、ToDo を1件ずつ並べる一覧は別の形が要る（仮説）。最大の未決は、Area の知識をマスクして部屋の AI に見せる経路。
+- 遠回り: トピックの置き場を、記憶に頼って最初の指示どおり `kit-growth/` の下に作った。既存の決定（`planning-method` の 10-20、案④は保留）を先に突き合わせれば、移動を2回避けられた。
+- 変更した kit 外のファイル: `exmem/lessons/planning-method.md` と `guides/howto/claude-usage-report.md` のパスだけ。`workflow-kit/` は書き換えていない。
+
 ### 2026-10-20（`review 消化`: Next Actions 4「room の改善 3 件の実機確認」を、確認せずに閉じた）
 - ユーザーが各機能の役割と確認工数を尋ね、AI が実装を読んで答えた（工数は見積もりで、実測ではない）: ① `ROOM.md` の指示で `⟦CUST_nnn⟧` を書かなくなるか（`room.py:848`。約10〜15分、AI の挙動で2〜3回試す）、② `room start` が `hasTrustDialogAccepted` を書いて信頼の確認を省くか（`room.py:960`。約3〜5分）、③ `reap` が `-home-ai` の残りを警告するか（`room.py:1451`。約5分）。合計は約20〜25分。ユーザーは項目 3 と同じ扱いで「使うときに行う」として、項目を閉じた。**3件とも実機では未確認のまま**（② ③ は単体テストのみ。`test_room.py:467`、`:1109`）。
 - 閉じた項目の全文: 「4. room の改善 3 件の実機確認（旧 37。10-19 に実装、テストは `CaCertTest` の 2 件（`openssl` 無し）以外 OK）: ① `ROOM.md` の指示で、AI が `⟦CUST_nnn⟧` を書かなくなるか ② `room start` で信頼の確認が出ないか。`~/.claude.json` の `projects["/mnt/room/<名>"].hasTrustDialogAccepted` が効くか ③ `reap` が `-home-ai` の残りを警告するか。」

@@ -4,6 +4,19 @@
 
 ## Decisions
 
+### 【汎用】【仮 〜2026-10-28】題材ごとのトピックと、`records/` の仕訳（2か所）を、最新の扱いにする（2026-10-21）
+- 決めたこと（ユーザー。仮運用してから昇格するかを決める）:
+  - ① **構造**: 計画のやり方（`start 計画`）の題材ごとに、`topics/<名前>/`（kebab-case、1階層）の Project 型トピックを作る。構造は `planning-method` と同じ。窓口 `<名前>-start-here.md`、`docs/`（`log.md` `decisions.md` `log-history.md`）、`records/`。現在の対象: `planning-method`、`usage-viz`、`stock-modes`、`private-knowledge`。
+  - ② **`records/` の仕訳は2か所**: `topics/kit-growth/records/` = 測ったことだけ（品質チェックと振り返り。`<名前>-record.md`、新しい順）。各トピックの `records/` = そのトピック自身の出力（6R・憲章・WBS・マイルストーン・作り方のメモ・見本・確認メモ・通し試験の結果の数字）。
+  - ③ **ほかの置き場**: 決めたことはトピックの `docs/decisions.md`（ユーザーの発言を根拠に）、経緯は `log-history.md`、現在状態は `log.md`。実務の中身（顧客・案件）は入れない。
+  - ④ **使わない置き場**: `topics/kit-growth/plans/`（振り返りへの入力案④の中の案。案④は 2026-11-11 まで保留のまま）、`planning-method/records/` への題材の計画の集約。
+  - ⑤ 10-20 の「workbase の題材の計画の置き場は昇格のときに決める。それまでは都度ユーザーに聞く」は、この仮決めで置き換える（`planning-method` の昇格を待たず、仮運用から始める）。
+- 根拠: ユーザーの指示（2026-10-21）。中身で置き場を決めると、題材ごとの計画が計画のやり方のトピックに混ざらない。進行中の取り組みはトピック直下、`kit-growth/records/` は測ったことだけ、という 10-20 の決定を一貫させる。
+- 却下案: `topics/kit-growth/` の下にトピックを置く（索引は1階層）、`kit-growth/plans/` への集約（案④は未決）、`planning-method/records/` に計画を集める（別題材の計画が混ざる）、昇格するまで都度聞く（題材が4つに増え、置き場が揺れた）。
+- 弱点: 計画が題材ごとに分散し、探す場所が増える（索引 `topics/topics-index.md` で引く）。
+- 見直しの条件: 期限 2026-10-28 に、`review 消化` が正式化・却下・延長をユーザーに聞く。正式化するときは、`workflow-kit/start-plan.md` の「置き場」の表（workbase の行が「未決」）と `topics/AGENTS.md` を直す（`workflow-kit/` は承認が要る）。却下するときの戻し方: 計画を `planning-method/records/` に戻す（履歴は git）。
+- → `topics/private-knowledge/docs/decisions.md`
+
 ### 【汎用】部屋に変換の道具を入れる（v1）。Windows が要る実行は `room run` の案（v2・v3）にする（2026-10-20）
 - 決めたこと（ユーザー）: ① 部屋の道具は `init` で root が入れる（AI がホームに入れる案ではない）。② 呼び分け: **v1** = 部屋に LibreOffice・Chromium（mermaid-cli）・pandoc を入れる。**v2** = `room run`（`data: none` と `mask` だけ）。**v3** = v2 に実データ（`restore`）への実行を足す。v1 に価値がなければ v2 に上げる。③ v1 は実装済み（`room.py` の `init`）。mermaid の画像化は部屋で完結させる（Chromium は Playwright 版）。日本語（JP）の字形を優先する。④ `room run` の方針: 1 回に 1 件、成果物を名前で指定して実行する（全体実行・Area 単位は作らない）。スクリプトは `ai/work/run/`（使い捨てのスクリプトの置き場）、成果物は `ai/out/<成果物名>/dist/`（実データ由来は `_noai/final/<成果物名>/dist/`）。実行の記録は `room` だけが書き、`start` の冒頭と `close` の停止で未実行に気づく。⑤ v3 は、静的検査・入力のコピー・書き出しとログは `_noai/` の条件で許す（弱点: 難読化は防げない。最後の関門は人が読むこと）。⑥ PlemolJP（等幅フォント）は、試験が安定するまで `init` から外す（ユーザーの依頼。手順は `room.py` に残し、コメントを外せば戻る）。⑦ PC1 で pwsh 7 は使える（ユーザーの申告）。
 - 根拠: 作る側が最後まで持ち、人の操作を固定する、というユーザーの方針。Linux の道具で足りる変換は部屋で完結でき、Windows が要る範囲を VBA とピボットに狭められる。`room run` は部屋の保証（AI は実データを見ず、Windows に触れない）に穴を開けるので、スコープを狭め、実行前に人が全文を読む。
