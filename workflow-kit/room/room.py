@@ -551,9 +551,20 @@ tar -xJf "$F" -C /usr/local --strip-components=1 --exclude='*.md' --exclude=LICE
 cd /; rm -rf "$D"
 """
 # 変換の道具（v1。2026-10-20）: LibreOffice（xlsx・docx・pptx の PDF/HTML/csv 変換と再計算）、日本語フォント（無いと PDF・画像の日本語が四角になる）、pandoc（Markdown の HTML 化）。root が入れ、ai は書き換えられない
+# fonts-noto-cjk は日本語・簡体字・繁体字・韓国語を同居させていて、既定では簡体字（sc）が選ばれ、PDF の漢字が中国式の字形になる。日本語（JP）を優先する（実機: 2026-10-20 に sc が埋め込まれた）
+FONT_PREFER_JA = """<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <alias><family>sans-serif</family><prefer><family>Noto Sans CJK JP</family></prefer></alias>
+  <alias><family>serif</family><prefer><family>Noto Serif CJK JP</family></prefer></alias>
+  <alias><family>monospace</family><prefer><family>Noto Sans Mono CJK JP</family></prefer></alias>
+</fontconfig>
+"""
 CONVERT_TOOLS_INSTALL = (
     "export DEBIAN_FRONTEND=noninteractive\n"
     "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc\n"
+    "cat > /etc/fonts/local.conf <<'EOF'\n" + FONT_PREFER_JA + "EOF\n"
+    "fc-cache -f\n"
 )
 NPM_CAFILE = "npm config set cafile /etc/ssl/certs/ca-certificates.crt\n"  # npm は証明書ストアを見ない。システムのバンドル（入れた会社の証明書を含む）を指す
 
