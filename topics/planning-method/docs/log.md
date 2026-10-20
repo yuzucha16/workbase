@@ -9,6 +9,9 @@
 3. 振り返りへの入力（計画を基準にする案）は、直下 `docs/log.md` の Open Questions にある。10-20 に保留にした（2026-11-11 まで。品質チェック3回の後に出し直す）。承認した計画の置き場の案（`topics/kit-growth/plans/`）は、このトピックの置き場と合わせて見直す。
 4. 試行の題材（トークン・コスト可視化）は実装まで終わった（2026-10-20。ツールと手順書は直下 `docs/log.md` の状態）。実行後のフィードバックは `records/usage-viz-*.md` の末尾にある。（済 2026-10-20）ユーザーの指示で `workflow-kit/start-plan.md` に反映した（足す候補は欄に足し、省く候補は省いてよい許可にした）。効果は品質チェックで見る。
 
+5. 進行中: stock のモード追加の計画（`records/stock-modes-*.md`）。6R・憲章・WBS・マイルストーンは作成済み（2026-10-20）。M1（設計の確認）は途中: 出力先・モード名・引数なし（「両方」なし）・更新は対象外・`find-knowledge` 対応は不要、までユーザーが決めた（`docs/decisions.md`）。残りの【提案】（`kind` の値、6見出し、`integrate` の変換、`check-inbox` の分岐、権限は変えない）は未確認。見本は `records/explain-inbox-example.md`。その後 M2 で `workflow-kit/` を書き換える（承認が要る）。`room.py` が `kind` をそのまま運ぶかは未確認。
+6. 6R へのフィードバック（`records/stock-modes-6r.md` の末尾。`start-plan.md` への案6件）は未承認。`review 消化` で扱う。
+
 ## Open Questions
 
 - workbase の題材の計画の置き場（トピックを明示する経路、トピックの要否を含む）。ユーザーの決定（2026-10-20）: 案④の `topics/kit-growth/plans/` と合わせて、`planning-method` の昇格のときに決める。それまではトピックの運用自体が試行で、計画は都度ユーザーに聞く。
