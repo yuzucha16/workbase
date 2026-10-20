@@ -5,7 +5,7 @@ tags:
   - workflow
   - knowledge-management
 created: 2026-10-12
-updated: 2026-10-16
+updated: 2026-10-20
 ---
 
 # topics
@@ -15,5 +15,6 @@ updated: 2026-10-16
 | トピック | 型 | 窓口 | あなた待ち |
 |---|---|---|---|
 | `kit-growth/` | Area（workflow-kit の育て方） | [[kit-growth-start-here]] | 0 |
+| `planning-method/` | Project（計画のやり方。kit-growth の子） | [[planning-method-start-here]] | 1 |
 
 型と書き方、終わらせ方の規則は `AGENTS.md`。
