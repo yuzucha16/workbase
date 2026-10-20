@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【この件】計画のやり方を試した出力は、トピックの `records/` に置く（2026-10-20）
+- 決めたこと（ユーザー）: 試行の出力（6R、憲章・WBS・マイルストーン、作り方のメモ）は `topics/planning-method/records/` に置く。最初は `topics/kit-growth/records/` に置いたが、ユーザーが移した。
+- 根拠: 直前の決定（進行中の取り組みはトピック直下）に合わせる。測ったことの記録 `planning-method-record.md` は `kit-growth/records/` に残っている（分け方は見直しの対象）。
+
 ### 【汎用】計画のやり方を、トピックとして kit-growth の records から切り出した（2026-10-20）
 - 決めたこと（ユーザー）: `records/` は測ったこと（確認用）だけにし、進行中の取り組みは `topics/` 直下の Project 型トピックにする。まず計画のやり方だけで様子を見る。kit-growth（Area 型）は残す。
 - 根拠: records に下書き・決定・次の一手まで入っていて見通しが悪かった。窓口と `docs/log.md` という既にある仕組みで進捗が1か所で読める。
