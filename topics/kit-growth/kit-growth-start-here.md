@@ -5,7 +5,7 @@
 
 ## いま
 
-PC1 の印象を壁打ちして `inbox.md` に入れる経路を作った。`review` が inbox と動いているトピックを見る（2026-10-15）。
+PC1 の印象を壁打ちして `inbox.md` に入れる経路を作った。`review` が inbox と動いているトピックを見る（2026-10-15）。動いている子トピック: [[planning-method-start-here]]（計画のやり方。2026-10-20 に records から切り出した）。
 
 ## あなた待ち
 
@@ -20,4 +20,4 @@ PC1 で使った印象が出たら、モバイルで壁打ちして `inbox.md`�
 1. 直下の `docs/log.md`（現在状態。kit の改善の docs は、2026-10-18 から workbase 直下の `docs/` にある）
 2. `inbox.md`（未選別の印象）
 3. 直下の `docs/decisions.md`
-4. `records/kit-records-index.md`（やり方・モードの品質チェックと振り返りの記録。測ったことはここに足す）
+4. `records/kit-records-index.md`（やり方・モードの品質チェックと振り返りの記録。測ったことだけをここに足す。進行中の取り組みは子トピックにする）
