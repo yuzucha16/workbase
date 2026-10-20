@@ -70,7 +70,7 @@ updated: 2026-10-16
 - [[session-goal-modes]]: セッションの進め方: ゴールを決める工程と達成する工程の分離（start のモードの根拠）
 - [[shell-command-usecases]]: ターミナルのコマンド利用傾向とヒストリの種
 - [[shell-fzf-keybindings]]: シェルの fzf とキー割り当て（pwsh / zsh / bash）
-- [[shell-script-testing-wsl]]: WSL でシェルスクリプトを試験する
+- [[shell-script-testing-wsl]]: WSL でシェルスクリプトを試験する（Windows の `.bat` の文字化け・cp932・ASCII・改行・pause・日本語表示も）
 - [[terminal-cursor-blink]]: ターミナルのカーソル点滅を止める（DECSCUSR）
 - [[user-manual]]: ユーザー（ee）の取扱説明書: 口癖から読む思考・行動パターン
 - [[user-thinking-habits]]: ユーザー（ee）の思考の癖、その悪影響、AI の補正策（取扱説明書の根拠）
