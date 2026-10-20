@@ -4,10 +4,10 @@
 
 ## Next Actions
 
-1. 取り込み: ① 3層（`workflow-kit/approval-screening.md`）は 2026-10-20 に通り、ユーザーが試験運用での昇格を正式化した（`docs/decisions.md` の同日。別セッションで実装する）。② `workflow-kit/` の新ファイル、`methods.md` の新区分「計画」、`start 計画`、登録の作業（[[planning-method-draft]] の末尾の一覧）を行う。取り込み前に、下書きの要約が自分たちの言葉かを1回点検する。
-2. 昇格の後、PC1 で品質チェック3回（2週間の実務の題材、見本なし、短い題材）を行い、[[planning-method-record]] に足す。
+1. （済 2026-10-20）取り込み: 3層は 2026-10-20 に通り、試験運用で `workflow-kit/` に取り込んだ。`start-plan.md`、`methods.md` の区分「計画」、`start-hook.md` の `start 計画`、`hooks.md`、`hook-matrix.md`、`exmem/lessons/planning-method.md` ほか（root `docs/decisions.md` の同日）。コミット・push は未了ならユーザーに確認。
+2. PC1 で品質チェック3回（2週間の実務の題材、見本なし、短い題材）を行い、[[planning-method-record]] に足す。
 3. 振り返りへの入力（計画を基準にする案）は、直下 `docs/log.md` の Open Questions にある。10-20 に保留にした（2026-11-11 まで。品質チェック3回の後に出し直す）。承認した計画の置き場の案（`topics/kit-growth/plans/`）は、このトピックの置き場と合わせて見直す。
-4. 試行の題材（トークン・コスト可視化）は実装まで終わった（2026-10-20。ツールと手順書は直下 `docs/log.md` の状態）。実行後のフィードバックは `records/usage-viz-*.md` の末尾にある。ユーザーが読んで、下書き（[[planning-method-draft]]）の欄に反映するかを決める（足す候補: 用語の定義、対象外の見直し条件、出力の置き場、承認が要る変更先、WBS の変更の記録、動作確認。省く候補: 1人の題材の体制、状況、日数の予算）。
+4. 試行の題材（トークン・コスト可視化）は実装まで終わった（2026-10-20。ツールと手順書は直下 `docs/log.md` の状態）。実行後のフィードバックは `records/usage-viz-*.md` の末尾にある。（済 2026-10-20）ユーザーの指示で `workflow-kit/start-plan.md` に反映した（足す候補は欄に足し、省く候補は省いてよい許可にした）。効果は品質チェックで見る。
 
 ## Open Questions
 
