@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-20（`review 消化`: Next Actions 4「room の改善 3 件の実機確認」を、確認せずに閉じた）
+- ユーザーが各機能の役割と確認工数を尋ね、AI が実装を読んで答えた（工数は見積もりで、実測ではない）: ① `ROOM.md` の指示で `⟦CUST_nnn⟧` を書かなくなるか（`room.py:848`。約10〜15分、AI の挙動で2〜3回試す）、② `room start` が `hasTrustDialogAccepted` を書いて信頼の確認を省くか（`room.py:960`。約3〜5分）、③ `reap` が `-home-ai` の残りを警告するか（`room.py:1451`。約5分）。合計は約20〜25分。ユーザーは項目 3 と同じ扱いで「使うときに行う」として、項目を閉じた。**3件とも実機では未確認のまま**（② ③ は単体テストのみ。`test_room.py:467`、`:1109`）。
+- 閉じた項目の全文: 「4. room の改善 3 件の実機確認（旧 37。10-19 に実装、テストは `CaCertTest` の 2 件（`openssl` 無し）以外 OK）: ① `ROOM.md` の指示で、AI が `⟦CUST_nnn⟧` を書かなくなるか ② `room start` で信頼の確認が出ないか。`~/.claude.json` の `projects["/mnt/room/<名>"].hasTrustDialogAccepted` が効くか ③ `reap` が `-home-ai` の残りを警告するか。」
+
 ### 2026-10-20（部屋の変換の道具: v1 を実装し、room run の案を決めた）
 - ユーザーの相談: 部屋の中で pwsh・pandoc（HTML 化、スクリプト実行、Excel）を使いたい。作る側が最後まで持つ方針で、Windows が要る部分だけ人が実行する形にしたい。議論の結果は `decisions.md` の同日の項（v1・v2・v3、`room run` の方針）。
 - 実装: `room.py` の `init` に、変換の道具（LibreOffice の calc・writer・impress、`fonts-noto-cjk`、pandoc、unzip）、日本語優先の `local.conf`、Chromium（Playwright 1.64.1、`/opt/ms-playwright`）と mermaid-cli 12.0.0、`room-mmdc` と `room-chrome` を足した（`73d8089`、`be1808e`、`1b4ef86`、`89f66ba`、`f15d513`）。PlemolJP は実装したが、試験が安定するまで外した。単体テスト 81 件が通る。
