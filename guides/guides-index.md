@@ -53,6 +53,13 @@ updated: 2026-10-20
 |---|---|---|
 | `review`（見直して）は何のためか、何を見て何を決めるか、ここまでの経緯とこれからを、自分で説明できるようにする | [[review-hook-why]] | 理解ガイド |
 
+### AI の使用量を振り返る
+
+| やりたいこと・場面 | 見る文書 | 種類 |
+|---|---|---|
+| Claude Code のトークン使用量・概算費用($)を、週次・月次で集計して、上位セッションや 1 件当たりの平均/最大/最小を見る | [[claude-usage-report]] | 手順書 |
+| 使用量の集計を HTML のレポートにする。単価表を足す・更新する。ccusage と突き合わせる | [[claude-usage-report]] | 手順書 |
+
 ### エラー・困りごとを切り分ける
 
 | やりたいこと・場面 | 見る文書 | 種類 |
@@ -76,7 +83,7 @@ updated: 2026-10-20
 
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
-| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[bedrock-first-hello]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
+| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[bedrock-first-hello]]、[[claude-usage-report]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
 | 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[review-hook-why]]、[[llm-gateway-oidc]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
