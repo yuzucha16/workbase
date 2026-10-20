@@ -19,12 +19,11 @@
 - 経路は整備済み: 受け皿 = トピック、入力 = `inbox.md`、見直し = `review`。cwd はリポジトリのトップだけ。フックの権限は `hooks.md` の「領域とフックの権限」が正本。
 - 仕組みの決定は `review 消化` の3段で承認する（`approval-screening.md`）。仮決めは `【仮 〜日付】`。
 - やり方は `methods.md`（変更・調査1・調査2・振り返り1）。作り方は `exmem/lessons/method-creation.md`、改善の記録は `topics/kit-growth/records/`。
-- room（`workflow-kit/room/`）: 実機の通しは済み（2026-10-18）。Ubuntu 26.04 の部屋（`init`）、`data:` の none / mask / restore、`room shell` と Node の流れは、実機で確認済み（ユーザー、2026-10-19）。`room init` の `wsl --install` の早戻りは、次に再現するまで保留（`log-history.md` の同日の項）。
+- room（`workflow-kit/room/`）: 実機の通しは済み（2026-10-18）。Ubuntu 26.04 の部屋（`init`）、`data:` の none / mask / restore、`room shell` と Node の流れは、実機で確認済み（ユーザー、2026-10-19）。`room init` の `wsl --install` の早戻りは、次に再現するまで保留（`log-history.md` の同日の項）。`room aws-key` は、10-20 に原因（`sh -c` の引数経路で代入した変数が空になる）を直し、PC1 で動作を確認した（`08202a7`）。
 - 計画のやり方（6R → 憲章 → 成果物 WBS → マイルストーン）: 下書きは `topics/kit-growth/records/planning-method-record.md`（`workflow-kit/` には未反映。3層の前。2026-10-19）。試行の元ファイルは Project の共有フォルダ `notes/planning-method/`（クラウド側の控え。PC 環境からは見えない）。
 
 ## Next Actions
 
-1. `room aws-key` を実機で通す。PC1 で、部屋の `~/.aws/credentials` への `touch` が `ai` で失敗する。原因は未特定。確かめる: `wsl -d room-<Area> -- sh -c 'id; echo $HOME; ls -ld $HOME $HOME/.aws; touch $HOME/.aws/credentials; echo $?'` の出力と `touch` のエラー文。手書きの `credentials` では、Zed の Agent の Bedrock 認証が通っている。（旧 40）
 2. `data:` の残り（旧 42）: ① `data: mask` の pptx・txt の実データの確認は、別セッションで行う。② Area 共通のマスク表の置き場を `areas/<Area>/_noai/` で試す（仕様は足さない。Area の README には語を書かない）。
 3. room の実機の確認の残り（旧 39）: ① 実データで `mask` の警告量 ③ `base_stale` ⑤ `restore` が `mapping.json` の欠け・食い違いで止まるか ⑧ 部屋の AI が `stock` の下書きを書けるか。共有知の送付のサイズ（1.5MB、120 ファイル）は、増えたら測り直す。
 4. room の改善 3 件の実機確認（旧 37。10-19 に実装、テストは `CaCertTest` の 2 件（`openssl` 無し）以外 OK）: ① `ROOM.md` の指示で、AI が `⟦CUST_nnn⟧` を書かなくなるか ② `room start` で信頼の確認が出ないか。`~/.claude.json` の `projects["/mnt/room/<名>"].hasTrustDialogAccepted` が効くか ③ `reap` が `-home-ai` の残りを警告するか。
@@ -40,4 +39,5 @@
 - `repos/` の受け渡し（スナップショットと patch。未検証）: `remote` の type と `dev-env` の実使用の後に決める。【保留 〜2026-11-05】
 - `restore_project` が `_noai/final/` の人の変更を上書きする件（2026-10-18 の通しで未試験）: 正本の宣言と上書き前の警告を、次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】
 - `token-matrix.md` と `review` の入力 5: 第5の観点「温存」を足し、入力 5 を「TTL を超えて空いた後の書き込み量」に変えるか。今の役目の引き継ぎと基準値 103 の再設定を付け、分割して出し直す。【保留 〜2026-10-25】
+- `workflow-kit/room/room.py` / `Wsl.push`（`sh -c` の引数経路）は、代入した変数を含むスクリプトを渡すと、空に展開されて壊れる。規則は `exmem` にあったが、10-14 に続き 10-19 に再発した / 案: `push` の入口で、スクリプト内の代入（`name=`）を検出して `RoomError` にするか、関数の説明文に規則を書く。AI の提案で、未承認。`push_shared` は代入を使わないので影響なし。
 - `workflow-kit/` / 計画のやり方（`start 計画`。6R → 憲章 → 成果物 WBS → マイルストーン）の取り込み / 案: `topics/kit-growth/records/planning-method-record.md` の骨子を、`workflow-kit/` の新ファイルと `methods.md` の新区分「計画」に、試験運用で昇格する。ユーザーの決定（2026-10-19）は同記録に書いた。先行する決定: `start` の引数つきモードは試験運用（`docs/decisions.md` 2026-10-16）。`start` のインタビュー・`open`・基準文書・改善4は触らない。3層（`approval-screening.md`）を通すまで未反映。6R 自体は3層に乗せない。
