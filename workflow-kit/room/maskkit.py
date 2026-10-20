@@ -702,6 +702,8 @@ def mask_files(raw_files, config, mapping, only=None):
     unsupported = [r for r in raw_files if Path(r).suffix.lower() not in MASK_TEXT_EXT + tuple(OOXML_PARA)]
     if unsupported:
         raise MaskError("マスクできない形式が原本にある（" + "・".join(e[1:] for e in MASK_TEXT_EXT + tuple(OOXML_PARA)) + " だけ）:\n  " + "\n  ".join(sorted(unsupported)))
+    if not config.terms and not config.columns:
+        warns.append("mask.toml に語も列の指定も無い（語の行がコメントアウトのままかも）。何も置き換わらず、原本がそのまま ai/in に入る")
     table = build_mapping(config, mapping, raw_files, warns)
     residual = []
     for rel, data in raw_files.items():
