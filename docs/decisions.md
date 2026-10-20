@@ -4,6 +4,14 @@
 
 ## Decisions
 
+### 【汎用】部屋に変換の道具を入れる（v1）。Windows が要る実行は `room run` の案（v2・v3）にする（2026-10-20）
+- 決めたこと（ユーザー）: ① 部屋の道具は `init` で root が入れる（AI がホームに入れる案ではない）。② 呼び分け: **v1** = 部屋に LibreOffice・Chromium（mermaid-cli）・pandoc を入れる。**v2** = `room run`（`data: none` と `mask` だけ）。**v3** = v2 に実データ（`restore`）への実行を足す。v1 に価値がなければ v2 に上げる。③ v1 は実装済み（`room.py` の `init`）。mermaid の画像化は部屋で完結させる（Chromium は Playwright 版）。日本語（JP）の字形を優先する。④ `room run` の方針: 1 回に 1 件、成果物を名前で指定して実行する（全体実行・Area 単位は作らない）。スクリプトは `ai/work/run/`（使い捨てのスクリプトの置き場）、成果物は `ai/out/<成果物名>/dist/`（実データ由来は `_noai/final/<成果物名>/dist/`）。実行の記録は `room` だけが書き、`start` の冒頭と `close` の停止で未実行に気づく。⑤ v3 は、静的検査・入力のコピー・書き出しとログは `_noai/` の条件で許す（弱点: 難読化は防げない。最後の関門は人が読むこと）。⑥ PlemolJP（等幅フォント）は、試験が安定するまで `init` から外す（ユーザーの依頼。手順は `room.py` に残し、コメントを外せば戻る）。⑦ PC1 で pwsh 7 は使える（ユーザーの申告）。
+- 根拠: 作る側が最後まで持ち、人の操作を固定する、というユーザーの方針。Linux の道具で足りる変換は部屋で完結でき、Windows が要る範囲を VBA とピボットに狭められる。`room run` は部屋の保証（AI は実データを見ず、Windows に触れない）に穴を開けるので、スコープを狭め、実行前に人が全文を読む。
+- 却下案: AI がホームに道具を入れる（取得元と版を AI が選ぶ）、道具を入れない（HTML 化は Python、`.ps1` は人が毎回操作を覚える）、`interop` を有効にする（境界が破れる）、`room run` の全体実行・Area 単位の実行（成果物が変わりうる）、実行の記録を AI も書ける形（偽れる）。
+- 確認済み（PC2 の使い捨ての部屋、2026-10-20）: LibreOffice 26.2.6.3 の xlsx の PDF 変換と再計算、pandoc 3.7.0.2 の日本語、Chromium の起動と PDF（NotoSansCJKjp）、mermaid の PNG（日本語ラベル。ユーザーが目で確認）、`init` を通して `mmdc --version` が出ること。**PC1（TLS 検査）は未確認。** `room run` と PlemolJP の `init` での実機確認は未了。
+- 見直しの条件: PC1 で取得できなければ取得の手順を直し、直せなければ v2 に上げる。v2 は v1 の価値の判定の後。
+- → [[ai-room-convert-tools]]（理解ガイド）
+
 ### 【汎用】計画のやり方を、試験運用で `workflow-kit/` に取り込んだ（2026-10-20）
 - 決めたこと: 3層で正式化済み（`topics/planning-method/docs/decisions.md` の 2026-10-20）の実装。新ファイルは `workflow-kit/start-plan.md`（手順と欄の定義）と `exmem/lessons/planning-method.md`（背景・Facts・Open Questions）。`methods.md` に区分「計画」（計画1）、`start-hook.md` に `start 計画`（引数つきモードの1節。本体は `start-plan.md` に置いたので +20% の枠を最小に抑えた）、`hooks.md`（別名「計画で始めて」）、`hook-matrix.md` の review の点検 7、`exmem-index.md`、`method-creation.md` の事例の表、`workflow-kit/README.md` の表を更新した。
 - 取り込みの範囲: 下書き（`planning-method-draft.md`）の骨子。同日、ユーザーの指示（「反映して」）で、試行の実行後のフィードバックも `start-plan.md` に反映した（足す候補: 用語の定義、対象外の見直し条件、出力の置き場、承認が要る変更先、WBS の変更の記録、動作確認、未決の解消先、前提の表の既存ツールの役割。省く候補は、欄の削除でなく「省いてよい・まとめてよい」の許可にした）。
@@ -494,6 +502,7 @@
 
 ## Gotchas
 
+- 【汎用】部屋（Ubuntu 26.04）で Chromium を使うとき: apt の `chromium` に候補が無く、`chromium-browser` は snap への移行パッケージで部屋では使えない。Playwright の Chromium は、不足するライブラリ `libasound2t64` を足せば動く。`--dump-dom` の日本語が化けるのは、`data:` URL に `;charset=utf-8` が無いため（Chromium の不具合ではない）。dbus の警告は無害。`fonts-noto-cjk` は既定で簡体字（sc）が選ばれるので、`/etc/fonts/local.conf` で JP を優先する（実機: 2026-10-20）。 → [[ai-room-convert-tools]]
 - 【汎用】automount を切った WSL の部屋で、Windows の `WSLENV` に `/p` 付きのパス（証明書など）があると、変換できず、入るたびに「failed to translate」が出る。しかも `SSL_CERT_FILE` などが壊れたまま部屋に残り、curl が証明書エラー（終了コード 60）になる。`wsl.exe` に渡す環境から `WSLENV` を外す（実機: 2026-10-19、PC1）。部屋の `curl` の発行元を `openssl s_client … | openssl x509 -noout -issuer` で見ると、TLS 検査のプロキシかどうかが分かる。 → [[ai-isolated-work-room]]
 - 【汎用】TLS 検査のあるネットワークの部屋では、curl だけでなく、Node（`NODE_EXTRA_CA_CERTS`）、npm（`npm config set cafile`）、AWS CLI（`AWS_CA_BUNDLE`）も、システムの証明書ストアを見ない。ツールごとに、システムのバンドル（`/etc/ssl/certs/ca-certificates.crt`）を指す（実機: curl は `--ca-cert` の後に通った、2026-10-19。npm、Node、AWS の変数は、設定したが単独の効果は未分離）。 → [[ai-isolated-work-room]]
 - 【汎用】Ubuntu 24.04 の apt の Node は 18。Zed の Agent（`@agentclientprotocol/claude-agent-acp`、`npx` で起動）は 22 以上を要る。部屋に Node が無いと「npx を知らない」になる（実機: 2026-10-19）。 → [[ai-isolated-work-room]]
