@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-20（`integrate`: 写真のメモから、`.bat` の ASCII ルールが作業中に届かなかった構造の抜けが見つかった）
+- ユーザーが `exmem/inbox/` に置いた写真（別環境の stock 形式のメモを画面ごと撮ったもの。初の試み）を、`integrate` で `exmem/lessons/shell-script-testing-wsl.md` に統合した（`3d99a9c`）。内容は「日本語を表示する `.bat` は UTF-8 に `chcp 65001` でなく cp932・CRLF で保存する」。写真は削除した。写し間違いの有無は、元データでの確認をユーザーに頼んだ。
+- 経緯の調査: `.bat` の ASCII ルールは 2026-10-06 に dotfiles（`7b82d2c`）で、日本語コメントの文字化け対策として決まり、exmem へ転記された（`867be36`）。今回の `.bat` は works で作られ、AI がルールに届かなかった。原因は構造にある: 索引の1行に `.bat` の語が無い、ルールがノート後半の追記節にある、dotfiles の `AGENTS.md` にも無い。
+- 決定（ユーザー、2026-10-20）: 暫定で全体 ASCII を正にし、cp932 の `.bat` は作らず、cp932 の試験もしない。cp932 の内容は草稿・優先度低として lesson に残した。先に採った「cp932 を例外に認める」案（`9361b2e`）は、同日に取り下げた。dotfiles は変更しない。索引の行に語を足した（補修）。「ルールが見つかりにくい構造」は、領域全体の論点として `docs/log.md` の Next Actions 9 に置いた（exmem の肥大化と合わせて議論する）。決定の記録先は lesson の Decisions。
+
 ### 2026-10-20（計画のやり方を records から切り出し、子トピック `topics/planning-method/` にした）
 - `records/` が下書き・決定・次の一手まで抱えて見通しが悪いとのユーザーの指摘（kit-growth の整理）。records は測ったことだけに戻し、計画のやり方は Project 型のトピックにした（窓口、`docs/log.md`、`decisions.md`、`log-history.md`、下書き）。まず計画だけで様子を見る（ユーザー）。kit-growth は Area 型のまま残す。決定は `topics/planning-method/docs/decisions.md`。
 
