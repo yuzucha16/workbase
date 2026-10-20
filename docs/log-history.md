@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-20（`review 消化` 項目 1: `room aws-key` の `touch` 失敗の原因を特定して直した）
+- 旧 Next Actions 1（旧 40）: PC1 で `room aws-key` が、部屋の `~/.aws/credentials` への `touch` で失敗していた。原因は、`aws_credentials_script` を引数経路（`wsl.exe -- sh -c <スクリプト>`、`Wsl.push`）で渡したため、スクリプト内で代入した `$f` `$x` `$t` が部屋側の外側のシェルで空に展開され、`touch ""` になったこと。10-14 に `exmem` へ入れた規則と同じ原因の再発。`room-office` で、実コードと同じ関数を呼ぶ読み取り専用のプローブで再現した（`f=[]`、`cannot create : Directory nonexistent`）。`$HOME` は展開される。
+- 切り分けの誤り: AI が、ユーザーのキャプチャ（直接実行の `touch` が終了コード 0）を「通過」と読み、失敗を取り違えた。ユーザーが「通過していない」と訂正した。直接実行と `room aws-key` では経路が違う。
+- 直し: スクリプトと本文を標準入力（`sh -s`、`Wsl.script`）で渡し、本文は引用つきのヒアドキュメントにした。`room-office` で、権限 600、所有者 `ai`、`$` とバッククォートがそのまま入ることを確認。ユーザーが PC1 で push と動作確認まで完了した。コミット `08202a7`（メッセージの「`$HOME` を先に展開」は不正確。正しくは代入した変数。コメントは次のコミットで直した）。テストは 92 件中 `CaCertTest` の 2 件が失敗（既知。`openssl` 無し）。
+- ナレッジ化: `exmem/inbox/2026-10-20-wsl-argv-expansion-recurrence.md`（点検 PASS 20）。`decisions.md` の Gotchas に同日の項。引数経路 `push` に検査を足す案を Open Questions に置いた（未承認）。
+- 遠回り: 上の誤読の分。`review 消化` は項目 1 だけに絞って行った（待ち行列のスクリーニングと 3 つのリストは未実施）。
+
 ### 2026-10-20（振り返り改善4: 定例化と規模の Must）
 - ユーザーの判断: 振り返りを daily / weekly / monthly の定例にした。規模を Must に足した（daily 3章・1分、weekly 4章・2分、monthly 5章・3分）。逆らう項は削除で畳む。monthly は最終営業日を含む最後の5営業日の初日。理由と見直しの条件は `decisions.md` の同日の項。手順書は `retrospective-method.md` の v6（【仮 〜10-26】）。
 - 改善4 の使用回数 3/3 の後の Must の増減は、この決定で行った（Next Actions 5 から外した）。残り: 読み比べ、週次の使い方、改善5 の品質チェック3回。
