@@ -17,7 +17,7 @@
 
 ## 試行の出力（`records/`）
 
-トークン・コスト可視化の題材: [[usage-viz-6r]]、[[usage-viz-plan]]、[[usage-viz-plan-notes]]（2026-10-20。kit 以外の初の題材。ユーザーの確認待ち）。
+トークン・コスト可視化の題材: [[usage-viz-6r]]、[[usage-viz-plan]]、[[usage-viz-plan-notes]]（2026-10-20。kit 以外の初の題材。計画は確定）。
 
 ## 読む順
 
