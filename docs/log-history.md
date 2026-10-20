@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-20（計画のやり方を records から切り出し、子トピック `topics/planning-method/` にした）
+- `records/` が下書き・決定・次の一手まで抱えて見通しが悪いとのユーザーの指摘（kit-growth の整理）。records は測ったことだけに戻し、計画のやり方は Project 型のトピックにした（窓口、`docs/log.md`、`decisions.md`、`log-history.md`、下書き）。まず計画だけで様子を見る（ユーザー）。kit-growth は Area 型のまま残す。決定は `topics/planning-method/docs/decisions.md`。
+
 ### 2026-10-20（`review 消化` 項目 1: `room aws-key` の `touch` 失敗の原因を特定して直した）
 - 旧 Next Actions 1（旧 40）: PC1 で `room aws-key` が、部屋の `~/.aws/credentials` への `touch` で失敗していた。原因は、`aws_credentials_script` を引数経路（`wsl.exe -- sh -c <スクリプト>`、`Wsl.push`）で渡したため、スクリプト内で代入した `$f` `$x` `$t` が部屋側の外側のシェルで空に展開され、`touch ""` になったこと。10-14 に `exmem` へ入れた規則と同じ原因の再発。`room-office` で、実コードと同じ関数を呼ぶ読み取り専用のプローブで再現した（`f=[]`、`cannot create : Directory nonexistent`）。`$HOME` は展開される。
 - 切り分けの誤り: AI が、ユーザーのキャプチャ（直接実行の `touch` が終了コード 0）を「通過」と読み、失敗を取り違えた。ユーザーが「通過していない」と訂正した。直接実行と `room aws-key` では経路が違う。
