@@ -354,6 +354,50 @@ class InitTest(unittest.TestCase):
             self.assertFalse(hasattr(wsl, "installed"))
 
 
+class RenameAreaTest(unittest.TestCase):
+    def git_out(self, v, *args):
+        return subprocess.run(["git", "-C", str(v), *args], check=True, capture_output=True, text=True, encoding="utf-8").stdout
+
+    def args(self, old="area-x", new="area-z", commit=True):
+        return argparse.Namespace(old=old, new=new, commit=commit)
+
+    def test_rename_moves_area_rewrites_projects_and_manifest_and_commits(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            (v / "areas" / "area-x" / "memo.md").write_text("追跡外\n", encoding="utf-8")
+            p = room.Project.load(c, "proj-a")
+            (p.ai / "in" / "a.txt").write_text("x", encoding="utf-8")
+            room.adopt_in(c, p)
+            sh(v, "add", "-A")
+            sh(v, "commit", "-qm", "setup")
+            room.cmd_rename_area(c, self.args())
+            self.assertFalse((v / "areas" / "area-x").exists())
+            self.assertTrue((v / "areas" / "area-z" / "memo.md").exists())
+            readme = (v / "projects" / "proj-a" / "README.md").read_text(encoding="utf-8")
+            self.assertIn("area: area-z", readme)
+            self.assertIn("[[areas/area-z/README|area-z]]", readme)
+            self.assertNotIn("area-x", readme)
+            self.assertIn("[[projects/proj-a/README", (v / "areas" / "area-z" / "README.md").read_text(encoding="utf-8"))
+            self.assertEqual(room.Project.load(c, "proj-a").area, "area-z")
+            self.assertEqual(room.check_provenance(room.Project.load(c, "proj-a")), [])
+            self.assertEqual(self.git_out(v, "status", "--porcelain", "--", "areas", "projects").strip().splitlines(), [])
+
+    def test_rename_refuses_bad_missing_existing_and_mounted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            (v / "areas" / "area-y").mkdir()
+            c = ctx_for(v)
+            for old, new in (("area-x", "日本語"), ("area-x", "area-x"), ("nothing", "area-z"), ("area-x", "area-y")):
+                with self.assertRaises(room.RoomError):
+                    room.cmd_rename_area(c, self.args(old, new))
+            self.assertTrue((v / "areas" / "area-x").exists())
+            wsl = FakeWsl()
+            wsl.mounted = True
+            with self.assertRaises(room.RoomError):
+                room.cmd_rename_area(ctx_for(v, wsl), self.args())
+            self.assertTrue((v / "areas" / "area-x").exists())
+
+
 class ReapTest(unittest.TestCase):
     def archived(self, v, name, reap_after, status="done", reaped=None):
         d = v / "archives" / name

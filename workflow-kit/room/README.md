@@ -13,6 +13,7 @@ uv run room.py open <Project> --area <Area> [--type doc|dev|dev-env|dev-test|res
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--adopt] [--commit]
 uv run room.py close <Project> [--commit]
 uv run room.py umount --area <Area>
+uv run room.py rename-area <旧Area> <新Area> [--no-commit]
 ```
 
 - works は `$ROOM_VAULT`、無ければ `~/works`。`--vault <パス>` で指定できる（`--vault` はサブコマンドの前に書く）。`close` から reap までの日数は `--reap-days`（既定 14。`$ROOM_REAP_DAYS` でも指定できる）。
@@ -33,6 +34,7 @@ uv run room.py umount --area <Area>
 | `restore` | `ai/out/` を復元して `_noai/final/` へ。戻らないプレースホルダー・未知の形式があれば、何も書かずに一覧を出して止める。`_noai/final/` を人が前回の復元から変えていたときも止める（`--force` で上書き。前回の書き出しのハッシュは `_noai/map/final-manifest.json`）。`start` の終わりでも自動で行う |
 | `readme` | 部屋の AI が書いた `ai/out/readme-draft.md`（本文だけ）を、`README.md` の本文に反映する（frontmatter は変えず、`updated` だけ今日にする。確認あり、`--yes` で省略）。`open` の判断部分（目的・完了条件）を AI が下書きする形 |
 | `stock` | 部屋の AI の【汎用】の下書き（`ai/out/stock/*.md`）を、**1件ずつ人が確認して**（`--yes` で省略）`resources/exmem/inbox/` に運ぶ。frontmatter に `base_commit` と `observed` が要る。対応表の語を含む下書きは運ばない。基準以降に統合先の `lessons/` が変わっていれば、frontmatter に `base_stale` を足す。運んだものは manifest の `stock` に記録し（同じ内容は二度運ばない）、未追跡のまま残す（コミットしない: `stock-hook.md` の方針） |
+| `rename-area` | `rename-area <旧> <新>`: `areas/<旧>/` を `areas/<新>/` に移し（追跡外のファイルも）、その Area の Project（`projects/` と `archives/`）の README の `area:` と `[[areas/<旧>/…]]` のリンク、`ai/records/manifest.json` の来歴の `area` を書き換える。新しい名前は英数字・`_`・`-` だけ（`room-<新>` になるため）。新しい名前がすでにある、旧 Area が無い、旧の部屋にマウントが残っている、のいずれかなら何も変えずに止まる。**部屋は触らない**: `room-<旧>` は不要なら手で消し（`wsl --unregister`）、`room init <新>` で作り直す。`room-log.md` の過去の行は書き換えない。既定でコミットする（`--no-commit` で省く） |
 | `umount` | 部屋に残った `/mnt/room/*` のマウントを外す |
 
 `start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。待つ間、部屋が止まってマウントが消えないよう、部屋で `sleep infinity` を動かす（実機で確認済み: 2026-10-18。待つ間マウントは残り、Enter で戻る。`wsl.exe` はコンソールから切り離して起こす）。
