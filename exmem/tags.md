@@ -7,7 +7,7 @@ tags:
 aliases:
   - Tags
 created: 2026-09-26
-updated: 2026-10-14
+updated: 2026-10-20
 ---
 
 # タグ一覧
@@ -100,3 +100,5 @@ updated: 2026-10-14
 | `markdown` | Markdown の記法 |
 | `plugins` | Claude Code などのプラグイン・マーケットプレイスの導入と管理 |
 | `skills` | AI エージェントのスキル（`SKILL.md`）の利用・取り込み |
+| `oidc` | OIDC（OpenID Connect）のサインイン・トークン |
+| `llm-gateway` | 組織の LLM ゲートウェイ経由での AI クライアントの接続 |
