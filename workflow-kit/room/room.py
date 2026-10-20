@@ -1390,14 +1390,15 @@ AWS_SECRET_RE = re.compile(r"^\S{20,}$")
 AWS_TOKEN_RE = re.compile(r"^\S{20,}$")
 
 
-def aws_credentials_script(profile):
-    """標準入力の [profile] の節で、~/.aws/credentials の同名の節を置き換える（ほかの節は残す。権限 600）。"""
+def aws_credentials_script(profile, body):
+    """body（[profile] の節）で、~/.aws/credentials の同名の節を置き換える（ほかの節は残す。権限 600）。
+    スクリプトは標準入力（sh -s）で渡し、body は引用つきのヒアドキュメントに埋める。引数で渡す（sh -c）と、wsl.exe の側のシェルが $HOME や $t を先に展開し、touch "" で失敗する。"""
     p = shlex.quote(f"[{profile}]")
     return (f"f=\"$HOME/.aws/credentials\"\n"
             "for x in \"$HOME/.aws\" \"$f\"; do [ ! -e \"$x\" ] || [ -O \"$x\" ] || "
             "{ echo \"所有者が一般ユーザーではない: $x（root のシェルで作った可能性。wsl -d <部屋> -u root -- chown -R ai:ai /home/ai/.aws で直す）\" >&2; exit 3; }; done\n"
             f"umask 077; mkdir -p \"$HOME/.aws\"; touch \"$f\"; chmod 600 \"$f\"\n"
-            f"t=$(mktemp) && cat > \"$t\" && "
+            f"t=$(mktemp)\ncat > \"$t\" <<'ROOM_AWS_EOF'\n{body}ROOM_AWS_EOF\n"
             f"awk -v p={p} '/^\\[/{{s=($0==p)}} !s' \"$f\" > \"$f.new\" && cat \"$t\" >> \"$f.new\" && "
             f"mv \"$f.new\" \"$f\"; rm -f \"$t\"; chmod 600 \"$f\"")
 
@@ -1419,7 +1420,7 @@ def cmd_aws_key(ctx, a):
     if token and not AWS_TOKEN_RE.match(token):
         raise RoomError("AWS_SESSION_TOKEN の形が違う。何も書き込んでいない")
     body = f"[{a.profile}]\naws_access_key_id={key}\naws_secret_access_key={secret}\n" + (f"aws_session_token={token}\n" if token else "")
-    rc, _out, err = ctx.wsl.push(distro, body.encode("utf-8"), aws_credentials_script(a.profile))
+    rc, _out, err = ctx.wsl.script(distro, aws_credentials_script(a.profile, body))
     if rc != 0:
         raise RoomError(f"~/.aws/credentials に書けなかった（終了コード {rc}）: {err.strip()[-300:]}")
     ctx.say(f"書いた: {distro} の ~/.aws/credentials の [{a.profile}]（権限 600、{'一時キー' if token else '長期キー'}）。AI からは読める場所なので、"
