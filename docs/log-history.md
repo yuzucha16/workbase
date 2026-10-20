@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-20（`workflow-kit/tools/` に使用量の集計ツールを足した）
+- ユーザーの依頼（計画の試行の題材「トークン・コスト可視化」の実装）で、`usage_report.py`、`usage_report_html.py`、`usage_prices.json` を `workflow-kit/tools/` に置いた（置き場はユーザーが承認）。手順書は `guides/howto/claude-usage-report.md`。10-19 以降の合計トークンが ccusage と一致（79,675,204）。詳細は `topics/planning-method/docs/log-history.md` の同日（3）。HTML の見た目の確認と自動テストは未了。
+
 ### 2026-10-20（`room rename-area` を足した: Area の名前を変える）
 - ユーザーの依頼「areas/<area> の rename 機能がほしい。ルームは手動で作り直す」を受けて、`workflow-kit/room/room.py` に `rename-area <旧> <新> [--no-commit]` を実装した。`areas/<旧>/` を `areas/<新>/` に移し（追跡外のファイルも）、`projects/` と `archives/` の該当 Project の README の `area:` と `[[areas/<旧>/…]]`、`ai/records/manifest.json` の来歴 `area` を書き換える（manifest を直さないと次の `start` の来歴チェックが止まる）。新しい名前は英数字・`_`・`-` だけ。新名がある・旧 Area が無い・旧の部屋にマウントが残る、のいずれかなら何も変えずに止まる。部屋（WSL）は触らない。`room-log.md` の過去の行は書き換えない。既定でコミットする。
 - 確認: 新しいテスト `RenameAreaTest` の 2 件は OK。全体は 94 件中 2 件が失敗（`CaCertTest` の 2 件。`FileNotFoundError`。既知の `openssl` 無しと同じ原因と見ているが、今回の変更前の状態では測っていない）。実機（実際の `areas/` と部屋）では未確認。README（`workflow-kit/room/README.md`）の使い方と表に追記した。
