@@ -205,12 +205,14 @@ class AwsKeyTest(unittest.TestCase):
             wsl = FakeWsl()
             c = self.ctx(tmp, ["AKIAEXAMPLE0000000"], ["s" * 40, ""], wsl)
             self.run_cmd(c)
-            distro, data, script = wsl.pushes[0]
+            self.assertEqual(wsl.pushes, [])  # sh -c の引数では渡さない（wsl.exe の側のシェルが $HOME を先に展開する）
+            distro, script, root = wsl.scripts[0]
             self.assertEqual(distro, "room-area-x")
-            self.assertIn(b"[n1-trial]", data)
-            self.assertIn(b"aws_secret_access_key=" + b"s" * 40, data)
-            self.assertNotIn(b"aws_session_token", data)
-            self.assertNotIn("s" * 40, script)
+            self.assertFalse(root)
+            self.assertIn("[n1-trial]", script)
+            self.assertIn("aws_secret_access_key=" + "s" * 40, script)
+            self.assertNotIn("aws_session_token", script)
+            self.assertIn("<<'ROOM_AWS_EOF'", script)  # 引用つき: 本文の $ を展開しない
             self.assertIn("chmod 600", script)
             self.assertFalse(any("s" * 40 in m or "AKIAEXAMPLE" in m for m in c.msgs))
 
@@ -218,7 +220,7 @@ class AwsKeyTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
             self.run_cmd(self.ctx(tmp, ["AKIAEXAMPLE0000000"], ["s" * 40, "t" * 60], wsl))
-            self.assertIn(b"aws_session_token=" + b"t" * 60, wsl.pushes[0][1])
+            self.assertIn("aws_session_token=" + "t" * 60, wsl.scripts[0][1])
 
     def test_bad_input_and_missing_room_write_nothing(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -230,6 +232,7 @@ class AwsKeyTest(unittest.TestCase):
                 with self.assertRaises(room.RoomError):
                     self.run_cmd(self.ctx(tmp, list(answers), list(secrets), wsl), area=area, profile=profile)
                 self.assertEqual(wsl.pushes, [])
+                self.assertEqual(wsl.scripts, [])
 
 
 class ShellTest(unittest.TestCase):
@@ -242,8 +245,8 @@ class ShellTest(unittest.TestCase):
                 room.cmd_shell(ctx_for(Path(tmp), FakeWsl()), argparse.Namespace(area="no-room"))
 
     def test_aws_key_script_stops_when_files_are_not_owned_by_the_user(self):
-        self.assertIn("[ -O", room.aws_credentials_script("n1"))
-        self.assertIn("chown -R ai:ai", room.aws_credentials_script("n1"))
+        self.assertIn("[ -O", room.aws_credentials_script("n1", "[n1]\n"))
+        self.assertIn("chown -R ai:ai", room.aws_credentials_script("n1", "[n1]\n"))
 
 
 class InitTest(unittest.TestCase):
