@@ -205,7 +205,7 @@ class AwsKeyTest(unittest.TestCase):
             wsl = FakeWsl()
             c = self.ctx(tmp, ["AKIAEXAMPLE0000000"], ["s" * 40, ""], wsl)
             self.run_cmd(c)
-            self.assertEqual(wsl.pushes, [])  # sh -c の引数では渡さない（wsl.exe の側のシェルが $HOME を先に展開する）
+            self.assertEqual(wsl.pushes, [])  # sh -c の引数では渡さない（wsl.exe の側のシェルが、スクリプト内で代入した変数を先に展開して空にする）
             distro, script, root = wsl.scripts[0]
             self.assertEqual(distro, "room-area-x")
             self.assertFalse(root)
