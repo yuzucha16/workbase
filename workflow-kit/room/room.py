@@ -689,7 +689,8 @@ def cmd_init(ctx, a):
                     f"cat > {CA_DEST} <<'EOF'\n{ca_pem}EOF\nchmod 644 {CA_DEST}\nupdate-ca-certificates\n", root=True)
     step_script(ctx, distro, "Node.js 24（公式の tarball、チェックサム確認つき）", NODE_INSTALL, root=True)
     step_script(ctx, distro, "変換の道具（LibreOffice、日本語フォント、pandoc。大きいので数分かかる）", CONVERT_TOOLS_INSTALL, root=True)
-    step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
+    # 等幅フォント PlemolJP は、使い捨ての部屋での試験が安定するまで入れない（約 220 MB の取得で時間がかかる。ee の依頼、2026-10-20）。戻すときは次の行のコメントを外し、tests の PlemolJP の確認も戻す
+    # step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
     step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
     step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
     step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
