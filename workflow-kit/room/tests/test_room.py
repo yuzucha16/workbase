@@ -288,6 +288,12 @@ class InitTest(unittest.TestCase):
                 self.assertIn(pkg, scripts[conv][0])
             self.assertIn("Noto Sans CJK JP", scripts[conv][0])
             self.assertIn("fc-cache", scripts[conv][0])
+            pl = idx("PlemolJP_")
+            self.assertTrue(scripts[pl][1])  # root で入れる
+            self.assertIn("sha256sum -c", scripts[pl][0])
+            self.assertIn(room.PLEMOLJP_SHA256, scripts[pl][0])
+            self.assertIn("<family>PlemolJP</family>", scripts[conv][0])
+            self.assertLess(conv, pl)
             self.assertLess(idx("latest-v24.x"), conv)
             self.assertLess(conv, idx("astral.sh"))
 
