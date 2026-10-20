@@ -12,6 +12,7 @@
 | 2026-10-25 | 単発 | 保留中の Open Questions（Stop フックの記録の置き場） | ユーザー |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断（Open Questions。計画のやり方の品質チェックの後） | ユーザー |
 | 2026-10-26 | 単発 | 振り返りの手順書 v6（v5 の続き）の仮決め。定例の初回で字数を測る（項目 5） | ユーザー |
+| 2026-10-28 | 単発 | 仮決め: 題材ごとのトピックと `records/` の仕訳（2か所）を、正式化するか（`decisions.md` の 10-21。正式化なら `start-plan.md` の置き場の表を直す） | ユーザー |
 | 2026-11-02 | 単発 | `remote` の type の要否（項目 10 の後） | ユーザー |
 | 2026-11-05 | 単発 | Open Questions の保留 2 件（`repos/` の受け渡し、`restore` の上書き保護） | ユーザー |
 
@@ -31,8 +32,12 @@
 6. 暫定の数値（旧 24）: 続ける・切るの約10万 / 約2万トークンを、本物のフック列で3回以上再実験する（`~/claude-records/<フォルダ名>/sessions.jsonl` の記録を集計する）。Stop フックの費用記録（旧 29）は、Zed を使う PC で動作を確認した（10-19。dotfiles の `settings.json` のコマンドは `python "$HOME/.claude/hooks/stop-record.py"`。Git Bash の無い PC の警告を止めるため、10-20 に `"shell": "powershell"` を足した。dotfiles `43a7192`、未 push）。`sessions.jsonl` は 10-20 に約50本を誤って消したので、再実験は記録が溜まってから。`replies/<日付>.md` が 0 バイトだった件は、原因を特定して直した（10-19）: 環境変数 `PYTHONIOENCODING=utf-8:surrogateescape` の下で、標準入力に不正なバイトが入ると、書き込みで例外になり空ファイルだけが残る（lone surrogate で再現）。書き込みの `open` に `errors="replace"` を足した（実機で確認済み: 同日 `replies/2026-10-19.md` に 16 KB が入った。`stop-record.py` は、この PC では `~/.claude/hooks/` と共有フォルダ（`_sharedai`）にあり、公開の dotfiles（`main`）には無い。Zed の PC に置いた版にも同じ修正が要る）。
 9. ルールが見つかりにくい構造（2026-10-20）: works で `.bat` を作った AI が、dotfiles と exmem にあった ASCII ルール（2026-10-06）に届かず、`chcp 65001` で崩れた。ルールは `exmem/lessons/shell-script-testing-wsl.md` の後ろの追記節にあり、索引の1行に `.bat` の語が無く、dotfiles の `AGENTS.md` にも無かった。索引に語を足したのは補修で、恒久対策ではない。exmem の肥大化（大きいノートの後ろの追記節、索引の1行では引けない）と合わせて、領域全体の論点として議論する: 知識がどこにあれば、作業の最中に届くか（索引、ノートの分け方、作業側の `AGENTS.md` への写し、検索の仕組み）。議論の前に、似た見落としが他にもあるかを数える材料を集めてよい。ユーザーの指示（2026-10-20）。なお `.bat` は、暫定で全体 ASCII を正にし、cp932 の `.bat` と試験はやらない（cp932 の内容は lesson の草稿・優先度低。dotfiles は変更しない）。
 
+12. 会議録のナレッジ化（`topics/private-knowledge/`。2026-10-21 開始）: 裏づけ5件の確認は済み（`records/private-knowledge-checks.md`）。AI の提案（既存の `data: mask` の型に載せる、新しいフックは作らない、置き場は Area の `ai/docs/`、横断の ToDo は frontmatter + Bases）への賛否を、ユーザーが決める。最大の未決は「Area の知識をマスクして部屋の AI に見せる経路」。続きは「private-knowledge の続き」。
+13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: `usage-viz/`（HTML の見た目の確認、閉じる判断）、`stock-modes/`（M1 の【提案】の確認）、`private-knowledge/` を、同じ構造で運用する。10-28 に正式化するかを `review 消化` で決める。
+
 ## Open Questions
 
+- 【案件】の行き先: `para-operations`（2026-10-07）は Area の `docs/decisions.md`、実装（2026-10-14）は Area の `ai/docs/inbox.md`。現行はどちらか（`topics/private-knowledge/` の確認 #2）。
 - Stop フックの記録の置き場: 既定は `~/claude-records/`。部屋の中だけ `ai/records/` にするか。実機確認（Next Actions 6）の後に決める。【保留 〜2026-10-25】
 - `remote` の type: 要否は項目 `dev-env` の実使用（済み。10-20 にユーザーが業務で使った）を踏まえて決める。【保留 〜2026-11-02】
 - `repos/` の受け渡し（スナップショットと patch。未検証）: `remote` の type と `dev-env` の実使用の後に決める。【保留 〜2026-11-05】

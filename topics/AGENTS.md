@@ -14,6 +14,7 @@
 - Claude Projects の共有フォルダは議論の下書きの置き場。確定したらトピックへ移す。
 - 決定は `docs/decisions.md`（ユーザーの発言を根拠に）。経緯は `docs/log-history.md`。
 - 次の会話への依頼は「<トピック名> の続き」の1行（状態は窓口と `log.md` が持つ）。
+- **題材ごとのトピックと `records/` の仕訳**（仮決め 〜2026-10-28。正本は workbase 直下 `docs/decisions.md` の同日の項）: 計画のやり方の題材は `topics/<名前>/`（kebab-case、1階層）に、窓口・`docs/`・`records/` の同じ構造で置く。`records/` は2か所だけ: `kit-growth/records/` は測ったこと（品質チェックと振り返り）、各トピックの `records/` はそのトピック自身の出力（計画・見本・確認メモ）。`kit-growth/plans/` は使わない。
 - 反映が済んだトピックは、下の「トピックを終わらせるとき」に従って削除する（履歴は git）。
 
 ## トピックを終わらせるとき

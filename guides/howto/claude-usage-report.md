@@ -11,7 +11,7 @@ tags:
 Claude Code のセッションログ（JSONL）から、トークン使用量と概算費用($)を集計する手順書。ターミナルに出す `usage_report.py` と、1枚の HTML にする `usage_report_html.py` がある。どちらも読み取り専用で、外部には通信しない。
 
 - **ゴール（完了の目安）**: 週次または月次の合計・1セッション当たりの平均/最大/最小・上位セッションが見え、HTML をブラウザで開ける
-- 範囲: 実行のしかた、見方、単価表の足し方、突合。設計の経緯は `topics/planning-method/records/usage-viz-*.md`
+- 範囲: 実行のしかた、見方、単価表の足し方、突合。設計の経緯は `topics/usage-viz/records/usage-viz-*.md`
 - 置き場: `workflow-kit/tools/`（`usage_report.py`、`usage_report_html.py`、`usage_prices.json`）。Python 3 の標準ライブラリだけで動く
 ## 対応バージョン表
 
