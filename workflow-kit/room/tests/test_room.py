@@ -286,6 +286,8 @@ class InitTest(unittest.TestCase):
             self.assertTrue(scripts[conv][1])  # root で入れる
             for pkg in ("libreoffice-writer", "libreoffice-impress", "fonts-noto-cjk", "pandoc"):
                 self.assertIn(pkg, scripts[conv][0])
+            self.assertIn("Noto Sans CJK JP", scripts[conv][0])
+            self.assertIn("fc-cache", scripts[conv][0])
             self.assertLess(idx("latest-v24.x"), conv)
             self.assertLess(conv, idx("astral.sh"))
 
