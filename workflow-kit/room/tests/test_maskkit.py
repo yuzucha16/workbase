@@ -275,6 +275,10 @@ class PptxTest(unittest.TestCase):
         self.assertIn('<a:rPr b="1"/><a:t>⟦CUST_001⟧</a:t>', slide)  # 先頭の run の書式に置く
         self.assertIn("<a:t>との合意</a:t>", slide)
 
+    def test_empty_config_warns(self):
+        res = mk.mask_files({"a.pptx": build_pptx()}, mk.Config({}, {}), mk.Mapping())
+        self.assertTrue(any("語も列の指定も無い" in w for w in res["warnings"]))
+
     def test_properties_blank(self):
         res = mk.mask_files({"a.pptx": build_pptx()}, mk.Config({}, {}), mk.Mapping())
         z = zipfile.ZipFile(io.BytesIO(res["outputs"]["a.pptx"]))
