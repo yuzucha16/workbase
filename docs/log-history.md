@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-20（`review 消化`: 待ち行列4件の判断と `Wsl.push` の代入検出）
+- 待ち行列の4件を、サブエージェントのスクリーニングを経てユーザーが判断した: `token-matrix` の第5観点「温存」は却下、`Wsl.push` の代入検出は正式化、計画のやり方の試験運用での昇格は正式化（実装は別セッション）、改善4への計画の入力は保留（〜2026-11-11）。判断は `decisions.md` の同日の項。
+- `workflow-kit/room/room.py` の `Wsl.push` に、スクリプト内の代入を弾く検査（`SCRIPT_ASSIGN`）を足し、`PushAssignTest` の 2 件を足した。テストは 96 件中、既知の `CaCertTest` の 2 件（`openssl` 無し）以外 OK。Next Actions 8（計画の取り込みへのポインタ）は、`topics/planning-method/docs/log.md` に同じ内容があるので消した。
+
 ### 2026-10-20（`workflow-kit/tools/` に使用量の集計ツールを足した）
 - ユーザーの依頼（計画の試行の題材「トークン・コスト可視化」の実装）で、`usage_report.py`、`usage_report_html.py`、`usage_prices.json` を `workflow-kit/tools/` に置いた（置き場はユーザーが承認）。手順書は `guides/howto/claude-usage-report.md`。10-19 以降の合計トークンが ccusage と一致（79,675,204）。詳細は `topics/planning-method/docs/log-history.md` の同日（3）。HTML の見た目の確認と自動テストは未了。
 
