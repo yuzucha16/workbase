@@ -282,6 +282,12 @@ class InitTest(unittest.TestCase):
             self.assertIn("sha256sum -c", scripts[node][0])
             self.assertLess(node, idx("astral.sh"))
             self.assertIn("npm config set cafile", scripts[idx("npm config set cafile")][0])
+            conv = idx("libreoffice-calc")
+            self.assertTrue(scripts[conv][1])  # root で入れる
+            for pkg in ("libreoffice-writer", "libreoffice-impress", "fonts-noto-cjk", "pandoc"):
+                self.assertIn(pkg, scripts[conv][0])
+            self.assertLess(idx("latest-v24.x"), conv)
+            self.assertLess(conv, idx("astral.sh"))
 
     def test_init_refuses_existing_and_bad_isolation_stops_before_tools(self):
         with tempfile.TemporaryDirectory() as tmp:
