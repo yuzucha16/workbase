@@ -286,6 +286,19 @@ class InitTest(unittest.TestCase):
             self.assertTrue(scripts[conv][1])  # root で入れる
             for pkg in ("libreoffice-writer", "libreoffice-impress", "fonts-noto-cjk", "pandoc"):
                 self.assertIn(pkg, scripts[conv][0])
+            self.assertIn("Noto Sans CJK JP", scripts[conv][0])
+            self.assertIn("fc-cache", scripts[conv][0])
+            # PlemolJP は、安定するまで init から外している（2026-10-20）。戻すときは、ここを元の確認（root で入れる、SHA-256 の照合、conv の後）に戻す
+            self.assertFalse(any("PlemolJP_" in t for t, _ in scripts))
+            self.assertIn("sha256sum -c", room.PLEMOLJP_INSTALL)
+            self.assertIn(room.PLEMOLJP_SHA256, room.PLEMOLJP_INSTALL)
+            self.assertIn("<family>PlemolJP</family>", scripts[conv][0])
+            cr = idx("playwright@")
+            self.assertTrue(scripts[cr][1])  # root で入れる
+            for key in ("libasound2t64", "/opt/ms-playwright", room.PLAYWRIGHT_VERSION, room.MERMAID_CLI_VERSION,
+                        "--no-sandbox", "NODE_EXTRA_CA_CERTS"):
+                self.assertIn(key, scripts[cr][0])
+            self.assertLess(conv, cr)
             self.assertLess(idx("latest-v24.x"), conv)
             self.assertLess(conv, idx("astral.sh"))
 
