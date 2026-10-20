@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-20（4）
+- 2回目の題材 `stock` のモード追加（私用の `guides/explain` と AI 用の `exmem/lessons` を同じフックで動かす。`stock 理解` / `stock ナレッジ`）で `start 計画` を行い、6R・憲章・成果物 WBS・マイルストーン・作り方のメモ・理解ガイドの下書きの見本を作った（`records/stock-modes-6r.md`、`stock-modes-plan.md`、`stock-modes-plan-notes.md`、`explain-inbox-example.md`）。出力先は、`guides/inbox/`・`workbase/inbox/`・`exmem/inbox/` 維持を比べ、ユーザーが `exmem/inbox/` 維持（`kind` で区別）を選んだ（`workbase/inbox/` は約25ファイルの参照と `room.py` の書き換えが要るため却下）。決定は `docs/decisions.md`。
+- 計画を書いた後のフィードバックを `stock-modes-6r.md` の末尾に足した（足りない情報: 予算の根拠、開始日と順序、承認者、変えないことの書き場所、変更先の洗い出し。再現性: 裏づけが葉につながらない、前提の表の書式と選択肢の名前の揺れ、〔資料〕の出典なし、憲章と他の表の矛盾。計画の不備として、完了時期とバッファの矛盾の修正と、`find-knowledge` の葉の追加（その後ユーザーが不要と決めて削除）を、WBS の変更の記録に残した）。`start-plan.md` への案6件は未承認。
+- ユーザーが M1 の一部を確認した: 「両方」は選択肢に入れない、既存の理解ガイドの更新は対象外、`find-knowledge` の `guides/` 対応は不要。ユーザーの選択は「設計に進む」（計画で止めない）。`workflow-kit/` は書き換えていない。
+
 ### 2026-10-20（3）
 - 試行の題材（トークン・コスト可視化）を、ユーザーの指示で実装した。成果物: `workflow-kit/tools/usage_report.py`（週次・月次の集計）、`usage_report_html.py`（概要と詳細・分析の HTML）、`usage_prices.json`（公式の単価表、取得日 2026-10-20）、`guides/howto/claude-usage-report.md`（使い方）。突合: 10-19 以降の合計トークンが ccusage と完全一致（79,675,204）、費用は $26.17 対 $26.175。計画の指標（±5%）を満たした。M1・M2 に当たる作業と M3 の手順書が、同じ日の1セッションで終わった。
 - 実行後のフィードバックを `records/usage-viz-6r.md`、`usage-viz-plan.md`、`usage-viz-plan-notes.md` の末尾に足した（足りない欄: 用語の定義、対象外の見直し条件、出力の置き場、承認が要る変更先、WBS の変更の記録、動作確認。薄い欄: 憲章の体制、仮説、状況。見積もりが日数で桁外れ）。決定は `docs/decisions.md`。
