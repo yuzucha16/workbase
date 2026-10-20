@@ -551,9 +551,59 @@ tar -xJf "$F" -C /usr/local --strip-components=1 --exclude='*.md' --exclude=LICE
 cd /; rm -rf "$D"
 """
 # 変換の道具（v1。2026-10-20）: LibreOffice（xlsx・docx・pptx の PDF/HTML/csv 変換と再計算）、日本語フォント（無いと PDF・画像の日本語が四角になる）、pandoc（Markdown の HTML 化）。root が入れ、ai は書き換えられない
+# fonts-noto-cjk は日本語・簡体字・繁体字・韓国語を同居させていて、既定では簡体字（sc）が選ばれ、PDF の漢字が中国式の字形になる。日本語（JP）を優先する（実機: 2026-10-20 に sc が埋め込まれた）
+FONT_PREFER_JA = """<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <alias><family>sans-serif</family><prefer><family>Noto Sans CJK JP</family></prefer></alias>
+  <alias><family>serif</family><prefer><family>Noto Serif CJK JP</family></prefer></alias>
+  <alias><family>monospace</family><prefer><family>PlemolJP</family><family>Noto Sans Mono CJK JP</family></prefer></alias>
+</fontconfig>
+"""
+# 等幅フォント PlemolJP（SIL OFL。yuru7/PlemolJP）: 版と SHA-256 を固定して取得し、必要な4書体（Regular・Bold・Italic・BoldItalic）だけを root が置く。zip は約 220 MB で、取得に時間がかかる。既に入っていれば何もしない（--resume で取り直さない）
+PLEMOLJP_VERSION = "v3.1.0"
+PLEMOLJP_SHA256 = "f1a65b539ed8979f211ceaa6c7ad1123b7e0cc2eb00ab0df02fb2dcb0d6e7157"
+PLEMOLJP_INSTALL = r"""set -e
+D=/usr/local/share/fonts/plemoljp
+[ -f "$D/PlemolJP-Regular.ttf" ] && { echo "PlemolJP: 入っている"; exit 0; }
+T=$(mktemp -d); cd "$T"
+curl -fsSL -o p.zip "https://github.com/yuru7/PlemolJP/releases/download/%(v)s/PlemolJP_%(v)s.zip"
+echo "%(sha)s  p.zip" | sha256sum -c -
+mkdir -p "$D"
+for w in Regular Bold Italic BoldItalic; do unzip -o -j -q p.zip "PlemolJP_%(v)s/PlemolJP/PlemolJP-$w.ttf" -d "$D"; done
+chmod 644 "$D"/*.ttf
+fc-cache -f
+cd /; rm -rf "$T"
+fc-list | grep -c PlemolJP
+""" % {"v": PLEMOLJP_VERSION, "sha": PLEMOLJP_SHA256}
+# Chromium（Playwright 版）と mermaid-cli: mermaid の画像化と HTML の PDF 化を部屋で完結させる。Ubuntu 26.04 の chromium は snap への移行パッケージで、部屋では使えない（実機: 2026-10-20）。root が /opt に入れ、ai は書き換えられない。版は固定する。
+# Chromium が要るライブラリは libasound2t64 だけが不足だった（実機）。サンドボックスは、非特権ユーザー名前空間の制限で動かないことがあるので --no-sandbox（mermaid の自作テキストの描画と、自分で作った HTML の PDF 化だけに使う）。
+# TLS 検査のある環境では、Node の取得（Playwright・npm）がシステムの証明書ストアを見ないので、環境変数で指す。
+PLAYWRIGHT_VERSION = "1.64.1"
+MERMAID_CLI_VERSION = "12.0.0"
+CHROMIUM_INSTALL = r"""set -e
+export DEBIAN_FRONTEND=noninteractive
+export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt NPM_CONFIG_CAFILE=/etc/ssl/certs/ca-certificates.crt
+apt-get install -y -qq --no-install-recommends libasound2t64
+export PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright
+find /opt/ms-playwright -name chrome -type f 2>/dev/null | grep -q . || npx -y playwright@%(pw)s install chromium
+chmod -R a+rX /opt/ms-playwright
+C=$(find /opt/ms-playwright -name chrome -type f | head -1)
+[ -n "$C" ]
+command -v mmdc >/dev/null 2>&1 || PUPPETEER_SKIP_DOWNLOAD=1 npm install -g --silent @mermaid-js/mermaid-cli@%(mm)s
+mkdir -p /usr/local/share/room
+printf '{"executablePath":"%%s","args":["--no-sandbox"]}\n' "$C" > /usr/local/share/room/puppeteer.json
+printf '#!/bin/sh\nexec mmdc -p /usr/local/share/room/puppeteer.json "$@"\n' > /usr/local/bin/room-mmdc
+printf '#!/bin/sh\nexec "%%s" --headless --no-sandbox "$@"\n' "$C" > /usr/local/bin/room-chrome
+chmod 755 /usr/local/bin/room-mmdc /usr/local/bin/room-chrome /usr/local/share/room/puppeteer.json
+mmdc --version
+""" % {"pw": PLAYWRIGHT_VERSION, "mm": MERMAID_CLI_VERSION}
+
 CONVERT_TOOLS_INSTALL = (
     "export DEBIAN_FRONTEND=noninteractive\n"
-    "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc\n"
+    "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc unzip\n"
+    "cat > /etc/fonts/local.conf <<'EOF'\n" + FONT_PREFER_JA + "EOF\n"
+    "fc-cache -f\n"
 )
 NPM_CAFILE = "npm config set cafile /etc/ssl/certs/ca-certificates.crt\n"  # npm は証明書ストアを見ない。システムのバンドル（入れた会社の証明書を含む）を指す
 
@@ -639,13 +689,16 @@ def cmd_init(ctx, a):
                     f"cat > {CA_DEST} <<'EOF'\n{ca_pem}EOF\nchmod 644 {CA_DEST}\nupdate-ca-certificates\n", root=True)
     step_script(ctx, distro, "Node.js 24（公式の tarball、チェックサム確認つき）", NODE_INSTALL, root=True)
     step_script(ctx, distro, "変換の道具（LibreOffice、日本語フォント、pandoc。大きいので数分かかる）", CONVERT_TOOLS_INSTALL, root=True)
+    # 等幅フォント PlemolJP は、使い捨ての部屋での試験が安定するまで入れない（約 220 MB の取得で時間がかかる。ee の依頼、2026-10-20）。戻すときは次の行のコメントを外し、tests の PlemolJP の確認も戻す
+    # step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
+    step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
     step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
     step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
     step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
     step_script(ctx, distro, "PATH",
                 f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
     ver = step_script(ctx, distro, "道具の確認",
-                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\n')
+                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\nmmdc --version\n')
     ctx.say(ver.rstrip())
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
             f"  room shell {a.area}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
