@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | `init` | 「workflowを導入して」<br>`init 更新`＝「雛形を反映して」 | `init-hook.md` | 導入時 | 作業ディレクトリへの導入の入口（works のトップの生成を含む）。`init 更新` で、雛形の変更を works に反映する |
 | `open` | | `open-hook.md` | Project の開始 | 目的と完了条件を聞いて README 本文を下書きし、`start` を呼ぶ。Project の構造の表は `project-structure.md`（ひな形は `room open`） |
-| `start` | 「作業を始めて」<br>`start 解決`＝「解決で始めて」<br>`start 改善`＝「改善で始めて」<br>`start 調査`＝「調査で始めて」 | `start-hook.md` | セッションの開始 | 開始インタビュー。`start 解決` / `start 改善` / `start 調査` で、進め方を選んで始める |
+| `start` | 「作業を始めて」<br>`start 解決`＝「解決で始めて」<br>`start 改善`＝「改善で始めて」<br>`start 調査`＝「調査で始めて」<br>`start 計画`＝「計画で始めて」 | `start-hook.md` | セッションの開始 | 開始インタビュー。`start 解決` / `start 改善` / `start 調査` / `start 計画` で、進め方を選んで始める |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push を、順序を固定して行う |
 | `stock` | 「ナレッジ化して」 | `stock-hook.md` | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`） |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |

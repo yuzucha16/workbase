@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】計画のやり方を、試験運用で `workflow-kit/` に取り込んだ（2026-10-20）
+- 決めたこと: 3層で正式化済み（`topics/planning-method/docs/decisions.md` の 2026-10-20）の実装。新ファイルは `workflow-kit/start-plan.md`（手順と欄の定義）と `exmem/lessons/planning-method.md`（背景・Facts・Open Questions）。`methods.md` に区分「計画」（計画1）、`start-hook.md` に `start 計画`（引数つきモードの1節。本体は `start-plan.md` に置いたので +20% の枠を最小に抑えた）、`hooks.md`（別名「計画で始めて」）、`hook-matrix.md` の review の点検 7、`exmem-index.md`、`method-creation.md` の事例の表、`workflow-kit/README.md` の表を更新した。
+- 取り込みの範囲: 下書き（`planning-method-draft.md`）の骨子。同日、ユーザーの指示（「反映して」）で、試行の実行後のフィードバックも `start-plan.md` に反映した（足す候補: 用語の定義、対象外の見直し条件、出力の置き場、承認が要る変更先、WBS の変更の記録、動作確認、未決の解消先、前提の表の既存ツールの役割。省く候補は、欄の削除でなく「省いてよい・まとめてよい」の許可にした）。
+- 見直しの条件と戻し方: PC1 の品質チェック3回の後。使われなければ `start-plan.md`、`methods.md` の区分、`start-hook.md` の節を削除して戻す（履歴は git）。
+- 確認: `check-hook-outline.ps1` は通った（`review-hook.md` の字数の NOTE は既存）。
+
 ### 【汎用】`review 消化`（2026-10-20）で待ち行列の4件を判断した
 - 決めたこと（ユーザー）: ① `token-matrix.md` に第5観点「温存」を足し、`review` の入力 5 を差し替える案は**却下**（AI の提案。型 B・D・E。覆す可能性: 中。基準値 103 を変えると過去の点と比べられなくなる）。② `Wsl.push` は、スクリプト内の代入（`name=`）を検出して `RoomError` にする方針を**正式化**し、実装した（`room.py` の `SCRIPT_ASSIGN`、`PushAssignTest`）。説明文にも規則を書いた。③ 計画のやり方の試験運用での昇格を**正式化**（`topics/planning-method/docs/decisions.md` の同日）。④ 改善4に計画を入力として足す案は**保留**（〜2026-11-11）。
 - 根拠: サブエージェントのスクリーニング（`approval-screening.md`）。② は 10-14・10-19 に続き 10-20 に再発し、説明文だけでは止まらなかった。④ は 10-19 の「改善4は触らない」（`topics/planning-method/docs/decisions.md`）の理由が、計画のやり方が未運用のため尽きていない。
