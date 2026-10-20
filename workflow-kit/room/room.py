@@ -557,12 +557,28 @@ FONT_PREFER_JA = """<?xml version="1.0"?>
 <fontconfig>
   <alias><family>sans-serif</family><prefer><family>Noto Sans CJK JP</family></prefer></alias>
   <alias><family>serif</family><prefer><family>Noto Serif CJK JP</family></prefer></alias>
-  <alias><family>monospace</family><prefer><family>Noto Sans Mono CJK JP</family></prefer></alias>
+  <alias><family>monospace</family><prefer><family>PlemolJP</family><family>Noto Sans Mono CJK JP</family></prefer></alias>
 </fontconfig>
 """
+# 等幅フォント PlemolJP（SIL OFL。yuru7/PlemolJP）: 版と SHA-256 を固定して取得し、必要な4書体（Regular・Bold・Italic・BoldItalic）だけを root が置く。zip は約 220 MB で、取得に時間がかかる。既に入っていれば何もしない（--resume で取り直さない）
+PLEMOLJP_VERSION = "v3.1.0"
+PLEMOLJP_SHA256 = "f1a65b539ed8979f211ceaa6c7ad1123b7e0cc2eb00ab0df02fb2dcb0d6e7157"
+PLEMOLJP_INSTALL = r"""set -e
+D=/usr/local/share/fonts/plemoljp
+[ -f "$D/PlemolJP-Regular.ttf" ] && { echo "PlemolJP: 入っている"; exit 0; }
+T=$(mktemp -d); cd "$T"
+curl -fsSL -o p.zip "https://github.com/yuru7/PlemolJP/releases/download/%(v)s/PlemolJP_%(v)s.zip"
+echo "%(sha)s  p.zip" | sha256sum -c -
+mkdir -p "$D"
+for w in Regular Bold Italic BoldItalic; do unzip -o -j -q p.zip "PlemolJP_%(v)s/PlemolJP/PlemolJP-$w.ttf" -d "$D"; done
+chmod 644 "$D"/*.ttf
+fc-cache -f
+cd /; rm -rf "$T"
+fc-list | grep -c PlemolJP
+""" % {"v": PLEMOLJP_VERSION, "sha": PLEMOLJP_SHA256}
 CONVERT_TOOLS_INSTALL = (
     "export DEBIAN_FRONTEND=noninteractive\n"
-    "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc\n"
+    "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc unzip\n"
     "cat > /etc/fonts/local.conf <<'EOF'\n" + FONT_PREFER_JA + "EOF\n"
     "fc-cache -f\n"
 )
@@ -650,6 +666,7 @@ def cmd_init(ctx, a):
                     f"cat > {CA_DEST} <<'EOF'\n{ca_pem}EOF\nchmod 644 {CA_DEST}\nupdate-ca-certificates\n", root=True)
     step_script(ctx, distro, "Node.js 24（公式の tarball、チェックサム確認つき）", NODE_INSTALL, root=True)
     step_script(ctx, distro, "変換の道具（LibreOffice、日本語フォント、pandoc。大きいので数分かかる）", CONVERT_TOOLS_INSTALL, root=True)
+    step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
     step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
     step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
     step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
