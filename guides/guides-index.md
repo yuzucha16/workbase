@@ -7,7 +7,7 @@ aliases:
   - guides
   - 手順書の索引
 created: 2026-10-10
-updated: 2026-10-19
+updated: 2026-10-20
 ---
 
 # guides の索引
@@ -30,6 +30,9 @@ updated: 2026-10-19
 |---|---|---|
 | 個人の AWS アカウントを作って、Bedrock 経由で Claude Code に「こんにちは」と話しかける | [[bedrock-first-hello]] | 手順書 |
 | Bedrock と Anthropic 直接の単価の差、リージョン指定の割増を思い出す | [[bedrock-first-hello#対応バージョン表]] | 手順書 |
+| 会社から「ゲートウェイのベース URL と発行者 URL」を渡された。Claude Code / Zed でどうつなぐのか、OIDC のサインインとトークンの流れを、自分で説明できるようにする | [[llm-gateway-oidc]] | 理解ガイド |
+| ゲートウェイにつながらない・`apiKeyHelper` が失敗する・約1時間で `401` になる、などの症状から原因を切り分ける | [[llm-gateway-oidc#3. チェックリスト（症状 → 原因 → 対処）]] | 理解ガイド |
+| Claude Code を会社のゲートウェイにつなぐ（URL・クライアント ID を入れて、サインインして起動する） | dotfiles の `windows/claude/README.md` 第4章（このリポジトリの外。スクリプトの隣に置く手順書） | 手順書 |
 
 ### AI に顧客データ・社外秘を見せない
 
@@ -74,7 +77,7 @@ updated: 2026-10-19
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
 | 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[bedrock-first-hello]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[review-hook-why]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[review-hook-why]]、[[llm-gateway-oidc]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新
