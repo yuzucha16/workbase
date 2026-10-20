@@ -643,6 +643,65 @@ def cmd_init(ctx, a):
         commit_paths(ctx, [rel], f"[room] init {a.area}（Area の作成、boundary: {read_frontmatter(area_readme).get('boundary')}）", only=True)
 
 
+# ---------- rename-area（Area の名前を変える。部屋は触らない） ----------
+
+AREA_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")  # 部屋の名前（room-<Area>）になるので、ASCII に限る
+
+
+def cmd_rename_area(ctx, a):
+    """areas/<旧> を <新> に改名し、その Area の Project（projects/・archives/）の area: と来歴（manifest）、wikilink を書き換える。
+    部屋（WSL のディストリビューション）は触らない。人が room-<新> を作り直す。"""
+    old, new = a.old, a.new
+    if not AREA_NAME_RE.match(new):
+        raise RoomError(f"新しい Area 名が不正: {new}（英数字・_・- だけ。部屋の名前 room-<Area> になる）")
+    if old == new:
+        raise RoomError("新旧の名前が同じ")
+    old_dir, new_dir = ctx.vault / "areas" / old, ctx.vault / "areas" / new
+    if not old_dir.is_dir():
+        raise RoomError(f"Area が無い: {old_dir}")
+    if new_dir.exists():
+        raise RoomError(f"同名がすでにある: {new_dir}")
+    old_distro = f"room-{old}"
+    if old_distro in ctx.wsl.distros():
+        mounts = room_mounts(ctx, old_distro)
+        if mounts:
+            raise RoomError(f"部屋 {old_distro} にマウントが残っている。先に外す（`room umount --area {old}`）:\n  " + "\n  ".join(mounts))
+    targets = []  # (top, Project 名)
+    for top in ("projects", "archives"):
+        for readme in sorted((ctx.vault / top).glob("*/README.md")):
+            if read_frontmatter(readme).get("area") == old:
+                targets.append((top, readme.parent.name))
+    shutil.move(str(old_dir), str(new_dir))
+    link_old, link_new = f"[[areas/{old}/", f"[[areas/{new}/"
+    alias_old, alias_new = f"|{old}]]", f"|{new}]]"
+
+    def relink(text):
+        return text.replace(link_old, link_new).replace(alias_old, alias_new)
+
+    area_readme = new_dir / "README.md"
+    if area_readme.exists():
+        area_readme.write_text(relink(area_readme.read_text(encoding="utf-8")), encoding="utf-8", newline="\n")
+    for top, name in targets:
+        d = ctx.vault / top / name
+        readme = d / "README.md"
+        text = update_frontmatter(readme.read_text(encoding="utf-8"), {"area": new})
+        readme.write_text(relink(text), encoding="utf-8", newline="\n")
+        mpath = d / "ai" / "records" / "manifest.json"
+        if mpath.exists():
+            man = json.loads(mpath.read_text(encoding="utf-8"))
+            for e in man.get("files", {}).values():
+                if e.get("area") == old:
+                    e["area"] = new
+            mpath.write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    ctx.say(f"改名した: areas/{old} → areas/{new}（Project {len(targets)} 件の area: と来歴を書き換えた）")
+    for top, name in targets:
+        ctx.say(f"  {top}/{name}")
+    ctx.say(f"部屋は触っていない。{old_distro} は不要なら手で消し（wsl --unregister {old_distro}）、room init {new} で room-{new} を作る")
+    if a.commit:
+        paths = [f"areas/{old}", f"areas/{new}"] + [f"{top}/{name}" for top, name in targets]
+        commit_paths(ctx, paths, f"[room] Area を改名 {old} → {new}", only=True)
+
+
 # ---------- start ----------
 
 def preflight(ctx, p):
@@ -1480,6 +1539,9 @@ def build_parser():
     rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
     rp.add_argument("name", nargs="?"); rp.add_argument("--yes", action="store_true")
     rp.add_argument("--force", action="store_true", help="期限前でも消す（名前を指定したとき）")
+    ra = sub.add_parser("rename-area", help="Area を改名する（areas/・Project の area:・来歴・リンク。部屋は触らない）")
+    ra.add_argument("old"); ra.add_argument("new")
+    ra.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="改名をコミットしない（既定はコミットする）")
     u = sub.add_parser("umount", help="部屋に残ったマウントを外す")
     u.add_argument("--area", required=True)
     return ap
@@ -1490,7 +1552,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
-        {"init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount,
+        {"init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
          "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
