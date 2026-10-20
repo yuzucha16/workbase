@@ -42,6 +42,10 @@ NOAI_DIRS = {
 AI_KEEP = ("ai/in", "ai/work", "ai/records")
 
 
+# sh -c のスクリプト内の代入（`d=...`、`;d=...`）。`--opt=値` や `[ a == b ]` は、直前が空白・区切りの名前ではないので当たらない
+SCRIPT_ASSIGN = re.compile(r"(?:^|[\s;&|(])[A-Za-z_][A-Za-z0-9_]*=(?!=)")
+
+
 class RoomError(Exception):
     pass
 
@@ -67,7 +71,10 @@ class Wsl:
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
     def push(self, distro, data, script):
-        """data（バイト列）を標準入力で渡して、script を一般ユーザーで実行する（共有知の写しを送る）。"""
+        """data（バイト列）を標準入力で渡して、script を一般ユーザーで実行する（共有知の写しを送る）。
+        wsl.exe は sh -c の引数を外側のシェルでもう一度解釈し、スクリプト内で代入した変数を空に展開するので、代入を含むスクリプトは渡せない。"""
+        if SCRIPT_ASSIGN.search(script):
+            raise RoomError("sh -c に渡すスクリプトに変数の代入（name=）がある。wsl.exe の側で空に展開されて壊れる。$HOME/<パス> を直接書くか、標準入力で渡す")
         cmd = ["wsl.exe", "-d", distro, "--", "sh", "-c", script]
         r = subprocess.run(cmd, input=data, capture_output=True, env=wsl_env())
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")

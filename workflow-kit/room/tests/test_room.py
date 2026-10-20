@@ -189,6 +189,17 @@ class WslEnvTest(unittest.TestCase):
         self.assertEqual(env["KEEP_ME"], "1")
 
 
+class PushAssignTest(unittest.TestCase):
+    def test_assignment_in_script_is_rejected(self):
+        for script in ('d="$HOME/x"; rm -rf "$d"', "set -e; d=1; echo $d", "a=1 b=2 true"):
+            with self.assertRaises(room.RoomError):
+                room.Wsl().push("room-x", b"", script)
+
+    def test_options_and_comparisons_are_not_assignments(self):
+        for script in ('tar xzf - --exclude=x -C "$HOME/y"', "[ a == b ] && true", 'chmod -R a-w "$HOME/x"'):
+            self.assertIsNone(room.SCRIPT_ASSIGN.search(script), script)
+
+
 class AwsKeyTest(unittest.TestCase):
     def ctx(self, tmp, answers, secrets, wsl):
         v = Path(tmp) if (Path(tmp) / "areas").exists() else make_vault(tmp)
