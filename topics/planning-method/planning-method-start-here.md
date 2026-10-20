@@ -5,15 +5,15 @@
 
 ## いま
 
-下書きの段階。`workflow-kit/` には未反映で、3層の承認待ち（詳細は `docs/log.md`）。
+試験運用で `workflow-kit/` に取り込み済み（2026-10-20。`start 計画`、手順は `workflow-kit/start-plan.md`）。次は PC1 での品質チェック3回（詳細は `docs/log.md`）。
 
 ## あなた待ち
 
-- 取り込みの Open Questions 1件の 3層の判断（`review 消化`）。
+- なし（試行のフィードバックは `start-plan.md` に反映済み）。
 
 ## 次の一手
 
-`review 消化` で3層に通す（どこでも）。
+PC1 で品質チェック1回目（2週間の実務の題材、見本なし）。`start 計画` で始める。
 
 ## 試行の出力（`records/`）
 
