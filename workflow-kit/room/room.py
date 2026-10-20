@@ -550,6 +550,11 @@ grep " $F\$" SHASUMS256.txt | sha256sum -c -
 tar -xJf "$F" -C /usr/local --strip-components=1 --exclude='*.md' --exclude=LICENSE
 cd /; rm -rf "$D"
 """
+# 変換の道具（v1。2026-10-20）: LibreOffice（xlsx・docx・pptx の PDF/HTML/csv 変換と再計算）、日本語フォント（無いと PDF・画像の日本語が四角になる）、pandoc（Markdown の HTML 化）。root が入れ、ai は書き換えられない
+CONVERT_TOOLS_INSTALL = (
+    "export DEBIAN_FRONTEND=noninteractive\n"
+    "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc\n"
+)
 NPM_CAFILE = "npm config set cafile /etc/ssl/certs/ca-certificates.crt\n"  # npm は証明書ストアを見ない。システムのバンドル（入れた勤務先の証明書を含む）を指す
 
 CA_MAX_CERTS = 5  # need to know: 勤務先のルート証明書など、少数だけ。OS の証明書ストア丸ごとは入れない
@@ -623,7 +628,7 @@ def cmd_init(ctx, a):
     got = dict(l.strip().split("=", 1) for l in out.splitlines() if "=" in l)
     if got != {"user": "ai", "c": "0", "cmd": "no", "sudo": "no"}:
         raise RoomError(f"分離の確認が目安と違う（{got}）。user=ai, c=0, cmd=no, sudo=no が目安。道具は入れていない")
-    ctx.say("道具を入れる（curl、rg、Node.js、uv、Claude Code。配布元のスクリプトをそのまま実行する）")
+    ctx.say("道具を入れる（curl、rg、Node.js、LibreOffice、pandoc、uv、Claude Code。uv と Claude Code は配布元のスクリプトをそのまま実行する）")
     step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep）",
                 "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep\n", root=True)
     if ca_pem:
@@ -633,13 +638,14 @@ def cmd_init(ctx, a):
         step_script(ctx, distro, "update-ca-certificates",
                     f"cat > {CA_DEST} <<'EOF'\n{ca_pem}EOF\nchmod 644 {CA_DEST}\nupdate-ca-certificates\n", root=True)
     step_script(ctx, distro, "Node.js 24（公式の tarball、チェックサム確認つき）", NODE_INSTALL, root=True)
+    step_script(ctx, distro, "変換の道具（LibreOffice、日本語フォント、pandoc。大きいので数分かかる）", CONVERT_TOOLS_INSTALL, root=True)
     step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
     step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
     step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
     step_script(ctx, distro, "PATH",
                 f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
     ver = step_script(ctx, distro, "道具の確認",
-                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\n')
+                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\n')
     ctx.say(ver.rstrip())
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
             f"  room shell {a.area}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
