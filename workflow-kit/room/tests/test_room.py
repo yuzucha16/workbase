@@ -294,6 +294,12 @@ class InitTest(unittest.TestCase):
             self.assertIn(room.PLEMOLJP_SHA256, scripts[pl][0])
             self.assertIn("<family>PlemolJP</family>", scripts[conv][0])
             self.assertLess(conv, pl)
+            cr = idx("playwright@")
+            self.assertTrue(scripts[cr][1])  # root で入れる
+            for key in ("libasound2t64", "/opt/ms-playwright", room.PLAYWRIGHT_VERSION, room.MERMAID_CLI_VERSION,
+                        "--no-sandbox", "NODE_EXTRA_CA_CERTS"):
+                self.assertIn(key, scripts[cr][0])
+            self.assertLess(pl, cr)
             self.assertLess(idx("latest-v24.x"), conv)
             self.assertLess(conv, idx("astral.sh"))
 

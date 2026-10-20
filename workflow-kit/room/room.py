@@ -576,6 +576,29 @@ fc-cache -f
 cd /; rm -rf "$T"
 fc-list | grep -c PlemolJP
 """ % {"v": PLEMOLJP_VERSION, "sha": PLEMOLJP_SHA256}
+# Chromium（Playwright 版）と mermaid-cli: mermaid の画像化と HTML の PDF 化を部屋で完結させる。Ubuntu 26.04 の chromium は snap への移行パッケージで、部屋では使えない（実機: 2026-10-20）。root が /opt に入れ、ai は書き換えられない。版は固定する。
+# Chromium が要るライブラリは libasound2t64 だけが不足だった（実機）。サンドボックスは、非特権ユーザー名前空間の制限で動かないことがあるので --no-sandbox（mermaid の自作テキストの描画と、自分で作った HTML の PDF 化だけに使う）。
+# TLS 検査のある環境では、Node の取得（Playwright・npm）がシステムの証明書ストアを見ないので、環境変数で指す。
+PLAYWRIGHT_VERSION = "1.64.1"
+MERMAID_CLI_VERSION = "12.0.0"
+CHROMIUM_INSTALL = r"""set -e
+export DEBIAN_FRONTEND=noninteractive
+export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt NPM_CONFIG_CAFILE=/etc/ssl/certs/ca-certificates.crt
+apt-get install -y -qq --no-install-recommends libasound2t64
+export PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright
+find /opt/ms-playwright -name chrome -type f 2>/dev/null | grep -q . || npx -y playwright@%(pw)s install chromium
+chmod -R a+rX /opt/ms-playwright
+C=$(find /opt/ms-playwright -name chrome -type f | head -1)
+[ -n "$C" ]
+command -v mmdc >/dev/null 2>&1 || PUPPETEER_SKIP_DOWNLOAD=1 npm install -g --silent @mermaid-js/mermaid-cli@%(mm)s
+mkdir -p /usr/local/share/room
+printf '{"executablePath":"%%s","args":["--no-sandbox"]}\n' "$C" > /usr/local/share/room/puppeteer.json
+printf '#!/bin/sh\nexec mmdc -p /usr/local/share/room/puppeteer.json "$@"\n' > /usr/local/bin/room-mmdc
+printf '#!/bin/sh\nexec "%%s" --headless --no-sandbox "$@"\n' "$C" > /usr/local/bin/room-chrome
+chmod 755 /usr/local/bin/room-mmdc /usr/local/bin/room-chrome /usr/local/share/room/puppeteer.json
+mmdc --version
+""" % {"pw": PLAYWRIGHT_VERSION, "mm": MERMAID_CLI_VERSION}
+
 CONVERT_TOOLS_INSTALL = (
     "export DEBIAN_FRONTEND=noninteractive\n"
     "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc unzip\n"
@@ -667,13 +690,14 @@ def cmd_init(ctx, a):
     step_script(ctx, distro, "Node.js 24（公式の tarball、チェックサム確認つき）", NODE_INSTALL, root=True)
     step_script(ctx, distro, "変換の道具（LibreOffice、日本語フォント、pandoc。大きいので数分かかる）", CONVERT_TOOLS_INSTALL, root=True)
     step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
+    step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
     step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
     step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
     step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
     step_script(ctx, distro, "PATH",
                 f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
     ver = step_script(ctx, distro, "道具の確認",
-                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\n')
+                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\nmmdc --version\n')
     ctx.say(ver.rstrip())
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
             f"  room shell {a.area}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
