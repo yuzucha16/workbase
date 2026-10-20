@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-20（`start 改善4`: 第3回の日次の振り返り）
+- 10-20 00:09〜20:22 の 25 コミットを、活動のみで振り返った（`retrospective-daily-record.md`）。手戻り 4 件、施策 R-2026-10-20-02（2 回再発した規則は検出にする。承認待ち）。字数は 495 字（空白を除く）で、500 字に収まった。実測は `retrospective-method-record.md` に足した。次の daily は 10-21。
+- 遠回り: 1回目の草稿は 675 字で、版の行と施策の説明を畳んで収めた。
+
 ### 2026-10-20（`review 消化`: 待ち行列4件の判断と `Wsl.push` の代入検出）
 - 待ち行列の4件を、サブエージェントのスクリーニングを経てユーザーが判断した: `token-matrix` の第5観点「温存」は却下、`Wsl.push` の代入検出は正式化、計画のやり方の試験運用での昇格は正式化（実装は別セッション）、改善4への計画の入力は保留（〜2026-11-11）。判断は `decisions.md` の同日の項。
 - `workflow-kit/room/room.py` の `Wsl.push` に、スクリプト内の代入を弾く検査（`SCRIPT_ASSIGN`）を足し、`PushAssignTest` の 2 件を足した。テストは 96 件中、既知の `CaCertTest` の 2 件（`openssl` 無し）以外 OK。Next Actions 8（計画の取り込みへのポインタ）は、`topics/planning-method/docs/log.md` に同じ内容があるので消した。
