@@ -15,9 +15,11 @@
 
 PC1 で品質チェック1回目（2週間の実務の題材、見本なし）。`start 計画` で始める。
 
-## 試行の出力（`records/`）
+## 試行の題材（トピックに切り出した。2026-10-21）
 
-トークン・コスト可視化の題材: [[usage-viz-6r]]、[[usage-viz-plan]]、[[usage-viz-plan-notes]]（2026-10-20。kit 以外の初の題材。計画の確定から実装まで終わり、実行後のフィードバックを各ファイルの末尾に足した）。
+- `topics/usage-viz/`: トークン・コスト可視化（kit 以外の初の題材。実装まで終わった）。窓口 [[usage-viz-start-here]]
+- `topics/stock-modes/`: `stock` のモード追加（2回目の題材。M1 の途中）。窓口 [[stock-modes-start-here]]
+- `topics/private-knowledge/`: 会議録のナレッジ化（3回目の題材）。窓口 [[private-knowledge-start-here]]
 
 ## 読む順
 

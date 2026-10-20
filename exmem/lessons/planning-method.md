@@ -46,7 +46,7 @@ sources:
 - 試行で迷いが重なった点（4題材）: 測り方の指標が元の要求に無い（3/3）、戦略にあたる上位が未確認（4/4）、リーダー兼任が仮（4/4）、課題ログの置き先が揺れた（4/4）、日付が推測（4/4）。
 - 節目に上限3つを置くと、早く終わる直しを遅い節目に束ねる歪みが出た。2週・4週の上限は使っていない。
 - トークン・コスト可視化の試行（kit 以外、1週間、見本なし）: 実行は1セッションで終わり、日数の見積もりは桁で外れた。憲章の体制の欄と WBS の葉の多くが実態と合わなかった。6R の「裏づけ（未確認。最初に確かめる）」の欄がいちばん役に立った。
-- 測ったこと: `topics/kit-growth/records/planning-method-record.md`。試行の出力: `topics/planning-method/records/`。
+- 測ったこと: `topics/kit-growth/records/planning-method-record.md`。試行の出力: 題材ごとのトピックの `records/`（`topics/usage-viz/`、`topics/stock-modes/`、`topics/private-knowledge/`）。
 
 ## Gotchas
 

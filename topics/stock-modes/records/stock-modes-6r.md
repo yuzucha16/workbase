@@ -52,7 +52,7 @@ updated: 2026-10-20
 
 - 対象: 計画（憲章・WBS・マイルストーン）。実装の対象は `stock-hook.md`、`integrate-hook.md`、`hooks.md`、`hook-common.md`（記録の表）、`guides/AGENTS.md`、点検スクリプト（実装は計画の承認後。kit の書き換えはユーザーの承認が要る）。
 - 対象外: `howto/` と `quickref/`（理由: 今回は理解ガイドだけ。見直す条件: 理解ガイドで2〜3件回して、手順書の需要が出たとき）。既存の `explain/` の自動書き換え。
-- 前提と注意: 計画の出力は `topics/planning-method/records/`（公開してよい中身）。機微なし。`workflow-kit/` はユーザーの承認なしに書き換えない。
+- 前提と注意: 計画の出力は `topics/stock-modes/records/`（公開してよい中身）。機微なし。`workflow-kit/` はユーザーの承認なしに書き換えない。
 
 ## 期待する成果
 

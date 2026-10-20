@@ -32,8 +32,8 @@ updated: 2026-10-20
 ```
 1 stock のモード追加
  1.1 設計
-  1.1.1 設計の決定（kind の値、引数なしの1問、integrate の分岐）   置き場: topics/planning-method/docs/decisions.md
-  1.1.2 理解ガイドの下書きの見本（型は reference-doc-types の理解ガイドの型） 置き場: 承認までは topics/planning-method/records/explain-inbox-example.md。M2 の承認後に workflow-kit/examples/ へ移す
+  1.1.1 設計の決定（kind の値、引数なしの1問、integrate の分岐）   置き場: topics/stock-modes/docs/decisions.md
+  1.1.2 理解ガイドの下書きの見本（型は reference-doc-types の理解ガイドの型） 置き場: 承認までは topics/stock-modes/records/explain-inbox-example.md。M2 の承認後に workflow-kit/examples/ へ移す
  1.2 手順書の変更（要承認）
   1.2.1 stock-hook.md（モード、引数なしの1問、kind 別の書き方と自己点検） 置き場: workflow-kit/stock-hook.md
   1.2.2 integrate-hook.md（kind 分岐、guides 側の規則） 置き場: workflow-kit/integrate-hook.md
@@ -41,7 +41,7 @@ updated: 2026-10-20
  1.3 点検
   1.3.1 check-inbox の kind 分岐（ps1 と py） 置き場: workflow-kit/tools/
  1.4 動作確認
-  1.4.1 通し試験（理解ガイド1本 → stock 理解 → 点検 → integrate。引数なしの1問も） 置き場: topics/kit-growth/records/planning-method-record.md
+  1.4.1 通し試験（理解ガイド1本 → stock 理解 → 点検 → integrate。引数なしの1問も） 置き場: 結果の数字は topics/stock-modes/records/ に足す。やり方の品質チェックにあたる場合だけ topics/kit-growth/records/ に足す
   1.4.2 check-hook-outline の実行結果（1.4.1 の親にまとめる）
 2 プロジェクトマネジメント
  2.1 憲章
