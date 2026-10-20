@@ -8,14 +8,17 @@ tags:
   - dotfiles
   - tool/powershell
   - testing
+  - oidc
+  - llm-gateway
 aliases:
   - Claude Code の認証
   - Bedrock 設定
   - apiKeyHelper
   - OAuth と API キーの切り替え
 created: 2026-10-11
-updated: 2026-10-19
+updated: 2026-10-20
 sources:
+  - Claude Code conversation "Zed と Claude Code の Bedrock SSO・ゲートウェイ接続" (2026-10-20)
   - Claude Code conversation "Zed の Agent と Bedrock の認証（部屋）" (2026-10-19)
   - Claude Code conversation "Claude Code の認証経路とモデル指定" (2026-10-08)
   - Claude Code conversation "Bedrock 設定の生成と OAuth への切り替え" (2026-10-08)
@@ -43,10 +46,17 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - Zed の Agent に渡す値は、シェルの `export` でなく、Zed の `agent_servers` の `env` と、ファイル（`~/.aws/credentials`）で渡す。理由: 環境変数はプロセスの作成時に親から子へコピーされるだけで、手で `export` した `bash` は、Zed のサーバーが起動する Agent の祖先にいない。
 - 秘密を含まない値（Bedrock を使う設定、リージョン、プロファイル名、モデル ID、証明書のパス）は `env` に、秘密（アクセスキー）はファイルに分ける。理由: Zed の設定は dotfiles などで共有されうる。SDK はファイルを読むので、Agent の起動のしかたに関係しない。
 - Bedrock を IAM ユーザーのアクセスキーで使うだけなら、AWS CLI は要らない。理由: Claude Code は環境変数か `~/.aws/credentials` を直接読む。
+- 接続先の種類（AWS SSO、Claude apps gateway、汎用ゲートウェイ）は、製品名・用語・エラー文言から推測せず、すでに動いている別クライアントの設定項目（Claude Desktop の設定画面など）と、公式の現行手順で確かめてから設計する。理由: 「発行者 URL」「ゲートウェイ」という語から AWS SSO、次に Claude apps gateway と推測して実装し、2回作り直しになった。
+- 新しいクライアントを足すときは、すでに動いているクライアントの値と流れ（同じ IdP、同じクライアント ID、同じトークン種別）を参照元にする。理由: 認可側（IdP とゲートウェイ）の設定を変えずに済み、組織への依頼も要らない。
+- 期限のあるトークンは、起動時の環境変数に固定せず、`apiKeyHelper` が呼ばれるたびに期限を見て更新する。理由: ID トークンは約1時間で切れ、環境変数に固定するとセッションの途中で失効する。
+- `apiKeyHelper` の標準出力には秘密の値だけを出し、メッセージは標準エラーに出す。理由: 余計な出力が混ざると失敗する。
+- 組織を特定できる値（ゲートウェイの URL、クライアント ID）は、公開リポジトリに置かず、プロンプトで入力してこの PC のファイルにだけ書く。理由: 公開すると組織が特定でき、PC ごとに値が違う場合もある。
 
 ## Decisions
 
 すべて 2026-10-08（日付の付いたものを除く）。
+
+- **組織固有の URL とクライアント ID を dotfiles に置かず、セットアップのプロンプトで入力する**（2026-10-20）。根拠: ユーザーが「載せない。これまで同じようにプロンプトで入力する形が良い」と決めた。公開リポジトリで、組織を特定できる値のため。却下案: プレースホルダー値をリポジトリに置き、手で書き換える（実値が混ざる事故が起きやすい）。
 
 - **部屋の `~/.aws/credentials` に、秘密を標準入力で渡す `aws-key <Area> --profile <名前>` を足した**（2026-10-19）。根拠: ユーザーが、キーを入れるコマンドを依頼した。画面に出さず（`getpass`）、コマンドラインにもシェルの履歴にも残らず、同名の節だけを置き換え、権限は 600。却下案: 長期キーを環境変数で毎回 `export`（Zed 経由では届かない）、`op`（1Password CLI）を部屋へ持ち込む（解錠済みの `op` から、AI が秘密を引き出せる）。
 
@@ -110,6 +120,16 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - 長期キーは、AI から読める場所に残る。Windows 側で `aws sts get-session-token` を使えば、12時間の一時キー（`AWS_SESSION_TOKEN` つき）にできる（仮説。実行していない）。
 - 部屋の仕様（`aws-key`）は `workflow-kit/room/` にある。実物で `cmd_aws_key` の存在を確認した（2026-10-19、根拠: `room.py` を読んだ）。
 
+### 組織の OIDC ゲートウェイ（確認: 2026-10-20、根拠: 特記以外は下の各項に記載）
+
+- 汎用の LLM ゲートウェイ + OIDC の構成では、Claude Desktop の「Configure Third-Party Inference」で、Inference provider = Gateway、Credential kind = Interactive sign-in にすると、Desktop が発行者 URL・クライアント ID・スコープで OIDC のブラウザサインイン（認可コード + PKCE、`127.0.0.1` への loopback リダイレクト）を行い、既定では ID トークンを `Authorization: Bearer` でゲートウェイに送る（根拠: Anthropic の Claude Desktop ゲートウェイ設定の公式ページ）。
+- Claude Code の `/login` の Cloud gateway（Claude apps gateway）は、公開アドレスのゲートウェイを拒否し、`gateway hosts must be on your organization's private network` を出す。社内のプライベートアドレスが前提（根拠: 実機のエラーと公式ドキュメント）。
+- ゲートウェイのホスト名の名前解決結果が公開アドレス（クラウドの公開範囲）なら、Claude apps gateway ではなく、汎用ゲートウェイの可能性が高い（根拠: 実機でホスト名を解決した結果）。
+- Claude Code の `apiKeyHelper` は、値を `Authorization: Bearer` と `x-api-key` の両方で送り、既定で5分間キャッシュする（根拠: 公式の LLM ゲートウェイ接続ページ）。ベース URL は `ANTHROPIC_BASE_URL` に書く（根拠: ユーザーの確認。Desktop の「Gateway base URL」と同じ値）。
+- `CLAUDE_CONFIG_DIR` を分けたディレクトリに、`apiKeyHelper` と `ANTHROPIC_BASE_URL` を書いた設定を置く構成で、CLI の `claude` と Zed の ACP エージェント（`claude-agent-acp`）の両方が接続できた（根拠: ユーザーの報告）。サインインから約1時間後の自動更新は未確認（仮説）。
+- Entra ID の公開クライアントは、リダイレクト URI を `http://127.0.0.1/callback` の形（パスまで必要）で登録すれば、loopback のポートは実行時に自由に選べる。パスを省くと `AADSTS50011` になる（根拠: 公式ドキュメントの IdP 設定の注意）。
+- OIDC の公開クライアントのサインインは、PowerShell だけでも書ける。`TcpListener` で `127.0.0.1` を1回待ち受けて認可コードを受け取り、PKCE（S256）と `state`・`nonce` を検査し、トークンは DPAPI（`ConvertFrom-SecureString`）で暗号化して保管できる（根拠: 偽の IdP を使った試験29項目と、実機での接続）。
+
 ### この PC の実物（確認: 2026-10-11、根拠: ファイルと環境変数の取得。値は出していない）
 
 - 起動関数と設定ファイルの実体（`claude-api-key`、`claude-bedrock-setup`、`settings-api.json`、ACP 用のランチャー）と試験は、dotfiles の `windows/claude/README.md` が正（2026-10-16 に、ファイル一覧とモデルのピン留めの写しを削った）。`settings-api.json` は `~/.claude/` にリンクされ、`apiKeyHelper`、`model`、`env` のモデルのピン留めを持つ。Bedrock の設定は `~/.claude/settings-bedrock.json`（この PC 専用。リポジトリには置かない。秘密を含まない）に生成される。
@@ -122,11 +142,17 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - **公式ドキュメントを、取得ツールの要約経由で読んだら、`CLAUDE_CODE_USE_BEDROCK` を「fast mode を有効にする変数」と誤記された**: 要約が Bedrock ページ本文と矛盾していた。本文を取得し直して照合した。設定名や挙動は要約だけで信じず、本文で確認する。
 - **PowerShell の二重引用符の文字列に `"$Title: ..."` と書いたスクリプトが、読み込み時に構文エラーになった**: `$Title:` が、スコープやドライブの修飾子（`$env:` のような形）として解釈された。変数名を `${Title}` で囲み、`"${Title}: ..."` にした（[[windows-cli-pitfalls]] にも同種の変数の落とし穴がある）。
 
-- **`aws-key` が、部屋の `~/.aws/credentials` への `touch` で失敗した**: 原因は不明（下の Open Questions）。手で `credentials` を書くと、認証は通った。`aws-key` の失敗は未解決。
+- **`aws-key` が、部屋の `~/.aws/credentials` への `touch` で失敗した**: 原因は、`sh -c` の引数で渡したスクリプト内の変数が、wsl.exe の側で空に展開されたこと。標準入力（`sh -s`）で渡す形に直し、解決した（2026-10-20。詳細は [[ai-isolated-work-room]] の Gotchas）。
+- **`apiKeyHelper` に指定した `.cmd` の末尾に `pause` を入れた**: ヘルパーとして呼ばれると標準入力が開いたままで `pause` が待ち続け、標準出力にも `Press any key to continue` が混ざった（実測）。ヘルパーの経路には入れず、対話の入口（`-Login` のとき、セットアップ）だけ `pause` し、終了コードは保つ。
+- **PowerShell のスクリプトを `&` で呼び、`if ($LASTEXITCODE -ne 0)` で成否を見たら、成功しているのに失敗と判定された**: 呼ばれたスクリプトの成功経路が `exit` せず `return` で終わると、`$LASTEXITCODE` は更新されない。新しいプロセスでは `$null` で、`$null -ne 0` は真になる。呼ぶ前に `$global:LASTEXITCODE = 0` を入れた。
+- **試験で `$HOME` を偽のディレクトリにしようとして、環境変数 `HOME` を変えたが効かなかった**: Windows の `pwsh` は `$HOME` を `USERPROFILE` から決める。環境変数 `USERPROFILE` を差し替える。
 
 ## Open Questions
 
-- `aws-key` が、部屋の `~/.aws/credentials` への `touch` で失敗した原因（原因は不明。`~/.aws` の所有者が root だった可能性は、ユーザーが取り下げた）。手で `credentials` を書けば認証は通る。確認するコマンド: 部屋の中の `id`、`$HOME`、`ls -ld ~ ~/.aws`、`touch` のエラー文（`docs/log.md` の項目 40）。
+- 解決（2026-10-20）: `aws-key` の `touch` の失敗は、スクリプトを標準入力で渡す形に直して解決した（Gotchas 参照）。
+- 提案: `apiKeyHelper` とベース URL を、共通の設定ではなく `CLAUDE_CONFIG_DIR` で分けた設定に置く構成を、ゲートウェイ接続の標準にする（AI の提案。未承認。動作は確認済み）。Decisions の案B（却下）はキー認証の場合の判断で、食い違いに見える。分けると共通の permissions や hooks が効かないので、引き継ぎ方が未決。
+- 提案: `.cmd` の `pause` は、対話専用の入口だけに入れ、ヘルパーと Zed の起動用には入れない（AI の提案。ユーザーは全ての `.bat` に `pause` を求めたが、ヘルパーでは壊れるため範囲を絞った。未承認）。
+- サインインから約1時間後（ID トークンの期限後）に、`apiKeyHelper` の無音更新が CLI と Zed の両方で働くか。
 - 提案: 長期キーを部屋に置かず、一時キーだけを入れる運用にする（AI の提案。未承認）。
 - 解決（2026-10-11）: 起動関数の名前の提案（AI の提案、`claude-api`）は、実物のプロファイルに `claude-api` として入っている。明示の承認は未確認のまま、実装され使われている。
 - 提案（AI の提案。実機では動いたが、明示の承認は未確認）: キーの保管は DPAPI で暗号化したファイルにする。SecretManagement と 1Password CLI との比較表は、dotfiles の手順書にある。
@@ -141,7 +167,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - `claude` 単独で起動して `/status` を実行し、OAuth のログインになっていることを確認する（2026-10-08 時点）。
 - AWS CLI を入れた PC で、Bedrock のセットアップスクリプトを通し、一覧の出力の形が想定どおりか確認する（2026-10-08 時点）。
 - dotfiles のリポジトリに `.credentials.json` が含まれないことを `.gitignore` で確認する。
-- `aws-key` の失敗の原因を特定して直し、実機で通す（2026-10-19 時点）。
+- OIDC ゲートウェイ接続で、サインインの約1時間後に、更新が働くかを確認する（2026-10-20 時点）。
 
 ## Related
 
