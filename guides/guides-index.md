@@ -46,6 +46,9 @@ updated: 2026-10-20
 | 実際の名前（`pilot` `pilot-1`）で、`room.py` を使わずに、マウント・アンマウントを含めて手作業で通す | [[ai-room-setup-manual]] | 手順書 |
 | 顧客情報を含む資料（議事録、事業戦略など）を、マスクだけして AI に要約させる（実名には戻さない） | [[ai-room-mask-summary]] | 手順書 |
 | 部屋で作業した Project を閉じて、`archives/` に移す | [[ai-room-setup#7. Project を閉じる]] | 手順書 |
+| 部屋の中で、Markdown の HTML 化、mermaid の画像出力、xlsx の変換と再計算をしたい。入っている道具と、使い方（`room-mmdc` など）を思い出す | [[ai-room-convert-tools#3. v1 で入れたもの]] | 理解ガイド |
+| Windows が要る実行（pwsh、Excel 固有の機能）を、AI がスクリプトを作り人が 1 件ずつ実行する形にする案（`room run`）と、その境界への影響を思い出す | [[ai-room-convert-tools#7. room run の案（未実装）]] | 理解ガイド |
+| 部屋の Chromium が起動しない、PDF の漢字の字形が中国式になる、日本語が化ける、などで困った | [[ai-room-convert-tools#5. 実機で分かったこと（PC2、2026-10-20）]] | 理解ガイド |
 
 ### 仕組みを見直す
 
@@ -84,7 +87,7 @@ updated: 2026-10-20
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
 | 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[bedrock-first-hello]]、[[claude-usage-report]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[review-hook-why]]、[[llm-gateway-oidc]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools]]、[[review-hook-why]]、[[llm-gateway-oidc]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新
