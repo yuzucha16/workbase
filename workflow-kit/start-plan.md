@@ -26,8 +26,18 @@
 
 ## 置き場
 
-- kit の題材: トピックの `records/` など、ユーザーが指定した場所。
-- 実務の題材: AI が `ai/work/` で下書きし、ユーザーが承認したものを人が Project の `ai/in/` に置く。基準文書を次の Project に渡す型と同じで、部屋の AI は読むだけ。実務の中身は workbase に入れない。
+題材が入る領域で決める（公開してよい中身か、進行中の下書きか承認済みの基準か）。
+
+| 領域 | 置き場 |
+|---|---|
+| workbase（kit、exmem、guides） | **未決**。トピックを明示する経路が無く、`planning-method` は試行で作ったトピック。昇格するまでは**ユーザーに聞く**。`kit-growth/records/` は「測ったこと」だけの置き場（2026-10-20 の決定）なので、既定にしない |
+| works（Project、Area） | AI が Project の `ai/work/` で下書きし、ユーザーが承認したものを人が同じ Project の `ai/in/` に置く（基準文書を次の Project に渡す型と同じ。部屋の AI は読むだけ）。Area の README には、最新の Project を1行書く |
+| dotfiles | dotfiles 自身の `docs/` で完結させる（依存は dotfiles → workbase の一方向）。workbase に影響するときだけ、名前で指す1行を workbase 側に書く |
+| room（道具の開発） | workbase の題材と同じ（道具のコードは `workflow-kit/room/`） |
+| room の中（業務） | 部屋の `ai/work/` → `ai/in/`。マスク後の語だけで書く |
+
+実務の中身は workbase に入れない。
+
 - 聞けないとき（呼び出し元が置き場を指定していない）は、会話の中に出し、判断の記録に書く。
 
 ## Want（叩き台。1事例からの仮説）
