@@ -1392,7 +1392,7 @@ AWS_TOKEN_RE = re.compile(r"^\S{20,}$")
 
 def aws_credentials_script(profile, body):
     """body（[profile] の節）で、~/.aws/credentials の同名の節を置き換える（ほかの節は残す。権限 600）。
-    スクリプトは標準入力（sh -s）で渡し、body は引用つきのヒアドキュメントに埋める。引数で渡す（sh -c）と、wsl.exe の側のシェルが $HOME や $t を先に展開し、touch "" で失敗する。"""
+    スクリプトは標準入力（sh -s）で渡し、body は引用つきのヒアドキュメントに埋める。引数で渡す（sh -c）と、wsl.exe の側のシェルが、スクリプト内で代入した変数（$f $x $t）を先に展開して空にし、touch "" で失敗する（$HOME は外側でも定義されているので展開される）。"""
     p = shlex.quote(f"[{profile}]")
     return (f"f=\"$HOME/.aws/credentials\"\n"
             "for x in \"$HOME/.aws\" \"$f\"; do [ ! -e \"$x\" ] || [ -O \"$x\" ] || "
