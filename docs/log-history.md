@@ -6,6 +6,13 @@
 - ユーザーが別のセッションで両方を実機で試し、「問題無く動いた」「完了」と報告し、閉じることに賛成した（条件: stock と wrap が済んでいること）。`stock-modes` の知識は `exmem/lessons/` と `guides/` に統合済み（`29c2d4a`）、`private-knowledge` の【汎用】は `guides/explain/cross-area-shared-knowledge.md` などに反映済み。両トピックの【この件】の決定を root の `decisions.md` に1項ずつまとめて移し、トピックを削除（`records/` も移さず削除）、索引・`planning-method` の窓口と記録・リンクを直した。`usage-viz` に続く2・3件目で、残るトピックは `kit-growth`（Area 型）と `planning-method`。
 - 見えたこと: 実機の確認は別セッションで済んでいたが、記録に個別の数字は残っていない（未記録のまま）。
 
+### 2026-10-21（room: 準備は `init` で行い、後続のコマンドは置き場が無ければ止まって終わる）
+- ユーザーの相談「room init で、コマンドが想定する雛形（`areas/<Area>/knowledge/` や `mask.toml`）を作っておきたい。マニュアルを毎回見るのがつらい」。まず、ユーザーが手で作っているものを一覧にした（9件。共有フォルダ `notes/room-init-scaffold/2026-10-21-user-made-list.md`）。
+- ユーザーの方針: 準備は初期化で行う。後続のコマンドの「無ければ作る」はやめる。異常は、復帰処理をせず、デバッグできる状態を出して終わりに一本化する（組み合わせを減らす）。
+- 実装（`efc091c`、`756d1bc`）: `scaffold_area`（`init` が `knowledge/` と `ai/docs/inbox.md` を無ければ作る。部屋がすでにあって止まる場合も先に作る）。`close` は inbox が、`restore` は知識置き場が無ければ、何も変えずに止まり、`room init <Area>` を示す。最初は「警告して続行」にしたが、`close` が警告のまま archives へ移してしまうため、止まる型に直した。単体テスト 108 件パス。
+- `mask.toml` の雛形は、別のセッションでユーザーが内容を決め、`open` が書く形になった。置き場の追加（`deliverable/` `source/`）も別のセッション（Next Actions 14）。
+- 未確認: 実機。止まる型になっていない手作り物が残っていないかの見直し（`.gitignore` など）は、mask.toml の後に回した。
+
 ### 2026-10-21（room: 同じ Area の Project を同じ部屋で並行して `start` できるようにする）
 - ユーザーの相談: 部屋のマウントを複数にしたとき、Project 間でデータが見えるか。AI の思考時間中に別の Project を触りたい。同じ Area の Project に限り、すべて internal。同時に `start` すると、後続が「マウントがすでにある」で止まっていた（`preflight` が部屋の全マウントを確認していた）。
 - 検討: Project をまとめる案は、入力と終了時期が揃わず却下（ユーザー）。`--concurrent` のフラグ案は、ユーザーが既定にすると決めた。

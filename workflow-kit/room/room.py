@@ -761,7 +761,7 @@ updated: {today}
 
 
 def scaffold_area(ctx, area):
-    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（pull、restore、close）は、無ければ作らずに警告する。"""
+    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（pull、restore、close）は、無ければ作らず、何も変えずに止まる。"""
     root = ctx.vault / "areas" / area
     old = root / "knowledge"  # 2026-10-21 までの置き場（_noai の外で、守られていなかった）。自動では動かさない
     if old.is_dir():
