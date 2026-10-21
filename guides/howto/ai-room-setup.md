@@ -182,7 +182,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 1. 道具を入れる
 
    ```powershell
-   wsl -d room-<Area> -u root -- sh -c "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep"
+   wsl -d room-<Area> -u root -- sh -c "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep git"
    ```
 
 2. `uv` と Claude Code を、一般ユーザーで入れる

@@ -103,7 +103,7 @@ wsl -d room-pilot -- sh -c "id -un; ls /mnt/c | wc -l; command -v cmd.exe || ech
 ## 4. 道具を入れ、ログインする
 
 ```powershell
-wsl -d room-pilot -u root -- sh -c "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep"
+wsl -d room-pilot -u root -- sh -c "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep git"
 wsl -d room-pilot -- bash -lc 'curl -LsSf https://astral.sh/uv/install.sh | sh'
 wsl -d room-pilot -- bash -lc 'curl -fsSL https://claude.ai/install.sh | bash'
 'export PATH="$HOME/.local/bin:$PATH"' | wsl -d room-pilot -- tee -a /home/ai/.bashrc
