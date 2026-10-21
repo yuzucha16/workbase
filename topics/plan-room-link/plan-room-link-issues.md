@@ -95,6 +95,19 @@ README の印の範囲に入るもの。AI が下書きし、`room` は印の間
 <!-- plan:end -->
 ```
 
-## 4. 変更先の候補（論点が決まった後）
+## 4. 変更先（論点 1〜6 の仮決めを実装するとき。承認前）
 
-`workflow-kit/room/room.py`（`README_TEMPLATE`、`AREA_README_TEMPLATE`、`README_PLACEHOLDERS`）と tests、`workflow-kit/templates/project/README.template.md`、`workflow-kit/open-hook.md`、`workflow-kit/start-plan.md`（置き場）、`workflow-kit/room-context.md`、`workflow-kit/room/README.md`、`exmem/lessons/planning-method.md`。
+`review 消化` の3段を通してから行う（`open` は触らないという 2026-10-19 の取り決めの見直しを含むが、`open` 自体は変えない）。
+
+| # | 変更先 | 内容 |
+|---|---|---|
+| 1 | `workflow-kit/room/room.py` | `README_TEMPLATE` に印つきの空の節「計画」。`cmd_start` で来歴チェックの通過後、`ai/in/plan/readme-block.md` があれば、README の印の間を置き換える（承認日の行は room が書く。内容が同じなら何もしない）。印が無ければ止まって節を貼るよう案内する。10 行・1KB を超えたら知らせる |
+| 2 | `workflow-kit/room/tests/` | 置き換え、同じ内容で変更なし、印なしで停止、frontmatter を変えないこと、超過の警告 |
+| 3 | `workflow-kit/templates/project/README.template.md` | 同じ印つきの節。注記を足す |
+| 4 | `workflow-kit/start-plan.md` | B-5 の出力に `readme-block.md` を足す。置き場の表の works の行から「Area 配下」を直し（事実の食い違い）、`ai/work/plan/` → `ai/in/plan/` に統一する |
+| 5 | `workflow-kit/room-context.md`、`room/README.md`、`ROOM.md`（`room.py` の案内） | 部屋の AI が `ai/work/plan/readme-block.md` を書くこと、承認は人の `--adopt` であること |
+| 6 | `exmem/lessons/planning-method.md` | 事実と決定を足す |
+| 変えない | `open-hook.md`、Area の README、`close` の雛形チェック | 論点 4・5 の決定による |
+
+確認済み（`room.py` の `cmd_start` 末尾、1274 行付近）: `start` の自動コミットは `projects/<P>` 全体を対象にするので、README の反映も同じコミットに入る。反映の位置は、来歴チェックの通過後、`snapshot_readme` の前（部屋の写しに新しい節が入る）。実機での確認は PC1（実装直後は単体テストのみ）。
+
