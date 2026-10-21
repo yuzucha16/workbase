@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-21（`stock 理解`・`stock ナレッジ`・`wrap`: room のデータ設計）
+- `exmem/inbox/` に 2 件のメモを作った（コミットしない）: `2026-10-21-area-data-layout-flow`（`kind: explain`。原本・成果物・知識の置き場と流れ。統合先の候補: `guides/explain/` の新規。近い既存 `cross-area-shared-knowledge` の設計の軸が古くなる点は、要確認事項に書いた）、`2026-10-21-state-derived-switches-and-boundary`（統合先の候補: `lessons/ai-isolated-work-room.md`。設定でなく状態で決める設計と、秘匿の境界を親に寄せる配置）。点検スクリプトは PASS 45 / FAIL 0 / WARN 0。room の決定と経緯は `decisions.md` と本日の各項が正本なので、メモには一般化した原則だけを残した。
+- 改善の迷った点を Open Questions に 1 件足した（`stock-hook.md` の重なり確認で、近い既存ガイドが古くなる場合の扱い）。
+
 ### 2026-10-21（room: `open` が `mask.toml` のひな形を作る）
 - ユーザーが示した内容（書式の注記、`[terms.CUST]`、`[terms.PERSON]`。語はコメントアウト）を、`open` が `projects/<名>/_noai/mask.toml` に書く。`init` の Area の置き場（`source` `knowledge` `deliverable` `inbox.md`）の作成は、先のコミットで済み。単体テスト 115 件が通る。
 
