@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-21（room: `init --only` で、既存の部屋に道具の段だけを入れ直す）
+- ユーザーの相談: `init` に apt などを足すたびに Area（部屋）を作り直していて面倒。既存の部屋に、足した分だけ適用したい。調べると `init --resume` が全段を入れ直せる（各段は冪等）が、取得の重い段（Chromium、LibreOffice）も毎回走る。
+- ユーザーの依頼で実装: `init <Area> --only apt,pwsh`（`--resume` を含む）。段の名前は `INIT_STEPS`（`base` `apt` `cacert` `node` `convert` `chromium` `pwsh` `npm` `uv` `claude` `path`）。不明な名前・部屋なしは、何も触らずに止まる。`--only` 無しは従来どおり全段。
+- 確認: 単体テスト 117 件が通った（新規 2 件。skip 3）。実機は未確認。変更: `room/room.py`、`room/tests/test_room.py`、`room/README.md`。未コミット。
+- 質問への回答: 「差分すべて」は、`Room-Rev`（トレーラー）から `git diff <Room-Rev>..HEAD -- workflow-kit/room/room.py` で足された段を見て `--only` に渡す。迷ったら `--resume`（全段）。差分の自動判定は無い（Open Questions に積んだ）。
+
 ### 2026-10-21（room: 部屋に pwsh 7 を入れ、ps1 の静的チェッカーを足した。束ねる役も ps1 にする規約）
 - ユーザーの相談: 部屋（WSL）で bat と ps1 を作ると、エラーとデバッグが多く、効率が悪い。pwsh を入れる案と `room run` の案を比べた結果、bat はそもそも ps1 を束ねて 1 回で実行するための入口で、価値は無いと分かった。`room run` は今回の用途には過剰（結果を AI に戻す経路も案に無い）。
 - ユーザーの決定: 束ねる役も ps1 にし、bat は起動用の 3 行だけ許す。部屋の AI が従うよう文書に書く。静的チェッカーは部屋に pwsh 7 を入れる案にする（pwsh は 7 に固定）。決定の全文と確認は `decisions.md` の同日の項。

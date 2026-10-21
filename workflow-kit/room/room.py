@@ -769,6 +769,21 @@ def scaffold_area(ctx, area):
         ctx.say(f"作った: areas/{area}/ai/docs/inbox.md（close が【案件】を追記する郵便受け）")
 
 
+# init の段（--only で選ぶ名前）。base は一般ユーザー・wsl.conf・分離の確認（部屋を terminate する）
+INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "pwsh", "npm", "uv", "claude", "path")
+
+
+def parse_only(value):
+    """--only の値（カンマ区切り）を集合にする。指定が無ければ None（全部）。"""
+    if not value:
+        return None
+    names = [n.strip() for n in value.split(",") if n.strip()]
+    bad = [n for n in names if n not in INIT_STEPS]
+    if bad or not names:
+        raise RoomError(f"--only の名前が不明: {', '.join(bad) or value}。使える名前: {', '.join(INIT_STEPS)}")
+    return set(names)
+
+
 def cmd_init(ctx, a):
     """Area の部屋（専用ディストロ）を作り、道具を入れる。ログインは人が行う。"""
     boundary_arg = getattr(a, "boundary", None)
@@ -789,47 +804,62 @@ def cmd_init(ctx, a):
     scaffold_area(ctx, a.area)  # 部屋がすでにあって止まる場合も、足りない置き場は作る
     ca_cert = getattr(a, "ca_cert", None)
     ca_pem, ca_prints = load_ca_cert(ca_cert) if ca_cert else (None, [])  # 部屋を触る前に、検査で止める
+    only = parse_only(getattr(a, "only", None))
+    resume = a.resume or bool(only)  # --only は、既存の部屋への入れ直しなので --resume を含む
+    want = lambda name: only is None or name in only
     distro = f"room-{a.area}"
     exists = distro in ctx.wsl.distros()
-    if exists and not a.resume:
-        raise RoomError(f"部屋がすでにある: {distro}。作りかけの続きなら --resume（設定と道具の入れ直しだけを行う）")
+    if exists and not resume:
+        raise RoomError(f"部屋がすでにある: {distro}。作りかけの続きなら --resume（設定と道具の入れ直しだけを行う）。一部の道具だけなら --only <名前,…>（{', '.join(INIT_STEPS)}）")
     if not exists:
-        if a.resume:
-            raise RoomError(f"--resume だが部屋が無い: {distro}")
+        if resume:
+            raise RoomError(f"--resume（--only）だが部屋が無い: {distro}")
         ctx.say(f"部屋を作る: {distro}（{ROOM_BASE}。ダウンロードに数分かかる）")
         if ctx.wsl.install(distro, ROOM_BASE) != 0 or distro not in ctx.wsl.distros():
             raise RoomError("wsl --install が失敗した（古い WSL は --name が使えない可能性がある。ai-room-setup.md の 3 章）")
-    ctx.say("設定する（一般ユーザーを先に作る。root のままだと C: をマウントできてしまう）")
-    step_script(ctx, distro, "一般ユーザー ai", "id ai >/dev/null 2>&1 || useradd -m -u 1000 -s /bin/bash ai\nid ai\n", root=True)
-    step_script(ctx, distro, "/etc/wsl.conf", "cat > /etc/wsl.conf <<'EOF'\n" + WSL_CONF + "EOF\n", root=True)
-    ctx.wsl.terminate(distro)
-    out = step_script(ctx, distro, "分離の確認",
-                      "echo user=$(id -un)\necho c=$(ls /mnt/c 2>/dev/null | wc -l)\n"
-                      "command -v cmd.exe >/dev/null 2>&1 && echo cmd=yes || echo cmd=no\n"
-                      "sudo -n true >/dev/null 2>&1 && echo sudo=yes || echo sudo=no\n")
-    got = dict(l.strip().split("=", 1) for l in out.splitlines() if "=" in l)
-    if got != {"user": "ai", "c": "0", "cmd": "no", "sudo": "no"}:
-        raise RoomError(f"分離の確認が目安と違う（{got}）。user=ai, c=0, cmd=no, sudo=no が目安。道具は入れていない")
+    if only is not None:
+        ctx.say(f"一部だけ入れ直す: {', '.join(n for n in INIT_STEPS if n in only)}")
+    if want("base"):
+        ctx.say("設定する（一般ユーザーを先に作る。root のままだと C: をマウントできてしまう）")
+        step_script(ctx, distro, "一般ユーザー ai", "id ai >/dev/null 2>&1 || useradd -m -u 1000 -s /bin/bash ai\nid ai\n", root=True)
+        step_script(ctx, distro, "/etc/wsl.conf", "cat > /etc/wsl.conf <<'EOF'\n" + WSL_CONF + "EOF\n", root=True)
+        ctx.wsl.terminate(distro)
+        out = step_script(ctx, distro, "分離の確認",
+                          "echo user=$(id -un)\necho c=$(ls /mnt/c 2>/dev/null | wc -l)\n"
+                          "command -v cmd.exe >/dev/null 2>&1 && echo cmd=yes || echo cmd=no\n"
+                          "sudo -n true >/dev/null 2>&1 && echo sudo=yes || echo sudo=no\n")
+        got = dict(l.strip().split("=", 1) for l in out.splitlines() if "=" in l)
+        if got != {"user": "ai", "c": "0", "cmd": "no", "sudo": "no"}:
+            raise RoomError(f"分離の確認が目安と違う（{got}）。user=ai, c=0, cmd=no, sudo=no が目安。道具は入れていない")
     ctx.say("道具を入れる（curl、rg、Node.js、LibreOffice、pandoc、PowerShell 7、uv、Claude Code。uv と Claude Code は配布元のスクリプトをそのまま実行する）")
-    step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep）",
-                "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep\n", root=True)
-    if ca_pem:
+    if want("apt"):
+        step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep）",
+                    "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep\n", root=True)
+    if ca_pem and want("cacert"):
         ctx.say("証明書を入れる（root 所有。ai は読めるが書き換えられない）")
         for p in ca_prints:
             ctx.say(f"  SHA-256 {p}")
         step_script(ctx, distro, "update-ca-certificates",
                     f"cat > {CA_DEST} <<'EOF'\n{ca_pem}EOF\nchmod 644 {CA_DEST}\nupdate-ca-certificates\n", root=True)
-    step_script(ctx, distro, "Node.js 24（公式の tarball、チェックサム確認つき）", NODE_INSTALL, root=True)
-    step_script(ctx, distro, "変換の道具（LibreOffice、日本語フォント、pandoc。大きいので数分かかる）", CONVERT_TOOLS_INSTALL, root=True)
+    if want("node"):
+        step_script(ctx, distro, "Node.js 24（公式の tarball、チェックサム確認つき）", NODE_INSTALL, root=True)
+    if want("convert"):
+        step_script(ctx, distro, "変換の道具（LibreOffice、日本語フォント、pandoc。大きいので数分かかる）", CONVERT_TOOLS_INSTALL, root=True)
     # 等幅フォント PlemolJP は、使い捨ての部屋での試験が安定するまで入れない（約 220 MB の取得で時間がかかる。ee の依頼、2026-10-20）。戻すときは次の行のコメントを外し、tests の PlemolJP の確認も戻す
     # step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
-    step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
-    step_script(ctx, distro, "PowerShell 7（公式の tarball、チェックサム確認つき）と PSScriptAnalyzer・Pester（版を固定）", PWSH_INSTALL, root=True)
-    step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
-    step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
-    step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
-    step_script(ctx, distro, "PATH",
-                f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
+    if want("chromium"):
+        step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
+    if want("pwsh"):
+        step_script(ctx, distro, "PowerShell 7（公式の tarball、チェックサム確認つき）と PSScriptAnalyzer・Pester（版を固定）", PWSH_INSTALL, root=True)
+    if want("npm"):
+        step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
+    if want("uv"):
+        step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
+    if want("claude"):
+        step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
+    if want("path"):
+        step_script(ctx, distro, "PATH",
+                    f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
     ver = step_script(ctx, distro, "道具の確認",
                       'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\nmmdc --version\npwsh --version\npwsh -NoProfile -Command \'Get-Module -ListAvailable PSScriptAnalyzer,Pester | ForEach-Object { "$($_.Name) $($_.Version)" }\'\n')
     ctx.say(ver.rstrip())
@@ -1954,6 +1984,7 @@ def build_parser():
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
     i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")
+    i.add_argument("--only", help="既存の部屋に、指定した段だけを入れ直す（--resume を含む。カンマ区切り: " + ", ".join(INIT_STEPS) + "）")
     i.add_argument("--ca-cert", help="部屋に入れる会社のルート証明書（PEM、最大5枚）。TLS 検査のあるネットワークで curl が証明書エラー（60）になるときに指定する。既定は入れない")
     i.add_argument("--boundary", help="Area が無い（または boundary: が無い）ときに付ける印（例: internal、顧客を表す名前。既定値は無い）")
     i.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="Area の作成をコミットしない（既定はコミットする）")

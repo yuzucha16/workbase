@@ -61,6 +61,13 @@
 - 却下案: 単価を表に持たず `--prices` で外から渡すだけ（最初の版）。
 - 閉じ方: 完了条件は達成済み。`records/` の計画3件（6R、憲章・WBS・マイルストーン、作り方のメモ）は移さず、ディレクトリごと削除した（履歴は git、実行後のフィードバックは `start-plan.md` に反映済み）。未確認は HTML の見た目（ブラウザで開いていない）。
 
+### 【汎用】`room init --only <段,…>` で、既存の部屋に道具の段だけを入れ直す（2026-10-21）
+- 決めたこと（ユーザーの依頼）: `init` の段（`INIT_STEPS`）を名前で選べるようにする。`--only` は `--resume` を含み、部屋は作らない。
+- 根拠: 道具を足すたびに部屋を作り直すのは負担。`--resume` は全段を走らせるので、Chromium などの重い取得が毎回かかる。
+- 却下（保留）: `Room-Rev` から差分の段を自動で選ぶ `--only changed`。段と変更の対応表が要るため、Open Questions に積んだ。
+- 見直しの条件: `init` に段を足すときは `INIT_STEPS` にも足す（足し忘れると `--only` で選べない）。
+- 実装: `workflow-kit/room/room.py`（`INIT_STEPS` `parse_only`）、README、テスト2件。実機は未確認。
+
 ### 【汎用】room が作るコミットに、トレーラー `Room-Op` `Room-Rev` `Room-Area` `Room-Project` を付ける（2026-10-21）
 - 決めたこと（ユーザーの指示）: `room.py` が works に作るコミット（`init` `open` `rename-area` `start` `readme` `close`）に付ける。`Room-Rev` は resources の短縮ハッシュで、`workflow-kit/` に未コミットの変更があれば `-dirty`、git で引けなければ `unknown`。
 - 根拠: 既存の Area / Project を、どの版の room で作ったかが分かれば、`git diff <Room-Rev>..HEAD -- workflow-kit/room` で差分を確認でき、update できるかの判断材料になる。
