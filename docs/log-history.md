@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-21（`stock-modes` の続き: `stock 理解` の実装、`start 計画` へのフィードバック、`private-knowledge` との整理）
+- ユーザーが設計の【提案】を一括承認し、全工程を進めた。`workflow-kit/` に `stock` のモード「理解」（`kind: explain`）を実装（`stock-explain.md` 新規、`stock-hook.md`、`integrate-hook.md`、`check_inbox.py` / `check-inbox.ps1`、見本、整合10ファイル、`room.py` の古さの印、単体テスト）。点検は FAIL 0、lesson は回帰なし。実機（`integrate`、`room stock`）は未実施。設計からの差分4件はユーザーが承認。詳細は `topics/stock-modes/docs/`。
+- `start 計画` へのフィードバック案8件を `topics/planning-method/planning-method-feedback-stock-modes-m1.md` に記録（未承認）。`private-knowledge` との重なりは整理済み（`topics/private-knowledge/docs/decisions.md`）。
+- コミット: `8292322`（kit）、`1875603`（topics）。
+
 ### 2026-10-21（`planning-method` の続き: 試行のフィードバックの反映、品質チェック1回目、Area を跨ぐ共有知の実装）
 - 試行の3題材のフィードバックをユーザーの承認で `workflow-kit/start-plan.md` に反映した（詳細は `topics/planning-method/docs/log-history.md`）。題材の計画の置き場の仮決め（題材のトピックの `records/`）を `start-plan.md` の置き場の表に反映した（正式化の判断は 10-28 のまま）。
 - 品質チェック1回目は `private-knowledge`（`topics/kit-growth/records/planning-method-record.md`）。
