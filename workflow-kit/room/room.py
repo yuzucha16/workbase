@@ -237,6 +237,19 @@ def room_mounts(ctx, distro):
     return [l for l in out.splitlines() if l.strip()]
 
 
+def mount_name(line):
+    """/proc/mounts の 1 行から、Project 名（/mnt/room/<名> の <名>）。"""
+    parts = line.split()
+    return parts[1][len(MOUNT_ROOT) + 1:] if len(parts) > 1 and parts[1].startswith(MOUNT_ROOT + "/") else ""
+
+
+def split_mounts(mounts, p):
+    """部屋のマウントを、この Project のものと、同じ部屋（Area）でほかの Project が開いているものに分ける。"""
+    own = [l for l in mounts if mount_name(l) == p.name]
+    others = sorted({mount_name(l) for l in mounts} - {p.name, ""})
+    return own, others
+
+
 # ---------- manifest（来歴） ----------
 
 def sha256(path):
@@ -340,8 +353,10 @@ def room_git_script(p):
     q = shlex.quote
     return (
         "set -e\n"
-        "cat > /usr/local/bin/git <<'WRAP'\n" + ROOM_GIT_WRAPPER + "WRAP\n"
-        "chmod 755 /usr/local/bin/git\n"
+        # 並行して動く別の Project の AI が git を呼ぶ最中に、空になった瞬間が無いよう、書いてから置き換える
+        "cat > /usr/local/bin/git.new <<'WRAP'\n" + ROOM_GIT_WRAPPER + "WRAP\n"
+        "chmod 755 /usr/local/bin/git.new\n"
+        "mv -f /usr/local/bin/git.new /usr/local/bin/git\n"
         f"runuser -u ai -- sh -s <<'AI'\n"
         "set -e\n"
         f"rm -rf {q(gd)}\n"
@@ -379,7 +394,7 @@ def unmount(ctx, p):
     )
     ctx.wsl.script(p.distro, script, root=True)
     time.sleep(ctx.settle)
-    left = room_mounts(ctx, p.distro)
+    left, _others = split_mounts(room_mounts(ctx, p.distro), p)  # 同じ部屋でほかの Project が動いていてもよい
     # 入力の読み取り専用を、Windows 側で戻す（人が差し替えられるように）
     # （マウント時は .gitkeep も含めて in/ の全ファイルを読み取り専用にするので、戻すのも全ファイル）
     base = p.ai / "in"
@@ -390,7 +405,8 @@ def unmount(ctx, p):
 
 
 def clean_stale_mountpoints(ctx, distro):
-    ctx.wsl.script(distro, f"find {MOUNT_ROOT} -mindepth 1 -maxdepth 1 -type d -empty -exec rmdir {{}} + 2>/dev/null || true\n", root=True)
+    # 並行して start した別の Project が、mkdir してから mount するまでの間に消さないよう、作って 1 分以上たったものだけ消す
+    ctx.wsl.script(distro, f"find {MOUNT_ROOT} -mindepth 1 -maxdepth 1 -type d -empty -mmin +1 -exec rmdir {{}} + 2>/dev/null || true\n", root=True)
 
 
 # ---------- git ----------
@@ -941,10 +957,12 @@ def preflight(ctx, p):
     check_gitignore(ctx)
     boundary = check_area(p)
     check_distro(ctx, p)
-    mounts = room_mounts(ctx, p.distro)
-    if mounts:
-        raise RoomError("部屋にマウントが残っている（同時に開かない）。`room umount --area "
-                        f"{p.area}` で外す:\n  " + "\n  ".join(mounts))
+    own, others = split_mounts(room_mounts(ctx, p.distro), p)
+    if own:
+        raise RoomError("この Project のマウントが残っている（二重に開かない）。`room umount --area "
+                        f"{p.area}` で外す（ほかの Project のマウントも外れる）:\n  " + "\n  ".join(own))
+    if others:
+        ctx.say(f"同じ部屋で開いている Project: {', '.join(others)}（同じ Area なので並行できる。~/shared は最新に揃え、start は同じタイミングで行う）")
     clean_stale_mountpoints(ctx, p.distro)
     return boundary
 
@@ -1103,10 +1121,11 @@ if os.path.exists(f) and os.path.getsize(f) > 0:
 allow = d.setdefault("permissions", {}).setdefault("allow", [])
 if "Read(~/shared/**)" not in allow:
     allow.append("Read(~/shared/**)")
-os.makedirs(os.path.dirname(f), exist_ok=True)
-with open(f, "w", encoding="utf-8", newline="\\n") as fh:
-    json.dump(d, fh, ensure_ascii=False, indent=2)
-    fh.write("\\n")
+    os.makedirs(os.path.dirname(f), exist_ok=True)
+    with open(f + ".new", "w", encoding="utf-8", newline="\\n") as fh:
+        json.dump(d, fh, ensure_ascii=False, indent=2)
+        fh.write("\\n")
+    os.replace(f + ".new", f)
 """
 
 
@@ -1128,10 +1147,14 @@ d = {{}}
 if os.path.exists(f) and os.path.getsize(f) > 0:
     with open(f, encoding="utf-8") as fh:
         d = json.load(fh)
-d.setdefault("projects", {{}}).setdefault({path}, {{}})["hasTrustDialogAccepted"] = True
-with open(f, "w", encoding="utf-8", newline="\\n") as fh:
-    json.dump(d, fh, ensure_ascii=False, indent=2)
-    fh.write("\\n")
+entry = d.setdefault("projects", {{}}).setdefault({path}, {{}})
+if not entry.get("hasTrustDialogAccepted"):
+    # 並行して動く別の Project の Claude も、このファイルを書く。記録済みなら触らず、書くときは置き換えで壊れた状態を見せない
+    entry["hasTrustDialogAccepted"] = True
+    with open(f + ".new", "w", encoding="utf-8", newline="\\n") as fh:
+        json.dump(d, fh, ensure_ascii=False, indent=2)
+        fh.write("\\n")
+    os.replace(f + ".new", f)
 """
 
 
@@ -1161,10 +1184,18 @@ def push_shared(ctx, p):
     (ctx_dir / "SHARED.md").write_text(guide, encoding="utf-8", newline="\n")
     # wsl.exe は `sh -c` の引数を、部屋の側の外側のシェルでもう一度解釈する。スクリプト内で代入した変数（$d など）は
     # 外側で空に展開されるので、変数を使わず $HOME/<dest> を直接書く（$HOME は外側でも定義されている）。
+    # 並行して動く別の Project の AI が読む最中に無い瞬間が長く続かないよう、横で展開してから置き換える
     d = f"\"$HOME/{SHARE_DEST}\""
-    script = (f"set -e; if [ -e {d} ]; then chmod -R u+w {d}; rm -rf {d}; fi; "
-              f"mkdir -p {d} && tar xzf - -C {d}; "
-              f"chmod -R a-w {d}")
+    n = f"\"$HOME/{SHARE_DEST}.new\""
+    o = f"\"$HOME/{SHARE_DEST}.old\""
+    script = (f"set -e; "
+              f"if [ -e {n} ]; then chmod -R u+w {n}; rm -rf {n}; fi; "
+              f"if [ -e {o} ]; then chmod -R u+w {o}; rm -rf {o}; fi; "
+              f"mkdir -p {n} && tar xzf - -C {n}; "
+              f"chmod -R a-w {n}; "
+              f"if [ -e {d} ]; then mv {d} {o}; fi; "
+              f"mv {n} {d}; "
+              f"if [ -e {o} ]; then chmod -R u+w {o}; rm -rf {o}; fi")
     rc, _o, err = ctx.wsl.push(p.distro, data, script)
     if rc != 0:
         raise RoomError(f"共有知の写しを送れなかった: {err.strip()}")
@@ -1750,7 +1781,7 @@ def cmd_close(ctx, a):
     check_gitignore(ctx)
     check_area(p)
     check_distro(ctx, p)
-    mounts = room_mounts(ctx, p.distro)
+    mounts, _others = split_mounts(room_mounts(ctx, p.distro), p)
     if mounts:
         raise RoomError("マウントが残っている。先に外す（`room umount --area " + p.area + "`）:\n  " + "\n  ".join(mounts))
     close_md = p.ai / "out" / "close.md"

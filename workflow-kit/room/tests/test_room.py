@@ -35,7 +35,8 @@ updated: 2026-10-01
 class FakeWsl:
     def __init__(self, distros=("room-area-x",)):
         self._distros = list(distros)
-        self.mounted = False
+        self.mounted = False  # proj-a（テストの Project）のマウント
+        self.others = []  # 同じ部屋でほかの Project が開いているマウント（Project 名）
         self.scripts = []
         self.interactive_calls = []
         self.pushes = []
@@ -53,12 +54,15 @@ class FakeWsl:
             self.mounted = True
         if "umount" in text:
             self.mounted = False
+            if "/proc/mounts | cut" in text:  # cmd_umount は部屋の全マウントを外す
+                self.others = []
         if text.startswith("echo user="):
             return 0, getattr(self, "isolation", "user=ai\nc=0\ncmd=no\nsudo=no\n"), ""
         if text.startswith("export PATH") and "claude --version" in text:
             return 0, "2.1.296 (Claude Code)\n", ""
-        if text.startswith("grep ' /mnt/room/' /proc/mounts") and self.mounted:
-            return 0, "C:\\x /mnt/room/p 9p rw 0 0\n", ""
+        if text.startswith("grep ' /mnt/room/' /proc/mounts"):
+            names = (["proj-a"] if self.mounted else []) + self.others
+            return 0, "".join(f"C:\\x /mnt/room/{n} 9p rw 0 0\n" for n in names), ""
         return 0, "", ""
 
     def install(self, distro, base):
@@ -739,6 +743,47 @@ class StartTest(unittest.TestCase):
             self.assertIn("マウントが残っている", str(cm.exception))
             self.assertEqual(wsl.interactive_calls, [])
 
+    def test_start_allows_other_project_mounted_in_same_room(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            wsl.others = ["proj-b"]
+            v, c = opened(tmp, wsl)
+            room.cmd_start(c, self.args())
+            self.assertEqual(len(wsl.interactive_calls), 1)
+            self.assertTrue(any("proj-b" in m and "並行" in m for m in c.msgs))
+            self.assertFalse(wsl.mounted)
+            self.assertEqual(wsl.others, ["proj-b"], "ほかの Project のマウントは外さない")
+
+    def test_start_does_not_fail_when_other_project_stays_mounted(self):
+        # 自分のマウントだけを確認する（ほかの Project が動いていても「マウントが残っている」にならない）
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            wsl.others = ["proj-b", "proj-c"]
+            v, c = opened(tmp, wsl)
+            room.cmd_start(c, self.args())
+            self.assertIn("proj-b", "".join(wsl.others))
+
+    def test_stale_cleanup_spares_fresh_mountpoints(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            room.cmd_start(c, self.args())
+            cleans = [s[1] for s in wsl.scripts if s[1].startswith("find /mnt/room") and "-empty" in s[1]]
+            self.assertTrue(cleans and all("-mmin +1" in t for t in cleans))
+
+    def test_close_ignores_other_project_mounts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            wsl.others = ["proj-b"]
+            v, c = opened(tmp, wsl)
+            fill_readme(v / "projects/proj-a")
+            (v / "projects/proj-a/ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
+            # マウントの確認では止まらない（ほかの理由で止まっても、マウントの理由ではない）
+            try:
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            except room.RoomError as e:
+                self.assertNotIn("マウントが残っている", str(e))
+
     def test_start_blocked_without_distro(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c = opened(tmp)
@@ -1205,6 +1250,7 @@ class SharedPushTest(unittest.TestCase):
             distro, data, script = wsl.pushes[0]
             self.assertEqual(distro, "room-area-x")
             self.assertIn("chmod -R a-w", script)
+            self.assertIn('mv "$HOME/shared.new" "$HOME/shared"', script, "横で展開してから置き換える（読む最中に無い時間を作らない）")
             names = tarfile.open(fileobj=io.BytesIO(data), mode="r:gz").getnames()
             self.assertIn("workflow-kit/hooks.md", names)
             self.assertIn("exmem/lessons/a.md", names)
