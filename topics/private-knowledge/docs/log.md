@@ -10,7 +10,7 @@ Area を跨ぐ共有知の仕組みは、2026-10-21 に実装し、実機の通�
 
 1. 実例1件で通す（works の実際の会議録。マスクして `pull`、統合、`restore`）。指標を測る: 冒頭の数行に収まった決定・ToDo の数、人が直した箇所の数、冒頭の行数の上限（仮 10 行）。works 側の `areas/<Area>/knowledge/` を人が作る（このリポジトリの外）。
 2. 統合の手順書の整備: 部屋の AI に統合させる指示（`ai/out/knowledge/` に `kind: integrated` で書く）を、`room-context.md` か手順書に固める。いまは `ai-room-setup-script.md` の 6.1 の例だけ。
-3. 進行中の `stock` のモード追加（`topics/stock-modes/`）との重なりを整理する（裏づけ #5）。型の用語（冒頭の数行 = 人向け）が、理解ガイドの6見出しと食い違わないか。
+3. （済 2026-10-21）`stock` のモード追加（`topics/stock-modes/`）との重なりの整理。結果は `docs/decisions.md` の同日の項。
 4. 型・理解ガイドの型の整理と改善は、別セッションで行う（ユーザーの指示、2026-10-21）。
 
 ## Open Questions

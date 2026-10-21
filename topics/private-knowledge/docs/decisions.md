@@ -37,6 +37,15 @@
 - → inbox/2026-10-21-masked-area-knowledge-flow
 - 却下案: (c) AI が Area を直接読む（`areas/` を扱わない決まりに反する）、(b) 常にマスク済みの写しを持つ（二重管理。ただし生成物にする案は検討中、同日の議論）。
 
+### 【この件】`stock` のモード追加（`stock-modes`）との重なりを整理した（2026-10-21）
+- 決めたこと（ユーザー、2026-10-21）: 整理は AI に任せ、仕様の追加・削除を含めてよい。結果（AI の整理。ユーザーの承認は上の包括的な指示）:
+  - 衝突なし: `kind` は `type` ごとの値（`type: inbox` は `lesson | explain`、`type: area-note` は `meeting | integrated`）。「冒頭」は型ごとに別物（`area-note` は人向けの要約の数行、`explain` は目的・前提・確認状況）。経路も別（Area の知識: `room pull` → `ai/out/knowledge/` → `restore` → Area。共有知: `ai/out/stock/` → `room stock` → `exmem/inbox/`）。
+  - 分けた理由が整合: 会議録は同じ事実の表示違いなので1ファイル2層（この `decisions.md` の Principles）。`stock` の lesson と explain は、読む問い（判断か仕組みか）も中身も違うので、別のメモ（1つの会話に両方あれば2回実行）。
+  - **追加（仕様）**: `stock-hook.md`（どのモードでも）に「固有の事実は、仮名にしても書かない。一般化した教訓だけ」を足した（決定 ⑦ の③を、手順書に反映）。`stock-explain.md` に、`area-note` の「冒頭」との区別を足した。`room stock` は `kind: explain` に古さの印を付けない。
+  - **削除（仕様）**: なし。両方の仕様から削る重複は見つからなかった。この題材の Next Action 3 と、`stock-modes` の Open Question（重なり）は閉じた。
+- 根拠: 両トピックの `decisions.md` と、実装した `workflow-kit/` の差分（`stock-hook.md`、`stock-explain.md`、`room/room.py`）。
+- 却下案: `kind` の値を全体で一意にする（`type` で区別できる。値を揃えると既存の `area-note` を直すことになる）。
+
 ### 【この件】【仮 〜2026-10-28】トピックと計画の置き場: `records/` は2か所にする（2026-10-21。正本は workbase 直下 `docs/decisions.md` の同日の項）
 - 決めたこと（ユーザー）: トピックは `topics/private-knowledge/`（`planning-method` と同じ構造: 窓口・`docs/`・`records/`）。`records/` の使い分けは2つだけにする。①`topics/kit-growth/records/` = 測ったことだけ（品質チェックと振り返り。従来どおり）。②各トピックの `records/` = そのトピック自身の出力（計画・見本・確認メモ）。6R・憲章・WBS・マイルストーン・作り方のメモは `topics/private-knowledge/records/`。
 - 根拠: ユーザーの選択（AI の案を採用）。中身で置き場を決めると、題材ごとの計画が計画のやり方のトピックに混ざらない。最初の指示（`topics/kit-growth/private_knowledge/`、計画は `topics/kit-growth/plans/`）は、ユーザーの記憶が曖昧で、既存の運用と違っていた。`plans/` は案④の中の案で、決定済みではなかった。

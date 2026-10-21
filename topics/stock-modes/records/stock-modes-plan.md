@@ -33,7 +33,7 @@ updated: 2026-10-20
 1 stock のモード追加
  1.1 設計
   1.1.1 設計の決定（kind の値、引数なしの1問、integrate の分岐）   置き場: topics/stock-modes/docs/decisions.md
-  1.1.2 理解ガイドの下書きの見本（型は reference-doc-types の理解ガイドの型） 置き場: 承認までは topics/stock-modes/records/explain-inbox-example.md。M2 の承認後に workflow-kit/examples/ へ移す
+  1.1.2 理解ガイドの下書きの見本（型は reference-doc-types の理解ガイドの型） 置き場: workflow-kit/examples/inbox-example-explain.md（承認前は topics/stock-modes/records/ に置いた。2026-10-21 に移した）
  1.2 手順書の変更（要承認）
   1.2.1 stock-hook.md（モード、引数なしの1問、kind 別の書き方と自己点検） 置き場: workflow-kit/stock-hook.md
   1.2.2 integrate-hook.md（kind 分岐、guides 側の規則） 置き場: workflow-kit/integrate-hook.md
