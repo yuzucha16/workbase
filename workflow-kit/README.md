@@ -46,7 +46,7 @@
 
 ### 「ナレッジ化して」を使う
 
-ユーザーが「ナレッジ化して」と言ったら、エージェントは `stock-hook.md` に従う。単独で言われたときは、知識の抽出だけを行い、`docs/` の更新・棚卸し・コミットは「終了処理して」に任せる（誤入力でも害が小さい）。
+ユーザーが「ナレッジ化して」と言ったら、エージェントは `stock-hook.md` に従う（AI 用。人用の理解ガイドは「理解ガイドにして」＝`stock 理解`で、`stock-explain.md` も読む。`stock` だけなら1問で選ばせる）。単独で言われたときは、知識の抽出だけを行い、`docs/` の更新・棚卸し・コミットは「終了処理して」に任せる（誤入力でも害が小さい）。
 
 ### 「終了処理して」と「inboxを整理して」を使う
 
@@ -62,7 +62,8 @@
 | `methods.md` | 解決・改善・変更・調査のやり方の要点の表(選ぶ基準・骨子・詳細ノートへの参照)。`start 解決` / `start 改善` / `start 調査` が読む。詳細は `exmem/lessons/` |
 | `hook-common.md` | 全フックの共通規則: 冒頭の定型、改善の流れ、承認、フックを足す・消すとき |
 | `approval-screening.md` | 仕組みの決定を `review 消化` で承認する手順: 待ち行列・サブエージェントのスクリーニング・最終判断の3段、覆しの型 A〜E、仮決めの期限 |
-| `stock-hook.md` | 「ナレッジ化して」の手順・書き方・形式 |
+| `stock-hook.md` | 「ナレッジ化して」（`stock ナレッジ`）の手順・書き方・形式。モードの選び方（合言葉だけなら1問） |
+| `stock-explain.md` | `stock 理解`（別名「理解ガイドにして」）の違う点: 判定の問い、`kind: explain` の6見出し、統合先。見本は `examples/inbox-example-explain.md` |
 | `wrap-hook.md` | 「終了処理して」の手順（対象の特定、現在状態の更新、昇格の案、コミットと push）・報告の型 |
 | `integrate-hook.md` | 「inboxを整理して」の手順（統合、照合の報告、コミット）・報告の型 |
 | `review-hook.md` | `review`（別名「見直して」）の手順: 遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
@@ -76,7 +77,7 @@
 | `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 構成、文書、テスト、変更の依頼、立ち上げ・完了のチェック。`dev-env` `dev-test` の差分も持つ。`type` が `dev` `dev-env` `dev-test` の `open` / `start` のときだけ読む |
 | `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: インタビューの項目と作業の種類の差分でゴールと前提をそろえる |
 | `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `docs/decisions.md`） |
-| `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」のうち、機械で確認できる項目。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
+| `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」と `stock-explain.md` のうち、機械で確認できる項目。frontmatter の `kind` で項目が切り替わる。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
 | `tools/check_inbox.py`、`tools/find_knowledge.py` | 上の2つの Python 版（標準ライブラリだけ。`pwsh` が無い環境、例: AI 作業部屋用）。出力は同じ（確認: 2026-10-17、現在のメモと検索で一致。違いは、`check_inbox.py` が英小文字の検査で大文字を通さないこと）。点検の項目を変えるときは、両方を直す |
 | `tools/usage_report.py`、`tools/usage_report_html.py`、`tools/usage_prices.json` | Claude Code のセッションログから、トークン使用量と概算費用($)を週次・月次で集計する（ターミナル表示と HTML）。単価表は公式の料金ページの値（出典・取得日つき）。読み取り専用、標準ライブラリだけ。使い方は `guides/howto/claude-usage-report.md` |
 | `tools/find-knowledge.ps1` | `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。ファイルの大きさと、ヒットした見出しの節の行の範囲を返す。読み取り専用。PowerShell 7） |

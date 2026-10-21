@@ -36,7 +36,9 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 - `base_commit: <~/shared/ROOM.md の基準コミット>`
 - `observed: YYYY-MM-DD`（観測した日。並べる順は到着順でなく、この日付）
 
-人が `room stock <名>` で確認して `exmem/inbox/` に運ぶ。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
+`stock 理解` の下書き（`kind: explain`）も同じ場所に書く。形は `stock-explain.md`（部屋の中では、マスク後の語だけで書く。対応表の語を含む下書きは、`room stock` が運ばない）。
+
+人が `room stock <名>` で確認して `exmem/inbox/` に運ぶ。`kind` はそのまま運ばれる。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
 
 ## 分担と受け渡し
 

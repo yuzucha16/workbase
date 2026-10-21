@@ -1,8 +1,9 @@
 #Requires -Version 7
 <#
 .SYNOPSIS
-  「ナレッジ化して」で作った inbox のメモを、機械的に点検する。
-  stock-hook.md の「書き方」「形式」のうち、機械的に確認できる項目だけを見る（手で確認する項目は、最後に一覧する）。
+  「ナレッジ化して」「理解ガイドにして」で作った inbox のメモを、機械的に点検する。
+  stock-hook.md の「書き方」「形式」と stock-explain.md のうち、機械的に確認できる項目だけを見る（手で確認する項目は、最後に一覧する）。
+  frontmatter の kind で項目を切り替える: lesson（省略時。7見出し）と explain（理解ガイド。6見出し）。
 
 .PARAMETER Path
   点検するメモ。複数のときは、パスを空白で並べる（-Path は付けない）か、-Path a,b（カンマ区切り）にする。
@@ -52,6 +53,7 @@ function Section([string]$text, [string]$name, [string]$next) {
 function Count([string]$text, [string]$pattern) { return ([regex]::Matches($text, $pattern)).Count }
 
 $order = 'Goal', 'Principles', 'Decisions', 'Facts', 'Gotchas', 'Open Questions', 'Next Actions'
+$explainOrder = '冒頭', 'ダイジェスト', '基礎知識', 'チェックリスト', '補足', '要確認事項'
 $script:spans = @{}   # インラインコード（8文字以上）→ それを Facts / Gotchas に含むメモ。メモをまたぐ重複の候補を見つける
 
 foreach ($p in $Path) {
@@ -67,6 +69,8 @@ foreach ($p in $Path) {
   $front = $fm.Groups[1].Value
   $get = { param($k) ([regex]::Match($front, "(?m)^${k}:\s*(.*)$")).Groups[1].Value.Trim() }
   Report ((& $get 'type') -eq 'inbox') 'type が inbox'
+  $kind = & $get 'kind'; if (-not $kind) { $kind = 'lesson' }
+  Report ($kind -in 'lesson', 'explain') 'kind が lesson か explain（省略は lesson）' 'FAIL' $kind
   Report ((& $get 'title') -ne '') 'title がある'
   $created = & $get 'created'
   Report ($created -match '^\d{4}-\d{2}-\d{2}$') 'created が YYYY-MM-DD'
@@ -80,8 +84,28 @@ foreach ($p in $Path) {
   $srcs = [regex]::Matches($srcBlock, '(?m)^\s+-\s+(.+)$') | ForEach-Object { $_.Groups[1].Value }
   Report (($srcs.Count -ge 1) -and -not ($srcs | Where-Object { $_ -notmatch '^.+ conversation ".+"$' })) 'sources が `<AI名> conversation "<テーマ>"` の形'
 
-  # 見出し
   $heads = [regex]::Matches($raw, '(?m)^## (.+?)\s*$') | ForEach-Object { $_.Groups[1].Value }
+  if ($kind -eq 'explain') {
+    # kind: explain（理解ガイド）の下書き。見出しは reference-doc-types の理解ガイドの型（stock-explain.md）
+    Report (($heads -join '|') -eq ($explainOrder -join '|')) '見出し6つが、定められた順番で、すべてある' 'FAIL' ($heads -join ', ')
+    $intro = Section $raw '冒頭' 'ダイジェスト'
+    $lastLine = ($intro -split "`n")[-1]
+    Report ($lastLine -match '^統合先の候補: guides/explain/(\S+?\.md|新規)（キーワード: .+）') '冒頭の末尾が「統合先の候補: guides/explain/…（キーワード: …）」の行' 'FAIL' $lastLine
+    $names = $explainOrder[1..5]
+    $empty = @(); $badNone = @()
+    for ($i = 0; $i -lt $names.Count; $i++) {
+      $nx = if ($i + 1 -lt $names.Count) { $names[$i + 1] } else { '' }
+      $s = Section $raw $names[$i] $nx
+      if ($s -eq '') { $empty += $names[$i] } elseif ($s -match '(?s)^なし.+') { $badNone += $names[$i] }
+    }
+    Report ($empty.Count -eq 0) '各見出しに中身がある（該当が無い見出しは「なし」と書く）' 'FAIL' ($empty -join ', ')
+    Report ($badNone.Count -eq 0) '「なし」と書いた見出しは、単独の行になっている' 'FAIL' ($badNone -join ', ')
+    Report ((Section $raw '基礎知識' 'チェックリスト') -match '自分で説明するときの一言') '基礎知識に「自分で説明するときの一言」がある' 'WARN'
+    Report ($raw -notmatch '（仮説(?!）)') '未確認は `（仮説）` の形のとおりに書く（補足は括弧の外）'
+    $badConf = [regex]::Matches($raw, '（確認:[^）]*）') | ForEach-Object Value | Where-Object { $_ -notmatch '^（確認: \d{4}-\d{2}-\d{2}、根拠: .+）$' }
+    Report (-not $badConf) '確認した事実は `（確認: YYYY-MM-DD、根拠: …）` の形' 'FAIL' (($badConf | Select-Object -First 1) -replace '^(.{40}).*$', '$1…')
+  } else {
+  # 見出し
   Report (($heads -join '|') -eq ($order -join '|')) '見出し7つが、定められた順番で、すべてある' 'FAIL' ($heads -join ', ')
 
   # Goal 末尾
@@ -133,6 +157,7 @@ foreach ($p in $Path) {
     if (-not $script:spans.ContainsKey($s)) { $script:spans[$s] = [System.Collections.Generic.HashSet[string]]::new() }
     [void]$script:spans[$s].Add($file.Name)
   }
+  }
 
   # 文章の規則
   Report ($raw -notmatch 'この会話|上記|さっき|先ほど|前述') '会話に依存する表現（この会話、上記、さっき、先ほど、前述）が無い'
@@ -153,5 +178,5 @@ if ($Path.Count -ge 2) {
 
 Write-Host ''
 Write-Host "RESULT: files=$($Path.Count) pass=$($script:pass) fail=$($script:fail) warn=$($script:warn)"
-Write-Host '手で確認する項目: 1ファイル1テーマ / 同じ日の既存メモとの重複 / 作業ログ（何をいつやったか）の混在 / Decisions が、ユーザーの明示または承認した決定か / 確認した事実の根拠が本当か / 範囲を限定された場合は、その範囲だけか'
+Write-Host '手で確認する項目: 1ファイル1テーマ / 同じ日の既存メモとの重複 / 作業ログ（何をいつやったか）の混在 / Decisions が、ユーザーの明示または承認した決定か（lesson） / 確認した事実の根拠が本当か / 範囲を限定された場合は、その範囲だけか / 理解ガイドが、既存の guides/explain/ と重ならないか（explain）'
 exit $script:fail

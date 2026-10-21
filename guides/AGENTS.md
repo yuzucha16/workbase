@@ -11,7 +11,7 @@ Claudeは、以下のルールに従って作業する。以下は主に `howto/
 | ディレクトリ | 種類 | 読む人の問い | 例 |
 |---|---|---|---|
 | `howto/` | 手順書 | どの順で何をやるんだっけ | `ai-room-setup.md`、`bedrock-first-hello.md`。1ファイル=1系統。dotfiles のスクリプトに依存する手順書（PC のセットアップ）は、dotfiles の `docs/setup/` に置く（2026-10-16 に移した） |
-| `explain/` | 理解ガイド | なぜそうなる? どう動いている? | `ssl-inspection.md`。調査の成果物（公開してよく、読者が本人の確定版。`start 調査`）も置く |
+| `explain/` | 理解ガイド | なぜそうなる? どう動いている? | `ssl-inspection.md`。調査の成果物（公開してよく、読者が本人の確定版。`start 調査`）も置く。「理解ガイドにして」（`stock 理解`）の下書きは `exmem/inbox/` に `kind: explain` で作られ、`integrate` が新規作成する（既存への追記・上書きは対象外。`workflow-kit/stock-explain.md`） |
 | `quickref/` | クイックリファレンス | あのコマンドは何だっけ | `apt.md`、`git.md`。`やりたいこと | コマンド | 注意` の表 |
 
 - frontmatter に `type`(`howto` / `explain` / `quickref`)、`title`、`tags` を付ける。調査の成果物は `checked: YYYY-MM-DD`（調査日。変わる値の取得日の最新）も付ける。再調査は同じファイルを上書きする（版は git）
