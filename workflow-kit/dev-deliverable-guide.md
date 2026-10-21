@@ -94,3 +94,30 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
 - `dev-env` は、部屋の中では実環境を作れない。部屋の中で確かめるのは、スクリプトの静的な検査と、作れるならコンテナでの実行まで。実環境での実行と結果の記録は人が行う（検証項目に「人が実行」と書く）。
 - `dev-test` は、テスト対象を直さない（`ai/in/` は読み取り専用）。不具合は `report.md` に書き、対象の Project に返す。テストの不合格は、成果物の失敗ではない（完了条件は「対応と実行と記録」）。
 - テスト対象がリポジトリの clone のときの置き場は、`open-hook.md` の未決（リポジトリが正の `src`）に従う。
+
+## Windows で実行するスクリプト（ps1 と起動用 bat）
+
+成果物に、人が Windows で実行するスクリプトを含むときの規約（2026-10-21 のユーザーの決定。全 type 共通）。bat は、ps1 を束ねて 1 回で実行したいという人の手間を省くための入口にすぎず、bat 自体に価値は無い。bat の失敗（日本語の文字化け、LF でラベルが見つからない、`call` 忘れ）は、bat にロジックを書くから起きる。
+
+- **ロジックは ps1 に書く。束ねる役も ps1 にする**: 個別の処理を `<名前>.ps1` に分け、それらを順に呼ぶ 1 本（例: `run-all.ps1`）を置く。失敗したら止まる、ログを 1 か所に出す、最後に結果の一覧を出す、を束ねる側に持たせる。人は `pwsh -File run-all.ps1` を 1 回打つだけにする。
+- **bat は、起動用の 3 行だけ許す**。ダブルクリックで動かしたい場合の入口で、ロジック（`if`、`goto`、ラベル、変数、`setlocal`）は書かない。型は固定:
+
+  ```bat
+  @echo off
+  pwsh -NoProfile -File "%~dp0run-all.ps1"
+  pause
+  ```
+
+  1 行目は省いてよい。2 行目の `run-all.ps1` は、同じ場所にある呼び先の名前に変える。ファイルは全体 ASCII、CRLF、BOM なしで書く（`exmem/lessons/shell-script-testing-wsl.md` の bat の落とし穴は、この型に従えば出ない）。`pause` を最後に必ず置く（終わっても画面が閉じない）。
+- **実行は PowerShell 7（`pwsh`）に固定する**。ps1 の先頭に `#Requires -Version 7`、`Set-StrictMode -Version Latest`、`$ErrorActionPreference = 'Stop'` を置く。5.1（`powershell.exe`）では動かさない（UTF-8 の扱いと文字化けの差を避けるため）。ps1 は UTF-8 で保存する。
+- **部屋の中で、作った直後に静的チェッカーを実行する**。実行はしない（部屋には Windows が無い）が、構文と規約の誤りは、人が Windows で実行する前に取れる:
+
+  ```
+  pwsh -NoProfile -File ~/shared/workflow-kit/tools/check-ps1.ps1 <成果物のディレクトリ>
+  pwsh -NoProfile -File ~/shared/workflow-kit/tools/check-ps1.ps1 -RunTests <成果物のディレクトリ>   # *.Tests.ps1 を Pester 5 で実行する
+  ```
+
+  FAIL は直してから人に渡す。WARN は、理由を見て判断する。終了コードは FAIL の数。見るもの: UTF-8、改行の混在、構文、`#Requires`、`$ErrorActionPreference`、`Set-StrictMode`、PSScriptAnalyzer、起動用 bat の型（上の 3 行、呼び先の存在）。
+- **部屋の中のテストは、外部とのやり取りを差し替える**。Windows 固有の部分（レジストリ、scoop、`setx`、Windows のパス）は、関数に包んで、Pester の `Mock` で差し替えて分岐を試す。差し替えない本物の動作は、人が Windows で実行する層（上の「テスト」の 2 層目）に回し、検証項目に「人が実行」と書く。
+- **部屋の中では分からないこと**（報告の「実環境で未確認の点」に書く）: Windows 固有のコマンドの実際の動き、Windows のパスと権限、実行ポリシー、ネットワーク。部屋の pwsh は Linux 版（globalization は invariant）なので、文化依存の動作（日付や数値の書式）も本物と違いうる。
+- 人が実行した結果を AI に戻すときは、ログ（標準出力とエラーの全文、工程名つき）を `ai/in/` に置く。実データの語は人が伏せてから渡す（上の「テスト」と同じ）。`room run` のような、AI が Windows で実行する仕組みは無い。

@@ -74,13 +74,14 @@
 | `project-structure.md` | Project の構造: 固定の核（`ai/` と `_noai/`）、type ごとの置き場、基準文書の置き場。`open` の type の決定と、置き場に迷ったときに読む |
 | `start-work-types.md` | 作業の種類の差分（開発、文書作成）: `start-hook.md` の手順「項目を埋める」で、インタビューの項目に加えて聞く項目 |
 | `start-plan.md` | 計画のやり方（`start 計画`。試験運用）の手順と欄の定義: 6R → 憲章 → 成果物 WBS → マイルストーン |
-| `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 構成、文書、テスト、変更の依頼、立ち上げ・完了のチェック。`dev-env` `dev-test` の差分も持つ。`type` が `dev` `dev-env` `dev-test` の `open` / `start` のときだけ読む |
+| `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 構成、文書、テスト、変更の依頼、立ち上げ・完了のチェック。`dev-env` `dev-test` の差分と、Windows で実行するスクリプト（束ねる役も ps1、bat は起動用の 3 行だけ）の規約も持つ。`type` が `dev` `dev-env` `dev-test` の `open` / `start` のときだけ読む |
 | `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: インタビューの項目と作業の種類の差分でゴールと前提をそろえる |
 | `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `docs/decisions.md`） |
 | `tools/check-inbox.ps1` | inbox のメモの機械的な点検（`stock-hook.md` の「書き方」「形式」と `stock-explain.md` のうち、機械で確認できる項目。frontmatter の `kind` で項目が切り替わる。PowerShell 7）。点検の改善は、フックの改善と同じ手順で回す（`hook-common.md` の「改善」） |
 | `tools/check_inbox.py`、`tools/find_knowledge.py` | 上の2つの Python 版（標準ライブラリだけ。`pwsh` が無い環境、例: AI 作業部屋用）。出力は同じ（確認: 2026-10-17、現在のメモと検索で一致。違いは、`check_inbox.py` が英小文字の検査で大文字を通さないこと）。点検の項目を変えるときは、両方を直す |
 | `tools/usage_report.py`、`tools/usage_report_html.py`、`tools/usage_prices.json` | Claude Code のセッションログから、トークン使用量と概算費用($)を週次・月次で集計する（ターミナル表示と HTML）。単価表は公式の料金ページの値（出典・取得日つき）。読み取り専用、標準ライブラリだけ。使い方は `guides/howto/claude-usage-report.md` |
 | `tools/find-knowledge.ps1` | `stock-hook.md` の手順「既存の知識と重なるか確認する」の検索（ファイル名・見出し・tags・aliases をキーワード検索。`-Body` で本文の行も検索。ファイルの大きさと、ヒットした見出しの節の行の範囲を返す。読み取り専用。PowerShell 7） |
+| `tools/check-ps1.ps1` | Windows で実行するスクリプト（`.ps1` と、それを呼ぶ起動用 `.bat`）を、実行せずに点検する（2026-10-21。PowerShell 7。文字コード、改行、構文、`#Requires -Version 7`、`$ErrorActionPreference`、`Set-StrictMode`、PSScriptAnalyzer、起動用 bat の 3 行の型。`-RunTests` で `*.Tests.ps1` を Pester 5 で実行）。部屋の pwsh 7 で動く（`room init` が入れる）。規約は `dev-deliverable-guide.md` の「Windows で実行するスクリプト」。終了コードは FAIL の数 |
 | `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検、`hooks.md` と README の表にフックが過不足なく載っているかの点検（フックの追加・削除の漏れ止め。PowerShell 7）。Python 版は `tools/check_hook_outline.py`（`pwsh` が無い環境用。点検は同じ。どちらかを直したら合わせる） |
 | `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` は works 用（`AGENTS.md`、`gitignore.template`、`claude-settings.template.json`、`ignore.template`、`gitattributes.template`、`pre-push.template`）。`topic/` はトピックの窓口の雛形（`start-here.template.md`） |
 | `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |

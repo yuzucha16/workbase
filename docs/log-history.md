@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-21（room: 部屋に pwsh 7 を入れ、ps1 の静的チェッカーを足した。束ねる役も ps1 にする規約）
+- ユーザーの相談: 部屋（WSL）で bat と ps1 を作ると、エラーとデバッグが多く、効率が悪い。pwsh を入れる案と `room run` の案を比べた結果、bat はそもそも ps1 を束ねて 1 回で実行するための入口で、価値は無いと分かった。`room run` は今回の用途には過剰（結果を AI に戻す経路も案に無い）。
+- ユーザーの決定: 束ねる役も ps1 にし、bat は起動用の 3 行だけ許す。部屋の AI が従うよう文書に書く。静的チェッカーは部屋に pwsh 7 を入れる案にする（pwsh は 7 に固定）。決定の全文と確認は `decisions.md` の同日の項。
+- 変更: `workflow-kit/tools/check-ps1.ps1`（新規）、`room/room.py`（`PWSH_INSTALL`、`init` の手順、道具の確認）、`room/tests/test_room.py`、`dev-deliverable-guide.md`（節「Windows で実行するスクリプト」）、`room-context.md`、`workflow-kit/README.md`、`room/README.md`。
+- 確認: Windows と、Ubuntu 24.04 の一時ディレクトリの Linux 版 pwsh 7.6.7 で、チェッカーが良い例を通し、悪い例を検出した。Warning の検出と Pester の実行も確認した。room の単体テスト 115 件が通った。
+- 遠回り・直したもの: 試験で、Warning だけなのに FAIL が 1 件増える二重計上が見つかり、直した。部屋（Ubuntu 26.04）での `init` は未確認（Next Actions 16）。
+
 ### 2026-10-21（room: `start` の自動コミットと、部屋ローカルの git）
 - ユーザーの相談: 部屋（WSL）では Windows の git が使えず不便。解消案を7つ挙げ、ユーザーが「部屋で `ai/out/` のコミットまでしてほしい」ため案1（部屋ローカルの git）+ 案2（基準コミット）を選んだ。部屋のコミットは works に届かないため、ユーザーが「`start` の回収で自動コミット」も選んだ（works の git はそもそも機能していないので部屋に閉じ込めればよい、という発言があり、works の git の部屋から見たメリットを挙げて整理した）。
 - 実装（`df4ff0d`）: `start` は既定でコミット（`--no-commit`）。マウントの後に部屋の git（`/home/ai/gitdirs/<Project>`）を作り、アンマウントの後に捨てる。ラッパー `/usr/local/bin/git`。単体テスト 95 件通過（3 スキップ）。シェルは `bash -n` のみ。実機は未確認。
