@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-21（room: 成果物置き場 `_noai/deliverable/`）
+- `restore` が `ai/out/deliverable/` の下を、`areas/<Area>/_noai/deliverable/<Project 名>/` にも書くようにした。書き出しの規則（プレースホルダー名・外を指す拒否、人の変更で止める、`--force`、`_prev` への退避）は知識と同じ。`room.py` の書き出しを `Route` の表（知識・成果物）で共通にした。`init` が `deliverable/` を作る。単体テスト 114 件が通る（実機は未確認）。これで Area の `_noai/` の `source`・`knowledge`・`deliverable` が揃った。決定は `decisions.md` の同日の項。
+
 ### 2026-10-21（room: 原本置き場 `_noai/source/` と `pull --from source`）
 - 旧 `knowledge/` の確認: works の `areas/` では `pilot2` だけが持っていた（試験用のダミー。git に一度も入っていない）。ユーザーが自分で移す。
 - ユーザーが選んだ設計: 原本は Area の `_noai/source/` に置き、Project の `_noai/raw/` は pull の出力だけ。`room pull <Project> --from source --path <パス or glob>` で選ぶ。`init` が `source/` を作る。`raw/` に人が置いた原本があれば `mask` が注意を出す（止めない）。`deliverable/` は別に足す。単体テスト 108 件が通る（実機は未確認）。決定は `decisions.md` の同日の項。
