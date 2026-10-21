@@ -19,6 +19,15 @@
 - 方針の追加（同日、ユーザーの依頼）: 部屋の AI には、① 部屋で完結できるなら、すべて部屋（WSL）で実行する、② Excel・COM などの Windows 依存部は、できるだけ小さくし、人の手数を少なくする、と依頼を出せる形にする。`dev-deliverable-guide.md` に節「実行の方針」を足し（部屋の道具の版、切り分けの 5 手順）、ps1 の節を「残った Windows 依存の薄い層」の規約に位置づけ直した。`room-context.md` と `ROOM.md`（`ROOM_GUIDE`）に案内を足した。ロジックを部屋の Python に置くのは、Windows の実行先に Python があるか未確認のため。薄い層は ps1（pwsh 7 は会社の PC で使えることを確認済み）。部屋の道具の版は、実機（`room-pilot2`、`ai` ユーザー）で確認した: python3 3.14.4（`pip` は無い。`uv` で依存を管理）、uv 0.13.4、git 2.53.0、pwsh 7.6.7、node 24.22.0、LibreOffice 26.2.6.3、pandoc 3.7.0.2、ripgrep 15.1.0。`/mnt/c` は空、`cmd.exe` は無い。
 - 見直しの条件: bat の失敗が再発したとき、`check-ps1.ps1` の WARN が多すぎる・少なすぎるとき、Pester 6 へ上げるとき。
 
+### 【汎用】同じ Area の Project を、同じ部屋に並行してマウントしてよい。既定にする（2026-10-21）
+- 決めたこと（ユーザーの決定）: ① `room start` は、同じ部屋にほかの Project のマウントがあっても止まらない。止まるのは、自分の Project のマウントが残っているときだけ（フラグは作らず既定）。② アンマウントの確認と `close` の確認は、自分のマウント点だけを見る。③ `clean_stale_mountpoints` は、作って 1 分以上たった空のマウント点だけ消す。④ 部屋の共有ファイル（`~/shared`、`/usr/local/bin/git`、`~/.claude.json` の信頼、`~/.claude/settings.json` の許可）は、動いている AI に空・壊れた状態を見せない置き換え方式で更新する。⑤ 使う側の約束: `~/shared` は最新に揃え、`start` は同じタイミングで行い、後から足すときは動いているセッションを止める。
+- 根拠: 成果物が違う Project が作業の後半で細かくなり、AI の思考時間中に別の Project を触りたい。Project をまとめる案は、入力と終わる時期が揃わず使えない（ユーザー）。同じ Area は同じ境界（すべて internal）なので、部屋の中で見えても越境ではない。部屋は Area ごとのディストロなので、Area をまたぐ並行は起きない。
+- 却下案: `--concurrent` を明示するフラグ（ユーザーが既定にする）、Project をまとめる（1・3 が揃わない）、Project ごとにディストロ（導入のコストが Project の数だけ要る）。
+- 見直しの条件: 同じ Area に境界の違う Project が入るようになったとき（`--exclusive` を足す）、Windows 側のコミットの `index.lock` の衝突が頻発するとき。
+- 未検証: 実機での並行 start（`~/.claude.json` を動く Claude が書くときの競合は、置き換えで緩和しただけ）。単体テストは WSL を差し替えている。
+- 反映: `room.py`（`split_mounts` `preflight` `unmount` `cmd_close` `clean_stale_mountpoints` `push_shared` ほか）、`room/README.md`、`guides/explain/ai-room-why.md`。
+- → inbox/2026-10-21-exclusive-tool-to-concurrent、inbox/2026-10-21-project-granularity-three-conditions、inbox/2026-10-21-room-concurrent-mount-model（理解）
+
 ### 【汎用】`room start` の回収を既定でコミットし、部屋の中にローカルの git を用意する（2026-10-21）
 - 決めたこと（ユーザーの選択）: ① `start` は回収の後に既定でコミットする（`--no-commit` で省く）。② `start` のマウントの後に、部屋のローカル（`/home/ai/gitdirs/<Project>`）に独立した git を作り、回収済みの `ai/` を基準コミットにする。`/usr/local/bin/git` のラッパーが、`/mnt/room/<Project>` の下で `GIT_DIR` と `GIT_WORK_TREE` を設定する。アンマウントの後に捨てる。
 - 根拠: works の `.git` はマウントの外で、部屋の AI は git を使えなかった。`ai/out/` の成果物を人が毎回コミットする手間も要らなくする。works の git は実質使っていない（ユーザー）が、`start` の変更の一覧と漏れの警告、`close` の `git mv` が使うので残す。
