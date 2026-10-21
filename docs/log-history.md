@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-21（room: 同じ Area の Project を同じ部屋で並行して `start` できるようにする）
+- ユーザーの相談: 部屋のマウントを複数にしたとき、Project 間でデータが見えるか。AI の思考時間中に別の Project を触りたい。同じ Area の Project に限り、すべて internal。同時に `start` すると、後続が「マウントがすでにある」で止まっていた（`preflight` が部屋の全マウントを確認していた）。
+- 検討: Project をまとめる案は、入力と終了時期が揃わず却下（ユーザー）。`--concurrent` のフラグ案は、ユーザーが既定にすると決めた。
+- 実装（ユーザーの承認）: `room.py` の `preflight`（自分のマウントだけを確認）、`unmount` と `cmd_close`（自分のマウント点だけを確認）、`clean_stale_mountpoints`（作って 1 分以上）、`setup_room_git`（git のラッパーを置き換え）、`push_shared`（`~/shared.new` から入れ替え）、`TRUST_PY` と `SHARED_RULE_PY`（記録済みなら書かず、置き換え）。テスト 4 件を追加、既存 1 件を調整（全 105 件パス、3 件スキップ）。`room/README.md` と `ai-room-why.md`（2 か所）を更新。決定は `decisions.md` の同日の項。
+- 未確認: 実機の並行 start。動いている Claude が書く `~/.claude.json` との競合は、置き換えで緩和しただけ。ユーザーの運用: `~/shared` は最新に揃え、`start` のタイミングを揃え、追加するときはセッションを止める。
+- 同日に `stock`（ナレッジ 2 件、理解 1 件）を作成した（`exmem/inbox/`。コミットしない）。
+
 ### 2026-10-21（room: スクリプトの言語を Python → ps1 → bat の順で AI が決め、聞かないようにする）
 - ユーザーの依頼: 部屋の AI が、スクリプトを作るたびに「Python でよいか、ps1 がよいか」と聞く。Windows 依存を減らしたいので、Python → ps1/bat の優先順位で動いてほしい（人の作業を減らす方針は、すでに `dev-deliverable-guide.md` にある）。
 - 実装（ユーザーの依頼を承認とした。未コミット→この wrap でコミット）: `dev-deliverable-guide.md` の「実行の方針」に「言語の選び方」を追加（Python が既定、ps1 は Python で書けない Windows 依存の操作か実行先に Python が無いと分かっているときだけ、bat は ps1 の起動 3 行だけ。順で決められないときだけ聞く。報告に言語と理由を 1 行）。同じ内容を `room-context.md`、`room.py` の部屋の AI への案内文（`ROOM.md` と部屋の `CLAUDE.md` の元）、`README.md` の説明行にも入れた。
