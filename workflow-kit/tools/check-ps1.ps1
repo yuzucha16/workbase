@@ -68,6 +68,7 @@ $strictUtf8 = [Text.UTF8Encoding]::new($false, $true)
 
 function Test-Launcher([IO.FileInfo]$file) {
   $bytes = [IO.File]::ReadAllBytes($file.FullName)
+  if ([Text.Encoding]::ASCII.GetString($bytes) -match '(?im)^\s*uv run\b') { Write-Host '  (uv で .py を呼ぶ bat は check_py.py の担当。省略)'; return }
   Report (-not ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF)) '起動用 bat に BOM が無い'
   Report (-not ($bytes | Where-Object { $_ -gt 127 } | Select-Object -First 1)) '起動用 bat 全体が ASCII（日本語のコメントや表示は書かない）'
   $text = [Text.Encoding]::ASCII.GetString($bytes)
