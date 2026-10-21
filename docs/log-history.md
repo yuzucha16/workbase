@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-21（review 消化。18 以外）
+- 11 を閉じた: `room run`（v2）は、v1 で期待に足りているため不要（ユーザー）。
+- 12 の ① を閉じた: 統合の指示（`ai/out/knowledge/`、`kind: integrated`）を `room-context.md` の新しい節と部屋の案内（`room.py` の `ROOM_GUIDE`）に反映。② は別セッションの扱いのため外した。③（指標）は使いながら測る。
+- 14 の ③ を確認: 部屋の案内に `ai/out/deliverable/` が無かったので足した。④ はメモが `29c2d4a` で統合済み（`ai-room-data-layout.md`）と確認し、`cross-area-shared-knowledge.md` の「戻り」の行を新しい置き場に合わせた。残りは ①②。
+- 待ち行列（計画と README の紐付け、`stock-hook.md` の曖昧点）は、置いた当日のため判断せず、次回に持ち越し。
+- 確認: room の単体テスト 124 件パス（スキップ 3）。
+
 ### 2026-10-21（Next Actions 18: 部屋の Stop フックの記録を実装）
 - `room init` に段 `stophook` を足した（`room.py` の `STOP_RECORD_PY`、`STOP_HOOK_INSTALL`）。部屋の ai ユーザーの `~/.claude/hooks/room-stop-record.py` を置き、`~/.claude/settings.json` の Stop に登録する。記録先は cwd が `/mnt/room/<Project>` のとき Project の `ai/records/`（`sessions.jsonl`、`replies/<日付>.md`）、それ以外は `~/claude-records/<フォルダ名>`。記録時に `C:\Users\<名>`・`/mnt/c/Users/<名>` を `%USERPROFILE%` に置換。
 - 確認: 単体テスト 3 件を足し、全体 124 件パス（スキップ 3。`python -m unittest discover -s tests`）。実機は未確認。
