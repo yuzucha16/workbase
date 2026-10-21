@@ -1229,8 +1229,7 @@ def restore_project(ctx, p, force=False):
     except RoomError as e:
         return 0, [str(e)]
     if publish and not knowledge_dir(p).is_dir():
-        ctx.say(f"警告: Area の知識置き場が無いので、Area には書かない: {knowledge_dir(p)}（`room init {p.area}` で作ってから、restore をやり直す。ai/out/knowledge/ は残っている）")
-        publish = {}
+        return 0, [f"Area の知識置き場が無い: {knowledge_dir(p)}（`room init {p.area}` で作ってから、restore をやり直す。何も書いていない）"]
     mf = n / "map" / "final-manifest.json"
     written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
     if not force:
@@ -1584,19 +1583,17 @@ def cmd_close(ctx, a):
     problems = check_provenance(p)
     if problems:
         raise RoomError("来歴チェックに失敗した:\n  " + "\n  ".join(problems))
+    inbox = p.area_dir / "ai" / "docs" / "inbox.md"
+    if not inbox.exists():
+        raise RoomError(f"Area の inbox が無い: {inbox}（`room init {p.area}` で作ってから、close をやり直す。何も変えていない）")
     cases = parse_cases(close_md.read_text(encoding="utf-8"))
     today = ctx.today()
     reap = (datetime.date.fromisoformat(today) + datetime.timedelta(days=ctx.reap_days)).isoformat()
     # 1. Area の inbox
     inbox = p.area_dir / "ai" / "docs" / "inbox.md"
-    if inbox.exists():
-        text, n = append_inbox(inbox.read_text(encoding="utf-8"), p.name, today, cases, f"archives/{p.name}/ai/out/close.md")
-        inbox.write_text(text, encoding="utf-8", newline="\n")
-        ctx.say(f"Area の inbox に【案件】{n} 件を追記した（{len(cases) - n} 件は送信済み）")
-    else:
-        ctx.say(f"警告: Area の inbox が無いので、【案件】{len(cases)} 件は追記しない: {inbox}（`room init {p.area}` で作り、archives/{p.name}/ai/out/close.md から手で移す）")
-        for c in cases:
-            ctx.say(f"  【案件】{c}")
+    text, n = append_inbox(inbox.read_text(encoding="utf-8"), p.name, today, cases, f"archives/{p.name}/ai/out/close.md")
+    inbox.write_text(text, encoding="utf-8", newline="\n")
+    ctx.say(f"Area の inbox に【案件】{n} 件を追記した（{len(cases) - n} 件は送信済み）")
     # 2. README の状態
     p.readme.write_text(
         update_frontmatter(p.readme.read_text(encoding="utf-8"),

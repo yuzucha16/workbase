@@ -929,7 +929,7 @@ class PullKnowledgeTest(unittest.TestCase):
             self.assertIn("v2", (k / "t.md").read_text(encoding="utf-8"))
             self.assertEqual((p / "_noai/final/_prev/knowledge/t.md").read_text(encoding="utf-8"), "人が直した\n")
 
-    def test_restore_without_knowledge_dir_warns_and_does_not_create_it(self):
+    def test_restore_without_knowledge_dir_stops_and_writes_nothing(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
             self.pull(c)
@@ -938,13 +938,11 @@ class PullKnowledgeTest(unittest.TestCase):
             out.mkdir(parents=True)
             (out / "t.md").write_text("⟦CUST_001⟧ v1\n", encoding="utf-8", newline="\n")
             shutil.rmtree(k)
-            said = []
-            c.say = said.append
             n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
-            self.assertEqual((n, problems), (1, []))
+            self.assertEqual(n, 0)
+            self.assertIn("room init area-x", problems[0])
             self.assertFalse(k.exists())
-            self.assertTrue((p / "_noai/final/knowledge/t.md").exists())
-            self.assertTrue(any("警告" in m and "知識置き場" in m for m in said))
+            self.assertFalse((p / "_noai/final/knowledge").exists())
 
     def test_bad_names_and_options_are_refused(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1354,20 +1352,19 @@ class CloseTest(unittest.TestCase):
             log = subprocess.run(["git", "-C", str(v), "log", "-1", "--format=%s"], capture_output=True, text=True, encoding="utf-8").stdout
             self.assertIn("[room] proj-a を close", log)
 
-    def test_close_without_inbox_warns_and_does_not_create_it(self):
+    def test_close_without_inbox_stops_before_any_change(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
             v, c = opened(tmp, wsl)
-            said = []
-            c.say = said.append
             p = v / "projects/proj-a"
             fill_readme(p)
             (p / "ai/out/close.md").write_text("- 【案件】運用で埋める\n", encoding="utf-8")
-            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            with self.assertRaises(room.RoomError) as e:
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertIn("room init area-x", str(e.exception))
             self.assertFalse((v / "areas/area-x/ai/docs/inbox.md").exists())
-            self.assertTrue(any("警告" in m and "inbox" in m for m in said))
-            self.assertTrue(any("運用で埋める" in m for m in said), "追記できなかった【案件】は画面に出す")
-            self.assertTrue((v / "archives/proj-a").exists())
+            self.assertTrue(p.exists())
+            self.assertFalse((v / "archives/proj-a").exists())
 
     def test_init_scaffolds_area_knowledge_and_inbox_without_touching_existing(self):
         with tempfile.TemporaryDirectory() as tmp:
