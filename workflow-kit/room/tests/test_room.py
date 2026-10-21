@@ -327,6 +327,17 @@ class InitTest(unittest.TestCase):
             self.assertEqual(self.git_out(v, "show", "--name-only", "--format=", "HEAD").split(), ["areas/area-y/README.md"])
             self.assertIn("?? areas/area-x/memo.md", self.git_out(v, "status", "--porcelain"))
 
+    def test_room_commit_has_trailers_with_kit_rev(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=True))
+            tr = self.git_out(v, "log", "-1", "--format=%(trailers:key=Room-Op,key=Room-Rev,key=Room-Area,key=Room-Project,separator=%x0a)").split("\n")
+            tr = [l for l in tr if l]
+            self.assertIn("Room-Op: init", tr)
+            self.assertIn("Room-Area: area-y", tr)
+            self.assertTrue(any(l.startswith("Room-Rev: ") and len(l) > len("Room-Rev: ") for l in tr), tr)
+            self.assertFalse(any(l.startswith("Room-Project") for l in tr))
+
     def test_init_without_boundary_does_not_create_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
