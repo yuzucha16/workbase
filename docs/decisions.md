@@ -4,6 +4,16 @@
 
 ## Decisions
 
+### 【汎用】Windows で実行するスクリプトは、束ねる役も ps1 にする。bat は起動用の 3 行だけ。部屋に pwsh 7 を入れ、静的チェッカーで点検する（2026-10-21）
+- 決めたこと（ユーザーの決定と承認）: ① bat は、ps1 を束ねて 1 回で実行するための入口にすぎず、価値は無い。束ねる役も ps1（例: `run-all.ps1`）にする。② bat は、起動用の 1 行（`pwsh -NoProfile -File "%~dp0run-all.ps1"`）と `pause` だけ許す（`@echo off` は省いてよい）。ロジックは書かない。③ 部屋の AI が認識して従うよう、`dev-deliverable-guide.md` の「Windows で実行するスクリプト」と `room-context.md` に書く。④ 静的チェッカーは、部屋に pwsh 7 を入れる案（B）にする。pwsh は 7 に固定する。ルールは workbase の既存規約（kit の変更は承認後、版と SHA-256 の固定、root が入れる）に従う。
+- 実装: `workflow-kit/tools/check-ps1.ps1`（文字コード、改行、構文、`#Requires -Version 7`、`$ErrorActionPreference`、`Set-StrictMode`、PSScriptAnalyzer、起動用 bat の 3 行の型、`-RunTests` で Pester 5）。`room init` が pwsh 7.6.7（公式の tarball、SHA-256 固定。x64 は取得して一致を確認）、PSScriptAnalyzer 1.25.0、Pester 5.9.1（AllUsers）を root で入れる。`/usr/local/bin/pwsh` は、globalization を invariant にし、テレメトリと更新確認を切る薄い包み。
+- 根拠: bat の失敗（日本語の文字化け、LF のラベル、`call` 忘れ、`pause` 忘れ。`exmem/lessons/shell-script-testing-wsl.md`）は、bat にロジックを書くから起きる。ps1 だけにすれば消える。ps1 の誤りの大半は構文・変数・引用符で、部屋の pwsh 7 の Parser と PSScriptAnalyzer で、人が Windows で実行する前に取れる。Python では PowerShell の構文を解析できない。
+- 却下案: `room run`（承認と記録の仕組みは、実データに触れる実行のための安全装置で、この用途には過剰。結果を AI に戻す経路も案に無い。`room run` は v1 の判定後の案のまま）、Python だけの検査（案 A。規約の一部しか見られない）、bat を cp932 で書く（草稿のまま）、pwsh を ai がホームに入れる（取得元と版を AI が選ぶ）。
+- 確認済み（2026-10-21）: Windows の pwsh 7.6.7 と、Ubuntu 24.04 の一時ディレクトリ（HOME を差し替え、終了時に削除）に展開した Linux 版の pwsh 7.6.7（invariant globalization）で、チェッカーが良い例を通し、悪い例（構文エラー、cp932、ロジックのある bat、呼び先が無い bat、pause 無し、`#Requires` 無し）を検出した。Linux で PSScriptAnalyzer 1.25.0 と Pester 5.9.1 を `Install-PSResource` で入れられた（`-TrustRepository` が要る）。`PWSH_INSTALL` は `bash -n` を通り、room の単体テスト 115 件が通った（3 件スキップ）。PSScriptAnalyzer の Warning（`Invoke-Expression`、未使用の変数と引数）の検出と、`-RunTests` の Pester 5.9.1（`Mock` を含む 2 件）の実行も、同じ一時ディレクトリで確認した。
+- 直した不具合: 試験で、Warning だけなのに「指摘が無い」のまとめの行が FAIL に数えられた（二重計上）。まとめの行は、指摘が 0 件のときだけ PASS として数える形にした。
+- 未確認: Ubuntu 26.04 の部屋での `init`（pwsh の依存ライブラリ、TLS 検査のあるネットワークでの GitHub と PSGallery の取得）。部屋の AI が案内で実際に使うか。
+- 見直しの条件: bat の失敗が再発したとき、`check-ps1.ps1` の WARN が多すぎる・少なすぎるとき、Pester 6 へ上げるとき。
+
 ### 【汎用】`room start` の回収を既定でコミットし、部屋の中にローカルの git を用意する（2026-10-21）
 - 決めたこと（ユーザーの選択）: ① `start` は回収の後に既定でコミットする（`--no-commit` で省く）。② `start` のマウントの後に、部屋のローカル（`/home/ai/gitdirs/<Project>`）に独立した git を作り、回収済みの `ai/` を基準コミットにする。`/usr/local/bin/git` のラッパーが、`/mnt/room/<Project>` の下で `GIT_DIR` と `GIT_WORK_TREE` を設定する。アンマウントの後に捨てる。
 - 根拠: works の `.git` はマウントの外で、部屋の AI は git を使えなかった。`ai/out/` の成果物を人が毎回コミットする手間も要らなくする。works の git は実質使っていない（ユーザー）が、`start` の変更の一覧と漏れの警告、`close` の `git mv` が使うので残す。

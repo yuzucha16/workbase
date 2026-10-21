@@ -303,6 +303,20 @@ class InitTest(unittest.TestCase):
             self.assertLess(conv, cr)
             self.assertLess(idx("latest-v24.x"), conv)
             self.assertLess(conv, idx("astral.sh"))
+            # PowerShell 7 と静的チェッカーの道具（2026-10-21）: root が、版と SHA-256 を固定して入れる
+            pw = idx("/opt/microsoft/powershell/7")
+            self.assertTrue(scripts[pw][1])  # root で入れる
+            self.assertIn("sha256sum -c", scripts[pw][0])
+            self.assertIn(room.PWSH_VERSION, scripts[pw][0])
+            self.assertIn(room.PWSH_SHA256["x64"], scripts[pw][0])
+            self.assertIn(room.PWSH_SHA256["arm64"], scripts[pw][0])
+            for key in ("PSScriptAnalyzer", room.PSSA_VERSION, "Pester", room.PESTER_VERSION, "-Scope AllUsers",
+                        "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1", "POWERSHELL_UPDATECHECK=Off", "/usr/local/bin/pwsh"):
+                self.assertIn(key, scripts[pw][0])
+            self.assertNotIn("%(", scripts[pw][0])  # 書式の置換漏れが無い
+            self.assertLess(cr, pw)
+            self.assertLess(pw, idx("astral.sh"))
+            self.assertTrue(any("pwsh --version" in t for t, _ in scripts))  # 道具の確認に入っている
 
     def test_init_refuses_existing_and_bad_isolation_stops_before_tools(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -665,6 +665,46 @@ chmod 755 /usr/local/bin/room-mmdc /usr/local/bin/room-chrome /usr/local/share/r
 mmdc --version
 """ % {"pw": PLAYWRIGHT_VERSION, "mm": MERMAID_CLI_VERSION}
 
+# PowerShell 7 と、静的チェッカー（workflow-kit/tools/check-ps1.ps1）の道具（2026-10-21）: 部屋の AI が書く .ps1 を、実行せずに構文・規約・PSScriptAnalyzer で点検し、Pester で差し替えテストをするため。
+# pwsh は公式の tarball（版と SHA-256 を固定。x64 の SHA-256 は取得して一致を確認した: 2026-10-21）を /opt に置き、root が入れる（ai は書き換えられない）。
+# 部屋の pwsh は 7 に固定する。ICU を入れないので、globalization は invariant にし、テレメトリと更新確認を切る（/usr/local/bin/pwsh の薄い包み）。
+# PSScriptAnalyzer と Pester は、PSGallery から版を固定して AllUsers に入れる（Pester は 5 系。2026-10-21 時点の最新は 6.2.0 だが、情報の多い 5 系の最終版にした）。
+PWSH_VERSION = "7.6.7"
+PWSH_SHA256 = {
+    "x64": "6896f9e3a6b0a354bf470835a96da76d2f801cd50dcf047ad7c4563bf93bf431",
+    "arm64": "ba465efdfb0984c1c5dc5ed9eb0b79a7e91a1b52c45f99377058c0659b84d3f1",
+}
+PSSA_VERSION = "1.25.0"
+PESTER_VERSION = "5.9.1"
+PWSH_INSTALL = r"""set -e
+export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 POWERSHELL_TELEMETRY_OPTOUT=1 POWERSHELL_UPDATECHECK=Off
+D=/opt/microsoft/powershell/7
+if [ ! -x "$D/pwsh" ] || [ "$("$D/pwsh" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()')" != "%(v)s" ]; then
+  case "$(uname -m)" in x86_64) A=x64; S=%(sx)s;; aarch64) A=arm64; S=%(sa)s;; *) echo "未対応のアーキテクチャ" >&2; exit 1;; esac
+  T=$(mktemp -d); cd "$T"
+  curl -fsSL -o p.tar.gz "https://github.com/PowerShell/PowerShell/releases/download/v%(v)s/powershell-%(v)s-linux-$A.tar.gz"
+  echo "$S  p.tar.gz" | sha256sum -c -
+  rm -rf "$D"; mkdir -p "$D"
+  tar -xzf p.tar.gz -C "$D"
+  chmod 755 "$D/pwsh"; chmod -R a+rX "$D"
+  cd /; rm -rf "$T"
+fi
+printf '#!/bin/sh\nexport DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 POWERSHELL_TELEMETRY_OPTOUT=1 POWERSHELL_UPDATECHECK=Off\nexec %%s "$@"\n' "$D/pwsh" > /usr/local/bin/pwsh
+chmod 755 /usr/local/bin/pwsh
+export HOME=/root SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+mkdir -p "$HOME/.local/share" "$HOME/.config"
+pwsh -NoProfile -Command '
+$ErrorActionPreference = "Stop"
+foreach ($m in @(@("PSScriptAnalyzer", "%(pssa)s"), @("Pester", "%(pester)s"))) {
+  if (-not (Get-Module -ListAvailable $m[0] | Where-Object { $_.Version -eq [version]$m[1] })) {
+    Install-PSResource -Name $m[0] -Version $m[1] -Repository PSGallery -TrustRepository -Scope AllUsers -Quiet
+  }
+}
+'
+chmod -R a+rX /usr/local/share/powershell 2>/dev/null || true
+pwsh --version
+""" % {"v": PWSH_VERSION, "sx": PWSH_SHA256["x64"], "sa": PWSH_SHA256["arm64"], "pssa": PSSA_VERSION, "pester": PESTER_VERSION}
+
 CONVERT_TOOLS_INSTALL = (
     "export DEBIAN_FRONTEND=noninteractive\n"
     "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc unzip\n"
@@ -770,7 +810,7 @@ def cmd_init(ctx, a):
     got = dict(l.strip().split("=", 1) for l in out.splitlines() if "=" in l)
     if got != {"user": "ai", "c": "0", "cmd": "no", "sudo": "no"}:
         raise RoomError(f"分離の確認が目安と違う（{got}）。user=ai, c=0, cmd=no, sudo=no が目安。道具は入れていない")
-    ctx.say("道具を入れる（curl、rg、Node.js、LibreOffice、pandoc、uv、Claude Code。uv と Claude Code は配布元のスクリプトをそのまま実行する）")
+    ctx.say("道具を入れる（curl、rg、Node.js、LibreOffice、pandoc、PowerShell 7、uv、Claude Code。uv と Claude Code は配布元のスクリプトをそのまま実行する）")
     step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep）",
                 "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep\n", root=True)
     if ca_pem:
@@ -784,13 +824,14 @@ def cmd_init(ctx, a):
     # 等幅フォント PlemolJP は、使い捨ての部屋での試験が安定するまで入れない（約 220 MB の取得で時間がかかる。ee の依頼、2026-10-20）。戻すときは次の行のコメントを外し、tests の PlemolJP の確認も戻す
     # step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
     step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
+    step_script(ctx, distro, "PowerShell 7（公式の tarball、チェックサム確認つき）と PSScriptAnalyzer・Pester（版を固定）", PWSH_INSTALL, root=True)
     step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
     step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
     step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
     step_script(ctx, distro, "PATH",
                 f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
     ver = step_script(ctx, distro, "道具の確認",
-                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\nmmdc --version\n')
+                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\nmmdc --version\npwsh --version\npwsh -NoProfile -Command \'Get-Module -ListAvailable PSScriptAnalyzer,Pester | ForEach-Object { "$($_.Name) $($_.Version)" }\'\n')
     ctx.say(ver.rstrip())
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
             f"  room shell {a.area}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"
