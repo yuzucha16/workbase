@@ -42,7 +42,7 @@
 - 却下案: AI がホームに道具を入れる（取得元と版を AI が選ぶ）、道具を入れない（HTML 化は Python、`.ps1` は人が毎回操作を覚える）、`interop` を有効にする（境界が破れる）、`room run` の全体実行・Area 単位の実行（成果物が変わりうる）、実行の記録を AI も書ける形（偽れる）。
 - 確認済み（PC2 の使い捨ての部屋、2026-10-20）: LibreOffice 26.2.6.3 の xlsx の PDF 変換と再計算、pandoc 3.7.0.2 の日本語、Chromium の起動と PDF（NotoSansCJKjp）、mermaid の PNG（日本語ラベル。ユーザーが目で確認）、`init` を通して `mmdc --version` が出ること。**PC1（TLS 検査）は未確認。** `room run` と PlemolJP の `init` での実機確認は未了。
 - 見直しの条件: PC1 で取得できなければ取得の手順を直し、直せなければ v2 に上げる。v2 は v1 の価値の判定の後。
-- → [[ai-room-convert-tools]]（理解ガイド）
+- → [[ai-room-convert-tools]]（理解ガイド）、inbox/2026-10-21-room-convert-tools-gotchas、inbox/2026-10-21-ai-run-record-design
 
 ### 【汎用】計画のやり方を、試験運用で `workflow-kit/` に取り込んだ（2026-10-20）
 - 決めたこと: 3層で正式化済み（`topics/planning-method/docs/decisions.md` の 2026-10-20）の実装。新ファイルは `workflow-kit/start-plan.md`（手順と欄の定義）と `exmem/lessons/planning-method.md`（背景・Facts・Open Questions）。`methods.md` に区分「計画」（計画1）、`start-hook.md` に `start 計画`（引数つきモードの1節。本体は `start-plan.md` に置いたので +20% の枠を最小に抑えた）、`hooks.md`（別名「計画で始めて」）、`hook-matrix.md` の review の点検 7、`exmem-index.md`、`method-creation.md` の事例の表、`workflow-kit/README.md` の表を更新した。
@@ -534,7 +534,7 @@
 
 ## Gotchas
 
-- 【汎用】部屋（Ubuntu 26.04）で Chromium を使うとき: apt の `chromium` に候補が無く、`chromium-browser` は snap への移行パッケージで部屋では使えない。Playwright の Chromium は、不足するライブラリ `libasound2t64` を足せば動く。`--dump-dom` の日本語が化けるのは、`data:` URL に `;charset=utf-8` が無いため（Chromium の不具合ではない）。dbus の警告は無害。`fonts-noto-cjk` は既定で簡体字（sc）が選ばれるので、`/etc/fonts/local.conf` で JP を優先する（実機: 2026-10-20）。 → [[ai-room-convert-tools]]
+- 【汎用】部屋（Ubuntu 26.04）で Chromium を使うとき: apt の `chromium` に候補が無く、`chromium-browser` は snap への移行パッケージで部屋では使えない。Playwright の Chromium は、不足するライブラリ `libasound2t64` を足せば動く。`--dump-dom` の日本語が化けるのは、`data:` URL に `;charset=utf-8` が無いため（Chromium の不具合ではない）。dbus の警告は無害。`fonts-noto-cjk` は既定で簡体字（sc）が選ばれるので、`/etc/fonts/local.conf` で JP を優先する（実機: 2026-10-20）。 → [[ai-room-convert-tools]]、inbox/2026-10-21-room-convert-tools-gotchas
 - 【汎用】automount を切った WSL の部屋で、Windows の `WSLENV` に `/p` 付きのパス（証明書など）があると、変換できず、入るたびに「failed to translate」が出る。しかも `SSL_CERT_FILE` などが壊れたまま部屋に残り、curl が証明書エラー（終了コード 60）になる。`wsl.exe` に渡す環境から `WSLENV` を外す（実機: 2026-10-19、PC1）。部屋の `curl` の発行元を `openssl s_client … | openssl x509 -noout -issuer` で見ると、TLS 検査のプロキシかどうかが分かる。 → [[ai-isolated-work-room]]
 - 【汎用】TLS 検査のあるネットワークの部屋では、curl だけでなく、Node（`NODE_EXTRA_CA_CERTS`）、npm（`npm config set cafile`）、AWS CLI（`AWS_CA_BUNDLE`）も、システムの証明書ストアを見ない。ツールごとに、システムのバンドル（`/etc/ssl/certs/ca-certificates.crt`）を指す（実機: curl は `--ca-cert` の後に通った、2026-10-19。npm、Node、AWS の変数は、設定したが単独の効果は未分離）。 → [[ai-isolated-work-room]]
 - 【汎用】Ubuntu 24.04 の apt の Node は 18。Zed の Agent（`@agentclientprotocol/claude-agent-acp`、`npx` で起動）は 22 以上を要る。部屋に Node が無いと「npx を知らない」になる（実機: 2026-10-19）。 → [[ai-isolated-work-room]]

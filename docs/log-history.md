@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-21（`stock ナレッジ`: 部屋の変換の道具と room run の設計）
+- `exmem/inbox/` に 2 件のメモを作った（未追跡のまま）: `2026-10-21-room-convert-tools-gotchas`（統合先: `ai-isolated-work-room.md`。道具の入れ方、Chromium・フォントの実機の落とし穴）、`2026-10-21-ai-run-record-design`（同。依頼と実行の記録の分離、気づく場所、スコープ、実データ実行の条件、最小の版から上げる進め方。進め方の 1 例は型にするには早い）。`stock 理解` は 10-20 に `guides/explain/ai-room-convert-tools.md` で済み。点検スクリプトは FAIL 0 / WARN 0。`decisions.md` の 2 項に `→` を足した。
+
 ### 2026-10-21（`usage-viz` を閉じた）
 - ユーザーが選び、削除に賛成した（条件: stock と wrap が済んでいること）。stock は `guides/howto/claude-usage-report.md` に反映済み（落とし穴2件を含む）、経緯は 10-20 の項にある。決定の【この件】2件を root の `decisions.md` に移し、`topics/usage-viz/` を削除、索引と窓口の行を消した。`records/` を閉じるときの扱い（移す・消す）は規則が無かったので、移さず削除にした。10-28 の仕訳の正式化と一緒に、規則にするかを決める。
 
