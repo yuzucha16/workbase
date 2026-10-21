@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-21（room: スクリプトの言語を Python → ps1 → bat の順で AI が決め、聞かないようにする）
+- ユーザーの依頼: 部屋の AI が、スクリプトを作るたびに「Python でよいか、ps1 がよいか」と聞く。Windows 依存を減らしたいので、Python → ps1/bat の優先順位で動いてほしい（人の作業を減らす方針は、すでに `dev-deliverable-guide.md` にある）。
+- 実装（ユーザーの依頼を承認とした。未コミット→この wrap でコミット）: `dev-deliverable-guide.md` の「実行の方針」に「言語の選び方」を追加（Python が既定、ps1 は Python で書けない Windows 依存の操作か実行先に Python が無いと分かっているときだけ、bat は ps1 の起動 3 行だけ。順で決められないときだけ聞く。報告に言語と理由を 1 行）。同じ内容を `room-context.md`、`room.py` の部屋の AI への案内文（`ROOM.md` と部屋の `CLAUDE.md` の元）、`README.md` の説明行にも入れた。
+- 注意: 既存の部屋の `ROOM.md` には、次の `room start` まで届かない（仮説）。`room.py` は並行セッションの変更（Project 並行の対応）が同じファイルに未コミットで混ざっていたので、この wrap のコミットには私の 1 行だけを入れた。`room.py` の単体テストは実行していない。
+- 知識化: `exmem/inbox/2026-10-21-ai-default-rule-over-asking.md`（未追跡）。
+
 ### 2026-10-21（room: `init` に git を足し、部屋の AI への git の案内を強める）
 - ユーザーの相談: 部屋に git を手で入れたが、部屋の AI が「リポジトリを作ってよいか」を分かっていない。`/mnt/room/` の下を、自由に使えるローカルリポジトリにしたい。調べると、部屋の git（`start` が `/home/ai/gitdirs/<Project>` に作る、`df4ff0d`）は実装済みで、足りないのは案内が AI に届くことだった。ユーザーは `room init` に git が入っていると思っていたが、apt の段は `curl ca-certificates ripgrep` だけだった。
 - ユーザーの依頼で実装（承認済み。`adb7fce`、`90df7d9`、push 済み）: ① `init` の apt の段に `git` を足した（手順書 `guides/howto/ai-room-setup.md` と `-manual.md` の apt の行も）。② 部屋の `~/.claude/CLAUDE.md` の案内（`POINTER_TEXT`）に、git は許可なしで使ってよい・`git init` `git config` はしない（`.git` が works に回収されるため）・コミットは部屋の中だけ、を足した。`ROOM.md` の「部屋の git」と `room-context.md` も同じ内容にした。
