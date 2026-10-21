@@ -668,6 +668,13 @@ class OpenTest(unittest.TestCase):
             self.assertIn("projects/proj-a/ai/in/.gitkeep", tracked)
             self.assertNotIn("_noai", tracked)
 
+    def test_open_readme_has_plan_pointer_that_is_not_a_placeholder(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            text = (v / "projects" / "proj-a" / "README.md").read_text(encoding="utf-8")
+            self.assertIn("計画: `ai/in/plan/`", text)
+            self.assertFalse([l for l in room.readme_placeholders(text) if "計画" in l])
+
     def test_open_refuses_without_gitignore_rules(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp, gitignore="*.tmp\n")
