@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-21（room のコミットにトレーラー）
+- ユーザーの依頼「room 処理一式にトレーラーをつけたい。既存のルームを使った area / projects に対して、差分確認と update が可能かの判断材料として」を受け、`room.py` の 6 つのコミット（`init` `open` `rename-area` `start` `readme` `close`）に `Room-Op` `Room-Rev` `Room-Area` `Room-Project` を付けた。`kit_rev()` と `room_trailers()` を追加し、`commit_paths` に `trailers` 引数を足した。README に使い方、テストを 1 件追加。
+- 結果: 104 件中、新テストは通った。失敗 2 件（`CaCertTest`）は変更前から同じ（無関係）。コミットしない操作（`mask` `restore` `pull` `stock`）には付かない。判断は `decisions.md` の同日の項。
+- コミット: 下の終了処理のコミット。
+
 ### 2026-10-21（`stock-modes` の続き: `stock 理解` の実装、`start 計画` へのフィードバック、`private-knowledge` との整理）
 - ユーザーが設計の【提案】を一括承認し、全工程を進めた。`workflow-kit/` に `stock` のモード「理解」（`kind: explain`）を実装（`stock-explain.md` 新規、`stock-hook.md`、`integrate-hook.md`、`check_inbox.py` / `check-inbox.ps1`、見本、整合10ファイル、`room.py` の古さの印、単体テスト）。点検は FAIL 0、lesson は回帰なし。実機（`integrate`、`room stock`）は未実施。設計からの差分4件はユーザーが承認。詳細は `topics/stock-modes/docs/`。
 - `start 計画` へのフィードバック案8件を `topics/planning-method/planning-method-feedback-stock-modes-m1.md` に記録（未承認）。`private-knowledge` との重なりは整理済み（`topics/private-knowledge/docs/decisions.md`）。
