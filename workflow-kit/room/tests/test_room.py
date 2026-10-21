@@ -861,8 +861,8 @@ class PullKnowledgeTest(unittest.TestCase):
         v, c = opened(tmp, wsl)
         p = v / "projects/proj-a"
         (p / "_noai/mask.toml").write_text(self.MASK, encoding="utf-8", newline="\n")
-        k = v / "areas/area-x/knowledge"
-        k.mkdir()
+        k = v / "areas/area-x/_noai/knowledge"
+        k.mkdir(parents=True)
         (k / "2026-10-14-アクメ商事-定例.md").write_text(self.note("アクメ商事"), encoding="utf-8", newline="\n")
         (k / "2026-10-15-other.md").write_text(self.note("自社", body="自社のみ\n"), encoding="utf-8", newline="\n")
         (k / "2026-10-01-old.md").write_text(self.note("アクメ商事", status="superseded"), encoding="utf-8", newline="\n")
@@ -1342,18 +1342,30 @@ class CloseTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=False))
-            self.assertTrue((v / "areas/area-y/knowledge").is_dir())
+            self.assertTrue((v / "areas/area-y/_noai/knowledge").is_dir())
             self.assertEqual((v / "areas/area-y/ai/docs/inbox.md").read_text(encoding="utf-8"), room.INBOX_NEW)
             (v / "areas/area-y/ai/docs/inbox.md").write_text("既存\n", encoding="utf-8")
             room.scaffold_area(ctx_for(v, FakeWsl()), "area-y")
             self.assertEqual((v / "areas/area-y/ai/docs/inbox.md").read_text(encoding="utf-8"), "既存\n")
+
+    def test_scaffold_warns_about_old_knowledge_dir_and_does_not_move_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            old = v / "areas/area-x/knowledge"
+            old.mkdir()
+            (old / "a.md").write_text("x\n", encoding="utf-8")
+            c = ctx_for(v, FakeWsl())
+            room.scaffold_area(c, "area-x")
+            self.assertTrue(any("knowledge/ がある" in m for m in c.msgs))
+            self.assertTrue((old / "a.md").exists())
+            self.assertTrue((v / "areas/area-x/_noai/knowledge").is_dir())
 
     def test_init_scaffolds_existing_area_even_when_room_exists(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             with self.assertRaises(room.RoomError):
                 room.cmd_init(ctx_for(v, FakeWsl()), argparse.Namespace(area="area-x", resume=False))
-            self.assertTrue((v / "areas/area-x/knowledge").is_dir())
+            self.assertTrue((v / "areas/area-x/_noai/knowledge").is_dir())
 
     def test_close_second_run_does_not_duplicate_inbox(self):
         with tempfile.TemporaryDirectory() as tmp:

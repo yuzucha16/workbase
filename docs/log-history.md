@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-21（room: Area の知識置き場を `_noai/knowledge/` に移した）
+- 知識（share）・原本（source）・成果物（deliverable）を役割で分け、実名を含む Area のデータを `areas/<Area>/_noai/` の下にまとめる案（C）をユーザーが選んだ。旧 `areas/<Area>/knowledge/` が `_noai` の外で守られていなかったため、まず `knowledge/` を移した（`room.py` の `KNOWLEDGE_DEFAULT`、`init` の旧置き場の警告、`room/README.md`、`guides/howto/ai-room-setup-script.md`、テスト）。単体テスト 105 件が通る。決定は `decisions.md` の同日の項。`source/` と `deliverable/` は未実装（Next Actions 14）。
+
 ### 2026-10-21（room: `data:` を廃止し、マスクと復元を状態で決める）
 - `room pull` の新設で実質 `restore` だけが使われることから、ユーザーと検討し、Project の `data:`（none / mask / restore）を廃止した。マスクは `_noai/raw/` に原本があるとき、復元は `_noai/map/mapping.json` があるときだけ行う。`open` は `type` に関係なく `_noai/{raw,map,final,user}` を作る。`mask`（復元しない）は `restore` に統一。変更: `room.py`、`room/README.md`、`templates/project/README.template.md`、`project-structure.md`、テスト（`DataModeTest` を `NoDataModeTest` に置換）。単体テスト 104 件が通る（スキップ 3）。実機は未確認。決定は `decisions.md` の同日の項。
 - 検討で分かったこと: 「窓口が2つ」に見えたのは、`areas/<Area>/knowledge/`（Project から循環した成果物）と `_noai/raw/`（作業の原本）の2つが入力元だったため。マスクの窓口は `_noai/raw` の一つ。知識と原本・成果物は別物なので置き場を分ける方針。置き場の設計は Next Actions 14。
