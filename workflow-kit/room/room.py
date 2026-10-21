@@ -326,6 +326,50 @@ def mount(ctx, p):
         raise RoomError(f"マウントに失敗した: {err.strip() or out.strip()}")
 
 
+ROOM_GIT_WRAPPER = """#!/bin/sh
+# room: /mnt/room/<Project> の下では、部屋のローカルの git（~/gitdirs/<Project>）を使う（works の .git はマウントの外で見えない）
+case "$PWD/" in
+/mnt/room/*) p=${PWD#/mnt/room/}; p=${p%%/*}; export GIT_DIR="$HOME/gitdirs/$p" GIT_WORK_TREE="/mnt/room/$p" ;;
+esac
+exec /usr/bin/git "$@"
+"""
+
+
+def room_git_script(p):
+    gd = f"/home/ai/gitdirs/{p.name}"
+    q = shlex.quote
+    return (
+        "set -e\n"
+        "cat > /usr/local/bin/git <<'WRAP'\n" + ROOM_GIT_WRAPPER + "WRAP\n"
+        "chmod 755 /usr/local/bin/git\n"
+        f"runuser -u ai -- sh -s <<'AI'\n"
+        "set -e\n"
+        f"rm -rf {q(gd)}\n"
+        f"mkdir -p {q(gd)}\n"
+        f"export GIT_DIR={q(gd)} GIT_WORK_TREE={q(p.mount_point)}\n"
+        "git init -q\n"
+        "git config user.name 'room-ai'\n"
+        "git config user.email 'ai@room.invalid'\n"
+        "git config core.autocrlf false\n"
+        "printf 'ctx/\\n' > \"$GIT_DIR/info/exclude\"\n"
+        "git add -A\n"
+        "git commit -q --allow-empty -m 'room: start の基準（回収済みの ai/）'\n"
+        "AI\n"
+    )
+
+
+def setup_room_git(ctx, p):
+    """部屋の中で git（diff・commit・log）を使えるようにする。.git は部屋のローカル（~/gitdirs/<Project>）で、回収の後に捨てる。
+    失敗しても start は止めない（works 側のコミットが履歴の正本）。"""
+    rc, out, err = ctx.wsl.script(p.distro, room_git_script(p), root=True)
+    if rc != 0:
+        ctx.say(f"警告: 部屋の git を用意できなかった（部屋では git が使えない。続ける）: {(err or out).strip()}")
+
+
+def discard_room_git(ctx, p):
+    ctx.wsl.script(p.distro, f"rm -rf {shlex.quote('/home/ai/gitdirs/' + p.name)}\n", root=True)
+
+
 def unmount(ctx, p):
     """アンマウントし、マウント点を消し、残りを確認する。残っていれば False。"""
     mp = shlex.quote(p.mount_point)
@@ -1072,6 +1116,7 @@ def cmd_start(ctx, a):
             ctx.say("--no-launch: ここで AI を起動しない。Zed などで WSL リモート接続し、終わったら Enter")
             keep = ctx.wsl.keepalive(p.distro)  # セッションが無くなって部屋が止まると、マウントも消える（仮説。実機で確認する）
             try:
+        setup_room_git(ctx, p)
                 input()
             finally:
                 keep.terminate()
@@ -1086,6 +1131,7 @@ def cmd_start(ctx, a):
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
+        discard_room_git(ctx, p)
     restored, restore_problems = restore_project(ctx, p)
     if restored:
         ctx.say(f"復元した: {restored} ファイル → _noai/final")
@@ -1804,7 +1850,8 @@ def build_parser():
     s.add_argument("--no-launch", action="store_true", help="起動せず、マウントしたまま待つ（Zed などで使う）")
     s.add_argument("--adopt", action="store_true", help="ai/in の現在のファイルを、この Project の入力として記録する")
     s.add_argument("--yes", action="store_true", help="mask.toml が変わったときの作り直しを確認しない")
-    s.add_argument("--commit", action="store_true")
+    s.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
+    s.add_argument("--no-commit", dest="commit", action="store_false", help="回収をコミットしない（既定はコミットする）")
     m = sub.add_parser("mask", help="_noai/raw の原本をマスクして ai/in へ（start でも自動で行う）")
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")

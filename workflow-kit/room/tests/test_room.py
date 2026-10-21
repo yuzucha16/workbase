@@ -610,6 +610,34 @@ class StartTest(unittest.TestCase):
             self.assertIn("start", (p / "ai/records/room-log.md").read_text(encoding="utf-8"))
             self.assertTrue(any("result.md" in m for m in c.msgs))
 
+    def test_start_sets_up_and_discards_room_git(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            room.cmd_start(c, self.args())
+            texts = [s[1] for s in wsl.scripts if s[2]]
+            setup = [t for t in texts if "git init" in t]
+            self.assertEqual(len(setup), 1)
+            self.assertIn("GIT_DIR=/home/ai/gitdirs/proj-a", setup[0])
+            self.assertIn("GIT_WORK_TREE=/mnt/room/proj-a", setup[0])
+            self.assertIn("runuser -u ai", setup[0])
+            self.assertTrue(texts.index(setup[0]) > texts.index([t for t in texts if "mount -t drvfs" in t][0]), "マウントの後")
+            self.assertTrue(any(t.startswith("rm -rf /home/ai/gitdirs/proj-a") for t in texts), "回収の後に捨てる")
+
+    def test_start_continues_when_room_git_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            orig = wsl.script
+            wsl.script = lambda d, t, root=False: (1, "", "boom") if "git init" in t else orig(d, t, root)
+            v, c = opened(tmp, wsl)
+            room.cmd_start(c, self.args())
+            self.assertTrue(any("部屋の git を用意できなかった" in m for m in c.msgs))
+            self.assertFalse(wsl.mounted)
+
+    def test_start_commits_by_default(self):
+        self.assertTrue(room.build_parser().parse_args(["start", "x"]).commit)
+        self.assertFalse(room.build_parser().parse_args(["start", "x", "--no-commit"]).commit)
+
     def test_start_snapshots_readme_readonly_during_run(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
