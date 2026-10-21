@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-21（review 消化の続き。14 を閉じた）
+- 14 を閉じた: ① 旧 `areas/pilot2/knowledge/` の移動と、② 実機の通し（`data:` なしの `open` / `start` / `restore`、`source` → `pull` → `restore` → `deliverable`）は、ユーザーが完了を報告した（問題なし。個別の数字は未記録）。
+- 13 の注記を直した: `usage-viz` の HTML の見た目はブラウザで確認済み（ユーザー、問題なし）。13 の残りは、10-28 の正式化の判断だけ。
+
 ### 2026-10-21（review 消化。18 以外）
 - 11 を閉じた: `room run`（v2）は、v1 で期待に足りているため不要（ユーザー）。
 - 12 の ① を閉じた: 統合の指示（`ai/out/knowledge/`、`kind: integrated`）を `room-context.md` の新しい節と部屋の案内（`room.py` の `ROOM_GUIDE`）に反映。② は別セッションの扱いのため外した。③（指標）は使いながら測る。
