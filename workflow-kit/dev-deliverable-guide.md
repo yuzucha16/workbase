@@ -109,11 +109,11 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
   ```
 
   1 行目は省いてよい。2 行目の `run-all.ps1` は、同じ場所にある呼び先の名前に変える。ファイルは全体 ASCII、CRLF、BOM なしで書く（`exmem/lessons/shell-script-testing-wsl.md` の bat の落とし穴は、この型に従えば出ない）。`pause` を最後に必ず置く（終わっても画面が閉じない）。
-- **束ねる ps1 は、Project の `ai/work/<束ねる ps1 の名前>.log` の 1 本にログを出す**（2026-10-21 のユーザーの依頼。エラーのとき、人がこのログを部屋の AI に見せるため）。成果物（`ai/out/<成果物名>/`）の中には出さない（配布物に混ざるため）。束ねる ps1 の置き場から親をたどって、`work/` を持つ `ai` ディレクトリを探す。見つからないとき（Project の外、配布先で実行したとき）は、束ねる ps1 の隣の `work/` に出す。`-LogDir <パス>` で出力先を変えられる。実行のたびに上書きする。個別の ps1 は、ログを作らない。型（動作確認済み: Windows の pwsh 7.6.7、失敗した工程・終了コード・スタックがログに残る）:
+- **束ねる ps1 に、ログ出力の機能を持たせる。ただし既定では出さない**（2026-10-21 のユーザーの依頼と訂正。ログは `ai/` の中に出ると部屋の AI から読めるので、人が付けたときだけ出す）。`-Log` を付けると、Project の `ai/work/<束ねる ps1 の名前>.log` の 1 本に出す。`-LogDir <パス>` なら、その場所に出す（`-Log` は不要）。成果物（`ai/out/<成果物名>/`）の中には出さない（配布物に混ざるため）。`ai/work/` は、束ねる ps1 の置き場から親をたどって、`work/` を持つ `ai` ディレクトリを探す。見つからないとき（Project の外、配布先で実行したとき）は、束ねる ps1 の隣の `work/`。実行のたびに上書きする。個別の ps1 は、ログを作らない。エラーが出たら、人が `-Log` を付けて再実行し、AI に「`ai/work/<名前>.log` を読んで」と伝える。起動用 bat に引数を渡したいときは、2 行目の末尾に ` %*` を足してよい（`run-all.bat -Log`）。型（動作確認済み: Windows の pwsh 7.6.7、失敗した工程・終了コード・スタックがログに残る）:
 
   ```powershell
   #Requires -Version 7
-  param([string]$LogDir)
+  param([switch]$Log, [string]$LogDir)
   Set-StrictMode -Version Latest
   $ErrorActionPreference = 'Stop'
 
@@ -125,11 +125,14 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
     }
     return Join-Path $PSScriptRoot 'work'             # Project の外で実行したとき
   }
-  if (-not $LogDir) { $LogDir = Find-AiWork }
-  $logPath = Join-Path $LogDir ([IO.Path]::GetFileNameWithoutExtension($PSCommandPath) + '.log')
-  New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
-  Start-Transcript -Path $logPath -Force | Out-Null
-  Write-Host "[LOG] $logPath"
+  $logging = $Log -or [bool]$LogDir                   # 既定ではログを出さない（-Log か -LogDir を付けたときだけ）
+  if ($logging) {
+    if (-not $LogDir) { $LogDir = Find-AiWork }
+    $logPath = Join-Path $LogDir ([IO.Path]::GetFileNameWithoutExtension($PSCommandPath) + '.log')
+    New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
+    Start-Transcript -Path $logPath -Force | Out-Null
+    Write-Host "[LOG] $logPath"
+  }
   $exitCode = 0
   try {
     foreach ($step in 'step1.ps1', 'step2.ps1') {   # 実際の工程名に変える
@@ -144,12 +147,12 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
     Write-Host $_.ScriptStackTrace
     $exitCode = 1
   } finally {
-    Stop-Transcript | Out-Null
+    if ($logging) { Stop-Transcript | Out-Null }
   }
   exit $exitCode
   ```
 
-  **ログは `ai/` の中に出るので、部屋の AI から読める**（マスクを通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（マスクして復元する Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/user/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
+  **`-Log` のログは `ai/` の中に出るので、部屋の AI から読める**（マスクを通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（マスクして復元する Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/user/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
 - **実行は PowerShell 7（`pwsh`）に固定する**。ps1 の先頭に `#Requires -Version 7`、`Set-StrictMode -Version Latest`、`$ErrorActionPreference = 'Stop'` を置く。5.1（`powershell.exe`）では動かさない（UTF-8 の扱いと文字化けの差を避けるため）。ps1 は UTF-8 で保存する。
 - **部屋の中で、作った直後に静的チェッカーを実行する**。実行はしない（部屋には Windows が無い）が、構文と規約の誤りは、人が Windows で実行する前に取れる:
 
@@ -161,4 +164,4 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
   FAIL は直してから人に渡す。WARN は、理由を見て判断する。終了コードは FAIL の数。見るもの: UTF-8、改行の混在、構文、`#Requires`、`$ErrorActionPreference`、`Set-StrictMode`、PSScriptAnalyzer、起動用 bat の型（上の 3 行、呼び先の存在）。
 - **部屋の中のテストは、外部とのやり取りを差し替える**。Windows 固有の部分（レジストリ、scoop、`setx`、Windows のパス）は、関数に包んで、Pester の `Mock` で差し替えて分岐を試す。差し替えない本物の動作は、人が Windows で実行する層（上の「テスト」の 2 層目）に回し、検証項目に「人が実行」と書く。
 - **部屋の中では分からないこと**（報告の「実環境で未確認の点」に書く）: Windows 固有のコマンドの実際の動き、Windows のパスと権限、実行ポリシー、ネットワーク。部屋の pwsh は Linux 版（globalization は invariant）なので、文化依存の動作（日付や数値の書式）も本物と違いうる。
-- 人が実行した結果を AI に戻すときは、ログ（`ai/work/<束ねる ps1 の名前>.log`。標準出力とエラーの全文、工程名つき）を、AI に「`work/<名前>.log` を読んで」と伝える。ログが `ai/` の外にあるときは、人が伏せてから `ai/in/` に置く（上の「テスト」と同じ）。`room run` のような、AI が Windows で実行する仕組みは無い。
+- 人が実行した結果を AI に戻すときは、`-Log` を付けて再実行し、ログ（`ai/work/<束ねる ps1 の名前>.log`。標準出力とエラーの全文、工程名つき）を読むよう AI に伝える。ログが `ai/` の外にあるときは、人が伏せてから `ai/in/` に置く（上の「テスト」と同じ）。`room run` のような、AI が Windows で実行する仕組みは無い。
