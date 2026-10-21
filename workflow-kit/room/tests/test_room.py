@@ -838,6 +838,111 @@ class MaskIntegrationTest(unittest.TestCase):
             self.assertFalse(wsl.mounted)
 
 
+class PullKnowledgeTest(unittest.TestCase):
+    MASK = '[terms.CUST]\nacme = ["アクメ商事株式会社", "アクメ商事"]\n'
+
+    def note(self, org, status="active", body="アクメ商事の件。決定: 切替は11月\n"):
+        return f"---\ntype: area-note\nkind: meeting\nstatus: {status}\norg:\n  - {org}\n---\n\n# 定例\n\n{body}"
+
+    def setup_area(self, tmp, wsl=None):
+        v, c = opened(tmp, wsl)
+        p = v / "projects/proj-a"
+        (p / "_noai/mask.toml").write_text(self.MASK, encoding="utf-8", newline="\n")
+        k = v / "areas/area-x/knowledge"
+        k.mkdir()
+        (k / "2026-10-14-アクメ商事-定例.md").write_text(self.note("アクメ商事"), encoding="utf-8", newline="\n")
+        (k / "2026-10-15-other.md").write_text(self.note("自社", body="自社のみ\n"), encoding="utf-8", newline="\n")
+        (k / "2026-10-01-old.md").write_text(self.note("アクメ商事", status="superseded"), encoding="utf-8", newline="\n")
+        return v, c, p, k
+
+    def pull(self, c, **kw):
+        d = dict(name="proj-a", where=["org=アクメ商事"], yes=True)
+        d.update(kw)
+        room.cmd_pull(c, argparse.Namespace(**d))
+
+    def test_pull_filters_and_hides_real_file_names(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            self.pull(c)
+            names = sorted(f.name for f in (p / "_noai/raw/area").iterdir())
+            self.assertEqual(len(names), 1)  # org 一致かつ status: active の1件だけ
+            self.assertTrue(names[0].startswith("2026-10-14-"))
+            self.assertNotIn("アクメ", names[0])
+            src = json.loads((p / "_noai/map/pull-sources.json").read_text(encoding="utf-8"))
+            self.assertEqual(list(src.values()), ["2026-10-14-アクメ商事-定例.md"])
+
+    def test_pull_then_start_then_integrated_note_returns_to_area(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p, k = self.setup_area(tmp, wsl)
+            self.pull(c)
+            seen = {}
+
+            def ai():
+                f = next((p / "ai/in/area").iterdir())
+                seen["in"] = f.read_text(encoding="utf-8")
+                seen["name"] = f.name
+                (p / "ai/out/knowledge").mkdir(parents=True)
+                (p / "ai/out/knowledge/topic-cutover.md").write_text("---\nkind: integrated\n---\n⟦CUST_001⟧ の切替は11月\n", encoding="utf-8", newline="\n")
+            wsl.on_interactive = ai
+            room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=True))
+            self.assertNotIn("アクメ", seen["in"])
+            self.assertNotIn("アクメ", seen["name"])
+            self.assertIn("⟦CUST_001⟧", seen["in"])
+            self.assertIn("アクメ商事株式会社 の切替は11月", (k / "topic-cutover.md").read_text(encoding="utf-8"))
+            man = (p / "ai/records/manifest.json").read_text(encoding="utf-8")
+            self.assertNotIn("アクメ", man)
+            self.assertIn("pull-sources.json", man)
+
+    def test_changed_area_file_stops_restore_unless_force(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p, k = self.setup_area(tmp, wsl)
+            out = p / "ai/out/knowledge"
+            out.mkdir(parents=True)
+            (out / "t.md").write_text("⟦CUST_001⟧ v1\n", encoding="utf-8", newline="\n")
+            self.pull(c)
+            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
+            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a")), (1, []))
+            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a")), (1, []))  # 人が変えていなければ止まらない
+            (k / "t.md").write_text("人が直した\n", encoding="utf-8", newline="\n")
+            (out / "t.md").write_text("⟦CUST_001⟧ v2\n", encoding="utf-8", newline="\n")
+            n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
+            self.assertEqual(n, 0)
+            self.assertIn("t.md", problems[0])
+            self.assertEqual((k / "t.md").read_text(encoding="utf-8"), "人が直した\n")  # 何も書かない
+            self.assertFalse((p / "_noai/final/_prev").exists())
+            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a"), force=True)[1], [])
+            self.assertIn("v2", (k / "t.md").read_text(encoding="utf-8"))
+            self.assertEqual((p / "_noai/final/_prev/knowledge/t.md").read_text(encoding="utf-8"), "人が直した\n")
+
+    def test_bad_names_and_options_are_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            out = p / "ai/out/knowledge"
+            out.mkdir(parents=True)
+            (out / "⟦CUST_001⟧.md").write_text("x\n", encoding="utf-8", newline="\n")
+            k_, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
+            self.assertEqual(k_, 0)
+            self.assertIn("プレースホルダー", problems[0])
+            self.assertFalse((k / "⟦CUST_001⟧.md").exists())
+            with self.assertRaises(room.RoomError):
+                self.pull(c, where=["org"])
+            (v / "projects/proj-a/README.md").write_text(
+                (v / "projects/proj-a/README.md").read_text(encoding="utf-8").replace("---\n", "---\nknowledge_dest: ../x\n", 1),
+                encoding="utf-8", newline="\n")
+            with self.assertRaises(room.RoomError):
+                self.pull(c)
+
+    def test_pull_refuses_unless_restore_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            readme = p / "README.md"
+            readme.write_text(readme.read_text(encoding="utf-8").replace("data: restore", "data: mask"), encoding="utf-8", newline="\n")
+            with self.assertRaises(room.RoomError):
+                self.pull(c)
+
+
 class DataModeTest(unittest.TestCase):
     def open_with(self, tmp, wsl=None, **kw):
         v = make_vault(tmp)

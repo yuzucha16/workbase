@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-21（`planning-method` の続き: 試行のフィードバックの反映、品質チェック1回目、Area を跨ぐ共有知の実装）
+- 試行の3題材のフィードバックをユーザーの承認で `workflow-kit/start-plan.md` に反映した（詳細は `topics/planning-method/docs/log-history.md`）。題材の計画の置き場の仮決め（題材のトピックの `records/`）を `start-plan.md` の置き場の表に反映した（正式化の判断は 10-28 のまま）。
+- 品質チェック1回目は `private-knowledge`（`topics/kit-growth/records/planning-method-record.md`）。
+- `private-knowledge` の設計と実装（`topics/private-knowledge/docs/decisions.md` ⑧〜㉕）: `workflow-kit/room/room.py` に `pull` と `restore` の Area 書き出しを追加し（テスト `PullKnowledgeTest`）、`room/README.md`、`guides/howto/ai-room-setup-script.md`（4.1・6.1）、`guides/explain/cross-area-shared-knowledge.md`、`guides/guides-index.md` を更新。実機の通し試験（ダミーの Area `pilot2`）はユーザーが問題なしと報告。単体テスト全体は 102 件中、`openssl` が無い環境の `CaCertTest` 2 件が失敗（今回の変更と無関係。変更前から失敗していたかは未確認）。
+- kit の変更はすべてユーザーが承認した（`start-plan.md` の追記、`room` の実装、差分 ㉑〜㉕）。`ai-room-setup.md` と `ai-room-setup-manual.md` は、ユーザーの指示で触っていない（あとでユーザーが調整）。
+
 ### 2026-10-21（`start 計画`: 会議録のナレッジ化を始め、題材ごとのトピックと `records/` の仕訳を仮決めにした）
 - ユーザーの要求: 顧客を含む打合せ内容を知識化したい（AI 向け = lessons、私向け = explain と同じ扱い・方針・ルール）。すり合わせ4回で、置き場（規則だけ workbase、中身は works 側の Area。Project を跨げるため）、入力（自動の文字起こしと自分の議事録）、「同じ」の範囲（型・タグ・索引・昇格の流れまで）、2系統の扱い（手段だった。1ファイル2層 + Bases の一覧）、顧客名（Area 内は書く、AI に渡すときはマスク）を決めた。6R・憲章・WBS・マイルストーンは作成済みで、ユーザーの反対なし。
 - 置き場は、ユーザーの記憶の曖昧さで2回動いた（`kit-growth/plans/` → `planning-method/records/` → 各トピックの `records/`）。結果として `topics/private-knowledge/` を作り、`usage-viz/` と `stock-modes/` を `planning-method` から切り出した。仕訳は2か所（測ったことは `kit-growth/records/`、各トピックの出力はそのトピックの `records/`）。仮決め 〜2026-10-28（`decisions.md` の同日の項）。`start-plan.md` の置き場の表は、正式化のときに直す（kit の変更で承認が要る）。
