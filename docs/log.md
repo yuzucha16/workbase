@@ -7,6 +7,7 @@
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
 | 2026-10-22 | 定例 | daily の振り返り（毎営業日。`start 改善4`。規模は `retrospective-method.md` の v6: 3章・500字） | ユーザー |
+| 2026-10-24 | 単発 | 計画と README の紐付けの判断（Open Questions。代替案を検討したうえで。ユーザー、10-21 の消化） | ユーザー |
 | 2026-10-26 | 定例 | weekly の振り返り（毎週月曜。4章・1,000字）。仮決めの期限切れを数える（R-05） | ユーザー |
 | 2026-10-26 | 定例 | monthly の振り返り（最終営業日を含む最後の5営業日の初日。5章・1,500字）。初回は材料の weekly が1回だけ。次は 11-24 | ユーザー |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断（Open Questions。計画のやり方の品質チェックの後） | ユーザー |
@@ -44,11 +45,11 @@
 ## Open Questions
 
 - 会議録の Area 側の保管場所と同期（Git か、PC ごとのローカルか）。`private-knowledge` を閉じるときに移した。
-- Windows の実行先に Python（または uv）があるか（2026-10-21。言語の優先順位は Python → ps1 → bat に決まった。この答えで、Windows 側の薄い層を Python にできるかが変わる）: あれば、`dev-deliverable-guide.md` の「実行の方針」の Windows 依存の薄い層を ps1 でなく Python にでき、`check-ps1.ps1` に相当する Python 側の点検が要る。今は薄い層を ps1（pwsh 7 は勤務先の PC で使えることを確認済み）にしている。
+- Windows の薄い層を Python にするか（2026-10-21。言語の優先順位は Python → ps1 → bat に決まった。Windows の実行先に Python と uv があることは、ユーザーが確認済み〔10-21〕。残りは、薄い層を ps1 から Python に替えるかの判断）: 替えるなら、`dev-deliverable-guide.md` の「実行の方針」の Windows 依存の薄い層を ps1 でなく Python にでき、`check-ps1.ps1` に相当する Python 側の点検が要る。今は薄い層を ps1（pwsh 7 は勤務先の PC で使えることを確認済み）にしている。
 - `room init --only changed`（2026-10-21）: 既存の部屋に、足された段だけを自動で入れる案。`Room-Rev`（トレーラー）から現在の版までの `room.py` の差分で、変わった段を選ぶ。段と変更箇所の対応表が要る（今は人が差分を見て `--only` に渡す）。`--only` の実機での使い心地を見てから決める。
 - `stock-hook.md` の手順「既存の知識と重なるか確認する」/ 理解のとき、近い既存ガイドが新しい内容で古くなる場合の扱いが曖昧（`stock-explain.md` は「同じテーマがあればメモを作らず報告」とだけ書く）。案: テーマが違うなら作り、既存ガイドの更新が要る点は、メモの「要確認事項」に書く（2026-10-21 は、この形で作った）。
 
-- 計画と部屋の README の紐付け（2026-10-21。`topics/plan-room-link/`）: 場所 = `workflow-kit/room/room.py`（`cmd_start`、`README_TEMPLATE`）、`workflow-kit/templates/project/README.template.md`、`start-plan.md`、`room-context.md`、`room/README.md`、`exmem/lessons/planning-method.md`。問題 = `start 計画` の出力が README に結び付いていない。承認（`start --adopt`）のたびに手で README を直すと漏れる。案 = 部屋の AI が計画と一緒に `ai/work/plan/readme-block.md` を書き、人が `ai/in/plan/` に置いて `--adopt` したとき、`room start` が README の印つきの節「計画」だけを機械的に差し替える。Area の README と `open-hook.md` と `close` の雛形チェックは変えない。論点 1〜6 の仮決めと変更先の一覧は `topics/plan-room-link/plan-room-link-issues.md`（4 章）。スクリーニングの注意: 論点 6 件を 1 承認にまとめると型 D。2026-10-19 の「`open` は触らない」の見直しを含む（`open` 自体は変えない）。
+- 計画と部屋の README の紐付け（2026-10-21。`topics/plan-room-link/`）: 場所 = `workflow-kit/room/room.py`（`cmd_start`、`README_TEMPLATE`）、`workflow-kit/templates/project/README.template.md`、`start-plan.md`、`room-context.md`、`room/README.md`、`exmem/lessons/planning-method.md`。問題 = `start 計画` の出力が README に結び付いていない。承認（`start --adopt`）のたびに手で README を直すと漏れる。案 = 部屋の AI が計画と一緒に `ai/work/plan/readme-block.md` を書き、人が `ai/in/plan/` に置いて `--adopt` したとき、`room start` が README の印つきの節「計画」だけを機械的に差し替える。Area の README と `open-hook.md` と `close` の雛形チェックは変えない。論点 1〜6 の仮決めと変更先の一覧は `topics/plan-room-link/plan-room-link-issues.md`（4 章）。スクリーニングの注意: 論点 6 件を 1 承認にまとめると型 D。2026-10-19 の「`open` は触らない」の見直しを含む（`open` 自体は変えない）。【10-21 の消化で保留、判断は 10-24】スクリーニングの指摘: 機構・雛形・不変の確認の3つに分ける（型 D）。10 行・1KB の上限は AI 案で未確認（型 E）。`start` が README を書く新経路は、10-21 の「後続は何も変えずに止まる」と並べて見る。ユーザーの懸念: 計画を直すたびに置き直しと `--adopt` が要り、運用が重くなる。代替案（`ai/ctx/README.md` への合成、`room readme` に引数）を検討してから決める。
 
 - 【案件】の行き先: `para-operations`（2026-10-07）は Area の `docs/decisions.md`、実装（2026-10-14）は Area の `ai/docs/inbox.md`。現行はどちらか（`topics/private-knowledge/` の確認 #2）。
 - `remote` の type: 要否は項目 `dev-env` の実使用（済み。10-20 にユーザーが業務で使った）を踏まえて決める。【保留 〜2026-11-02】
