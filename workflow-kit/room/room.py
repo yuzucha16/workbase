@@ -831,10 +831,10 @@ def cmd_init(ctx, a):
         got = dict(l.strip().split("=", 1) for l in out.splitlines() if "=" in l)
         if got != {"user": "ai", "c": "0", "cmd": "no", "sudo": "no"}:
             raise RoomError(f"分離の確認が目安と違う（{got}）。user=ai, c=0, cmd=no, sudo=no が目安。道具は入れていない")
-    ctx.say("道具を入れる（curl、rg、Node.js、LibreOffice、pandoc、PowerShell 7、uv、Claude Code。uv と Claude Code は配布元のスクリプトをそのまま実行する）")
+    ctx.say("道具を入れる（curl、rg、git、Node.js、LibreOffice、pandoc、PowerShell 7、uv、Claude Code。uv と Claude Code は配布元のスクリプトをそのまま実行する）")
     if want("apt"):
-        step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep）",
-                    "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep\n", root=True)
+        step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep, git）",
+                    "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep git\n", root=True)
     if ca_pem and want("cacert"):
         ctx.say("証明書を入れる（root 所有。ai は読めるが書き換えられない）")
         for p in ca_prints:
@@ -1010,7 +1010,7 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 
 人が確認して `exmem/inbox/` へ運ぶ。
 
-部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git log` `git commit`）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。作業の区切りで自由にコミットしてよい。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
+部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git add` `git commit` `git log`）。リポジトリは `room start` が用意済みなので、許可を取らずに使ってよい。自分で `git init` や `git config` をしない（`.git` を作ると works に回収される。`git status` が失敗したときは、作らずに人に伝える）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。作業の区切りで自由にコミットしてよい。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
 
 `ai/out/` の文書に、`⟦` と `⟧` を、マスクの記号以外の用途で書かない。説明文でプレースホルダーの形を示すときは、「CUST_001 の形」のように括弧なしで書く（`⟦CUST_nnn⟧` のような書き方は、復元が壊れた記号として止まる）。
 """
@@ -1065,7 +1065,9 @@ def share_state(ctx, root):
 POINTER_BEGIN = "<!-- room-shared:begin（room start が管理する。この範囲は書き換えられる） -->"
 POINTER_END = "<!-- room-shared:end -->"
 POINTER_TEXT = """共有知（読み取り専用の写し）が `~/shared` にある。作業の前に `~/shared/ROOM.md` を読む。
-合言葉（`start` `wrap` など）を言われたら、`~/shared/workflow-kit/hooks.md` の表に従って手順書を読む。`~/shared` には書かない。"""
+合言葉（`start` `wrap` など）を言われたら、`~/shared/workflow-kit/hooks.md` の表に従って手順書を読む。`~/shared` には書かない。
+git は、`/mnt/room/<名>` の下で自由に使ってよい（許可は不要）。部屋のローカルの git が `room start` で用意済みで、`git status` `git diff` `git add` `git commit` `git log` がそのまま動く。
+自分で `git init` や `git config` をしない（`.git` を作ると works に回収される）。ここのコミットは部屋の中だけの記録で、セッションの終わりに捨てる。"""
 
 
 def install_guide_pointer(ctx, p):

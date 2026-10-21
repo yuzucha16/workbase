@@ -19,7 +19,7 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 - 手順書は `~/shared/workflow-kit/` にある（読み取り専用の写し。基準コミットは `~/shared/ROOM.md`）。
 - 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、works へのコミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する。
 - Windows で人が実行するスクリプト（ps1、起動用 bat）を作るときは、`dev-deliverable-guide.md` の「Windows で実行するスクリプト」に従う（束ねる役も ps1、bat は起動用の 3 行だけ。作った直後に、部屋の pwsh 7 で `~/shared/workflow-kit/tools/check-ps1.ps1` を実行する。2026-10-21）。
-- 部屋の git（`/mnt/room/<名>` の下で使える、部屋のローカルの git）は例外で、AI が自由に使ってよい（`git diff` で回収される変更を見る、作業の区切りでコミットする）。セッションの終わりに捨てるので、works には届かない。works へのコミットは `room start` の回収が既定で行う。
+- 部屋の git（`/mnt/room/<名>` の下で使える、部屋のローカルの git）は例外で、AI が自由に使ってよい（許可は要らない。リポジトリは `room start` が用意済みなので、AI は `git init` `git config` をしない。この案内は、部屋の `~/.claude/CLAUDE.md` と `~/shared/ROOM.md` の両方に入る。`git diff` で回収される変更を見る、作業の区切りでコミットする）。セッションの終わりに捨てるので、works には届かない。works へのコミットは `room start` の回収が既定で行う。
 - `wrap-hook.md` の手順「コミットする」（push を含む）は、部屋では行わない（works へのコミットは回収の側。部屋の git のコミットは、作業の記録として任意）。`wrap-hook.md` の手順「昇格の案を出す」の知識化は、部屋では `ai/out/stock/` の下書きに一本化する（下の `stock`）。部屋の `wrap` は、業務の知識を `ai/docs/` に残し、共有知は `stock` の窓口だけから出す。
 
 ## `ai/out/close.md` の書き方（部屋の中）
