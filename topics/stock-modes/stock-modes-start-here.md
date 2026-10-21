@@ -9,7 +9,7 @@ M1〜M3 を通した（2026-10-21）。`stock 理解` を `workflow-kit/` に実
 
 ## あなた待ち
 
-- 設計からの差分4件の確認（`docs/decisions.md`）。計画へのフィードバック案8件（`topics/planning-method/`）の承認は `review 消化`。
+- 計画へのフィードバック案8件（`topics/planning-method/`）の承認は `review 消化`。
 
 ## 次の一手
 

@@ -9,7 +9,7 @@ M1〜M3 を 2026-10-21 に通した（ユーザーが設計の【提案】を一
 ## Next Actions
 
 1. 実機で通す: `stock 理解` で下書きを作り、`integrate` で `guides/explain/` に入れる（実際の理解ガイドの題材で。本物のファイルができるので、使うときに行う）。`room stock` の実機も同じ。通ったらトピックを閉じる（`topics/AGENTS.md`）。
-2. 設計からの差分4件（`decisions.md`）の確認。
+2. （済 2026-10-21）設計からの差分4件はユーザーが承認した。
 3. フィードバック（`topics/planning-method/planning-method-feedback-stock-modes-m1.md`）の案8件は未承認。`review 消化` で扱う。6R 末尾の6件も同じ。
 
 ## Open Questions
