@@ -428,6 +428,64 @@ class InitTest(unittest.TestCase):
             self.assertFalse(hasattr(wsl, "terminated"))
             self.assertFalse(hasattr(wsl, "installed"))
 
+    def load_stop_hook(self, tmp):
+        import importlib.util
+        f = Path(tmp) / "room_stop_record.py"
+        f.write_text(room.STOP_RECORD_PY, encoding="utf-8", newline="\n")
+        spec = importlib.util.spec_from_file_location("room_stop_record", f)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # 構文エラー（docstring のバックスラッシュなど）もここで出る
+        return mod
+
+    def test_init_stophook_step_installs_hook_and_registers_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            wsl = FakeWsl()
+            room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=False, only="stophook"))
+            self.assertEqual(len(wsl.scripts), 2)  # フックの設置と、道具の確認だけ
+            distro, text, root = wsl.scripts[0]
+            self.assertFalse(root)  # 部屋の一般ユーザー（ai）の ~/.claude に置く
+            self.assertIn(f"$HOME/.claude/hooks/{room.STOP_HOOK_NAME}", text)
+            self.assertIn("python3 $HOME/.claude/hooks/" + room.STOP_HOOK_NAME, text)
+            self.assertIn('"Stop"', text)
+            self.assertEqual(text.count("ROOM_STOP_EOF"), 2)  # heredoc の区切りが本文に混ざっていない
+
+    def test_stop_hook_script_redacts_windows_user_paths(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            mod = self.load_stop_hook(tmp)
+            for src in ("C:\\Users\\taro\\works\\x", "c:/Users/taro/works/x", "/mnt/c/Users/taro/works/x", "/mnt/d/Users/taro/x"):
+                self.assertNotIn("taro", mod.redact(src))
+                self.assertIn("%USERPROFILE%", mod.redact(src))
+            self.assertEqual(mod.redact("C:\\Users\\taro\\works\\x"), "%USERPROFILE%\\works\\x")
+            self.assertEqual(mod.redact("/mnt/room/proj-a/ai/out"), "/mnt/room/proj-a/ai/out")  # 部屋のパスは変えない
+
+    def test_stop_hook_script_records_into_project_ai_records(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            mod = self.load_stop_hook(tmp)
+            self.assertEqual(mod.record_dir("/mnt/room/proj-a"), "/mnt/room/proj-a/ai/records")
+            self.assertEqual(mod.record_dir("/mnt/room/proj-a/ai/work"), "/mnt/room/proj-a/ai/records")
+            self.assertTrue(mod.record_dir("/home/ai/other").endswith(os.path.join("claude-records", "other")))
+            # 本体の通し: 記録先だけ差し替えて、応答本文の置換と同じ session の行の置き換えを確かめる
+            out = Path(tmp) / "records"
+            mod.record_dir = lambda cwd: str(out)
+            tr = Path(tmp) / "t.jsonl"
+            tr.write_text(json.dumps({"type": "assistant", "message": {"id": "m1", "model": "claude-sonnet-5-5",
+                                                                        "usage": {"input_tokens": 10, "output_tokens": 5}}}) + "\n", encoding="utf-8")
+            import io
+            for _ in range(2):
+                sys.stdin = io.StringIO(json.dumps({"cwd": "/mnt/room/proj-a", "transcript_path": str(tr), "session_id": "abcdef123456",
+                                                    "last_assistant_message": "開いた: C:\\Users\\taro\\x"}))
+                try:
+                    mod.main()
+                finally:
+                    sys.stdin = sys.__stdin__
+            rows = (out / "sessions.jsonl").read_text(encoding="utf-8").splitlines()
+            self.assertEqual(len(rows), 1)  # 同じ session_id は置き換え
+            self.assertEqual(json.loads(rows[0])["requests"], 1)
+            reply = next((out / "replies").iterdir()).read_text(encoding="utf-8")
+            self.assertIn("%USERPROFILE%\\x", reply)
+            self.assertNotIn("taro", reply)
+
     def test_init_only_rejects_unknown_step_and_missing_room(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)

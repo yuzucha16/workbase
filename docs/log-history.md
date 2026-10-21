@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-21（Next Actions 18: 部屋の Stop フックの記録を実装）
+- `room init` に段 `stophook` を足した（`room.py` の `STOP_RECORD_PY`、`STOP_HOOK_INSTALL`）。部屋の ai ユーザーの `~/.claude/hooks/room-stop-record.py` を置き、`~/.claude/settings.json` の Stop に登録する。記録先は cwd が `/mnt/room/<Project>` のとき Project の `ai/records/`（`sessions.jsonl`、`replies/<日付>.md`）、それ以外は `~/claude-records/<フォルダ名>`。記録時に `C:\Users\<名>`・`/mnt/c/Users/<名>` を `%USERPROFILE%` に置換。
+- 確認: 単体テスト 3 件を足し、全体 124 件パス（スキップ 3。`python -m unittest discover -s tests`）。実機は未確認。
+- ③ `~/claude-records/room/` は cwd が `workflow-kit\room`（Windows 側）で、部屋の中の記録ではない。④ `mask-spec.md` の `ai/records/` の行に記録を足し、矛盾なし。決定は `decisions.md` の同日の項。
+
 ### 2026-10-21（Next Actions 15・16・17 を閉じた。実機確認の完了）
 - ユーザーが「15〜17 は完了している」と報告した。15 = 部屋の git（`init --only apt` → `start` → 回収、ラッパー、AI の利用）、16 = pwsh 7 と `check-ps1.ps1`（取得、指摘、束ねる ps1、言語の優先順位）、17 = 並行 `start`（4 点）。個別の数字・結果は記録に残っていない（未記録）。
 - 17 のメモ 3 件の `integrate` も確認済み（ユーザー）。15〜17 の結果は、すべて期待どおりで、問題・残件なし。項目 17 も `log.md` から消した。
