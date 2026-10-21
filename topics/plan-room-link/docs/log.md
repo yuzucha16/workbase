@@ -4,7 +4,7 @@
 
 ## Next Actions
 
-1. 論点 1〜3 は仮に決まった（本体は `ai/in/plan/`、案 A、日付は frontmatter。`decisions.md`）。次は、frontmatter の項目名とマイルストーンの入れ方、`readme-block.md` の形（印つきの範囲、6R の分解の書き方）。
+1. 論点 1〜3 は仮に決まった（本体は `ai/in/plan/`、案 A、日付は本文。`decisions.md`）。次は、印つきの範囲に何を入れるか（`readme-block.md` の形、6R の分解の書き方）。
 2. 決まったら、`start 計画` で、この題材の 6R を作るか決める（作るなら出力は `records/`。`topics/AGENTS.md` の仕訳）。
 3. 論点 4〜6（Area の README、`open` の前に作った計画、雛形の変更）を決める。
 4. 仕組みの変更（`open` は触らないという 2026-10-19 の取り決めの見直しを含む）は、`review 消化` の3段で承認してから、kit と `room.py` に反映する。

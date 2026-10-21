@@ -4,10 +4,10 @@
 
 ## Decisions
 
-### 【この件】【仮】README への反映は案 A（承認の `--adopt` で機械的に差し替え）。日付は frontmatter に足す（2026-10-21）
-- 決めたこと（ユーザー）: ① 案 A: AI が計画4点と一緒に README 用のブロック（`readme-block.md`）を `ai/work/plan/` に下書きし、人が `ai/in/plan/` に置いて `room start --adopt` する（承認）と、`room` が README の印つきの範囲を機械的に差し替える。② 憲章の完了時期（と主要マイルストーン）の置き場は、README の本文に節を新設せず、frontmatter に項目を追加する。
+### 【この件】【仮】README への反映は案 A（承認の `--adopt` で機械的に差し替え）。日付は本文に置く（2026-10-21）
+- 決めたこと（ユーザー）: ① 案 A: AI が計画4点と一緒に README 用のブロック（`readme-block.md`）を `ai/work/plan/` に下書きし、人が `ai/in/plan/` に置いて `room start --adopt` する（承認）と、`room` が README の印つきの範囲を機械的に差し替える。② 憲章の完了時期（と主要マイルストーン）の置き場は、~~frontmatter に項目を追加する~~ → README の本文にする（同日に変更。ユーザー: frontmatter にこだわりは無い。本文なら `room readme` が frontmatter を変えない決まりと衝突せず、印の範囲の差し替えだけで済む）。
 - 根拠: ユーザーの発言（2026-10-21）「aにします。frontmatterに追加」。
-- 設計上の注意（AI の読み。未確認）: `room readme` は frontmatter を変えない決まり（`cmd_readme`）なので、自動反映は frontmatter の更新を別に持つ必要がある。frontmatter の項目名（`due:` など）、マイルストーン3つをどう入れるか（配列か、本文の既存の節か）は未決。
+- 設計上の注意（AI の読み。未確認）: 日付が本文なので、frontmatter の更新は要らない（`room readme` は frontmatter を変えない決まり、`cmd_readme`）。印の範囲に何を入れるか（新しい節「計画」だけか、5節の分解まで含めるか）は未決。
 - 見直しの条件: 実装前に `review 消化` を通す（`open` は触らない取り決めの見直しを含む）。
 
 ### 【この件】【仮】計画は実名なしで用意する。README への反映は承認で自動にしたい（2026-10-21）
