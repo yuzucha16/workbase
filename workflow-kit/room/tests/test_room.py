@@ -1098,6 +1098,13 @@ class NoDataModeTest(unittest.TestCase):
                 self.assertNotIn("data:", (p / "README.md").read_text(encoding="utf-8"))
                 self.assertFalse(any("警告" in m for m in c.msgs))
 
+    def test_open_writes_a_valid_mask_toml_template(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _v, _c, p = self.open_with(tmp)
+            self.assertEqual((p / "_noai/mask.toml").read_text(encoding="utf-8"), room.MASK_TOML_TEMPLATE)
+            cfg = room.maskkit.load_config(p / "_noai/mask.toml")
+            self.assertEqual(cfg.terms, {})
+
     def test_stale_data_key_is_ignored(self):
         with tempfile.TemporaryDirectory() as tmp:
             _v, c, p = self.open_with(tmp)
