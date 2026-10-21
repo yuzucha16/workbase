@@ -884,6 +884,38 @@ class PullKnowledgeTest(unittest.TestCase):
             src = json.loads((p / "_noai/map/pull-sources.json").read_text(encoding="utf-8"))
             self.assertEqual(list(src.values()), ["2026-10-14-アクメ商事-定例.md"])
 
+    def test_pull_from_source_selects_by_path_and_hides_names(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            s = v / "areas/area-x/_noai/source"
+            (s / "客先A").mkdir(parents=True)
+            (s / "客先A/議事録.csv").write_text("アクメ商事,1\n", encoding="utf-8")
+            (s / "客先A/メモ.md").write_text("x\n", encoding="utf-8")
+            (s / "他社.csv").write_text("y\n", encoding="utf-8")
+            self.pull(c, origin="source", path=["客先A/*.csv"])
+            names = sorted(f.name for f in (p / "_noai/raw/area").iterdir())
+            self.assertEqual(len(names), 1)
+            self.assertTrue(names[0].startswith("src-") and names[0].endswith(".csv"))
+            self.assertNotIn("議事録", names[0])
+            src = json.loads((p / "_noai/map/pull-sources.json").read_text(encoding="utf-8"))
+            self.assertEqual(list(src.values()), ["_noai/source/客先A/議事録.csv"])
+
+    def test_pull_from_source_needs_a_path_inside_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            (v / "areas/area-x/_noai/source").mkdir(parents=True)
+            (v / "areas/area-x/_noai/source/a.csv").write_text("x\n", encoding="utf-8")
+            for bad in (None, ["../knowledge/*.md"]):
+                with self.assertRaises(room.RoomError):
+                    self.pull(c, origin="source", path=bad)
+
+    def test_mask_warns_about_hand_placed_raw(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            (p / "_noai/raw/手置き.md").write_text("アクメ商事\n", encoding="utf-8")
+            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
+            self.assertTrue(any("pull で取り出したものではない" in m for m in c.msgs))
+
     def test_pull_then_start_then_integrated_note_returns_to_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
