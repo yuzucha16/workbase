@@ -16,7 +16,5 @@ updated: 2026-10-20
 |---|---|---|---|
 | `kit-growth/` | Area（workflow-kit の育て方） | [[kit-growth-start-here]] | 0 |
 | `planning-method/` | Project（計画のやり方。kit-growth の子） | [[planning-method-start-here]] | 1 |
-| `stock-modes/` | Project（`stock` のモード追加。計画のやり方の試行の題材） | [[stock-modes-start-here]] | 1 |
-| `private-knowledge/` | Project（会議録のナレッジ化。kit-growth の子。計画は同トピックの `records/`） | [[private-knowledge-start-here]] | 1 |
 
 型と書き方、終わらせ方の規則は `AGENTS.md`。

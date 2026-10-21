@@ -58,7 +58,7 @@ sources:
 - 3題材（ツール開発、手順書の変更、会議録の知識化）の計画で、WBS の葉は実際のファイル数より多かった（確認: 2026-10-21、根拠: 各題材の WBS と成果物のファイルの突き合わせ）。
 - 品質チェック1回目の題材は1週間で、2週・4週の上限は検証できなかった（確認: 2026-10-21、根拠: 計画の期間が 10-21〜10-28）。
 - トークン・コスト可視化の試行（kit 以外、1週間、見本なし）: 実行は1セッションで終わり、日数の見積もりは桁で外れた。憲章の体制の欄と WBS の葉の多くが実態と合わなかった。6R の「裏づけ（未確認。最初に確かめる）」の欄がいちばん役に立った。
-- 測ったこと: `topics/kit-growth/records/planning-method-record.md`。試行の出力: 題材ごとのトピックの `records/`（`topics/stock-modes/`、`topics/private-knowledge/`。`usage-viz` は 2026-10-21 に閉じて削除、履歴は git）。
+- 測ったこと: `topics/kit-growth/records/planning-method-record.md`。試行の出力: 題材ごとのトピックの `records/`（`usage-viz` `stock-modes` `private-knowledge` は 2026-10-21 に閉じて削除、履歴は git）。
 
 ## Gotchas
 

@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-21（`stock-modes` と `private-knowledge` を閉じた）
+- ユーザーが別のセッションで両方を実機で試し、「問題無く動いた」「完了」と報告し、閉じることに賛成した（条件: stock と wrap が済んでいること）。`stock-modes` の知識は `exmem/lessons/` と `guides/` に統合済み（`29c2d4a`）、`private-knowledge` の【汎用】は `guides/explain/cross-area-shared-knowledge.md` などに反映済み。両トピックの【この件】の決定を root の `decisions.md` に1項ずつまとめて移し、トピックを削除（`records/` も移さず削除）、索引・`planning-method` の窓口と記録・リンクを直した。`usage-viz` に続く2・3件目で、残るトピックは `kit-growth`（Area 型）と `planning-method`。
+- 見えたこと: 実機の確認は別セッションで済んでいたが、記録に個別の数字は残っていない（未記録のまま）。
+
 ### 2026-10-21（room: 同じ Area の Project を同じ部屋で並行して `start` できるようにする）
 - ユーザーの相談: 部屋のマウントを複数にしたとき、Project 間でデータが見えるか。AI の思考時間中に別の Project を触りたい。同じ Area の Project に限り、すべて internal。同時に `start` すると、後続が「マウントがすでにある」で止まっていた（`preflight` が部屋の全マウントを確認していた）。
 - 検討: Project をまとめる案は、入力と終了時期が揃わず却下（ユーザー）。`--concurrent` のフラグ案は、ユーザーが既定にすると決めた。

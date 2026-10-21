@@ -88,7 +88,7 @@
 
 ### 【汎用】【仮 〜2026-10-28】題材ごとのトピックと、`records/` の仕訳（2か所）を、最新の扱いにする（2026-10-21）
 - 決めたこと（ユーザー。仮運用してから昇格するかを決める）:
-  - ① **構造**: 計画のやり方（`start 計画`）の題材ごとに、`topics/<名前>/`（kebab-case、1階層）の Project 型トピックを作る。構造は `planning-method` と同じ。窓口 `<名前>-start-here.md`、`docs/`（`log.md` `decisions.md` `log-history.md`）、`records/`。現在の対象: `planning-method`、`usage-viz`、`stock-modes`、`private-knowledge`。
+  - ① **構造**: 計画のやり方（`start 計画`）の題材ごとに、`topics/<名前>/`（kebab-case、1階層）の Project 型トピックを作る。構造は `planning-method` と同じ。窓口 `<名前>-start-here.md`、`docs/`（`log.md` `decisions.md` `log-history.md`）、`records/`。現在の対象: `planning-method`、`usage-viz`、`stock-modes`、`private-knowledge`（`usage-viz` `stock-modes` `private-knowledge` は 2026-10-21 に閉じた）。
   - ② **`records/` の仕訳は2か所**: `topics/kit-growth/records/` = 測ったことだけ（品質チェックと振り返り。`<名前>-record.md`、新しい順）。各トピックの `records/` = そのトピック自身の出力（6R・憲章・WBS・マイルストーン・作り方のメモ・見本・確認メモ・通し試験の結果の数字）。
   - ③ **ほかの置き場**: 決めたことはトピックの `docs/decisions.md`（ユーザーの発言を根拠に）、経緯は `log-history.md`、現在状態は `log.md`。実務の中身（顧客・案件）は入れない。
   - ④ **使わない置き場**: `topics/kit-growth/plans/`（振り返りへの入力案④の中の案。案④は 2026-11-11 まで保留のまま）、`planning-method/records/` への題材の計画の集約。
@@ -97,7 +97,20 @@
 - 却下案: `topics/kit-growth/` の下にトピックを置く（索引は1階層）、`kit-growth/plans/` への集約（案④は未決）、`planning-method/records/` に計画を集める（別題材の計画が混ざる）、昇格するまで都度聞く（題材が4つに増え、置き場が揺れた）。
 - 弱点: 計画が題材ごとに分散し、探す場所が増える（索引 `topics/topics-index.md` で引く）。
 - 見直しの条件: 期限 2026-10-28 に、`review 消化` が正式化・却下・延長をユーザーに聞く。正式化するときは、`workflow-kit/start-plan.md` の「置き場」の表（workbase の行が「未決」）と `topics/AGENTS.md` を直す（`workflow-kit/` は承認が要る）。却下するときの戻し方: 計画を `planning-method/records/` に戻す（履歴は git）。
-- → `topics/private-knowledge/docs/decisions.md`
+- → 会議録のナレッジ化を閉じた項（本ファイルの同日。トピックは削除済み）
+
+### 【この件】`stock` のモード追加（`topics/stock-modes/`）を閉じる。実装の決定をここに移す（2026-10-21）
+- 決めたこと（ユーザー、2026-10-20 に設計の軸、2026-10-21 に設計の【提案】を一括承認し、同日に別セッションで実機を試して閉じることに賛成）: ①`exmem/inbox/` を唯一の窓口として維持し、frontmatter の `kind: lesson | explain` で区別する（省略は `lesson`）。②モード名は `stock 理解`（`guides/explain/` 向け）と `stock ナレッジ`（`exmem/lessons/` 向け）。引数なしの `stock` は1問でモードを選ばせる（「両方」は入れない）。③既存の理解ガイドの更新（追記・上書き）は対象外。`find-knowledge` の `guides/` 対応は不要（重複確認は `guides/guides-index.md`）。④理解ガイドの下書きは6見出し（冒頭 / ダイジェスト / 基礎知識 / チェックリスト / 補足 / 要確認事項）で、書き方は `stock-explain.md` に分ける（`stock-hook.md` の字数枠のため）。⑤`integrate` は `kind: explain` を `guides/explain/` に新規作成し、`check_inbox`（py・ps1）は `kind` で点検項目を切り替える。⑥`room stock` は explain に古さの印を付けない。⑦`private-knowledge` との重なりは衝突なし。`kind` は `type` ごとの値で、固有の事実は仮名でも workbase に書かない（`stock-hook.md` に追加）。設計からの差分4件はユーザーが承認した。
+- 根拠: ユーザーの回答と承認。ユーザーは「別のセッションで試しました。問題無く動いたので、実機確認は完了です」と述べた（2026-10-21）。単体テストと点検（py・ps1）は FAIL 0。
+- 却下案: `guides/inbox/`（窓口が3か所に増える）、`workbase/inbox/`（約25ファイルの参照と `room.py` の書き換え）、`stock` の選択肢に「両方」。
+- 閉じ方: 完了条件は達成済み。`records/` の計画3件は移さず削除した。未確認は、`room stock` の個別の結果（ユーザーは実機で問題なしと報告、詳細は未記録）。使われなければ `kind: explain` の分岐を外して戻す（履歴は git）。`start 計画` へのフィードバック案8件は未承認のまま `topics/planning-method/` にある（`review 消化`）。
+
+### 【この件】会議録のナレッジ化（`topics/private-knowledge/`）を閉じる。実装の決定をここに移す（2026-10-21）
+- 決めたこと（ユーザー、2026-10-21。実機で試して閉じることに賛成）: ①規則（型・タグ・索引・昇格の流れ）だけ workbase に置き、中身（顧客・案件）は works 側の Area に置く。参照用は Project を跨げる Area 配下。②共有の単位は Area（自社・顧客ごとの抽出は want で `org:`）。③AI 向け・私向けは1ファイル2層（冒頭の数行＝人向け、本文＝AI 向け）。決定事項・ToDo は既存の3ラベルに載せる。④顧客名は Area 内では書いてよく、AI（room）に渡すところはマスク。⑤渡し方は、必要な分を Area から取り出してマスクした写しを部屋に置く。選び方は「絞って人が確認」（**仮案**。負担が出たら見直す）。写しは渡すときに作る。⑥統合は部屋の作業にする（works の AI は実名を読まない。deny は `Read`/`Edit` の安全網でシェルは止まらない）。知識は3層（事実 = Area、部屋用の写し、一般化した教訓 = workbase）で、固有の事実は仮名でも workbase に切り出さない。⑦`room pull`（`--where <項目>=<値>`、`status: active` のみ）と `restore` の Area 書き出し（`ai/out/knowledge/` → Area）を実装した。人が変えた既存ファイルがあれば `restore` が止まり、`--force` で上書き（直前の版を退避）。manifest に Area のファイル名を書かない（部屋の AI から見え、顧客名を含みうる）。⑧会議録の型: `YYYY-MM-DD-<slug>.md`（統合ノートは `kind: integrated`）、`type: area-note`、見出しは 冒頭（10行以内〔仮〕）/ 決定 / ToDo（表）/ 背景・経緯 / 事実・数値 / 未決・要確認。ToDo の正は表。
+- 根拠: ユーザーの回答と承認（2026-10-21）。実機の通し試験（ダミーの Area）は「すべて問題なし」、続けて実際に使って「完了」と報告（個別の数字は未記録）。案と比較は `guides/explain/cross-area-shared-knowledge.md`、一般化した教訓は `exmem/lessons/` と `guides/explain/ai-room-data-layout.md` に反映済み。
+- 却下案: 非公開リポジトリの新設、マスクして workbase に上げる、2ファイル、Project 内だけの置き場、AI が Area を直接読む案、常にマスク済みの写しを持つ案。
+- その後の変更: Area の知識置き場は `areas/<Area>/_noai/knowledge/` に移り、`data:` は廃止された（上の同日の【汎用】の項）。型（⑧）の見本 `records/meeting-note-example.md` は、閉じるときに削除した（履歴は git）。
+- 閉じ方: `records/` の計画・見本・確認メモは移さず削除した。残件は `docs/log.md` の Next Actions 12。
 
 ### 【汎用】部屋に変換の道具を入れる（v1）。Windows が要る実行は `room run` の案（v2・v3）にする（2026-10-20）
 - 決めたこと（ユーザー）: ① 部屋の道具は `init` で root が入れる（AI がホームに入れる案ではない）。② 呼び分け: **v1** = 部屋に LibreOffice・Chromium（mermaid-cli）・pandoc を入れる。**v2** = `room run`（`data: none` と `mask` だけ）。**v3** = v2 に実データ（`restore`）への実行を足す。v1 に価値がなければ v2 に上げる。③ v1 は実装済み（`room.py` の `init`）。mermaid の画像化は部屋で完結させる（Chromium は Playwright 版）。日本語（JP）の字形を優先する。④ `room run` の方針: 1 回に 1 件、成果物を名前で指定して実行する（全体実行・Area 単位は作らない）。スクリプトは `ai/work/run/`（使い捨てのスクリプトの置き場）、成果物は `ai/out/<成果物名>/dist/`（実データ由来は `_noai/final/<成果物名>/dist/`）。実行の記録は `room` だけが書き、`start` の冒頭と `close` の停止で未実行に気づく。⑤ v3 は、静的検査・入力のコピー・書き出しとログは `_noai/` の条件で許す（弱点: 難読化は防げない。最後の関門は人が読むこと）。⑥ PlemolJP（等幅フォント）は、試験が安定するまで `init` から外す（ユーザーの依頼。手順は `room.py` に残し、コメントを外せば戻る）。⑦ PC1 で pwsh 7 は使える（ユーザーの申告）。
