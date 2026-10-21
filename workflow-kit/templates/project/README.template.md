@@ -11,6 +11,8 @@ updated: <YYYY-MM-DD>
 
 <目的を1〜2文。所属 Area: [[areas/<Area 名>/README|<Area 名>]]>
 
+計画: `ai/in/plan/`（承認版。`start 計画` の出力。無ければ未作成）
+
 ## いま / あなた待ち / 次の一手
 
 <各1行。詳細は `docs/log.md`。`docs/` が無い小さな Project では省く。README が窓口の役を兼ねる（予算 2KB）>
