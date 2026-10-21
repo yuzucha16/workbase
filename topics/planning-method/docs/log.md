@@ -10,7 +10,7 @@
 2b. （済 2026-10-21 承認）WBS の第2層は成果物の種類で分ける。中間の記録は、読み手がいれば葉、読み手のいない本当の中間物（テスト、作業用スクリプト）だけ親に含める。`start-plan.md` に反映済み。効果は次の題材で見る。
 2c. （2026-10-21 記録、未承認）stock-modes の設計・実装・通し試験を通した、憲章・WBS・マイルストーンへのフィードバック: [[planning-method-feedback-stock-modes-m1]]（削除候補7、粒度5、足りない5、`start-plan.md` への案8件）。`review 消化` で扱う。前回の6件（`stock-modes-6r.md` の末尾）は 2a で反映済み。
 3. 振り返りへの入力（計画を基準にする案）は、直下 `docs/log.md` の Open Questions にある。10-20 に保留にした（2026-11-11 まで。品質チェック3回の後に出し直す）。承認した計画の置き場の案（`topics/kit-growth/plans/`）は、このトピックの置き場と合わせて見直す。
-4. 試行の題材は、2026-10-21 にトピックへ切り出した: `topics/usage-viz/`（トークン・コスト可視化。実装まで終わった）、`topics/stock-modes/`（`stock` のモード追加。M1 の途中）、`topics/private-knowledge/`（会議録のナレッジ化）。各トピックの状態はそれぞれの `docs/log.md`。
+4. 試行の題材は、2026-10-21 にトピックへ切り出した: `topics/stock-modes/`（`stock` のモード追加。M1 の途中）、`topics/private-knowledge/`（会議録のナレッジ化）。各トピックの状態はそれぞれの `docs/log.md`。`topics/usage-viz/`（トークン・コスト可視化）は実装まで終わり、2026-10-21 に閉じた（決定は root の `docs/decisions.md`）。
 
 ## Open Questions
 

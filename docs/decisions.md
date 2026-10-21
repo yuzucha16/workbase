@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【この件】トークン・コスト可視化（`topics/usage-viz/`）を閉じる。実装の決定をここに移す（2026-10-21）
+- 決めたこと（ユーザー、2026-10-20 に実装を決め、2026-10-21 に閉じることに賛成）: ①週次・月次の集計、ランキング、平均・最大・最小、HTML のレポートを実装する（`workflow-kit/tools/usage_report.py`、`usage_report_html.py`）。②ツールの置き場は `workflow-kit/tools/`。③単価は Anthropic の公式の料金ページの値（ドル）を `usage_prices.json` に出典・取得日つきで持つ。④突合のため `npx ccusage` を許可する。⑤使い方は `guides/howto/claude-usage-report.md`。⑥計画の読みは C（既存ツールで試し、足りない分だけ自作）。「検証」は「憲章」の意味。10-23 以降の作業（運用の手順書）は M3 に束ねてよい（この題材1件の判断。一般の条件は未決で `topics/planning-method/` にある）。
+- 根拠: ユーザーの回答。ログの形式は未固定（Claude Code 内部）で、手順書の対応バージョン表に注記した。突合は合計トークンが ccusage と完全一致、費用は \$26.17 対 \$26.175。
+- 却下案: 単価を表に持たず `--prices` で外から渡すだけ（最初の版）。
+- 閉じ方: 完了条件は達成済み。`records/` の計画3件（6R、憲章・WBS・マイルストーン、作り方のメモ）は移さず、ディレクトリごと削除した（履歴は git、実行後のフィードバックは `start-plan.md` に反映済み）。未確認は HTML の見た目（ブラウザで開いていない）。
+
 ### 【汎用】room が作るコミットに、トレーラー `Room-Op` `Room-Rev` `Room-Area` `Room-Project` を付ける（2026-10-21）
 - 決めたこと（ユーザーの指示）: `room.py` が works に作るコミット（`init` `open` `rename-area` `start` `readme` `close`）に付ける。`Room-Rev` は resources の短縮ハッシュで、`workflow-kit/` に未コミットの変更があれば `-dirty`、git で引けなければ `unknown`。
 - 根拠: 既存の Area / Project を、どの版の room で作ったかが分かれば、`git diff <Room-Rev>..HEAD -- workflow-kit/room` で差分を確認でき、update できるかの判断材料になる。
