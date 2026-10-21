@@ -21,7 +21,7 @@
 - 経路は整備済み: 受け皿 = トピック、入力 = `inbox.md`、見直し = `review`。cwd はリポジトリのトップだけ。フックの権限は `hooks.md` の「領域とフックの権限」が正本。
 - 仕組みの決定は `review 消化` の3段で承認する（`approval-screening.md`）。仮決めは `【仮 〜日付】`。
 - やり方は `methods.md`（変更・調査1・調査2・振り返り1）。作り方は `exmem/lessons/method-creation.md`、改善の記録は `topics/kit-growth/records/`。
-- room（`workflow-kit/room/`）: 実機の通しは済み（2026-10-18）。Ubuntu 26.04 の部屋（`init`）、`data:` の none / mask / restore、`room shell` と Node の流れは、実機で確認済み（ユーザー、2026-10-19）。`room init` の `wsl --install` の早戻りは、次に再現するまで保留（`log-history.md` の同日の項）。`room aws-key` は、10-20 に原因（`sh -c` の引数経路で代入した変数が空になる）を直し、PC1 で動作を確認した（`08202a7`）。
+- room（`workflow-kit/room/`）: 実機の通しは済み（2026-10-18）。Ubuntu 26.04 の部屋（`init`）、`data:` の none / mask / restore（10-21 に `data:` を廃止し、状態で決める形にした。単体テストのみ）、`room shell` と Node の流れは、実機で確認済み（ユーザー、2026-10-19）。`room init` の `wsl --install` の早戻りは、次に再現するまで保留（`log-history.md` の同日の項）。`room aws-key` は、10-20 に原因（`sh -c` の引数経路で代入した変数が空になる）を直し、PC1 で動作を確認した（`08202a7`）。
 - room の変換の道具（2026-10-20）: `init` が LibreOffice・日本語フォント・pandoc・Chromium・mermaid-cli を root で入れる（v1。PC2 で確認、PC1 は未確認）。`room run`（v2・v3）は案のみ。経緯と使い方は `guides/explain/ai-room-convert-tools.md`、決定は `decisions.md` の同日の項。
 - room の Area を跨ぐ共有知（2026-10-21）: `room pull`（Area の `knowledge/` から条件で絞り、`_noai/raw/area/` へ）と、`restore` の Area 書き出し（`ai/out/knowledge/` → `areas/<Area>/knowledge/`。人が変えた既存ファイルがあれば止まる、`--force` で上書き）を実装し、実機の通しで問題なし。統合は部屋の作業（works の AI は実名を読まない）。手順は `guides/howto/ai-room-setup-script.md` の 4.1・6.1、理解は `guides/explain/cross-area-shared-knowledge.md`、決定は `topics/private-knowledge/docs/decisions.md`。
 - room のコミットのトレーラー（2026-10-21）: `init` `open` `rename-area` `start` `readme` `close` のコミットに `Room-Op` / `Room-Rev` / `Room-Area` / `Room-Project` を付ける（`room/README.md`、決定は `decisions.md` の同日の項）。`Room-Rev` を基点に `git diff <Room-Rev>..HEAD -- workflow-kit/room` で、既存の Area / Project に対する room の変更を確認できる。`restore` / `pull` の版は未記録。実機での確認は未実施（単体テストのみ）。room の単体テストは PC1 でスキップを含む全件パス（10-21。短縮名の不一致を直し、`openssl` が無い環境では CA のテストをスキップ。`9a9c8d2`）。
@@ -36,6 +36,7 @@
 
 12. 会議録のナレッジ化（`topics/private-knowledge/`。2026-10-21 開始）: Area を跨ぐ共有知の仕組み（`room pull`、`restore` の Area 書き出し、型）を実装し、実機の通し試験で問題なし（ダミーの Area）。`stock-modes` との重なりは整理済み（10-21。衝突なし、仕様の追加2点・削除なし）。次は、実例1件で指標を測ること、統合の手順書の整備、型の整理は別セッション（状態は同 `docs/log.md`）。続きは「private-knowledge の続き」。
 13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: `stock-modes/`（M1〜M3 は 10-21 に通した。次は実機: 実際の題材で `stock 理解` → `integrate`、`room stock`。`start 計画` へのフィードバック案8件は `topics/planning-method/planning-method-feedback-stock-modes-m1.md`、`review 消化` で承認）、`private-knowledge/` を、同じ構造で運用する（`usage-viz/` は 10-21 に閉じた。HTML の見た目はブラウザで未確認）。10-28 に正式化するかを `review 消化` で決める。
+14. room の原本の置き場の設計（2026-10-21）: `data:` 廃止（`decisions.md` の同日）の次。原本・成果物は `areas/<Area>/knowledge/`（知識）と分ける方針だけ決まっている。Area に `source/` を新設して `pull` が扱うか、`_noai/raw/` のままにするかを決める。実機で `data:` なしの `open` / `start` / `restore` を確かめる。
 
 ## Open Questions
 

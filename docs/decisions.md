@@ -4,6 +4,15 @@
 
 ## Decisions
 
+### 【汎用】Project の `data:`（none / mask / restore）を廃止し、マスクと復元を状態で決める（2026-10-21）
+
+- 決めたこと（ユーザー）: ① `data:` をやめる。② マスクは `_noai/raw/` に原本があるときだけ、復元は `_noai/map/mapping.json` があるとき（マスクしたことがあるとき）だけ行う。③ `_noai/{raw,map,final,user}` は `type` に関係なく常に作る。④ 以前の `mask`（復元しない）は `restore` に統一する。⑤ 既存の README に残る `data:` は無視する。
+- 根拠: `room pull` の新設で、実質 `restore` だけが使われる（`pull` は `restore` 限定）。`mask_project` は `raw` が空、`restore_project` は `ai/out` が空なら元から何もしないので、`data:` は拒否とガードにしか効いていなかった。`data: が無い` 場合の既定がすでに `restore` で、既存の挙動は変わらない。
+- 却下案: 現状維持（3値を残す）。設定と状態の食い違い（「`none` なのに `raw` に原本がある」）を防ぐガードが要り続けるため。
+- 注意: 復元を `ai/out` の有無だけで判断してはいけない。マスクしない Project（dev など）の `ai/out` のコードが「復元できない形式」で止まる。`mapping.json` の有無で見る。
+- 未決（次の設計）: 原本の置き場。`areas/<Area>/knowledge/` は Project から循環した成果物の置き場で、`_noai/raw/` の原本とは別物。知識と原本・成果物は分ける方針だけ決まっており、`source/` を新設するかは未決。
+- 確認済み: 単体テスト 104 件が通る（スキップ 3。2026-10-21）。実機は未確認。
+
 ### 【汎用】room init が Area の置き場（`knowledge/` と `ai/docs/inbox.md`）を作り、後続のコマンドは「無ければ作る」をやめ、何も変えずに止まる（2026-10-21）
 
 - 決めたこと: `room init <Area>` が、無ければ `areas/<Area>/knowledge/` と `areas/<Area>/ai/docs/inbox.md` を作る（あるものは触らない。部屋がすでにあって止まる場合も作成は先に行う）。`close` は inbox が、`restore` は知識置き場が無ければ、作らず、何も変えずに止まり、直し方（`room init <Area>`）を示す（復帰処理も警告して続行もしない。ユーザーの方針: 準備は初期化で行い、異常は状態を出して終わりに一本化）。

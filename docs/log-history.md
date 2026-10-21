@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-21（room: `data:` を廃止し、マスクと復元を状態で決める）
+- `room pull` の新設で実質 `restore` だけが使われることから、ユーザーと検討し、Project の `data:`（none / mask / restore）を廃止した。マスクは `_noai/raw/` に原本があるとき、復元は `_noai/map/mapping.json` があるときだけ行う。`open` は `type` に関係なく `_noai/{raw,map,final,user}` を作る。`mask`（復元しない）は `restore` に統一。変更: `room.py`、`room/README.md`、`templates/project/README.template.md`、`project-structure.md`、テスト（`DataModeTest` を `NoDataModeTest` に置換）。単体テスト 104 件が通る（スキップ 3）。実機は未確認。決定は `decisions.md` の同日の項。
+- 検討で分かったこと: 「窓口が2つ」に見えたのは、`areas/<Area>/knowledge/`（Project から循環した成果物）と `_noai/raw/`（作業の原本）の2つが入力元だったため。マスクの窓口は `_noai/raw` の一つ。知識と原本・成果物は別物なので置き場を分ける方針。置き場の設計は Next Actions 14。
+
 ### 2026-10-21（`stock ナレッジ`: 部屋の変換の道具と room run の設計）
 - `exmem/inbox/` に 2 件のメモを作った（クラウドのセッションなので、コミットして push した）: `2026-10-21-room-convert-tools-gotchas`（統合先: `ai-isolated-work-room.md`。道具の入れ方、Chromium・フォントの実機の落とし穴）、`2026-10-21-ai-run-record-design`（同。依頼と実行の記録の分離、気づく場所、スコープ、実データ実行の条件、最小の版から上げる進め方。進め方の 1 例は型にするには早い）。`stock 理解` は 10-20 に `guides/explain/ai-room-convert-tools.md` で済み。点検スクリプトは FAIL 0 / WARN 0。`decisions.md` の 2 項に `→` を足した。
 
