@@ -4,6 +4,14 @@
 
 ## Decisions
 
+### 【汎用】Area の知識置き場を `areas/<Area>/_noai/knowledge/` に移す。実名を含む Area のデータは `_noai/` の下にまとめる（2026-10-21）
+
+- 決めたこと（ユーザーが選択肢 C を選んだ）: ① 知識（share）、原本（source）、成果物（deliverable）は役割で分け、Area の実名を含むデータは `areas/<Area>/_noai/{source,deliverable,knowledge}` にまとめる。② 今回は `knowledge/` を `_noai/knowledge/` に移した（`KNOWLEDGE_DEFAULT`。`knowledge_dest:` での上書きは残す）。③ 成果物は原本や知識の昇格元で、知識は成果物の一般化、または工程で蒸留したもの。
+- 根拠: 3つとも実名を含む。旧 `areas/<Area>/knowledge/` は `_noai` の外にあり、`**/_noai/` の追跡除外と AI の deny が効かない状態だった（ユーザーが確認、2026-10-21）。親を `_noai` にすれば守り方が1か所で済む。`in` / `out` は Project の `ai/in`・`ai/out`（マスク済み）と紛れるので、Area 側は `source` / `deliverable` とする。
+- 却下案: A（`_noai` の外に3つ並べる。守りが3か所）、B（原本だけ足す。成果物の区分が Area に無い）。
+- 影響: 既存の Area は、`room init <Area>` が旧 `knowledge/` を見つけて警告する。自動では動かさない（人が中身を移す。追跡に入っていれば、履歴に実名が残っているので、別途判断する）。単体テスト 105 件が通る。実機は未確認。
+- 未決: `source/`（原本。`pull` が扱うか）と `deliverable/`（成果物を Area に戻す経路）。どちらも、まだ作っていない。
+
 ### 【汎用】Project の `data:`（none / mask / restore）を廃止し、マスクと復元を状態で決める（2026-10-21）
 
 - 決めたこと（ユーザー）: ① `data:` をやめる。② マスクは `_noai/raw/` に原本があるときだけ、復元は `_noai/map/mapping.json` があるとき（マスクしたことがあるとき）だけ行う。③ `_noai/{raw,map,final,user}` は `type` に関係なく常に作る。④ 以前の `mask`（復元しない）は `restore` に統一する。⑤ 既存の README に残る `data:` は無視する。

@@ -165,7 +165,7 @@ tanaka = ["田中太郎"]
 '@
 ```
 
-**手順2. Area に知識を置く**（ダミー。内容はすべて架空。`areas/<Area>/knowledge/` は `room init` が作る。`init` より前に作った Area は、`init <Area>` をもう一度実行すると足りない置き場だけ作る（部屋がすでにあるので止まるが、置き場は先に作られる）。下の `New-Item` は、`init` 前の Area の補い）:
+**手順2. Area に知識を置く**（ダミー。内容はすべて架空。`areas/<Area>/_noai/knowledge/` は `room init` が作る。`init` より前に作った Area は、`init <Area>` をもう一度実行すると足りない置き場だけ作る（部屋がすでにあるので止まるが、置き場は先に作られる）。下の `New-Item` は、`init` 前の Area の補い）:
 
 ```powershell
 $k = "$HOME\works\areas\pilot2\knowledge"
@@ -222,7 +222,7 @@ Select-String -Path $HOME\works\projects\pilot2-3\ai\records\manifest.json -Patt
 
 - `--where <項目>=<値>` は、frontmatter の項目で絞る（複数指定は AND。リストの項目は要素に一致）。`status: superseded` のファイルは取り出さない（`status` が無ければ active 扱い）。`--yes` で一覧の確認を省く
 - 部屋に渡るファイル名は、`<日付>-<元の相対パスのハッシュ>.md` にする（Area のファイル名は顧客名を含みうるため）。元の名前は `_noai/map/pull-sources.json`（部屋に渡らない）にある。manifest の `masked_from` にも名前は書かない
-- Area の知識置き場は `areas/<Area>/knowledge/`。変えるときは Project の README の frontmatter に `knowledge_dest: <Area からの相対パス>` を書く（Area の外は拒否）
+- Area の知識置き場は `areas/<Area>/_noai/knowledge/`。変えるときは Project の README の frontmatter に `knowledge_dest: <Area からの相対パス>` を書く（Area の外は拒否）
 - **確認ポイント**:
   - 一覧が1件だけ（`org` 一致かつ active）。取り出した名前に `アクメ` が無い
   - `ai/in/area/` の本文と、frontmatter の `org:` の値に `アクメ` `田中` が残らない（`org:` の値の置換は、実機で確認済み: 2026-10-21。残るときは、語を足して設計を見直す）
@@ -314,7 +314,7 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 
    対照: 人が書き換えていないときは、止まらない（もう一度 `restore` するだけ）
 
-- 書き出すのは、`ai/out/knowledge/` の下だけ（ほかの成果物は従来どおり `_noai/final/` にだけ書く）。書き出し先は `knowledge_dest`（既定 `areas/<Area>/knowledge/`）
+- 書き出すのは、`ai/out/knowledge/` の下だけ（ほかの成果物は従来どおり `_noai/final/` にだけ書く）。書き出し先は `knowledge_dest`（既定 `areas/<Area>/_noai/knowledge/`）
 - **止まる場合**: ファイル名にプレースホルダー（`⟦CUST_001⟧.md` など）が残る、置き場の外を指す名前、は何も書かずに止まる。直して `uv run room.py restore pilot2-3` を再実行する
 - 前回の書き出し（`_noai/map/knowledge-manifest.json` のハッシュ）から人が変えた既存ファイルがあると、`restore` は何も書かずに止まる（`--force` で上書き。直前の版は `_noai/final/_prev/knowledge/` に退避される。2026-10-21 に、警告から止める仕様に変えた）。`start` の終わりで止まったときも、`ai/out/` は回収済みなので、直して `restore` を再実行する
 - **確認ポイント**:
@@ -378,7 +378,7 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 | `Remove-Item` が `being used` | Windows 側の Zed の Agent などが、`projects\<名>\ai` を掴んでいる | Zed のウィンドウを閉じ、`claude-acp` のプロセスを終了する |
 | `close --commit` / `start --commit` が「対象外のファイルがステージされている」で止まる | ステージ済みの別の変更がある | 先にそれをコミットするか、`git restore --staged <パス>` で戻す（`init` `open` は止まらない。3 章） |
 | `pull` が「data: … の Project には取り出さない」 | `data: restore` でない Project | README の `data:` を `restore` にする（4.1） |
-| `pull` が「Area の知識置き場が無い」 | `areas/<Area>/knowledge/` が無い | 作る（4.1 の 2）。別の場所なら README に `knowledge_dest:` |
+| `pull` が「Area の知識置き場が無い」 | `areas/<Area>/_noai/knowledge/` が無い | 作る（4.1 の 2）。別の場所なら README に `knowledge_dest:` |
 | `pull` の一覧に何も出ない | `--where` が合わない、または `status: superseded` | frontmatter の項目名と値（リストは要素）を確かめる。`org:` の値は完全一致 |
 | `restore` が「Area の知識が、前回の書き出しから変わっている」 | 人が Area 側の統合ノートを直したあとに、同じ Project が書き出そうとした | Area 側の変更を残したいなら、先に退避するか、ノートに取り込んでから `--force`。上書きしてよければ `restore --force`（直前の版は `_noai\final\_prev\knowledge\`） |
 | `restore` が「ファイル名にプレースホルダーが残っている」 | AI が `ai/out/knowledge/` に `⟦…⟧` を含む名前を付けた | ファイル名を英数字に直し、`restore` を再実行する（6.1） |

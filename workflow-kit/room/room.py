@@ -653,6 +653,9 @@ updated: {today}
 def scaffold_area(ctx, area):
     """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（pull、restore、close）は、無ければ作らずに警告する。"""
     root = ctx.vault / "areas" / area
+    old = root / "knowledge"  # 2026-10-21 までの置き場（_noai の外で、守られていなかった）。自動では動かさない
+    if old.is_dir():
+        ctx.say(f"警告: areas/{area}/knowledge/ がある。知識置き場は {KNOWLEDGE_DEFAULT}/ に移った。中身を人が移す（追跡に入っていれば、履歴にも実名が残っている）")
     kd = root / KNOWLEDGE_DEFAULT
     if not kd.is_dir():
         kd.mkdir(parents=True)
@@ -1111,7 +1114,7 @@ def write_bytes(path, data):
     path.write_bytes(data)
 
 
-KNOWLEDGE_DEFAULT = "knowledge"  # Area の知識置き場（areas/<Area>/knowledge/）。README の knowledge_dest: で変える
+KNOWLEDGE_DEFAULT = "_noai/knowledge"  # Area の知識置き場（areas/<Area>/_noai/knowledge/。実名を含むので _noai の下＝追跡外・AI に見せない）。README の knowledge_dest: で変える
 KNOWLEDGE_OUT = "knowledge/"  # ai/out のこの下だけを Area に戻す
 PULL_PREFIX = "area/"  # _noai/raw の下の、Area から取り出した写しの置き場
 
