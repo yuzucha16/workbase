@@ -20,6 +20,7 @@
 - 変更: `workflow-kit/tools/check-ps1.ps1`（新規）、`room/room.py`（`PWSH_INSTALL`、`init` の手順、道具の確認）、`room/tests/test_room.py`、`dev-deliverable-guide.md`（節「Windows で実行するスクリプト」）、`room-context.md`、`workflow-kit/README.md`、`room/README.md`。
 - 確認: Windows と、Ubuntu 24.04 の一時ディレクトリの Linux 版 pwsh 7.6.7 で、チェッカーが良い例を通し、悪い例を検出した。Warning の検出と Pester の実行も確認した。room の単体テスト 115 件が通った。
 - 追加（ユーザーの依頼。出力先は、ユーザーの訂正で `ai/work/` に直した。成果物に混ざるのを避けるため）: 束ねる ps1 が `ai/work/<名前>.log` の 1 本にログを出す型を、ガイドに足した（`Start-Transcript`、`catch` でエラーとスタックを書く）。`check-ps1.ps1` に、起動用 bat の呼び先のログ出力の点検（WARN）を足した。試験で `$LASTEXITCODE` の未設定エラーを直した。
+- 方針（ユーザーの依頼）: bat・ps1・Python のどれにするかの相談から、部屋の AI には「部屋で完結できるなら、すべて部屋で実行する」「Excel・COM などの Windows 依存部は、できるだけ小さくし、人の手数を少なくする」と依頼を出せる形にした。実機の部屋（`room-pilot2`）の道具を読み取りで調べ（python3 3.14.4、uv、git、pwsh 7.6.7 ほか）、`dev-deliverable-guide.md` に節「実行の方針」を足した。`room-context.md` と `ROOM.md` に案内を足した。
 - 再訂正（ユーザー）: ログは `ai/` の中だと AI から読めるのを失念していた。機能は残し、既定では出さず、`-Log`（`-LogDir`）を付けたときだけ出す形にした。`check-ps1.ps1` の点検も合わせた。
 - 遠回り・直したもの: 試験で、Warning だけなのに FAIL が 1 件増える二重計上が見つかり、直した。部屋（Ubuntu 26.04）での `init` は未確認（Next Actions 16）。
 
