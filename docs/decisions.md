@@ -4,6 +4,13 @@
 
 ## Decisions
 
+### 【汎用】room が作るコミットに、トレーラー `Room-Op` `Room-Rev` `Room-Area` `Room-Project` を付ける（2026-10-21）
+- 決めたこと（ユーザーの指示）: `room.py` が works に作るコミット（`init` `open` `rename-area` `start` `readme` `close`）に付ける。`Room-Rev` は resources の短縮ハッシュで、`workflow-kit/` に未コミットの変更があれば `-dirty`、git で引けなければ `unknown`。
+- 根拠: 既存の Area / Project を、どの版の room で作ったかが分かれば、`git diff <Room-Rev>..HEAD -- workflow-kit/room` で差分を確認でき、update できるかの判断材料になる。
+- 判断（AI）: `-dirty` の判定は resources 全体でなく `workflow-kit/` に限る（無関係な未追跡ファイルで常に dirty になるのを避ける。`Kit-Rev` と範囲が違う）。コミットしない操作（`mask` `restore` `pull` `stock`）には付かない。
+- 見直しの条件: `restore` / `pull` の版も追いたくなったら、`room-log.md` への記録を検討する（既存ログの表の列が変わるので別件）。
+- 実装: `workflow-kit/room/room.py`（`kit_rev` `room_trailers`）、README、テスト1件。
+
 ### 【汎用】【仮 〜2026-10-28】題材ごとのトピックと、`records/` の仕訳（2か所）を、最新の扱いにする（2026-10-21）
 - 決めたこと（ユーザー。仮運用してから昇格するかを決める）:
   - ① **構造**: 計画のやり方（`start 計画`）の題材ごとに、`topics/<名前>/`（kebab-case、1階層）の Project 型トピックを作る。構造は `planning-method` と同じ。窓口 `<名前>-start-here.md`、`docs/`（`log.md` `decisions.md` `log-history.md`）、`records/`。現在の対象: `planning-method`、`usage-viz`、`stock-modes`、`private-knowledge`。
