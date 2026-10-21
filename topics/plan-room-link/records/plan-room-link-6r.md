@@ -64,4 +64,4 @@ updated: 2026-10-21
 
 ## 未決
 
-- 憲章・WBS・マイルストーンまで作るか。残りは4行（未の2つと実機確認、トピックを閉じる）で、6R で足りる可能性が高い〔推測〕。ユーザーに聞く。
+- （解決 2026-10-21）憲章・WBS・マイルストーンも、この 6R から作る（ユーザーの指示。後日、後追いの 6R などと比較・分析する）。[[plan-room-link-charter]]、[[plan-room-link-wbs]]、[[plan-room-link-milestones]]、[[plan-room-link-plan-notes]]。
