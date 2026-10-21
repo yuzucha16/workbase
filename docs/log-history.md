@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-21（room: `open` が `mask.toml` のひな形を作る）
+- ユーザーが示した内容（書式の注記、`[terms.CUST]`、`[terms.PERSON]`。語はコメントアウト）を、`open` が `projects/<名>/_noai/mask.toml` に書く。`init` の Area の置き場（`source` `knowledge` `deliverable` `inbox.md`）の作成は、先のコミットで済み。単体テスト 115 件が通る。
+
 ### 2026-10-21（room: 成果物置き場 `_noai/deliverable/`）
 - `restore` が `ai/out/deliverable/` の下を、`areas/<Area>/_noai/deliverable/<Project 名>/` にも書くようにした。書き出しの規則（プレースホルダー名・外を指す拒否、人の変更で止める、`--force`、`_prev` への退避）は知識と同じ。`room.py` の書き出しを `Route` の表（知識・成果物）で共通にした。`init` が `deliverable/` を作る。単体テスト 114 件が通る（実機は未確認）。これで Area の `_noai/` の `source`・`knowledge`・`deliverable` が揃った。決定は `decisions.md` の同日の項。
 
