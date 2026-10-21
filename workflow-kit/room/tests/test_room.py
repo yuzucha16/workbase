@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import shutil
 import stat
 import subprocess
 import sys
@@ -129,6 +130,7 @@ def opened(tmp, wsl=None):
     return v, c
 
 
+@unittest.skipUnless(shutil.which("openssl"), "openssl が PATH にない")
 class CaCertTest(unittest.TestCase):
     def make_cert(self, tmp, n=1):
         pems = []
