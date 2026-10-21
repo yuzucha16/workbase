@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-21（room: `init` に git を足し、部屋の AI への git の案内を強める）
+- ユーザーの相談: 部屋に git を手で入れたが、部屋の AI が「リポジトリを作ってよいか」を分かっていない。`/mnt/room/` の下を、自由に使えるローカルリポジトリにしたい。調べると、部屋の git（`start` が `/home/ai/gitdirs/<Project>` に作る、`df4ff0d`）は実装済みで、足りないのは案内が AI に届くことだった。ユーザーは `room init` に git が入っていると思っていたが、apt の段は `curl ca-certificates ripgrep` だけだった。
+- ユーザーの依頼で実装（承認済み。`adb7fce`、`90df7d9`、push 済み）: ① `init` の apt の段に `git` を足した（手順書 `guides/howto/ai-room-setup.md` と `-manual.md` の apt の行も）。② 部屋の `~/.claude/CLAUDE.md` の案内（`POINTER_TEXT`）に、git は許可なしで使ってよい・`git init` `git config` はしない（`.git` が works に回収されるため）・コミットは部屋の中だけ、を足した。`ROOM.md` の「部屋の git」と `room-context.md` も同じ内容にした。
+- 却下: `/mnt/room/` 自体を 1 つのリポジトリにする案（`.git` が各 Project の `ai/`＝works の実体に漏れる）。
+- 確認: 単体テスト 117 件が通った（skip 3）。実機は未確認。既存の部屋への反映は `room init <Area> --only apt` → `room start <名>`。
+
 ### 2026-10-21（room: `init --only` で、既存の部屋に道具の段だけを入れ直す）
 - ユーザーの相談: `init` に apt などを足すたびに Area（部屋）を作り直していて面倒。既存の部屋に、足した分だけ適用したい。調べると `init --resume` が全段を入れ直せる（各段は冪等）が、取得の重い段（Chromium、LibreOffice）も毎回走る。
 - ユーザーの依頼で実装: `init <Area> --only apt,pwsh`（`--resume` を含む）。段の名前は `INIT_STEPS`（`base` `apt` `cacert` `node` `convert` `chromium` `pwsh` `npm` `uv` `claude` `path`）。不明な名前・部屋なしは、何も触らずに止まる。`--only` 無しは従来どおり全段。
