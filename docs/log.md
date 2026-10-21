@@ -36,9 +36,11 @@
 
 12. 会議録のナレッジ化（`topics/private-knowledge/`。2026-10-21 開始）: Area を跨ぐ共有知の仕組み（`room pull`、`restore` の Area 書き出し、型）を実装し、実機の通し試験で問題なし（ダミーの Area）。`stock-modes` との重なりは整理済み（10-21。衝突なし、仕様の追加2点・削除なし）。次は、実例1件で指標を測ること、統合の手順書の整備、型の整理は別セッション（状態は同 `docs/log.md`）。続きは「private-knowledge の続き」。
 13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: `stock-modes/`（M1〜M3 は 10-21 に通した。次は実機: 実際の題材で `stock 理解` → `integrate`、`room stock`。`start 計画` へのフィードバック案8件は `topics/planning-method/planning-method-feedback-stock-modes-m1.md`、`review 消化` で承認）、`private-knowledge/` を、同じ構造で運用する（`usage-viz/` は 10-21 に閉じた。HTML の見た目はブラウザで未確認）。10-28 に正式化するかを `review 消化` で決める。
-14. room の Area の置き場の設計（2026-10-21）: `data:` 廃止の次。知識置き場は `areas/<Area>/_noai/knowledge/` に移した（`decisions.md` の同日）。`_noai/source/` と `pull --from source` も実装した（単体テストのみ）。`_noai/deliverable/`（`ai/out/deliverable/` → Area）も実装した（単体テストのみ）。残り: ① 旧 `areas/pilot2/knowledge/`（試験用のダミー。未追跡。ユーザーが移す）② 実機で `source` → `pull` → `restore` → `deliverable` の通し。実機で `data:` なしの `open` / `start` / `restore` を確かめる。
+14. room の Area の置き場の設計（2026-10-21）: `data:` 廃止の次。知識置き場は `areas/<Area>/_noai/knowledge/` に移した（`decisions.md` の同日）。`_noai/source/` と `pull --from source` も実装した（単体テストのみ）。`_noai/deliverable/`（`ai/out/deliverable/` → Area）も実装した（単体テストのみ）。残り: ① 旧 `areas/pilot2/knowledge/`（試験用のダミー。未追跡。ユーザーが移す）② 実機で `data:` なしの `open`（`mask.toml` のひな形つき）/ `start` / `restore` と、`source` → `pull` → `restore` → `deliverable` の通しを確かめる ③ 部屋の AI に渡す文書へ、成果物を `ai/out/deliverable/` に置く案内を足すか確かめる ④ `guides/explain/cross-area-shared-knowledge.md` の設計の軸（「戻り」「統合」）を、新しい置き場の分け方に合わせる（`exmem/inbox/2026-10-21-area-data-layout-flow.md` を `integrate` するときに整合）。
 
 ## Open Questions
+
+- `stock-hook.md` の手順「既存の知識と重なるか確認する」/ 理解のとき、近い既存ガイドが新しい内容で古くなる場合の扱いが曖昧（`stock-explain.md` は「同じテーマがあればメモを作らず報告」とだけ書く）。案: テーマが違うなら作り、既存ガイドの更新が要る点は、メモの「要確認事項」に書く（2026-10-21 は、この形で作った）。
 
 - 【案件】の行き先: `para-operations`（2026-10-07）は Area の `docs/decisions.md`、実装（2026-10-14）は Area の `ai/docs/inbox.md`。現行はどちらか（`topics/private-knowledge/` の確認 #2）。
 - Stop フックの記録の置き場: 既定は `~/claude-records/`。部屋の中だけ `ai/records/` にするか。実機確認（Next Actions 6）の後に決める。【保留 〜2026-10-25】
