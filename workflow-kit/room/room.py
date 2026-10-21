@@ -1283,7 +1283,7 @@ def publish_knowledge(ctx, p, plan):
         write_bytes(dest, data)
         written[key] = maskkit.sha256_bytes(data)
     write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
-    ctx.say(f"Area に書いた: {len(plan)} ファイル → {base.relative_to(ctx.vault).as_posix()}")
+    ctx.say(f"Area に書いた: {len(plan)} ファイル → {base.resolve().relative_to(Path(ctx.vault).resolve()).as_posix()}")  # resolve: Windows の 8.3 短縮名と長い名前の違いを吸収
 
 
 def cmd_mask(ctx, a):
