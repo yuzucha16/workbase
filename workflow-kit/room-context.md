@@ -42,6 +42,14 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 
 人が `room stock <名>` で確認して `exmem/inbox/` に運ぶ。`kind` はそのまま運ばれる。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
 
+## 知識の統合と成果物の置き場（部屋の中）
+
+2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書き、人が `room restore`（`start` の終わりでも自動）で実名に戻して Area に置く。
+
+- **統合した知識**: `ai/in/area/`（Area から `room pull` で渡された、マスク済みの写し）を読み、統合したノートを `ai/out/knowledge/<英数字の名前>.md` に書く。frontmatter は `kind: integrated`、`status: active`、`org` は元のまま。`⟦…⟧` の記号は変えない。Area の知識置き場の既存ファイルを、人が前回から変えていると、`restore` は止まる（人が `--force` で判断する）。
+- **成果物**（人が読む最終版）: `ai/out/deliverable/` の下に置く。`restore` が、Area の成果物置き場（Project 名の下）にも実名に戻して書く。それ以外の `ai/out/<最終成果物>` は、従来どおり Project の `_noai/final/` に戻る。
+- **共有知へ出す知見**は、上のどちらでもなく、下の `stock` の窓口（`ai/out/stock/`）。
+
 ## 分担と受け渡し
 
 | 場面 | AI（部屋の中）が行う | 人（`room`）が行う | 受け渡しのファイル |

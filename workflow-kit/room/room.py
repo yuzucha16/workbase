@@ -1157,6 +1157,11 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 
 人が確認して `exmem/inbox/` へ運ぶ。
 
+Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
+
+- 統合した知識: `ai/out/knowledge/<英数字の名前>.md`。frontmatter は `kind: integrated`、`status: active`、`org` は元のまま。`ai/in/area/` を読んでマスクのまま書く。
+- 人が読む最終版の成果物: `ai/out/deliverable/` の下に置く。
+
 部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git add` `git commit` `git log`）。リポジトリは `room start` が用意済みなので、許可を取らずに使ってよい。自分で `git init` や `git config` をしない（`.git` を作ると works に回収される。`git status` が失敗したときは、作らずに人に伝える）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。作業の区切りで自由にコミットしてよい。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
 
 `ai/out/` の文書に、`⟦` と `⟧` を、マスクの記号以外の用途で書かない。説明文でプレースホルダーの形を示すときは、「CUST_001 の形」のように括弧なしで書く（`⟦CUST_nnn⟧` のような書き方は、復元が壊れた記号として止まる）。
