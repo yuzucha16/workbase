@@ -373,9 +373,35 @@ def unexpected_ignored(ctx, p):
     return res
 
 
-def commit_paths(ctx, paths, message, extra_allowed=(), only=False):
+def kit_rev():
+    """この room.py が入っている resources/（workbase）の版。短縮ハッシュ。workflow-kit/ に未コミットの変更（未追跡を含む）があれば末尾に -dirty。
+    git で引けなければ unknown（resources/ を git 管理せずに写したとき）。"""
+    kit = Path(__file__).resolve().parent
+    try:
+        r = subprocess.run(["git", "-C", str(kit), "rev-parse", "--short", "HEAD"], capture_output=True)
+        if r.returncode != 0:
+            return "unknown"
+        rev = r.stdout.decode("utf-8", "replace").strip()
+        s = subprocess.run(["git", "-C", str(kit), "status", "--porcelain", "--", ".."], capture_output=True)
+    except OSError:
+        return "unknown"
+    return rev + ("-dirty" if s.returncode == 0 and s.stdout.strip() else "")
+
+
+def room_trailers(op, area, project=None):
+    """room が作るコミットのトレーラー。Area / Project が、どの版の room で作られ、変えられたかを、後から引くための印。
+    差分: git -C resources diff <Room-Rev>..HEAD -- workflow-kit/room（-dirty の版は基点にしない）。"""
+    t = [("Room-Op", op), ("Room-Rev", kit_rev()), ("Room-Area", area)]
+    if project:
+        t.append(("Room-Project", project))
+    return t
+
+
+def commit_paths(ctx, paths, message, extra_allowed=(), only=False, trailers=()):
     """paths をステージしてコミットする。対象外のステージ済みの変更があるときは、既定では止まる。
-    only=True は、止まらずに、対象のパスだけをコミットする（対象外の変更はステージに残る。init と open の初期状態用）。"""
+    only=True は、止まらずに、対象のパスだけをコミットする（対象外の変更はステージに残る。init と open の初期状態用）。
+    trailers は (キー, 値) の列。コミットのトレーラーにする。"""
+    tr = [x for k, v in trailers for x in ("--trailer", f"{k}: {v}")]
     git(ctx.vault, "add", "-A", "--", *paths)
     staged = [l for l in git(ctx.vault, "diff", "--cached", "--name-only").splitlines() if l]
     if not staged:
@@ -389,10 +415,10 @@ def commit_paths(ctx, paths, message, extra_allowed=(), only=False):
     if stray:
         ctx.say("注意: 対象外のステージ済みの変更は、コミットに含めない（ステージに残す）:\n  " + "\n  ".join(stray))
         ctx.say("ステージ済み（対象）: " + str(len(staged) - len(stray)) + " ファイル")
-        git(ctx.vault, "commit", "-m", message, "--", *paths, *extra_allowed)
+        git(ctx.vault, "commit", "-m", message, *tr, "--", *paths, *extra_allowed)
     else:
         ctx.say("ステージ済み: " + str(len(staged)) + " ファイル")
-        git(ctx.vault, "commit", "-m", message)
+        git(ctx.vault, "commit", "-m", message, *tr)
     ctx.say("コミットした: " + git(ctx.vault, "log", "--oneline", "-1").strip())
 
 
@@ -508,7 +534,8 @@ def cmd_open(ctx, a):
         ctx.say(f"注意: 部屋（{p.distro}）がまだ無い。guides/howto/ai-room-setup.md の 3 章で作る")
     ctx.say(f"作った: projects/{a.name}（ai/ と _noai/）。README の <...> を埋める")
     if a.commit:  # 初期状態を、戻る起点としてコミットする（既定。--no-commit で省く）
-        commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）", only=True)
+        commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）", only=True,
+                     trailers=room_trailers("open", a.area, a.name))
 
 
 # ---------- init（部屋を作る。手順は ai-room-setup.md の 3〜4 章） ----------
@@ -706,7 +733,8 @@ def cmd_init(ctx, a):
             f"  確認: wsl -d {distro} -- bash -ic 'cd ~ && claude -p \"Reply with exactly: ok\"'")
     rel = f"areas/{a.area}/README.md"
     if getattr(a, "commit", False) and git(ctx.vault, "status", "--porcelain", "--", rel).strip():
-        commit_paths(ctx, [rel], f"[room] init {a.area}（Area の作成、boundary: {read_frontmatter(area_readme).get('boundary')}）", only=True)
+        commit_paths(ctx, [rel], f"[room] init {a.area}（Area の作成、boundary: {read_frontmatter(area_readme).get('boundary')}）", only=True,
+                     trailers=room_trailers("init", a.area))
 
 
 # ---------- rename-area（Area の名前を変える。部屋は触らない） ----------
@@ -765,7 +793,8 @@ def cmd_rename_area(ctx, a):
     ctx.say(f"部屋は触っていない。{old_distro} は不要なら手で消し（wsl --unregister {old_distro}）、room init {new} で room-{new} を作る")
     if a.commit:
         paths = [f"areas/{old}", f"areas/{new}"] + [f"{top}/{name}" for top, name in targets]
-        commit_paths(ctx, paths, f"[room] Area を改名 {old} → {new}", only=True)
+        commit_paths(ctx, paths, f"[room] Area を改名 {old} → {new}", only=True,
+                     trailers=room_trailers("rename-area", new))
 
 
 # ---------- start ----------
@@ -1074,7 +1103,8 @@ def cmd_start(ctx, a):
         raise RoomError("復元を止めた（_noai/final は変更していない。ai/out は回収済み）:\n  " + "\n  ".join(restore_problems)
                         + "\n（直して `room restore " + p.name + "` を再実行する。コミットはしていない）")
     if a.commit:
-        commit_paths(ctx, [f"projects/{p.name}"], f"[room] {p.name}: start {ctx.now()}")
+        commit_paths(ctx, [f"projects/{p.name}"], f"[room] {p.name}: start {ctx.now()}",
+                     trailers=room_trailers("start", p.area, p.name))
 
 
 # ---------- マスクと復元（maskkit。仕様は mask-spec.md） ----------
@@ -1375,7 +1405,8 @@ def cmd_readme(ctx, a):
     p.readme.write_text(new, encoding="utf-8", newline="\n")
     ctx.say("反映した。確認して、コミットする（`git diff projects/" + p.name + "/README.md`）")
     if a.commit:
-        commit_paths(ctx, [f"projects/{p.name}/README.md"], f"[room] {p.name}: README を更新 {ctx.now()}")
+        commit_paths(ctx, [f"projects/{p.name}/README.md"], f"[room] {p.name}: README を更新 {ctx.now()}",
+                     trailers=room_trailers("readme", p.area, p.name))
 
 
 # ---------- 【汎用】の下書きの回収（stock） ----------
@@ -1578,7 +1609,7 @@ def cmd_close(ctx, a):
     if a.commit:
         # projects/<名> の削除は、git mv でステージ済み（消えたパスは pathspec にできない）
         commit_paths(ctx, [f"archives/{p.name}", f"areas/{p.area}"], f"[room] {p.name} を close し archives へ移動",
-                     extra_allowed=(f"projects/{p.name}",))
+                     extra_allowed=(f"projects/{p.name}",), trailers=room_trailers("close", p.area, p.name))
 
 
 # ---------- reap（閉じた Project が部屋に残した跡を、期限で片付ける） ----------
