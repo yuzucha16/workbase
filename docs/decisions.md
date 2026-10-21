@@ -10,7 +10,7 @@
 - 根拠: 3つとも実名を含む。旧 `areas/<Area>/knowledge/` は `_noai` の外にあり、`**/_noai/` の追跡除外と AI の deny が効かない状態だった（ユーザーが確認、2026-10-21）。親を `_noai` にすれば守り方が1か所で済む。`in` / `out` は Project の `ai/in`・`ai/out`（マスク済み）と紛れるので、Area 側は `source` / `deliverable` とする。
 - 却下案: A（`_noai` の外に3つ並べる。守りが3か所）、B（原本だけ足す。成果物の区分が Area に無い）。
 - 影響: 既存の Area は、`room init <Area>` が旧 `knowledge/` を見つけて警告する。自動では動かさない（人が中身を移す。追跡に入っていれば、履歴に実名が残っているので、別途判断する）。単体テスト 105 件が通る。実機は未確認。
-- 未決: `source/`（原本。`pull` が扱うか）と `deliverable/`（成果物を Area に戻す経路）。どちらも、まだ作っていない。
+- 続き（ユーザーが選択、2026-10-21）: ① `source/` を作り、`pull --from source --path <パス or glob>` で取り出す（`--path` 必須。名前は `src-<ハッシュ>.<拡張子>`）。② Project の `_noai/raw/` は pull の出力だけ。人が置いた原本があれば `mask` が注意を出す（止めない。移行のため）。③ `deliverable/`（成果物を Area に戻す経路）は、`source/` の後に別の変更で足す（未実装）。単体テスト 108 件が通る。
 
 ### 【汎用】Project の `data:`（none / mask / restore）を廃止し、マスクと復元を状態で決める（2026-10-21）
 

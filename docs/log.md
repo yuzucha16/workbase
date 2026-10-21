@@ -36,7 +36,7 @@
 
 12. 会議録のナレッジ化（`topics/private-knowledge/`。2026-10-21 開始）: Area を跨ぐ共有知の仕組み（`room pull`、`restore` の Area 書き出し、型）を実装し、実機の通し試験で問題なし（ダミーの Area）。`stock-modes` との重なりは整理済み（10-21。衝突なし、仕様の追加2点・削除なし）。次は、実例1件で指標を測ること、統合の手順書の整備、型の整理は別セッション（状態は同 `docs/log.md`）。続きは「private-knowledge の続き」。
 13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: `stock-modes/`（M1〜M3 は 10-21 に通した。次は実機: 実際の題材で `stock 理解` → `integrate`、`room stock`。`start 計画` へのフィードバック案8件は `topics/planning-method/planning-method-feedback-stock-modes-m1.md`、`review 消化` で承認）、`private-knowledge/` を、同じ構造で運用する（`usage-viz/` は 10-21 に閉じた。HTML の見た目はブラウザで未確認）。10-28 に正式化するかを `review 消化` で決める。
-14. room の Area の置き場の設計（2026-10-21）: `data:` 廃止の次。知識置き場は `areas/<Area>/_noai/knowledge/` に移した（`decisions.md` の同日）。残り: ① 既存の Area の旧 `knowledge/` を人が移す（追跡に入っていたか、履歴に実名が残っていないかの確認を含む）② `_noai/source/`（原本。`pull` が扱うか）③ `_noai/deliverable/`（成果物を Area に戻す経路）。実機で `data:` なしの `open` / `start` / `restore` を確かめる。
+14. room の Area の置き場の設計（2026-10-21）: `data:` 廃止の次。知識置き場は `areas/<Area>/_noai/knowledge/` に移した（`decisions.md` の同日）。`_noai/source/` と `pull --from source` も実装した（単体テストのみ）。残り: ① 旧 `areas/pilot2/knowledge/`（試験用のダミー。未追跡。ユーザーが移す）② `_noai/deliverable/`（成果物を Area に戻す経路）。実機で `data:` なしの `open` / `start` / `restore` を確かめる。
 
 ## Open Questions
 
