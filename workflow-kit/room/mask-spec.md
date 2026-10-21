@@ -18,7 +18,7 @@
 | `ai/in/` | マスク済みの入力（読み取り専用でマウント） | する |
 | `ai/out/` | AI の出力（プレースホルダーのまま） | する |
 | `_noai/final/` | 復元済みの成果物（実データ入り） | しない |
-| `ai/records/` | manifest（ハッシュ、版）。**対応表の中身は入れない** | する |
+| `ai/records/` | manifest（ハッシュ、版）、Stop フックの記録（`sessions.jsonl`、`replies/`。部屋の AI の応答なので、実名はプレースホルダーのまま。Windows のユーザー名入りのパスは `%USERPROFILE%` に置換）。**対応表の中身は入れない** | する |
 
 ## `mask.toml`（ユーザー: 自動採番）
 

@@ -721,6 +721,131 @@ chmod -R a+rX /usr/local/share/powershell 2>/dev/null || true
 pwsh --version
 """ % {"v": PWSH_VERSION, "sx": PWSH_SHA256["x64"], "sa": PWSH_SHA256["arm64"], "pssa": PSSA_VERSION, "pester": PESTER_VERSION}
 
+# Stop フックの記録（2026-10-21。`decisions.md` の同日）: 部屋の中では、費用の推定（sessions.jsonl）と応答本文（replies/<日付>.md）を、Project の ai/records/ に書く。
+# 部屋を wsl --unregister で消しても残り、Project と結び付く。部屋の外のフック（dotfiles 側）とは別物で、部屋の ai ユーザーの ~/.claude/hooks/ に置く（部屋には dotfiles が無い）。
+# 記録するとき、Windows のユーザー名入りのパス（C:\Users\<名>、/mnt/c/Users/<名>）を %USERPROFILE% に置き換える（ai/records/ は追跡する）。
+# 単価の表は dotfiles 側のスクリプトと同じ内容の写し。上げたら両方を直す（出典: platform.claude.com/docs/en/about-claude/pricing）。
+STOP_HOOK_NAME = "room-stop-record.py"
+STOP_RECORD_PY = r'''#!/usr/bin/env python3
+"""Stop フック（room init が置く）: 費用の推定と最後の応答本文を、Project の ai/records/ に記録する。標準出力には何も出さない。失敗しても exit 0。"""
+import datetime, json, os, re, sys
+
+PRICES = {  # USD / 100万トークン。入力, 5分書き込み, 1時間書き込み, 読み, 出力
+    "sonnet-5-5": (2, 2.5, 4, 0.10, 10),
+    "opus-5-5": (4, 5, 8, 0.20, 20),
+    "fable-5-1": (10, 12.5, 20, 0.25, 50),
+    "haiku-5-5": (0.10, 0.125, 0.20, 0.01, 0.50),
+    "haiku-5-5-long": (0.50, 0.625, 1.0, 0.05, 2.50),
+}
+USER_PATH = re.compile(r"(?:[A-Za-z]:[\\/]+Users[\\/]+|/mnt/[A-Za-z]/Users/)[^\\/\s\"'`<>|:*?]+", re.I)
+
+
+def redact(text):
+    # Windows のユーザー名入りのパス（ドライブ文字 + Users + 名前、/mnt/c/Users/名前）を %USERPROFILE% に置き換える
+    # （docstring に書かない: このファイルは文字列として部屋に置かれ、バックスラッシュ + U の並びは構文エラーになる）
+    return USER_PATH.sub("%USERPROFILE%", text)
+
+
+def price_key(model, prompt_tokens):
+    for key in ("sonnet-5-5", "opus-5-5", "fable-5-1", "haiku-5-5"):
+        if key in (model or ""):
+            return "haiku-5-5-long" if key == "haiku-5-5" and prompt_tokens > 100_000 else key
+    return None
+
+
+def summarize(path):
+    seen = {}
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            try:
+                d = json.loads(line)
+            except ValueError:
+                continue
+            m = d.get("message") or {}
+            if d.get("type") == "assistant" and m.get("usage") and m.get("id"):
+                seen[m["id"]] = (m.get("model"), m["usage"])
+    tokens = dict(input=0, output=0, cache_read=0, cache_write=0)
+    cost, unknown = 0.0, set()
+    for model, u in seen.values():
+        i, o = u.get("input_tokens") or 0, u.get("output_tokens") or 0
+        r, w = u.get("cache_read_input_tokens") or 0, u.get("cache_creation_input_tokens") or 0
+        cc = u.get("cache_creation") or {}
+        w1h = cc.get("ephemeral_1h_input_tokens", 0) or 0
+        w5m = cc.get("ephemeral_5m_input_tokens", w - w1h) or 0
+        tokens["input"] += i; tokens["output"] += o
+        tokens["cache_read"] += r; tokens["cache_write"] += w
+        key = price_key(model, i + r + w)
+        if key is None:
+            unknown.add(model)
+            continue
+        pi, p5, p1, pr, po = PRICES[key]
+        cost += (i * pi + w5m * p5 + w1h * p1 + r * pr + o * po) / 1e6
+    return len(seen), tokens, round(cost, 4), sorted(unknown)
+
+
+def record_dir(cwd):
+    """cwd が /mnt/room/<Project>（の下）なら <Project>/ai/records。そうでなければ ~/claude-records/<フォルダ名>。"""
+    m = re.match(r"^(/mnt/room/[^/]+)(?:/|$)", cwd)
+    if m:
+        return m.group(1) + "/ai/records"
+    return os.path.join(os.path.expanduser("~"), "claude-records", os.path.basename(cwd.rstrip("/")) or "root")
+
+
+def main():
+    d = json.load(sys.stdin)
+    cwd = d.get("cwd") or os.getcwd()
+    out = record_dir(cwd)
+    os.makedirs(out, exist_ok=True)
+    now = datetime.datetime.now()
+    n, tokens, cost, unknown = summarize(d["transcript_path"])
+    rec = dict(session_id=d["session_id"], updated=now.isoformat(timespec="seconds"), cwd=cwd, requests=n,
+               tokens=tokens, cost_usd_estimate=cost, unknown_models=unknown)
+    path = os.path.join(out, "sessions.jsonl")
+    rows = []
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            rows = [l for l in f if l.strip() and json.loads(l).get("session_id") != d["session_id"]]
+    rows.append(redact(json.dumps(rec, ensure_ascii=False)) + "\n")
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.writelines(rows)
+    text = d.get("last_assistant_message")
+    if text and os.environ.get("CLAUDE_RECORD_REPLIES", "1") != "0":
+        rd = os.path.join(out, "replies")
+        os.makedirs(rd, exist_ok=True)
+        with open(os.path.join(rd, now.strftime("%F") + ".md"), "a", encoding="utf-8", errors="replace", newline="\n") as f:
+            f.write("\n## %s %s\n\n%s\n" % (now.strftime("%H:%M"), d["session_id"][:8], redact(text)))
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        sys.stderr.write("room-stop-record: %s\n" % e)
+    sys.exit(0)
+'''
+STOP_HOOK_SETTINGS_PY = """import json, os
+f = os.path.expanduser("~/.claude/settings.json")
+d = {{}}
+if os.path.exists(f) and os.path.getsize(f) > 0:
+    with open(f, encoding="utf-8") as fh:
+        d = json.load(fh)
+cmd = "python3 $HOME/.claude/hooks/{name}"
+stop = d.setdefault("hooks", {{}}).setdefault("Stop", [])
+if not any(h.get("command") == cmd for g in stop for h in g.get("hooks", [])):
+    stop.append({{"hooks": [{{"type": "command", "command": cmd}}]}})
+    with open(f + ".new", "w", encoding="utf-8", newline="\\n") as fh:
+        json.dump(d, fh, ensure_ascii=False, indent=2)
+        fh.write("\\n")
+    os.replace(f + ".new", f)
+"""
+STOP_HOOK_INSTALL = (
+    "set -e\n"
+    'mkdir -p "$HOME/.claude/hooks"\n'
+    f"cat > \"$HOME/.claude/hooks/{STOP_HOOK_NAME}\" <<'ROOM_STOP_EOF'\n" + STOP_RECORD_PY + "ROOM_STOP_EOF\n"
+    f'chmod 644 "$HOME/.claude/hooks/{STOP_HOOK_NAME}"\n'
+    "python3 - <<'ROOM_STOPSET_EOF'\n" + STOP_HOOK_SETTINGS_PY.format(name=STOP_HOOK_NAME) + "ROOM_STOPSET_EOF\n"
+)
+
 CONVERT_TOOLS_INSTALL = (
     "export DEBIAN_FRONTEND=noninteractive\n"
     "apt-get install -y -qq --no-install-recommends libreoffice-calc libreoffice-writer libreoffice-impress fonts-noto-cjk pandoc unzip\n"
@@ -786,7 +911,7 @@ def scaffold_area(ctx, area):
 
 
 # init の段（--only で選ぶ名前）。base は一般ユーザー・wsl.conf・分離の確認（部屋を terminate する）
-INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "pwsh", "npm", "uv", "claude", "path")
+INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "pwsh", "npm", "uv", "claude", "stophook", "path")
 
 
 def parse_only(value):
@@ -873,6 +998,8 @@ def cmd_init(ctx, a):
         step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
     if want("claude"):
         step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
+    if want("stophook"):
+        step_script(ctx, distro, "Stop フック（費用と応答本文を Project の ai/records/ に記録）", STOP_HOOK_INSTALL)
     if want("path"):
         step_script(ctx, distro, "PATH",
                     f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
