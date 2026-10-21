@@ -704,6 +704,10 @@ def scaffold_area(ctx, area):
     if not kd.is_dir():
         kd.mkdir(parents=True)
         ctx.say(f"作った: areas/{area}/{KNOWLEDGE_DEFAULT}/（知識置き場。pull の取り出し元、restore の書き出し先）")
+    dd = root / DELIVERABLE_DEFAULT
+    if not dd.is_dir():
+        dd.mkdir(parents=True)
+        ctx.say(f"作った: areas/{area}/{DELIVERABLE_DEFAULT}/（成果物置き場。restore の書き出し先。<Project 名>/ の下に置く）")
     sd = root / SOURCE_DEFAULT
     if not sd.is_dir():
         sd.mkdir(parents=True)
@@ -1112,11 +1116,11 @@ def cmd_start(ctx, a):
     try:
         mount(ctx, p)
         ctx.say(f"マウントした: {p.mount_point}")
+        setup_room_git(ctx, p)
         if a.no_launch:
             ctx.say("--no-launch: ここで AI を起動しない。Zed などで WSL リモート接続し、終わったら Enter")
             keep = ctx.wsl.keepalive(p.distro)  # セッションが無くなって部屋が止まると、マウントも消える（仮説。実機で確認する）
             try:
-        setup_room_git(ctx, p)
                 input()
             finally:
                 keep.terminate()
@@ -1127,11 +1131,11 @@ def cmd_start(ctx, a):
         result = f"終了コード {rc}"
     finally:
         ok = unmount(ctx, p)
+        discard_room_git(ctx, p)
         rmtree_force(p.ai / "ctx")
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
-        discard_room_git(ctx, p)
     restored, restore_problems = restore_project(ctx, p)
     if restored:
         ctx.say(f"復元した: {restored} ファイル → _noai/final")
@@ -1166,7 +1170,9 @@ def write_bytes(path, data):
 
 KNOWLEDGE_DEFAULT = "_noai/knowledge"  # Area の知識置き場（areas/<Area>/_noai/knowledge/。実名を含むので _noai の下＝追跡外・AI に見せない）。README の knowledge_dest: で変える
 SOURCE_DEFAULT = "_noai/source"  # Area の原本置き場（areas/<Area>/_noai/source/。人が置く。pull --from source の取り出し元）
-KNOWLEDGE_OUT = "knowledge/"  # ai/out のこの下だけを Area に戻す
+KNOWLEDGE_OUT = "knowledge/"  # ai/out のこの下だけを Area の知識置き場に戻す
+DELIVERABLE_OUT = "deliverable/"  # ai/out のこの下だけを Area の成果物置き場（<Project 名>/ の下）に戻す
+DELIVERABLE_DEFAULT = "_noai/deliverable"  # Area の成果物置き場（areas/<Area>/_noai/deliverable/<Project>/。人が読む最終版）
 PULL_PREFIX = "area/"  # _noai/raw の下の、Area から取り出した写しの置き場
 
 
@@ -1177,6 +1183,10 @@ def knowledge_dir(p):
     if p.area_dir.resolve() not in d.parents:
         raise RoomError(f"knowledge_dest が Area の中を指していない: {dest}")
     return d
+
+
+def deliverable_dir(p):
+    return p.area_dir / DELIVERABLE_DEFAULT
 
 
 def source_dir(p):
@@ -1263,16 +1273,23 @@ def restore_project(ctx, p, force=False):
         return 0, [str(e)]
     if problems:
         return 0, problems
+    plans = []
     try:
-        publish = plan_knowledge_publish(p, restored)
+        all_routes = routes(p)
     except RoomError as e:
         return 0, [str(e)]
-    if publish and not knowledge_dir(p).is_dir():
-        return 0, [f"Area の知識置き場が無い: {knowledge_dir(p)}（`room init {p.area}` で作ってから、restore をやり直す。何も書いていない）"]
+    for route in all_routes:
+        try:
+            plan = plan_publish(route, restored)
+        except RoomError as e:
+            return 0, [str(e)]
+        if plan and not route.root.is_dir():
+            return 0, [f"Area の{route.label}の置き場が無い: {route.root}（`room init {p.area}` で作ってから、restore をやり直す。何も書いていない）"]
+        plans.append((route, plan))
     mf = n / "map" / "final-manifest.json"
     written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
     if not force:
-        changed = knowledge_conflicts(p, publish)
+        changed = [c for route, plan in plans for c in publish_conflicts(p, route, plan)]
         for rel, data in restored.items():
             dest = n / "final" / rel
             if dest.exists():
@@ -1285,62 +1302,77 @@ def restore_project(ctx, p, force=False):
         write_bytes(n / "final" / rel, data)
         written[rel] = maskkit.sha256_bytes(data)
     write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
-    publish_knowledge(ctx, p, publish)
+    for route, plan in plans:
+        publish(ctx, p, route, plan)
     return len(restored), []
 
 
-def plan_knowledge_publish(p, restored):
-    """復元した ai/out/knowledge/ の下を、Area の知識置き場への書き出し先に対応づける（何も書かない）。{書き出し先: bytes}。"""
-    items = {rel[len(KNOWLEDGE_OUT):]: data for rel, data in restored.items() if rel.startswith(KNOWLEDGE_OUT)}
-    if not items:
-        return {}
-    base = knowledge_dir(p)
+class Route:
+    """ai/out のある下位ディレクトリを、Area のどこへ戻すか。prefix: ai/out の下の名前、label: 文中の呼び名、manifest: 前回の書き出しの記録（_noai/map の下）。"""
+
+    def __init__(self, prefix, label, manifest, base, root):
+        self.prefix, self.label, self.manifest, self.base, self.root = prefix, label, manifest, base, root
+
+
+def routes(p):
+    """知識は Area に1つの共有の置き場へ、成果物は Project の名前の下へ戻す（Project どうしで名前が衝突しないように）。"""
+    return [
+        Route(KNOWLEDGE_OUT, "知識", "knowledge-manifest.json", knowledge_dir(p), knowledge_dir(p)),
+        Route(DELIVERABLE_OUT, "成果物", "deliverable-manifest.json", deliverable_dir(p) / p.name, deliverable_dir(p)),
+    ]
+
+
+def plan_publish(route, restored):
+    """復元した ai/out/<prefix> の下を、Area への書き出し先に対応づける（何も書かない）。{書き出し先: bytes}。"""
+    items = {rel[len(route.prefix):]: data for rel, data in restored.items() if rel.startswith(route.prefix)}
     plan = {}
+    base = route.base.resolve()
     for rel, data in items.items():
         if "⟦" in rel or "⟧" in rel:
-            raise RoomError(f"{KNOWLEDGE_OUT}{rel}: ファイル名にプレースホルダーが残っている（AI に、英数字のファイル名を付けさせる）")
+            raise RoomError(f"{route.prefix}{rel}: ファイル名にプレースホルダーが残っている（AI に、英数字のファイル名を付けさせる）")
         dest = (base / rel).resolve()
         if base not in dest.parents:
-            raise RoomError(f"{KNOWLEDGE_OUT}{rel}: Area の知識置き場の外を指している")
+            raise RoomError(f"{route.prefix}{rel}: Area の{route.label}の置き場の外を指している")
         plan[dest] = data
     return plan
 
 
-def knowledge_conflicts(p, plan):
+def read_written(p, route):
+    mf = noai_dir(p) / "map" / route.manifest
+    return mf, (json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {})
+
+
+def publish_conflicts(p, route, plan):
     """Area の既存ファイルのうち、前回の書き出しから人が変えたもの（上書きすると人の変更が消える）を、問題の文で返す。"""
-    mf = noai_dir(p) / "map" / "knowledge-manifest.json"
-    written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
-    base = knowledge_dir(p)
+    _mf, written = read_written(p, route)
+    base = route.base.resolve()
     out = []
     for dest, data in plan.items():
         if dest.exists():
             cur = dest.read_bytes()
             key = dest.relative_to(base).as_posix()
             if cur != data and written.get(key) != maskkit.sha256_bytes(cur):
-                out.append(f"{KNOWLEDGE_OUT}{key}: Area の知識が、前回の書き出しから変わっている（人の変更を上書きしてしまう）")
+                out.append(f"{route.prefix}{key}: Area の{route.label}が、前回の書き出しから変わっている（人の変更を上書きしてしまう）")
     return out
 
 
-def publish_knowledge(ctx, p, plan):
-    """Area の知識置き場へ書く。前回の書き出しから変わっている既存ファイルは、ここに来るのは --force のときだけ。直前の版は _noai/final/_prev/ に退避する。"""
+def publish(ctx, p, route, plan):
+    """Area へ書く。前回の書き出しから変わっている既存ファイルは、ここに来るのは --force のときだけ。直前の版は _noai/final/_prev/ に退避する。"""
     if not plan:
         return
-    n = noai_dir(p)
-    mf = n / "map" / "knowledge-manifest.json"
-    written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
-    base = knowledge_dir(p)
+    mf, written = read_written(p, route)
+    base = route.base.resolve()
     for dest, data in plan.items():
         key = dest.relative_to(base).as_posix()
         if dest.exists():
             cur = dest.read_bytes()
             if cur != data and written.get(key) != maskkit.sha256_bytes(cur):
-                write_bytes(n / "final" / "_prev" / KNOWLEDGE_OUT / key, cur)
-                ctx.say(f"注意: Area の {key} は前回の書き出しから変わっていた。--force で上書きした（直前の版は _noai/final/_prev/{KNOWLEDGE_OUT}{key}）")
+                write_bytes(noai_dir(p) / "final" / "_prev" / route.prefix / key, cur)
+                ctx.say(f"注意: Area の {key} は前回の書き出しから変わっていた。--force で上書きした（直前の版は _noai/final/_prev/{route.prefix}{key}）")
         write_bytes(dest, data)
         written[key] = maskkit.sha256_bytes(data)
     write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
-    ctx.say(f"Area に書いた: {len(plan)} ファイル → {base.resolve().relative_to(Path(ctx.vault).resolve()).as_posix()}")  # resolve: Windows の 8.3 短縮名と長い名前の違いを吸収
-
+    ctx.say(f"Area に書いた: {len(plan)} ファイル → {base.relative_to(Path(ctx.vault).resolve()).as_posix()}")  # resolve: Windows の 8.3 短縮名と長い名前の違いを吸収
 
 def cmd_mask(ctx, a):
     p = Project.load(ctx, a.name)

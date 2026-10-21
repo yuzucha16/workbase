@@ -891,6 +891,7 @@ class PullKnowledgeTest(unittest.TestCase):
         (p / "_noai/mask.toml").write_text(self.MASK, encoding="utf-8", newline="\n")
         k = v / "areas/area-x/_noai/knowledge"
         k.mkdir(parents=True)
+        (v / "areas/area-x/_noai/deliverable").mkdir()
         (k / "2026-10-14-アクメ商事-定例.md").write_text(self.note("アクメ商事"), encoding="utf-8", newline="\n")
         (k / "2026-10-15-other.md").write_text(self.note("自社", body="自社のみ\n"), encoding="utf-8", newline="\n")
         (k / "2026-10-01-old.md").write_text(self.note("アクメ商事", status="superseded"), encoding="utf-8", newline="\n")
@@ -966,6 +967,53 @@ class PullKnowledgeTest(unittest.TestCase):
             man = (p / "ai/records/manifest.json").read_text(encoding="utf-8")
             self.assertNotIn("アクメ", man)
             self.assertIn("pull-sources.json", man)
+
+    def test_deliverable_returns_under_project_name_and_keeps_final_copy(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            self.pull(c)
+            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
+            d = p / "ai/out/deliverable"
+            d.mkdir(parents=True)
+            (d / "report.md").write_text("⟦CUST_001⟧ の報告\n", encoding="utf-8", newline="\n")
+            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a")), (1, []))
+            dest = v / "areas/area-x/_noai/deliverable/proj-a/report.md"
+            self.assertIn("アクメ商事株式会社 の報告", dest.read_text(encoding="utf-8"))
+            self.assertTrue((p / "_noai/final/deliverable/report.md").exists())
+            self.assertFalse((k / "report.md").exists())
+
+    def test_deliverable_changed_by_human_stops_restore_unless_force(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            self.pull(c)
+            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
+            d = p / "ai/out/deliverable"
+            d.mkdir(parents=True)
+            (d / "report.md").write_text("⟦CUST_001⟧ v1\n", encoding="utf-8", newline="\n")
+            room.restore_project(c, room.Project.load(c, "proj-a"))
+            dest = v / "areas/area-x/_noai/deliverable/proj-a/report.md"
+            dest.write_text("人が直した\n", encoding="utf-8", newline="\n")
+            (d / "report.md").write_text("⟦CUST_001⟧ v2\n", encoding="utf-8", newline="\n")
+            n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
+            self.assertEqual(n, 0)
+            self.assertIn("deliverable/report.md", problems[0])
+            self.assertEqual(dest.read_text(encoding="utf-8"), "人が直した\n")
+            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a"), force=True)[0], 1)
+            self.assertEqual((p / "_noai/final/_prev/deliverable/report.md").read_text(encoding="utf-8"), "人が直した\n")
+
+    def test_deliverable_without_area_dir_stops_and_writes_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            (v / "areas/area-x/_noai/deliverable").rmdir()
+            self.pull(c)
+            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
+            d = p / "ai/out/deliverable"
+            d.mkdir(parents=True)
+            (d / "report.md").write_text("⟦CUST_001⟧ x\n", encoding="utf-8", newline="\n")
+            n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
+            self.assertEqual(n, 0)
+            self.assertIn("成果物の置き場が無い", problems[0])
+            self.assertFalse((p / "_noai/final/deliverable").exists())
 
     def test_changed_area_file_stops_restore_unless_force(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1403,6 +1451,8 @@ class CloseTest(unittest.TestCase):
             v = make_vault(tmp)
             room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=False))
             self.assertTrue((v / "areas/area-y/_noai/knowledge").is_dir())
+            self.assertTrue((v / "areas/area-y/_noai/source").is_dir())
+            self.assertTrue((v / "areas/area-y/_noai/deliverable").is_dir())
             self.assertEqual((v / "areas/area-y/ai/docs/inbox.md").read_text(encoding="utf-8"), room.INBOX_NEW)
             (v / "areas/area-y/ai/docs/inbox.md").write_text("既存\n", encoding="utf-8")
             room.scaffold_area(ctx_for(v, FakeWsl()), "area-y")
