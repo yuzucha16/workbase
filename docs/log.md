@@ -40,10 +40,11 @@
 13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: `stock-modes/`（M1〜M3 は 10-21 に通した。次は実機: 実際の題材で `stock 理解` → `integrate`、`room stock`。`start 計画` へのフィードバック案8件は `topics/planning-method/planning-method-feedback-stock-modes-m1.md`、`review 消化` で承認）、`private-knowledge/` を、同じ構造で運用する（`usage-viz/` は 10-21 に閉じた。HTML の見た目はブラウザで未確認）。10-28 に正式化するかを `review 消化` で決める。
 14. room の Area の置き場の設計（2026-10-21）: `data:` 廃止の次。知識置き場は `areas/<Area>/_noai/knowledge/` に移した（`decisions.md` の同日）。`_noai/source/` と `pull --from source` も実装した（単体テストのみ）。`_noai/deliverable/`（`ai/out/deliverable/` → Area）も実装した（単体テストのみ）。残り: ① 旧 `areas/pilot2/knowledge/`（試験用のダミー。未追跡。ユーザーが移す）② 実機で `data:` なしの `open`（`mask.toml` のひな形つき）/ `start` / `restore` と、`source` → `pull` → `restore` → `deliverable` の通しを確かめる ③ 部屋の AI に渡す文書へ、成果物を `ai/out/deliverable/` に置く案内を足すか確かめる ④ `guides/explain/cross-area-shared-knowledge.md` の設計の軸（「戻り」「統合」）を、新しい置き場の分け方に合わせる（`exmem/inbox/2026-10-21-area-data-layout-flow.md` を `integrate` するときに整合）。
 15. 部屋の git の実機確認（2026-10-21。`df4ff0d` の続き）: 案内は書いた（ユーザーの承認。`room-context.md` に例外を足し、`ROOM_GUIDE`（`~/shared/ROOM.md`）に部屋の git の節を足した）。残り: 実機で、`start` → 部屋で `git status` / `commit` → 回収、Zed 経由でラッパーが効くこと、部屋の AI が案内で実際に使うことを確かめる。
-16. room の pwsh 7 と `check-ps1.ps1` の実機確認（2026-10-21）: ① 部屋で `room init <Area> --resume` を通し、`pwsh --version`、PSScriptAnalyzer 1.25.0、Pester 5.9.1 が入るか（Ubuntu 26.04 の依存、TLS 検査の環境での取得）② 部屋で `check-ps1.ps1` の指摘（Warning）と `-RunTests` を試す ③ 部屋の AI が案内（`dev-deliverable-guide.md`）で、束ねる ps1 と 3 行の bat を作り、チェッカーを使うか。
+16. room の pwsh 7 と `check-ps1.ps1` の実機確認（2026-10-21）: ① 部屋で `room init <Area> --only pwsh`（10-21 に足した段指定。実機は未確認。全段なら `--resume`）を通し、`pwsh --version`、PSScriptAnalyzer 1.25.0、Pester 5.9.1 が入るか（Ubuntu 26.04 の依存、TLS 検査の環境での取得）② 部屋で `check-ps1.ps1` の指摘（Warning）と `-RunTests` を試す ③ 部屋の AI が案内（`dev-deliverable-guide.md`）で、束ねる ps1 と 3 行の bat を作り、チェッカーを使うか。
 
 ## Open Questions
 
+- `room init --only changed`（2026-10-21）: 既存の部屋に、足された段だけを自動で入れる案。`Room-Rev`（トレーラー）から現在の版までの `room.py` の差分で、変わった段を選ぶ。段と変更箇所の対応表が要る（今は人が差分を見て `--only` に渡す）。`--only` の実機での使い心地を見てから決める。
 - `stock-hook.md` の手順「既存の知識と重なるか確認する」/ 理解のとき、近い既存ガイドが新しい内容で古くなる場合の扱いが曖昧（`stock-explain.md` は「同じテーマがあればメモを作らず報告」とだけ書く）。案: テーマが違うなら作り、既存ガイドの更新が要る点は、メモの「要確認事項」に書く（2026-10-21 は、この形で作った）。
 
 - 【案件】の行き先: `para-operations`（2026-10-07）は Area の `docs/decisions.md`、実装（2026-10-14）は Area の `ai/docs/inbox.md`。現行はどちらか（`topics/private-knowledge/` の確認 #2）。

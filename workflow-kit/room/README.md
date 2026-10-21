@@ -8,7 +8,7 @@ AI 作業部屋の操作（`open` / `start` / `close` / `umount` / `mask` / `res
 
 ```powershell
 cd <このディレクトリ>
-uv run room.py init <Area> [--boundary <印>] [--resume] [--no-commit]
+uv run room.py init <Area> [--boundary <印>] [--resume] [--only <段,…>] [--no-commit]
 uv run room.py open <Project> --area <Area> [--type doc|dev|dev-env|dev-test|research] [--boundary <印>] [--no-commit]
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--adopt] [--no-commit]
 uv run room.py close <Project> [--commit]
@@ -19,6 +19,7 @@ uv run room.py rename-area <旧Area> <新Area> [--no-commit]
 - works は `$ROOM_VAULT`、無ければ `~/works`。`--vault <パス>` で指定できる（`--vault` はサブコマンドの前に書く）。`close` から reap までの日数は `--reap-days`（既定 14。`$ROOM_REAP_DAYS` でも指定できる）。
 - 部屋（WSL のディストリビューション）は `room-<Area>`。`room init <Area>` で作る（手作業の手順は `guides/howto/ai-room-setup.md` の 3・4 章）。
 - トレーラー（2026-10-21）: room が作るコミット（`init` `open` `rename-area` `start` `readme` `close`）に、`Room-Op: <操作>`、`Room-Rev: <resources の短縮ハッシュ>`、`Room-Area: <Area>`、`Room-Project: <Project>`（Project の操作だけ）を付ける。既存の Area / Project が、どの版の room で作られ、変えられたかを引く印。差分は `git -C resources diff <Room-Rev>..HEAD -- workflow-kit/room`、一覧は `git log --format='%h %(trailers:key=Room-Op,key=Room-Rev,valueonly,separator=%x20)'`（works 側）。`Room-Rev` は `workflow-kit/` に未コミットの変更があると末尾が `-dirty`（その版は差分の基点にしない）、git で引けなければ `unknown`。コミットしない操作（`mask` `restore` `pull` `stock` など）には付かない。付いていない古いコミットは「版不明」。
+- 既存の部屋に道具を足す（2026-10-21。単体テストのみ）: `init <Area> --only apt,pwsh` は、指定した段だけを入れ直す（`--resume` を含む。部屋は作らない）。段の名前: `base`（一般ユーザー・`wsl.conf`・分離の確認。部屋を terminate する）、`apt` `cacert` `node` `convert` `chromium` `pwsh` `npm` `uv` `claude` `path`。名前が違う・部屋が無いときは、何も触らずに止まる。`init` に道具を足したら、その段の名前も `INIT_STEPS`（`room.py`）に足す。`cacert` は `--ca-cert` も要る。`--only` 無しの `--resume` は、従来どおり全段。
 - コミット: `init`（Area の作成）と `open`（Project のひな形と Area の一覧）は、**初期状態として既定でコミットする**（戻る起点。`--no-commit` で省く。2026-10-18）。`init` `open` は、対象外のステージ済みの変更があっても止まらず、対象のパスだけをコミットする（対象外はステージに残す）。`start` も、回収の後に既定でコミットする（`--no-commit` で省く。2026-10-21。`ai/out/` の成果物を人が毎回コミットする手間をなくすため）。`readme` `close` は、`--commit` を付けたときだけ。`start` `readme` `close` は、対象のパス以外がステージされていたら、コミットしない。
 - 部屋の git（2026-10-21）: works の `.git` はマウントの外なので、部屋では見えない。`start` はマウントの後に、部屋のローカル（`/home/ai/gitdirs/<Project>`）に独立した git を作り、回収済みの `ai/` を基準としてコミットする。`/usr/local/bin/git` の薄いラッパーが、`/mnt/room/<Project>` の下では `GIT_DIR` と `GIT_WORK_TREE` を自動で設定するので、部屋の AI は普通に `git diff` `git commit` `git log` が使える（Zed の Agent でも効く）。アンマウントの後に捨てるので、部屋のコミットは works には届かない（works の履歴は、回収ごとの 1 コミット）。用意に失敗しても `start` は続く（警告のみ）。実機は未確認（単体テストは WSL を差し替え）。
 
