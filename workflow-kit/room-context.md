@@ -17,8 +17,9 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 - 起動する場所は `/mnt/room/<名>`（Project の `ai/`）に固定される。開始時に読むのは `~/shared/ROOM.md` → `ai/ctx/README.md`（Project の窓口の写し）→ `ai/ctx/area-README.md`（所属する Area の README の写し。Area の共通ルール）→ `ai/docs/log.md`。
 - 手順書の `docs/` は、部屋では `ai/docs/`（Project の記録）。Project と Area の `README.md` は書き込めない。写し（`ai/ctx/README.md`、`ai/ctx/area-README.md`）を読む。
 - 手順書は `~/shared/workflow-kit/` にある（読み取り専用の写し。基準コミットは `~/shared/ROOM.md`）。
-- 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、コミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する。
-- `wrap-hook.md` の手順「コミットする」（push を含む）は、部屋では行わない（回収の側で人が行う）。`wrap-hook.md` の手順「昇格の案を出す」の知識化は、部屋では `ai/out/stock/` の下書きに一本化する（下の `stock`）。部屋の `wrap` は、業務の知識を `ai/docs/` に残し、共有知は `stock` の窓口だけから出す。
+- 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、works へのコミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する。
+- 部屋の git（`/mnt/room/<名>` の下で使える、部屋のローカルの git）は例外で、AI が自由に使ってよい（`git diff` で回収される変更を見る、作業の区切りでコミットする）。セッションの終わりに捨てるので、works には届かない。works へのコミットは `room start` の回収が既定で行う。
+- `wrap-hook.md` の手順「コミットする」（push を含む）は、部屋では行わない（works へのコミットは回収の側。部屋の git のコミットは、作業の記録として任意）。`wrap-hook.md` の手順「昇格の案を出す」の知識化は、部屋では `ai/out/stock/` の下書きに一本化する（下の `stock`）。部屋の `wrap` は、業務の知識を `ai/docs/` に残し、共有知は `stock` の窓口だけから出す。
 
 ## `ai/out/close.md` の書き方（部屋の中）
 
