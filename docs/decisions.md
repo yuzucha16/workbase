@@ -4,9 +4,9 @@
 
 ## Decisions
 
-### 【汎用】room init が Area の置き場（`knowledge/` と `ai/docs/inbox.md`）を作り、後続のコマンドは「無ければ作る」をやめて警告にする（2026-10-21）
+### 【汎用】room init が Area の置き場（`knowledge/` と `ai/docs/inbox.md`）を作り、後続のコマンドは「無ければ作る」をやめ、何も変えずに止まる（2026-10-21）
 
-- 決めたこと: `room init <Area>` が、無ければ `areas/<Area>/knowledge/` と `areas/<Area>/ai/docs/inbox.md` を作る（あるものは触らない。部屋がすでにあって止まる場合も作成は先に行う）。`close` は inbox が無ければ作らず警告し、【案件】を画面に出す。`restore` は知識置き場が無ければ作らず警告し、Area には書かない（`_noai/final/` には書く）。
+- 決めたこと: `room init <Area>` が、無ければ `areas/<Area>/knowledge/` と `areas/<Area>/ai/docs/inbox.md` を作る（あるものは触らない。部屋がすでにあって止まる場合も作成は先に行う）。`close` は inbox が、`restore` は知識置き場が無ければ、作らず、何も変えずに止まり、直し方（`room init <Area>`）を示す（復帰処理も警告して続行もしない。ユーザーの方針: 準備は初期化で行い、異常は状態を出して終わりに一本化）。
 - 根拠: ユーザーの指示（2026-10-21）。置き場が init で必ずあれば、後続コマンドの異常（置き場が無い）が見分けやすい。
 - 影響: `init` より前に作った Area は、`room init <Area>` をもう一度実行して補う。`mask.toml` の雛形は未決（内容をユーザーと相談してから、`open` に足す）。単体テスト 108 件が通る。実機は未確認。
 
