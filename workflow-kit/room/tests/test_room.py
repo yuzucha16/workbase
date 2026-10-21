@@ -410,6 +410,30 @@ class InitTest(unittest.TestCase):
             room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=True))
             self.assertFalse(hasattr(wsl, "installed"))
 
+    def test_init_only_runs_selected_steps(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            wsl = FakeWsl()
+            room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=False, only="apt,pwsh"))
+            texts = "\n".join(t for _, t, _ in wsl.scripts)
+            self.assertIn("apt-get install -y -qq curl", texts)
+            self.assertIn("powershell", texts.lower())
+            self.assertNotIn("useradd", texts)
+            self.assertNotIn("libreoffice", texts)
+            self.assertNotIn("astral.sh", texts)
+            self.assertFalse(hasattr(wsl, "terminated"))
+            self.assertFalse(hasattr(wsl, "installed"))
+
+    def test_init_only_rejects_unknown_step_and_missing_room(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            wsl = FakeWsl()
+            with self.assertRaises(room.RoomError):
+                room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=False, only="apt,nope"))
+            self.assertEqual(wsl.scripts, [])
+            with self.assertRaises(room.RoomError):
+                room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-x", resume=False, only="apt"))
+
 
 class RenameAreaTest(unittest.TestCase):
     def git_out(self, v, *args):
