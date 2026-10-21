@@ -7,7 +7,7 @@ tags:
 aliases:
   - Tags
 created: 2026-09-26
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 # タグ一覧
@@ -51,6 +51,8 @@ updated: 2026-10-20
 | `tool/aws` | AWS（Bedrock・IAM・AWS CLI） |
 | `tool/apt` | apt（Debian 系のパッケージマネージャー） |
 | `tool/ssh` | SSH（`ssh`、鍵、`~/.ssh/config`） |
+| `tool/libreoffice` | LibreOffice（headless での変換・再計算） |
+| `tool/chromium` | Chromium（headless での PDF 化・画像化。Playwright 版を含む） |
 
 ### `ai/` — AIサービス・エージェント
 
@@ -102,3 +104,6 @@ updated: 2026-10-20
 | `skills` | AI エージェントのスキル（`SKILL.md`）の利用・取り込み |
 | `oidc` | OIDC（OpenID Connect）のサインイン・トークン |
 | `llm-gateway` | 組織の LLM ゲートウェイ経由での AI クライアントの接続 |
+| `ai-room` | AI 作業部屋（専用 WSL の `room`）の設計・運用 |
+| `concurrency` | 並行利用・排他・競合の設計 |
+| `python` | Python の実装・テスト |
