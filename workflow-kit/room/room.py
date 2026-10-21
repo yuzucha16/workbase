@@ -660,6 +660,10 @@ def scaffold_area(ctx, area):
     if not kd.is_dir():
         kd.mkdir(parents=True)
         ctx.say(f"作った: areas/{area}/{KNOWLEDGE_DEFAULT}/（知識置き場。pull の取り出し元、restore の書き出し先）")
+    sd = root / SOURCE_DEFAULT
+    if not sd.is_dir():
+        sd.mkdir(parents=True)
+        ctx.say(f"作った: areas/{area}/{SOURCE_DEFAULT}/（原本置き場。人が置く。pull --from source の取り出し元）")
     inbox = root / "ai" / "docs" / "inbox.md"
     if not inbox.exists():
         inbox.parent.mkdir(parents=True, exist_ok=True)
@@ -1115,6 +1119,7 @@ def write_bytes(path, data):
 
 
 KNOWLEDGE_DEFAULT = "_noai/knowledge"  # Area の知識置き場（areas/<Area>/_noai/knowledge/。実名を含むので _noai の下＝追跡外・AI に見せない）。README の knowledge_dest: で変える
+SOURCE_DEFAULT = "_noai/source"  # Area の原本置き場（areas/<Area>/_noai/source/。人が置く。pull --from source の取り出し元）
 KNOWLEDGE_OUT = "knowledge/"  # ai/out のこの下だけを Area に戻す
 PULL_PREFIX = "area/"  # _noai/raw の下の、Area から取り出した写しの置き場
 
@@ -1126,6 +1131,10 @@ def knowledge_dir(p):
     if p.area_dir.resolve() not in d.parents:
         raise RoomError(f"knowledge_dest が Area の中を指していない: {dest}")
     return d
+
+
+def source_dir(p):
+    return p.area_dir / SOURCE_DEFAULT
 
 
 def pull_sources_path(p):
@@ -1144,6 +1153,9 @@ def mask_project(ctx, p, yes=False):
     raw = maskkit.list_files(n / "raw")
     if not raw:
         return 0
+    stray = sorted(r for r in raw if not r.startswith(PULL_PREFIX))
+    if stray:
+        ctx.say(f"注意: _noai/raw に、pull で取り出したものではない原本がある（{len(stray)} 件）。原本は Area の {SOURCE_DEFAULT}/ に置き、`room pull --from source` で取り出す（raw は pull の出力）")
     conf_path = n / "mask.toml"
     if not conf_path.exists():
         raise RoomError(f"_noai/raw に原本があるが、{conf_path} が無い（マスクの指定を人が書く）")
@@ -1177,7 +1189,7 @@ def mask_project(ctx, p, yes=False):
             "sha256": maskkit.sha256_bytes(data), "area": p.area, "project": p.name, "added": ctx.now(),
             "raw_sha256": maskkit.sha256_bytes(raw[rel]), "mask_sha256": conf_hash, "mapping_version": version,
             # manifest は部屋の AI から見える。Area のファイル名は実名を含みうるので、名前は対応表の側（pull-sources.json）に置く
-            "masked_from": f"areas/{p.area}/{KNOWLEDGE_DEFAULT}/（名前は _noai/map/pull-sources.json）" if rel in pulled else f"_noai/raw/{rel}",
+            "masked_from": f"areas/{p.area}/_noai/（名前は _noai/map/pull-sources.json）" if rel in pulled else f"_noai/raw/{rel}",
         }
     mapping.save(n / "map" / "mapping.json")
     manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
@@ -1339,24 +1351,48 @@ def matches_where(fm, conds):
     return True
 
 
+def pick_source_files(src, patterns):
+    """Area の原本置き場（source/）から、--path の glob に合うファイルを選ぶ。置き場の外を指す指定は拒否する。"""
+    if not patterns:
+        raise RoomError("--from source には --path <置き場からの相対パス or glob> が要る（例: --path 2026/議事録.xlsx、--path '客先A/*.pptx'）")
+    root = src.resolve()
+    picked = set()
+    for pat in patterns:
+        if Path(pat).is_absolute() or ".." in Path(pat).parts:
+            raise RoomError(f"--path は source/ の中の相対パスで書く: {pat!r}")
+        for f in src.glob(pat):
+            if f.is_file() and root in f.resolve().parents:
+                picked.add(f)
+    return sorted(picked)
+
+
 def cmd_pull(ctx, a):
-    """Area の知識置き場から、条件に合う（status: active の）ファイルを _noai/raw/area/ に写す。マスクは room mask（start でも自動）。実名を読むので人が実行する。"""
+    """Area の知識置き場（--from knowledge）か原本置き場（--from source）から、ファイルを _noai/raw/area/ に写す。マスクは room mask（start でも自動）。実名を読むので人が実行する。"""
     p = Project.load(ctx, a.name)
-    conds = parse_where(a.where)
-    src = knowledge_dir(p)
-    if not src.is_dir():
-        raise RoomError(f"Area の知識置き場が無い: {src}")
-    picked = []
-    for f in sorted(src.rglob("*.md")):
-        fm = read_frontmatter_values(f)
-        if fm.get("status") not in (None, [], "active"):
-            continue
-        if matches_where(fm, conds):
-            picked.append(f)
+    origin = getattr(a, "origin", None) or "knowledge"
+    if origin == "source":
+        src = source_dir(p)
+        if not src.is_dir():
+            raise RoomError(f"Area の原本置き場が無い: {src}（`room init {p.area}` で作る）")
+        picked = pick_source_files(src, getattr(a, "path", None))
+        label, ext_of = "原本", lambda f: f.suffix.lower()
+    else:
+        conds = parse_where(a.where)
+        src = knowledge_dir(p)
+        if not src.is_dir():
+            raise RoomError(f"Area の知識置き場が無い: {src}")
+        picked = []
+        for f in sorted(src.rglob("*.md")):
+            fm = read_frontmatter_values(f)
+            if fm.get("status") not in (None, [], "active"):
+                continue
+            if matches_where(fm, conds):
+                picked.append(f)
+        label, ext_of = "status: active の知識", lambda f: ".md"
     if not picked:
         ctx.say("条件に合うファイルは無い")
         return
-    ctx.say(f"取り出す候補（{len(picked)} 件。status: active のもの）:")
+    ctx.say(f"取り出す候補（{len(picked)} 件。{label}）:")
     for f in picked:
         ctx.say("  " + f.relative_to(src).as_posix())
     if not a.yes and ctx.ask("この一覧を取り出してよいか [y/N]: ").strip().lower() != "y":
@@ -1364,14 +1400,14 @@ def cmd_pull(ctx, a):
     sources = load_pull_sources(p)
     for f in picked:
         rel_src = f.relative_to(src).as_posix()
-        # ファイル名は実名を含みうる。部屋に渡る名前は、日付と元の相対パスのハッシュだけにする
+        # ファイル名は実名を含みうる。部屋に渡る名前は、日付（知識）または種類（原本）と、元の相対パスのハッシュだけにする
         m = re.match(r"(\d{4}-\d{2}-\d{2})-", f.name)
-        rel = f"{PULL_PREFIX}{m.group(1) if m else 'note'}-{maskkit.sha256_bytes(rel_src.encode('utf-8'))[:8]}.md"
+        head = (m.group(1) if m else "note") if origin == "knowledge" else "src"
+        rel = f"{PULL_PREFIX}{head}-{maskkit.sha256_bytes((rel_src if origin == 'knowledge' else f'source/{rel_src}').encode('utf-8'))[:8]}{ext_of(f)}"
         write_bytes(noai_dir(p) / "raw" / rel, f.read_bytes())
-        sources[rel] = rel_src
+        sources[rel] = rel_src if origin == "knowledge" else f"{SOURCE_DEFAULT}/{rel_src}"
     write_bytes(pull_sources_path(p), json.dumps(sources, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
     ctx.say(f"取り出した: {len(picked)} ファイル → _noai/raw/{PULL_PREFIX}（次は `room mask {p.name}`。今回の条件に合わなくなった前回の分は、_noai/raw から手で消す）")
-
 
 def cmd_readme(ctx, a):
     """部屋の AI が書いた ai/out/readme-draft.md（本文だけ）を、Project の README.md の本文に反映する。frontmatter は変えない（updated だけ今日にする）。"""
@@ -1775,6 +1811,8 @@ def build_parser():
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     pl = sub.add_parser("pull", help="Area の知識置き場から、条件に合う知識を _noai/raw/area/ に写す（マスクは mask / start）")
     pl.add_argument("name"); pl.add_argument("--where", action="append", metavar="項目=値", help="frontmatter の項目で絞る（複数指定は AND。リストの項目は要素に一致）")
+    pl.add_argument("--from", dest="origin", choices=("knowledge", "source"), default="knowledge", help="取り出し元: knowledge（知識。--where で絞る）/ source（原本。--path で選ぶ）。既定は knowledge")
+    pl.add_argument("--path", action="append", metavar="パス", help="--from source のとき、置き場からの相対パスか glob（複数指定可）")
     pl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")

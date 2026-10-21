@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-21（room: 原本置き場 `_noai/source/` と `pull --from source`）
+- 旧 `knowledge/` の確認: works の `areas/` では `pilot2` だけが持っていた（試験用のダミー。git に一度も入っていない）。ユーザーが自分で移す。
+- ユーザーが選んだ設計: 原本は Area の `_noai/source/` に置き、Project の `_noai/raw/` は pull の出力だけ。`room pull <Project> --from source --path <パス or glob>` で選ぶ。`init` が `source/` を作る。`raw/` に人が置いた原本があれば `mask` が注意を出す（止めない）。`deliverable/` は別に足す。単体テスト 108 件が通る（実機は未確認）。決定は `decisions.md` の同日の項。
+
 ### 2026-10-21（room: Area の知識置き場を `_noai/knowledge/` に移した）
 - 知識（share）・原本（source）・成果物（deliverable）を役割で分け、実名を含む Area のデータを `areas/<Area>/_noai/` の下にまとめる案（C）をユーザーが選んだ。旧 `areas/<Area>/knowledge/` が `_noai` の外で守られていなかったため、まず `knowledge/` を移した（`room.py` の `KNOWLEDGE_DEFAULT`、`init` の旧置き場の警告、`room/README.md`、`guides/howto/ai-room-setup-script.md`、テスト）。単体テスト 105 件が通る。決定は `decisions.md` の同日の項。`source/` と `deliverable/` は未実装（Next Actions 14）。
 
