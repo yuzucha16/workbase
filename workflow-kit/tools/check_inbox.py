@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """check-inbox.ps1 の Python 版（標準ライブラリだけ。pwsh が無い環境、例: AI 作業部屋用）。
 
-「ナレッジ化して」で作った inbox のメモを、機械的に点検する。
-stock-hook.md の「書き方」「形式」のうち、機械的に確認できる項目だけを見る（手で確認する項目は、最後に一覧する）。
+「ナレッジ化して」「理解ガイドにして」で作った inbox のメモを、機械的に点検する。
+stock-hook.md の「書き方」「形式」と stock-explain.md のうち、機械的に確認できる項目だけを見る（手で確認する項目は、最後に一覧する）。
+frontmatter の kind で項目を切り替える: lesson（省略時。7見出し）と explain（理解ガイド。6見出し）。
 
 使い方: python check_inbox.py [--today YYYY-MM-DD] [--show-pass] [メモのパス...]
   パスを省略すると、exmem/inbox/ の今日の日付のメモ（README.md を除く）を点検する。
@@ -18,6 +19,7 @@ import sys
 from pathlib import Path
 
 ORDER = ["Goal", "Principles", "Decisions", "Facts", "Gotchas", "Open Questions", "Next Actions"]
+EXPLAIN_ORDER = ["冒頭", "ダイジェスト", "基礎知識", "チェックリスト", "補足", "要確認事項"]
 EMAIL_RE = (
     r"[\w.+-]+@(?!(?:[\w-]+\.)*(?:example\.(?:com|org|net)|local|invalid|test|example)(?![\w-]|\.\w))[\w-]+\.[\w.]+"
 )
@@ -58,38 +60,7 @@ def count(text, pattern):
     return len(re.findall(pattern, text, re.M))
 
 
-def check_file(path, today, c, spans):
-    name = path.name
-    print(f"== {name}")
-    raw = path.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
-
-    c.report(bool(re.match(r"^\d{4}-\d{2}-\d{2}-[a-z0-9]+(-[a-z0-9]+){1,4}\.md$", name)),
-             "ファイル名が YYYY-MM-DD-<英単語2〜5語の kebab-case>.md", "FAIL", name)
-
-    fm = re.match(r"---\n(.*?)\n---\n", raw, re.S)
-    c.report(bool(fm), "frontmatter がある")
-    front = fm.group(1) if fm else ""
-
-    def get(k):
-        m = re.search(rf"^{k}:\s*(.*)$", front, re.M)
-        return m.group(1).strip() if m else ""
-
-    c.report(get("type") == "inbox", "type が inbox")
-    c.report(get("title") != "", "title がある")
-    created = get("created")
-    c.report(bool(re.match(r"^\d{4}-\d{2}-\d{2}$", created)), "created が YYYY-MM-DD")
-    c.report(created == today, f"created が今日（{today}）", "WARN", created)
-    m = re.search(r"tags:\n(.*?)(?=\n\S|\Z)", front, re.S)
-    tag_block = m.group(1) if m else ""
-    tags = re.findall(r"^\s+-\s+(\S+)\s*$", tag_block, re.M)
-    c.report(3 <= len(tags) <= 6, "tags が3〜6個", "FAIL", f"{len(tags)}個")
-    c.report(not [t for t in tags if not re.match(r"^[a-z0-9]+([-/][a-z0-9]+)*$", t)], "tags が英小文字の kebab-case（階層は /）")
-    c.report(not [t for t in tags if t.lower() in ("inbox", "knowledge", "active", "superseded", "project", "index")], "tags に type / status の値を含まない")
-    m = re.search(r"sources:\n(.*)", front, re.S)
-    src_block = m.group(1) if m else ""
-    srcs = re.findall(r"^\s+-\s+(.+)$", src_block, re.M)
-    c.report(len(srcs) >= 1 and all(re.match(r'^.+ conversation ".+"$', s) for s in srcs), 'sources が `<AI名> conversation "<テーマ>"` の形')
-
+def check_lesson(raw, name, c, spans):
     heads = re.findall(r"^## (.+?)\s*$", raw, re.M)
     c.report("|".join(heads) == "|".join(ORDER), "見出し7つが、定められた順番で、すべてある", "FAIL", ", ".join(heads))
 
@@ -140,6 +111,70 @@ def check_file(path, today, c, spans):
         if len(span) >= 8:
             spans.setdefault(span, set()).add(name)
 
+
+def check_explain(raw, c):
+    """kind: explain（理解ガイド）の下書き。見出しは reference-doc-types の理解ガイドの型（stock-explain.md）。"""
+    heads = re.findall(r"^## (.+?)\s*$", raw, re.M)
+    c.report("|".join(heads) == "|".join(EXPLAIN_ORDER), "見出し6つが、定められた順番で、すべてある", "FAIL", ", ".join(heads))
+
+    intro = section(raw, "冒頭", "ダイジェスト")
+    last_line = intro.split("\n")[-1]
+    c.report(bool(re.search(r"^統合先の候補: guides/explain/(\S+?\.md|新規)（キーワード: .+）", last_line)),
+             "冒頭の末尾が「統合先の候補: guides/explain/…（キーワード: …）」の行", "FAIL", last_line)
+
+    names = EXPLAIN_ORDER[1:]
+    nxt = names[1:] + [""]
+    empty = [n for n, x in zip(names, nxt) if section(raw, n, x) == ""]
+    c.report(not empty, "各見出しに中身がある（該当が無い見出しは「なし」と書く）", "FAIL", ", ".join(empty))
+    bad_none = [n for n, x in zip(names, nxt) if re.match(r"なし.+", section(raw, n, x), re.S)]
+    c.report(not bad_none, "「なし」と書いた見出しは、単独の行になっている", "FAIL", ", ".join(bad_none))
+
+    c.report("自分で説明するときの一言" in section(raw, "基礎知識", "チェックリスト"),
+             "基礎知識に「自分で説明するときの一言」がある（該当が無ければ、その旨を「なし」でなく理由つきで書く）", "WARN")
+    c.report(not re.search(r"（仮説(?!）)", raw), "未確認は `（仮説）` の形のとおりに書く（補足は括弧の外）")
+    bad = [m for m in re.findall(r"（確認:[^）]*）", raw) if not re.match(r"（確認: \d{4}-\d{2}-\d{2}、根拠: .+）", m)]
+    c.report(not bad, "確認した事実は `（確認: YYYY-MM-DD、根拠: …）` の形", "FAIL", bad[0][:40] if bad else "")
+
+
+def check_file(path, today, c, spans):
+    name = path.name
+    print(f"== {name}")
+    raw = path.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+
+    c.report(bool(re.match(r"^\d{4}-\d{2}-\d{2}-[a-z0-9]+(-[a-z0-9]+){1,4}\.md$", name)),
+             "ファイル名が YYYY-MM-DD-<英単語2〜5語の kebab-case>.md", "FAIL", name)
+
+    fm = re.match(r"---\n(.*?)\n---\n", raw, re.S)
+    c.report(bool(fm), "frontmatter がある")
+    front = fm.group(1) if fm else ""
+
+    def get(k):
+        m = re.search(rf"^{k}:\s*(.*)$", front, re.M)
+        return m.group(1).strip() if m else ""
+
+    c.report(get("type") == "inbox", "type が inbox")
+    kind = get("kind") or "lesson"
+    c.report(kind in ("lesson", "explain"), "kind が lesson か explain（省略は lesson）", "FAIL", kind)
+    c.report(get("title") != "", "title がある")
+    created = get("created")
+    c.report(bool(re.match(r"^\d{4}-\d{2}-\d{2}$", created)), "created が YYYY-MM-DD")
+    c.report(created == today, f"created が今日（{today}）", "WARN", created)
+    m = re.search(r"tags:\n(.*?)(?=\n\S|\Z)", front, re.S)
+    tag_block = m.group(1) if m else ""
+    tags = re.findall(r"^\s+-\s+(\S+)\s*$", tag_block, re.M)
+    c.report(3 <= len(tags) <= 6, "tags が3〜6個", "FAIL", f"{len(tags)}個")
+    c.report(not [t for t in tags if not re.match(r"^[a-z0-9]+([-/][a-z0-9]+)*$", t)], "tags が英小文字の kebab-case（階層は /）")
+    c.report(not [t for t in tags if t.lower() in ("inbox", "knowledge", "active", "superseded", "project", "index")], "tags に type / status の値を含まない")
+    m = re.search(r"sources:\n(.*)", front, re.S)
+    src_block = m.group(1) if m else ""
+    srcs = re.findall(r"^\s+-\s+(.+)$", src_block, re.M)
+    c.report(len(srcs) >= 1 and all(re.match(r'^.+ conversation ".+"$', s) for s in srcs), 'sources が `<AI名> conversation "<テーマ>"` の形')
+
+    if kind == "explain":
+        check_explain(raw, c)
+    else:
+        check_lesson(raw, name, c, spans)
+
     c.report(not re.search("この会話|上記|さっき|先ほど|前述", raw), "会話に依存する表現（この会話、上記、さっき、先ほど、前述）が無い")
     c.report(not re.search(r"(?i)[A-Za-z]:\\Users\\(?![<%$])[^\\\s`]+", raw) and not re.search(EMAIL_RE, raw),
              "共有したくない値（ユーザー名を含むパス、メールアドレス。example.com / *.local / *.invalid / *.test は例示用なので除く）が無い")
@@ -181,7 +216,7 @@ def main():
 
     print()
     print(f"RESULT: files={len(paths)} pass={c.passed} fail={c.fail} warn={c.warn}")
-    print("手で確認する項目: 1ファイル1テーマ / 同じ日の既存メモとの重複 / 作業ログ（何をいつやったか）の混在 / Decisions が、ユーザーの明示または承認した決定か / 確認した事実の根拠が本当か / 範囲を限定された場合は、その範囲だけか")
+    print("手で確認する項目: 1ファイル1テーマ / 同じ日の既存メモとの重複 / 作業ログ（何をいつやったか）の混在 / Decisions が、ユーザーの明示または承認した決定か（lesson） / 確認した事実の根拠が本当か / 範囲を限定された場合は、その範囲だけか / 理解ガイドが、既存の guides/explain/ と重ならないか（explain）")
     return c.fail
 
 

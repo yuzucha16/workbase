@@ -8,7 +8,7 @@
 | `open` | | `open-hook.md` | Project の開始 | 目的と完了条件を聞いて README 本文を下書きし、`start` を呼ぶ。Project の構造の表は `project-structure.md`（ひな形は `room open`） |
 | `start` | 「作業を始めて」<br>`start 解決`＝「解決で始めて」<br>`start 改善`＝「改善で始めて」<br>`start 調査`＝「調査で始めて」<br>`start 計画`＝「計画で始めて」 | `start-hook.md` | セッションの開始 | 開始インタビュー。`start 解決` / `start 改善` / `start 調査` / `start 計画` で、進め方を選んで始める |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push を、順序を固定して行う |
-| `stock` | 「ナレッジ化して」 | `stock-hook.md` | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`） |
+| `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
 | `review` | 「見直して」<br>`review 消化`＝「next action を消化して」 | `review-hook.md` | 随時（週1回・15分を目途） | 遠回りの事例を見て、1つ直すか1つ畳む。`review 消化` で Next Actions / Open Questions の消化 |
 | （常時） | | `docs-rules.md` | `docs/` を更新するとき、コミット・push の前 | `docs/` の運用規則 |

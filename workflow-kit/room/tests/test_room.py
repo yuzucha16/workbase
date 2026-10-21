@@ -1150,6 +1150,20 @@ class StockTest(unittest.TestCase):
             self.assertIn("base_stale:", got)
             self.assertIn("topic-a.md", got)
 
+    def test_explain_kind_is_carried_and_never_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, r, base = self.setup(tmp)
+            p = v / "projects/proj-a"
+            (r / "exmem/lessons/topic-a.md").write_text("v2\n", encoding="utf-8")
+            sh(r, "add", "-A"); sh(r, "commit", "-qm", "c2")
+            (p / "ai/out/stock").mkdir(parents=True)
+            draft = self.DRAFT.format(base=base).replace("type: inbox\n", "type: inbox\nkind: explain\n")
+            (p / "ai/out/stock/2026-10-12-topic-a.md").write_text(draft, encoding="utf-8")
+            room.cmd_stock(c, self.ns())
+            got = (r / "exmem/inbox/2026-10-12-topic-a.md").read_text(encoding="utf-8")
+            self.assertIn("kind: explain", got)
+            self.assertNotIn("base_stale", got)
+
     def test_refuses_missing_header_and_masked_terms(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, r, base = self.setup(tmp)

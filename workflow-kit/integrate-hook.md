@@ -46,3 +46,12 @@
 6. 統合先の `lessons/` のノートの `Open Questions` / `Next Actions` を更新する（未完の項目の置き場）。
 7. 新しいファイルを作ったら `exmem-index.md` に1行足す。
 8. 統合したメモを inbox から削除する。削除の前に、上の「手順」の「メモと統合先の照合」を行う。
+
+### `kind: explain` のメモ（理解ガイド）
+
+frontmatter の `kind` が `explain` のメモは、上の統合の細則のうち次を読み替える。`kind` が無い、または `lesson` のメモは、上のとおり。
+
+- **書き込み先**: `guides/explain/<name>.md` の**新規作成**と、`guides/guides-index.md` への1行（更新の規則は索引の末尾）。既存の `guides/explain/` への追記・上書きは行わない（同じテーマがあれば、統合せず、報告で食い違いとして挙げる）。権限は変わらない（`exmem/` 側の作業）。
+- **変換**: frontmatter を `type: explain`、`title`、`tags` にする（`kind`、`created`、`sources` は外す。`checked` は調査の成果物だけ）。`tags` は `exmem/tags.md` の語彙に正規化する（無ければ先に追記）。本文は6見出しのまま使い、「冒頭」の末尾の「統合先の候補」の行は外す。
+- **ファイル名**: リポジトリ内で一意にする（`exmem/lessons/` と重ならない。`guides/AGENTS.md`）。
+- **照合**: 実物との照合と、手順「メモと統合先の照合を、報告に載せる」は同じ。基準が古いメモ（`base_stale`）の扱いは、新規作成なので該当しない。
