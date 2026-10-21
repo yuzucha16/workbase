@@ -1,4 +1,4 @@
-"""room: AI 作業部屋の操作（open / start / close / umount / mask / restore / readme / stock）。
+"""room: AI 作業部屋の操作（open / start / close / umount / mask / restore / pull / readme / stock）。
 
 人が Windows で実行する。AI には実行させない（原本と対応表を読む工程を含むため）。
 設計は guides/explain/ai-room-why.md、手作業の手順は guides/howto/ai-room-setup.md。
@@ -1088,6 +1088,30 @@ def write_bytes(path, data):
     path.write_bytes(data)
 
 
+KNOWLEDGE_DEFAULT = "knowledge"  # Area の知識置き場（areas/<Area>/knowledge/）。README の knowledge_dest: で変える
+KNOWLEDGE_OUT = "knowledge/"  # ai/out のこの下だけを Area に戻す
+PULL_PREFIX = "area/"  # _noai/raw の下の、Area から取り出した写しの置き場
+
+
+def knowledge_dir(p):
+    """Area の知識置き場。README の knowledge_dest:（Area からの相対パス）で変えられる。Area の外を指す指定は拒否する。"""
+    dest = str(p.fm.get("knowledge_dest") or KNOWLEDGE_DEFAULT).strip().strip("\"'")
+    d = (p.area_dir / dest).resolve()
+    if p.area_dir.resolve() not in d.parents:
+        raise RoomError(f"knowledge_dest が Area の中を指していない: {dest}")
+    return d
+
+
+def pull_sources_path(p):
+    return noai_dir(p) / "map" / "pull-sources.json"
+
+
+def load_pull_sources(p):
+    """{_noai/raw からの相対パス: Area の知識置き場からの相対パス}。実名を含みうるので、_noai/map（部屋に渡らない）に置く。"""
+    path = pull_sources_path(p)
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
 def mask_project(ctx, p, yes=False):
     """_noai/raw の新しい・変わった原本を、マスクして ai/in へ。点検に通らなければ止める。作った件数を返す。"""
     n = noai_dir(p)
@@ -1102,6 +1126,7 @@ def mask_project(ctx, p, yes=False):
         mapping = maskkit.Mapping.load(n / "map" / "mapping.json")
         conf_hash = maskkit.sha256_bytes(conf_path.read_bytes())
         man = load_manifest(p)
+        pulled = load_pull_sources(p)
         todo, rebuild = set(), False
         for rel, data in raw.items():
             e = man["files"].get(f"in/{rel}")
@@ -1125,7 +1150,8 @@ def mask_project(ctx, p, yes=False):
         man["files"][f"in/{rel}"] = {
             "sha256": maskkit.sha256_bytes(data), "area": p.area, "project": p.name, "added": ctx.now(),
             "raw_sha256": maskkit.sha256_bytes(raw[rel]), "mask_sha256": conf_hash, "mapping_version": version,
-            "masked_from": f"_noai/raw/{rel}",
+            # manifest は部屋の AI から見える。Area のファイル名は実名を含みうるので、名前は対応表の側（pull-sources.json）に置く
+            "masked_from": f"areas/{p.area}/{KNOWLEDGE_DEFAULT}/（名前は _noai/map/pull-sources.json）" if rel in pulled else f"_noai/raw/{rel}",
         }
     mapping.save(n / "map" / "mapping.json")
     manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
@@ -1153,10 +1179,14 @@ def restore_project(ctx, p, force=False):
         return 0, [str(e)]
     if problems:
         return 0, problems
+    try:
+        publish = plan_knowledge_publish(p, restored)
+    except RoomError as e:
+        return 0, [str(e)]
     mf = n / "map" / "final-manifest.json"
     written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
     if not force:
-        changed = []
+        changed = knowledge_conflicts(p, publish)
         for rel, data in restored.items():
             dest = n / "final" / rel
             if dest.exists():
@@ -1169,7 +1199,61 @@ def restore_project(ctx, p, force=False):
         write_bytes(n / "final" / rel, data)
         written[rel] = maskkit.sha256_bytes(data)
     write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
+    publish_knowledge(ctx, p, publish)
     return len(restored), []
+
+
+def plan_knowledge_publish(p, restored):
+    """復元した ai/out/knowledge/ の下を、Area の知識置き場への書き出し先に対応づける（何も書かない）。{書き出し先: bytes}。"""
+    items = {rel[len(KNOWLEDGE_OUT):]: data for rel, data in restored.items() if rel.startswith(KNOWLEDGE_OUT)}
+    if not items:
+        return {}
+    base = knowledge_dir(p)
+    plan = {}
+    for rel, data in items.items():
+        if "⟦" in rel or "⟧" in rel:
+            raise RoomError(f"{KNOWLEDGE_OUT}{rel}: ファイル名にプレースホルダーが残っている（AI に、英数字のファイル名を付けさせる）")
+        dest = (base / rel).resolve()
+        if base not in dest.parents:
+            raise RoomError(f"{KNOWLEDGE_OUT}{rel}: Area の知識置き場の外を指している")
+        plan[dest] = data
+    return plan
+
+
+def knowledge_conflicts(p, plan):
+    """Area の既存ファイルのうち、前回の書き出しから人が変えたもの（上書きすると人の変更が消える）を、問題の文で返す。"""
+    mf = noai_dir(p) / "map" / "knowledge-manifest.json"
+    written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
+    base = knowledge_dir(p)
+    out = []
+    for dest, data in plan.items():
+        if dest.exists():
+            cur = dest.read_bytes()
+            key = dest.relative_to(base).as_posix()
+            if cur != data and written.get(key) != maskkit.sha256_bytes(cur):
+                out.append(f"{KNOWLEDGE_OUT}{key}: Area の知識が、前回の書き出しから変わっている（人の変更を上書きしてしまう）")
+    return out
+
+
+def publish_knowledge(ctx, p, plan):
+    """Area の知識置き場へ書く。前回の書き出しから変わっている既存ファイルは、ここに来るのは --force のときだけ。直前の版は _noai/final/_prev/ に退避する。"""
+    if not plan:
+        return
+    n = noai_dir(p)
+    mf = n / "map" / "knowledge-manifest.json"
+    written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
+    base = knowledge_dir(p)
+    for dest, data in plan.items():
+        key = dest.relative_to(base).as_posix()
+        if dest.exists():
+            cur = dest.read_bytes()
+            if cur != data and written.get(key) != maskkit.sha256_bytes(cur):
+                write_bytes(n / "final" / "_prev" / KNOWLEDGE_OUT / key, cur)
+                ctx.say(f"注意: Area の {key} は前回の書き出しから変わっていた。--force で上書きした（直前の版は _noai/final/_prev/{KNOWLEDGE_OUT}{key}）")
+        write_bytes(dest, data)
+        written[key] = maskkit.sha256_bytes(data)
+    write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
+    ctx.say(f"Area に書いた: {len(plan)} ファイル → {base.relative_to(ctx.vault).as_posix()}")
 
 
 def cmd_mask(ctx, a):
@@ -1190,6 +1274,81 @@ def cmd_restore(ctx, a):
     if problems:
         raise RoomError("復元を止めた（_noai/final は変更していない）:\n  " + "\n  ".join(problems))
     ctx.say(f"復元した: {k} ファイル → _noai/final")
+
+
+def read_frontmatter_values(path):
+    """frontmatter を {キー: 文字列 または文字列のリスト} で返す（`- 値` 形式と `[a, b]` 形式のリストを読む）。"""
+    fm, _ = split_frontmatter(Path(path).read_text(encoding="utf-8"))
+    data, key = {}, None
+    unq = lambda s: s.strip().strip("\"'")
+    for line in (fm or "").split("\n"):
+        m = re.match(r"^([A-Za-z0-9_]+):\s*(.*?)\s*$", line)
+        if m:
+            key, val = m.group(1), re.sub(r"\s+#.*$", "", m.group(2))
+            if val.startswith("[") and val.endswith("]"):
+                data[key] = [unq(x) for x in val[1:-1].split(",") if x.strip()]
+            else:
+                data[key] = unq(val) if val else []
+            continue
+        m = re.match(r"^\s+-\s*(.*?)\s*$", line)
+        if m and key and isinstance(data.get(key), list):
+            data[key].append(unq(m.group(1)))
+    return data
+
+
+def parse_where(items):
+    conds = []
+    for it in items or []:
+        k, sep, v = it.partition("=")
+        if not sep or not k.strip() or not v.strip():
+            raise RoomError(f"--where は <項目>=<値> の形で書く: {it!r}")
+        conds.append((k.strip(), v.strip()))
+    return conds
+
+
+def matches_where(fm, conds):
+    for k, v in conds:
+        have = fm.get(k)
+        have = have if isinstance(have, list) else [have]
+        if v not in have:
+            return False
+    return True
+
+
+def cmd_pull(ctx, a):
+    """Area の知識置き場から、条件に合う（status: active の）ファイルを _noai/raw/area/ に写す。マスクは room mask（start でも自動）。実名を読むので人が実行する。"""
+    p = Project.load(ctx, a.name)
+    if p.data != "restore":
+        raise RoomError(f"data: {p.data} の Project には取り出さない（結果を Area に戻すので、README の data: を restore にする）")
+    conds = parse_where(a.where)
+    src = knowledge_dir(p)
+    if not src.is_dir():
+        raise RoomError(f"Area の知識置き場が無い: {src}")
+    picked = []
+    for f in sorted(src.rglob("*.md")):
+        fm = read_frontmatter_values(f)
+        if fm.get("status") not in (None, [], "active"):
+            continue
+        if matches_where(fm, conds):
+            picked.append(f)
+    if not picked:
+        ctx.say("条件に合うファイルは無い")
+        return
+    ctx.say(f"取り出す候補（{len(picked)} 件。status: active のもの）:")
+    for f in picked:
+        ctx.say("  " + f.relative_to(src).as_posix())
+    if not a.yes and ctx.ask("この一覧を取り出してよいか [y/N]: ").strip().lower() != "y":
+        raise RoomError("取り出しを中止した")
+    sources = load_pull_sources(p)
+    for f in picked:
+        rel_src = f.relative_to(src).as_posix()
+        # ファイル名は実名を含みうる。部屋に渡る名前は、日付と元の相対パスのハッシュだけにする
+        m = re.match(r"(\d{4}-\d{2}-\d{2})-", f.name)
+        rel = f"{PULL_PREFIX}{m.group(1) if m else 'note'}-{maskkit.sha256_bytes(rel_src.encode('utf-8'))[:8]}.md"
+        write_bytes(noai_dir(p) / "raw" / rel, f.read_bytes())
+        sources[rel] = rel_src
+    write_bytes(pull_sources_path(p), json.dumps(sources, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
+    ctx.say(f"取り出した: {len(picked)} ファイル → _noai/raw/{PULL_PREFIX}（次は `room mask {p.name}`。今回の条件に合わなくなった前回の分は、_noai/raw から手で消す）")
 
 
 def cmd_readme(ctx, a):
@@ -1587,6 +1746,9 @@ def build_parser():
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
+    pl = sub.add_parser("pull", help="Area の知識置き場から、条件に合う知識を _noai/raw/area/ に写す（マスクは mask / start）")
+    pl.add_argument("name"); pl.add_argument("--where", action="append", metavar="項目=値", help="frontmatter の項目で絞る（複数指定は AND。リストの項目は要素に一致）")
+    pl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
     st = sub.add_parser("stock", help="ai/out/stock/ の【汎用】の下書きを、確認を経て exmem/inbox/ に運ぶ")
@@ -1619,7 +1781,7 @@ def main(argv=None):
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
         {"init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
-         "mask": cmd_mask, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
+         "mask": cmd_mask, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2

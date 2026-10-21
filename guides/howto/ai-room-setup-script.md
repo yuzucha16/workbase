@@ -28,9 +28,9 @@ tags:
 | 1 | 前提を確認する | 手動 | `.gitignore`、`uv`、WSL2 がそろう |
 | 2 | 部屋を作る（`init`） | スクリプト + ログインは人 | 部屋が `claude -p` に `ok` を返す |
 | 3 | Project を作る（`open`） | スクリプト + README は人 | `projects/pilot2-1/` ができ、README を書いた |
-| 4 | マスクする（`mask`。任意） | スクリプト | `ai/in/` にマスク済みのファイルが入る |
+| 4 | マスクする（`mask`。任意）。4.1: Area の知識を取り出す（`pull`） | スクリプト | `ai/in/` にマスク済みのファイルが入る（4.1: `ai/in/area/`） |
 | 5 | 部屋で使う（`start`） | スクリプト | 成果物が `ai/out/` に現れ、マウントが残らない |
-| 6 | 回収する（`restore` `readme` `stock`） | スクリプト | 実名に戻った成果物が `_noai/final/` にある |
+| 6 | 回収する（`restore` `readme` `stock`）。6.1: 統合した知識を Area に戻す | スクリプト | 実名に戻った成果物が `_noai/final/` にある（6.1: Area の `knowledge/` にも） |
 | 7 | 閉じる（`close`） | スクリプト + `close.md` は部屋の AI | `archives/pilot2-1/` に移った |
 | 8 | 片付ける（`reap`、部屋の削除） | スクリプト | 会話履歴が消え、README に `reaped:` が付く |
 | 9 | うまくいかないとき | | |
@@ -143,6 +143,92 @@ Get-ChildItem $HOME\works\projects\pilot2-2\ai\in               # マスク済�
 - **辞書にない名前は、置き換わらない**。ダミーの CSV の担当「山田」が実例で、部屋の AI が気づいて報告した。列で指定する仕組みは `[columns]`
 - 語が残っていれば止まる。`start` の最初にも、自動で行う
 
+### 4.1 Area の知識を取り出す（`pull`。2026-10-21 追加。実機で確認済み: 2026-10-21、問題なし）
+
+Area に溜めた知識（実名入りの会議録など）を、別の Project の部屋の AI に使わせるとき。Area の `knowledge/` から、条件に合うファイルを `_noai/raw/area/` に写し、`mask` で `ai/in/area/` にマスクした写しを作る。設計の理由は [[cross-area-shared-knowledge]]。**実名を読むので、人が実行する**（AI には実行させない）。ここでは、試験用の Project `pilot2-3` を使う（`data: restore` が前提）。
+
+```powershell
+uv run room.py open pilot2-3 --area pilot2 --type doc --data restore
+```
+
+以下の `Set-Content` は PowerShell 7（`pwsh`）で実行する。Windows PowerShell 5.1 だと UTF-8 に BOM が付き、frontmatter（先頭の `---`）と `mask.toml` を読めない。手で書くなら BOM なしの UTF-8 で保存する。
+
+**手順1. マスクの指定を書く**（ひな形があれば上書きしてよい。試験用のダミー）:
+
+```powershell
+Set-Content -Path $HOME\works\projects\pilot2-3\_noai\mask.toml -Encoding utf8 -Value @'
+[terms.CUST]
+acme = ["アクメ商事株式会社", "アクメ商事"]
+
+[terms.PERSON]
+tanaka = ["田中太郎"]
+'@
+```
+
+**手順2. Area に知識を置く**（ダミー。内容はすべて架空）:
+
+```powershell
+$k = "$HOME\works\areas\pilot2\knowledge"
+New-Item -ItemType Directory -Force $k | Out-Null
+Set-Content -Path "$k\2026-10-14-アクメ商事-定例.md" -Encoding utf8 -Value @'
+---
+type: area-note
+kind: meeting
+title: 在庫システム更新の定例
+status: active
+date: 2026-10-14
+org:
+  - アクメ商事
+tags:
+  - knowledge-management
+created: 2026-10-14
+updated: 2026-10-14
+todo_open: 1
+todo_due: 2026-10-21
+---
+
+# 在庫システム更新の定例
+
+## 冒頭
+- 決定: 切替は11月第2週。ToDo: 項目一覧をアクメ商事が10-21 までに出す。
+
+## 決定
+- 切替日を11月第2週にする。理由: アクメ商事の締め処理と重ならない。【案件】
+
+## ToDo
+| 内容 | 担当 | 期日 | 状態 |
+|---|---|---|---|
+| 移行データの項目一覧を出す | 田中太郎（アクメ商事） | 2026-10-21 | 未了 |
+'@
+Set-Content -Path "$k\2026-10-15-自社内の打合せ.md" -Encoding utf8 -Value "---`ntype: area-note`nkind: meeting`ntitle: 自社内の打合せ`nstatus: active`norg:`n  - 自社`n---`n`n# 自社内の打合せ`n`n自社だけの内容`n"
+Set-Content -Path "$k\2026-10-01-古い定例.md" -Encoding utf8 -Value "---`ntype: area-note`nkind: meeting`ntitle: 古い定例`nstatus: superseded`norg:`n  - アクメ商事`n---`n`n# 古い定例`n`nアクメ商事の古い決定`n"
+```
+
+**手順3. 取り出す**:
+
+```powershell
+uv run room.py pull pilot2-3 --where org=アクメ商事     # 一覧を確認して y
+Get-ChildItem $HOME\works\projects\pilot2-3\_noai\raw\area
+```
+
+**手順4. マスクする**:
+
+```powershell
+uv run room.py mask pilot2-3
+Get-ChildItem $HOME\works\projects\pilot2-3\ai\in\area
+Get-Content $HOME\works\projects\pilot2-3\ai\in\area\*.md      # ⟦CUST_001⟧、⟦PERSON_001⟧
+Select-String -Path $HOME\works\projects\pilot2-3\ai\records\manifest.json -Pattern 'アクメ|田中'     # 何も出ない
+```
+
+- `--where <項目>=<値>` は、frontmatter の項目で絞る（複数指定は AND。リストの項目は要素に一致）。`status: superseded` のファイルは取り出さない（`status` が無ければ active 扱い）。`--yes` で一覧の確認を省く
+- 部屋に渡るファイル名は、`<日付>-<元の相対パスのハッシュ>.md` にする（Area のファイル名は顧客名を含みうるため）。元の名前は `_noai/map/pull-sources.json`（部屋に渡らない）にある。manifest の `masked_from` にも名前は書かない
+- Area の知識置き場は `areas/<Area>/knowledge/`。変えるときは Project の README の frontmatter に `knowledge_dest: <Area からの相対パス>` を書く（Area の外は拒否）
+- **確認ポイント**:
+  - 一覧が1件だけ（`org` 一致かつ active）。取り出した名前に `アクメ` が無い
+  - `ai/in/area/` の本文と、frontmatter の `org:` の値に `アクメ` `田中` が残らない（`org:` の値の置換は、実機で確認済み: 2026-10-21。残るときは、語を足して設計を見直す）
+  - `ai/records/manifest.json` に実名が無い
+- **よく忘れる点**: 今回の条件に合わなくなった前回の取り出し分は、`_noai/raw/area/` に残る。手で消す。`data: mask` の Project には取り出せない（結果を Area に戻すため `restore` が要る）
+
 ## 5. 部屋で使う（`start`）
 
 **A. 端末で使う（既定）**:
@@ -192,6 +278,49 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 
 - `stock` の運び先は `resources/exmem/inbox/`（**公開リポジトリ**）。対応表の語を含む下書きは運ばれない。運んだメモは、未追跡のまま残る（コミットしない方針）
 - Excel の成果物は、`_noai/final/` のファイルを Excel で開き、ピボットは「すべて更新」を押す。シート名・値・コメントが実名に戻っているか確認する
+
+### 6.1 統合した知識を Area に戻す（`ai/out/knowledge/`。2026-10-21 追加。実機で確認済み: 2026-10-21、問題なし）
+
+4.1 で取り出した知識を、部屋の AI が統合し、実名に戻して Area に置く。`restore` が自動で行う（`start` の終わり）。**部屋の AI は実名を見ない**。
+
+1. 部屋で起動し、AI に頼む:
+
+   ```powershell
+   uv run room.py start pilot2-3
+   ```
+
+   部屋の `claude` に: 「`ai/in/area/` を読み、`ai/out/knowledge/topic-cutover.md` に統合ノートを書いて。frontmatter は `kind: integrated`、`status: active`、`org` はそのまま。`⟦…⟧` の記号は変えない。ファイル名は英数字で」。`/exit` で戻る
+2. 自動で `restore` が動き、`ai/out/knowledge/` の下が、実名に戻って Area に書かれる:
+
+   ```powershell
+   Get-Content $HOME\works\areas\pilot2\knowledge\topic-cutover.md      # アクメ商事株式会社、田中太郎
+   Get-Content $HOME\works\projects\pilot2-3\_noai\final\knowledge\topic-cutover.md     # 同じ内容
+   ```
+
+3. **人の変更を守る停止を確かめる**（`start` をもう一度やり直す必要はない。`ai/out/` に前回の出力が残っている）:
+
+   ```powershell
+   Add-Content "$HOME\works\areas\pilot2\knowledge\topic-cutover.md" "`n人が追記した1行"     # Area 側を人が書き換える
+   uv run room.py restore pilot2-3                                                          # 止まる
+   ```
+
+   「Area の知識が、前回の書き出しから変わっている（人の変更を上書きしてしまう）」と出て、何も書かずに止まる。Area のファイルは人の1行を保ったまま。確認して上書きしてよければ:
+
+   ```powershell
+   uv run room.py restore pilot2-3 --force
+   Get-Content "$HOME\works\areas\pilot2\knowledge\topic-cutover.md"                          # 人の1行は消えている
+   Get-Content "$HOME\works\projects\pilot2-3\_noai\final\_prev\knowledge\topic-cutover.md"   # 人の1行が残っている
+   ```
+
+   対照: 人が書き換えていないときは、止まらない（もう一度 `restore` するだけ）
+
+- 書き出すのは、`ai/out/knowledge/` の下だけ（ほかの成果物は従来どおり `_noai/final/` にだけ書く）。書き出し先は `knowledge_dest`（既定 `areas/<Area>/knowledge/`）
+- **止まる場合**: ファイル名にプレースホルダー（`⟦CUST_001⟧.md` など）が残る、置き場の外を指す名前、は何も書かずに止まる。直して `uv run room.py restore pilot2-3` を再実行する
+- 前回の書き出し（`_noai/map/knowledge-manifest.json` のハッシュ）から人が変えた既存ファイルがあると、`restore` は何も書かずに止まる（`--force` で上書き。直前の版は `_noai/final/_prev/knowledge/` に退避される。2026-10-21 に、警告から止める仕様に変えた）。`start` の終わりで止まったときも、`ai/out/` は回収済みなので、直して `restore` を再実行する
+- **確認ポイント**:
+  - 部屋の AI が `ai/in/area/` を読める（`in/` は読み取り専用でマウントされる）。プレースホルダーを壊さない
+  - Area の統合ノートに、`⟦…⟧` が残らず、実名に戻っている（`org:` の値も）
+  - 人が Area 側を変えたあとの `restore` が止まり、`--force` で上書きされて、直前の版が退避される
 
 ## 7. 閉じる（`close`）
 
@@ -248,4 +377,10 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 | `reap` が `消せなかった（）` | 古い `room.py` のバグ（`086381c` で直した） | 最新の `room.py` を使う |
 | `Remove-Item` が `being used` | Windows 側の Zed の Agent などが、`projects\<名>\ai` を掴んでいる | Zed のウィンドウを閉じ、`claude-acp` のプロセスを終了する |
 | `close --commit` / `start --commit` が「対象外のファイルがステージされている」で止まる | ステージ済みの別の変更がある | 先にそれをコミットするか、`git restore --staged <パス>` で戻す（`init` `open` は止まらない。3 章） |
+| `pull` が「data: … の Project には取り出さない」 | `data: restore` でない Project | README の `data:` を `restore` にする（4.1） |
+| `pull` が「Area の知識置き場が無い」 | `areas/<Area>/knowledge/` が無い | 作る（4.1 の 2）。別の場所なら README に `knowledge_dest:` |
+| `pull` の一覧に何も出ない | `--where` が合わない、または `status: superseded` | frontmatter の項目名と値（リストは要素）を確かめる。`org:` の値は完全一致 |
+| `restore` が「Area の知識が、前回の書き出しから変わっている」 | 人が Area 側の統合ノートを直したあとに、同じ Project が書き出そうとした | Area 側の変更を残したいなら、先に退避するか、ノートに取り込んでから `--force`。上書きしてよければ `restore --force`（直前の版は `_noai\final\_prev\knowledge\`） |
+| `restore` が「ファイル名にプレースホルダーが残っている」 | AI が `ai/out/knowledge/` に `⟦…⟧` を含む名前を付けた | ファイル名を英数字に直し、`restore` を再実行する（6.1） |
+| 統合ノートに `アクメ` などの実名が `ai/in/area/` に残る | `org:` の値や本文の語が `mask.toml` に無い、または frontmatter が置換の対象外 | `mask.toml` に語を足して `mask`。frontmatter が対象外なら、結果を記録して設計を見直す（4.1 の確認ポイント） |
 | マウントが残る | `start` が途中で止まった | `uv run room.py umount --area pilot2`。残れば `wsl --terminate room-pilot2` |
