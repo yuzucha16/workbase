@@ -165,7 +165,7 @@ tanaka = ["田中太郎"]
 '@
 ```
 
-**手順2. Area に知識を置く**（ダミー。内容はすべて架空）:
+**手順2. Area に知識を置く**（ダミー。内容はすべて架空。`areas/<Area>/knowledge/` は `room init` が作る。`init` より前に作った Area は、`init <Area>` をもう一度実行すると足りない置き場だけ作る（部屋がすでにあるので止まるが、置き場は先に作られる）。下の `New-Item` は、`init` 前の Area の補い）:
 
 ```powershell
 $k = "$HOME\works\areas\pilot2\knowledge"
