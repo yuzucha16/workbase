@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-21（`usage-viz` を閉じた）
+- ユーザーが選び、削除に賛成した（条件: stock と wrap が済んでいること）。stock は `guides/howto/claude-usage-report.md` に反映済み（落とし穴2件を含む）、経緯は 10-20 の項にある。決定の【この件】2件を root の `decisions.md` に移し、`topics/usage-viz/` を削除、索引と窓口の行を消した。`records/` を閉じるときの扱い（移す・消す）は規則が無かったので、移さず削除にした。10-28 の仕訳の正式化と一緒に、規則にするかを決める。
+
 ### 2026-10-21（room のコミットにトレーラー）
 - ユーザーの依頼「room 処理一式にトレーラーをつけたい。既存のルームを使った area / projects に対して、差分確認と update が可能かの判断材料として」を受け、`room.py` の 6 つのコミット（`init` `open` `rename-area` `start` `readme` `close`）に `Room-Op` `Room-Rev` `Room-Area` `Room-Project` を付けた。`kit_rev()` と `room_trailers()` を追加し、`commit_paths` に `trailers` 引数を足した。README に使い方、テストを 1 件追加。
 - 結果: 104 件中、新テストは通った。失敗 2 件（`CaCertTest`）は変更前から同じ（無関係）。コミットしない操作（`mask` `restore` `pull` `stock`）には付かない。判断は `decisions.md` の同日の項。

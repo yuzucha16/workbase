@@ -17,7 +17,6 @@ PC1 で品質チェック1回目（2週間の実務の題材、見本なし）�
 
 ## 試行の題材（トピックに切り出した。2026-10-21）
 
-- `topics/usage-viz/`: トークン・コスト可視化（kit 以外の初の題材。実装まで終わった）。窓口 [[usage-viz-start-here]]
 - `topics/stock-modes/`: `stock` のモード追加（2回目の題材。M1〜M3 を通した。実機は未実施）。窓口 [[stock-modes-start-here]]
 - `topics/private-knowledge/`: 会議録のナレッジ化（3回目の題材）。窓口 [[private-knowledge-start-here]]
 

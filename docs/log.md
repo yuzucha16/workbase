@@ -35,7 +35,7 @@
 9. ルールが見つかりにくい構造（2026-10-20）: works で `.bat` を作った AI が、dotfiles と exmem にあった ASCII ルール（2026-10-06）に届かず、`chcp 65001` で崩れた。ルールは `exmem/lessons/shell-script-testing-wsl.md` の後ろの追記節にあり、索引の1行に `.bat` の語が無く、dotfiles の `AGENTS.md` にも無かった。索引に語を足したのは補修で、恒久対策ではない。exmem の肥大化（大きいノートの後ろの追記節、索引の1行では引けない）と合わせて、領域全体の論点として議論する: 知識がどこにあれば、作業の最中に届くか（索引、ノートの分け方、作業側の `AGENTS.md` への写し、検索の仕組み）。議論の前に、似た見落としが他にもあるかを数える材料を集めてよい。ユーザーの指示（2026-10-20）。なお `.bat` は、暫定で全体 ASCII を正にし、cp932 の `.bat` と試験はやらない（cp932 の内容は lesson の草稿・優先度低。dotfiles は変更しない）。
 
 12. 会議録のナレッジ化（`topics/private-knowledge/`。2026-10-21 開始）: Area を跨ぐ共有知の仕組み（`room pull`、`restore` の Area 書き出し、型）を実装し、実機の通し試験で問題なし（ダミーの Area）。`stock-modes` との重なりは整理済み（10-21。衝突なし、仕様の追加2点・削除なし）。次は、実例1件で指標を測ること、統合の手順書の整備、型の整理は別セッション（状態は同 `docs/log.md`）。続きは「private-knowledge の続き」。
-13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: `usage-viz/`（HTML の見た目の確認、閉じる判断）、`stock-modes/`（M1〜M3 は 10-21 に通した。次は実機: 実際の題材で `stock 理解` → `integrate`、`room stock`。`start 計画` へのフィードバック案8件は `topics/planning-method/planning-method-feedback-stock-modes-m1.md`、`review 消化` で承認）、`private-knowledge/` を、同じ構造で運用する。10-28 に正式化するかを `review 消化` で決める。
+13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: `stock-modes/`（M1〜M3 は 10-21 に通した。次は実機: 実際の題材で `stock 理解` → `integrate`、`room stock`。`start 計画` へのフィードバック案8件は `topics/planning-method/planning-method-feedback-stock-modes-m1.md`、`review 消化` で承認）、`private-knowledge/` を、同じ構造で運用する（`usage-viz/` は 10-21 に閉じた。HTML の見た目はブラウザで未確認）。10-28 に正式化するかを `review 消化` で決める。
 
 ## Open Questions
 
