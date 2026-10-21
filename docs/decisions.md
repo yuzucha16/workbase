@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】【仮】トピックで相談するときの型を、3段にする（2026-10-21）
+- 決めたこと（ユーザー）: ① 現状の事実を調べて論点を一覧化する。② これを叩き台として潰していく。③ 確認したい事実や前提があれば聞く。これまではやり方がその都度ばらばらだったので、仮決めとして、トピックで相談するときの型にして試す。うまくいけば、トピックを出て、Project 型の相談の型に格上げする。
+- 根拠: ユーザーの発言（2026-10-21）「この進め方いいですね。これまでランダムにやり方が出てましたが、今後は仮決めとしてトピックで相談するときの型にして試してみたい。うまくいけばトピックを出て projects 型の相談の型に格上げしていきたい」。最初の実例は `topics/plan-room-link/`（[[plan-room-link-issues]] が①の出力）。
+- 見直しの条件: 数回使った後、型として残す・格上げする・やめるを決める。期限は未定（ユーザーに決めてもらう）。格上げする場合は、`methods.md` の新しいやり方として `review 消化` の3段に乗せる（仕組みの決定のため）。
+- 未了: `topics/AGENTS.md` や手順書には、まだ書いていない（試して形が見えてから）。
+
 ### 【汎用】Windows で実行するスクリプトは、束ねる役も ps1 にする。bat は起動用の 3 行だけ。部屋に pwsh 7 を入れ、静的チェッカーで点検する（2026-10-21）
 - 決めたこと（ユーザーの決定と承認）: ① bat は、ps1 を束ねて 1 回で実行するための入口にすぎず、価値は無い。束ねる役も ps1（例: `run-all.ps1`）にする。② bat は、起動用の 1 行（`pwsh -NoProfile -File "%~dp0run-all.ps1"`）と `pause` だけ許す（`@echo off` は省いてよい）。ロジックは書かない。③ 部屋の AI が認識して従うよう、`dev-deliverable-guide.md` の「Windows で実行するスクリプト」と `room-context.md` に書く。④ 静的チェッカーは、部屋に pwsh 7 を入れる案（B）にする。pwsh は 7 に固定する。ルールは workbase の既存規約（kit の変更は承認後、版と SHA-256 の固定、root が入れる）に従う。
 - 実装: `workflow-kit/tools/check-ps1.ps1`（文字コード、改行、構文、`#Requires -Version 7`、`$ErrorActionPreference`、`Set-StrictMode`、PSScriptAnalyzer、起動用 bat の 3 行の型、`-RunTests` で Pester 5）。`room init` が pwsh 7.6.7（公式の tarball、SHA-256 固定。x64 は取得して一致を確認）、PSScriptAnalyzer 1.25.0、Pester 5.9.1（AllUsers）を root で入れる。`/usr/local/bin/pwsh` は、globalization を invariant にし、テレメトリと更新確認を切る薄い包み。
