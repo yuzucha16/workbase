@@ -9,7 +9,8 @@
 
 ## あなた待ち
 
-- stock-modes の実行を通したフィードバック案8件（[[planning-method-feedback-stock-modes-m1]]）の承認。`review 消化` で。
+- stock-modes の実行を通したフィードバック案8件（[[planning-method-feedback-stock-modes-m1]]）の承認。`review 消化` で、品質チェック2回目の後に（2026-10-21 ユーザーの決定）。
+- 品質チェック2回目の題材（2週間の実務、見本なし、kit 以外）の選定。
 
 ## 次の一手
 
