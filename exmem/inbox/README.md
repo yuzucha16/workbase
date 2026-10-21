@@ -82,4 +82,4 @@ sources:
 次にやること。
 ````
 
-このプロンプトは `resources/workflow-kit/stock-hook.md` の「書き方」「形式」と同じ内容にそろえてある。形式を変えるときは、kit を先に直し、ここを合わせる。モバイルのAIは exmem を検索できないので、統合先の候補は「不明」にし、統合のときに exmem 側で探す。
+このプロンプトは `kind: lesson`（AI 用。`kind` の省略と同じ）の形で、`resources/workflow-kit/stock-hook.md` の「書き方」「形式」と同じ内容にそろえてある。人用の理解ガイド（`kind: explain`）はモバイル用のプロンプトを持たない（kit の `stock-explain.md`）。形式を変えるときは、kit を先に直し、ここを合わせる。モバイルのAIは exmem を検索できないので、統合先の候補は「不明」にし、統合のときに exmem 側で探す。

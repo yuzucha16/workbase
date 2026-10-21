@@ -1425,9 +1425,13 @@ def cmd_stock(ctx, a):
             ctx.say(f"  運ばない（対応表の語が含まれている。公開されうる workbase に入れない）: {f.name}: {table.search(text).group(0)}")
             continue
         valid, changed = stock_staleness(ctx, base)
-        cands = set(re.findall(r"lessons/([^\s）)、,]+?\.md)", text.split("\n## Principles")[0]))
+        # kind: explain は guides/explain/ への新規作成だけなので、lessons の変更で古くならない
+        explain = meta.get("kind", "") == "explain"
+        cands =set(re.findall(r"lessons/([^\s）)、,]+?\.md)", text.split("\n## Principles")[0]))
         hit = sorted(c for c in cands if f"lessons/{c}" in changed)
-        if not valid:
+        if explain:
+            stale = ""
+        elif not valid:
             stale = "基準コミットを確認できない"
         elif hit:
             stale = "統合先の lessons が基準以降に変わった: " + ", ".join(hit)
