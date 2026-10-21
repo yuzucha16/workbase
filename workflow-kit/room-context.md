@@ -42,6 +42,10 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 
 人が `room stock <名>` で確認して `exmem/inbox/` に運ぶ。`kind` はそのまま運ばれる。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
 
+## 計画（部屋の中）
+
+Project の目的・完了時期・マイルストーンは、README に写さず、承認版の計画（`ai/in/plan/`。6R・憲章・WBS・マイルストーン。2026-10-21 `plan-room-link` の決定）を読む。README の「計画:」の行は、その場所を指す固定のポインタ。下書きは `ai/work/plan/` に書き、人が承認して `ai/in/plan/` に置いて `room start --adopt` する（部屋の AI は `ai/in/` に書かない）。
+
 ## 知識の統合と成果物の置き場（部屋の中）
 
 2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書き、人が `room restore`（`start` の終わりでも自動）で実名に戻して Area に置く。
