@@ -6,6 +6,7 @@
 - 設計の軸をユーザーと決めた（決定 ⑧〜⑳）: 渡し方は Area から取り出してマスクした写しを `ai/in/` へ、選び方は「絞って人が確認」（仮案）、マスクは渡すとき、戻りは既存の `room close` → `ai/docs/inbox.md`、統合は Area に置き**部屋の作業**にする（works の AI が実名を読まない。deny は `Read`/`Edit` だけを止める安全網で、シェルは止まらない）。知識は3層（事実 = Area、部屋用の写し、一般化した教訓 = workbase。固有の事実は仮名にしても workbase に切り出さない）。会議録の型を承認（`records/meeting-note-example.md`）。
 - `room.py` に `pull` と、`restore` の Area 書き出し（`ai/out/knowledge/` → `areas/<Area>/knowledge/`）を実装。設計からの差分を4つ承認（`knowledge_dest`、manifest に Area のファイル名を書かない、`status: active` だけ、上書きの扱い）。その後、上書きを警告から停止に変更（決定 ㉕）。単体テスト追加（`PullKnowledgeTest` 5件）。
 - 実機の通し試験（ダミーの Area `pilot2`、`guides/howto/ai-room-setup-script.md` の 4.1・6.1）で、ユーザーが「すべて問題なし」と報告（`org:` の値の置換、部屋の AI の読み取り、人の変更を守る停止を含む。個別の数字は未記録）。
+- ナレッジ化（`stock`。`stock ナレッジ` のモードは未実装のため、既存の「ナレッジ化して」で実行）: 一般化できるものを `exmem/inbox/` の3件のメモにした（`2026-10-21-masked-area-knowledge-flow`、`2026-10-21-wbs-by-deliverable-kind`、`2026-10-21-multi-reader-doc-split`。点検スクリプトは PASS 74・FAIL 0・WARN 0）。`decisions.md` の【汎用】2項目に `→` を足した。メモはコミットしていない（統合まで未追跡）。
 - 見えたこと: 設計の途中で、「Area を読める AI が統合する」案が部屋の目的（実名を AI に見せない）と衝突することに気づき、統合を部屋の作業に変えた。manifest が部屋の AI から見える点を読み落とすと、Area のファイル名（実名を含みうる）が漏れる所だった。
 
 ### 2026-10-21（計画の開始）
