@@ -457,6 +457,15 @@ def commit_paths(ctx, paths, message, extra_allowed=(), only=False, trailers=())
 
 # ---------- open ----------
 
+MASK_TOML_TEMPLATE = """# 書式: キー = ["正式名（先頭）", "表記ゆれ", ...]。1文字の語は不可。
+
+[terms.CUST]
+# company1 = ["株式会社田中", "田中", "タナカ"]
+
+[terms.PERSON]
+# person1 = ["吉田義男", "吉田"]
+"""
+
 README_TEMPLATE = """---
 status: active
 area: {area}
@@ -551,6 +560,7 @@ def cmd_open(ctx, a):
     p.dir.mkdir(parents=True)
     for d in AI_DIRS + NOAI_DIRS:
         (p.dir / d).mkdir(parents=True, exist_ok=True)
+    (p.dir / "_noai" / "mask.toml").write_text(MASK_TOML_TEMPLATE, encoding="utf-8", newline="\n")
     for d in AI_KEEP:
         (p.dir / d / ".gitkeep").write_text("", encoding="utf-8")
     p.readme.write_text(README_TEMPLATE.format(area=a.area, type=a.type, today=ctx.today(), name=a.name),
