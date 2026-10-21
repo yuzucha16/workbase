@@ -49,6 +49,14 @@
 - 方針の追加（同日、ユーザーの依頼）: 部屋の AI には、① 部屋で完結できるなら、すべて部屋（WSL）で実行する、② Excel・COM などの Windows 依存部は、できるだけ小さくし、人の手数を少なくする、と依頼を出せる形にする。`dev-deliverable-guide.md` に節「実行の方針」を足し（部屋の道具の版、切り分けの 5 手順）、ps1 の節を「残った Windows 依存の薄い層」の規約に位置づけ直した。`room-context.md` と `ROOM.md`（`ROOM_GUIDE`）に案内を足した。ロジックを部屋の Python に置くのは、Windows の実行先に Python があるか未確認のため。薄い層は ps1（pwsh 7 は会社の PC で使えることを確認済み）。部屋の道具の版は、実機（`room-pilot2`、`ai` ユーザー）で確認した: python3 3.14.4（`pip` は無い。`uv` で依存を管理）、uv 0.13.4、git 2.53.0、pwsh 7.6.7、node 24.22.0、LibreOffice 26.2.6.3、pandoc 3.7.0.2、ripgrep 15.1.0。`/mnt/c` は空、`cmd.exe` は無い。
 - 見直しの条件: bat の失敗が再発したとき、`check-ps1.ps1` の WARN が多すぎる・少なすぎるとき、Pester 6 へ上げるとき。
 
+### 【汎用】Windows 依存の薄い層は、Python を既定にする。ps1 は例外（2026-10-21）
+- 決めたこと（ユーザーの決定。上の項の「薄い層は ps1」を替える）: ① 薄い層も Python で書く（`pywin32` の COM、`winreg`、`subprocess`）。実行は `uv run --script`、依存は PEP 723。② 束ねる役は `run_all.py`、bat は `uv run --script "%~dp0run_all.py" %*` と `pause` の 3 行。ログは `--log` / `--log-dir` のときだけ（ps1 の `-Log` と同じ決定）。③ ps1 は、実行先に Python が無いとき、または cmdlet でしか操作できないときの例外。④ 点検は `workflow-kit/tools/check_py.py`（標準ライブラリだけ）。`check-ps1.ps1` は残し、uv を呼ぶ bat を省く。
+- 根拠: 言語の優先順位が Python → ps1 → bat に決まり、Windows の実行先に Python と uv があることをユーザーが確認した。部屋で実行・テストする Python と同じ言語にすると、薄い層との境目が小さな関数への包みだけになり、AI が言語を切り替える手間と誤りが減る。pwsh 7 の導入を人に頼まなくてよい。
+- 却下案: ps1 のまま（優先順位と矛盾し、2 言語の規約が要る）、ps1 の規約と `check-ps1.ps1` の廃止（実行先に Python が無い場合の逃げ道が消える）。
+- 確認済み（Windows の Python 3.13.16 と uv 0.13.0）: ガイドの型の `run_all.py` を実行し、既定ではログが出ない、`--log` で `ai/work/` に出る、失敗した工程の出力・スタックがログに残り終了コードが 1、bat 経由の `--log`（`%*`）も同じ。`check_py.py` が良い例を通し、悪い例（構文エラー、cp932、LF のロジックのある bat、呼び先なし、pause なし）を検出し、終了コードは FAIL の数（6）。`--run-tests` は、合格で 0、失敗で 1。`check-ps1.ps1` は uv の bat を省く。
+- 未確認: 部屋の実機での `check_py.py`（Linux の `python3` 3.14）、依存つき（`pywin32`）の `uv run --script` の取得（会社のネットワークの証明書）、`pywin32` の COM の実行、ruff を入れるか。
+- 見直しの条件: 会社の PC で `uv run --script` の依存の取得が失敗したとき、`check_py.py` の WARN が多すぎる・少なすぎるとき、ruff を `room init` に足すとき。
+
 ### 【汎用】同じ Area の Project を、同じ部屋に並行してマウントしてよい。既定にする（2026-10-21）
 - 決めたこと（ユーザーの決定）: ① `room start` は、同じ部屋にほかの Project のマウントがあっても止まらない。止まるのは、自分の Project のマウントが残っているときだけ（フラグは作らず既定）。② アンマウントの確認と `close` の確認は、自分のマウント点だけを見る。③ `clean_stale_mountpoints` は、作って 1 分以上たった空のマウント点だけ消す。④ 部屋の共有ファイル（`~/shared`、`/usr/local/bin/git`、`~/.claude.json` の信頼、`~/.claude/settings.json` の許可）は、動いている AI に空・壊れた状態を見せない置き換え方式で更新する。⑤ 使う側の約束: `~/shared` は最新に揃え、`start` は同じタイミングで行い、後から足すときは動いているセッションを止める。
 - 根拠: 成果物が違う Project が作業の後半で細かくなり、AI の思考時間中に別の Project を触りたい。Project をまとめる案は、入力と終わる時期が揃わず使えない（ユーザー）。同じ Area は同じ境界（すべて internal）なので、部屋の中で見えても越境ではない。部屋は Area ごとのディストロなので、Area をまたぐ並行は起きない。
@@ -105,7 +113,7 @@
 ### 【汎用】`room init --only <段,…>` で、既存の部屋に道具の段だけを入れ直す（2026-10-21）
 - 決めたこと（ユーザーの依頼）: `init` の段（`INIT_STEPS`）を名前で選べるようにする。`--only` は `--resume` を含み、部屋は作らない。
 - 根拠: 道具を足すたびに部屋を作り直すのは負担。`--resume` は全段を走らせるので、Chromium などの重い取得が毎回かかる。
-- 却下（保留）: `Room-Rev` から差分の段を自動で選ぶ `--only changed`。段と変更の対応表が要るため、Open Questions に積んだ。
+- 却下（保留）: `Room-Rev` から差分の段を自動で選ぶ `--only changed`。段と変更の対応表が要るため、Open Questions に積んだ。→ 2026-10-21 にユーザーが不要と判断（`--resume` で足りた）。Open Questions から削除。
 - 見直しの条件: `init` に段を足すときは `INIT_STEPS` にも足す（足し忘れると `--only` で選べない）。
 - 実装: `workflow-kit/room/room.py`（`INIT_STEPS` `parse_only`）、README、テスト2件。実機は未確認。
 
