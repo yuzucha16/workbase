@@ -104,9 +104,9 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
 
 **言語の選び方（2026-10-21 のユーザーの依頼。AI は「Python でよいか」「ps1 がよいか」とユーザーに聞かず、この順で自分で決める）**: Windows 依存を減らすため、優先順位は **Python → ps1 → bat**。
 
-1. **Python**（既定）。部屋で実行できる処理は、すべて Python で書く。
-2. **ps1**。Python で書けない Windows 依存の操作（Excel の COM、レジストリ、Windows のアプリ操作）、または、実行先に Python が無いと分かっているときだけ。薄い層にする。
-3. **bat**。ps1 を起動するだけの 3 行（下の「Windows で実行するスクリプト」）。ロジックは書かない。
+1. **Python**（既定。2026-10-21 のユーザーの決定で、Windows 依存の薄い層も Python にした）。部屋で実行できる処理に加え、Windows 依存の操作（Excel の COM は `pywin32`、レジストリは `winreg`、アプリの起動は `subprocess`）も Python で書く。実行は `uv run --script`（Windows の実行先に Python と uv があることは確認済み）。
+2. **ps1**。実行先に Python（uv）が無いと分かっているとき、または PowerShell の cmdlet でしか操作できない Windows 依存の操作のときだけ。薄い層にする。
+3. **bat**。`uv run`（または ps1）を起動するだけの 3 行（下の「Windows で実行するスクリプト」）。ロジックは書かない。
 
 上の順で決められない事情（実行先の制約が不明など）があるときだけ、ユーザーに聞く。決めたら、報告に使った言語と理由を 1 行書く。
 
@@ -125,13 +125,126 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
 
 1. 処理を工程に分け、工程ごとに「部屋で実行できるか」を判定する。判定の目安は、Windows のアプリ（Excel の VBA 実行、ピボットの作成、COM）、レジストリ、Windows のパスと権限、実行先の環境（インストール、環境変数）に触れるかどうか。触れなければ部屋で完結する。
 2. **Excel は、LibreOffice で足りないかを先に確かめる。** xlsx の読み書き、変換、再計算は、部屋で完結できる。Windows に回すのは、VBA の実行確認、ピボットの作成、見た目の完全な再現だけ（LibreOffice は Excel と結果が違う）。
-3. 部屋で完結する工程（判定、変換、検証、整形、ファイルの生成）は、部屋で Python（または部屋の道具）で書き、**部屋で実行してテストする**。Windows の実行先に Python があるとは限らないので（未確認）、Windows 側の依存は Python に置かない。
+3. 部屋で完結する工程（判定、変換、検証、整形、ファイルの生成）は、部屋で Python（または部屋の道具）で書き、**部屋で実行してテストする**。部屋の Python と同じ言語で書くので、薄い層との境目は「Windows 依存の操作を、小さな関数に包むかどうか」で決まる。
 4. Windows 依存の工程だけを、**薄い層**として切り出す（成果物の中の専用ディレクトリ、例: `windows/`）。薄い層は、部屋が作った入力ファイルを読み、Windows 依存の操作だけを行い、結果をファイルに書く。判定や変換を持たない。部屋で実行できないので、検証項目に「人が実行」と書き、報告の「実環境で未確認の点」に書く。
 5. **人の手数を減らす。** 人が打つのは 1 コマンドにする（下の「束ねる ps1」と起動用 bat）。実行の前提（Excel を閉じる、入力ファイルの有無、実行場所）は、束ねる側が先に確認して、満たされなければ、何をすればよいかを表示して止まる。人が覚える手順を、スクリプトの外に残さない。結果は、人が見るべき要約（成否、件数、出力の場所）を最後に表示する。
 
-## Windows で実行するスクリプト（ps1 と起動用 bat）
+## Windows で実行するスクリプト（Python が既定、ps1 は例外。起動用 bat）
 
-上の方針で残った、**Windows 依存の薄い層**を、人が Windows で実行するときの規約（2026-10-21 のユーザーの決定。全 type 共通）。bat は、ps1 を束ねて 1 回で実行したいという人の手間を省くための入口にすぎず、bat 自体に価値は無い。bat の失敗（日本語の文字化け、LF でラベルが見つからない、`call` 忘れ）は、bat にロジックを書くから起きる。
+上の方針で残った、**Windows 依存の薄い層**を、人が Windows で実行するときの規約（2026-10-21 のユーザーの決定。全 type 共通。Python を既定にしたのも同日のユーザーの決定）。bat は、束ねる役を 1 回で実行したいという人の手間を省くための入口にすぎず、bat 自体に価値は無い。bat の失敗（日本語の文字化け、LF でラベルが見つからない、`call` 忘れ）は、bat にロジックを書くから起きる。
+
+### Python の薄い層（既定）
+
+- **個別の処理は `<名前>.py`（snake_case）、それらを順に呼ぶ束ねる役を 1 本（例: `run_all.py`）にする。** 失敗したら止まる、最後に結果を出す、ログを 1 か所に出す、を束ねる側に持たせる。人は `uv run --script run_all.py` を 1 回打つだけにする。判定・変換・検証は薄い層に置かない（上の「切り分けの手順」の 4）。
+- **依存は、各 `.py` の先頭の `# /// script`（PEP 723）に書く**（`requires-python`、`dependencies`。Excel の COM なら `pywin32`）。実行は `uv run --script`。束ねる役が個別の処理を呼ぶときも `uv run --script` で呼ぶ（自分の Python には、呼び先の依存が無い）。
+- **bat は、起動用の 3 行だけ許す**。ロジックは書かない。型は固定（`%*` は引数を渡したいときだけ。全体 ASCII、CRLF、BOM なし、`pause` を最後に必ず置く）:
+
+  ```bat
+  @echo off
+  uv run --script "%~dp0run_all.py" %*
+  pause
+  ```
+- **束ねる役に、ログ出力の機能を持たせる。ただし既定では出さない**（ps1 と同じ決定。理由と実データの注意は、下の ps1 の節）。`--log` を付けると、Project の `ai/work/<束ねる役の名前>.log` の 1 本に出す。`--log-dir <パス>` なら、その場所に出す。個別の処理は、ログを作らない。型（動作確認済み: Windows の Python 3.13 と uv 0.13.0。既定ではログが出ない、`--log` で `ai/work/` に出る、失敗した工程・終了コード・スタックがログに残り終了コードが 1 になる。bat 経由の `--log` も同じ）:
+
+  ```python
+  # /// script
+  # requires-python = ">=3.12"
+  # dependencies = []
+  # ///
+  """工程を順に実行する束ねる役。失敗したら止まり、最後に結果を出す。--log のときだけログを出す。"""
+  import argparse
+  import os
+  import subprocess
+  import sys
+  import traceback
+  from pathlib import Path
+
+  STEPS = ["step1.py", "step2.py"]  # 実際の工程名に変える
+  HERE = Path(__file__).resolve().parent
+
+
+  def find_ai_work() -> Path:
+      for d in (HERE, *HERE.parents):
+          if d.name == "ai" and (d / "work").is_dir():
+              return d / "work"
+      return HERE / "work"  # Project の外（配布先）で実行したとき
+
+
+  class Tee:
+      def __init__(self, *streams):
+          self.streams = streams
+
+      def write(self, s):
+          for st in self.streams:
+              st.write(s)
+          return len(s)
+
+      def flush(self):
+          for st in self.streams:
+              st.flush()
+
+
+  def run_steps() -> int:
+      try:
+          for step in STEPS:
+              print(f"[STEP] {step}", flush=True)
+              p = subprocess.Popen(
+                  ["uv", "run", "--script", str(HERE / step)],
+                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                  text=True, encoding="utf-8", errors="replace",
+                  env={**os.environ, "PYTHONUTF8": "1"},
+              )
+              for line in p.stdout:
+                  print(line, end="")
+              if p.wait() != 0:
+                  raise RuntimeError(f"{step} が終了コード {p.returncode} で終わった")
+          print("[OK] すべて完了")
+          return 0
+      except Exception as e:  # ログに残すため、ここで書く
+          print(f"[ERROR] {e}")
+          traceback.print_exc(file=sys.stdout)
+          return 1
+
+
+  def main() -> int:
+      ap = argparse.ArgumentParser()
+      ap.add_argument("--log", action="store_true", help="ai/work/<名前>.log に出す")
+      ap.add_argument("--log-dir", type=Path, help="この場所にログを出す（--log は不要）")
+      a = ap.parse_args()
+      sys.stdout.reconfigure(errors="replace")
+      if not (a.log or a.log_dir):  # 既定ではログを出さない
+          return run_steps()
+      log_path = (a.log_dir or find_ai_work()) / f"{Path(__file__).stem}.log"
+      log_path.parent.mkdir(parents=True, exist_ok=True)
+      with open(log_path, "w", encoding="utf-8") as f:  # 実行のたびに上書きする
+          real = sys.stdout
+          sys.stdout = Tee(real, f)
+          try:
+              print(f"[LOG] {log_path}")
+              return run_steps()
+          finally:
+              sys.stdout = real
+
+
+  if __name__ == "__main__":
+      sys.exit(main())
+  ```
+
+  Python 版のログには、ps1 の transcript のようなヘッダー（ユーザー名とマシン名）は入らない。ただし、パス（ユーザー名を含みうる）とエラー文は入るので、`ai/` の中に出るログが部屋の AI から読める点は同じ（実データの扱いは ps1 の節）。
+- **Windows 固有の操作（COM、レジストリ）は、小さな関数に包む。** `pywin32` は Windows 専用で、部屋では import できない。関数の中で import するか、`sys.platform` で分け、部屋のテストでは `unittest.mock.patch` で関数ごと差し替える。差し替えない本物の動作は、人が Windows で実行する層に回し、検証項目に「人が実行」と書く。
+- **部屋の中で、作った直後に静的チェッカーを実行する**（標準ライブラリだけ。実行はしない）:
+
+  ```
+  python3 ~/shared/workflow-kit/tools/check_py.py <成果物のディレクトリ>
+  python3 ~/shared/workflow-kit/tools/check_py.py --run-tests <成果物のディレクトリ>   # test*.py を unittest で実行する
+  ```
+
+  FAIL は直してから人に渡す。WARN は理由を見て判断する。終了コードは FAIL の数。見るもの: UTF-8、改行の混在、構文、起動用 bat の型（上の 3 行、呼び先の存在）、束ねる役のログ機能、ruff（入っていれば。`room init` は入れないので、通常は WARN。未定義の名前の誤りは、部屋のテストで補う）。
+- **部屋の中では分からないこと**（報告の「実環境で未確認の点」に書く）: Windows 固有の動作（COM、レジストリ、パス、権限）、実行先の `uv` による依存の取得（ネットワークと証明書。型の確認では依存が空だった）。結果を AI に戻すときは、`--log` を付けて再実行し、ログを読むよう AI に伝える（ps1 と同じ）。
+
+### ps1 の薄い層（Python が使えないときだけ）
+
+下の規約は、実行先に Python（uv）が無いと分かっているとき、または PowerShell の cmdlet でしか操作できないときの、ps1 の薄い層に適用する。
 
 - **Windows 側の処理は ps1 に書く（Windows 依存の操作だけ。判定・変換・検証は部屋側）。束ねる役も ps1 にする**: 個別の処理を `<名前>.ps1` に分け、それらを順に呼ぶ 1 本（例: `run-all.ps1`）を置く。失敗したら止まる、ログを 1 か所に出す、最後に結果の一覧を出す、を束ねる側に持たせる。人は `pwsh -File run-all.ps1` を 1 回打つだけにする。
 - **bat は、起動用の 3 行だけ許す**。ダブルクリックで動かしたい場合の入口で、ロジック（`if`、`goto`、ラベル、変数、`setlocal`）は書かない。型は固定:
