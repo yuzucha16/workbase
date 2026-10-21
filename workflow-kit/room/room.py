@@ -665,6 +665,20 @@ updated: {today}
 """
 
 
+def scaffold_area(ctx, area):
+    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（pull、restore、close）は、無ければ作らずに警告する。"""
+    root = ctx.vault / "areas" / area
+    kd = root / KNOWLEDGE_DEFAULT
+    if not kd.is_dir():
+        kd.mkdir(parents=True)
+        ctx.say(f"作った: areas/{area}/{KNOWLEDGE_DEFAULT}/（知識置き場。pull の取り出し元、restore の書き出し先）")
+    inbox = root / "ai" / "docs" / "inbox.md"
+    if not inbox.exists():
+        inbox.parent.mkdir(parents=True, exist_ok=True)
+        inbox.write_text(INBOX_NEW, encoding="utf-8", newline="\n")
+        ctx.say(f"作った: areas/{area}/ai/docs/inbox.md（close が【案件】を追記する郵便受け）")
+
+
 def cmd_init(ctx, a):
     """Area の部屋（専用ディストロ）を作り、道具を入れる。ログインは人が行う。"""
     boundary_arg = getattr(a, "boundary", None)
@@ -682,6 +696,7 @@ def cmd_init(ctx, a):
         area_readme.write_text(update_frontmatter(area_readme.read_text(encoding="utf-8"), {"boundary": boundary_arg}),
                                encoding="utf-8", newline="\n")
         ctx.say(f"Area に boundary: {boundary_arg} を付けた")
+    scaffold_area(ctx, a.area)  # 部屋がすでにあって止まる場合も、足りない置き場は作る
     ca_cert = getattr(a, "ca_cert", None)
     ca_pem, ca_prints = load_ca_cert(ca_cert) if ca_cert else (None, [])  # 部屋を触る前に、検査で止める
     distro = f"room-{a.area}"
@@ -1213,6 +1228,9 @@ def restore_project(ctx, p, force=False):
         publish = plan_knowledge_publish(p, restored)
     except RoomError as e:
         return 0, [str(e)]
+    if publish and not knowledge_dir(p).is_dir():
+        ctx.say(f"警告: Area の知識置き場が無いので、Area には書かない: {knowledge_dir(p)}（`room init {p.area}` で作ってから、restore をやり直す。ai/out/knowledge/ は残っている）")
+        publish = {}
     mf = n / "map" / "final-manifest.json"
     written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
     if not force:
@@ -1571,11 +1589,14 @@ def cmd_close(ctx, a):
     reap = (datetime.date.fromisoformat(today) + datetime.timedelta(days=ctx.reap_days)).isoformat()
     # 1. Area の inbox
     inbox = p.area_dir / "ai" / "docs" / "inbox.md"
-    inbox.parent.mkdir(parents=True, exist_ok=True)
-    text = inbox.read_text(encoding="utf-8") if inbox.exists() else INBOX_NEW
-    text, n = append_inbox(text, p.name, today, cases, f"archives/{p.name}/ai/out/close.md")
-    inbox.write_text(text, encoding="utf-8", newline="\n")
-    ctx.say(f"Area の inbox に【案件】{n} 件を追記した（{len(cases) - n} 件は送信済み）")
+    if inbox.exists():
+        text, n = append_inbox(inbox.read_text(encoding="utf-8"), p.name, today, cases, f"archives/{p.name}/ai/out/close.md")
+        inbox.write_text(text, encoding="utf-8", newline="\n")
+        ctx.say(f"Area の inbox に【案件】{n} 件を追記した（{len(cases) - n} 件は送信済み）")
+    else:
+        ctx.say(f"警告: Area の inbox が無いので、【案件】{len(cases)} 件は追記しない: {inbox}（`room init {p.area}` で作り、archives/{p.name}/ai/out/close.md から手で移す）")
+        for c in cases:
+            ctx.say(f"  【案件】{c}")
     # 2. README の状態
     p.readme.write_text(
         update_frontmatter(p.readme.read_text(encoding="utf-8"),

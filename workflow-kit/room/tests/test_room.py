@@ -929,6 +929,23 @@ class PullKnowledgeTest(unittest.TestCase):
             self.assertIn("v2", (k / "t.md").read_text(encoding="utf-8"))
             self.assertEqual((p / "_noai/final/_prev/knowledge/t.md").read_text(encoding="utf-8"), "人が直した\n")
 
+    def test_restore_without_knowledge_dir_warns_and_does_not_create_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, k = self.setup_area(tmp)
+            self.pull(c)
+            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
+            out = p / "ai/out/knowledge"
+            out.mkdir(parents=True)
+            (out / "t.md").write_text("⟦CUST_001⟧ v1\n", encoding="utf-8", newline="\n")
+            shutil.rmtree(k)
+            said = []
+            c.say = said.append
+            n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
+            self.assertEqual((n, problems), (1, []))
+            self.assertFalse(k.exists())
+            self.assertTrue((p / "_noai/final/knowledge/t.md").exists())
+            self.assertTrue(any("警告" in m and "知識置き場" in m for m in said))
+
     def test_bad_names_and_options_are_refused(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
@@ -1305,6 +1322,7 @@ class CloseTest(unittest.TestCase):
             v, c = opened(tmp, wsl)
             p = v / "projects/proj-a"
             fill_readme(p)
+            room.scaffold_area(c, "area-x")  # inbox は init が作る（close は作らない）
             (p / "ai/out/close.md").write_text("- 【案件】運用で埋める\n- 【案件】表記ゆれを直す\n", encoding="utf-8")
             (p / "ai/out/final.md").write_text("成果物\n", encoding="utf-8")
             (p / "_noai/raw/orig.csv").write_text("secret\n", encoding="utf-8")
@@ -1335,6 +1353,38 @@ class CloseTest(unittest.TestCase):
             self.assertEqual(status.strip(), "", "コミット後はクリーン")
             log = subprocess.run(["git", "-C", str(v), "log", "-1", "--format=%s"], capture_output=True, text=True, encoding="utf-8").stdout
             self.assertIn("[room] proj-a を close", log)
+
+    def test_close_without_inbox_warns_and_does_not_create_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            said = []
+            c.say = said.append
+            p = v / "projects/proj-a"
+            fill_readme(p)
+            (p / "ai/out/close.md").write_text("- 【案件】運用で埋める\n", encoding="utf-8")
+            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertFalse((v / "areas/area-x/ai/docs/inbox.md").exists())
+            self.assertTrue(any("警告" in m and "inbox" in m for m in said))
+            self.assertTrue(any("運用で埋める" in m for m in said), "追記できなかった【案件】は画面に出す")
+            self.assertTrue((v / "archives/proj-a").exists())
+
+    def test_init_scaffolds_area_knowledge_and_inbox_without_touching_existing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=False))
+            self.assertTrue((v / "areas/area-y/knowledge").is_dir())
+            self.assertEqual((v / "areas/area-y/ai/docs/inbox.md").read_text(encoding="utf-8"), room.INBOX_NEW)
+            (v / "areas/area-y/ai/docs/inbox.md").write_text("既存\n", encoding="utf-8")
+            room.scaffold_area(ctx_for(v, FakeWsl()), "area-y")
+            self.assertEqual((v / "areas/area-y/ai/docs/inbox.md").read_text(encoding="utf-8"), "既存\n")
+
+    def test_init_scaffolds_existing_area_even_when_room_exists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            with self.assertRaises(room.RoomError):
+                room.cmd_init(ctx_for(v, FakeWsl()), argparse.Namespace(area="area-x", resume=False))
+            self.assertTrue((v / "areas/area-x/knowledge").is_dir())
 
     def test_close_second_run_does_not_duplicate_inbox(self):
         with tempfile.TemporaryDirectory() as tmp:
