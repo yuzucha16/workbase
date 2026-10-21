@@ -4,6 +4,14 @@
 
 ## Decisions
 
+### 【汎用】`room start` の回収を既定でコミットし、部屋の中にローカルの git を用意する（2026-10-21）
+- 決めたこと（ユーザーの選択）: ① `start` は回収の後に既定でコミットする（`--no-commit` で省く）。② `start` のマウントの後に、部屋のローカル（`/home/ai/gitdirs/<Project>`）に独立した git を作り、回収済みの `ai/` を基準コミットにする。`/usr/local/bin/git` のラッパーが、`/mnt/room/<Project>` の下で `GIT_DIR` と `GIT_WORK_TREE` を設定する。アンマウントの後に捨てる。
+- 根拠: works の `.git` はマウントの外で、部屋の AI は git を使えなかった。`ai/out/` の成果物を人が毎回コミットする手間も要らなくする。works の git は実質使っていない（ユーザー）が、`start` の変更の一覧と漏れの警告、`close` の `git mv` が使うので残す。
+- 却下案: Windows の `git.exe` を部屋に出す（interop が要り、分離が破れる）、works の `.git` を見せる（`_noai/` と他 Project の履歴が見える）、部屋のコミットを works に再現する（実装が大きい）、部屋の git だけで works へは手動のまま（手間が減らない）。
+- 見直しの条件: 部屋のコミットの粒度を works に残したくなったとき。
+- 未検証: 実機（`runuser -u ai`、Zed 経由でラッパーが効くか、部屋の AI が自分で使うか）。単体テストは WSL を差し替えている。`room-context.md` の「コミットは AI が行わない」と食い違う（Next Actions 15）。
+- 実装: `df4ff0d`（`room.py` の `room_git_script` `setup_room_git` `discard_room_git`、README、テスト3件）。
+
 ### 【汎用】Area の知識置き場を `areas/<Area>/_noai/knowledge/` に移す。実名を含む Area のデータは `_noai/` の下にまとめる（2026-10-21）
 
 - 決めたこと（ユーザーが選択肢 C を選んだ）: ① 知識（share）、原本（source）、成果物（deliverable）は役割で分け、Area の実名を含むデータは `areas/<Area>/_noai/{source,deliverable,knowledge}` にまとめる。② 今回は `knowledge/` を `_noai/knowledge/` に移した（`KNOWLEDGE_DEFAULT`。`knowledge_dest:` での上書きは残す）。③ 成果物は原本や知識の昇格元で、知識は成果物の一般化、または工程で蒸留したもの。

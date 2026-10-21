@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-21（room: `start` の自動コミットと、部屋ローカルの git）
+- ユーザーの相談: 部屋（WSL）では Windows の git が使えず不便。解消案を7つ挙げ、ユーザーが「部屋で `ai/out/` のコミットまでしてほしい」ため案1（部屋ローカルの git）+ 案2（基準コミット）を選んだ。部屋のコミットは works に届かないため、ユーザーが「`start` の回収で自動コミット」も選んだ（works の git はそもそも機能していないので部屋に閉じ込めればよい、という発言があり、works の git の部屋から見たメリットを挙げて整理した）。
+- 実装（`df4ff0d`）: `start` は既定でコミット（`--no-commit`）。マウントの後に部屋の git（`/home/ai/gitdirs/<Project>`）を作り、アンマウントの後に捨てる。ラッパー `/usr/local/bin/git`。単体テスト 95 件通過（3 スキップ）。シェルは `bash -n` のみ。実機は未確認。
+- 他セッションの未コミットの変更（`routes` / `deliverable_dir` など）が `room.py` とテストに混ざっていたので、自分の hunk だけを `git apply --cached` でステージした。
+- 残り: 部屋の AI が git を使うかは、`room-context.md`（「コミットは AI が行わない」）と `ROOM_GUIDE` の案内次第（Next Actions 15）。
+
 ### 2026-10-21（`stock 理解`・`stock ナレッジ`・`wrap`: room のデータ設計）
 - `exmem/inbox/` に 2 件のメモを作った（コミットしない）: `2026-10-21-area-data-layout-flow`（`kind: explain`。原本・成果物・知識の置き場と流れ。統合先の候補: `guides/explain/` の新規。近い既存 `cross-area-shared-knowledge` の設計の軸が古くなる点は、要確認事項に書いた）、`2026-10-21-state-derived-switches-and-boundary`（統合先の候補: `lessons/ai-isolated-work-room.md`。設定でなく状態で決める設計と、秘匿の境界を親に寄せる配置）。点検スクリプトは PASS 45 / FAIL 0 / WARN 0。room の決定と経緯は `decisions.md` と本日の各項が正本なので、メモには一般化した原則だけを残した。
 - 改善の迷った点を Open Questions に 1 件足した（`stock-hook.md` の重なり確認で、近い既存ガイドが古くなる場合の扱い）。
