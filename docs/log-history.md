@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-21（薄い層を Python にする）
+- ユーザーが、Open Questions「薄い層を ps1 から Python に替えるか」を Python に決めた。`dev-deliverable-guide.md` に節「Python の薄い層（既定）」を足し（束ねる `run_all.py` の型、`uv run --script`、PEP 723、bat の 3 行、`--log`）、ps1 の節を「Python が使えないときだけ」に位置づけ直した。`workflow-kit/tools/check_py.py`（標準ライブラリだけの点検）を新規に作り、`check-ps1.ps1` は uv の bat を省くようにした。README の表と `room-context.md` も直した。決定は `decisions.md` の同日の項。
+- 確認: Windows の Python 3.13 と uv 0.13.0 で、型の実行（ログの有無、失敗時の終了コード、bat 経由）と `check_py.py` の良い例・悪い例。未確認: 部屋の実機、`pywin32` の取得（`--run-tests` は確認済み）。コミットはしていない。
+- Open Questions の `room init --only changed` を、ユーザーが不要と判断して削除した（`--resume` で足りた）。`decisions.md` の「却下（保留）」の行は経緯としてそのまま残す。
+
 ### 2026-10-21（plan-room-link の続き。案 D の決定と実装、計画一式）
 - `review 消化` で、計画と README の紐付けの保留（10-24 の期日）を前倒しで判断した。代替案 A / B / C / D を並べ、ユーザーが D（雛形に固定のポインタ1行だけ）を選んだ。案 A（印つきの節の差し替え）は取り下げ。10-24 の期日の行は消した。`start-plan.md` の works の置き場の「Area 配下」を、Project の `ai/in/plan/` と `_noai/knowledge/` に直した（`ea9866c`）。
 - 案 D を実装した（`9b4db50`）: README の雛形に固定の1行、`room-context.md` に節「計画（部屋の中）」、テスト1件。単体テスト 109 件パス（スキップ 3）。実機は未確認。
