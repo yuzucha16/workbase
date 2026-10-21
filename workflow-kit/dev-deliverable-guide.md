@@ -109,6 +109,36 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
   ```
 
   1 行目は省いてよい。2 行目の `run-all.ps1` は、同じ場所にある呼び先の名前に変える。ファイルは全体 ASCII、CRLF、BOM なしで書く（`exmem/lessons/shell-script-testing-wsl.md` の bat の落とし穴は、この型に従えば出ない）。`pause` を最後に必ず置く（終わっても画面が閉じない）。
+- **束ねる ps1 は、`work/<束ねる ps1 の名前>.log` の 1 本にログを出す**（2026-10-21 のユーザーの依頼。エラーのとき、人がこのログを部屋の AI に見せるため）。`work/` は、束ねる ps1 と同じ場所の下に作る。実行のたびに上書きする。個別の ps1 は、ログを作らない。型（動作確認済み: Windows の pwsh 7.6.7、失敗した工程・終了コード・スタックがログに残る）:
+
+  ```powershell
+  #Requires -Version 7
+  Set-StrictMode -Version Latest
+  $ErrorActionPreference = 'Stop'
+
+  $logPath = Join-Path $PSScriptRoot ('work/' + [IO.Path]::GetFileNameWithoutExtension($PSCommandPath) + '.log')
+  New-Item -ItemType Directory -Force -Path (Split-Path $logPath) | Out-Null
+  Start-Transcript -Path $logPath -Force | Out-Null
+  $exitCode = 0
+  try {
+    foreach ($step in 'step1.ps1', 'step2.ps1') {   # 実際の工程名に変える
+      Write-Host "[STEP] $step"
+      $global:LASTEXITCODE = 0                        # Set-StrictMode の下で、未設定の参照を避ける
+      & (Join-Path $PSScriptRoot $step)
+      if ($LASTEXITCODE -ne 0) { throw "$step が終了コード $LASTEXITCODE で終わった" }
+    }
+    Write-Host '[OK] すべて完了'
+  } catch {
+    Write-Host "[ERROR] $($_.Exception.Message)"      # catch の中で書く（finally の後ではログに入らない）
+    Write-Host $_.ScriptStackTrace
+    $exitCode = 1
+  } finally {
+    Stop-Transcript | Out-Null
+  }
+  exit $exitCode
+  ```
+
+  ログの先頭（transcript のヘッダー）に、Windows のユーザー名とマシン名が入る。人が部屋の AI に渡す前に、実データの語と一緒に伏せる。`work/` は成果物の配布に含めない。
 - **実行は PowerShell 7（`pwsh`）に固定する**。ps1 の先頭に `#Requires -Version 7`、`Set-StrictMode -Version Latest`、`$ErrorActionPreference = 'Stop'` を置く。5.1（`powershell.exe`）では動かさない（UTF-8 の扱いと文字化けの差を避けるため）。ps1 は UTF-8 で保存する。
 - **部屋の中で、作った直後に静的チェッカーを実行する**。実行はしない（部屋には Windows が無い）が、構文と規約の誤りは、人が Windows で実行する前に取れる:
 
@@ -120,4 +150,4 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
   FAIL は直してから人に渡す。WARN は、理由を見て判断する。終了コードは FAIL の数。見るもの: UTF-8、改行の混在、構文、`#Requires`、`$ErrorActionPreference`、`Set-StrictMode`、PSScriptAnalyzer、起動用 bat の型（上の 3 行、呼び先の存在）。
 - **部屋の中のテストは、外部とのやり取りを差し替える**。Windows 固有の部分（レジストリ、scoop、`setx`、Windows のパス）は、関数に包んで、Pester の `Mock` で差し替えて分岐を試す。差し替えない本物の動作は、人が Windows で実行する層（上の「テスト」の 2 層目）に回し、検証項目に「人が実行」と書く。
 - **部屋の中では分からないこと**（報告の「実環境で未確認の点」に書く）: Windows 固有のコマンドの実際の動き、Windows のパスと権限、実行ポリシー、ネットワーク。部屋の pwsh は Linux 版（globalization は invariant）なので、文化依存の動作（日付や数値の書式）も本物と違いうる。
-- 人が実行した結果を AI に戻すときは、ログ（標準出力とエラーの全文、工程名つき）を `ai/in/` に置く。実データの語は人が伏せてから渡す（上の「テスト」と同じ）。`room run` のような、AI が Windows で実行する仕組みは無い。
+- 人が実行した結果を AI に戻すときは、ログ（`work/<束ねる ps1 の名前>.log`。標準出力とエラーの全文、工程名つき）を `ai/in/` に置く。実データの語は人が伏せてから渡す（上の「テスト」と同じ）。`room run` のような、AI が Windows で実行する仕組みは無い。
