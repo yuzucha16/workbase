@@ -85,9 +85,9 @@ function Test-Launcher([IO.FileInfo]$file) {
     $targetPath = Join-Path $file.DirectoryName $target
     $exists = Test-Path -LiteralPath $targetPath
     Report $exists "起動用 bat の呼び先 $target が同じ場所にある"
-    if ($exists) {  # 束ねる ps1 は、work/<名前>.log の 1 本にログを出す（型は dev-deliverable-guide.md）
+    if ($exists) {  # 束ねる ps1 は、ai/work/<名前>.log の 1 本にログを出す（型は dev-deliverable-guide.md）
       $body = [IO.File]::ReadAllText($targetPath)
-      Report ($body -match 'Start-Transcript' -and $body -match 'Stop-Transcript' -and $body -match "work/") "束ねる $target が work/<名前>.log にログを出す（Start-Transcript と Stop-Transcript、work/）" 'WARN'
+      Report ($body -match 'Start-Transcript' -and $body -match 'Stop-Transcript' -and $body -match "'work'") "束ねる $target が ai/work/<名前>.log にログを出す（Start-Transcript と Stop-Transcript、'work'）" 'WARN'
     }
   }
   $last = if ($lines.Count) { $lines[-1] } else { '' }
