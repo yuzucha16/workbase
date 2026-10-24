@@ -1150,7 +1150,7 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 - 知識: `~/shared/exmem/exmem-index.md`→ `~/shared/exmem/lessons/*.md`
 - 手順書・理解ガイド: `~/shared/guides/guides-index.md`
 
-スクリプトや変換を作るとき: 言語はユーザーに聞かず、Python → ps1 → bat の順で自分で決める（ps1 は Python で書けない Windows 依存の操作だけ、bat は ps1 の起動用 3 行だけ）。部屋で完結できる処理は、部屋で実行して確かめる（部屋には python3・uv・git・pwsh 7・node・LibreOffice・pandoc・Chromium がある）。Excel・COM などの Windows 依存部は、できるだけ小さな層にして、人の手数を 1 コマンドに減らす。方針と切り分けは `~/shared/workflow-kit/dev-deliverable-guide.md` の「実行の方針」。
+スクリプトや変換を作るとき: 言語はユーザーに聞かず、Python → ps1 → bat の順で自分で決める（ps1 は Python で書けない Windows 依存の操作だけ、bat は ps1 の起動用 3 行だけ）。部屋で完結できる処理は、部屋で実行して確かめる（部屋には python3・uv・git・pwsh 7・node・LibreOffice・pandoc・Chromium がある）。Excel・COM などの Windows 依存部は、できるだけ小さな層にして、人の手数を 1 コマンドに減らす。方針と切り分けは `~/shared/workflow-kit/script-guide.md` の「実行の方針」。
 
 共有知へ戻したい知見（`stock`）は、直接書かず、`ai/out/stock/` に下書きを書く。下書きの frontmatter に次を足す:
 

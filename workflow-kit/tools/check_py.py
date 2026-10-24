@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Windows で実行する Python スクリプト（.py と、それを呼ぶ起動用 .bat）を、実行せずに点検する。
 
-dev-deliverable-guide.md の「Windows で実行するスクリプト（Python）」の規約のうち、機械的に確認できる項目を見る。
+script-guide.md の「Windows で実行するスクリプト（Python）」の規約のうち、機械的に確認できる項目を見る。
 標準ライブラリだけで動く（AI 作業部屋でも Windows でも同じ結果になる）。check-ps1.ps1 の Python 版にあたる。
 
 使い方: python check_py.py [--run-tests] [--show-pass] パス...
