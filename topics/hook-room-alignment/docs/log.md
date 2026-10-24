@@ -1,6 +1,6 @@
 # 作業ログ（log）
 
-`init` `open` フックを廃止して `room mkworks` などに移し、`start` を `brief` に改名した（2026-10-24。`a015bda` `c771c01` `45ee732`）。残りフック（`wrap` `stock` `integrate` `review`）と `room` の整合も見て反映した（2026-10-24。`hooks.md` の room 表を絞り、`wrap` のコミットは AI が行う）。経緯は `docs/log-history.md`、根拠は `docs/decisions.md`。
+`init` `open` フックを廃止して `room mkworks` などに移し、`start` を `brief` に改名した（2026-10-24。`a015bda` `c771c01` `45ee732`）。`brief 変更` の入口を足し、`brief-hook.md` と `review-hook.md` の字数超過を解消した（2026-10-24）。残りフック（`wrap` `stock` `integrate` `review`）と `room` の整合も見て反映した（2026-10-24。`hooks.md` の room 表を絞り、`wrap` のコミットは AI が行う）。経緯は `docs/log-history.md`、根拠は `docs/decisions.md`。
 
 ## Next Actions
 
@@ -10,6 +10,4 @@
 
 ## Open Questions
 
-- `brief 変更`（`methods.md` の「変更」の入口）を足すか。引数が `methods.md` の区分（解決・改善・変更・調査・計画）と1対1でない。足すなら設計が要る。
-- `brief-hook.md` が 5,042 字で目安（5,000）を超える（`check_hook_outline` の NOTE）。基準 4,490 の +12%。
 - `mkworks` は `Template-Rev` を新規に付けず `Room-Rev` に統一した。旧版の `room.py` で `--update` した works との行き来は考えていない。
