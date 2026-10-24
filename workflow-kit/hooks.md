@@ -4,24 +4,25 @@
 
 | 合言葉 | 別名（日本語） | 読むファイル | 寿命・時機 | 要点 |
 |---|---|---|---|---|
-| `start` | 「作業を始めて」<br>`start 解決`＝「解決で始めて」<br>`start 改善`＝「改善で始めて」<br>`start 調査`＝「調査で始めて」<br>`start 計画`＝「計画で始めて」 | `start-hook.md` | セッションの開始 | 開始インタビュー。`start 解決` / `start 改善` / `start 調査` / `start 計画` で、進め方を選んで始める |
+| `brief` | 「作業を始めて」<br>`brief 解決`＝「解決で始めて」<br>`brief 改善`＝「改善で始めて」<br>`brief 調査`＝「調査で始めて」<br>`brief 計画`＝「計画で始めて」 | `brief-hook.md` | セッションの開始 | 開始インタビュー。`brief 解決` / `brief 改善` / `brief 調査` / `brief 計画` で、進め方を選んで始める |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push を、順序を固定して行う |
 | `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
 | `review` | 「見直して」<br>`review 消化`＝「next action を消化して」 | `review-hook.md` | 随時（週1回・15分を目途） | 遠回りの事例を見て、1つ直すか1つ畳む。`review 消化` で Next Actions / Open Questions の消化 |
 | （常時） | | `docs-rules.md` | `docs/` を更新するとき、コミット・push の前 | `docs/` の運用規則 |
 
-- 連鎖: `[start → 作業 → wrap]×N`。`stock` と `integrate` は随時。works の作成と雛形の反映（旧 `init`）、Project の開始（旧 `open`）と終了は合言葉を持たず、人が `room mkworks` `room open` `room close` で行う（部屋の AI が書く `ai/out/close.md` の書き方は `room-context.md`）。トピックの終了は `topics/AGENTS.md`。
+- 連鎖: `[brief → 作業 → wrap]×N`。`stock` と `integrate` は随時。works の作成と雛形の反映（旧 `init`）、Project の開始（旧 `open`）と終了は合言葉を持たず、人が `room mkworks` `room open` `room close` で行う（部屋の AI が書く `ai/out/close.md` の書き方は `room-context.md`）。トピックの終了は `topics/AGENTS.md`。
 - 全フックの共通規則（冒頭の定型、改善、承認、フックを足す・消すとき）は `hook-common.md`。
 - 上のファイルが読めない場合（`workbase` を clone していない PC など）は、記憶で代用せず、ユーザーに伝えて止まる。
 - ディレクトリ名: `exmem/knowledge/` は `exmem/lessons/` に、`cheatsheets/` は `guides/`（`howto/` `explain/` `quickref/`）に、2026-10-10 に改名した。履歴の中の旧名は、これで読み替える。
 - 旧ファイル名 `closing-hook.md` `knowledge-hook.md` `setup-hook.md` は、2026-10-08 に削除した（新名は `wrap` `stock` `init`）。履歴の中の旧名は、この表で読み替える。
 - `init` `open` の合言葉と `init-hook.md`（`init-workspace.md` `init-update.md` `init-restore.md` を含む）`open-hook.md` は、2026-10-24 に削除した（works の作成と雛形の反映は `room mkworks`、Project のひな形は `room open`、README 本文の下書きの書き方は `room-context.md`。他のリポジトリへの導入と履歴からの復元は廃止）。履歴の中の `init` `open` は、これで読み替える。
+- `start` の合言葉は、2026-10-24 に `brief` に改名した（`room start` との名前の重なりをなくすため。別名「作業を始めて」と引数 `解決` `改善` `調査` `計画` は同じ。`start-hook.md` `start-plan.md` `start-work-types.md` は `brief-hook.md` `brief-plan.md` `brief-work-types.md` に改名）。履歴の中の `start` は、これで読み替える（`room start` は変わらない）。
 - `close-hook.md` は、2026-10-16 に削除した（Project の終了は `room close`、判断の部分は `room-context.md`。トピックの終了は `topics/AGENTS.md`）。履歴の中の `close` は、これで読み替える。
 
 ## 運用コマンド（`room`）
 
-合言葉のフックとは別の層。人が端末で打つスクリプトで、AI は実行しない。呼び出し表と正本は `room/README.md`。合言葉の `start` と名前が重なるものがあるので、必ず `room` を前置して区別する。部屋の中でフックを使うときの読み替えと分担は `room-context.md`。
+合言葉のフックとは別の層。人が端末で打つスクリプトで、AI は実行しない。呼び出し表と正本は `room/README.md`。合言葉（`brief` など）と区別するため、会話と文書では必ず `room` を前置する（2026-10-24 までは、`start` が両方にあった）。部屋の中でフックを使うときの読み替えと分担は `room-context.md`。
 
 | コマンド | すること |
 |---|---|
@@ -39,7 +40,7 @@
 
 | フック | works | workbase | dotfiles | room |
 |---|---|---|---|---|
-| `start` | rw | rw | rw | rw |
+| `brief` | rw | rw | rw | rw |
 | `wrap` | rw | rw | rw | rw（コミット・push は人） |
 | `stock` | w | rw | w | w |
 | `integrate` | － | rw | － | － |

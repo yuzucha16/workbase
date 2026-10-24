@@ -10,7 +10,7 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 | 性質 | 決まった手順の副作用（マウント、写しの送付、マスク、移動、コミット） | 判断（聞き取り、確認、振り分け、下書き） |
 | 実行者 | スクリプト。**AI は実行しない** | AI |
 
-同じ名前（`start`）が両方にあるときは、運用コマンドには必ず `room` を前置し、合言葉は日本語の別名で呼ぶ。2つをつなぐのは**ファイルの受け渡しだけ**。
+運用コマンドには必ず `room` を前置し、合言葉は日本語の別名で呼ぶ（`start` は 2026-10-24 に合言葉を `brief` へ改名して、重なりは無くなった。前置は習慣として残す）。2つをつなぐのは**ファイルの受け渡しだけ**。
 
 ## 部屋の中の読み替え
 
@@ -33,9 +33,9 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 
 ## README 本文の下書きの書き方（部屋の中）
 
-Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入の `<…>` がある）なら、`start` の最初に、人に断ってから下書きする。旧 `open` フックの手順 4〜5 を移した（2026-10-24）。名前・Area・type は `room open` の引数で決まっているので、聞かない（判断基準は `project-structure.md` の「Project を立てる前の判断基準」）。
+Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入の `<…>` がある）なら、`brief` の最初に、人に断ってから下書きする。旧 `open` フックの手順 4〜5 を移した（2026-10-24）。名前・Area・type は `room open` の引数で決まっているので、聞かない（判断基準は `project-structure.md` の「Project を立てる前の判断基準」）。
 
-1. **聞く**（選択式。答えが1つに定まるものは宣言する）: 主題（言語や方式など）、完了条件の種類、見直し日。`dev` の Project は、`start-work-types.md` の「開発」の項目を、**実装の前に**ここで聞く。
+1. **聞く**（選択式。答えが1つに定まるものは宣言する）: 主題（言語や方式など）、完了条件の種類、見直し日。`dev` の Project は、`brief-work-types.md` の「開発」の項目を、**実装の前に**ここで聞く。
 2. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文だけ（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`。frontmatter を含めない）。完了条件は、AI が具体案（成果物）を出し、ユーザーが承認してから書く。承認の前に「ユーザー承認: 日付」を書かない。既に `readme-draft.md` があれば、読んでから更新する。
 3. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
 4. **報告する**: 下書きのパス、type、完了条件、見直し日と、人が `room readme <名>` で反映すること（Project と Area の `README.md` は書き込めない）。コミットはしない。
@@ -57,7 +57,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 
 ## 知識の統合と成果物の置き場（部屋の中）
 
-2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書き、人が `room restore`（`start` の終わりでも自動）で実名に戻して Area に置く。
+2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書き、人が `room restore`（`room start` の終わりでも自動）で実名に戻して Area に置く。
 
 - **統合した知識**: `ai/in/area/`（Area から `room pull` で渡された、マスク済みの写し）を読み、統合したノートを `ai/out/knowledge/<英数字の名前>.md` に書く。frontmatter は `kind: integrated`、`status: active`、`org` は元のまま。`⟦…⟧` の記号は変えない。Area の知識置き場の既存ファイルを、人が前回から変えていると、`restore` は止まる（人が `--force` で判断する）。
 - **成果物**（人が読む最終版）: `ai/out/deliverable/` の下に置く。`restore` が、Area の成果物置き場（Project 名の下）にも実名に戻して書く。それ以外の `ai/out/<最終成果物>` は、従来どおり Project の `_noai/final/` に戻る。
@@ -68,7 +68,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 | 場面 | AI（部屋の中）が行う | 人（`room`）が行う | 受け渡しのファイル |
 |---|---|---|---|
 | `open`（合言葉なし） | 目的・完了条件の聞き取りと README 本文の下書き（下の節） | `room open <名>`（ひな形）→ `room readme <名>`（下書きの反映） | `ai/out/readme-draft.md`（本文だけ。frontmatter を含めない） |
-| `start` | 開始インタビュー | `room start <名>`（チェック、マスク、写しの送付、マウント、起動） | `ai/ctx/`、`ai/in/` |
+| `brief` | 開始インタビュー | `room start <名>`（チェック、マスク、写しの送付、マウント、起動） | `ai/ctx/`、`ai/in/` |
 | `wrap` | `ai/docs/` の更新、昇格の案 | 回収（復元、コミット） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
 | `stock` | 下書きまで | `room stock <名>`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |

@@ -31,7 +31,7 @@ exmem の用途は2つ。(1) AI が今後の参考にするもの（`exmem/lesso
 | 種類 | 読む人の問い | 順序 | 例 |
 |---|---|---|---|
 | 手順書 | どの順で何をやるんだっけ | あり | dotfiles の `windows/claude/README.md` |
-| 理解ガイド | なぜそうなる？ どう動いている？ | 説明の流れ | `guides/explain/ssl-inspection.md`。調査の成果物（`start 調査`。`checked` つき）も、この種類 |
+| 理解ガイド | なぜそうなる？ どう動いている？ | 説明の流れ | `guides/explain/ssl-inspection.md`。調査の成果物（`brief 調査`。`checked` つき）も、この種類 |
 | クイックリファレンス | あのコマンド・設定は何だっけ | なし（引く） | `guides/quickref/apt.md` |
 
 - 判定の順: 順序があって実行するなら手順書。自分で説明できることが目的なら理解ガイド。どちらでもなく単発の引きものならクイックリファレンス。

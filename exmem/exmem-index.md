@@ -63,12 +63,12 @@ updated: 2026-10-16
 - [[research-method]]: 調査のやり方1: 問いを構造化し、読者を決めて、一次情報から事実と所感を分けてまとめる（Must / Want）
 - [[research-method-2]]: 調査のやり方2: 手順を調べ、前提と骨格を固定して、実行できる手順書にまとめる（Must / Want）
 - [[retrospective-method]]: 振り返りのやり方1（改善4。定期）: 済んだ進め方・成果物を、評価軸を先に決めて、良い点と悪い点の両面で評価する（Must / Want）
-- [[planning-method]]: 計画のやり方（`start 計画`）: 6R で要求を整理し、憲章・成果物 WBS・マイルストーンで目的とゴールを共有する（Must / Want。試験運用）
+- [[planning-method]]: 計画のやり方（`brief 計画`）: 6R で要求を整理し、憲章・成果物 WBS・マイルストーンで目的とゴールを共有する（Must / Want。試験運用）
 - [[retrospective-method-2]]: 振り返りのやり方2（改善5。突発）: 失敗・トラブル1件を、時系列の事実から、なぜなぜで仕組みの欠けまで掘る（叩き台。品質チェック未実施）
 - [[reference-doc-types]]: 人が見る文書の3種類（手順書・理解ガイド・クイックリファレンス）の作り方
 - [[scoop-app-management]]: Windows のアプリを scoop で管理し、管理外を最小にする
 - [[session-handoff]]: スレッド（セッション）を切り替える作法
-- [[session-goal-modes]]: セッションの進め方: ゴールを決める工程と達成する工程の分離（start のモードの根拠）
+- [[session-goal-modes]]: セッションの進め方: ゴールを決める工程と達成する工程の分離（brief のモードの根拠）
 - [[shell-command-usecases]]: ターミナルのコマンド利用傾向とヒストリの種
 - [[shell-fzf-keybindings]]: シェルの fzf とキー割り当て（pwsh / zsh / bash）
 - [[shell-script-testing-wsl]]: WSL でシェルスクリプトを試験する（Windows の `.bat` の文字化け・cp932・ASCII・改行・pause・日本語表示も）
