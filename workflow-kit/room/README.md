@@ -9,7 +9,7 @@ AI 作業部屋の操作（`open` / `start` / `close` / `umount` / `mask` / `res
 ```powershell
 cd <このディレクトリ>
 uv run room.py init <Area> [--boundary <印>] [--resume] [--only <段,…>] [--no-commit]
-uv run room.py open <Project> --area <Area> [--type doc|dev|dev-env|dev-test|research] [--boundary <印>] [--no-commit]
+uv run room.py open <Project> --area <Area> [--type dev|inv] [--boundary <印>] [--no-commit]
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--adopt] [--no-commit]
 uv run room.py close <Project> [--commit]
 uv run room.py umount --area <Area>
@@ -17,6 +17,7 @@ uv run room.py rename-area <旧Area> <新Area> [--no-commit]
 ```
 
 - works は `$ROOM_VAULT`、無ければ `~/works`。`--vault <パス>` で指定できる（`--vault` はサブコマンドの前に書く）。`close` から reap までの日数は `--reap-days`（既定 14。`$ROOM_REAP_DAYS` でも指定できる）。
+- `open` の `--type` は、作業の特性で選ぶ2つ。`dev`（既定）は作って保守する成果物（`src/` `env/` `tests/` `tools/` `docs/` から必要なものを選ぶ。文書だけの成果物も含む）、`inv` は調べて結論を出す成果物（`report.md`）。`room` は `type` で動きを変えない（README の frontmatter に書くだけ）。違いは手順書（`workflow-kit/project-structure.md`）が持つ。
 - 部屋（WSL のディストリビューション）は `room-<Area>`。`room init <Area>` で作る（手作業の手順は `guides/howto/ai-room-setup.md` の 3・4 章）。
 - トレーラー（2026-10-21）: room が作るコミット（`init` `open` `rename-area` `start` `readme` `close`）に、`Room-Op: <操作>`、`Room-Rev: <resources の短縮ハッシュ>`、`Room-Area: <Area>`、`Room-Project: <Project>`（Project の操作だけ）を付ける。既存の Area / Project が、どの版の room で作られ、変えられたかを引く印。差分は `git -C resources diff <Room-Rev>..HEAD -- workflow-kit/room`、一覧は `git log --format='%h %(trailers:key=Room-Op,key=Room-Rev,valueonly,separator=%x20)'`（works 側）。`Room-Rev` は `workflow-kit/` に未コミットの変更があると末尾が `-dirty`（その版は差分の基点にしない）、git で引けなければ `unknown`。コミットしない操作（`mask` `restore` `pull` `stock` など）には付かない。付いていない古いコミットは「版不明」。
 - Stop フックの記録（2026-10-21。単体テストのみ。決定は `docs/decisions.md` の同日）: `init`（段 `stophook`）が、部屋の ai ユーザーの `~/.claude/hooks/room-stop-record.py` を置き、`~/.claude/settings.json` に Stop フックとして登録する。記録先は、cwd が `/mnt/room/<Project>` なら Project の `ai/records/sessions.jsonl`（費用の推定。session ごとに1行）と `ai/records/replies/<日付>.md`（応答本文）。記録するとき、`C:\Users\<名>`・`/mnt/c/Users/<名>` を `%USERPROFILE%` に置換する。既存の部屋は `init <Area> --only stophook` で足す。
@@ -45,14 +46,14 @@ uv run room.py rename-area <旧Area> <新Area> [--no-commit]
 
 `start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。待つ間、部屋が止まってマウントが消えないよう、部屋で `sleep infinity` を動かす（実機で確認済み: 2026-10-18。待つ間マウントは残り、Enter で戻る。`wsl.exe` はコンソールから切り離して起こす）。
 
-## マスクと復元は状態で決まる（`data:` は廃止。2026-10-21）
+## マスクと復元は状態で決まる
 
 設定は無い。`type` に関係なく、`_noai/` は常に `raw/` `map/` `final/` `user/` を作る。
 
 - マスク（`start` / `mask`）: `_noai/raw/` に原本があるときだけ行う。無ければ何もしない。マスクしないデータは `raw/` に置かず、`ai/in/` に直接置いて `start --adopt` する。
 - 復元（`start` の終わり / `restore`）: `_noai/map/mapping.json` があるとき（その Project でマスクしたことがあるとき）だけ行う。マスクしたことが無い Project（dev など）の `ai/out/` は、戻すものではないので触らない。
 - `user/` は人だけが使う仮置き（予約名。`room` は触らない）。`_noai/` 全体が追跡外で、AI にも見せない。
-- 既存の Project の README に残る `data:` は無視する（消してよい）。以前の `mask`（復元しない）は、`restore` に統一した。
+
 ## 実装の決まり
 
 - WSL へのコマンドは、標準入力で LF 固定で渡す（PowerShell の CRLF で、`umount` が壊れ、マウントが積み重なる）。値は `shlex.quote` で引用する。
