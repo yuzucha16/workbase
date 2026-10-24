@@ -74,7 +74,7 @@ Area（非公開・実名）                       AI 作業部屋
 | マスクの時期 | 書くとき / 渡すとき | **渡すとき**。Area 内は実名で書ける。写しは使い捨てで、持ち越さない |
 | 戻り | AI の出力を Area に戻す / 戻さない | **案件の決定・ToDo は既存の `room close` → `ai/docs/inbox.md`（【案件】）**。統合した知識は `ai/out/knowledge/`、人が読む成果物は `ai/out/deliverable/` に置き、`restore` が実名に戻して Area の `_noai/knowledge/`、`_noai/deliverable/<Project>/` に書く（2026-10-21。置き場の分け方は [[ai-room-data-layout]]） |
 | 統合 | 件ごとに溜める / 統合して育てる | **Area に置く**（ユーザーの決定、2026-10-21）。実行は**部屋の作業**: マスクした写しを `ai/in/` に置き、部屋の AI がマスクのまま統合し、人が `restore` で実名に戻して Area に置く。works の AI は実名を読まない。`integrate` の権限は変えない。戻り先の経路は `room` に足す（設計中） |
-| 知識の層 | ① 事実（実名、Area）/ ② 部屋用の写し（渡すときに作る）/ ③ 一般化した教訓（workbase） | 3層。固有の事実は、仮名にしても workbase に切り出さない。③ は一般化したものだけを、既存の `room stock` で出す（ユーザーの決定） |
+| 知識の層 | ① 事実（実名、Area）/ ② 部屋用の写し（渡すときに作る）/ ③ 一般化した教訓（workbase） | 3層。固有の事実は、仮名にしても workbase に切り出さない。③ は一般化したものだけを、既存の `room stock` で出す（ユーザーの決定）。部屋の AI が残したい知見は、下書きの `scope:` で振り分ける: 剥がしても社外で使える → `public`（`room stock` → `exmem/inbox/`）、剥がすと意味が無い → `area`（`ai/out/knowledge/` → `restore` → Area の知識置き場。2026-10-24） |
 
 ### 2.3 一般の型（案）
 

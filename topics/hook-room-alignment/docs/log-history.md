@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-24（`stock` の行き先）
+- ユーザーの依頼で、PC1 の業務で出る、workbase に戻せない業務固有の知の置き場と `room stock` の変更を相談した。最初の叩き台（works 直下に Area を跨ぐ置き場を作る）は、ユーザーの「非公開の共有知は Area に閉じてよい。土台はすでにある」で取り下げ、第2版（`pull` `restore` `ai/out/knowledge/` を土台に、入口だけ統一）で仮決め4点がOKになった。実装した: 下書きの `scope: public | area`、`room stock` は `area` を運ばない。決定は `docs/decisions.md` の同日の項。`room pull --where` の仕様は変えるかもしれない（予告）。
+
 ### 2026-10-24
 - ユーザーの依頼で、`room` の導入によって名前や工程が重なった `init` `open` `start` のフックを見直した。事実の表（フック ↔ `room` コマンド）を作り、論点と案を出した（[[hook-room-alignment-notes]]）。
 - ユーザーが、`init` は人がやる操作なので `room` に取り込む（`room mkworks`、`--update`。将来 `--list` など引数で足す）、他リポジトリへの導入と履歴復元は廃止（`kit` は作らない）、`open` と `close` は畳む、`start` は改名してよい、と決めた。`start` の名前は `brief` で承認。
