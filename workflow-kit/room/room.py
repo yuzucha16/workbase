@@ -497,7 +497,7 @@ updated: {today}
 
 <目的を1〜2文。所属 Area: [[areas/{area}/README|{area}]]>
 
-計画: `ai/in/plan/`（承認版。`start 計画` の出力。無ければ未作成）
+計画: `ai/in/plan/`（承認版。`brief 計画` の出力。無ければ未作成）
 
 ## 完了条件
 
@@ -1221,7 +1221,7 @@ def share_state(ctx, root):
 POINTER_BEGIN = "<!-- room-shared:begin（room start が管理する。この範囲は書き換えられる） -->"
 POINTER_END = "<!-- room-shared:end -->"
 POINTER_TEXT = """共有知（読み取り専用の写し）が `~/shared` にある。作業の前に `~/shared/ROOM.md` を読む。
-合言葉（`start` `wrap` など）を言われたら、`~/shared/workflow-kit/hooks.md` の表に従って手順書を読む。`~/shared` には書かない。
+合言葉（`brief` `wrap` など）を言われたら、`~/shared/workflow-kit/hooks.md` の表に従って手順書を読む。`~/shared` には書かない。
 git は、`/mnt/room/<名>` の下で自由に使ってよい（許可は不要）。部屋のローカルの git が `room start` で用意済みで、`git status` `git diff` `git add` `git commit` `git log` がそのまま動く。
 自分で `git init` や `git config` をしない（`.git` を作ると works に回収される）。ここのコミットは部屋の中だけの記録で、セッションの終わりに捨てる。"""
 

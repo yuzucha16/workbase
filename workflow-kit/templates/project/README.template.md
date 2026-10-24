@@ -11,7 +11,7 @@ updated: <YYYY-MM-DD>
 
 <目的を1〜2文。所属 Area: [[areas/<Area 名>/README|<Area 名>]]>
 
-計画: `ai/in/plan/`（承認版。`start 計画` の出力。無ければ未作成）
+計画: `ai/in/plan/`（承認版。`brief 計画` の出力。無ければ未作成）
 
 ## いま / あなた待ち / 次の一手
 
