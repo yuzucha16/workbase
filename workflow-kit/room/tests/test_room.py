@@ -1681,5 +1681,188 @@ class ShareTarTest(unittest.TestCase):
         self.assertNotIn("workflow-kit/room/tests/test_x.py", names)
 
 
+KIT_TEMPLATES = Path(room.__file__).resolve().parent.parent / "templates"
+IDENT = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.org", "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.org"}
+
+
+def make_works(tmp, with_resources=True, origin="https://github.com/yuzucha16/workbase.git"):
+    """mkworks 用: 空の works に、雛形を持つ resources/（git）を置く。"""
+    v = Path(tmp) / "works"
+    v.mkdir()
+    if with_resources:
+        res = v / "resources"
+        shutil.copytree(KIT_TEMPLATES, res / "workflow-kit" / "templates")
+        sh(res, "init", "-q", "-b", "main")
+        sh(res, "remote", "add", "origin", origin)
+        sh(res, "add", "-A")
+        sh(res, "-c", "user.name=t", "-c", "user.email=t@example.org", "commit", "-qm", "kit")
+    return v
+
+
+def kit_commit(v, rel, text):
+    res = v / "resources"
+    f = res / "workflow-kit" / "templates" / "workspace" / rel
+    f.write_text(text, encoding="utf-8", newline="\n")
+    sh(res, "add", "-A")
+    sh(res, "-c", "user.name=t", "-c", "user.email=t@example.org", "commit", "-qm", f"kit {rel}")
+
+
+def mkw_args(**kw):
+    d = dict(update=False, role="業務用", remote="none", base=None, yes=True, commit=True)
+    d.update(kw)
+    return argparse.Namespace(**d)
+
+
+def last_commit(v):
+    return subprocess.run(["git", "-C", str(v), "log", "-1", "--format=%B"], capture_output=True, text=True, encoding="utf-8").stdout
+
+
+class MkworksTest(unittest.TestCase):
+    def setUp(self):
+        self._old = {k: os.environ.get(k) for k in IDENT}
+        os.environ.update(IDENT)
+
+    def tearDown(self):
+        for k, val in self._old.items():
+            if val is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = val
+
+    def create(self, tmp, **kw):
+        v = make_works(tmp)
+        c = ctx_for(v)
+        room.cmd_mkworks(c, mkw_args(**kw))
+        return v, c
+
+    def test_create_default(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, _c = self.create(tmp)
+            for rel in (".gitignore", ".ignore", ".gitattributes", ".claude/settings.json", "README.md", "AGENTS.md", "CLAUDE.md",
+                        "docs/log.md", "docs/decisions.md", "areas/.gitkeep", "projects/.gitkeep", "archives/.gitkeep", ".git/hooks/pre-push"):
+                self.assertTrue((v / rel).exists(), rel)
+            self.assertTrue((v / "resources_p").is_dir())
+            agents = (v / "AGENTS.md").read_text(encoding="utf-8")
+            self.assertIn("業務用 PC の作業場", agents)
+            self.assertNotIn("<この works", agents)
+            self.assertNotIn("<remote の方針", agents)
+            self.assertIn("remote: なし", agents)
+            self.assertNotIn("<決めたこと>", (v / "docs" / "decisions.md").read_text(encoding="utf-8"))
+            self.assertEqual("@AGENTS.md\n", (v / "CLAUDE.md").read_text(encoding="utf-8"))
+            tracked = subprocess.run(["git", "-C", str(v), "ls-files"], capture_output=True, text=True).stdout.splitlines()
+            self.assertFalse([t for t in tracked if t.startswith("resources")], tracked)
+            msg = last_commit(v)
+            self.assertIn("[works] initial commit", msg)
+            self.assertIn("Room-Op: mkworks", msg)
+            self.assertIn("Room-Rev: ", msg)
+            self.assertNotIn("Agent:", msg)
+
+    def test_create_with_remote_has_no_prepush(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = self.create(tmp, remote="https://example.org/me/works.git", role="個人用")
+            self.assertFalse((v / ".git" / "hooks" / "pre-push").exists())
+            self.assertIn("個人用 PC", (v / "AGENTS.md").read_text(encoding="utf-8"))
+            self.assertIn("origin", subprocess.run(["git", "-C", str(v), "remote"], capture_output=True, text=True).stdout)
+            self.assertTrue(any("push は人が行う" in m for m in c.msgs))
+
+    def test_existing_file_is_not_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_works(tmp)
+            (v / "README.md").write_text("mine\n", encoding="utf-8")
+            room.cmd_mkworks(ctx_for(v), mkw_args())
+            self.assertEqual("mine\n", (v / "README.md").read_text(encoding="utf-8"))
+
+    def test_existing_work_stops(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, _c = self.create(tmp)
+            with self.assertRaises(room.RoomError):
+                room.cmd_mkworks(ctx_for(v), mkw_args())
+
+    def test_resources_must_be_workbase_clone(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_works(tmp, with_resources=False)
+            with self.assertRaises(room.RoomError):
+                room.cmd_mkworks(ctx_for(v), mkw_args())
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_works(tmp, origin="https://example.org/other.git")
+            with self.assertRaises(room.RoomError):
+                room.cmd_mkworks(ctx_for(v), mkw_args())
+
+    def test_update_merges_and_keeps_local_fill(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, _c = self.create(tmp)
+            kit_commit(v, "gitignore.template", (KIT_TEMPLATES / "workspace" / "gitignore.template").read_text(encoding="utf-8") + "\n*.bak\n")
+            c = ctx_for(v)
+            room.cmd_mkworks(c, mkw_args(update=True))
+            self.assertIn("*.bak", (v / ".gitignore").read_text(encoding="utf-8"))
+            self.assertIn("業務用 PC の作業場", (v / "AGENTS.md").read_text(encoding="utf-8"))
+            msg = last_commit(v)
+            self.assertIn("Room-Op: mkworks-update", msg)
+            self.assertIn("Room-Rev: " + room.resources_rev(c), msg)
+
+    def test_update_nothing_to_do(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, _c = self.create(tmp)
+            before = last_commit(v)
+            c = ctx_for(v)
+            room.cmd_mkworks(c, mkw_args(update=True))
+            self.assertEqual(before, last_commit(v))
+            self.assertTrue(any("反映するものなし" in m for m in c.msgs))
+
+    def test_update_conflict_writes_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, _c = self.create(tmp)
+            tpl = (KIT_TEMPLATES / "workspace" / "gitignore.template").read_text(encoding="utf-8")
+            first = next(l for l in tpl.splitlines() if l.startswith("/resources/"))
+            kit_commit(v, "gitignore.template", tpl.replace(first, "/resources-new/"))
+            local = (v / ".gitignore").read_text(encoding="utf-8").replace(first, "/resources-mine/")
+            (v / ".gitignore").write_text(local, encoding="utf-8", newline="\n")
+            sh(v, "add", ".gitignore")
+            sh(v, "commit", "-qm", "local edit")
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_mkworks(ctx_for(v), mkw_args(update=True))
+            self.assertIn(".gitignore", str(cm.exception))
+            self.assertEqual(local, (v / ".gitignore").read_text(encoding="utf-8"))
+
+    def test_update_refuses_uncommitted_local_change(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, _c = self.create(tmp)
+            kit_commit(v, "gitignore.template", (KIT_TEMPLATES / "workspace" / "gitignore.template").read_text(encoding="utf-8") + "\n*.bak\n")
+            (v / ".gitignore").write_text((v / ".gitignore").read_text(encoding="utf-8") + "# mine\n", encoding="utf-8", newline="\n")
+            with self.assertRaises(room.RoomError):
+                room.cmd_mkworks(ctx_for(v), mkw_args(update=True))
+            self.assertNotIn("*.bak", (v / ".gitignore").read_text(encoding="utf-8"))
+
+    def test_update_adds_deny_and_never_removes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c0 = self.create(tmp)
+            old = json.loads((KIT_TEMPLATES / "workspace" / "claude-settings.template.json").read_text(encoding="utf-8"))
+            new = json.loads(json.dumps(old))
+            gone = new["permissions"]["deny"].pop(0)
+            new["permissions"]["deny"].append("Read(./extra/**)")
+            kit_commit(v, "claude-settings.template.json", json.dumps(new, ensure_ascii=False, indent=2) + "\n")
+            c = ctx_for(v)
+            room.cmd_mkworks(c, mkw_args(update=True))
+            deny = json.loads((v / ".claude" / "settings.json").read_text(encoding="utf-8"))["permissions"]["deny"]
+            self.assertIn("Read(./extra/**)", deny)
+            self.assertIn(gone, deny)
+            self.assertTrue(any(gone in m for m in c.msgs))
+
+    def test_update_needs_base_when_unknown(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, _c = self.create(tmp, commit=False)
+            with self.assertRaises(room.RoomError):
+                room.cmd_mkworks(ctx_for(v), mkw_args(update=True))
+
+    def test_update_reads_legacy_template_rev(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_works(tmp)
+            base = room.resources_rev(ctx_for(v))
+            room.cmd_mkworks(ctx_for(v), mkw_args(commit=False))
+            sh(v, "add", "-A", "--", ".gitignore", ".ignore", ".gitattributes", "README.md", "AGENTS.md", "CLAUDE.md", "docs")
+            sh(v, "commit", "-qm", "init", "--trailer", f"Template-Rev: {base}")
+            self.assertEqual((base, "Template-Rev"), room.mkworks_base(ctx_for(v)))
+
+
 if __name__ == "__main__":
     unittest.main()

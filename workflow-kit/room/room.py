@@ -1,4 +1,4 @@
-"""room: AI 作業部屋の操作（open / start / close / umount / mask / restore / pull / readme / stock）。
+"""room: AI 作業部屋の操作（mkworks / open / start / close / umount / mask / restore / pull / readme / stock）。
 
 人が Windows で実行する。AI には実行させない（原本と対応表を読む工程を含むため）。
 設計は guides/explain/ai-room-why.md、手作業の手順は guides/howto/ai-room-setup.md。
@@ -437,10 +437,12 @@ def kit_rev():
     return rev + ("-dirty" if s.returncode == 0 and s.stdout.strip() else "")
 
 
-def room_trailers(op, area, project=None):
+def room_trailers(op, area=None, project=None):
     """room が作るコミットのトレーラー。Area / Project が、どの版の room で作られ、変えられたかを、後から引くための印。
     差分: git -C resources diff <Room-Rev>..HEAD -- workflow-kit/room（-dirty の版は基点にしない）。"""
-    t = [("Room-Op", op), ("Room-Rev", kit_rev()), ("Room-Area", area)]
+    t = [("Room-Op", op), ("Room-Rev", kit_rev())]
+    if area:
+        t.append(("Room-Area", area))
     if project:
         t.append(("Room-Project", project))
     return t
@@ -2113,6 +2115,324 @@ def cmd_shell(ctx, a):
     ctx.wsl.shell(distro)
 
 
+# ---------- mkworks（works のトップを作る・雛形を反映する） ----------
+
+MKWORKS_ROLES = {
+    "業務用": "業務用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジ（`resources/`）を参照する。",
+    "個人用": "個人用 PC の作業場。この PC のローカルの作業を PARA で管理し、共有ナレッジ（`resources/`）を参照する。",
+}
+MKWORKS_TEMPLATES = (  # (works での名前, templates/workspace/ の雛形)
+    ("README.md", "README.md"), ("AGENTS.md", "AGENTS.md"), (".gitignore", "gitignore.template"),
+    (".ignore", "ignore.template"), (".gitattributes", "gitattributes.template"),
+)
+MKWORKS_SETTINGS = ".claude/settings.json"
+MKWORKS_SETTINGS_TEMPLATE = "claude-settings.template.json"
+MKWORKS_PREPUSH = ".git/hooks/pre-push"
+MKWORKS_PREPUSH_TEMPLATE = "pre-push.template"
+MKWORKS_KEEP = ("areas", "projects", "archives")
+MKWORKS_COMMIT = "[works] initial commit: PC-local vault top (PARA, docs, AGENTS.md, ignore rules)"
+MKWORKS_OPS = ("mkworks", "mkworks-update")
+
+
+def resources_dir(ctx):
+    return ctx.vault / "resources"
+
+
+def workspace_templates_dir(ctx):
+    return resources_dir(ctx) / "workflow-kit" / "templates"
+
+
+def check_resources(ctx):
+    """resources/ が workbase の clone であること。無ければ clone を案内して止まる（mkworks は clone しない）。"""
+    res = resources_dir(ctx)
+    if not (res / ".git").exists():
+        raise RoomError(f"resources/ が無い、または git のリポジトリでない: {res}。先に workbase を clone する（dotfiles の 50_repos）")
+    url = git(res, "remote", "get-url", "origin", check=False).strip()
+    if "workbase" not in url:
+        raise RoomError(f"resources/ の origin が workbase でない: {url or '（origin なし）'}")
+
+
+def resources_rev(ctx):
+    return git(resources_dir(ctx), "rev-parse", "--short", "HEAD").strip()
+
+
+def unbracket(text):
+    """説明の行（`<…>` で囲んだ行）の囲みを外す。"""
+    return "\n".join(l[1:-1] if l.startswith("<") and l.endswith(">") else l for l in text.splitlines()) + "\n"
+
+
+def render_agents(text, role_text, remote_text, rule_line):
+    out = []
+    for l in text.splitlines():
+        if l.startswith("<この works の役割"):
+            l = role_text
+        elif l.startswith("- <remote の方針"):
+            l = "- " + rule_line
+        elif l.startswith("- <その他の固有ルール"):
+            continue
+        out.append(l.replace("<なし / 非公開リポジトリの URL>", remote_text))
+    return "\n".join(out) + "\n"
+
+
+def render_readme(text, name, role_text):
+    out = []
+    for l in text.splitlines():
+        if l.startswith("# <works の名前>"):
+            l = f"# {name}"
+        elif l.startswith("<この works の役割"):
+            l = role_text
+        out.append(l)
+    return "\n".join(out) + "\n"
+
+
+def render_decisions(text):
+    text = re.sub(r"### 【汎用】<決めたこと>.*?(?=\n## Gotchas)", "-\n", text, flags=re.S)
+    return unbracket(text)
+
+
+def git_identity_ok(ctx):
+    email = os.environ.get("GIT_AUTHOR_EMAIL") or git(ctx.vault, "config", "user.email", check=False).strip()
+    return bool(email) and "example.com" not in email
+
+
+def is_junction_or_link(path):
+    return path.is_symlink() or bool(getattr(os.path, "isjunction", lambda _p: False)(path))
+
+
+def mkworks_create(ctx, a):
+    check_resources(ctx)
+    v = ctx.vault
+    if (v / ".git").exists() and git(v, "rev-parse", "--verify", "HEAD", check=False).strip():
+        raise RoomError(f"すでに works（コミットがある）: {v}。雛形の反映は mkworks --update")
+    role_text = MKWORKS_ROLES[a.role]
+    remote = None if a.remote in (None, "none") else a.remote
+    if remote:
+        remote_text, rule = f"`{remote}`", f"remote は `origin`（{remote}）。push は人が行う。"
+    else:
+        remote_text = "なし"
+        rule = "このリポジトリに remote を足さない。push しない（誤って push しないよう、`.git/hooks/pre-push` で止めてある）。"
+    v.mkdir(parents=True, exist_ok=True)
+    made, kept = [], []
+
+    def put(rel, text):
+        path = v / rel
+        if path.exists():
+            kept.append(rel)
+            return
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8", newline="\n")
+        made.append(rel)
+
+    tpl = lambda name: (workspace_templates_dir(ctx) / "workspace" / name).read_text(encoding="utf-8")
+    top = lambda name: (workspace_templates_dir(ctx) / name).read_text(encoding="utf-8")
+    put(".gitignore", tpl("gitignore.template"))
+    put(".ignore", tpl("ignore.template"))
+    put(".gitattributes", tpl("gitattributes.template"))
+    put(MKWORKS_SETTINGS, tpl(MKWORKS_SETTINGS_TEMPLATE))
+    put("README.md", render_readme(tpl("README.md"), v.name, role_text))
+    put("AGENTS.md", render_agents(tpl("AGENTS.md"), role_text, remote_text, rule))
+    put("CLAUDE.md", "@AGENTS.md\n")
+    put("docs/log.md", unbracket(top("log.md")))
+    put("docs/decisions.md", render_decisions(top("decisions.md")))
+    for d in MKWORKS_KEEP:
+        put(f"{d}/.gitkeep", "")
+    (v / "resources_p").mkdir(exist_ok=True)
+    if not (v / ".git").exists():
+        git(v, "init", "-q", "-b", "main")
+        made.append(".git")
+    if remote:
+        git(v, "remote", "add", "origin", remote)
+    else:
+        hook = v / MKWORKS_PREPUSH
+        hook.parent.mkdir(parents=True, exist_ok=True)
+        hook.write_text(tpl(MKWORKS_PREPUSH_TEMPLATE), encoding="utf-8", newline="\n")
+        hook.chmod(hook.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    ctx.say(f"条件: 対象 {v}、役割 {a.role}、remote {remote or 'なし'}、コミット {'する' if a.commit else 'しない'}")
+    ctx.say("作った: " + (", ".join(made) or "なし") + "、resources_p/")
+    if kept:
+        ctx.say("すでにあるので触らなかった: " + ", ".join(kept))
+    obs = v / ".obsidian"
+    if obs.exists() and not is_junction_or_link(obs):
+        ctx.say("注意: .obsidian が実ディレクトリ。dotfiles の 30_link が止まるので、手で退避する")
+    if not a.commit:
+        return
+    if not git_identity_ok(ctx):
+        ctx.say("git の身元が未設定（または example.com の仮値）なので、コミットしなかった。"
+                "git config --global user.name / user.email を設定してから、生成物をコミットする")
+        return
+    paths = [p for p in made if p != ".git"]
+    commit_paths(ctx, paths, MKWORKS_COMMIT, only=True, trailers=[("Room-Op", "mkworks"), ("Room-Rev", resources_rev(ctx))])
+    if remote:
+        ctx.say("push は人が行う: git push -u origin main（リモートに既存のコミットがあれば、先に git pull --rebase origin main）")
+    for line in git(v, "status", "--porcelain", "-uall", "--", "areas", "projects", "archives").splitlines():
+        ctx.say("未追跡のまま（PARA の既存の中身）: " + line[3:])
+
+
+def usable_rev(ctx, rev):
+    rev = (rev or "").strip()
+    if not rev or rev.endswith("-dirty"):
+        return None
+    r = subprocess.run(["git", "-C", str(resources_dir(ctx)), "cat-file", "-e", f"{rev}^{{commit}}"], capture_output=True)
+    return rev if r.returncode == 0 else None
+
+
+def mkworks_base(ctx):
+    """前に反映した版（基点）。最新の mkworks / mkworks-update の Room-Rev、無ければ Template-Rev、無ければ最初のコミットの Kit-Rev。"""
+    fmt = ("--format=%x1e%(trailers:key=Room-Op,valueonly,separator=%x20)%x1f%(trailers:key=Room-Rev,valueonly,separator=%x20)"
+           "%x1f%(trailers:key=Template-Rev,valueonly,separator=%x20)%x1f%(trailers:key=Kit-Rev,valueonly,separator=%x20)")
+    records = [[f.strip() for f in r.split("\x1f")] for r in git(ctx.vault, "log", fmt, check=False).split("\x1e")[1:]]
+    for op, room_rev, template_rev, _kit in records:
+        cand = room_rev if op in MKWORKS_OPS else template_rev
+        if cand:
+            return usable_rev(ctx, cand), "Room-Rev" if op in MKWORKS_OPS else "Template-Rev"
+    kits = [k for *_x, k in records if k]
+    return (usable_rev(ctx, kits[-1]), "Kit-Rev") if kits else (None, "なし")
+
+
+def show_at(ctx, rev, rel):
+    r = subprocess.run(["git", "-C", str(resources_dir(ctx)), "show", f"{rev}:{rel}"], capture_output=True)
+    return r.stdout.decode("utf-8") if r.returncode == 0 else None
+
+
+def merge3(local, base, new):
+    """git merge-file -p。戻り値は (衝突の数, 結果)。"""
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        paths = []
+        for name, text in (("local", local), ("base", base), ("new", new)):
+            f = Path(d) / name
+            f.write_text(text, encoding="utf-8", newline="\n")
+            paths.append(str(f))
+        r = subprocess.run(["git", "merge-file", "-p", *paths], capture_output=True)
+    if r.returncode < 0 or r.returncode > 127:
+        raise RoomError("git merge-file が失敗した")
+    return r.returncode, r.stdout.decode("utf-8")
+
+
+def deny_of(text):
+    return json.loads(text).get("permissions", {}).get("deny", [])
+
+
+def mkworks_update(ctx, a):
+    import difflib
+    check_resources(ctx)
+    v, res = ctx.vault, resources_dir(ctx)
+    if not (v / ".git").exists():
+        raise RoomError(f"works が無い（.git が無い）: {v}。先に room mkworks")
+    if git(res, "status", "--porcelain").strip():
+        raise RoomError("resources/ に未コミットの変更がある。その状態の雛形は後から再現できないので、止まる")
+    new_rev = resources_rev(ctx)
+    base, origin = (usable_rev(ctx, a.base), "--base") if a.base else mkworks_base(ctx)
+    if not base:
+        raise RoomError("基点（前に反映した版）が分からない。--base <resources のハッシュ> で指定する（works の初回コミットの版など）")
+    if base == new_rev:
+        ctx.say(f"反映するものなし（基点 {base}（{origin}）は resources の最新と同じ）")
+        return
+    ctx.say(f"基点 {base}（{origin}）→ 新しい版 {new_rev}")
+    ws = "workflow-kit/templates/workspace/"
+    changed = {l.rsplit("/", 1)[-1] for l in git(res, "diff", "--name-only", base, "HEAD", "--", ws).splitlines() if l}
+    known = {t for _n, t in MKWORKS_TEMPLATES} | {MKWORKS_SETTINGS_TEMPLATE, MKWORKS_PREPUSH_TEMPLATE}
+    if changed - known:
+        raise RoomError("mkworks が知らない雛形が増えている: " + ", ".join(sorted(changed - known)) + "（room.py の MKWORKS_TEMPLATES を先に直す）")
+    plan, conflicts, dirty, notes, removed = [], [], [], [], []
+
+    def tracked_dirty(rel):
+        return bool(git(v, "status", "--porcelain", "--", rel, check=False).strip())
+
+    for rel, tpl in MKWORKS_TEMPLATES:
+        new_t = show_at(ctx, "HEAD", ws + tpl)
+        base_t = show_at(ctx, base, ws + tpl)
+        path = v / rel
+        if not path.exists():
+            if rel in ("README.md", "AGENTS.md"):
+                notes.append(f"{rel} が無い。作らない（役割などを埋める必要があるので、mkworks で新しく作るか手で書く）")
+            else:
+                plan.append((rel, new_t, "新規"))
+            continue
+        if new_t == base_t:
+            continue
+        if base_t is None:
+            conflicts.append(f"{rel}（基点の版に雛形が無い）")
+            continue
+        local = path.read_text(encoding="utf-8")
+        n, merged = merge3(local, base_t, new_t)
+        if n:
+            conflicts.append(f"{rel}（衝突 {n} 件）")
+        elif merged != local:
+            if tracked_dirty(rel):
+                dirty.append(rel)
+            plan.append((rel, merged, "3者マージ"))
+    # .claude/settings.json は deny の集合で合わせる
+    new_s = show_at(ctx, "HEAD", ws + MKWORKS_SETTINGS_TEMPLATE)
+    base_s = show_at(ctx, base, ws + MKWORKS_SETTINGS_TEMPLATE)
+    spath = v / MKWORKS_SETTINGS
+    if not spath.exists():
+        plan.append((MKWORKS_SETTINGS, new_s, "新規"))
+    elif new_s != base_s:
+        data = json.loads(spath.read_text(encoding="utf-8"))
+        deny = data.setdefault("permissions", {}).setdefault("deny", [])
+        base_deny = deny_of(base_s) if base_s else []
+        add = [d for d in deny_of(new_s) if d not in deny and d not in base_deny]
+        removed = [d for d in base_deny if d not in deny_of(new_s)]
+        if add:
+            if tracked_dirty(MKWORKS_SETTINGS):
+                dirty.append(MKWORKS_SETTINGS)
+            deny.extend(add)
+            plan.append((MKWORKS_SETTINGS, json.dumps(data, ensure_ascii=False, indent=2) + "\n", f"deny を足す: {add}"))
+    ppath = v / MKWORKS_PREPUSH
+    if ppath.exists() and show_at(ctx, "HEAD", ws + MKWORKS_PREPUSH_TEMPLATE) != show_at(ctx, base, ws + MKWORKS_PREPUSH_TEMPLATE):
+        n, merged = merge3(ppath.read_text(encoding="utf-8"), show_at(ctx, base, ws + MKWORKS_PREPUSH_TEMPLATE) or "",
+                           show_at(ctx, "HEAD", ws + MKWORKS_PREPUSH_TEMPLATE))
+        if n:
+            conflicts.append(f"{MKWORKS_PREPUSH}（衝突 {n} 件）")
+        else:
+            plan.append((MKWORKS_PREPUSH, merged, "3者マージ（追跡されない）"))
+    for d in MKWORKS_KEEP:
+        if not (v / d / ".gitkeep").exists():
+            plan.append((f"{d}/.gitkeep", "", "新規"))
+    if conflicts or dirty:
+        raise RoomError("何も書かずに止まる。\n"
+                        + ("  衝突（手で直してから、もう一度）:\n    " + "\n    ".join(conflicts) + "\n" if conflicts else "")
+                        + ("  未コミットの変更がある（コミットしてから、もう一度）:\n    " + "\n    ".join(dirty) if dirty else ""))
+    for n in notes:
+        ctx.say("注意: " + n)
+    if removed:
+        ctx.say("雛形から消えた deny は、消さずに残した（消すかは人が決める）: " + ", ".join(removed))
+    if not plan:
+        ctx.say("反映するものなし（雛形の変更は、このコミットの内容に当たらない）")
+        return
+    applied = []
+    for rel, text, kind in plan:
+        path = v / rel
+        old = path.read_text(encoding="utf-8") if path.exists() else ""
+        ctx.say(f"--- {rel}（{kind}）")
+        for line in difflib.unified_diff(old.splitlines(), text.splitlines(), "ローカル", "反映後", lineterm="", n=1):
+            ctx.say(line)
+        if not a.yes and ctx.ask(f"{rel} を反映する? [y/N] ").strip().lower() not in ("y", "yes"):
+            ctx.say(f"反映しなかった: {rel}")
+            continue
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8", newline="\n")
+        applied.append(rel)
+    (v / "resources_p").mkdir(exist_ok=True)
+    tracked = [r for r in applied if r != MKWORKS_PREPUSH]
+    if not tracked or not a.commit:
+        return
+    if not git_identity_ok(ctx):
+        ctx.say("git の身元が未設定（または example.com の仮値）なので、コミットしなかった")
+        return
+    commit_paths(ctx, tracked, f"[works] mkworks --update: 雛形を {base}..{new_rev} に合わせる", only=True,
+                 trailers=[("Room-Op", "mkworks-update"), ("Room-Rev", new_rev)])
+
+
+def cmd_mkworks(ctx, a):
+    """works のトップを作る。--update で、雛形の変更を既存の works に反映する。"""
+    if a.update:
+        mkworks_update(ctx, a)
+    else:
+        mkworks_create(ctx, a)
+
+
 # ---------- main ----------
 
 def build_parser():
@@ -2122,6 +2442,13 @@ def build_parser():
     ap.add_argument("--reap-days", type=int, default=int(os.environ.get("ROOM_REAP_DAYS") or REAP_DAYS_DEFAULT),
                     help="close から reap までの日数（既定 14）")
     sub = ap.add_subparsers(dest="command", required=True)
+    mk = sub.add_parser("mkworks", help="works のトップを作る（--update で、雛形の変更を既存の works に反映する）")
+    mk.add_argument("--update", action="store_true", help="作らずに、雛形の変更を反映する（3者マージ。衝突は書かずに止まる）")
+    mk.add_argument("--role", default="業務用", choices=sorted(MKWORKS_ROLES), help="PC の役割（既定: 業務用）")
+    mk.add_argument("--remote", default="none", help="none（既定。pre-push で push を止める）か、非公開リポジトリの URL")
+    mk.add_argument("--base", help="--update の基点（resources のハッシュ）。トレーラーから分からないときに指定する")
+    mk.add_argument("--yes", action="store_true", help="--update の確認を省く")
+    mk.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="コミットしない（既定はコミットする）")
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
     o.add_argument("--type", default="dev", choices=["dev", "inv"])
@@ -2177,7 +2504,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
-        {"init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
+        {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
          "mask": cmd_mask, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
