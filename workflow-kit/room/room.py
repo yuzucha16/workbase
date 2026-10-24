@@ -788,10 +788,10 @@ def summarize(path):
 
 
 def record_dir(cwd):
-    """cwd が /mnt/room/<Project>（の下）なら <Project>/ai/records。そうでなければ ~/claude-records/<フォルダ名>。"""
+    """cwd が /mnt/room/<Project>（の下）なら /mnt/room/<Project>/records（マウント先が Project の ai/ なので、Project の ai/records）。そうでなければ ~/claude-records/<フォルダ名>。"""
     m = re.match(r"^(/mnt/room/[^/]+)(?:/|$)", cwd)
     if m:
-        return m.group(1) + "/ai/records"
+        return m.group(1) + "/records"
     return os.path.join(os.path.expanduser("~"), "claude-records", os.path.basename(cwd.rstrip("/")) or "root")
 
 

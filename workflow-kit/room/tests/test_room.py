@@ -464,8 +464,8 @@ class InitTest(unittest.TestCase):
     def test_stop_hook_script_records_into_project_ai_records(self):
         with tempfile.TemporaryDirectory() as tmp:
             mod = self.load_stop_hook(tmp)
-            self.assertEqual(mod.record_dir("/mnt/room/proj-a"), "/mnt/room/proj-a/ai/records")
-            self.assertEqual(mod.record_dir("/mnt/room/proj-a/ai/work"), "/mnt/room/proj-a/ai/records")
+            self.assertEqual(mod.record_dir("/mnt/room/proj-a"), "/mnt/room/proj-a/records")  # マウント先が Project の ai/ なので、ai/ai/records にしない
+            self.assertEqual(mod.record_dir("/mnt/room/proj-a/work"), "/mnt/room/proj-a/records")
             self.assertTrue(mod.record_dir("/home/ai/other").endswith(os.path.join("claude-records", "other")))
             # 本体の通し: 記録先だけ差し替えて、応答本文の置換と同じ session の行の置き換えを確かめる
             out = Path(tmp) / "records"
