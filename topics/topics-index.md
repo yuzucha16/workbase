@@ -5,7 +5,7 @@ tags:
   - workflow
   - knowledge-management
 created: 2026-10-12
-updated: 2026-10-21
+updated: 2026-10-24
 ---
 
 # topics
@@ -17,6 +17,7 @@ updated: 2026-10-21
 | `kit-growth/` | Area（workflow-kit の育て方） | [[kit-growth-start-here]] | 0 |
 | `planning-method/` | Project（計画のやり方。kit-growth の子） | [[planning-method-start-here]] | 1 |
 | `room-type-consolidation/` | Project（room の type を `dev` と `inv` に集約。type の考え方を記載済み。実測待ち） | [[room-type-consolidation-start-here]] | 0 |
+| `hook-room-alignment/` | Project（フックと `room` コマンドの整合。`init` `open` 廃止、`mkworks`、`brief` 改名は反映済み） | [[hook-room-alignment-start-here]] | 0 |
 | `plan-room-link/` | Project（計画と部屋の README の紐付け） | [[plan-room-link-start-here]] | 1 |
 
 型と書き方、終わらせ方の規則は `AGENTS.md`。

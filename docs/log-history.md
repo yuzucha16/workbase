@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-24（フックと room の整合: `init` `open` の廃止、`mkworks`、`start` → `brief`）
+- ユーザーの依頼で、`room` の導入で重なったフックを見直した。`init` は人がやる操作として `room mkworks`（`--update`）に取り込み、他リポジトリへの導入と履歴復元は廃止、`open` を畳み、`start` を `brief` に改名した。実装と push は `a015bda` `c771c01` `45ee732`。決定は `decisions.md` の同日3項。単体テスト 137 件と `check_hook_outline` は通った。`mkworks` の実機は未確認。
+- ユーザーが、旧名の履歴は新しい仕様が回りだしたら読み替えごと消すと決めた。調整は継続するので、トピック `topics/hook-room-alignment/` に議論の記録と状態を置いた。
+
 ### 2026-10-24（dev-deliverable-guide の見直し）
 - ユーザーの依頼で、type 集約後の `dev-deliverable-guide.md` の整合を見直した。不整合 7 件（題名と中身の不一致、構成要素の表の欠落と二重、基準文書の形の散在、完了の定義の `src/` 前提、`remote` の古い記述、`tools/` と `tests/` の境目）を、論点 1〜5 の提案どおりに直した。全 type 共通の部分を `script-guide.md` に分け、`project-structure.md` に `ai/` 直下と構成要素の「用途」と「主な活動（目安）」を足した。参照（`README.md`、`room-context.md`、`room.py` の案内文、`check_py.py`、`check-ps1.ps1`、`workflow-kit.md`）を直した。単体テスト 125 件 OK。決定は `decisions.md` の同日の項。
 
