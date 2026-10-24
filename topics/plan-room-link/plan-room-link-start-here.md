@@ -1,7 +1,7 @@
 # 窓口: plan-room-link
 
-- 型: Project 型。完了条件: works の計画（`start 計画` の 6R・憲章・WBS・マイルストーン）を、Area と Project の README に結び付ける形（リンクか転記か、いつ・誰が書くか）が決まり、`room` か kit に反映される。
-- 何の取り組みか: `room init` / `room open` が作る README と、`start 計画` の出力が、今は結び付いていない。結び付けて、部屋の AI とユーザーが同じゴールを見られるようにする。論点と現状の事実は [[plan-room-link-issues]]。
+- 型: Project 型。完了条件: works の計画（`brief 計画` の 6R・憲章・WBS・マイルストーン。旧 `start 計画`）を、Area と Project の README に結び付ける形（リンクか転記か、いつ・誰が書くか）が決まり、`room` か kit に反映される。
+- 何の取り組みか: `room open` が作る README と、`brief 計画` の出力が、今は結び付いていない。結び付けて、部屋の AI とユーザーが同じゴールを見られるようにする。論点と現状の事実は [[plan-room-link-issues]]。
 
 ## いま
 
