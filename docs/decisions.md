@@ -4,6 +4,15 @@
 
 ## Decisions
 
+### 【汎用】部屋の `stock` は、行き先を `scope: public | area` で決める。Area の業務の知は `ai/out/knowledge/` へ（2026-10-24）
+
+- 決めたこと（ユーザー、2026-10-24。仮決め4点を「全てOK」）: ① 部屋の AI は `stock` の下書きに `scope:` を付ける。問いは「実名や社内の事情を剥がしても、社外の人が使えるか」で、迷うときは `area`。② `area` は `ai/out/knowledge/` に、`stock-hook.md` の7見出しの型（`kind: lesson` か `explain`、`base_commit` なし）で書く。`restore` が実名に戻して Area の知識置き場に置き、次の Project は `room pull` で受け取る。③ `room stock` は `scope: area` を運ばず案内するだけ（`--to` は足さない）。④ 受け取りの目次は持たない。
+- 根拠: 非公開の共有知は Area に閉じてよい（ユーザー）。経路（`pull` `restore` `ai/out/knowledge/`）は既にあり、足りなかったのは「ナレッジ化して」の入口だけだった。公開側への誤りは取り返しがつかないので、人が1件ずつ確認する門は公開側（`room stock`）だけに残す。
+- 却下案: works 直下に Area を跨ぐ非公開の置き場を作る（Area に閉じてよいので不要。写し・`integrate` の権限・`mkworks` の変更が要る）、`room stock --to area`（`ai/out/knowledge/` に直接書けるので経路が二重になる）。
+- 予告（ユーザー）: `room pull --where` の仕様は、どこかで変えるかもしれない。`area` の受け取りは `--where kind=lesson` を想定しているので、変えるときはここを見直す。
+- 実装: `room.py` の `cmd_stock`（`scope: area` を運ばない）、部屋用 `CLAUDE.md` の文面、単体テスト1件（全 138 件パス）。文書: `stock-hook.md`、`room-context.md`、`room/README.md`。実機は未確認。
+- 更新範囲: 上記と `guides/explain/cross-area-shared-knowledge.md`（知識の層）。
+
 ### 【汎用】`brief 変更` を足した。区分と引数が1対1になった（2026-10-24）
 
 - 決めたこと（ユーザー、2026-10-24）: `brief 変更`（別名「変更で始めて」）を、引数つきモードに足す。`methods.md` の「変更」はやり方が変更1だけなので、選ばせず、前提チェック（基準文書の有無）から始める。要約は、解決・改善の3点に基準文書の有無を足す。
