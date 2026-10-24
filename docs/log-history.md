@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-25（daily の振り返り 第5回。重複行の点検を採用）
+- ユーザーの「review 振り返り daily」で、10-21 20:50〜10-25 07:52 の 37 コミットを日次（改善4、活動のみ）で振り返った。手戻り 5件（重複行の混入 2、不整合の修正、置き場の直し、artifacts 案の取り下げ）。記録は `topics/kit-growth/records/retrospective-daily-record.md`。
+- ユーザーが R-2026-10-25-01 を採用。`docs-rules.md` の「コミットの前に確認する」に ④（表・一覧の重複行の点検）を足した（`fdf049b`）。決定は `decisions.md` の同日の項。
+
 ### 2026-10-24（フックと room の整合: `init` `open` の廃止、`mkworks`、`start` → `brief`）
 - ユーザーの依頼で、`room` の導入で重なったフックを見直した。`init` は人がやる操作として `room mkworks`（`--update`）に取り込み、他リポジトリへの導入と履歴復元は廃止、`open` を畳み、`start` を `brief` に改名した。実装と push は `a015bda` `c771c01` `45ee732`。決定は `decisions.md` の同日3項。単体テスト 137 件と `check_hook_outline` は通った。`mkworks` の実機は未確認。
 - ユーザーが、旧名の履歴は新しい仕様が回りだしたら読み替えごと消すと決めた。調整は継続するので、トピック `topics/hook-room-alignment/` に議論の記録と状態を置いた。
