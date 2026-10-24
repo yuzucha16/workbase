@@ -1,19 +1,19 @@
 # 窓口: room-type-consolidation
 
-- 型: Project 型。完了条件: type 集約（`dev` と `inv`）に合わせて手順書の整合が取れ、type の考え方・方針の文書が承認される。
+- 型: Project 型。完了条件: type 集約（`dev` と `inv`）に合わせて手順書の整合が取れ、type の考え方が `project-structure.md` に記載される（済み、2026-10-24）。実測を踏まえた見直しが残る。
 - 何の取り組みか: `room open` の type が5つ（`doc` `dev` `dev-env` `dev-test` `research`）あったが、違いは成果物のサブディレクトリの組み合わせと調べ方だった。`dev` と `inv` の2つに集約した（実装済み、2026-10-24）。議論の叩き台は [[room-type-consolidation-notes]]。
 
 ## いま
 
-type の集約と、`dev-deliverable-guide.md` の不整合の修正は反映済み（2026-10-24）。次は `dev` と `inv` の考え方・方針の文書。詳細は `docs/log.md`。
+type の集約と、`dev-deliverable-guide.md` の不整合の修正は反映済み（2026-10-24）。type の考え方も `project-structure.md` に記載済み。残りは実測待ち。詳細は `docs/log.md`。
 
 ## あなた待ち
 
-- 方針の文書の置き場と範囲（相談から始める）。
+なし
 
 ## 次の一手
 
-どこでも: `dev` と `inv` の考え方・方針の文書の相談（置き場、範囲）。
+なし（`dev` と `inv` を最初に使った後に、Open Questions を見直す）。
 
 ## 読む順
 
