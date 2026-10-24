@@ -9,7 +9,7 @@
 ## 書き込み先と統合
 
 - `exmem/inbox/YYYY-MM-DD-<topic>.md` に新規作成する。frontmatter は `type: inbox`、`kind: explain`、`title`、`tags`、`created`、`sources`（書き方は `stock-hook.md` の「ファイル名・title・tags」と同じ）。
-- `integrate`（`integrate-hook.md` の統合の細則）が `guides/explain/<name>.md` に新規作成する。既存の理解ガイドへの追記・上書きは対象外（同じテーマが `guides/guides-index.md` にあれば、メモを作らず報告する）。
+- `integrate`（`integrate-hook.md` の統合の細則）が `guides/explain/<name>.md` に新規作成する。既存の理解ガイドへの追記・上書きは対象外（同じテーマが `guides/guides-index.md` にあれば、メモを作らず報告する）。テーマが違っても、近い既存ガイドが新しい内容で古くなるときは、メモは作り、Open Questions に「統合時の修正」として、ガイド名と直す点を書く（`stock-hook.md` の手順 4-3 と同じ出口）。
 - 重複確認は `find-knowledge`（`lessons/` の検索）を使わず、`guides/guides-index.md` を見て決める。`lessons/` に近いノートがあるときは、冒頭の末尾にその名前を添える。
 
 ## 見出し（6つ。この順番、省略しない）
