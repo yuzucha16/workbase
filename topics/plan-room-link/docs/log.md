@@ -2,6 +2,8 @@
 
 計画と部屋の紐付け（`start 計画` の出力と、`room init` / `room open` が作る README の関連付け）の現在状態と次にやること。経緯は `docs/log-history.md`、判断の根拠は `docs/decisions.md`。リポジトリ全体の状態は workbase 直下の `docs/log.md`。
 
+名前の注記（2026-10-24）: フック `start` は `brief` に改名し（`brief 計画`、手順は `brief-plan.md`）、`init` / `open` のフックは廃止された（`room mkworks`、`room open` に一本化。`c771c01`）。このトピックの古い記述の `start 計画` `start-plan.md` `open-hook.md` は、その旧名（読み替える。新しい仕様が回りだしたら消す）。
+
 案 D（雛形に固定のポインタ1行）で実装済み（`9b4db50`）。計画一式（6R・憲章・WBS・マイルストーン・作り方のメモ）は `records/` にある（後追いの計画。ユーザーが後で、後追いの 6R などと比較・分析する予定）。
 
 ## Next Actions
