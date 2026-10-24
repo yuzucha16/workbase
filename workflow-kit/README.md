@@ -8,16 +8,15 @@
 
 フックは、寿命の階層ごとに、開始と終了の対にする。呼び出し名は英語の短い名前を主にし、日本語の言葉は別名として当面残す（別名は、いま決まっているものだけ。増減は後で揃える）。
 
-呼び出し表は `hooks.md` に移した（2026-10-08。写しを作らない）。寿命の階層: works `init`、Project `open`（終了は `room close`）、セッション `start`・`wrap`、随時 `stock`・`integrate`、週1回の目途 `review`。
+呼び出し表は `hooks.md` に移した（2026-10-08。写しを作らない）。寿命の階層: セッション `start`・`wrap`、随時 `stock`・`integrate`、週1回の目途 `review`。works の作成（`room mkworks`）と Project の開始・終了（`room open` `room close`）は、決まった手順の副作用なので、合言葉でなく人が打つ `room` のコマンドにした（2026-10-24。`init` `open` フックを廃止）。
 
-連鎖は `init`、`open → [start → 作業 → wrap]×N`。`stock` と `integrate` は随時。
+連鎖は `[start → 作業 → wrap]×N`。`stock` と `integrate` は随時。
 
-- **用語**: スレッド = Claude Code の1会話（フックの対象にしない）。セッション = `start` から `wrap` までの作業手順の単位（1スレッドに複数セッション、複数スレッドで1セッションがありうる）。`open` は、スレッドでなく Project の寿命。
-- **`open` と `start`**: `open` は README 本文を下書きしたあとに `start` を呼ぶ（ひな形は人が `room open` で作る）。`start` は単独でも呼べる（進行中の Project があるとき）。
+- **用語**: スレッド = Claude Code の1会話（フックの対象にしない）。セッション = `start` から `wrap` までの作業手順の単位（1スレッドに複数セッション、複数スレッドで1セッションがありうる）。Project の寿命は `room open` から `room close` まで（スレッドとは別）。
 - **`end` にしない理由**: 「会話を終える」と取られやすいので、`wrap` にした（ユーザー）。
-- **旧ファイル名**: `closing-hook.md`、`knowledge-hook.md`、`setup-hook.md` は、2026-10-08 に削除した（新名は `wrap-hook.md`、`stock-hook.md`、`init-hook.md`）。以下の履歴の旧名は、読み替える。
-- **フックの章立て**: 共通部は H2 の `目的と契機` → `場所と書き込みの制約` → `手順` → `報告の型`（この順。新しいフックにも置く）。共通部の中身（冒頭の定型、目的と契機、章の並び、手順の参照、改善、承認、記録、フックを足す・消すとき）は `hook-common.md`。それ以外の章は、フック固有の部分で、共通部の後ろに置く（例外: `入力`、init の `導入項目の一覧`）。`このフックの改善` は、固有の確認項目があるフックだけが持つ任意の章。`tools/check-hook-outline.ps1` で点検する。
-- **実測が少ないフック（`start` `open`）**: 叩き台として扱い、実測で直して育てる。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。`start 解決` / `start 改善` / `start 調査` は試験運用（実測してから、インタビューとの関係を決める）。フックの成熟度は、ここだけに書く。改善の流れは `hook-common.md`。
+- **旧ファイル名**: `closing-hook.md`、`knowledge-hook.md`、`setup-hook.md` は、2026-10-08 に削除した（新名は `wrap-hook.md`、`stock-hook.md`、`init-hook.md`。`init-hook.md` はその後 2026-10-24 に削除）。以下の履歴の旧名は、読み替える。
+- **フックの章立て**: 共通部は H2 の `目的と契機` → `場所と書き込みの制約` → `手順` → `報告の型`（この順。新しいフックにも置く）。共通部の中身（冒頭の定型、目的と契機、章の並び、手順の参照、改善、承認、記録、フックを足す・消すとき）は `hook-common.md`。それ以外の章は、フック固有の部分で、共通部の後ろに置く（例外: `入力`）。`このフックの改善` は、固有の確認項目があるフックだけが持つ任意の章。`tools/check-hook-outline.ps1` で点検する。
+- **実測が少ないフック（`start`）**: 叩き台として扱い、実測で直して育てる。作業の種類ごとの差分の項目（`start-hook.md`）は、実測がたまってから設計する。`start 解決` / `start 改善` / `start 調査` は試験運用（実測してから、インタビューとの関係を決める）。フックの成熟度は、ここだけに書く。改善の流れは `hook-common.md`。
 ## 目的
 
 ナレッジと作業ログを分ける。
@@ -34,15 +33,11 @@
 
 ## 使い方
 
-### 作業ディレクトリに導入する
-
-ユーザーが「workflowを導入して」と言ったら、エージェントは `init-hook.md` に従う。入力は4項目（対象ディレクトリ、目的、読む順番の固有項目、固有ルール）。生成物は `AGENTS.md`、`CLAUDE.md`（`@AGENTS.md`）、`docs/log.md`、`docs/decisions.md`。既存のファイルは上書きせず、差分案を示して承認を得る。導入項目は `init-hook.md` の一覧で管理し、新しい機能はその一覧に足す。
-
 ### works を作る
 
-新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから、その中でエージェントに「workflowを導入して」と言い、`init-hook.md` の項目 5 に従う。`workbase` の中で、対象を指定せずに言うと、項目 5 とみなして、既定値（対象 `$HOME\works`、業務用、remote なし、初回コミットする）で作る。作成後の報告に、使った条件（既定値か指定か）を示す。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、works 用の `AGENTS.md`、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init`（業務用は remote なし）、初回コミット（生成物だけ）。`resources/` の clone と `.obsidian` のリンクは、dotfiles（`50_repos`、`30_link`）が行う。
+新しい PC では、共有リポジトリ `workbase` を `resources/` に clone してから（dotfiles の `50_repos`）、人が端末で `uv run room.py mkworks` を打つ（`resources/workflow-kit/room/` の中で。AI は実行しない）。既定は、対象 `$HOME\works`（`--vault` か `$ROOM_VAULT` で変える）、業務用、remote なし、初回コミットする。生成物は、`.gitignore`、`.ignore`、`.gitattributes`、`.claude/settings.json`、works 用の `README.md` と `AGENTS.md`、`CLAUDE.md`、`docs/`、PARA の3フォルダ、`resources_p/`（PC ローカルの resources。追跡しない）、`git init`（業務用は remote なしで、`pre-push` で push を止める）、初回コミット（生成物だけ）。`.obsidian` のリンクは dotfiles（`30_link`）が行う。雛形が変わったら `mkworks --update` で既存の works に反映する。詳しくは `room/README.md`。
 
-呼べるのは、`init-hook.md` を参照している `AGENTS.md` の配下（`workbase` の中と、works の中）と、ユーザーがパスを指示したとき。他の場所からの入口は、Claude 用スキル（TODO）。
+他のリポジトリ（dotfiles など）に `AGENTS.md` `CLAUDE.md` `docs/` を入れる操作は、フックにしない（2026-10-24 に廃止）。`templates/AGENTS.md` `log.md` `decisions.md` を手本に、手で、または AI に頼んで作る。環境移行などで繰り返し必要になったら、改めて決める。
 
 ### 「ナレッジ化して」を使う
 
@@ -67,14 +62,10 @@
 | `wrap-hook.md` | 「終了処理して」の手順（対象の特定、現在状態の更新、昇格の案、コミットと push）・報告の型 |
 | `integrate-hook.md` | 「inboxを整理して」の手順（統合、照合の報告、コミット）・報告の型 |
 | `review-hook.md` | `review`（別名「見直して」）の手順: 遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
-| `init-hook.md` | 「workflowを導入して」の導入項目・入力・手順・自己点検・報告の型 |
-| `init-workspace.md` | init の導入項目 5（works の生成）の作り方。項目 5 のときだけ読む |
-| `init-restore.md` | init の導入項目 4（履歴からの復元）の作り方。項目 4 のときだけ読む |
-| `open-hook.md` | `open`（Project の開始）の手順: 対象の決定、判断基準での検査、聞き取り、README 本文の下書き |
-| `project-structure.md` | Project の構造: type（`dev` `inv`）の考え方、固定の核（`ai/` と `_noai/`）、type ごとの置き場、基準文書の置き場。`open` の type の決定と、置き場に迷ったときに読む |
+| `project-structure.md` | Project の構造: type（`dev` `inv`）の考え方、固定の核（`ai/` と `_noai/`）、type ごとの置き場、基準文書の置き場。`room open` の type の決定と、置き場に迷ったときに読む |
 | `start-work-types.md` | 作業の種類の差分（開発、文書作成）: `start-hook.md` の手順「項目を埋める」で、インタビューの項目に加えて聞く項目 |
 | `start-plan.md` | 計画のやり方（`start 計画`。試験運用）の手順と欄の定義: 6R → 憲章 → 成果物 WBS → マイルストーン |
-| `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 成果物の形ごとの構成要素の選び方、守ること、文書、テスト、変更の依頼、立ち上げ・完了のチェック。環境構築（`env/` が主）とテストだけ（`tests/` だけ）の成果物の差分も持つ。`type: dev` の `open` / `start` のときに読む |
+| `dev-deliverable-guide.md` | `type: dev` の成果物（`ai/out/<成果物名>/`）の作り方: 成果物の形ごとの構成要素の選び方、守ること、文書、テスト、変更の依頼、立ち上げ・完了のチェック。環境構築（`env/` が主）とテストだけ（`tests/` だけ）の成果物の差分も持つ。`type: dev` の Project の立ち上げ（`room open` と最初の `start`）のときに読む |
 | `script-guide.md` | スクリプトや変換を作る・動かすときの規約（全 type 共通）: 言語の選び方（Python → ps1 → bat。AI は聞かずに決める）、実行の方針（部屋で完結できるなら部屋で実行する。Windows 依存部は小さな層にして人の手数を減らす）、Windows で実行するスクリプト（束ねる役も同じ言語、bat は起動用の 3 行だけ）。スクリプトを書く・動かすときに読む |
 | `start-hook.md` | `start`（別名「作業を始めて」。セッションの開始）の手順: インタビューの項目と作業の種類の差分でゴールと前提をそろえる |
 | `improvements.md` | 改善提案の記録（2026-10-15 に凍結。以後は `docs/decisions.md`） |
@@ -86,14 +77,14 @@
 | `tools/check-ps1.ps1` | Windows で実行するスクリプト（`.ps1` と、それを呼ぶ起動用 `.bat`。Python が使えないときの例外の層）を、実行せずに点検する（2026-10-21。PowerShell 7。文字コード、改行、構文、`#Requires -Version 7`、`$ErrorActionPreference`、`Set-StrictMode`、PSScriptAnalyzer、起動用 bat の 3 行の型、束ねる ps1 が、`-Log` のときだけ `ai/work/<名前>.log` に出すログ機能（既定は出さない）を持つこと。`-RunTests` で `*.Tests.ps1` を Pester 5 で実行）。部屋の pwsh 7 で動く（`room init` が入れる）。規約は `script-guide.md` の「Windows で実行するスクリプト」。終了コードは FAIL の数 |
 | `tools/check-hook-outline.ps1` | `*-hook.md` の章立ての共通部（制約、手順、報告の型、改善）の存在と順序の点検、`hooks.md` と README の表にフックが過不足なく載っているかの点検（フックの追加・削除の漏れ止め。PowerShell 7）。Python 版は `tools/check_hook_outline.py`（`pwsh` が無い環境用。点検は同じ。どちらかを直したら合わせる） |
 | `templates/` | 導入用の雛形（`AGENTS.md`、`log.md`、`decisions.md`）。`workspace/` は works 用（`AGENTS.md`、`gitignore.template`、`claude-settings.template.json`、`ignore.template`、`gitattributes.template`、`pre-push.template`）。`topic/` はトピックの窓口の雛形（`start-here.template.md`） |
-| `examples/` | 出力の見本（`inbox-example.md`、`setup-example.md`）。出力のブレを抑える基準 |
+| `examples/` | 出力の見本（`inbox-example.md` など）。出力のブレを抑える基準 |
 | `AGENTS.md` | このディレクトリ自体を編集するときのルール |
 
 ## TODO（次回以降）
 
 - 手順書本体をさらに薄くする（`stock-hook.md` の手順「知識かどうかを判定する」の例外の細則、`docs-rules.md`）。2026-10-15 の点検と 2026-11-08 の判定の結果を見てから。
 
-- Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「workflowを導入して」と「ナレッジ化して」の入口にする。スキルは kit のファイルを読むだけにして、手順を重複させない。
+- Claude 用スキル（`dotfiles` の `home/.claude/skills/`）。「ナレッジ化して」の入口にする（「workflowを導入して」の入口は、2026-10-24 の `init` 廃止で不要）。スキルは kit のファイルを読むだけにして、手順を重複させない。
 
 ## 変更履歴
 

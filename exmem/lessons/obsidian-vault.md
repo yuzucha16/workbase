@@ -299,7 +299,7 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 - 解決（2026-10-06）: 他の PC で新規にトップを作るときの `certs` の置き場は、`$HOME\.certs` に変えたので、「workflowを導入して」の生成に含めない（作成は dotfiles の `10_env.bat`）。
 - 解決（2026-10-18）: `WSLENV` の `名前/p` は、Windows のパスを WSL のパスに変換して渡す指定で、実機で動いた。2026-10-06 に渡らなかった原因は、区切りが `;` だったこと（上の「置き場を `$HOME\works` へ移す」の Facts）。他の PC は、`10_env.bat` の再実行まで `;` のままなので、渡らない（`10_env.bat` は `;` を `:` に直す）。
 - 既存の WSL の `~/vault`（旧 `GHQ_ROOT`。`ghq` の clone を含む）の中身を、`~/works` へ移すか。WSL の dotfiles のリンク（旧 `/mnt/c/vault/repos/…` を指す）を張り直すか。`C:\vault` を消す前に決める。
-- 新しい業務用 PC で、dotfiles の `50_repos` から「workflowを導入して」までの順で、この構造を再現して確認する。
+- 新しい業務用 PC で、dotfiles の `50_repos` から `room mkworks`（旧「workflowを導入して」）までの順で、この構造を再現して確認する。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
 - 仮説（未検証）: `.claude/settings.local.json` は、Claude Code を起動したディレクトリの `.claude/` から読まれる。
 - dotfiles の `notepadpp\config.xml` に、古い `areas_shared\exmem\inbox` のパスが残っている（ユーザーの未コミット変更）。

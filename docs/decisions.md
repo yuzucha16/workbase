@@ -4,6 +4,15 @@
 
 ## Decisions
 
+### 【汎用】`init` と `open` のフックを廃止し、works の作成と雛形の反映を `room mkworks` に移した（2026-10-24）
+
+- 決めたこと（ユーザー、2026-10-24。「roomの導入で既存フックの一部がほぼ使われなくなったり意味が変わったりしている」）: ① 線は「決まった手順の副作用は人が打つ `room` のコマンド、判断はフック」（`room-context.md` の「2つの層」）。② `init` フックの項目 5（works の生成）と `init 更新`（雛形の3者マージ）は `room mkworks`（`--update`。今後の機能は `mkworks` の引数で足す。`--list` など）。③ 他のリポジトリへの導入（項目 1〜3）と履歴からの復元（項目 4）は、使用実績の記録が無いので廃止。`kit` フックは作らない。環境移行で必要になったら相談する。④ `open` フックは廃止（`close` は 10-16 に廃止済み）。Project のひな形は `room open`、README 本文の下書きの書き方は `room-context.md`、立てる前の判断基準と未決は `project-structure.md`。⑤ r/w 表の `init` `open` の行と、初回の例外を消した。
+- 根拠: `room init`（Area の部屋）と `init`（works と作業ディレクトリ）は、対象も寿命も違うのに名前が同じだった。`open` は部屋の中だけで動くのに、名前・Area・type は `room open` の引数で先に決まり、`room readme` は frontmatter を変えないので、フックで決め直した内容の反映経路が無かった。
+- 実装: `room.py` の `mkworks`（作る／`--update`）と単体テスト 12 件（全 137 件パス）。コミットの身元は人の git 設定。トレーラーは `Room-Op: mkworks` / `mkworks-update` と `Room-Rev`。基点は最新の `Room-Rev`、無ければ旧 `Template-Rev`、無ければ最初の `Kit-Rev`。衝突、未コミットの変更、`resources/` の未コミットの変更では、何も書かずに止まる。`deny` は足すだけ。削除: `init-hook.md` `init-workspace.md` `init-update.md` `init-restore.md` `open-hook.md` `examples/setup-example.md`。
+- 却下案: `kit` フックに導入だけを残す（実績が無い）。`mkkit`（導入の対象が works 以外にも読める）。works の作成と更新を別コマンドにする（ユーザーは `mkworks` + 引数を選んだ）。
+- 未確認: `mkworks` の実機（Windows）での動作。dotfiles の Claude 用スキル（「workflowを導入して」の入口）の有無。各 PC の既存 works の `AGENTS.md` は、合言葉の行が `hooks.md` を指すだけなので変更不要の見込み。
+- 続き: `start` の改名（`brief` 案。別コミット）。
+
 ### 【汎用】`dev-deliverable-guide.md` を分け、構成要素の用途と活動の目安を `project-structure.md` に一本化した（2026-10-24）
 
 - 決めたこと（ユーザー、2026-10-24。「いまは成果物の作り方〔スクリプト〕ばかり。まずは不整合を直す」。提案の論点 1〜5、活動の表の程度、ファイル名にすべて OK）: ① 全 type 共通の規約（実行の方針、言語の選び方、Windows で実行するスクリプト）を、新しい `script-guide.md` に原文のまま移した（`inv` でも読める）。② 構成要素（`docs/` `src/` `env/` `tests/` `tools/` `report.md`）の用途と主な活動、`ai/` 直下の用途と主な活動は、`project-structure.md` を正本にした（guide の置き場の図は削除）。③ 活動との繋がりは目安で、拘束しない。語は日本語（調べる・整理する・計画する・作る・確かめる）で、英語の分類名は固定しない。④ `tools/` と `tests/` の境目: 要求・検証項目に対応する検査（`env/` の確認スクリプトを含む）は `tests/`、作る・動かす補助は `tools/`。⑤ 古い記述を直した（`remote` の type、`env/` と `report.md` の欠落、完了の定義が `src/` 前提）。⑥ `docs/` だけの成果物の基準文書の形は、保留（実測が無い）。
