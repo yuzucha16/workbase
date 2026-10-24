@@ -13,7 +13,7 @@
 
 ## 次の一手
 
-どこでも: `brief 変更` の入口を足すか決める。PC: `room mkworks --update` を既存の works で試す。
+PC: `room mkworks --update` を既存の works で試す。
 
 ## 読む順
 
