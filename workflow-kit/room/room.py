@@ -1154,12 +1154,12 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 
 スクリプトや変換を作るとき: 言語はユーザーに聞かず、Python → ps1 → bat の順で自分で決める（ps1 は Python で書けない Windows 依存の操作だけ、bat は ps1 の起動用 3 行だけ）。部屋で完結できる処理は、部屋で実行して確かめる（部屋には python3・uv・git・pwsh 7・node・LibreOffice・pandoc・Chromium がある）。Excel・COM などの Windows 依存部は、できるだけ小さな層にして、人の手数を 1 コマンドに減らす。方針と切り分けは `~/shared/workflow-kit/script-guide.md` の「実行の方針」。
 
-共有知へ戻したい知見（`stock`）は、直接書かず、`ai/out/stock/` に下書きを書く。下書きの frontmatter に次を足す:
+残したい知見（`stock`）は、先に行き先を決める。問いは「実名や社内の事情を剥がしても、社外の人が使えるか」。使えれば `scope: public`、剥がすと意味が無くなれば `scope: area`。迷うときは `area`。
 
-- `base_commit: {commit}`
-- `observed: 書いた日（YYYY-MM-DD）`
-
-人が確認して `exmem/inbox/` へ運ぶ。
+- `public`（公開の共有知）: 直接書かず、`ai/out/stock/` に下書きを書く。下書きの frontmatter に次を足す。人が確認して `exmem/inbox/` へ運ぶ。
+  - `base_commit: {commit}`
+  - `observed: 書いた日（YYYY-MM-DD）`
+- `area`（この Area の業務に固有。非公開）: `ai/out/knowledge/YYYY-MM-DD-<topic>.md` に、stock の7見出しの型で書く。frontmatter は `kind: lesson` か `explain`、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない。マスクのまま書き、人が `restore` で実名に戻して Area に置く。
 
 Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
 
@@ -1808,6 +1808,9 @@ def cmd_stock(ctx, a):
             ctx.say(f"  運ばない（frontmatter が無い）: {f.name}")
             continue
         meta = read_frontmatter(f)
+        if meta.get("scope", "") == "area":
+            ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。ai/out/knowledge/ に置いて restore で Area に戻す）: {f.name}")
+            continue
         base, observed = meta.get("base_commit", ""), meta.get("observed", "")
         if not base or not observed:
             ctx.say(f"  運ばない（frontmatter に base_commit と observed が要る）: {f.name}")

@@ -1431,6 +1431,16 @@ class StockTest(unittest.TestCase):
             self.assertIn("kind: explain", got)
             self.assertNotIn("base_stale", got)
 
+    def test_scope_area_is_not_delivered(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, r, base = self.setup(tmp)
+            p = v / "projects/proj-a"
+            (p / "ai/out/stock").mkdir(parents=True)
+            draft = self.DRAFT.format(base=base).replace("type: inbox\n", "type: inbox\nscope: area\n")
+            (p / "ai/out/stock/2026-10-12-topic-a.md").write_text(draft, encoding="utf-8")
+            room.cmd_stock(c, self.ns())
+            self.assertEqual(list((r / "exmem/inbox").glob("*.md")), [])
+
     def test_refuses_missing_header_and_masked_terms(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, r, base = self.setup(tmp)

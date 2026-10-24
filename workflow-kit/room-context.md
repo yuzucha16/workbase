@@ -20,7 +20,7 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 - 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、works へのコミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する（部屋の git へのコミットは別で、AI が行う。下）。
 - スクリプトや変換を作るときは、言語をユーザーに聞かず、優先順位 Python → ps1 → bat で決める（`script-guide.md` の「言語の選び方」）。あわせて同じ文書の「実行の方針」に従う（部屋で完結できるなら、すべて部屋で実行する。Excel・COM などの Windows 依存部は、できるだけ小さな層にして、人の手数を 1 コマンドに減らす。2026-10-21）。人が Windows で実行する薄い層は、Python が既定（2026-10-21）。同じ文書の「Windows で実行するスクリプト」に従う（束ねる役も同じ言語、bat は起動用の 3 行だけ。作った直後に、Python なら `python3 ~/shared/workflow-kit/tools/check_py.py`、ps1 なら部屋の pwsh 7 で `~/shared/workflow-kit/tools/check-ps1.ps1` を実行する）。ps1 は、実行先に Python が無いときなどの例外。
 - 部屋の git（`/mnt/room/<名>` の下で使える、部屋のローカルの git）は例外で、AI が使う（許可は要らない。リポジトリは `room start` が用意済みなので、AI は `git init` `git config` をしない。この案内は、部屋の `~/.claude/CLAUDE.md` と `~/shared/ROOM.md` の両方に入る。`git diff` で回収される変更を見る。コミットは、人に言われなくても、作業の区切りと `wrap` のたびに行う。push は、リモートが無いので行わない）。セッションの終わりに捨てるので、works には届かない。works へのコミットは人の `room start` の回収が既定で行い、人が最終コミット分を回収する。
-- `wrap-hook.md` の手順「コミットする」は、部屋では部屋の git へのコミットまで行う（指示は要らない。push はしない。works へのコミットは回収の側）。`wrap-hook.md` の手順「昇格の案を出す」の知識化は、部屋では `ai/out/stock/` の下書きに一本化する（下の `stock`）。部屋の `wrap` は、業務の知識を `ai/docs/` に残し、共有知は `stock` の窓口だけから出す。
+- `wrap-hook.md` の手順「コミットする」は、部屋では部屋の git へのコミットまで行う（指示は要らない。push はしない。works へのコミットは回収の側）。`wrap-hook.md` の手順「昇格の案を出す」の知識化は、部屋では `ai/out/stock/` の下書きに一本化する（下の `stock`）。部屋の `wrap` は、業務の知識を `ai/docs/` に残し、共有知は `stock` の窓口だけから出す（公開は `ai/out/stock/`、Area の業務は `ai/out/knowledge/`）。
 
 ## `ai/out/close.md` の書き方（部屋の中）
 
@@ -42,14 +42,18 @@ Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入
 
 ## `stock` の下書きの書き方（部屋の中）
 
-`ai/out/stock/YYYY-MM-DD-<topic>.md` に、`stock-hook.md` の形式で書く。frontmatter に次の2つを足す（点検スクリプトは、知らない項目があっても FAIL にしない）。
+まず行き先を決める（2026-10-24 ユーザーの決定）。問いは「実名や社内の事情を剥がしても、社外の人が使えるか」。使えれば `scope: public`、剥がすと意味が無くなれば `scope: area`。迷うときは `area`（公開は取り返しがつかない。後で一般化して `public` に出せる）。形は `stock-hook.md` の7見出しで、どちらも同じ。
+
+**`public`**: `ai/out/stock/YYYY-MM-DD-<topic>.md` に書く。frontmatter に次の2つを足す（点検スクリプトは、知らない項目があっても FAIL にしない）。
 
 - `base_commit: <~/shared/ROOM.md の基準コミット>`
 - `observed: YYYY-MM-DD`（観測した日。並べる順は到着順でなく、この日付）
 
+**`area`**: `ai/out/knowledge/YYYY-MM-DD-<topic>.md` に書く。frontmatter は `kind: lesson`（`stock 理解` なら `explain`）、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない（workbase の版に紐づかない）。マスクのまま書き、人が `room restore` で実名に戻して Area の知識置き場に置く。次の Project では、人が `room pull` で受け取る。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
+
 `stock 理解` の下書き（`kind: explain`）も同じ場所に書く。形は `stock-explain.md`（部屋の中では、マスク後の語だけで書く。対応表の語を含む下書きは、`room stock` が運ばない）。
 
-人が `room stock <名>` で確認して `exmem/inbox/` に運ぶ。`kind` はそのまま運ばれる。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
+`public` は、人が `room stock <名>` で確認して `exmem/inbox/` に運ぶ。`kind` はそのまま運ばれる。`scope: area` の下書きが `ai/out/stock/` にあっても、`room stock` は運ばない。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
 
 ## 計画（部屋の中）
 
@@ -61,7 +65,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 
 - **統合した知識**: `ai/in/area/`（Area から `room pull` で渡された、マスク済みの写し）を読み、統合したノートを `ai/out/knowledge/<英数字の名前>.md` に書く。frontmatter は `kind: integrated`、`status: active`、`org` は元のまま。`⟦…⟧` の記号は変えない。Area の知識置き場の既存ファイルを、人が前回から変えていると、`restore` は止まる（人が `--force` で判断する）。
 - **成果物**（人が読む最終版）: `ai/out/deliverable/` の下に置く。`restore` が、Area の成果物置き場（Project 名の下）にも実名に戻して書く。それ以外の `ai/out/<最終成果物>` は、従来どおり Project の `_noai/final/` に戻る。
-- **共有知へ出す知見**は、上のどちらでもなく、下の `stock` の窓口（`ai/out/stock/`）。
+- **残したい知見**（`stock`）は、行き先を `scope:` で決める（下の `stock` の節）。Area の業務に固有なら上の `ai/out/knowledge/`、公開できる一般則なら `ai/out/stock/`。
 
 ## 分担と受け渡し
 
@@ -71,6 +75,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 | `brief` | 開始インタビュー | `room start <名>`（チェック、マスク、写しの送付、マウント、起動） | `ai/ctx/`、`ai/in/` |
 | `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（復元、works へのコミット） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
-| `stock` | 下書きまで | `room stock <名>`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
+| `stock`（`public`） | 下書きまで | `room stock <名>`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
+| `stock`（`area`） | `ai/out/knowledge/` に書く | `room restore`（`start` の終わりでも自動）で Area へ、次の Project で `room pull` | `ai/out/knowledge/` |
 
 `integrate` `review` は、部屋では行わない（`hooks.md` の r/w 表で －。works 側の workbase の作業）。works の作成と雛形の反映は `room mkworks`、部屋の作成は `room init`（どちらも人が打つ）。
