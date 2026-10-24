@@ -335,7 +335,7 @@ AIのコンテキスト
 - `git config --global user.name` / `user.email` を設定し、作者 agent・コミッター人間の分離を採用するか決める（[[workflow-kit]]）。
 - 他の PC で `git pull` したあと `git ls-files --eol` を確認する。clone 前の git 設定の順序を手順書に書くか判断する（[[git-line-endings]]）。
 - シェルスクリプトの試験の置き場（dotfiles の `tests/` など）と `PROC_VERSION_FILE` の扱いを決める。ネイティブ Linux 実機で確認する（[[shell-script-testing-wsl]]）。
-- 新しい業務用 PC で、dotfiles の `50_repos` から `init` までの順で Vault の構造を再現し、新しい Windows アカウントで `20_apps.bat` の Scoop 導入を確認する。旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか決める（[[obsidian-vault]]、[[scoop-app-management]]）。
+- 新しい業務用 PC で、dotfiles の `50_repos` から `room mkworks`（旧 `init` フック）までの順で Vault の構造を再現し、新しい Windows アカウントで `20_apps.bat` の Scoop 導入を確認する。旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか決める（[[obsidian-vault]]、[[scoop-app-management]]）。
 - Vault 構造の移行の残り: 旧 `exmem/`（`areas_shared` クローン側）の削除、Claude Code の履歴とメモリを新しい作業パスへコピーし直す（[[claude-code-storage]]）、Zed のプロジェクトを開き直す、`C:\vault\notes_old` と旧クローンの削除、`_local/` コミット（`27d1d08`）の push、`resources/fonts/` に HackGen Console NF Regular とライセンス文書を置く（Git LFS）。`knowledge.base` の一覧がObsidianで表示されるか確認する（[[obsidian-vault]]）。
 - Zed で exmem を開き、Claude Agent が `AGENTS.md` を読んでいるか確認する。ターミナルで `claude --resume` を実行し、コピーした履歴とメモリが引き継がれているか確認する。
 - モバイルで壁打ちし、Obsidian モバイルアプリで inbox に保存して、Sync 経由で PC に届くか試す（D4 の検証）。

@@ -355,7 +355,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 ## 付録: 課題（未了・要確認）
 
 - **`room.py` の残り**: マスク・復元、【汎用】の下書きの回収、reap、部屋の作成の自動化（`workflow-kit/room/README.md` の「未実装」）。実運用で安定したら、5・7 章を、スクリプトの呼び出しに差し替える
-- workflow-kit の手順書（`open` `start` `wrap` `close`）が、`docs/` を Project 直下と想定している。`ai/docs/` への読み替えと、部屋の中の AI が行う部分・人が行う部分の分担を、手順書に書く
+- workflow-kit の手順書（`start` `wrap`。`open` `close` は 2026-10-24 までに `room` のコマンドに移った）が、`docs/` を Project 直下と想定している。`ai/docs/` への読み替えと、部屋の中の AI が行う部分・人が行う部分の分担を、手順書に書く
 - workflow-kit の works の雛形（`gitignore.template`、`AGENTS.md`）への反映（2.1 の `.gitignore`、AI は部屋で使うこと、Zed は WSL リモートで使うこと、AI が書くスクリプトに標準ライブラリと同名を付けないこと）
 - マスク・復元（`mask.toml`、zip レベルの置換、置換後の点検）は、ダミーデータでの試験が未了
 - 部屋の会話履歴の片付け（reap）の手順と、期限の設定の置き場

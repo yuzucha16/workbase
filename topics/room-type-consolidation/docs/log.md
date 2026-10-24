@@ -4,7 +4,7 @@ type 集約（`dev` と `inv`）と、`dev-deliverable-guide.md` の不整合の
 
 ## Next Actions
 
-- 【起票 10-24】`docs/` だけの `dev` 成果物と `inv` の基準文書の形（`open-hook.md` の未決）。最初の利用の後。
+- 【起票 10-24】`docs/` だけの `dev` 成果物と `inv` の基準文書の形（`project-structure.md` の「未決」。旧 `open-hook.md` の未決を 2026-10-24 に移した）。最初の利用の後。
 
 ## Open Questions
 

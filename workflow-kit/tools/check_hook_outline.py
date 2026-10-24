@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 COMMON = ["目的と契機", "場所と書き込みの制約", "手順", "報告の型"]
-BEFORE_OK = ["導入項目の一覧", "入力"]
+BEFORE_OK = ["入力"]
 KIT = Path(__file__).resolve().parent.parent
 STEP_RE = re.compile(r"^\s*[0-9]+\. \*\*(.+?)\*\*", re.M)
 REF_RE = re.compile(r"(?:`?([a-z]+-hook\.md)`?\s*の)?手順「([^」]+)」")
