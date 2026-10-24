@@ -1,5 +1,7 @@
 """room.py のテスト。WSL は差し替え、一時ディレクトリの Vault（git）で `open → start → close` を通す。"""
 import argparse
+import contextlib
+import io
 import json
 import os
 import shutil
@@ -130,7 +132,7 @@ def ctx_for(v, wsl=None):
 def opened(tmp, wsl=None):
     v = make_vault(tmp)
     c = ctx_for(v, wsl)
-    room.cmd_open(c, argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+    room.cmd_open(c, argparse.Namespace(name="proj-a", area="area-x", type="dev", boundary=None, commit=True))
     return v, c
 
 
@@ -389,7 +391,7 @@ class InitTest(unittest.TestCase):
             sh(v, "add", "other.txt")
             room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=True))
             self.assertEqual(self.git_out(v, "show", "--name-only", "--format=", "HEAD").split(), ["areas/area-y/README.md"])
-            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="dev", boundary=None, commit=True))
             files = self.git_out(v, "show", "--name-only", "--format=", "HEAD").split()
             self.assertNotIn("other.txt", files)
             self.assertIn("projects/proj-a/README.md", files)
@@ -399,7 +401,7 @@ class InitTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             (v / "areas" / "area-x" / "memo.md").write_text("別の編集\n", encoding="utf-8")
-            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="doc", boundary=None, commit=True))
+            room.cmd_open(ctx_for(v), argparse.Namespace(name="proj-a", area="area-x", type="dev", boundary=None, commit=True))
             files = self.git_out(v, "show", "--name-only", "--format=", "HEAD").split()
             self.assertIn("areas/area-x/README.md", files)
             self.assertIn("projects/proj-a/README.md", files)
@@ -679,13 +681,13 @@ class OpenTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp, gitignore="*.tmp\n")
             with self.assertRaises(room.RoomError):
-                room.cmd_open(ctx_for(v), argparse.Namespace(name="p", area="area-x", type="doc", boundary=None, commit=False))
+                room.cmd_open(ctx_for(v), argparse.Namespace(name="p", area="area-x", type="dev", boundary=None, commit=False))
 
     def test_open_requires_boundary(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             (v / "areas/area-x/README.md").write_text("---\nstatus: active\n---\n\n# x\n", encoding="utf-8")
-            a = argparse.Namespace(name="p", area="area-x", type="doc", boundary=None, commit=False)
+            a = argparse.Namespace(name="p", area="area-x", type="dev", boundary=None, commit=False)
             with self.assertRaises(room.RoomError):
                 room.cmd_open(ctx_for(v), a)
             a.boundary = "internal"
@@ -1222,12 +1224,12 @@ class PullKnowledgeTest(unittest.TestCase):
 
 
 class NoDataModeTest(unittest.TestCase):
-    """data: は無い。マスクは _noai/raw の原本で、復元は対応表（mapping.json）で決まる。"""
+    """マスクは _noai/raw の原本で、復元は対応表（mapping.json）で決まる。"""
 
     def open_with(self, tmp, wsl=None, **kw):
         v = make_vault(tmp)
         c = ctx_for(v, wsl)
-        d = dict(name="proj-a", area="area-x", type="doc", boundary=None, commit=True)
+        d = dict(name="proj-a", area="area-x", type="dev", boundary=None, commit=True)
         d.update(kw)
         room.cmd_open(c, argparse.Namespace(**d))
         return v, c, v / "projects/proj-a"
@@ -1237,13 +1239,13 @@ class NoDataModeTest(unittest.TestCase):
         d.update(kw)
         return argparse.Namespace(**d)
 
-    def test_open_creates_every_noai_dir_and_no_data_key(self):
-        for t in ("doc", "dev"):
+    def test_open_creates_every_noai_dir(self):
+        for t in ("dev", "inv"):
             with tempfile.TemporaryDirectory() as tmp:
                 _v, c, p = self.open_with(tmp, type=t)
                 for d in ("raw", "map", "final", "user"):
                     self.assertTrue((p / "_noai" / d).is_dir(), (t, d))
-                self.assertNotIn("data:", (p / "README.md").read_text(encoding="utf-8"))
+                self.assertIn(f"type: {t}\n", (p / "README.md").read_text(encoding="utf-8"))
                 self.assertFalse(any("警告" in m for m in c.msgs))
 
     def test_open_writes_a_valid_mask_toml_template(self):
@@ -1253,12 +1255,13 @@ class NoDataModeTest(unittest.TestCase):
             cfg = room.maskkit.load_config(p / "_noai/mask.toml")
             self.assertEqual(cfg.terms, {})
 
-    def test_stale_data_key_is_ignored(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            _v, c, p = self.open_with(tmp)
-            text = (p / "README.md").read_text(encoding="utf-8").replace("type: doc\n", "type: doc\ndata: none\n")
-            (p / "README.md").write_text(text, encoding="utf-8", newline="\n")
-            self.assertEqual(room.Project.load(c, "proj-a").area, "area-x")
+    def test_type_is_dev_or_inv_and_defaults_to_dev(self):
+        parse = room.build_parser().parse_args
+        self.assertEqual(parse(["open", "x", "--area", "a"]).type, "dev")
+        self.assertEqual(parse(["open", "x", "--area", "a", "--type", "inv"]).type, "inv")
+        for old in ("doc", "dev-env", "dev-test", "research"):
+            with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+                parse(["open", "x", "--area", "a", "--type", old])
 
     def test_unmasked_project_does_not_restore_ai_out(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -62,7 +62,7 @@ Area の _noai/deliverable/Project名/ ◀─ restore（実名に戻す）← �
 ## 補足
 | 項目 | 以前 | 今 |
 |---|---|---|
-| マスク・復元の切替 | Project の `data:`（none / mask / restore） | 状態（原本の有無、対応表の有無）。設定なし |
+| マスク・復元の切替 | 設定で選ぶ | 状態（原本の有無、対応表の有無）。設定なし |
 | 知識置き場 | `areas/<Area>/knowledge/`（`_noai` の外） | `areas/<Area>/_noai/knowledge/` |
 | 原本の入口 | Project の `_noai/raw/` に直接置く、または `pull` | Area の `source/` に置き、`pull --from source --path <パス or glob>` |
 | 成果物の戻り先 | Project の `_noai/final/` だけ | `final/` に加えて、Area の `deliverable/<Project>/` |

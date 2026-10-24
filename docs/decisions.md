@@ -4,6 +4,13 @@
 
 ## Decisions
 
+### 【汎用】room の type を `dev` と `inv` の2つに集約した。線は成果物で引く（2026-10-24）
+
+- 決めたこと（ユーザー、2026-10-24。別セッションの「problem solving ＝ Project ＝ 部屋。活動は investigation と development に分かれる」の議論を踏まえた）: ① type は `dev`（作って保守する成果物。旧 `dev` `dev-env` `dev-test` `doc`）と `inv`（調べて結論を出す成果物。旧 `research`）の2つ。② 違いは作業の構造・特性で、`ai/out/<成果物名>/` のサブディレクトリの組み合わせに現れる（`dev` は `src/` `env/` `tests/` `tools/` `docs/` から必要なものを選ぶ。`inv` は `report.md`）。`env/` を新設し、旧 `dev-env` の `src/` から分ける。③ 線は活動でなく成果物で引く。曖昧なときは成果物の名前で決める（足りる。ユーザー）。調べてから作る流れは Project を分け、`report.md` を次の `ai/in/` に渡す。④ `room open --type` は `dev`（既定）と `inv` だけ受け付ける。既存の Project の旧値はそのまま（`room.py` は type を読まない）。⑤ `remote` の type は足さない（環境の置き場の質問で吸収。10-16 の判断と同じ向き）。⑥ このタイミングで、設定 `data:` の古い記述を `guides/` と `workflow-kit/room/README.md` から消した（廃止は 10-21）。
+- 根拠: `room.py` は type を frontmatter に書くだけで、分岐は無い。違いはすべて手順書にあり、基準文書の正の向き、立ち上げで聞くこと、固有の制約は、構成要素から導ける（調査だけが、成果物でなく調べ方の違いで、`start 調査` が持つ）。
+- 却下案: 段階案（まず `make`〔仮〕＋`research`、のちに type 廃止）。2 type で足りるとユーザーが判断した。`dev` を既定にしない案（省略時に失敗）。
+- 置き換えた決定: 2026-10-16「room の type に `dev-env` と `dev-test` を足した」。実装: `room.py`（`--type`）、テスト、`project-structure.md` ほか手順書。続き: `dev-deliverable-guide.md` の見直し（トピック `topics/room-type-consolidation/`）。
+
 ### 【汎用】Stop フックの記録（`sessions.jsonl`、`replies/`）は、部屋の中だけ Project の `ai/records/` に置く（2026-10-21）
 
 - 決めたこと（ユーザー）: 部屋（room）の中では、Stop フックの記録を Project の `ai/records/` に書く（案 B）。部屋の外は、これまでどおり `~/claude-records/<フォルダ名>/`。

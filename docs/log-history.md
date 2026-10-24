@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-24（room の type を `dev` と `inv` に集約）
+- ユーザーの依頼で、`dev` `dev-env` `dev-test` `doc` を1つにまとめ、`research` も含めて一般化する議論をした。`room.py` は type を読まず、違いは手順書だけだと確認し（`room.py` の `--type` と frontmatter への書き込みだけ）、type を `dev` と `inv` の2つにした（決定は `decisions.md` の同日の項）。`room.py`（選択肢と既定 `dev`）、`test_room.py`（旧値の拒否のテストを追加。125 件 OK）、`project-structure.md`（構成要素の表）、`dev-deliverable-guide.md`（`env/` と `tests/` が主の成果物）、`open-hook.md`、`start-hook.md`、`start-work-types.md`、雛形、`methods.md`、`research-method.md`、README の表を直した。`data:` の古い記述も `guides/` から消した。議論の記録はトピック `topics/room-type-consolidation/`。
+
 ### 2026-10-21（薄い層を Python にする）
 - ユーザーが、Open Questions「薄い層を ps1 から Python に替えるか」を Python に決めた。`dev-deliverable-guide.md` に節「Python の薄い層（既定）」を足し（束ねる `run_all.py` の型、`uv run --script`、PEP 723、bat の 3 行、`--log`）、ps1 の節を「Python が使えないときだけ」に位置づけ直した。`workflow-kit/tools/check_py.py`（標準ライブラリだけの点検）を新規に作り、`check-ps1.ps1` は uv の bat を省くようにした。README の表と `room-context.md` も直した。決定は `decisions.md` の同日の項。
 - 確認: Windows の Python 3.13 と uv 0.13.0 で、型の実行（ログの有無、失敗時の終了コード、bat 経由）と `check_py.py` の良い例・悪い例。未確認: 部屋の実機、`pywin32` の取得（`--run-tests` は確認済み）。コミットはしていない。

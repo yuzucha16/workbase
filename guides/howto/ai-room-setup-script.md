@@ -113,11 +113,11 @@ wsl -d room-pilot2 -- sh -c "id -un; ls /mnt/c | wc -l; command -v cmd.exe || ec
 ## 3. Project を作る（`open`）
 
 ```powershell
-uv run room.py open pilot2-1 --area pilot2 --type doc
+uv run room.py open pilot2-1 --area pilot2
 ```
 
-- `--data none|mask|restore` で、データの扱いを決める（省略は `none`。2026-10-19）。`_noai/` の中身が変わる: `none` は `user/` だけ、`mask` は `raw/` `map/` `user/`（復元しない）、`restore` は `raw/` `map/` `final/` `user/`。`user/` は人だけの仮置き（予約名）。`dev` は `none` だけが仕様。マスクだけで要約を出すときは [[ai-room-mask-summary]]。この章以降の `mask` `restore` の例は、`--data restore` で作った Project の話
-- `projects/pilot2-1/` に、`README.md`、`ai/{docs,in,work,out,records}`、`_noai/`（`data:` による。以下は `restore` のとき `_noai/{raw,map,final,user}`）ができ、Area の README の「進行中の Project」に1行足される。`ai/ctx/` は `start` が作る
+- `--type dev|inv`（省略は `dev`）で、成果物の種類を決める。`dev` は作って保守する成果物、`inv` は調べて結論を出す成果物（`project-structure.md`）。`_noai/` の中身は `type` に関係なく同じ（`raw/` `map/` `final/` `user/`）。マスクと復元は状態で決まる（原本が `raw/` にあればマスクし、対応表ができたら終了時に復元する。`workflow-kit/room/README.md`）。`user/` は人だけの仮置き（予約名）。マスクした資料の要約を出すときは [[ai-room-mask-summary]]
+- `projects/pilot2-1/` に、`README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final,user}` ができ、Area の README の「進行中の Project」に1行足される。`ai/ctx/` は `start` が作る
 - 初期状態を、既定でコミットする（`--no-commit` で省く）。コミットされるのは、Project のひな形と、Area の README だけ（Area のほかのファイルは含めない）
 - **README の本文を書く**（目的、完了条件、成果物、範囲外）。ひな形のままだと、`close` が通ってしまい、【案件】に「ひな形のまま」と出る
 
@@ -130,10 +130,10 @@ git -C $HOME\works status --short      # _noai/ が出ない
 
 ## 4. マスクする（`mask`。任意）
 
-原本（Excel、CSV、md、txt、pptx）を AI に見せず、置き換えた写しだけを渡すとき（`data: mask` か `restore` の Project。`none` は原本があると止まる）。ここでは、試験用の `pilot2-2` を使う。
+原本（Excel、CSV、md、txt、pptx）を AI に見せず、置き換えた写しだけを渡すとき（原本を `_noai/raw/` に置いた Project）。ここでは、試験用の `pilot2-2` を使う。
 
 ```powershell
-uv run room.py open pilot2-2 --area pilot2 --type doc --data restore
+uv run room.py open pilot2-2 --area pilot2
 python tests/dummy_fixture.py $HOME\works\projects\pilot2-2     # _noai/raw/ にダミーの xlsx と csv、_noai/mask.toml
 uv run room.py mask pilot2-2
 Get-ChildItem $HOME\works\projects\pilot2-2\ai\in               # マスク済みの xlsx と csv
@@ -145,10 +145,10 @@ Get-ChildItem $HOME\works\projects\pilot2-2\ai\in               # マスク済�
 
 ### 4.1 Area の知識を取り出す（`pull`。2026-10-21 追加。実機で確認済み: 2026-10-21、問題なし）
 
-Area に溜めた知識（実名入りの会議録など）を、別の Project の部屋の AI に使わせるとき。Area の `knowledge/` から、条件に合うファイルを `_noai/raw/area/` に写し、`mask` で `ai/in/area/` にマスクした写しを作る。設計の理由は [[cross-area-shared-knowledge]]。**実名を読むので、人が実行する**（AI には実行させない）。ここでは、試験用の Project `pilot2-3` を使う（`data: restore` が前提）。
+Area に溜めた知識（実名入りの会議録など）を、別の Project の部屋の AI に使わせるとき。Area の `knowledge/` から、条件に合うファイルを `_noai/raw/area/` に写し、`mask` で `ai/in/area/` にマスクした写しを作る。設計の理由は [[cross-area-shared-knowledge]]。**実名を読むので、人が実行する**（AI には実行させない）。ここでは、試験用の Project `pilot2-3` を使う。
 
 ```powershell
-uv run room.py open pilot2-3 --area pilot2 --type doc --data restore
+uv run room.py open pilot2-3 --area pilot2
 ```
 
 以下の `Set-Content` は PowerShell 7（`pwsh`）で実行する。Windows PowerShell 5.1 だと UTF-8 に BOM が付き、frontmatter（先頭の `---`）と `mask.toml` を読めない。手で書くなら BOM なしの UTF-8 で保存する。
@@ -227,7 +227,7 @@ Select-String -Path $HOME\works\projects\pilot2-3\ai\records\manifest.json -Patt
   - 一覧が1件だけ（`org` 一致かつ active）。取り出した名前に `アクメ` が無い
   - `ai/in/area/` の本文と、frontmatter の `org:` の値に `アクメ` `田中` が残らない（`org:` の値の置換は、実機で確認済み: 2026-10-21。残るときは、語を足して設計を見直す）
   - `ai/records/manifest.json` に実名が無い
-- **よく忘れる点**: 今回の条件に合わなくなった前回の取り出し分は、`_noai/raw/area/` に残る。手で消す。`data: mask` の Project には取り出せない（結果を Area に戻すため `restore` が要る）
+- **よく忘れる点**: 今回の条件に合わなくなった前回の取り出し分は、`_noai/raw/area/` に残る。手で消す。結果を Area に戻すには、`restore` が掛かる Project（マスクして対応表ができた Project）にする
 
 ## 5. 部屋で使う（`start`）
 
@@ -264,7 +264,7 @@ uv run room.py start pilot2-1 --no-launch
 
 ## 6. 回収する（`restore` `readme` `stock`）
 
-`start` の終わりに、`restore` が自動で動く（`data: restore` のときだけ。`mask` は復元せず、`none` はマスクも復元もしない）。
+`start` の終わりに、`restore` が自動で動く（マスクして対応表ができた Project のときだけ。マスクしていない Project の `ai/out/` は触らない）。
 
 - 成果物の中のプレースホルダー（`⟦CUST_001⟧` など）を、対応表で実名に戻し、`_noai/final/` に書く（実名入りなので、works のコミットの対象外）
 - **止まる場合**: 戻らないプレースホルダー、未知の形式があると、何も書かずに一覧を出して止まる。AI が本文に `⟦CUST_nnn⟧` のような**書式の説明**を書いたときも止まる（番号が無いため）。直して、`uv run room.py restore pilot2-2` を再実行する
@@ -377,7 +377,6 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 | `reap` が `消せなかった（）` | 古い `room.py` のバグ（`086381c` で直した） | 最新の `room.py` を使う |
 | `Remove-Item` が `being used` | Windows 側の Zed の Agent などが、`projects\<名>\ai` を掴んでいる | Zed のウィンドウを閉じ、`claude-acp` のプロセスを終了する |
 | `close --commit` / `start --commit` が「対象外のファイルがステージされている」で止まる | ステージ済みの別の変更がある | 先にそれをコミットするか、`git restore --staged <パス>` で戻す（`init` `open` は止まらない。3 章） |
-| `pull` が「data: … の Project には取り出さない」 | `data: restore` でない Project | README の `data:` を `restore` にする（4.1） |
 | `pull` が「Area の知識置き場が無い」 | `areas/<Area>/_noai/knowledge/` が無い | 作る（4.1 の 2）。別の場所なら README に `knowledge_dest:` |
 | `pull` の一覧に何も出ない | `--where` が合わない、または `status: superseded` | frontmatter の項目名と値（リストは要素）を確かめる。`org:` の値は完全一致 |
 | `restore` が「Area の知識が、前回の書き出しから変わっている」 | 人が Area 側の統合ノートを直したあとに、同じ Project が書き出そうとした | Area 側の変更を残したいなら、先に退避するか、ノートに取り込んでから `--force`。上書きしてよければ `restore --force`（直前の版は `_noai\final\_prev\knowledge\`） |

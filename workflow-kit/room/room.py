@@ -2124,7 +2124,7 @@ def build_parser():
     sub = ap.add_subparsers(dest="command", required=True)
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
-    o.add_argument("--type", default="doc", choices=["doc", "dev", "dev-env", "dev-test", "research"])
+    o.add_argument("--type", default="dev", choices=["dev", "inv"])
     o.add_argument("--boundary", help="Area に boundary: が無いときに付ける印")
     o.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
     o.add_argument("--no-commit", dest="commit", action="store_false", help="初期状態をコミットしない（既定はコミットする）")
