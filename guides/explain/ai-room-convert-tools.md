@@ -31,8 +31,8 @@ tags:
 | 版 | 中身 | 状態 |
 |---|---|---|
 | v1 | 部屋に LibreOffice・Chromium（mermaid-cli）・pandoc を `init` で入れる。`room run` は作らない | 実装済み。PC2 で確認。PC1 は未確認 |
-| v2 | `room run`: AI が書いた `.ps1` を、人が 1 件ずつ指定して Windows で実行する。実データには使わない（`data: none` と `mask` だけ） | 案のみ。v1 に価値がなければ v2 に上げる |
-| v3 | v2 に、実データ（`data: restore`）への実行を足す | 案のみ（条件は 7 章） |
+| v2 | `room run`: AI が書いた `.ps1` を、人が 1 件ずつ指定して Windows で実行する。実データには使わない（マスクして復元する Project には使わない） | 案のみ。v1 に価値がなければ v2 に上げる |
+| v3 | v2 に、実データ（マスクして復元する Project）への実行を足す | 案のみ（条件は 7 章） |
 
 v1 の見立て: 変換と mermaid の画像化が部屋で完結するので、目的の大半は v1 で済む。`room run` が要るのは、VBA の確認とピボットの作成だけになる見込み。
 
@@ -62,7 +62,7 @@ v1 の見立て: 変換と mermaid の画像化が部屋で完結するので、
 ## 4. 境界への影響
 
 - Linux の道具を足すだけで、`interop` と `/mnt/c` の無効、sudo 不可は変わらない（`init` の分離の確認はそのまま通る）。
-- **`data: restore` の制約**: `restore` は `ai/out/` の png と pdf を復元できず、「復元できない形式」で止まる。画像と PDF はマスク後の語が絵になるので、復元の対象にもならない。画像・PDF の出力が実用になるのは `data: none` と `mask`（復元しない）の Project。`data: restore` では、`ai/work/` に置くか、テキスト形式（HTML、xlsx、csv）の成果物に限る。
+- **復元の制約**: 復元（マスクして対応表ができた Project の終了時）は `ai/out/` の png と pdf を復元できず、「復元できない形式」で止まる。画像と PDF はマスク後の語が絵になるので、復元の対象にもならない。画像・PDF の出力が実用になるのは、マスクしていない Project（復元が動かない）。マスクして復元する Project では、`ai/work/` に置くか、テキスト形式（HTML、xlsx、csv）の成果物に限る。
 - ネットワーク: Chromium と mermaid-cli の取得で外へ出る。TLS 検査のある環境では、`--ca-cert` に加えて、Node の取得がシステムの証明書ストアを見ない点に注意（`init` は `NODE_EXTRA_CA_CERTS` と `NPM_CONFIG_CAFILE` を指す。PC1 では未確認）。
 - Chromium のサンドボックスは、非特権ユーザー名前空間の制限で動かないことがある。`--no-sandbox` で動かすので、信頼できないページは開かない（自作の mermaid テキストと、自分で作った HTML の PDF 化だけに使う）。
 

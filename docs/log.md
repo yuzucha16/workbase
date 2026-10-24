@@ -13,7 +13,6 @@
 | 2026-10-26 | 単発 | 振り返りの手順書 v6（v5 の続き）の仮決め。定例の初回で字数を測る（項目 5） | ユーザー |
 | 2026-10-28 | 単発 | 仮決め: 題材ごとのトピックと `records/` の仕訳（2か所）を、正式化するか（`decisions.md` の 10-21。正式化なら `start-plan.md` の置き場の表を直す） | ユーザー |
 | 2026-10-28 | 単発 | Next Actions 9（ルールが見つかりにくい構造）に着手するか、閉じるか（起票 10-20 から 1 週間後。ユーザー、10-21） | ユーザー |
-| 2026-11-02 | 単発 | `remote` の type の要否（項目 10 の後） | ユーザー |
 | 2026-11-05 | 単発 | Open Questions の保留 2 件（`repos/` の受け渡し、`restore` の上書き保護） | ユーザー |
 
 ## 状態
@@ -21,7 +20,7 @@
 - 経路は整備済み: 受け皿 = トピック、入力 = `inbox.md`、見直し = `review`。cwd はリポジトリのトップだけ。フックの権限は `hooks.md` の「領域とフックの権限」が正本。
 - 仕組みの決定は `review 消化` の3段で承認する（`approval-screening.md`）。仮決めは `【仮 〜日付】`。
 - やり方は `methods.md`（変更・調査1・調査2・振り返り1）。作り方は `exmem/lessons/method-creation.md`、改善の記録は `topics/kit-growth/records/`。
-- room（`workflow-kit/room/`）: 実機の通しは済み（2026-10-18）。Ubuntu 26.04 の部屋（`init`）、`data:` の none / mask / restore（10-21 に `data:` を廃止し、状態で決める形にした。単体テストのみ）、`room shell` と Node の流れは、実機で確認済み（ユーザー、2026-10-19）。`room init` の `wsl --install` の早戻りは、次に再現するまで保留（`log-history.md` の同日の項）。`room aws-key` は、10-20 に原因（`sh -c` の引数経路で代入した変数が空になる）を直し、PC1 で動作を確認した（`08202a7`）。
+- room（`workflow-kit/room/`）: 実機の通しは済み（2026-10-18）。Ubuntu 26.04 の部屋（`init`）、マスク・復元（10-21 に設定を廃止し、状態で決める形にした。単体テストのみ）、`room shell` と Node の流れは、実機で確認済み（ユーザー、2026-10-19）。`room init` の `wsl --install` の早戻りは、次に再現するまで保留（`log-history.md` の同日の項）。`room aws-key` は、10-20 に原因（`sh -c` の引数経路で代入した変数が空になる）を直し、PC1 で動作を確認した（`08202a7`）。
 - room の変換の道具（2026-10-20）: `init` が LibreOffice・日本語フォント・pandoc・Chromium・mermaid-cli を root で入れる（v1。PC2 で確認、PC1 は未確認）。`room run`（v2・v3）は案のみ。経緯と使い方は `guides/explain/ai-room-convert-tools.md`、決定は `decisions.md` の同日の項。
 - room の pwsh 7 と ps1 の静的チェッカー（2026-10-21）: 束ねる役も ps1、bat は起動用の 3 行だけ（`dev-deliverable-guide.md`、`room-context.md`）。`init` が pwsh 7.6.7・PSScriptAnalyzer・Pester 5 を root で入れ、`workflow-kit/tools/check-ps1.ps1` が点検する。方針「部屋で完結できるなら部屋で実行する。Windows 依存部は小さな層にする」も `dev-deliverable-guide.md`（節「実行の方針」）と `ROOM.md` に書いた。部屋（26.04）に入っていることは確認済み。決定は `decisions.md` の同日の項。同日、薄い層は Python を既定にし、ps1 は例外にした（`check_py.py`、`uv run --script`。決定は同日の別の項。部屋の実機と `pywin32` の取得は未確認）。
 - room の Area を跨ぐ共有知（2026-10-21）: `room pull`（Area の `knowledge/` から条件で絞り、`_noai/raw/area/` へ）と、`restore` の Area 書き出し（`ai/out/knowledge/` → `areas/<Area>/knowledge/`。人が変えた既存ファイルがあれば止まる、`--force` で上書き）を実装し、実機の通しで問題なし。統合は部屋の作業（works の AI は実名を読まない）。手順は `guides/howto/ai-room-setup-script.md` の 4.1・6.1、理解は `guides/explain/cross-area-shared-knowledge.md`、決定は `topics/private-knowledge/docs/decisions.md`。
@@ -30,6 +29,7 @@
 - room のコミットのトレーラー（2026-10-21）: `init` `open` `rename-area` `start` `readme` `close` のコミットに `Room-Op` / `Room-Rev` / `Room-Area` / `Room-Project` を付ける（`room/README.md`、決定は `decisions.md` の同日の項）。`Room-Rev` を基点に `git diff <Room-Rev>..HEAD -- workflow-kit/room` で、既存の Area / Project に対する room の変更を確認できる。`restore` / `pull` の版は未記録。実機での確認は未実施（単体テストのみ）。room の単体テストは PC1 でスキップを含む全件パス（10-21。短縮名の不一致を直し、`openssl` が無い環境では CA のテストをスキップ。`9a9c8d2`）。
 - room の並行 start（2026-10-21）: 同じ Area の Project を、同じ部屋に同時に `start` できる（既定。止まるのは自分の Project のマウントが残っているときだけ）。共有ファイル（`~/shared`、git のラッパー、信頼・許可の設定）は置き換え方式で更新する。単体テストのみ（全 105 件パス）。決定は `decisions.md` の同日の項、使い方の約束は `room/README.md`。
 - 計画のやり方（6R → 憲章 → 成果物 WBS → マイルストーン）: トピック `topics/planning-method/`（Project 型。状態は同 `docs/log.md`）。2026-10-20 に試験運用で `workflow-kit/` に取り込んだ（`start 計画`、`start-plan.md`）。次は PC1 の品質チェック3回。試行の元ファイルは Project の共有フォルダ `notes/planning-method/`（クラウド側の控え。PC 環境からは見えない）。測ったことは `topics/kit-growth/records/planning-method-record.md`。
+- room の type 集約（2026-10-24）: `dev` と `inv` の2つ（`room open --type`、既定 `dev`）。トピック `topics/room-type-consolidation/`（Project 型）。続きは `dev-deliverable-guide.md` の見直し。
 - 計画と部屋の紐付け（2026-10-21）: トピック `topics/plan-room-link/`（Project 型）。案 D（Project の README の雛形に固定の1行 `計画: ai/in/plan/`）で実装済み（`9b4db50`。実機は未確認）。計画一式（後追い。比較・分析用）は同 `records/`。残りは知識化・実機確認・閉じる判断（10-28）。状態は同 `docs/log.md`。
 
 ## Next Actions
@@ -50,6 +50,5 @@
 
 - 【起票 10-21】`kit-growth`（Area 型）と `kit-growth/records/` の行き先（`planning-method` を閉じる前に決める。13 の仕訳の正式化と合わせて）: 場所 = `topics/kit-growth/`（`records/` と窓口）、`topics/AGENTS.md`、`docs/decisions.md` の仕訳の項（119 行）、`topics-index.md`。問題 = 仕訳の文面（「測ったこと = 品質チェックと振り返り」）が `planning-method` の品質チェック用で、閉じると Area 型として残す理由が弱くなる。実際の中身には、振り返り（定例）、調査のやり方、計画のやり方の記録がある。案 = A 文面を「kit 全体のやり方と定例の測定記録」に直して残す／B 測ったことをやり方ごとの Project 型トピックへ戻す／C `planning-method` を閉じるときに決める／D Area 型を役目終了として、Project 型へ移管して削除する（ユーザーの意向。10-21）。移す・消すときは、`records/` の各ファイルの行き先（振り返りの定例の記録を含む）と、`kit-records-index.md`、窓口、リンクを決める。
 - 【案件】の行き先: `para-operations`（2026-10-07）は Area の `docs/decisions.md`、実装（2026-10-14）は Area の `ai/docs/inbox.md`。現行はどちらか（`topics/private-knowledge/` の確認 #2）。
-- `remote` の type: 要否は項目 `dev-env` の実使用（済み。10-20 にユーザーが業務で使った）を踏まえて決める。【保留 〜2026-11-02】
-- `repos/` の受け渡し（スナップショットと patch。未検証）: `remote` の type と `dev-env` の実使用の後に決める。【保留 〜2026-11-05】
+- `repos/` の受け渡し（スナップショットと patch。未検証）: `dev` の `env/` の実使用の後に決める（`remote` の type は足さないと決めた。2026-10-24）。【保留 〜2026-11-05】
 - `restore_project` が `_noai/final/` の人の変更を上書きする件（2026-10-18 の通しで未試験）: 正本の宣言と上書き前の警告を、次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】

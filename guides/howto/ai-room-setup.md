@@ -120,7 +120,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 | `_noai/raw` `map` `final` | 原本、対応表、実データ入りの成果物 | **見えない** |
 | `_noai/user/` | 人だけの仮置き（予約名。`room` は触らない） | **見えない** |
 
-- **`_noai/` の中身は、Project の `data:` で決まる**（2026-10-19。`room open --data`。`room.py` を使うなら自動）: `none` は `user/` だけ（マスクも復元もしない）、`mask` は `raw/` `map/` `user/`（マスクだけ。復元しない）、`restore` は `raw/` `map/` `final/` `user/`（マスクして復元する。上の `mkdir` の一覧は、この型）。`data:` が無い既存の Project は `restore` として動く。仕様の正本は `workflow-kit/room/README.md` の「データの扱い」。マスクだけで資料を要約させる手順は [[ai-room-mask-summary]]
+- **`_noai/` は `type` に関係なく `raw/` `map/` `final/` `user/` を作る**（`room.py` を使うなら自動。上の `mkdir` の一覧）。マスクと復元は状態で決まる（原本が `raw/` にあればマスクし、対応表ができたら終了時に復元する）。仕様の正本は `workflow-kit/room/README.md` の「マスクと復元は状態で決まる」。マスクした資料を要約させる手順は [[ai-room-mask-summary]]
 - 既存の Project がある場合は、`docs/` の中身を `ai/docs/` に、成果物を `ai/out/` に、ファイル単位の `git mv` で移す（ディレクトリごとだと `Permission denied` で失敗することがある）。README の中の旧パスは、`grep` で探して直す。過去の作業記録の中の旧パスは、当時の事実なので直さない
 - 完了の目安: `_noai/` が `git status` に出ない
 
