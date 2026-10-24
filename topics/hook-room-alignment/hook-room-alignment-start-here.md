@@ -5,7 +5,7 @@
 
 ## いま
 
-`init` `open` の廃止、`room mkworks`、`brief` の改名は反映済み（2026-10-24）。残りは `mkworks` の実機確認と、旧名の読み替えの削除。詳細は `docs/log.md`。
+`init` `open` の廃止、`room mkworks`、`brief` の改名は反映済み（2026-10-24）。残りのフックと `room` の整合も反映済み。残りは `mkworks` の実機確認と、旧名の読み替えの削除。詳細は `docs/log.md`。
 
 ## あなた待ち
 

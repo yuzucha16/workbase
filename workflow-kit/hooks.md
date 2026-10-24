@@ -5,8 +5,8 @@
 | 合言葉 | 別名（日本語） | 読むファイル | 寿命・時機 | 要点 |
 |---|---|---|---|---|
 | `brief` | 「作業を始めて」<br>`brief 解決`＝「解決で始めて」<br>`brief 改善`＝「改善で始めて」<br>`brief 調査`＝「調査で始めて」<br>`brief 計画`＝「計画で始めて」 | `brief-hook.md` | セッションの開始 | 開始インタビュー。`brief 解決` / `brief 改善` / `brief 調査` / `brief 計画` で、進め方を選んで始める |
-| `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push を、順序を固定して行う |
-| `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
+| `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push（許可リストにあれば）を、AI が順序を固定して行う。部屋では、部屋の git へのコミットまで（push はしない） |
+| `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。部屋では下書きまで（`ai/out/stock/`）で、人が `room stock` で運ぶ。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
 | `review` | 「見直して」<br>`review 消化`＝「next action を消化して」 | `review-hook.md` | 随時（週1回・15分を目途） | 遠回りの事例を見て、1つ直すか1つ畳む。`review 消化` で Next Actions / Open Questions の消化 |
 | （常時） | | `docs-rules.md` | `docs/` を更新するとき、コミット・push の前 | `docs/` の運用規則 |
@@ -27,9 +27,11 @@
 | コマンド | すること |
 |---|---|
 | `room mkworks` | works のトップの作成（PC に1回）と、雛形の変更の反映（`--update`）。旧 `init` フックの項目 5 と `init 更新` |
-| `room init` | Area の部屋（専用の WSL ディストロ）の作成と道具の導入 |
-| `room open` / `start` / `close` | Project のひな形、起動の準備（マスク、写しの送付、マウント）と回収（復元）、Area への引き渡しと `archives/` への移動 |
-| `room mask` / `restore` / `readme` / `umount` | マスクと復元の単独実行、AI の下書きの README への反映、残ったマウントの解除 |
+| `room open` / `start` / `close` | Project のひな形、起動の準備（マスク、写しの送付、マウント）と回収（復元、works へのコミット）、Area への引き渡しと `archives/` への移動 |
+| `room stock` | 部屋の AI の `stock` の下書き（`ai/out/stock/`）を、人が確認して `exmem/inbox/` に運ぶ |
+| `room readme` | AI の下書き（`ai/out/readme-draft.md`）を README に反映する |
+
+上のほかのコマンド（`init` `pull` `mask` `restore` `umount` `aws-key` `shell` `reap` `rename-area`）は、フックと対にならない。`room/README.md` を見る（この表に写さない）。
 
 ## 領域とフックの権限（r/w 表）
 
@@ -41,7 +43,7 @@
 | フック | works | workbase | dotfiles | room |
 |---|---|---|---|---|
 | `brief` | rw | rw | rw | rw |
-| `wrap` | rw | rw | rw | rw（コミット・push は人） |
+| `wrap` | rw | rw | rw | rw（部屋の git にコミット。works へのコミットは人の `room start` の回収） |
 | `stock` | w | rw | w | w |
 | `integrate` | － | rw | － | － |
 | `review` | rw | rw | rw | － |
