@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【汎用】人が叩くスクリプトの名前を工程で固定する: `run`（本番実行）・`verify`（動作確認）・`release`（リリース）（2026-10-24・仮決め）
+- 決めたこと（ユーザー、2026-10-24。叩き台の質問3点に「良いです」。順は run verify release）: ① 名前は `run` / `verify` / `release`（各 `.py` と起動用 `.bat`、成果物の `tools/`）。`finalize` は使わない（release と紛れるため）。② リリースの機械的な部分（版を振る・固める・記録）は、配布先が部屋の中なら AI が行い、人は「release OK」と判断を返す。③ 目視の合否は `verify` が y/n で聞いて結果ファイルに残す。
+- 未了: `script-guide.md` の型（プリフライト、結果ファイル、`release` の止まる条件）と `check_py.py` への反映は未実装。結果ファイルは `room-windows-balance` の診断ログ案と合わせて決める。叩き台は project files の `notes/script-stages/2026-10-24-proposal.md`。
+
 ### 【汎用】部屋の `stock` は、行き先を `scope: public | area` で決める。Area の業務の知は `ai/out/knowledge/` へ（2026-10-24）
 
 - 決めたこと（ユーザー、2026-10-24。仮決め4点を「全てOK」）: ① 部屋の AI は `stock` の下書きに `scope:` を付ける。問いは「実名や社内の事情を剥がしても、社外の人が使えるか」で、迷うときは `area`。② `area` は `ai/out/knowledge/` に、`stock-hook.md` の7見出しの型（`kind: lesson` か `explain`、`base_commit` なし）で書く。`restore` が実名に戻して Area の知識置き場に置き、次の Project は `room pull` で受け取る。③ `room stock` は `scope: area` を運ばず案内するだけ（`--to` は足さない）。④ 受け取りの目次は持たない。
