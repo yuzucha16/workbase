@@ -17,10 +17,10 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 - 起動する場所は `/mnt/room/<名>`（Project の `ai/`）に固定される。開始時に読むのは `~/shared/ROOM.md` → `ai/ctx/README.md`（Project の窓口の写し）→ `ai/ctx/area-README.md`（所属する Area の README の写し。Area の共通ルール）→ `ai/docs/log.md`。
 - 手順書の `docs/` は、部屋では `ai/docs/`（Project の記録）。Project と Area の `README.md` は書き込めない。写し（`ai/ctx/README.md`、`ai/ctx/area-README.md`）を読む。
 - 手順書は `~/shared/workflow-kit/` にある（読み取り専用の写し。基準コミットは `~/shared/ROOM.md`）。
-- 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、works へのコミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する。
+- 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、works へのコミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する（部屋の git へのコミットは別で、AI が行う。下）。
 - スクリプトや変換を作るときは、言語をユーザーに聞かず、優先順位 Python → ps1 → bat で決める（`script-guide.md` の「言語の選び方」）。あわせて同じ文書の「実行の方針」に従う（部屋で完結できるなら、すべて部屋で実行する。Excel・COM などの Windows 依存部は、できるだけ小さな層にして、人の手数を 1 コマンドに減らす。2026-10-21）。人が Windows で実行する薄い層は、Python が既定（2026-10-21）。同じ文書の「Windows で実行するスクリプト」に従う（束ねる役も同じ言語、bat は起動用の 3 行だけ。作った直後に、Python なら `python3 ~/shared/workflow-kit/tools/check_py.py`、ps1 なら部屋の pwsh 7 で `~/shared/workflow-kit/tools/check-ps1.ps1` を実行する）。ps1 は、実行先に Python が無いときなどの例外。
-- 部屋の git（`/mnt/room/<名>` の下で使える、部屋のローカルの git）は例外で、AI が自由に使ってよい（許可は要らない。リポジトリは `room start` が用意済みなので、AI は `git init` `git config` をしない。この案内は、部屋の `~/.claude/CLAUDE.md` と `~/shared/ROOM.md` の両方に入る。`git diff` で回収される変更を見る、作業の区切りでコミットする）。セッションの終わりに捨てるので、works には届かない。works へのコミットは `room start` の回収が既定で行う。
-- `wrap-hook.md` の手順「コミットする」（push を含む）は、部屋では行わない（works へのコミットは回収の側。部屋の git のコミットは、作業の記録として任意）。`wrap-hook.md` の手順「昇格の案を出す」の知識化は、部屋では `ai/out/stock/` の下書きに一本化する（下の `stock`）。部屋の `wrap` は、業務の知識を `ai/docs/` に残し、共有知は `stock` の窓口だけから出す。
+- 部屋の git（`/mnt/room/<名>` の下で使える、部屋のローカルの git）は例外で、AI が使う（許可は要らない。リポジトリは `room start` が用意済みなので、AI は `git init` `git config` をしない。この案内は、部屋の `~/.claude/CLAUDE.md` と `~/shared/ROOM.md` の両方に入る。`git diff` で回収される変更を見る。コミットは、人に言われなくても、作業の区切りと `wrap` のたびに行う。push は、リモートが無いので行わない）。セッションの終わりに捨てるので、works には届かない。works へのコミットは人の `room start` の回収が既定で行い、人が最終コミット分を回収する。
+- `wrap-hook.md` の手順「コミットする」は、部屋では部屋の git へのコミットまで行う（指示は要らない。push はしない。works へのコミットは回収の側）。`wrap-hook.md` の手順「昇格の案を出す」の知識化は、部屋では `ai/out/stock/` の下書きに一本化する（下の `stock`）。部屋の `wrap` は、業務の知識を `ai/docs/` に残し、共有知は `stock` の窓口だけから出す。
 
 ## `ai/out/close.md` の書き方（部屋の中）
 
@@ -69,7 +69,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 |---|---|---|---|
 | `open`（合言葉なし） | 目的・完了条件の聞き取りと README 本文の下書き（下の節） | `room open <名>`（ひな形）→ `room readme <名>`（下書きの反映） | `ai/out/readme-draft.md`（本文だけ。frontmatter を含めない） |
 | `brief` | 開始インタビュー | `room start <名>`（チェック、マスク、写しの送付、マウント、起動） | `ai/ctx/`、`ai/in/` |
-| `wrap` | `ai/docs/` の更新、昇格の案 | 回収（復元、コミット） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
+| `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（復元、works へのコミット） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
 | `stock` | 下書きまで | `room stock <名>`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
 
