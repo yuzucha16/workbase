@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】`wrap` のコミットは AI が行う。部屋では指示なしで部屋の git にコミットする。`hooks.md` の room 表はフックと対のものだけ（2026-10-24）
+
+- 決めたこと（ユーザー、2026-10-24）: ① `wrap` のコミット（許可リストなら push も）は AI が行う。Windows 側（works）へのコミットは人が行う。② 部屋では、人が指示しなくても、AI が作業の区切りと `wrap` のたびに部屋の git へコミットする（push は、リモートが無いので行わない）。人は `room start` の終わりに、最終コミット分を回収するだけ。③ `hooks.md` の「運用コマンド」の表は、フックと対になるもの（`mkworks` `open` `start` `close` `stock` `readme`）だけにし、ほかは `room/README.md` を指す。`stock` の行に、部屋では `room stock` が運ぶと書く。
+- 根拠: 部屋の git は捨てる記録なので、コミットで人の手間を増やす理由が無い。`hooks.md` に `room/README.md` の写しを持つと、コマンドが増えるたびに2か所を直すことになる。
+- 更新範囲: `hooks.md`、`hook-common.md`、`wrap-hook.md`、`room-context.md`、`room/room.py` の部屋に置く案内文（コミットを任意から必須に）。`integrate` `review` は部屋で行わない（変更なし）。
+
 ### 【汎用】`start` のフックを `brief` に改名した（2026-10-24）
 
 - 決めたこと（ユーザー、2026-10-24。「room start と寿命は同じでも目的が違うので名前を変えても良い」→ 案 `brief` を承認）: 合言葉 `start` を `brief` にする。別名「作業を始めて」と引数（`解決` `改善` `調査` `計画`）は同じ。`start-hook.md` `start-plan.md` `start-work-types.md` は `brief-hook.md` `brief-plan.md` `brief-work-types.md` に改名。`room start` は変えない。連鎖は `[brief → 作業 → wrap]×N`。

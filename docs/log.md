@@ -41,7 +41,7 @@
 12. 会議録のナレッジ化（`topics/private-knowledge/` は 2026-10-21 に閉じた。決定は `decisions.md` の同日の項）の残り: 指標（冒頭の行数の上限〔仮 10 行〕、人が直した箇所の数）は、スクリプトで数える（実名を読まず、出力は数字だけ）。数える対象は、新規に会議録を作り直して試した分から（ユーザー、10-21。既存の分は数えない）。スクリプトは、試した後で対象の Area を聞いて書く。
 13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: 今は `planning-method/` が同じ構造で運用している（`usage-viz/` `stock-modes/` `private-knowledge/` は 10-21 に閉じた。`usage-viz` の HTML の見た目はブラウザで確認済み、問題なし。`brief 計画` へのフィードバック案8件は `topics/planning-method/planning-method-feedback-stock-modes-m1.md`、`review 消化` で承認）。10-28 に正式化するかを `review 消化` で決める。
 18. 【起票 10-21】部屋の Stop フックの記録（`decisions.md` の同日。案 B）: 実装は済み（`init --only stophook`、パスの置換つき、単体テストのみ。10-21）。残り: 実機で、既存の部屋に `init <Area> --only stophook` → `start` → AI の応答 → Project の `ai/records/` に `sessions.jsonl` と `replies/` ができ、ユーザー名が `%USERPROFILE%` になっているか確かめる。部屋の AI が Windows のパスを作る原因は、次に再現したときに追う。
-19. 【起票 10-24】フックと room の整合（`topics/hook-room-alignment/`。状態は同 `docs/log.md`）: `mkworks` の実機確認、旧名（`init` `open` `start`）の読み替えと注記を、新しい仕様が回りだしたら消す（ユーザーの決定）、`brief 変更` の入口、dotfiles の Claude 用スキルの入口、残りのフック（`wrap` `stock` `integrate` `review`）と room の整合。
+19. 【起票 10-24】フックと room の整合（`topics/hook-room-alignment/`。状態は同 `docs/log.md`）: `mkworks` の実機確認、旧名（`init` `open` `start`）の読み替えと注記を、新しい仕様が回りだしたら消す（ユーザーの決定）、`brief 変更` の入口、dotfiles の Claude 用スキルの入口。残りのフックと room の整合は反映済み（2026-10-24。`wrap` のコミットは AI が行い、部屋では指示なしで部屋の git にコミットする）。
 
 ## Open Questions
 

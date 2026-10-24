@@ -12,7 +12,7 @@
 - 起動できる領域は `hooks.md` の「領域とフックの権限」に従う（部屋での扱いは `room-context.md`）。
 - 書き込み先: `docs/`（`docs-rules.md`）と、作業ディレクトリのコミットだけ。`exmem/lessons/` などは触らない（統合は `integrate-hook.md`）。`exmem/inbox/` のメモを作るのは `stock-hook.md`（このフックは作らない）。
 - 既存のファイル: `docs/log.md` は現在状態に上書きする。経緯の記録先と `decisions.md` は追記する。
-- コミットと push は `hook-common.md` の「コミットと push」に従う（部屋では、コミットと push は人が行う）。
+- コミットと push は `hook-common.md` の「コミットと push」に従う（部屋では、部屋の git へのコミットまで AI が行う。push はしない。works へのコミットは人の `room start` の回収）。
 - 手順の途中で承認が要るもの（既存ファイルの差分、リスクや制約が生まれる変更）は、`docs-rules.md` に従って、先にユーザーへ確認する。
 
 ## 手順
