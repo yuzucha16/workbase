@@ -1,6 +1,6 @@
-# 計画のやり方（`start 計画` の手順と欄の定義）
+# 計画のやり方（`brief 計画` の手順と欄の定義）
 
-`start-hook.md` の「`start 計画`」から呼ぶ。やり方の位置付けは `methods.md` の「計画」、背景と注意点は exmem の `lessons/planning-method.md`。試験運用で、**Must だけ守る**。欄の名前は、書籍の図表の読み取りで、本文は未読（出どころは lesson の Facts）。
+`brief-hook.md` の「`brief 計画`」から呼ぶ。やり方の位置付けは `methods.md` の「計画」、背景と注意点は exmem の `lessons/planning-method.md`。試験運用で、**Must だけ守る**。欄の名前は、書籍の図表の読み取りで、本文は未読（出どころは lesson の Facts）。
 
 ## A 事前の仕込み
 

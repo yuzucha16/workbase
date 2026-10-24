@@ -4,6 +4,14 @@
 
 ## Decisions
 
+### 【汎用】`start` のフックを `brief` に改名した（2026-10-24）
+
+- 決めたこと（ユーザー、2026-10-24。「room start と寿命は同じでも目的が違うので名前を変えても良い」→ 案 `brief` を承認）: 合言葉 `start` を `brief` にする。別名「作業を始めて」と引数（`解決` `改善` `調査` `計画`）は同じ。`start-hook.md` `start-plan.md` `start-work-types.md` は `brief-hook.md` `brief-plan.md` `brief-work-types.md` に改名。`room start` は変えない。連鎖は `[brief → 作業 → wrap]×N`。
+- 根拠: `room start`（準備・起動・回収）とフック（ゴールと前提をそろえる）は、同じセッションの寿命で続くが、目的が違う。名前が同じだと、会話で `room` の前置を忘れたときに取り違える。
+- 更新範囲: `workflow-kit/`（hooks.md、README.md、hook-common.md、hook-matrix.md、methods.md、token-matrix.md、room-context.md、project-structure.md、dev-deliverable-guide.md、review-hook.md、templates/project/README.template.md、room/room.py の部屋に置く案内文と README の雛形）、`exmem/lessons/` の参照、`guides/AGENTS.md`、`topics/AGENTS.md`。過去の記録（`decisions.md` `log-history.md` `topics/*/records`、`improvements.md`、`review-hook-why.md` などの経緯）は旧名のまま。読み替えは `hooks.md`。
+- 未決: 引数に「変更」の入口（`brief 変更`）を足すか。`methods.md` の「変更」は別の入口で、区分と引数の対応に穴がある。今回は足さない（設計が要る）。
+- 未確認: dotfiles の Claude 用スキルに、`start`（作業を始めて）の入口があれば直す（workbase の外）。既存の Project の README と各 PC の `AGENTS.md` に旧名が残っていても、別名「作業を始めて」で動く。
+
 ### 【汎用】`init` と `open` のフックを廃止し、works の作成と雛形の反映を `room mkworks` に移した（2026-10-24）
 
 - 決めたこと（ユーザー、2026-10-24。「roomの導入で既存フックの一部がほぼ使われなくなったり意味が変わったりしている」）: ① 線は「決まった手順の副作用は人が打つ `room` のコマンド、判断はフック」（`room-context.md` の「2つの層」）。② `init` フックの項目 5（works の生成）と `init 更新`（雛形の3者マージ）は `room mkworks`（`--update`。今後の機能は `mkworks` の引数で足す。`--list` など）。③ 他のリポジトリへの導入（項目 1〜3）と履歴からの復元（項目 4）は、使用実績の記録が無いので廃止。`kit` フックは作らない。環境移行で必要になったら相談する。④ `open` フックは廃止（`close` は 10-16 に廃止済み）。Project のひな形は `room open`、README 本文の下書きの書き方は `room-context.md`、立てる前の判断基準と未決は `project-structure.md`。⑤ r/w 表の `init` `open` の行と、初回の例外を消した。

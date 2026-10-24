@@ -9,7 +9,7 @@ tags:
 aliases:
   - 調査のやり方1
   - 調査モード
-  - start 調査
+  - brief 調査
 created: 2026-10-16
 updated: 2026-10-17
 sources:
@@ -20,7 +20,7 @@ sources:
 
 ## Purpose
 
-「ある主題を調べて、読者が使える形の Markdown にまとめる」ときの型。解決（[[problem-solving-analogy]]）・改善（[[improvement-quantified-options]]）・変更（[[change-method]]）の延長で、調べて知るやり方。要点の表は `workflow-kit/methods.md` の「調査」、呼び出しは `start 調査`（`start-hook.md` の「引数つきモード」）。出どころは、Claude スキルの調査（2026-10-16）が、ユーザーの言う「ほぼ完璧」の出来になった事例の振り返り。1事例からの仮説で、使いながら Must を増減する。
+「ある主題を調べて、読者が使える形の Markdown にまとめる」ときの型。解決（[[problem-solving-analogy]]）・改善（[[improvement-quantified-options]]）・変更（[[change-method]]）の延長で、調べて知るやり方。要点の表は `workflow-kit/methods.md` の「調査」、呼び出しは `brief 調査`（`brief-hook.md` の「引数つきモード」）。出どころは、Claude スキルの調査（2026-10-16）が、ユーザーの言う「ほぼ完璧」の出来になった事例の振り返り。1事例からの仮説で、使いながら Must を増減する。
 
 ## Principles
 
@@ -94,7 +94,7 @@ sources:
 
 ## Next Actions
 
-- 次の調査で `start 調査` を使い、Must が重すぎないか・足りないかを記録する。3回の `review` の後に増減を決める。
+- 次の調査で `brief 調査` を使い、Must が重すぎないか・足りないかを記録する。3回の `review` の後に増減を決める。
 
 ## Related
 
