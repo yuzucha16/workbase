@@ -157,7 +157,7 @@
 |---|---|---|
 | 本番実行 | `run.py` / `run.bat` | 実データに対して使う（繰り返し使うツールだけ）。ログは `ai/` の外（`_noai/`） |
 | 動作確認 | `verify.py` / `verify.bat` | Windows でしか動かない層の実行、実アプリでの単体テスト、目視の確認 |
-| リリース | `release.py` / `release.bat` | 動作確認の済んだ成果物に版を振り、Project の `artifacts/` に束ねる |
+| リリース | `release.py` / `release.bat` | 動作確認の済んだ成果物に版を振り、記録する（束ね先は未決） |
 
 `finalize` は使わない（release と意味が紛れる）。`verify` の「束ねる役」は、上の型（`run_all.py`）の名前を `verify.py` に変えたもの。
 
@@ -169,13 +169,14 @@
 4. `ai/work/verify-result.json` を**毎回**上書きで出す（環境の事実、工程ごとの結果、失敗の型と場所、目視の回答、`ai/out/<成果物名>/` のハッシュ）。業務の値・ユーザー名は入れない。全文ログは今まで通り `--log` のとき。
 5. 人が AI に返すのは「verify 済み」の一言。AI は結果ファイルを読む。
 
-**`release` の手順**:
+**`release` の手順**（2026-10-24 に見直し中。`artifacts/` に束ねる案は取り下げ。置き場は未決）:
 
-1. `verify-result.json` が全部 OK で、そのハッシュが今の `ai/out/<成果物名>/` と一致しなければ、止まる（古い版を出さない）。
-2. `ai/out/` にフラットに並ぶ成果物を、Project 直下の `artifacts/<成果物名>-<版>/` に束ねる（`ai/out/` は変えない。`artifacts/` は `ai/` の外なので、部屋の AI は書けない。release は人が叩く）。
-3. 版、日付、`verify-result.json` を添え、README の状況表に記録する。版の付け方（日付か連番か）は未決。
+1. `verify-result.json` が全部 OK で、そのハッシュが今の成果物と一致しなければ、止まる（古い版を出さない）。
+2. 版を振り、日付と `verify-result.json` を添えて、README の状況表に記録する。束ねる先（Project の成果物の置き場）は未決。
 
-未実装（2026-10-24）: 上の手順の型と、`check_py.py` での点検（名前、`verify-result.json` を出す機能）は、まだ書いていない。`room open` は `artifacts/` を作らない（`release` が作る）。`artifacts/` の追跡の扱い（git に入れるか）は未決。
+Project の成果物は、「`ai/out/` の AI の成果物（マスクした Project は復元後の `_noai/final/`）」と「人の成果物」の合わせたもの、になる見込み（ユーザー、2026-10-24。どちらかが無い場合もある）。置き場と `release` の入出力は、設計して決める。
+
+未実装（2026-10-24）: 上の手順の型と、`check_py.py` での点検（名前、`verify-result.json` を出す機能）は、まだ書いていない。
 
 ### ps1 の薄い層（Python が使えないときだけ）
 
