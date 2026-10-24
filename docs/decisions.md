@@ -4,6 +4,13 @@
 
 ## Decisions
 
+### 【汎用】`dev-deliverable-guide.md` を分け、構成要素の用途と活動の目安を `project-structure.md` に一本化した（2026-10-24）
+
+- 決めたこと（ユーザー、2026-10-24。「いまは成果物の作り方〔スクリプト〕ばかり。まずは不整合を直す」。提案の論点 1〜5、活動の表の程度、ファイル名にすべて OK）: ① 全 type 共通の規約（実行の方針、言語の選び方、Windows で実行するスクリプト）を、新しい `script-guide.md` に原文のまま移した（`inv` でも読める）。② 構成要素（`docs/` `src/` `env/` `tests/` `tools/` `report.md`）の用途と主な活動、`ai/` 直下の用途と主な活動は、`project-structure.md` を正本にした（guide の置き場の図は削除）。③ 活動との繋がりは目安で、拘束しない。語は日本語（調べる・整理する・計画する・作る・確かめる）で、英語の分類名は固定しない。④ `tools/` と `tests/` の境目: 要求・検証項目に対応する検査（`env/` の確認スクリプトを含む）は `tests/`、作る・動かす補助は `tools/`。⑤ 古い記述を直した（`remote` の type、`env/` と `report.md` の欠落、完了の定義が `src/` 前提）。⑥ `docs/` だけの成果物の基準文書の形は、保留（実測が無い）。
+- 根拠: `dev-deliverable-guide.md` の63%は全 type 共通のスクリプトの規約だったが、「`type: dev` のときだけ読む」ことになっており、`inv` では読まれなかった。構成要素の表と置き場の図が `project-structure.md` と二重になっていた。
+- 却下案: 1 ファイルのまま。活動の英語名（Research など）を手順書に固定する案（添付の分類は暫定のモデルで、変わったときの直しが増える）。
+- 続き: type の考え方・方針（`dev` と `inv` が何を目指すか）の文書がまだ無い（ユーザーの指摘）。トピックの Next Actions に起票した。
+
 ### 【汎用】room の type を `dev` と `inv` の2つに集約した。線は成果物で引く（2026-10-24）
 
 - 決めたこと（ユーザー、2026-10-24。別セッションの「problem solving ＝ Project ＝ 部屋。活動は investigation と development に分かれる」の議論を踏まえた）: ① type は `dev`（作って保守する成果物。旧 `dev` `dev-env` `dev-test` `doc`）と `inv`（調べて結論を出す成果物。旧 `research`）の2つ。② 違いは作業の構造・特性で、`ai/out/<成果物名>/` のサブディレクトリの組み合わせに現れる（`dev` は `src/` `env/` `tests/` `tools/` `docs/` から必要なものを選ぶ。`inv` は `report.md`）。`env/` を新設し、旧 `dev-env` の `src/` から分ける。③ 線は活動でなく成果物で引く。曖昧なときは成果物の名前で決める（足りる。ユーザー）。調べてから作る流れは Project を分け、`report.md` を次の `ai/in/` に渡す。④ `room open --type` は `dev`（既定）と `inv` だけ受け付ける。既存の Project の旧値はそのまま（`room.py` は type を読まない）。⑤ `remote` の type は足さない（環境の置き場の質問で吸収。10-16 の判断と同じ向き）。⑥ このタイミングで、設定 `data:` の古い記述を `guides/` と `workflow-kit/room/README.md` から消した（廃止は 10-21）。
