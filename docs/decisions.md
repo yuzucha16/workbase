@@ -6,6 +6,7 @@
 
 ### 【汎用】人が叩くスクリプトの名前を工程で固定する: `run`（本番実行）・`verify`（動作確認）・`release`（リリース）（2026-10-24・仮決め）
 - 決めたこと（ユーザー、2026-10-24。叩き台の質問3点に「良いです」。順は run verify release）: ① 名前は `run` / `verify` / `release`（各 `.py` と起動用 `.bat`、成果物の `tools/`）。`finalize` は使わない（release と紛れるため）。② リリースの機械的な部分（版を振る・固める・記録）は、配布先が部屋の中なら AI が行い、人は「release OK」と判断を返す。③ 目視の合否は `verify` が y/n で聞いて結果ファイルに残す。
+- 追記（ユーザー、2026-10-24。PC1 の教訓「out は AI の成果物、artifacts はプロジェクトの成果物」。workbase に `artifacts` のルールはまだ無かった）: `ai/out/` は成果物をフラットに並べ、`release` がそれを Project 直下の `artifacts/` に束ねる。`artifacts/` は `ai/` の外なので部屋に写らず、`release` は人が叩く（先の「配布先が部屋の中なら AI が行う」は、この置き場では成り立たない。`verify` の後に人が `release OK` を言い、人が `release.bat` を叩く形になる）。`script-guide.md` と `project-structure.md` に反映済み（型のコードと `check_py.py` は未実装）。
 - 未了: `script-guide.md` の型（プリフライト、結果ファイル、`release` の止まる条件）と `check_py.py` への反映は未実装。結果ファイルは `room-windows-balance` の診断ログ案と合わせて決める。叩き台は project files の `notes/script-stages/2026-10-24-proposal.md`。
 
 ### 【汎用】部屋の `stock` は、行き先を `scope: public | area` で決める。Area の業務の知は `ai/out/knowledge/` へ（2026-10-24）
