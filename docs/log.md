@@ -29,7 +29,7 @@
 - room のコミットのトレーラー（2026-10-21）: `init` `open` `rename-area` `start` `readme` `close` のコミットに `Room-Op` / `Room-Rev` / `Room-Area` / `Room-Project` を付ける（`room/README.md`、決定は `decisions.md` の同日の項）。`Room-Rev` を基点に `git diff <Room-Rev>..HEAD -- workflow-kit/room` で、既存の Area / Project に対する room の変更を確認できる。`restore` / `pull` の版は未記録。実機での確認は未実施（単体テストのみ）。room の単体テストは PC1 でスキップを含む全件パス（10-21。短縮名の不一致を直し、`openssl` が無い環境では CA のテストをスキップ。`9a9c8d2`）。
 - room の並行 start（2026-10-21）: 同じ Area の Project を、同じ部屋に同時に `start` できる（既定。止まるのは自分の Project のマウントが残っているときだけ）。共有ファイル（`~/shared`、git のラッパー、信頼・許可の設定）は置き換え方式で更新する。単体テストのみ（全 105 件パス）。決定は `decisions.md` の同日の項、使い方の約束は `room/README.md`。
 - 計画のやり方（6R → 憲章 → 成果物 WBS → マイルストーン）: トピック `topics/planning-method/`（Project 型。状態は同 `docs/log.md`）。2026-10-20 に試験運用で `workflow-kit/` に取り込んだ（`start 計画`、`start-plan.md`）。次は PC1 の品質チェック3回。試行の元ファイルは Project の共有フォルダ `notes/planning-method/`（クラウド側の控え。PC 環境からは見えない）。測ったことは `topics/kit-growth/records/planning-method-record.md`。
-- room の type 集約（2026-10-24）: `dev` と `inv` の2つ（`room open --type`、既定 `dev`）。トピック `topics/room-type-consolidation/`（Project 型）。続きは `dev-deliverable-guide.md` の見直し。
+- room の type 集約（2026-10-24）: `dev` と `inv` の2つ（`room open --type`、既定 `dev`）。トピック `topics/room-type-consolidation/`（Project 型）。`dev-deliverable-guide.md` の不整合も修正済み（`script-guide.md` を分離）。続きは type の考え方・方針の文書。
 - 計画と部屋の紐付け（2026-10-21）: トピック `topics/plan-room-link/`（Project 型）。案 D（Project の README の雛形に固定の1行 `計画: ai/in/plan/`）で実装済み（`9b4db50`。実機は未確認）。計画一式（後追い。比較・分析用）は同 `records/`。残りは知識化・実機確認・閉じる判断（10-28）。状態は同 `docs/log.md`。
 
 ## Next Actions

@@ -2,7 +2,7 @@
 <#
 .SYNOPSIS
   Windows で実行するスクリプト（.ps1 と、それを呼ぶ起動用 .bat）を、実行せずに点検する。
-  dev-deliverable-guide.md の「Windows で実行するスクリプト」の規約のうち、機械的に確認できる項目を見る。
+  script-guide.md の「Windows で実行するスクリプト」の規約のうち、機械的に確認できる項目を見る。
   AI 作業部屋（Linux の pwsh 7）でも、Windows の pwsh 7 でも同じ結果になる。
 
 .PARAMETER Path
@@ -86,7 +86,7 @@ function Test-Launcher([IO.FileInfo]$file) {
     $targetPath = Join-Path $file.DirectoryName $target
     $exists = Test-Path -LiteralPath $targetPath
     Report $exists "起動用 bat の呼び先 $target が同じ場所にある"
-    if ($exists) {  # 束ねる ps1 は、-Log のときだけ ai/work/<名前>.log の 1 本にログを出す機能を持つ（既定は出さない。型は dev-deliverable-guide.md）
+    if ($exists) {  # 束ねる ps1 は、-Log のときだけ ai/work/<名前>.log の 1 本にログを出す機能を持つ（既定は出さない。型は script-guide.md）
       $body = [IO.File]::ReadAllText($targetPath)
       Report ($body -match 'Start-Transcript' -and $body -match 'Stop-Transcript' -and $body -match "'work'" -and $body -match '\[switch\]\$Log\b') "束ねる $target が -Log のときのログ出力の機能を持つ（[switch]`$Log、Start-Transcript と Stop-Transcript、'work'）" 'WARN'
     }

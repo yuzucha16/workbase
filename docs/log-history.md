@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-24（dev-deliverable-guide の見直し）
+- ユーザーの依頼で、type 集約後の `dev-deliverable-guide.md` の整合を見直した。不整合 7 件（題名と中身の不一致、構成要素の表の欠落と二重、基準文書の形の散在、完了の定義の `src/` 前提、`remote` の古い記述、`tools/` と `tests/` の境目）を、論点 1〜5 の提案どおりに直した。全 type 共通の部分を `script-guide.md` に分け、`project-structure.md` に `ai/` 直下と構成要素の「用途」と「主な活動（目安）」を足した。参照（`README.md`、`room-context.md`、`room.py` の案内文、`check_py.py`、`check-ps1.ps1`、`workflow-kit.md`）を直した。単体テスト 125 件 OK。決定は `decisions.md` の同日の項。
+
 ### 2026-10-24（room の type を `dev` と `inv` に集約）
 - ユーザーの依頼で、`dev` `dev-env` `dev-test` `doc` を1つにまとめ、`research` も含めて一般化する議論をした。`room.py` は type を読まず、違いは手順書だけだと確認し（`room.py` の `--type` と frontmatter への書き込みだけ）、type を `dev` と `inv` の2つにした（決定は `decisions.md` の同日の項）。`room.py`（選択肢と既定 `dev`）、`test_room.py`（旧値の拒否のテストを追加。125 件 OK）、`project-structure.md`（構成要素の表）、`dev-deliverable-guide.md`（`env/` と `tests/` が主の成果物）、`open-hook.md`、`start-hook.md`、`start-work-types.md`、雛形、`methods.md`、`research-method.md`、README の表を直した。`data:` の古い記述も `guides/` から消した。議論の記録はトピック `topics/room-type-consolidation/`。
 
