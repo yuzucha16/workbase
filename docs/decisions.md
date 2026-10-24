@@ -10,6 +10,7 @@
 - 根拠: `room.py` は type を frontmatter に書くだけで、分岐は無い。違いはすべて手順書にあり、基準文書の正の向き、立ち上げで聞くこと、固有の制約は、構成要素から導ける（調査だけが、成果物でなく調べ方の違いで、`start 調査` が持つ）。
 - 却下案: 段階案（まず `make`〔仮〕＋`research`、のちに type 廃止）。2 type で足りるとユーザーが判断した。`dev` を既定にしない案（省略時に失敗）。
 - 置き換えた決定: 2026-10-16「room の type に `dev-env` と `dev-test` を足した」。実装: `room.py`（`--type`）、テスト、`project-structure.md` ほか手順書。続き: `dev-deliverable-guide.md` の見直し（トピック `topics/room-type-consolidation/`）。
+- → inbox/2026-10-24-classify-by-deliverable
 
 ### 【汎用】Stop フックの記録（`sessions.jsonl`、`replies/`）は、部屋の中だけ Project の `ai/records/` に置く（2026-10-21）
 
