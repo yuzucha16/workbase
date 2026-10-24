@@ -143,7 +143,7 @@ Area を増やすと、部屋（ディストロ）とログインも増える。
 | スクリプト → AI | `ai/ctx/`（README と Area の README の写し）、`ai/in/`（マスク済みの入力）、`~/shared`（共有知の写し）、部屋の `AGENTS.md` |
 | AI → スクリプト | `ai/out/close.md`（`close` の判断）、`ai/out/readme-draft.md`（README の下書き）、`ai/out/stock/`（【汎用】の下書き）、`ai/docs/decisions.md` の【案件】ラベル（Area への転記） |
 
-- 名前の衝突を避ける。`open` `start` `close` は、`room` のコマンドと、AI が手順書を読んで実行する合言葉の両方にある。会話と文書では、`room` のコマンドは必ず `room` を前置し、AI の合言葉は日本語の別名（「作業を始めて」「終了処理して」）で呼ぶ
+- 名前の衝突を避ける。`start` は、`room` のコマンドと、AI が手順書を読んで実行する合言葉の両方にある（`open` `close` `init` の合言葉は 2026-10-24 までに廃止した）。会話と文書では、`room` のコマンドは必ず `room` を前置し、AI の合言葉は日本語の別名（「作業を始めて」「終了処理して」）で呼ぶ
 - 正本は、`room` が `workflow-kit/room/README.md`、合言葉が `workflow-kit/hooks.md`。部屋の中での読み替え（`docs/` → `ai/docs/`、分担）は `workflow-kit/room-context.md`
 
 ### 共有知（workbase）との行き来
