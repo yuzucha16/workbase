@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-25（実機なしでできる分: 盲検に近い再測定、論点 C、索引の自動生成の案）
+- ユーザーの依頼「MD-link-graph の続き、実機なしでできるアイテム」。Next Actions のうち、1（11-08 の引き当て率）と 6（完了の判断）は日付待ち、5 は方針どおり何もしない。実機（PC1/PC2）が要る項目は、このトピックには無い（dotfiles `42c7c6a` の push は dotfiles 側の作業）。
+- 2: `triggers` を読まずに依頼文 18 件（B01〜B18）を書き、本番の `find_knowledge.py --triggers` で引いた。上位 5 件 17/18、1 位 12/18。取りこぼし B07。S01〜S26 を依頼の文で引くと S16 が 6 位（`Zed` の 1 語で同点）。IDF の重みの試算は悪くなった。
+- 3・4: `mdgraph.py` で再計測（178 ファイル、未到達 6 = 入次数 0 の 6）。6 件の中身と案、`exmem-index.md` のずれ（67/67、title と違う行 9）を `records/c-and-index-proposal.md` にまとめた。どちらもユーザーの判断待ち。
+- 窓口の「いま」「次の一手」が本実装の前のままだったので直した。
+
 ### 2026-10-25（本実装: 言葉の索引、dotfiles のフック、review の定期チェック）
 - ユーザーが案 1（言葉の索引を検索スクリプトで引く）を選び、「stock ナレッジ」「integrate」にも索引が作られるか、既存は今・これからのナレッジはどこで索引化されるかをまとめて設計するよう依頼。設計案（`records/design-triggers.md`）を出し、3 点（表をコミットしない、`guides/explain/` を含める、`stock` で必須・`integrate` で合わせる）をユーザーが承認。
 - 実装（`b49b65e`）: `find_knowledge.py` に `--triggers` `--check-triggers` `--list-triggers`、`guides/explain/` 9 本と `exmem/inbox/` 3 本に付与、`check_inbox` に `triggers` の点検、`stock` `integrate` の手順書と見本、root `AGENTS.md` と `exmem/AGENTS.md`。人用の表は `stock 理解` の下書き（`exmem/inbox/2026-10-25-triggers-knowledge-index.md`、未追跡）にし、表自体は `--list-triggers` で毎回出す形にした。
