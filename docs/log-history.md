@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-25（md-link-graph の論点 C と索引の点検を実装）
+- ユーザーの決定（`decisions.md` の同日の項）を実装: `mdgraph.py` の定義変更と root `README.md` の窓口 2 件で未到達 0、`--check-index` を新設（`integrate` と `review` に配線）。取りこぼし 2 件は見送り。
+
 ### 2026-10-25（kit-growth: 実機なしで進めた分）
 - ユーザーの依頼「kit-growth の続き、実機なしでできるアイテム」。承認済みの決定に沿う整合の直しだけを行い、新しい判断はしていない。
 - `docs/log.md` を 5.2KB から 4.1KB に縮めた（整合の基準のギャップ 9。4KB 目安）。Next Actions 3・4 の詳細は `topics/hook-room-alignment/docs/log.md` に同じ内容があるので、指す形にした。room の状態の行と Open Questions の補足を短くした。縮める前の全文は `git show 7af0c6a:docs/log.md`。

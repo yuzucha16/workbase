@@ -8,8 +8,8 @@
 |---|---|
 | `exmem/` | AI が今後の参考にするナレッジ（external memory）。判断・原則・落とし穴の記録は `exmem/lessons/` |
 | `workflow-kit/` | 作業ディレクトリに導入する共通機能（`docs/` の運用と、合言葉で呼ぶフック。呼び出し表は `hooks.md`）の正本。AI 作業部屋の操作コマンドは `room/` |
-| `guides/` | 人（ユーザー）が手順や仕組みを思い出すための文書。`howto/`（手順書）、`explain/`（理解ガイド）、`quickref/`（クイックリファレンス）。入口は `guides/guides-index.md` |
-| `topics/` | 大きな取り組み（トピック）を、セッションと端末をまたいで進める置き場。一覧は `topics/topics-index.md`。反映が済んだトピックは `topics/AGENTS.md` の「トピックを終わらせるとき」に従って削除する |
+| `guides/` | 人（ユーザー）が手順や仕組みを思い出すための文書。`howto/`（手順書）、`explain/`（理解ガイド）、`quickref/`（クイックリファレンス）。入口は `guides/guides-index.md`、窓口は `guides/README.md` |
+| `topics/` | 大きな取り組み（トピック）を、セッションと端末をまたいで進める置き場。一覧は `topics/topics-index.md`、窓口は `topics/README.md`。反映が済んだトピックは `topics/AGENTS.md` の「トピックを終わらせるとき」に従って削除する |
 
 ## 入口
 

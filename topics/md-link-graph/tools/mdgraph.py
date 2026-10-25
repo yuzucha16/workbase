@@ -19,7 +19,15 @@ root = Path(a.root).resolve()
 out = Path(a.out) if a.out else HERE.parents[1] / "records" / "graph.html"
 
 SKIP = {".git", "node_modules", ".obsidian"}
-files = [p for p in root.rglob("*.md") if not (SKIP & set(p.relative_to(root).parts))]
+def is_unlinked_by_design(p):
+    """辿って読まれないファイル。雛形（templates/）と、`@AGENTS.md` だけの CLAUDE.md（Claude Code が自動で取り込む）。2026-10-25 ユーザーの決定。"""
+    r = p.relative_to(root).as_posix()
+    if "/templates/" in "/" + r:
+        return True
+    return p.name == "CLAUDE.md" and re.fullmatch(r"@\S+\.md\s*", p.read_text(encoding="utf-8", errors="replace")) is not None
+
+
+files = [p for p in root.rglob("*.md") if not (SKIP & set(p.relative_to(root).parts)) and not is_unlinked_by_design(p)]
 rel = {p: p.relative_to(root).as_posix() for p in files}
 by_rel = {r: p for p, r in rel.items()}
 by_name = collections.defaultdict(list)

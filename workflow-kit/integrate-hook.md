@@ -46,7 +46,7 @@
 6. 統合先の `lessons/` のノートの `Open Questions` / `Next Actions` を更新する（未完の項目の置き場）。
 7. 新しいファイルを作ったら `exmem-index.md` に1行足す。
 8. 統合したメモを inbox から削除する。削除の前に、上の「手順」の「メモと統合先の照合」を行う。
-9. 削除の後、`python <kit>/tools/find_knowledge.py --check-triggers` を実行する（`lessons/` と `guides/explain/` の全ノートに `triggers:` が1〜15語あるか）。FAIL は直してからコミットする。
+9. 削除の後、`python <kit>/tools/find_knowledge.py --check-triggers` を実行する（`lessons/` と `guides/explain/` の全ノートに `triggers:` が1〜15語あるか）と、`--check-index`（`exmem-index.md` の行と `lessons/` のノートが一致するか）を実行する。FAIL は直してからコミットする。
 
 ### `kind: explain` のメモ（理解ガイド）
 

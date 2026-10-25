@@ -14,6 +14,7 @@ exmem/lessons/ のファイル名、見出し（^#）、frontmatter の tags / a
   python find_knowledge.py --triggers "<依頼文>" [--top N]   依頼文に triggers: の語を含むノートを示す（表は持たず、毎回 frontmatter を読む）
   python find_knowledge.py --list-triggers                   全ノートの「語 → ノート」の表（人が見る用）
   python find_knowledge.py --check-triggers                  lessons と guides/explain の全ノートに triggers:（1〜15 語）があるか
+  python find_knowledge.py --check-index                      exmem-index.md の行と lessons/ のノートが一致するか（抜け・存在しない行・重複）
 """
 import argparse
 import re
@@ -170,6 +171,25 @@ def check_triggers(repo):
     return bad
 
 
+def check_index(repo):
+    """exmem-index.md の [[名前]] の行と exmem/lessons/ のノートが一致するか（抜け、存在しない行、重複）。説明文は手書きなので比べない。問題の数を返す。"""
+    index = repo / "exmem" / "exmem-index.md"
+    lessons = {f.stem for f in (repo / "exmem" / "lessons").glob("*.md")}
+    listed = re.findall(r"^- \[\[([^\]|#]+)", index.read_text(encoding="utf-8-sig"), re.M)
+    bad = 0
+    for name in sorted(lessons - set(listed)):
+        print(f"FAIL: 索引に無い: {name}")
+        bad += 1
+    for name in sorted(set(listed) - lessons):
+        print(f"FAIL: 索引にあるがノートが無い: {name}")
+        bad += 1
+    for name in sorted({n for n in listed if listed.count(n) > 1}):
+        print(f"FAIL: 索引に重複: {name}")
+        bad += 1
+    print(f"RESULT: index fail={bad}（索引 {len(listed)} 行 / lessons {len(lessons)} 本）")
+    return bad
+
+
 def main():
     ap = argparse.ArgumentParser(description="exmem/lessons/ を、キーワードで検索する")
     ap.add_argument("keyword", nargs="*")
@@ -178,11 +198,14 @@ def main():
     ap.add_argument("--lessons", help="lessons/ の場所（省略時は kit の隣の exmem/lessons）")
     ap.add_argument("--triggers", metavar="依頼文", help="依頼文の言葉から、triggers: が当たるノートを引く（lessons・guides/explain・未統合の inbox。--top の既定は 5）")
     ap.add_argument("--check-triggers", action="store_true", help="lessons と guides/explain の全ノートに triggers: があるか点検する")
+    ap.add_argument("--check-index", action="store_true", help="exmem-index.md の行と lessons/ のノートが一致するか点検する")
     ap.add_argument("--list-triggers", action="store_true", help="全ノートの triggers: を「語 → ノート」の表で出す（人が見る用。毎回ノートから作る）")
     args = ap.parse_args()
     repo = Path(__file__).resolve().parent.parent.parent
     if args.check_triggers:
         return check_triggers(repo)
+    if args.check_index:
+        return check_index(repo)
     if args.list_triggers:
         for label, f in trigger_files(repo):
             words = read_triggers(f)

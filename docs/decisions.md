@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【この件】参照構造の測り方から雛形と `@` だけの CLAUDE.md を除き、索引は生成せず点検を足す（2026-10-25）
+- 決めたこと（ユーザー、「3. 採用」「4. 推奨案を採用」「2. 見送ります」）: ① `mdgraph.py` は `templates/` 配下と、`@x.md` だけの `CLAUDE.md` を数えない。root `README.md` に `topics/README.md` と `guides/README.md` を書く（未到達 6→0）。② `exmem-index.md` は自動生成せず、`find_knowledge.py --check-index`（抜け・存在しない行・重複）を `integrate` の最後と `review` の入力 9 に足す。③ 取りこぼし 2 件（B07、S16）の語は足さない（対象のノートがそんなに重要ではない）。
+- 根拠: 雛形と shim は読まれる知識でなく、定義を変えるのが正確。索引は 67/67 で揃い、手書きの補足 9 行に価値がある。
+- 反映先: `topics/md-link-graph/`、`workflow-kit/tools/find_knowledge.py`、`integrate-hook.md`、`review-triggers-check.md`、`README.md`。
+
 ### 【汎用】`review` の入力 9 を、トピック `md-link-graph` の測り方と同じにする（2026-10-25）
 - 決めたこと（ユーザー、「コールグラフの分析、html の更新、再測定などは review フックに含まれていますか…このトピックの品質と同等を期待しています。ギャップがあれば修正して下さい」）: 入力 9 に、① `graph.html` を `records/` に作り直してコミットする、② 未到達と入次数 0 のファイル名を出す（`mdgraph.py`）、③ 場面の依頼の文を本番の `--triggers` で引いて順位を数える（新しい `mdrank.py`、列 `scene_top1` `scene_top5`）、④ ノートが増えたら `triggers:` を読まずに場面を足す、⑤ 記録にパスを書くと未到達が減って見える注意、を足した。
 - 根拠: 前は `graph.html` を一時ファイルに出し、件数だけで名前が出ず、場面は語の列（試作の表）でしか測らなかった。トピックでは依頼の文で測って S16・B07 の取りこぼしが見えた。
