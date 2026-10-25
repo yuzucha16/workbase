@@ -4,8 +4,8 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。最初の実利用�
 
 ## Next Actions
 
-- 【起票 10-25】`report.md` の置き場が手順書で食い違う（`room-context.md` は `ai/out/deliverable/`、`methods.md` は `ai/out/report.md`、`project-structure.md` は `ai/out/<成果物名>/`）。`restore` の戻し先とつなげて 1 つに決める（決定が要る）。
-- 【起票 10-25】`brief-hook.md` と `research-method.md` の問いのひな形（9 問）に、「単一の問いなら 結論 / 確認できなかった点 / 出典 でよい」を足す。
+- 【済 10-25】`report.md` の置き場: コードは `ai/out/deliverable/` だけ Area に、それ以外は `_noai/final/` に戻す。食い違いは `methods.md` の書き方だけだったので、`ai/out/<成果物名>/report.md` に直した。決定は要らなかった。
+- 【済 10-25】単一の問いの章立て（`brief-hook.md`、`research-method.md`）。
 - 【起票 10-25】`dev` の「テスト」の節に、文書と実装の食い違いを機械で検査する型（`sample_dev` の `tests/test_docs.py`）を足すか決める。
 - 【起票 10-25】`dev-deliverable-guide.md:78` の旧名（`dev-env` `dev-test`）の説明を、削るか残すか。
 - 【起票 10-25】`brief-work-types.md` の「文書作成」の項（`docs/` だけの `dev`）を、使わない見込みなので残すか見直す。
