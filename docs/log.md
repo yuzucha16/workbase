@@ -29,12 +29,12 @@
 4. 会議録のナレッジ化の残り: 指標（冒頭の行数の上限 10 行、人が直した箇所の数）のスクリプト。新規に作り直して試した分から数える（ユーザー、10-21）。
 5. フックと room の整合（`topics/hook-room-alignment/`）: `mkworks` の実機確認、旧名（`init` `open` `start`）の注記を消す、dotfiles の Claude 用スキルの入口。
 6. 人が叩くスクリプト: PC2 の Windows で `verify.bat` を 1 回実行して確かめる。未実装は `run.py` の型、ps1 版、原因の台帳、`release` の束ね先。
-7. 計画と部屋の紐付け（`topics/plan-room-link/`）: 知識化・実機確認・閉じる判断（10-28）。
-8. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
-9. 未 push: workbase、works、dotfiles（`review` の変更と整合の基準の移動、`UserPromptSubmit` フック）。
+7. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
+8. 未 push: workbase、works、dotfiles（`review` の変更と整合の基準の移動、`UserPromptSubmit` フック）。
 
 ## Open Questions
 
+- 相談の型(3段と締め。決定の項は `decisions.md` の 2026-10-21)の仮決めは、`plan-room-link` で4回使って閉じた。5回目で、残す・格上げする・やめるを決める。次に論点の多い相談をするときに数える。
 - 会議録の Area 側の保管場所と同期（Git か、PC ごとのローカルか）。
 - 【案件】の行き先: `para-operations` は Area の `docs/decisions.md`、実装は Area の `ai/docs/inbox.md`。現行はどちらか。
 - `repos/` の受け渡し（スナップショットと patch。未検証）: `dev` の `env/` の実使用の後に決める(`env/` だけの実測は 10-25 に済んだが、`repos/` の受け渡しは測っていない)。【保留 〜2026-11-05】

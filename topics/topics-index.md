@@ -17,7 +17,6 @@ updated: 2026-10-24
 | `kit-growth/` | Area（workflow-kit の育て方） | [[kit-growth-start-here]] | 0 |
 | `room-type-consolidation/` | Project（room の type を `dev` と `inv` に集約。type の考え方を記載済み。実測待ち） | [[room-type-consolidation-start-here]] | 0 |
 | `hook-room-alignment/` | Project（フックと `room` コマンドの整合。`init` `open` 廃止、`mkworks`、`brief` 改名は反映済み） | [[hook-room-alignment-start-here]] | 0 |
-| `plan-room-link/` | Project（計画と部屋の README の紐付け） | [[plan-room-link-start-here]] | 1 |
 | `md-link-graph/` | Project（Markdown の参照構造の可視化と、ルールの届きやすさの論点整理） | [[md-link-graph-start-here]] | 0 |
 
 型と書き方、終わらせ方の規則は `AGENTS.md`。
