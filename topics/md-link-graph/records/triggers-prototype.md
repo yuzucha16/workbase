@@ -60,7 +60,7 @@
 - fzf / キー割り当て / キーバインド / Ctrl+R / Ctrl+T / 履歴検索 / PSReadLine / zsh / bash / pwsh → `exmem/lessons/shell-fzf-keybindings.md`
 - .bat / バッチ / バッチファイル / chcp / cp932 / 文字化け / 日本語表示 / pause / ASCII / シェルスクリプト / WSL / 試験 → `exmem/lessons/shell-script-testing-wsl.md`
 - カーソル / 点滅 / DECSCUSR / Windows Terminal / cursor_blink / 視覚の負担 / 端末 → `exmem/lessons/terminal-cursor-blink.md`
-- ユーザー / 取扱説明書 / 口癖 / 思考パターン / 依頼の読み方 / 指示の癖 / 補正 / ee / 好み → `exmem/lessons/user-manual.md`
+- ユーザー / 取扱説明書 / 口癖 / 思考パターン / 依頼の読み方 / 指示の癖 / 補正 / ee / 好み / 決定 / 廃止 / 取り下げ / 決め直し / 見直しの条件 → `exmem/lessons/user-manual.md`
 - 思考の癖 / 悪影響 / 補正策 / ユーザーの傾向 / 認知 / 習慣 / 判断の癖 / 依頼文 → `exmem/lessons/user-thinking-habits.md`
 - VS Code / VSCode / 拡張機能 / extension / extensions.json / .vscode / Workspace / formatter → `exmem/lessons/vscode-workspace.md`
 - PowerShell / パイプ / here-string / 引数 / 文字化け / 改行コード / Set-Content / 一括置換 / エイリアス / git update-index / 実行権限 / symlink / バッチ / Format-Table → `exmem/lessons/windows-cli-pitfalls.md`
