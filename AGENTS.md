@@ -29,6 +29,10 @@
 
 - **既定の対象**: トピックの続きで作業したときは、そのトピックの `docs/`。トピックの外で作業したときは、このリポジトリ直下の `docs/`。`workflow-kit/` `exmem/` `guides/` などの kit 改善の記録も、このリポジトリ直下の `docs/`（2026-10-18 に `topics/kit-growth/docs/` から統合した）。`topics/kit-growth/` には、窓口、`inbox.md`、`records/` を置く。
 
+## review の記録先
+
+`review`（`workflow-kit/review-hook.md`）の記録 `reviews` は、このリポジトリ直下の `docs/metrics/reviews.csv`（列は先頭行。1回に1行を追記する。2026-10-25 ユーザーの決定）。飛ばした入力は `skipped` 列に書き、同じ入力を3回続けて飛ばしたら警告する。
+
 ## 共有の範囲
 
 - このリポジトリの内容は、すべて共有（Git 管理）する。機密、勤務先固有の情報、PC ごとのデータを入れない。このリポジトリは公開（PUBLIC。2026-10-16 に確認）なので、世界に読まれる前提で書く。

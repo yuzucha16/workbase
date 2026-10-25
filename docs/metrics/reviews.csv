@@ -1,0 +1,2 @@
+date,id,cases,load_chars,token_score,fixed,hit_rate,top1_rate,missed,unreachable,cycle_ratio,unreached,indeg0,skipped,note
+2026-10-25,R-2026-10-25,0,n/a,n/a,review-hook の入力 9 を review-triggers-check.md に移す,4/42,3/14,84,1/26,88%,14,9,"4(重い会話は道具なし→heavy_sessions.py を作成);7;8","初回の記録。引当率はフック導入が 10-25 のため母数が少ない"
