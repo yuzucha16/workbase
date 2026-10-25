@@ -21,6 +21,7 @@
 - 追記（ユーザー、2026-10-24。PC1 の教訓「out は AI の成果物、artifacts はプロジェクトの成果物」。workbase に `artifacts` のルールはまだ無かった）: `ai/out/` は成果物をフラットに並べ、`release` がそれを Project 直下の `artifacts/` に束ねる。`artifacts/` は `ai/` の外なので部屋に写らず、`release` は人が叩く（先の「配布先が部屋の中なら AI が行う」は、この置き場では成り立たない。`verify` の後に人が `release OK` を言い、人が `release.bat` を叩く形になる）。`script-guide.md` と `project-structure.md` に反映済み（型のコードと `check_py.py` は未実装）。
 - 取り下げ（ユーザー、2026-10-24。「artifacts は AI の成果物という定義に戻す」「手数を増やすと面倒だから応用が利くシンプルな形に」）: 上の `artifacts/` を Project 直下に置く案と、それに伴う「`release` は人が叩く」は取り下げ。`project-structure.md` の行も削除。見込み: Project の成果物 = `ai/out/`（復元後は `_noai/final/`）+ 人の成果物（どちらも無い場合がある）。置き場と `release` の入出力は設計して決める（未決）。
 - 決めたこと（ユーザー、2026-10-25。「すべて ai を通して成果物にした方がパイプラインは綺麗」「私の修正はマスクに関係ないところに絞って直接 ai/out にする。マスク周りには触らない」）: ① 成果物の経路は `ai/out/` 1本。人の成果物を別の置き場（`_noai/user/` など）から混ぜる形にはしない（取り下げ。人が仕上げる案は、不安定になるため見送り）。② 人が `ai/out/` を直接直すのは、マスクに関係しない箇所だけ（プレースホルダーと実名に触らない）。`_noai/final/` は派生物で、人は編集しない。③ `release` の入力は、マスクした Project は復元後の `_noai/final/`、していなければ `ai/out/`。束ね先は未決のまま。
+- 決めたこと（ユーザー、2026-10-25。「日付と連番の組み合わせは可能？workflow-kit がすでにそのルールのはず。合わせてほしい」）: `release` の版は `YYYY-MM-DD.N`（N はその日の連番、1 から）。kit がかつて使った版の書式（2026-10-08 に廃止）と、施策 ID の `R-<日付>-<連番>` に合わせた。
 - 未了: `script-guide.md` の型（プリフライト、結果ファイル、`release` の止まる条件）と `check_py.py` への反映は未実装。結果ファイルは `room-windows-balance` の診断ログ案と合わせて決める。叩き台は project files の `notes/script-stages/2026-10-24-proposal.md`。
 
 ### 【汎用】部屋の `stock` は、行き先を `scope: public | area` で決める。Area の業務の知は `ai/out/knowledge/` へ（2026-10-24）
