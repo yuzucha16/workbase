@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-25（planning-method の続き: review 消化と、トピックを閉じる）
+- `review 消化` で、品質チェック2・3回目を「実施済み・記録なし」、2週・4週の上限を「確認できず」として閉じた。stock-modes のフィードバック8件をユーザーが承認し、`workflow-kit/brief-plan.md` に反映した。実行後の所見の置き場（節「実行後の所見の置き場」）も足した。決定は `decisions.md` の同日の項。
+- 知識の反映: `exmem/lessons/planning-method.md`（Open Questions と Next Actions）、記録は `planning-method-record.md`、索引・窓口のリンクを直した。試験運用か正式化かは Open Questions に置いた。
+- トピック `topics/planning-method/` を `topics/AGENTS.md` の手順で削除した（履歴は git。トピックの最終状態は削除前のコミット）。
+
 ### 2026-10-25（作業の言葉の索引の本実装。md-link-graph の続き）
 - ユーザーが案 1 を選び、`stock` `integrate` を含む索引化の設計を依頼。承認（表をコミットしない、`guides/explain/` を含める、`stock` 必須・`integrate` で合わせる）を得て実装した（`b49b65e`。詳細は `topics/md-link-graph/docs/log-history.md` の同日の項）。
 - kit の変更: `find_knowledge.py`（`--triggers` `--check-triggers` `--list-triggers`）、`triggers_hook.py`（`80f15e5`）、`triggers_stats.py` と `review-hook.md` の入力 9（`4e1250d`）、`stock-hook.md` `stock-explain.md` `integrate-hook.md`、点検（`check_inbox.py` `check-inbox.ps1`）、見本、`exmem/inbox/README.md`、root `AGENTS.md` `exmem/AGENTS.md`。dotfiles `42c7c6a` が配線。
