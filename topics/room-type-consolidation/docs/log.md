@@ -1,12 +1,18 @@
 # 作業ログ（log）
 
-type 集約（`dev` と `inv`）と、`dev-deliverable-guide.md` の不整合の修正は済み（2026-10-24）。type の考え方も `project-structure.md` の冒頭に記載済み（2026-10-24）。残りは実測待ち。経緯は `docs/log-history.md`、根拠は `docs/decisions.md`。
+type 集約（`dev` と `inv`）は済み（2026-10-24）。最初の実利用（`sample_dev` と `sample_inv`）の観察を受け、手順書を直した（2026-10-25）。経緯は `docs/log-history.md`、根拠は `docs/decisions.md`。
 
 ## Next Actions
 
-- 【起票 10-24】`docs/` だけの `dev` 成果物と `inv` の基準文書の形（`project-structure.md` の「未決」。旧 `open-hook.md` の未決を 2026-10-24 に移した）。最初の利用の後。
+- 【起票 10-25】`report.md` の置き場が手順書で食い違う（`room-context.md` は `ai/out/deliverable/`、`methods.md` は `ai/out/report.md`、`project-structure.md` は `ai/out/<成果物名>/`）。`restore` の戻し先とつなげて 1 つに決める（決定が要る）。
+- 【起票 10-25】`brief-hook.md` と `research-method.md` の問いのひな形（9 問）に、「単一の問いなら 結論 / 確認できなかった点 / 出典 でよい」を足す。
+- 【起票 10-25】`dev` の「テスト」の節に、文書と実装の食い違いを機械で検査する型（`sample_dev` の `tests/test_docs.py`）を足すか決める。
+- 【起票 10-25】`dev-deliverable-guide.md:78` の旧名（`dev-env` `dev-test`）の説明を、削るか残すか。
+- 【起票 10-25】`brief-work-types.md` の「文書作成」の項（`docs/` だけの `dev`）を、使わない見込みなので残すか見直す。
 
 ## Open Questions
 
-- `inv` と、`dev` の構成要素（`env/`、`tests/` だけ）の実測が無い。最初の利用の後に見直す。
+- `env/` だけ、`tests/` だけの成果物の実測が無い。最初に使うときに測る。
+- 成果物の形を AI が決める場面（依頼で指定が無いとき）は、まだ起きていない。
+- `inv` の基準文書は仮決め（問い＋完了条件の 1 行）。複数の問いの調査で見直す。
 - 既存の Project の README の旧 type 値（`doc` `dev-env` など）は、そのまま。読むコードが無いので影響なし。

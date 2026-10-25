@@ -670,6 +670,14 @@ class OpenTest(unittest.TestCase):
             self.assertIn("projects/proj-a/ai/in/.gitkeep", tracked)
             self.assertNotIn("_noai", tracked)
 
+    def test_open_puts_docs_templates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            d = v / "projects" / "proj-a" / "ai" / "docs"
+            self.assertEqual(sorted(f.name for f in d.iterdir()), ["decisions.md", "log-history.md", "log.md"])
+            tracked = subprocess.run(["git", "-C", str(v), "ls-files"], capture_output=True, text=True, encoding="utf-8").stdout
+            self.assertIn("projects/proj-a/ai/docs/log.md", tracked)
+
     def test_open_readme_has_plan_pointer_that_is_not_a_placeholder(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c = opened(tmp)

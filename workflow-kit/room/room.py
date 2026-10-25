@@ -516,6 +516,34 @@ updated: {today}
 - <未決の事項>
 """
 
+# Project の作業記録の雛形（2026-10-25: 部屋の最初の実利用で `ai/docs/` が空だったため、open が置く）。部屋の AI は開始時に log.md を読む
+DOCS_TEMPLATES = {
+    "log.md": """# 作業ログ（log）
+
+<この Project の現在状態と次にやること。判断の根拠は `decisions.md`、経緯は `log-history.md`。作業の終わりに更新する。>
+
+## Next Actions
+
+-
+
+## Open Questions
+
+-
+""",
+    "decisions.md": """# 判断の記録（decisions）
+
+<なぜそうしたか、却下案、実機で確認した事実。ユーザーが承認した決定だけを書く。>
+
+## Decisions
+
+-
+""",
+    "log-history.md": """# 経緯（log-history）
+
+<作業の経緯を、新しい順に1項目ずつ。現在状態は `log.md`。>
+""",
+}
+
 
 def section_bounds(lines, heading):
     start = next((i for i, l in enumerate(lines) if l.strip() == heading), None)
@@ -583,6 +611,8 @@ def cmd_open(ctx, a):
     (p.dir / "_noai" / "mask.toml").write_text(MASK_TOML_TEMPLATE, encoding="utf-8", newline="\n")
     for d in AI_KEEP:
         (p.dir / d / ".gitkeep").write_text("", encoding="utf-8")
+    for fname, text in DOCS_TEMPLATES.items():
+        (p.dir / "ai" / "docs" / fname).write_text(text, encoding="utf-8", newline="\n")
     p.readme.write_text(README_TEMPLATE.format(area=a.area, type=a.type, today=ctx.today(), name=a.name),
                         encoding="utf-8", newline="\n")
     entry = f"- [[projects/{a.name}/README|{a.name}]]（{ctx.today()} 開始）"

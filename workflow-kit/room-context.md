@@ -15,7 +15,7 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 ## 部屋の中の読み替え
 
 - 起動する場所は `/mnt/room/<名>`（Project の `ai/`）に固定される。開始時に読むのは `~/shared/ROOM.md` → `ai/ctx/README.md`（Project の窓口の写し）→ `ai/ctx/area-README.md`（所属する Area の README の写し。Area の共通ルール）→ `ai/docs/log.md`。
-- 手順書の `docs/` は、部屋では `ai/docs/`（Project の記録）。Project と Area の `README.md` は書き込めない。写し（`ai/ctx/README.md`、`ai/ctx/area-README.md`）を読む。
+- 手順書の `ai/X`（`ai/docs/` `ai/out/` など）は、部屋では `/mnt/room/<名>/X`（`ai/` そのものがマウント点で、`ai/` という名前のディレクトリは無い。cwd が `/mnt/room/<名>` のときは cwd 直下の `X`）。手順書の `docs/` は、部屋では `/mnt/room/<名>/docs/`（Project の記録。`log.md` `decisions.md` `log-history.md` の 3 つを `room open` が置く）。Project と Area の `README.md` は書き込めない。写し（`ai/ctx/README.md`、`ai/ctx/area-README.md`）を読む。
 - 手順書は `~/shared/workflow-kit/` にある（読み取り専用の写し。基準コミットは `~/shared/ROOM.md`）。
 - 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、works へのコミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する（部屋の git へのコミットは別で、AI が行う。下）。
 - スクリプトや変換を作るときは、言語をユーザーに聞かず、優先順位 Python → ps1 → bat で決める（`script-guide.md` の「言語の選び方」）。あわせて同じ文書の「実行の方針」に従う（部屋で完結できるなら、すべて部屋で実行する。Excel・COM などの Windows 依存部は、できるだけ小さな層にして、人の手数を 1 コマンドに減らす。2026-10-21）。人が Windows で実行する薄い層は、Python が既定（2026-10-21）。同じ文書の「Windows で実行するスクリプト」に従う（束ねる役も同じ言語、bat は起動用の 3 行だけ。作った直後に、Python なら `python3 ~/shared/workflow-kit/tools/check_py.py`、ps1 なら部屋の pwsh 7 で `~/shared/workflow-kit/tools/check-ps1.ps1` を実行する）。ps1 は、実行先に Python が無いときなどの例外。
@@ -36,7 +36,7 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入の `<…>` がある）なら、`brief` の最初に、人に断ってから下書きする。旧 `open` フックの手順 4〜5 を移した（2026-10-24）。名前・Area・type は `room open` の引数で決まっているので、聞かない（判断基準は `project-structure.md` の「Project を立てる前の判断基準」）。
 
 1. **聞く**（選択式。答えが1つに定まるものは宣言する）: 主題（言語や方式など）、完了条件の種類、見直し日。`dev` の Project は、`brief-work-types.md` の「開発」の項目を、**実装の前に**ここで聞く。
-2. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文だけ（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`。frontmatter を含めない）。完了条件は、AI が具体案（成果物）を出し、ユーザーが承認してから書く。承認の前に「ユーザー承認: 日付」を書かない。既に `readme-draft.md` があれば、読んでから更新する。
+2. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文だけ（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`。frontmatter を含めない）。完了条件は、AI が具体案（成果物）を出し、ユーザーが承認してから書く（ユーザーが完了条件を自分で書いて渡したときは、その文を案として扱い、承認の言葉を得てから「ユーザー承認」を書く）。承認の前に「ユーザー承認: 日付」を書かない。既に `readme-draft.md` があれば、読んでから更新する。
 3. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
 4. **報告する**: 下書きのパス、type、完了条件、見直し日と、人が `room readme <名>` で反映すること（Project と Area の `README.md` は書き込めない）。コミットはしない。
 
