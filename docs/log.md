@@ -32,6 +32,7 @@
 - 部屋の Stop フックの記録（2026-10-25）: 実機で確認済み。記録先が `ai/ai/records/` と二重になる誤りを直した（`0e7c591`。マウント先が Project の `ai/` のため）。既存の `ai/ai/records/` は手で移す。
 - Markdown の参照構造の可視化（2026-10-25）: トピック `topics/md-link-graph/`（Project 型）。`python -I topics/md-link-graph/tools/mdgraph.py` で `records/graph.html` を作り直せる。次は論点の整理（状態は同 `docs/log.md`）。
 - 計画と部屋の紐付け（2026-10-21）: トピック `topics/plan-room-link/`（Project 型）。案 D（Project の README の雛形に固定の1行 `計画: ai/in/plan/`）で実装済み（`9b4db50`。実機は未確認）。計画一式（後追い。比較・分析用）は同 `records/`。残りは知識化・実機確認・閉じる判断（10-28）。状態は同 `docs/log.md`。
+- 人が叩くスクリプトの名前（2026-10-25）: 工程で `run` / `verify` / `release` に固定（`script-guide.md`）。`verify.py` は毎回 `ai/work/verify-result.json` を出し（診断ログ。全文ログは `--log` のまま）、`release.py` は結果が OK で成果物が同じときだけ、版 `YYYY-MM-DD.N` を `release.json` に記録する。成果物の経路は `ai/out/` 1本（`artifacts/` の案は取り下げ）。`check_py.py` が名前と結果ファイルを点検する。Linux で確認、Windows は未確認。決定は `decisions.md` の 2026-10-24〜25 の項（`5e7659f`）。叩き台は Project の共有フォルダ `notes/script-stages/`。
 
 ## Next Actions
 
@@ -40,6 +41,7 @@
 
 12. 会議録のナレッジ化（`topics/private-knowledge/` は 2026-10-21 に閉じた。決定は `decisions.md` の同日の項）の残り: 指標（冒頭の行数の上限 10 行〔10-25 に正式化〕、人が直した箇所の数）は、スクリプトで数える（実名を読まず、出力は数字だけ）。数える対象は、新規に会議録を作り直して試した分から（ユーザー、10-21。既存の分は数えない）。スクリプトは、試した後で対象の Area を聞いて書く。
 19. 【起票 10-24】フックと room の整合（`topics/hook-room-alignment/`。状態は同 `docs/log.md`）: `mkworks` の実機確認、旧名（`init` `open` `start`）の読み替えと注記を、新しい仕様が回りだしたら消す（ユーザーの決定）、dotfiles の Claude 用スキルの入口。残りのフックと room の整合は反映済み（2026-10-24。`wrap` のコミットは AI が行い、部屋では指示なしで部屋の git にコミットする）。
+20. 【起票 10-25】人が叩くスクリプト（`script-guide.md`）の続き: PC2 の Windows で `verify.bat` を 1 回実行して確かめる（uv の取得、文字コード、y/n の入力）。未実装は `run.py` の型、ps1 版、原因の台帳（`room-windows-balance` の仮決め待ち）、`release` の束ね先（未決）。
 
 ## Open Questions
 
