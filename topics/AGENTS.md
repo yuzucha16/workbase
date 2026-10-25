@@ -8,7 +8,8 @@
 
 ## 書くとき
 
-- 窓口は `workflow-kit/templates/topic/start-here.template.md` から作る。- 状態は `docs/log.md` だけに置く（窓口には「いま」の1行だけ。ほかに写さない）。予算: 窓口 2KB、`log.md` 4KB。
+- 窓口は `workflow-kit/templates/topic/start-here.template.md` から作る。
+- 状態は `docs/log.md` だけに置く（窓口には「いま」の1行だけ。ほかに写さない）。予算: 窓口 2KB、`log.md` 4KB。
 - 例外: `kit-growth/`（Area 型）は `docs/` を持たない。kit の改善の状態・決定・経緯は workbase 直下の `docs/` に置く（2026-10-18。窓口と docs の置き場は別の論点）。
 - Claude Projects の共有フォルダは議論の下書きの置き場。確定したらトピックへ移す。
 - 決定は `docs/decisions.md`（ユーザーの発言を根拠に）。経緯は `docs/log-history.md`。
