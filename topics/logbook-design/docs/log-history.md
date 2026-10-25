@@ -8,3 +8,4 @@
 - ユーザーが案 A を `logbook/` で仮決めし、ほかにも漏れがあるはずと依頼。AI が `exmem/lessons/` 69 件を仕分けた（`records/2026-10-26-exmem-leaks.md`。title・節の構成・「時点」の数からの推測で、全文は読んでいない）。
 - ユーザーが 3 型を定義（個人の好み・1 回きりを除く）。AI は ② を logbook に移さず lessons に残す案へ練り直し（`records/2026-10-26-recommendation-v2.md`）、承認された。
 - 第1陣 5 ファイルの本文確認（`records/2026-10-26-wave1-review.md`）。節が単位であること、古い ③ が残っていること、`ai-work-metrics` と `claude-code-storage` の重複、公開範囲の確認事項を見つけた。
+- 第1陣の仕分けを 3 段チェックに載せる前に、ユーザーが `wrap` を指示。辿れるかの確認（引当率）は別セッションに分けると決めた。記録は `topics/logbook-design/` に残し、`9f7a22b` で push 済み。

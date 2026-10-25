@@ -16,10 +16,11 @@
 2. `ai-work-metrics` の Next Actions（10-06〜07 時点）が現役か、ユーザーに確認する。
 3. 第2陣の本文確認。節ごとに型（②並／②一／③）を付け、wave2 の記録を `records/` に足す。
 4. 最小の `logbook/` の型を決める: 節（いま／明細）、frontmatter（`review_by` `budget`）、スクリーニング（`find_knowledge.py` に `--check-aging` 相当を足すか。日数は暫定 60）、`triggers` 索引の対象にするか。実装は承認の後。
-5. 試行: 2026-11-29 の月次の振り返りで、週次の記録（`kit-growth/records/`）を 1 回手で畳んでみる（置き場は変えない）。
+5. 別セッションで、`logbook/` に上位の md（`AGENTS.md` `README.md` `exmem/` の索引など）から辿れるかを確かめる（引当率、`topics/md-link-graph/` の道具。`find_knowledge.py --triggers` の対象にするかも同時に決める）。実装の後。
+6. 試行: 2026-11-29 の月次の振り返りで、週次の記録（`kit-growth/records/`）を 1 回手で畳んでみる（置き場は変えない）。
 
 ## Open Questions
 
-- `logbook/` を `find_knowledge.py --triggers` の対象にするか（短命の内容が引き当てを汚す一方、取扱説明書の観測は引きたい）。
+- `logbook/` を `find_knowledge.py --triggers` の対象にするか、上位の md から辿れるか（短命の内容が引き当てを汚す一方、取扱説明書の観測は引きたい）。別セッションで引当率を測って決める（Next Actions 5）。
 - 公開範囲: `user-thinking-habits` の追補は「癖の評価は公開側に置かない」と書きつつ癖の表を載せている。降格のときに合わせて確認する。
 - 素材の節の扱い: lesson に残して印を付ける案（推奨）でよいか。
