@@ -1,6 +1,6 @@
 # 作業ログ（log）
 
-`workbase`（共有ナレッジと共通機能）全体の現在状態と次にやること。トピックの中身は各トピックの `docs/`。作業の終わりに更新し、経緯は `docs/log-history.md` の `## Log` の先頭に足す。判断の根拠は `docs/decisions.md`。2026-10-25 に 18KB から縮めた（縮める前の全文は `log-history.md` の同日の項）。
+`workbase`（共有ナレッジと共通機能）全体の現在状態と次にやること。トピックの中身は各トピックの `docs/`。作業の終わりに更新し、経緯は `docs/log-history.md` の `## Log` の先頭に足す。判断の根拠は `docs/decisions.md`。
 
 ## 期日（今日以前、または3日以内の項目は、最初の返答で知らせて判断を求める。書式は `workflow-kit/docs-rules.md`）
 
@@ -15,25 +15,25 @@
 
 ## 状態
 
-- 経路は整備済み: 受け皿 = トピック、入力 = `inbox.md`、見直し = `review`（記録は `docs/metrics/reviews.csv`、基準は `docs/alignment-baseline.md`）。フックの権限は `hooks.md` の「領域とフックの権限」が正本。仕組みの決定は `review 消化` の3段で承認する。仮決めは `【仮 〜日付】`。
-- やり方は `methods.md`。計画のやり方（`brief 計画`）は試験運用中（Open Questions）。
-- room（`workflow-kit/room/`）: 実機の通しは済み。type は `dev` と `inv`。`mkworks`、並行 start、Area を跨ぐ共有知、部屋の git とトレーラーは、単体テストまで（実機は一部未確認）。使い方は `room/README.md`、経緯は `log-history.md` の 2026-10-18〜25 の項。
-- 人が叩くスクリプトの名前は `run` / `verify` / `release`（`script-guide.md`）。Linux で確認、Windows は未確認。
-- 索引（triggers）: `exmem/lessons/` に `triggers:` を付け、dotfiles の `UserPromptSubmit` フックが依頼ごとに出す。参照構造は `topics/md-link-graph/`。
+- 経路は整備済み: 受け皿 = トピック、入力 = `inbox.md`、見直し = `review`（記録は `docs/metrics/reviews.csv`、基準は `docs/alignment-baseline.md`）。フックの権限は `hooks.md` の「領域とフックの権限」。仕組みの決定は `review 消化` の3段で承認する。仮決めは `【仮 〜日付】`。
+- やり方は `methods.md`。計画のやり方（`brief 計画`）は試験運用中。
+- room（`workflow-kit/room/`）: type は `dev` と `inv`。実機の通しは済み、`mkworks` などの新しい機能は単体テストまで（`room/README.md`）。
+- 人が叩くスクリプトは `run` / `verify` / `release`（`script-guide.md`）。Linux で確認、Windows は未確認。
+- 索引（triggers）: `exmem/lessons/` などの `triggers:` を、dotfiles のフックが依頼ごとに出す（`topics/md-link-graph/`）。
 
 ## Next Actions
 
-1. 振り返り（改善4・5）: 材料と施策は `topics/kit-growth/records/` と `decisions.md`（2026-10-25 の項）。次は週次 11-01、月次 11-29。
-2. 整合の基準のギャップ 8（公開リポジトリの履歴にユーザー名入りのパス）: workbase は 10-25 に書き換えて force push した。works（26 コミット）と dotfiles（5 コミット）が残る。他の PC の clone は `git fetch origin && git reset origin/main` で合わせる。
-3. フックと room の整合（`topics/hook-room-alignment/`）: `mkworks` の実機確認（`room mksub` で `works_sub<N>` を作って試す。10-25 に実装、単体テスト済み。実機は未実施）、旧名（`init` `open` `start`）の注記を消す、dotfiles の Claude 用スキルの入口。
-4. 人が叩くスクリプト: PC2 の Windows で `verify.bat` を 1 回実行して確かめる。`run.py` の型と ps1 版（`verify.ps1` `release.ps1`）は 10-25 に足した（Linux で確認）。PC2 では `verify.ps1` も 1 回（日本語のひとことの入力を含めて）。原因の台帳も 10-25 に足した（`script-guide.md` の節。最初の失敗で使う）。未決は `release` の束ね先。
+1. 振り返り（改善4・5）: 材料は `topics/kit-growth/records/` と `decisions.md`（2026-10-25）。次は週次 11-01、月次 11-29。
+2. 整合の基準のギャップ 8: works（26 コミット）と dotfiles（5 コミット）の履歴にユーザー名入りのパスが残る（`docs/alignment-baseline.md`）。他の PC の clone は `git fetch origin && git reset origin/main` で合わせる。
+3. フックと room の整合: `mkworks` の実機確認、旧名の注記の削除、dotfiles のスキルの入口（`topics/hook-room-alignment/docs/log.md`）。
+4. 人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（同上）。未決は `release` の束ね先。
 5. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
 
 ## Open Questions
 
-- 相談の型(3段と締め。決定の項は `decisions.md` の 2026-10-21)の仮決めは、`plan-room-link` で4回使って閉じた。5回目で、残す・格上げする・やめるを決める。次に論点の多い相談をするときに数える。
+- 相談の型（3段と締め。`decisions.md` の 2026-10-21）: 4回使った。5回目で、残す・格上げする・やめるを決める。
 - 会議録の Area 側の保管場所と同期（Git か、PC ごとのローカルか）。
 - 【案件】の行き先: `para-operations` は Area の `docs/decisions.md`、実装は Area の `ai/docs/inbox.md`。現行はどちらか。
-- `repos/` の受け渡し（スナップショットと patch。未検証）: `dev` の `env/` の実使用の後に決める(`env/` だけの実測は 10-25 に済んだが、`repos/` の受け渡しは測っていない)。【保留 〜2026-11-05】
-- 計画のやり方（`brief 計画`）は、実務で3回使うまで試験運用（2026-10-25 ユーザーの決定、`decisions.md`）。3回目の所見で、正式化・直す・やめるを決める。使った回数: 0。
-- `restore_project` が `_noai/final/` の人の変更を上書きする件: 正本の宣言と上書き前の警告を、次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】
+- `repos/` の受け渡し（スナップショットと patch。未検証）: `dev` の `env/` の実使用の後に決める。【保留 〜2026-11-05】
+- 計画のやり方（`brief 計画`）は、実務で3回使うまで試験運用（`decisions.md` の 2026-10-25）。使った回数: 0。
+- `restore_project` が `_noai/final/` の人の変更を上書きする件: 次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】

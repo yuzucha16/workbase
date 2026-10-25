@@ -40,10 +40,10 @@
 - 今の役目: 週次・月次を日曜に固定して続けること。v7 の効果を見てから、規模を縮めるかを決める。見直しの条件: v7 の検証（11-01 の週次）の後、11-09 に仮決め3件（字数の数え方、v6、v7）をまとめて判断する。v7 は期限 11-01 のまま。
 - 反映先: `exmem/lessons/retrospective-method.md`（周期の表、仮決めの期限）、`docs/log.md`（期日）、`user-manual.md`（triggers）。月次の記録は `topics/kit-growth/records/retrospective-monthly-record.md`。
 
-### 【汎用】振り返り（改善4）v7: 文中の丸かっこを禁止し、箇条書きは1階層3つ・2階層まで、施策 R-2026-10-26-01 を却下（2026-10-25）【仮 〜2026-11-02】
+### 【汎用】振り返り（改善4）v7: 文中の丸かっこを禁止し、箇条書きは1階層3つ・2階層まで、施策 R-2026-10-26-01 を却下（2026-10-25）【仮 〜2026-11-01】
 - 決めたこと（ユーザー）: ① R-2026-10-26-01（週次で `log.md` のバイト数を数える補正案）は却下。② v7: 文中の丸かっこは禁止、文末の丸かっこは許す。箇条書きは1階層に3つまで、深さは2階層まで、1章を最大6観点に収める。表は今の方針のまま。
 - 根拠: ユーザーの発言（「かっこが多くて読むリズムが崩れる」「文章を構造で表現してほしい」。適用後に「相当改善された。わかりやすくなった」）。
-- 反映先: `exmem/lessons/retrospective-method.md` の Decisions。今週の記録は v7 で書き直し済み。検証: 11-02 の週次で、文中の丸かっこ 0 件、箇条書きが上限内か。
+- 反映先: `exmem/lessons/retrospective-method.md` の Decisions。今週の記録は v7 で書き直し済み。検証: 11-01 の週次で、文中の丸かっこ 0 件、箇条書きが上限内か（期限は、同日の周期の変更〔日曜の7日〕に合わせて 11-02 から 11-01 にした。`retrospective-method.md` と同じ）。
 
 ### 【汎用】計画のやり方（`brief 計画`）: 品質チェック3回を閉じ、フィードバック8件を反映し、トピック `planning-method` を閉じる（2026-10-25）
 - 決めたこと（ユーザー）: ① 品質チェック2・3回目（PC1 で2週間・4週間の題材）は「実施済み・記録なし（PC2 に持って来られず）」として閉じる。② 2週・4週の上限（5・9）の検証は「確認できず」として閉じる。③ stock-modes のフィードバック8件（憲章の欄の削減、PM の葉は実際に作るものだけ、対のファイルは1葉、洗い出しは参照と振る舞いの2軸、6R に既存の制約と共有物、マイルストーンに確認する物と日付の置き方、設計からの差分、置き場は1か所）を承認し、`brief-plan.md` に反映する。④ 実行後の所見の置き場（一言は `topics/kit-growth/inbox.md`、詳しくは題材のトピックの `records/`、測ったことは `planning-method-record.md`、規則案は Open Questions）を `brief-plan.md` に足す。⑤ トピックを閉じる。
@@ -71,7 +71,7 @@
 - 決めたこと（ユーザー、2026-10-25。「日付と連番の組み合わせは可能？workflow-kit がすでにそのルールのはず。合わせてほしい」）: `release` の版は `YYYY-MM-DD.N`（N はその日の連番、1 から）。kit がかつて使った版の書式（2026-10-08 に廃止）と、施策 ID の `R-<日付>-<連番>` に合わせた。
 - 決めたこと（ユーザー、2026-10-25。「承認します。進めて」）: 毎回 `ai/work/verify-result.json` を出す（診断ログ）。2026-10-21 の「既定ではログを出さない」は、全文ログ（`--log`）に限る。`script-guide.md` に `verify.py` と `release.py` の型を載せ（Linux の Python 3.13 で動作確認。Windows は未確認）、`check_py.py` に名前と結果ファイルの点検（WARN）を足した。原因の台帳、`run.py`、ps1 版は未実装。
 - 実装（2026-10-25、上の仮決めと承認の範囲。新しい判断は無し）: `script-guide.md` に `run.py` の型（結果ファイル `ai/work/run-result.json` を毎回、全文ログは `--log` のとき Project の `_noai/user/`。入力の名前と業務の値は結果ファイルに入れない）と、ps1 版の `verify.ps1` `release.ps1` の型（結果ファイルとハッシュは Python 版と同じ形・同じ値。`run.ps1` は `verify.ps1` から作る旨を1文）を載せた。`check_py.py` と `check-ps1.ps1` に `<名前>-result.json` の点検を、`check-ps1.ps1` に名前の点検を足した（どれも WARN）。確認: 部屋相当の Linux（Python 3.13、pwsh 7.4.6）で、成功・失敗・前提なし・Project の外・`release` の各 STOP と連番・両版のハッシュの一致・`verify.ps1` の結果を `release.py` が受けること。未確認: Windows の Python・pwsh（PC2 で 1 回）。Linux の pwsh（globalization が invariant）では、対話の日本語のひとことが文字化けした。
-- 未了: `script-guide.md` の型（プリフライト、結果ファイル、`release` の止まる条件）と `check_py.py` への反映は未実装。結果ファイルは `room-windows-balance` の診断ログ案と合わせて決める。叩き台は project files の `notes/script-stages/2026-10-24-proposal.md`。
+- 未了: `release` の束ね先と、Windows での確認（PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ）。型（プリフライト、結果ファイル、`release` の止まる条件）と `check_py.py` `check-ps1.ps1` への反映は、上の「実装（2026-10-25）」で済んだ（2026-10-25 に、この行の古い記述を直した）。
 
 ### 【汎用】部屋の `stock` は、行き先を `scope: public | area` で決める。Area の業務の知は `ai/out/knowledge/` へ（2026-10-24）
 

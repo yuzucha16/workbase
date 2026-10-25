@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-25（kit-growth: 実機なしで進めた分）
+- ユーザーの依頼「kit-growth の続き、実機なしでできるアイテム」。承認済みの決定に沿う整合の直しだけを行い、新しい判断はしていない。
+- `docs/log.md` を 5.2KB から 4.1KB に縮めた（整合の基準のギャップ 9。4KB 目安）。Next Actions 3・4 の詳細は `topics/hook-room-alignment/docs/log.md` に同じ内容があるので、指す形にした。room の状態の行と Open Questions の補足を短くした。縮める前の全文は `git show 7af0c6a:docs/log.md`。
+- `decisions.md`: ① v7 の仮決めの期限と検証日を 11-02 から 11-01 にした（同日の周期の変更と `retrospective-method.md` は 11-01。見出しだけが古かった）。② `run` / `verify` / `release` の項の「未了」の行が、型と点検の実装（同項の「実装（2026-10-25）」）の前のままだったので、残りを `release` の束ね先と Windows での確認に直した。
+- 触らなかった: 実機が要るもの（`mkworks`・`verify.bat`/`verify.ps1`・`stock` の `scope: area`・`restore` の保護の実機確認、旧名の注記の削除〔条件が `mkworks` の実機確認〕）、承認待ち（md-link-graph の Next Actions 2〜4、振り返りの仮決め3件）、workbase の外（works・dotfiles の履歴の書き換え〔force push〕、dotfiles のスキルの入口）。inbox の未選別 1 件は「実際の案件で1回試してから」なので触らない。
+
 ### 2026-10-25（review の入力 9 を md-link-graph と同じ品質に）
 - ユーザーの指摘で、入力 9 のギャップ（`graph.html` を作り直さない、未到達の名前が出ない、依頼の文での再測定が無い、場面を足す手順が無い）を直した。`mdrank.py` を足し、`reviews.csv` に列 `scene_top1` `scene_top5`。初回の値は 30/43、40/43（このセッション）。決定は `decisions.md` の同日の項。
 - 記録に未到達のファイルのパスを書くと、未到達が 6 から 0 に見えた（論点 C の記録）。記録ではパスを囲まずに書き、注意を `review-triggers-check.md` に書いた。
