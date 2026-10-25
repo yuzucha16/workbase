@@ -6,6 +6,8 @@
 
 ### 開発（設計・実装・評価）
 
+`dev` の最初の `brief` では、聞く前に `project-structure.md`（`ai/` の置き場。成果物は `ai/out/<成果物名>/`、レビュー版や下書きは `ai/work/`、`ai/docs/` は作業の記録だけ）と `dev-deliverable-guide.md` を読む（置き場の取り違えが 5 回あった、2026-10-25）。
+
 実装の**前に**聞く。`env/` が主、`tests/` だけの成果物も、この表と、`dev-deliverable-guide.md` の「環境構築とテストが主の成果物の差分」の聞く項目を使う。
 
 | 項目 | 内容 |

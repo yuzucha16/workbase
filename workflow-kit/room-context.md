@@ -64,7 +64,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書き、人が `room restore`（`room start` の終わりでも自動）で実名に戻して Area に置く。
 
 - **統合した知識**: `ai/in/area/`（Area から `room pull` で渡された、マスク済みの写し）を読み、統合したノートを `ai/out/knowledge/<英数字の名前>.md` に書く。frontmatter は `kind: integrated`、`status: active`、`org` は元のまま。`⟦…⟧` の記号は変えない。Area の知識置き場の既存ファイルを、人が前回から変えていると、`restore` は止まる（人が `--force` で判断する）。
-- **成果物**（人が読む最終版）: `ai/out/deliverable/` の下に置く。`restore` が、Area の成果物置き場（Project 名の下）にも実名に戻して書く。それ以外の `ai/out/<最終成果物>` は、従来どおり Project の `_noai/final/` に戻る。
+- **Area に実名で戻したい最終版**: `ai/out/deliverable/` の下に置く。`restore` が、Area の成果物置き場（Project 名の下）にも実名に戻して書く。Project の成果物は `ai/out/<成果物名>/` に置き（置き場と構成は `project-structure.md`）、`deliverable/` に置かない。`deliverable/` の外の `ai/out/<成果物名>/` は、従来どおり Project の `_noai/final/` に戻る。
 - **残したい知見**（`stock`）は、行き先を `scope:` で決める（下の `stock` の節）。Area の業務に固有なら上の `ai/out/knowledge/`、公開できる一般則なら `ai/out/stock/`。
 
 ## 分担と受け渡し
