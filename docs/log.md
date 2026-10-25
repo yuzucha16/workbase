@@ -25,12 +25,10 @@
 
 1. 振り返り（改善4・5）: 材料と施策は `topics/kit-growth/records/` と `decisions.md`（2026-10-25 の項）。次は週次 11-01、月次 11-29。
 2. 整合の基準のギャップ 8（公開リポジトリの履歴にユーザー名入りのパス）は、書き換えが force push で禁止のため未着手。
-3. `review`: `review-hook.md` が 5,455 字で目安超過。次回に畳む候補。`token-matrix.md` の行 25 と 24 の順を直す。
-4. 会議録のナレッジ化の残り: 指標（冒頭の行数の上限 10 行、人が直した箇所の数）のスクリプト。新規に作り直して試した分から数える（ユーザー、10-21）。
-5. フックと room の整合（`topics/hook-room-alignment/`）: `mkworks` の実機確認、旧名（`init` `open` `start`）の注記を消す、dotfiles の Claude 用スキルの入口。
-6. 人が叩くスクリプト: PC2 の Windows で `verify.bat` を 1 回実行して確かめる。未実装は `run.py` の型、ps1 版、原因の台帳、`release` の束ね先。
-7. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
-8. 未 push: workbase、works、dotfiles（`review` の変更と整合の基準の移動、`UserPromptSubmit` フック）。
+3. 会議録のナレッジ化の残り: 指標（人が直した箇所の数）のスクリプト。新規に作り直して試した分から数える（ユーザー、10-21）。冒頭の行数の上限 10 行は決定済み（`decisions.md` の 10-25）。
+4. フックと room の整合（`topics/hook-room-alignment/`）: `mkworks` の実機確認（`works` を複数持てる環境が要る。10-25 のユーザーの指摘で、検証の方法を相談中）、旧名（`init` `open` `start`）の注記を消す、dotfiles の Claude 用スキルの入口。
+5. 人が叩くスクリプト: PC2 の Windows で `verify.bat` を 1 回実行して確かめる。未実装は `run.py` の型、ps1 版、原因の台帳、`release` の束ね先。
+6. ルールが見つかりにくい構造（`topics/md-link-graph/`。`AGENTS.md` は 10-25 に作った。完了は同窓口の条件）。
 
 ## Open Questions
 
@@ -38,5 +36,5 @@
 - 会議録の Area 側の保管場所と同期（Git か、PC ごとのローカルか）。
 - 【案件】の行き先: `para-operations` は Area の `docs/decisions.md`、実装は Area の `ai/docs/inbox.md`。現行はどちらか。
 - `repos/` の受け渡し（スナップショットと patch。未検証）: `dev` の `env/` の実使用の後に決める(`env/` だけの実測は 10-25 に済んだが、`repos/` の受け渡しは測っていない)。【保留 〜2026-11-05】
-- 計画のやり方（`brief 計画`）を、試験運用のままにするか正式化するか。案 = 当面は試験運用のまま、次に実務で使った回の所見で判断する。場所 = `workflow-kit/brief-plan.md`、`methods.md`。
+- 計画のやり方（`brief 計画`）は、実務で3回使うまで試験運用（2026-10-25 ユーザーの決定、`decisions.md`）。3回目の所見で、正式化・直す・やめるを決める。使った回数: 0。
 - `restore_project` が `_noai/final/` の人の変更を上書きする件: 正本の宣言と上書き前の警告を、次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】
