@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【この件】workbase の履歴のユーザー名入りパスを書き換えて force push した。実機確認用に `room mksub` を足した(2026-10-25)
+- 決めたこと(ユーザー、`review 消化` で「force の deny を切りました。進めてください」「`WORKS_DIR` の親ディレクトリに `works_sub*` を作れるように」): ① workbase の全履歴で `Users\<名>`・`C--Users-<名>`・`/home/<名>` の形の実際のユーザー名(3 種)を `<user>` に置換し、`main` を force push した(33 行、621 コミット、中身は HEAD で差分なし)。このセッションだけの許可。② `room mksub` は、works の隣に `works_sub<N>`(N は 1 から、空いている最小)を作り、`resources/` の複製と `mkworks` まで行う。`--vault` の既定は `ROOM_VAULT`、`WORKS_DIR`、`~/works` の順にした。
+- 影響: 全コミットのハッシュが変わったので、works・dotfiles・workbase の `Kit-Rev` `Room-Rev`(計 約750 件)は旧ハッシュを指す。既存の部屋の `mkworks --update` は、旧 `Room-Rev` を基点に読めないとき `--base` が要る。他の PC の clone は `git fetch origin && git reset origin/main`(`--hard` ではない)で合わせる。
+- 残り: works(26 コミット)と dotfiles(5 コミット)の履歴にも同じパスがある(未着手)。
+- 反映先: `docs/alignment-baseline.md` のギャップ 8、`workflow-kit/room/README.md`、`room.py`、`tests/test_room.py`。
+
 ### 【汎用】`brief 計画` は3回実施するまで試験運用のままにする(2026-10-25)
 - 決めたこと(ユーザー、`review 消化` で「保留 3回実施まで試験運用」): 計画のやり方(`workflow-kit/brief-plan.md`、`methods.md`)の正式化は保留し、実務で3回使うまで試験運用のままにする。3回目の所見で、正式化・直す・やめるを決める。
 - 根拠: ユーザーの発言。スクリーニング(サブエージェント)の結果は、食い違う過去の決定なし、型 A・B・D なし、覆す可能性は低い。指摘された「見直しの条件」の欠けを、回数(3回)で補った。

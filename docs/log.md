@@ -24,8 +24,8 @@
 ## Next Actions
 
 1. 振り返り（改善4・5）: 材料と施策は `topics/kit-growth/records/` と `decisions.md`（2026-10-25 の項）。次は週次 11-01、月次 11-29。
-2. 整合の基準のギャップ 8（公開リポジトリの履歴にユーザー名入りのパス）は、書き換えが force push で禁止のため未着手。
-3. フックと room の整合（`topics/hook-room-alignment/`）: `mkworks` の実機確認（`works` を複数持てる環境が要る。10-25 のユーザーの指摘で、検証の方法を相談中）、旧名（`init` `open` `start`）の注記を消す、dotfiles の Claude 用スキルの入口。
+2. 整合の基準のギャップ 8（公開リポジトリの履歴にユーザー名入りのパス）: workbase は 10-25 に書き換えて force push した。works（26 コミット）と dotfiles（5 コミット）が残る。他の PC の clone は `git fetch origin && git reset origin/main` で合わせる。
+3. フックと room の整合（`topics/hook-room-alignment/`）: `mkworks` の実機確認（`room mksub` で `works_sub<N>` を作って試す。10-25 に実装、単体テスト済み。実機は未実施）、旧名（`init` `open` `start`）の注記を消す、dotfiles の Claude 用スキルの入口。
 4. 人が叩くスクリプト: PC2 の Windows で `verify.bat` を 1 回実行して確かめる。未実装は `run.py` の型、ps1 版、原因の台帳、`release` の束ね先。
 5. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
 
