@@ -11,7 +11,6 @@
 | 2026-10-26 | 定例 | monthly の振り返り（最終営業日を含む最後の5営業日の初日。5章・1,500字）。初回は材料の weekly が1回だけ。次は 11-24 | ユーザー |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断（Open Questions。計画のやり方の品質チェックの後） | ユーザー |
 | 2026-10-26 | 単発 | 振り返りの手順書 v6（v5 の続き）の仮決め。定例の初回で字数を測る（項目 5） | ユーザー |
-| 2026-10-28 | 単発 | 仮決め: 題材ごとのトピックと `records/` の仕訳（2か所）を、正式化するか（`decisions.md` の 10-21。正式化なら `brief-plan.md` の置き場の表を直す） | ユーザー |
 | 2026-11-05 | 単発 | Open Questions の保留 2 件（`repos/` の受け渡し、`restore` の上書き保護） | ユーザー |
 
 ## 状態
@@ -30,6 +29,8 @@
 - 計画のやり方（6R → 憲章 → 成果物 WBS → マイルストーン）: トピック `topics/planning-method/`（Project 型。状態は同 `docs/log.md`）。2026-10-20 に試験運用で `workflow-kit/` に取り込んだ（`brief 計画`、`brief-plan.md`）。次は PC1 の品質チェック3回。試行の元ファイルは Project の共有フォルダ `notes/planning-method/`（クラウド側の控え。PC 環境からは見えない）。測ったことは `topics/kit-growth/records/planning-method-record.md`。
 - `init` `open` フックの廃止と `room mkworks`（2026-10-24）: works の作成と雛形の反映（`--update`）は `room mkworks`。`open` は `room open` + `room-context.md` の下書きの書き方 + `project-structure.md` の判断基準。他リポジトリへの導入と履歴復元は廃止。単体テストのみ。実機は未確認。決定は `decisions.md` の同日の項。`start` は 2026-10-24 に `brief` へ改名した。続きは `topics/hook-room-alignment/`（Next Actions 19）。
 - room の type 集約（2026-10-24）: `dev` と `inv` の2つ（`room open --type`、既定 `dev`）。トピック `topics/room-type-consolidation/`（Project 型）。`dev-deliverable-guide.md` の不整合も修正済み（`script-guide.md` を分離）。type の考え方は `project-structure.md` の冒頭に記載済み。
+- 部屋の Stop フックの記録（2026-10-25）: 実機で確認済み。記録先が `ai/ai/records/` と二重になる誤りを直した（`0e7c591`。マウント先が Project の `ai/` のため）。既存の `ai/ai/records/` は手で移す。
+- Markdown の参照構造の可視化（2026-10-25）: トピック `topics/md-link-graph/`（Project 型）。`python -I topics/md-link-graph/tools/mdgraph.py` で `records/graph.html` を作り直せる。次は論点の整理（状態は同 `docs/log.md`）。
 - 計画と部屋の紐付け（2026-10-21）: トピック `topics/plan-room-link/`（Project 型）。案 D（Project の README の雛形に固定の1行 `計画: ai/in/plan/`）で実装済み（`9b4db50`。実機は未確認）。計画一式（後追い。比較・分析用）は同 `records/`。残りは知識化・実機確認・閉じる判断（10-28）。状態は同 `docs/log.md`。
 
 ## Next Actions
@@ -37,9 +38,7 @@
 5. 振り返り（旧 38、15、13）: v5 の材料集めは AI 作業部屋の回を初実行として数えた（ユーザーが読んで比べる）、週次の使い方（引き継ぎは 10-26 の週次で）、改善5 の品質チェック3回。改善4 は 10-20 に定例化し、規模の Must を足した（v6。`decisions.md` の同日の項）。daily 10-20 は済み（第2回 470字、第3回 495字。空白を除く。含めると超える。数え方は 10-26 に決める。施策 R-2026-10-20-01・02 は 10-21 に却下）。daily 10-25 は済み（第5回。手戻り 5件/37コミット。R-2026-10-25-01 は採用: `docs-rules.md` のコミット前の確認に重複行の点検 ④ を足した。検証は次の daily で重複混入 0 件）。weekly と monthly（10-26）で、字数が収まったかを `retrospective-method-record.md` に足す。
 9. 【着手済み 10-25。`topics/md-link-graph/`（Project 型）で可視化と論点整理を続ける。状態は同 `docs/log.md`。完了は同窓口の条件】ルールが見つかりにくい構造（2026-10-20）: works で `.bat` を作った AI が、dotfiles と exmem にあった ASCII ルール（2026-10-06）に届かず、`chcp 65001` で崩れた。ルールは `exmem/lessons/shell-script-testing-wsl.md` の後ろの追記節にあり、索引の1行に `.bat` の語が無く、dotfiles の `AGENTS.md` にも無かった。索引に語を足したのは補修で、恒久対策ではない。exmem の肥大化（大きいノートの後ろの追記節、索引の1行では引けない）と合わせて、領域全体の論点として議論する: 知識がどこにあれば、作業の最中に届くか（索引、ノートの分け方、作業側の `AGENTS.md` への写し、検索の仕組み）。議論の前に、似た見落としが他にもあるかを数える材料を集めてよい。ユーザーの指示（2026-10-20）。なお `.bat` は、暫定で全体 ASCII を正にし、cp932 の `.bat` と試験はやらない（cp932 の内容は lesson の草稿・優先度低。dotfiles は変更しない）。
 
-12. 会議録のナレッジ化（`topics/private-knowledge/` は 2026-10-21 に閉じた。決定は `decisions.md` の同日の項）の残り: 指標（冒頭の行数の上限〔仮 10 行〕、人が直した箇所の数）は、スクリプトで数える（実名を読まず、出力は数字だけ）。数える対象は、新規に会議録を作り直して試した分から（ユーザー、10-21。既存の分は数えない）。スクリプトは、試した後で対象の Area を聞いて書く。
-13. 題材ごとのトピックと `records/` の仕訳（仮決め 〜2026-10-28。`decisions.md` の同日）: 今は `planning-method/` が同じ構造で運用している（`usage-viz/` `stock-modes/` `private-knowledge/` は 10-21 に閉じた。`usage-viz` の HTML の見た目はブラウザで確認済み、問題なし。`brief 計画` へのフィードバック案8件は `topics/planning-method/planning-method-feedback-stock-modes-m1.md`、`review 消化` で承認）。10-28 に正式化するかを `review 消化` で決める。
-18. 【起票 10-21】部屋の Stop フックの記録（`decisions.md` の同日。案 B）: 実装は済み（`init --only stophook`、パスの置換つき、単体テストのみ。10-21）。実機の確認は済み（ユーザー、10-25）。そこで記録先が `ai/ai/records/` と二重になっていた原因（マウント先が Project の `ai/` なのに `ai/records` を足した）を `record_dir` で直した（単体テスト 138 件パス）。残り: 直した後の実機で `ai/records/` に出ること、ユーザー名が `%USERPROFILE%` になっていること、既存の `ai/ai/records/` の手での移し替え。部屋の AI が Windows のパスを作る原因は、次に再現したときに追う。
+12. 会議録のナレッジ化（`topics/private-knowledge/` は 2026-10-21 に閉じた。決定は `decisions.md` の同日の項）の残り: 指標（冒頭の行数の上限 10 行〔10-25 に正式化〕、人が直した箇所の数）は、スクリプトで数える（実名を読まず、出力は数字だけ）。数える対象は、新規に会議録を作り直して試した分から（ユーザー、10-21。既存の分は数えない）。スクリプトは、試した後で対象の Area を聞いて書く。
 19. 【起票 10-24】フックと room の整合（`topics/hook-room-alignment/`。状態は同 `docs/log.md`）: `mkworks` の実機確認、旧名（`init` `open` `start`）の読み替えと注記を、新しい仕様が回りだしたら消す（ユーザーの決定）、dotfiles の Claude 用スキルの入口。残りのフックと room の整合は反映済み（2026-10-24。`wrap` のコミットは AI が行い、部屋では指示なしで部屋の git にコミットする）。
 
 ## Open Questions

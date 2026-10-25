@@ -34,7 +34,7 @@
 
 | 領域 | 置き場 |
 |---|---|
-| workbase（kit、exmem、guides） | 題材ごとのトピック `topics/<名前>/`（kebab-case、1階層）の `records/`。無ければトピックを作る。`kit-growth/records/` は「測ったこと」だけ（品質チェックと振り返り）。使わない: `kit-growth/plans/`、`planning-method/records/` への集約（仮決め 〜2026-10-28、ユーザーの決定 2026-10-21。正式化の判断は 10-28） |
+| workbase（kit、exmem、guides） | 題材ごとのトピック `topics/<名前>/`（kebab-case、1階層）の `records/`。無ければトピックを作る。`kit-growth/records/` は「測ったこと」だけ（品質チェックと振り返り）。使わない: `kit-growth/plans/`、`planning-method/records/` への集約（ユーザーの決定 2026-10-21、正式化 2026-10-25） |
 | works（Project、Area） | 承認版の計画は、実名なしで Project の `ai/in/plan/` に置く（`plan-room-link` の決定、2026-10-21）。知識は Area の `_noai/knowledge/`。作業用の下書きは、AI が `ai/work/plan/` に書き、ユーザーが承認したものを人が `ai/in/plan/` に置く（部屋の AI は読むだけ）。Area の README の最新の Project の1行は、`room open` が足す |
 | dotfiles | dotfiles 自身の `docs/` で完結させる（依存は dotfiles → workbase の一方向）。workbase に影響するときだけ、名前で指す1行を workbase 側に書く |
 | room（道具の開発） | workbase の題材と同じ（道具のコードは `workflow-kit/room/`） |
