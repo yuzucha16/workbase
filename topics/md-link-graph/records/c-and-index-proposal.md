@@ -8,14 +8,16 @@
 
 未到達の 6 件は、入次数 0 の 6 件と同じ。
 
+この記録では 6 件のパスをバッククォートで書かない（書くと `mdgraph.py` がこの記録からの辺として数え、未到達が 0 に見える。2026-10-25 に一度そうなった）。
+
 | ファイル | 何か | 読まれ方 | 案 |
 |---|---|---|---|
-| `exmem/CLAUDE.md` | 中身は `@AGENTS.md` の 1 行 | Claude Code が、そのディレクトリのファイルを読むときに自動で取り込む。リンクで辿るものではない | 数えない |
-| `topics/CLAUDE.md` | 同上 | 同上 | 数えない |
-| `workflow-kit/templates/log.md` | 雛形 | `room mkworks` のコードと、人が手本に見る。`workflow-kit/README.md` は `templates/AGENTS.md` `log.md` `decisions.md` と書くので、`log.md` が別のファイルに解決される | 数えない（雛形は読まれる知識ではない） |
-| `workflow-kit/templates/decisions.md` | 同上 | 同上 | 同上 |
-| `topics/README.md` | `topics/` の窓口 | root `README.md` は `topics/topics-index.md` と `topics/AGENTS.md` を指し、`topics/README.md` を指さない | root `README.md` の表の行に `topics/README.md` を足す |
-| `guides/README.md` | `guides/` の窓口 | root `README.md` は入口を `guides/guides-index.md` と書き、`guides/README.md` を指さない | 同上（`guides/README.md`） |
+| exmem/CLAUDE.md | 中身は `@AGENTS.md` の 1 行 | Claude Code が、そのディレクトリのファイルを読むときに自動で取り込む。リンクで辿るものではない | 数えない |
+| topics/CLAUDE.md | 同上 | 同上 | 数えない |
+| workflow-kit/templates/log.md | 雛形 | `room mkworks` のコードと、人が手本に見る。`workflow-kit/README.md` は `templates/AGENTS.md` `log.md` `decisions.md` と書くので、`log.md` が別のファイルに解決される | 数えない（雛形は読まれる知識ではない） |
+| workflow-kit/templates/decisions.md | 同上 | 同上 | 同上 |
+| topics/README.md | `topics/` の窓口 | root `README.md` は `topics/topics-index.md` と `topics/AGENTS.md` を指し、topics/README.md を指さない | root `README.md` の表の行に topics/README.md を足す |
+| guides/README.md | `guides/` の窓口 | root `README.md` は入口を `guides/guides-index.md` と書き、guides/README.md を指さない | 同上（guides/README.md） |
 
 推奨: `mdgraph.py` で `CLAUDE.md`（`@` の 1 行だけのもの）と `templates/` を数えない（測る道具の定義を変えるだけ。ノートは変えない）。窓口の 2 件は、root `README.md` の表にパスを書く（2 行の変更）。これで未到達と入次数 0 は 0 になる見込み（未試行）。
 

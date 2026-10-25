@@ -64,7 +64,7 @@
 - 思考の癖 / 悪影響 / 補正策 / ユーザーの傾向 / 認知 / 習慣 / 判断の癖 / 依頼文 → `exmem/lessons/user-thinking-habits.md`
 - VS Code / VSCode / 拡張機能 / extension / extensions.json / .vscode / Workspace / formatter → `exmem/lessons/vscode-workspace.md`
 - PowerShell / パイプ / here-string / 引数 / 文字化け / 改行コード / Set-Content / 一括置換 / エイリアス / git update-index / 実行権限 / symlink / バッチ / Format-Table → `exmem/lessons/windows-cli-pitfalls.md`
-- workflow-kit / フック / ナレッジ化 / 作業ログ / 共通機能 / wrap / 終了処理 / docs / 受け皿 / 合言葉 / log.md / 改善 → `exmem/lessons/workflow-kit.md`
+- workflow-kit / フック / ナレッジ化 / 作業ログ / 共通機能 / wrap / 終了処理 / docs / 受け皿 / 合言葉 / 種別 / 手順書 / 分割 / room open / 成果物 → `exmem/lessons/workflow-kit.md`
 - WSL / ファイル配置 / Windows側 / WSL側 / 置き場所 / /mnt/c / パフォーマンス / Zed / 配置方針 / ホーム → `exmem/lessons/wsl-file-placement.md`
 - Zed / ACP / Claude Code / Codex / エージェント / 接続 / agent_servers / 設定 / AIパネル / Agent → `exmem/lessons/zed-acp.md`
 - Zed / dotfiles / settings.json / 設定の再現 / 同期 / 管理 / シンボリックリンク / エディタ設定 / 配置 → `exmem/lessons/zed-dotfiles.md`

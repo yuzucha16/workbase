@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】`review` の入力 9 を、トピック `md-link-graph` の測り方と同じにする（2026-10-25）
+- 決めたこと（ユーザー、「コールグラフの分析、html の更新、再測定などは review フックに含まれていますか…このトピックの品質と同等を期待しています。ギャップがあれば修正して下さい」）: 入力 9 に、① `graph.html` を `records/` に作り直してコミットする、② 未到達と入次数 0 のファイル名を出す（`mdgraph.py`）、③ 場面の依頼の文を本番の `--triggers` で引いて順位を数える（新しい `mdrank.py`、列 `scene_top1` `scene_top5`）、④ ノートが増えたら `triggers:` を読まずに場面を足す、⑤ 記録にパスを書くと未到達が減って見える注意、を足した。
+- 根拠: 前は `graph.html` を一時ファイルに出し、件数だけで名前が出ず、場面は語の列（試作の表）でしか測らなかった。トピックでは依頼の文で測って S16・B07 の取りこぼしが見えた。
+- 反映先: `workflow-kit/review-triggers-check.md`、`review-hook.md`（入力 9 と記録の列）、`docs/metrics/reviews.csv`（列を 2 つ足し、既存の行は `n/a`）、`topics/md-link-graph/tools/`。
+
 ### 【この件】workbase の履歴のユーザー名入りパスを書き換えて force push した。実機確認用に `room mksub` を足した(2026-10-25)
 - 決めたこと(ユーザー、`review 消化` で「force の deny を切りました。進めてください」「`WORKS_DIR` の親ディレクトリに `works_sub*` を作れるように」): ① workbase の全履歴で `Users\<名>`・`C--Users-<名>`・`/home/<名>` の形の実際のユーザー名(3 種)を `<user>` に置換し、`main` を force push した(33 行、621 コミット、中身は HEAD で差分なし)。このセッションだけの許可。② `room mksub` は、works の隣に `works_sub<N>`(N は 1 から、空いている最小)を作り、`resources/` の複製と `mkworks` まで行う。`--vault` の既定は `ROOM_VAULT`、`WORKS_DIR`、`~/works` の順にした。
 - 影響: 全コミットのハッシュが変わったので、works・dotfiles・workbase の `Kit-Rev` `Room-Rev`(計 約750 件)は旧ハッシュを指す。既存の部屋の `mkworks --update` は、旧 `Room-Rev` を基点に読めないとき `--base` が要る。他の PC の clone は `git fetch origin && git reset origin/main`(`--hard` ではない)で合わせる。

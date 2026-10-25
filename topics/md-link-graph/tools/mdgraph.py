@@ -220,4 +220,6 @@ out.write_text(PAGE.replace("__DATA__", json.dumps(data, ensure_ascii=False).rep
 s = data["stats"]
 print(f"{len(nodes)} ファイル / {s['edges']} 辺 / 到達 {s['reach']} / 最大の循環 {s['scc_big']} / 深さ {s['depth']}")
 print(f"未到達 {s['unreach']} / 入次数 0 {len(s['orphans'])} / 最大の循環の割合 {round(100 * s['scc_big'] / s['files'])}%")
+for label, key in (("未到達", "unreached"), ("入次数 0", "orphans")):
+    print(f"{label}: {' '.join(data["stats"][key]) or 'なし'}")
 print(f"出力: {out}")

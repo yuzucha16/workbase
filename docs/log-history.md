@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-25（review の入力 9 を md-link-graph と同じ品質に）
+- ユーザーの指摘で、入力 9 のギャップ（`graph.html` を作り直さない、未到達の名前が出ない、依頼の文での再測定が無い、場面を足す手順が無い）を直した。`mdrank.py` を足し、`reviews.csv` に列 `scene_top1` `scene_top5`。初回の値は 30/43、40/43（このセッション）。決定は `decisions.md` の同日の項。
+- 記録に未到達のファイルのパスを書くと、未到達が 6 から 0 に見えた（論点 C の記録）。記録ではパスを囲まずに書き、注意を `review-triggers-check.md` に書いた。
+
 ### 2026-10-25（人が叩くスクリプトの残り: run.py の型と ps1 版）
 - 「hook-room-alignment の続き、実機なしでできるアイテム」の依頼で、承認済みの範囲から実機の要らないものを進めた。`script-guide.md` に `run.py` の型と、ps1 版の `verify.ps1` `release.ps1` の型を足し、`check_py.py` `check-ps1.ps1` に結果ファイル（`<名前>-result.json`）と名前の点検（WARN）を足した。Linux の Python 3.13 と pwsh 7.4.6 で、成功・失敗・前提なし・Project の外・`release` の各 STOP と連番・両版のハッシュの一致を確認。Windows は未確認（PC2 で 1 回）。原因の台帳は、承認（「今実装する」）を受けて `script-guide.md` に節を、`room-context.md` に1項を足した（`topics/hook-room-alignment/docs/decisions.md` の同件の「実装」）。決定は `decisions.md` の `run` / `verify` / `release` の項の「実装」。
 - 触らなかった実機の要る項目: `verify.bat` / `verify.ps1` の Windows での実行、`mkworks` の実機確認、`stock` の `scope: area` の実機確認、旧名の注記の削除（`mkworks` の実機確認が条件）、dotfiles の Claude 用スキルの入口（dotfiles 側）。
