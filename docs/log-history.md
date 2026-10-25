@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-25（10-22 の daily を第5回に含めて閉じた）
+- 期日表の 10-22 の daily で、10-22 のコミットが0件だと確認した（10-21 22:56 の次は 10-25 07:52）。第5回（10-21 20:50〜10-25 07:52、37コミット）が 10-22・23 を含むため、別に書かず閉じた。ユーザーの承認と説明: 10-22〜24 はトークン消費の制限で作業できなかった。期日表の定例の行は次回の 10-26 に書き換えた。記録は `topics/kit-growth/records/retrospective-daily-record.md`。
+
 ### 2026-10-25（人が叩くスクリプトの名前と工程の一般化）
 - ユーザーの依頼: スクリプトを一般化し、AI とのラリーを減らし、bat の名前を用途で固定したい。現行の `script-guide.md` を読み、kit に `finalize` も `release` も無いこと（束ねる役の例 `run_all.py` だけ）を確認して、叩き台（Project の共有フォルダ `notes/script-stages/2026-10-24-proposal.md`）を出した。
 - 決定（`decisions.md` の 2026-10-24〜25 の項）: 名前は `run` / `verify` / `release`、目視は bat が y/n、診断ログ（`verify-result.json`）は毎回出す、版は `YYYY-MM-DD.N`。`artifacts/` を Project 直下に置く案は、成果物の経路を `ai/out/` 1本にするため取り下げた（人の直接編集はマスクに関係しない箇所だけ。`restore` は `ai/out` を丸ごと `_noai/final` に流す仕組みで、確認済み）。
