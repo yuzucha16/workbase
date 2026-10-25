@@ -12,6 +12,7 @@ AI 作業部屋の操作（`mkworks` / `init` / `open` / `start` / `close` / `um
 cd <このディレクトリ>
 uv run room.py mkworks [--role 業務用|個人用] [--remote none|<URL>] [--no-commit]
 uv run room.py mkworks --update [--yes] [--base <resources のハッシュ>] [--no-commit]
+uv run room.py mksub [--role 個人用|業務用] [--rev <resources のハッシュ>] [--no-commit]
 uv run room.py init <Area> [--boundary <印>] [--resume] [--only <段,…>] [--no-commit]
 uv run room.py open <Project> --area <Area> [--type dev|inv] [--boundary <印>] [--no-commit]
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--adopt] [--no-commit]
@@ -20,7 +21,8 @@ uv run room.py umount --area <Area>
 uv run room.py rename-area <旧Area> <新Area> [--no-commit]
 ```
 
-- works は `$ROOM_VAULT`、無ければ `~/works`。`--vault <パス>` で指定できる（`--vault` はサブコマンドの前に書く）。`close` から reap までの日数は `--reap-days`（既定 14。`$ROOM_REAP_DAYS` でも指定できる）。
+- works は `$ROOM_VAULT`、無ければ `$WORKS_DIR`、無ければ `~/works`。`--vault <パス>` で指定できる（`--vault` はサブコマンドの前に書く）。`close` から reap までの日数は `--reap-days`（既定 14。`$ROOM_REAP_DAYS` でも指定できる）。
+- `mksub`（2026-10-25）: works と同じ親ディレクトリに、検証用の `works_sub1`、`works_sub2`、…（空いている最小の番号）を作る。`resources/` は今の `resources/` のコミット済みの複製（origin は本来の workbase の URL）で、作ったあとに `mkworks`（remote なし。既定の役割は個人用）まで行う。使うときは `WORKS_DIR`（または `ROOM_VAULT`、`--vault`）をその `works_sub<N>` に差し替える。`--rev` は古い版の `resources/` で作る（`mkworks --update` の試験用。`git -C works_sub<N>/resources checkout main` の後に `mkworks --update`）。WSL の部屋は本物の works と共有するので、`init` `open` `start` を試すときは Area と Project の名前を重ねない（`mkworks` と `mkworks --update` は WSL を使わない）。
 - `open` の `--type` は、作業の特性で選ぶ2つ。`dev`（既定）は作って保守する成果物（`src/` `env/` `tests/` `tools/` `docs/` から必要なものを選ぶ。文書だけの成果物も含む）、`inv` は調べて結論を出す成果物（`report.md`）。`room` は `type` で動きを変えない（README の frontmatter に書くだけ）。違いは手順書（`workflow-kit/project-structure.md`）が持つ。
 - 部屋（WSL のディストリビューション）は `room-<Area>`。`room init <Area>` で作る（手作業の手順は `guides/howto/ai-room-setup.md` の 3・4 章）。
 - トレーラー（2026-10-21）: room が作るコミット（`mkworks` `init` `open` `rename-area` `start` `readme` `close`）に、`Room-Op: <操作>`、`Room-Rev: <resources の短縮ハッシュ>`、`Room-Area: <Area>`（works の操作 `mkworks` には付かない）、`Room-Project: <Project>`（Project の操作だけ）を付ける。既存の Area / Project が、どの版の room で作られ、変えられたかを引く印。差分は `git -C resources diff <Room-Rev>..HEAD -- workflow-kit/room`、一覧は `git log --format='%h %(trailers:key=Room-Op,key=Room-Rev,valueonly,separator=%x20)'`（works 側）。`Room-Rev` は `workflow-kit/` に未コミットの変更があると末尾が `-dirty`（その版は差分の基点にしない）、git で引けなければ `unknown`。コミットしない操作（`mask` `restore` `pull` `stock` など）には付かない。付いていない古いコミットは「版不明」。

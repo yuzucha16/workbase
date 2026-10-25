@@ -2466,12 +2466,45 @@ def cmd_mkworks(ctx, a):
         mkworks_create(ctx, a)
 
 
+# ---------- mksub（検証用の works_sub<N> を、works の隣に作る） ----------
+
+def next_sub_dir(parent):
+    """parent の下で、まだ無い最小の works_sub<N>（N は 1 から）。"""
+    n = 1
+    while (parent / f"works_sub{n}").exists():
+        n += 1
+    return parent / f"works_sub{n}"
+
+
+def cmd_mksub(ctx, a):
+    """works の隣に、検証用の works_sub<N> を作る。resources/ は今の resources/ の複製（コミット済みの分だけ）。
+    作った後に mkworks まで行うので、--vault（または ROOM_VAULT / WORKS_DIR）を差し替えれば、そのまま試せる。"""
+    check_resources(ctx)
+    src = resources_dir(ctx)
+    url = git(src, "remote", "get-url", "origin").strip()
+    sub = next_sub_dir(ctx.vault.parent)
+    sub.mkdir()
+    res = sub / "resources"
+    git(sub, "clone", "-q", "--no-local", str(src), str(res))
+    git(res, "remote", "set-url", "origin", url)  # check_resources が workbase の clone と見るため、複製元ではなく本来の URL にする
+    if a.rev:
+        git(res, "checkout", "-q", a.rev)
+    sub_ctx = Ctx(sub, wsl=ctx.wsl, today=ctx._today, now=ctx._now, say=ctx.say, reap_days=ctx.reap_days, settle=ctx.settle,
+                  ask=ctx.ask, ask_secret=ctx.ask_secret)
+    mkworks_create(sub_ctx, argparse.Namespace(update=False, role=a.role, remote="none", base=None, yes=True, commit=a.commit))
+    ctx.say(f"作った: {sub}（resources/ は {resources_rev(sub_ctx)}）")
+    ctx.say(f"使い方: room --vault {sub} <コマンド>、または WORKS_DIR / ROOM_VAULT を {sub} にする")
+    if a.rev:
+        ctx.say(f"mkworks --update を試すとき: git -C {res} checkout main の後に room --vault {sub} mkworks --update")
+    ctx.say("WSL の部屋（init / open / start）は本物の works と共有するので、Area と Project の名前を重ねない")
+
+
 # ---------- main ----------
 
 def build_parser():
     ap = argparse.ArgumentParser(prog="room", description="AI 作業部屋の操作（人が実行する。AI には実行させない）")
-    ap.add_argument("--vault", default=os.environ.get("ROOM_VAULT") or str(Path.home() / "works"),
-                    help="ワークスペースのルート（既定: $ROOM_VAULT か ~/works）")
+    ap.add_argument("--vault", default=os.environ.get("ROOM_VAULT") or os.environ.get("WORKS_DIR") or str(Path.home() / "works"),
+                    help="ワークスペースのルート（既定: $ROOM_VAULT、$WORKS_DIR、~/works の順）")
     ap.add_argument("--reap-days", type=int, default=int(os.environ.get("ROOM_REAP_DAYS") or REAP_DAYS_DEFAULT),
                     help="close から reap までの日数（既定 14）")
     sub = ap.add_subparsers(dest="command", required=True)
@@ -2482,6 +2515,10 @@ def build_parser():
     mk.add_argument("--base", help="--update の基点（resources のハッシュ）。トレーラーから分からないときに指定する")
     mk.add_argument("--yes", action="store_true", help="--update の確認を省く")
     mk.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="コミットしない（既定はコミットする）")
+    ms = sub.add_parser("mksub", help="works の隣に検証用の works_sub<N>（N は 1 から）を作り、mkworks まで行う")
+    ms.add_argument("--role", default="個人用", choices=sorted(MKWORKS_ROLES), help="PC の役割（既定: 個人用）")
+    ms.add_argument("--rev", help="resources/ をこのコミットにして作る（mkworks --update の試験用。後で main に戻す）")
+    ms.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="コミットしない（既定はコミットする）")
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
     o.add_argument("--type", default="dev", choices=["dev", "inv"])
@@ -2537,7 +2574,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days)
     try:
-        {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
+        {"mkworks": cmd_mkworks, "mksub": cmd_mksub, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
          "mask": cmd_mask, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)

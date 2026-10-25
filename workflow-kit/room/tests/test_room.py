@@ -1818,6 +1818,34 @@ class MkworksTest(unittest.TestCase):
             self.assertIn("Room-Op: mkworks-update", msg)
             self.assertIn("Room-Rev: " + room.resources_rev(c), msg)
 
+    def test_mksub_numbers_from_one_next_to_works(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_works(tmp)
+            for n in (1, 2):
+                c = ctx_for(v)
+                room.cmd_mksub(c, argparse.Namespace(role="個人用", rev=None, commit=True))
+                sub = Path(tmp) / f"works_sub{n}"
+                self.assertTrue((sub / "AGENTS.md").exists(), sub)
+                self.assertTrue((sub / ".git" / "hooks" / "pre-push").exists())
+                self.assertIn("個人用 PC", (sub / "AGENTS.md").read_text(encoding="utf-8"))
+                origin = subprocess.run(["git", "-C", str(sub / "resources"), "remote", "get-url", "origin"], capture_output=True, text=True).stdout.strip()
+                self.assertIn("workbase", origin)
+                self.assertIn("Room-Op: mkworks", last_commit(sub))
+            self.assertFalse((v / "AGENTS.md").exists())  # 本物の works には触らない
+            self.assertFalse((Path(tmp) / "works_sub3").exists())
+
+    def test_mksub_rev_then_update(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_works(tmp)
+            old = room.resources_rev(ctx_for(v))
+            kit_commit(v, "gitignore.template", (KIT_TEMPLATES / "workspace" / "gitignore.template").read_text(encoding="utf-8") + "\n*.bak\n")
+            room.cmd_mksub(ctx_for(v), argparse.Namespace(role="業務用", rev=old, commit=True))
+            sub = Path(tmp) / "works_sub1"
+            self.assertNotIn("*.bak", (sub / ".gitignore").read_text(encoding="utf-8"))
+            sh(sub / "resources", "checkout", "-q", "main")
+            room.cmd_mkworks(ctx_for(sub), mkw_args(update=True))
+            self.assertIn("*.bak", (sub / ".gitignore").read_text(encoding="utf-8"))
+
     def test_update_nothing_to_do(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, _c = self.create(tmp)
