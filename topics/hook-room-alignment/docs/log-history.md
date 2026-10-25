@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-25（実機なしで進めた分: 診断ログ・run.py・ps1 版・原因の台帳）
+- ユーザーの依頼「実機なしでできるアイテム」で、承認済みの範囲を進めた。`script-guide.md` に `run.py` の型と ps1 版（`verify.ps1` `release.ps1`）、「原因の台帳」の節を足し、`room-context.md` に1項、`check_py.py` `check-ps1.ps1` に結果ファイルと名前の点検を足した。診断ログは `diag.json` でなく `<名前>-result.json`（毎回出す）にした。台帳の実装はユーザーの承認（「今実装する」）を受けた。Linux の Python 3.13 と pwsh 7.4 で確認、Windows は未確認。コミット `483abea` `0c808b5` `f7e4d7a`（決定は root の `decisions.md` と、このトピックの `decisions.md`）。
+- 触らなかった実機の項目: `verify.bat` / `verify.ps1` の Windows での実行、`mkworks` の実機確認、`stock` の `scope: area` の実機確認、旧名の注記の削除、dotfiles のスキルの入口。
+
 ### 2026-10-24（Windows 実行のデバッグのラリー）
 - ユーザーの依頼で、room の機密性と Windows 作業の効率の妥協点を相談した。他エージェントのレビュー（案 A〜D）を公式文書と現行の room で照らし、`interop` の有効化は却下のまま、境界は変えないと整理した。ユーザーの回答（主因は環境の違い、COM は未使用、別ユーザー・Sandbox は不可）で、案をログ取りと原因の蓄積に絞った。works 共通の置き場は、`stock` の `scope: area` と公開の経路で足りるとして作らないことにした（弱点2つは許容）。仮決めして `review 消化` の待ち行列に置いた。決定は `docs/decisions.md` の同日の項。実装は未着手。
 ### 2026-10-24（`stock` の行き先）
