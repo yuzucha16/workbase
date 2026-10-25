@@ -1,6 +1,6 @@
 # 作業ログ（log）
 
-type 集約（`dev` と `inv`）は済み（2026-10-24）。最初の実利用（`sample_dev` と `sample_inv`）の観察を受け、手順書を直した（2026-10-25）。経緯は `docs/log-history.md`、根拠は `docs/decisions.md`。
+type 集約（`dev` と `inv`）は済み（2026-10-24）。最初の実利用（`sample_dev` と `sample_inv`）の観察と、`env/` だけ・`tests/` だけ・`docs/` だけの実測を受け、手順書を直した（2026-10-25）。残りは、次の `dev` で置き場の取り違えが再発しないかの確認だけ。経緯は `docs/log-history.md`、根拠は `docs/decisions.md`。
 
 ## Next Actions
 

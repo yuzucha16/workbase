@@ -37,6 +37,6 @@
 
 - 会議録の Area 側の保管場所と同期（Git か、PC ごとのローカルか）。
 - 【案件】の行き先: `para-operations` は Area の `docs/decisions.md`、実装は Area の `ai/docs/inbox.md`。現行はどちらか。
-- `repos/` の受け渡し（スナップショットと patch。未検証）: `dev` の `env/` の実使用の後に決める。【保留 〜2026-11-05】
+- `repos/` の受け渡し（スナップショットと patch。未検証）: `dev` の `env/` の実使用の後に決める(`env/` だけの実測は 10-25 に済んだが、`repos/` の受け渡しは測っていない)。【保留 〜2026-11-05】
 - 計画のやり方（`brief 計画`）を、試験運用のままにするか正式化するか。案 = 当面は試験運用のまま、次に実務で使った回の所見で判断する。場所 = `workflow-kit/brief-plan.md`、`methods.md`。
 - `restore_project` が `_noai/final/` の人の変更を上書きする件: 正本の宣言と上書き前の警告を、次の実機で `final-manifest.json` の保護を試した後に決める。【保留 〜2026-11-05】
