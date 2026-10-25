@@ -46,8 +46,8 @@ kit と exmem のルール・仕組みが、トークン消費を抑える4つ�
 | 21 | スレッドを切る作法: 切る前にコミット、3行の依頼文、履歴を貼らない、該当ノートだけ読む（`exmem/lessons/session-handoff.md`） | 知識 | ◎ | ○ | | ◎ |
 | 22 | 毎回読むものに予算、経緯は開始時に読まない場所へ（`exmem/lessons/accretion-without-pruning.md`） | 知識 | | | ○ | ○ |
 | 23 | コンテキストの管理手段6つ、圧縮で決定が落ちるのでファイルへ（`exmem/lessons/ai-harness-concepts.md`） | 知識 | ○ | ○ | ○ | ○ |
-| 25 | 依頼ごとに、依頼文の語に当たる知識ノートの名前と大きさだけを最大数件出し、全文を読み込ませない（`tools/triggers_hook.py`、UserPromptSubmit フック。2026-10-25。出力は毎回の追加分なので、`triggers_stats.py` の引当率で費用対効果を見る） | 強制 | | ◎ | | |
 | 24 | 会話履歴の jsonl はスクリプトで集計して結果だけ読む（`exmem/lessons/ai-work-metrics.md`） | 知識 | | ○ | | |
+| 25 | 依頼ごとに、依頼文の語に当たる知識ノートの名前と大きさだけを最大数件出し、全文を読み込ませない（`tools/triggers_hook.py`、UserPromptSubmit フック。2026-10-25。出力は毎回の追加分なので、`triggers_stats.py` の引当率で費用対効果を見る） | 強制 | | ◎ | | |
 
 ## 点の履歴
 
