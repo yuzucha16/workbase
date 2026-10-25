@@ -12,6 +12,7 @@ tags:
   - tool/git
   - line-endings
   - setup
+triggers: [改行コード, CRLF, LF, .gitattributes, autocrlf, eol, 改行, Git設定]
 created: 2026-01-15
 sources:
   - Claude Code conversation "改行コードの統一"

@@ -8,6 +8,7 @@ tags:
   - windows
   - security
 checked: 2026-10-20
+triggers: [LLMゲートウェイ, OIDC, サインイン, 認証, トークン, プロキシ, Zed, 組織]
 ---
 
 # 組織の LLM ゲートウェイと OIDC サインイン:理解ガイド

@@ -1,3 +1,12 @@
+---
+type: explain
+title: Claude スキル（Agent Skills）調査メモ
+tags:
+  - ai/claude
+  - knowledge-management
+triggers: [スキル, SKILL.md, Agent Skills, 段階的開示, progressive disclosure, Claude スキル, 手順書化]
+---
+
 # Claude スキル（Agent Skills）調査メモ
 
 調査日: 2026-10-16。出典は Anthropic の一次情報を優先し、第三者の情報はそう明記する。【推測】と書いた箇所は、出典で確認できていない筆者の解釈。

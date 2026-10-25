@@ -42,16 +42,17 @@
 2. **実物と照合する。** メモの内容は会話から生まれたもので、実物と食い違うことがある。設定ファイル・コード・コマンド出力など確認できるものは実際に見て、一致すれば「確認済み」、食い違えば実物を正として記録し、食い違いを `Open Questions` に残す。確認できないものは仮説として書く。
 3. **基準が古いメモ（`base_stale`）の扱い。** 部屋（AI 作業部屋）から運ばれたメモには、frontmatter に `base_commit`（書いた時点の workbase のコミット）と `observed`（観測した日）が付く。`base_stale` が付いたメモは、統合先の `lessons/` が基準以降に変わっている。`base_commit` の版（`git show <base_commit>:<パス>`）・メモ・最新の版の3点で比べ、メモの内容が最新の版と食い違うときは、最新の版を正として統合せず、食い違いを統合先の `Open Questions` に書く。食い違いが無ければ、そのまま統合してよい。複数のメモを並べるときは、到着順でなく `observed` の順にする。印が無いメモは、今までどおり統合する。（経緯は `room/README.md` の `stock`）
 4. タグを `tags.md` の語彙に正規化する。
-5. 該当する `lessons/*.md` に統合する。該当がなければ新しいファイルを作る。
+5. 該当する `lessons/*.md` に統合する。該当がなければ新しいファイルを作る。**`triggers:` も合わせる**（2026-10-25）: 統合先が既存のノートなら、メモの語を足して重複を除き、15語を超えたら弱い語（他の語の言い換えで、依頼文に出にくいもの）を落とす。落とした語は報告の「照合」に載せる。新しいファイルなら、メモの `triggers:` をそのまま引き継ぐ。
 6. 統合先の `lessons/` のノートの `Open Questions` / `Next Actions` を更新する（未完の項目の置き場）。
 7. 新しいファイルを作ったら `exmem-index.md` に1行足す。
 8. 統合したメモを inbox から削除する。削除の前に、上の「手順」の「メモと統合先の照合」を行う。
+9. 削除の後、`python <kit>/tools/find_knowledge.py --check-triggers` を実行する（`lessons/` と `guides/explain/` の全ノートに `triggers:` が1〜15語あるか）。FAIL は直してからコミットする。
 
 ### `kind: explain` のメモ（理解ガイド）
 
 frontmatter の `kind` が `explain` のメモは、上の統合の細則のうち次を読み替える。`kind` が無い、または `lesson` のメモは、上のとおり。
 
 - **書き込み先**: `guides/explain/<name>.md` の**新規作成**と、`guides/guides-index.md` への1行（更新の規則は索引の末尾）。既存の `guides/explain/` への追記・上書きは行わない（同じテーマがあれば、統合せず、報告で食い違いとして挙げる）。権限は変わらない（`exmem/` 側の作業）。
-- **変換**: frontmatter を `type: explain`、`title`、`tags` にする（`kind`、`created`、`sources` は外す。`checked` は調査の成果物だけ）。`tags` は `exmem/tags.md` の語彙に正規化する（無ければ先に追記）。本文は6見出しのまま使い、「冒頭」の末尾の「統合先の候補」の行は外す。
+- **変換**: frontmatter を `type: explain`、`title`、`tags`、`triggers` にする（`kind`、`created`、`sources` は外す。`triggers` は残す。`checked` は調査の成果物だけ）。`tags` は `exmem/tags.md` の語彙に正規化する（無ければ先に追記）。本文は6見出しのまま使い、「冒頭」の末尾の「統合先の候補」の行は外す。
 - **ファイル名**: リポジトリ内で一意にする（`exmem/lessons/` と重ならない。`guides/AGENTS.md`）。
 - **照合**: 実物との照合と、手順「メモと統合先の照合を、報告に載せる」は同じ。基準が古いメモ（`base_stale`）の扱いは、新規作成なので該当しない。

@@ -14,7 +14,8 @@
 
 ## Next Actions
 
-1. 本実装の設計（ユーザーと相談。承認が要る変更を含む）:
+0. 実装済み（2026-10-25、未コミット）: `find_knowledge.py` に `--triggers` `--check-triggers` `--list-triggers`、`guides/explain/` 9 本に付与、`check_inbox` の点検、`stock` `integrate` と見本・inbox README・`exmem/AGENTS.md`・root `AGENTS.md` の記述。人用の理解ガイドの下書き（`exmem/inbox/2026-10-25-triggers-knowledge-index.md`、未追跡のまま）。残りは dotfiles のフック（下の 1-3）と、実作業での引き当て率の確認（2）。設計は `records/design-triggers.md`。
+1. 本実装の設計（下は元の論点。1-1・1-2・1-4 の一部と 1-5 は 0 で済み）:
   1. 表の大きさの扱い: 言葉の索引（言葉 → ノートの 1 行ずつ）にして、依頼文や拡張子から行を引く検索スクリプトにする、など。
   2. 起点の `AGENTS.md` への 1 行の入口（「作業の前に、作業の言葉を表で引く」。root `AGENTS.md` の変更。承認が要る）。
   3. 押し出し型のフック（dotfiles 側。編集するファイルの拡張子や依頼文の言葉を表と照合し、該当ルールの要点を作業中の AI に出す。このリポジトリには表と点検だけを置く）。

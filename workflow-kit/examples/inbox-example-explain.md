@@ -6,6 +6,7 @@ tags:
   - tool/git
   - line-endings
   - git-config
+triggers: [改行コード, CRLF, LF, autocrlf, eol, 改行, PCごとの違い]
 created: 2026-01-15
 sources:
   - Claude Code conversation "改行コードの統一"

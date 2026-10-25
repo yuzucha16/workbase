@@ -9,6 +9,11 @@ exmem/lessons/ のファイル名、見出し（^#）、frontmatter の tags / a
 使い方: python find_knowledge.py [--body] [--top N] キーワード... （日本語と英語の両方。大文字小文字は区別しない。リテラル一致）
   --body  本文の行も検索する。見出しに無い語（コマンド名、エラー文言、変数名）で探すとき
 読み取り専用。lessons/ は編集しない。
+
+作業の言葉の索引（2026-10-25。設計は topics/md-link-graph/records/design-triggers.md）:
+  python find_knowledge.py --triggers "<依頼文>" [--top N]   依頼文に triggers: の語を含むノートを示す（表は持たず、毎回 frontmatter を読む）
+  python find_knowledge.py --list-triggers                   全ノートの「語 → ノート」の表（人が見る用）
+  python find_knowledge.py --check-triggers                  lessons と guides/explain の全ノートに triggers:（1〜15 語）があるか
 """
 import argparse
 import re
@@ -97,13 +102,95 @@ def scan(path, keywords, body):
     return {"kinds": len(hit_kw), "hits": hits, "keywords": hit_kw, "evidence": evidence, "kb": round(path.stat().st_size / 1024)}
 
 
+TRIGGERS_MAX = 15
+
+
+def trigger_sources(repo):
+    """(ラベル, ディレクトリ) の一覧。inbox は未統合のメモ（README を除く）。"""
+    return [("lessons", repo / "exmem" / "lessons"), ("explain", repo / "guides" / "explain"), ("inbox", repo / "exmem" / "inbox")]
+
+
+def read_triggers(path):
+    """frontmatter の `triggers: [a, b]` の語の一覧。frontmatter が無い・行が無いときは None。"""
+    head = path.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+    m = re.match(r"---\n(.*?)\n---(?:\n|$)", head, re.S)
+    if not m:
+        return None
+    t = re.search(r"^triggers:\s*\[(.*?)\]\s*$", m.group(1), re.M)
+    if not t:
+        return None
+    return [w.strip() for w in t.group(1).split(",") if w.strip()]
+
+
+def trigger_files(repo):
+    for label, d in trigger_sources(repo):
+        if d.is_dir():
+            for f in sorted(d.glob("*.md")):
+                if label == "inbox" and f.name.lower() == "readme.md":
+                    continue
+                yield label, f
+
+
+def lookup_triggers(repo, query, top):
+    """依頼文 query に、triggers の語が（大文字小文字を区別せず）含まれるノートを、一致した語の数が多い順に示す。"""
+    q = query.lower()
+    found = []
+    for label, f in trigger_files(repo):
+        words = read_triggers(f) or []
+        hit = [w for w in words if len(w) >= 2 and w.lower() in q]
+        if hit:
+            found.append((len(hit), max(len(w) for w in hit), label, f, hit))
+    if not found:
+        print("該当なし（triggers の語が依頼文に無い）。必要なら exmem/exmem-index.md を引く")
+        return 0
+    found.sort(key=lambda x: (-x[0], -x[1], str(x[3])))
+    for n, _, label, f, hit in found[:top]:
+        mark = "（未統合）" if label == "inbox" else ""
+        print(f"{f.relative_to(repo).as_posix()}  ({round(f.stat().st_size / 1024)}KB)  [{n}語: {', '.join(hit)}]{mark}")
+    if len(found) > top:
+        print(f"ほか {len(found) - top} 件（--top で増やせる）")
+    return 0
+
+
+def check_triggers(repo):
+    """lessons と explain の全ノートに triggers: があり、15 語以内か。問題の数を返す。inbox は check_inbox の担当。"""
+    bad = 0
+    for label, f in trigger_files(repo):
+        if label == "inbox":
+            continue
+        words = read_triggers(f)
+        rel = f.relative_to(repo).as_posix()
+        if words is None:
+            print(f"FAIL: triggers が無い: {rel}")
+            bad += 1
+        elif not 1 <= len(words) <= TRIGGERS_MAX:
+            print(f"FAIL: triggers が {len(words)} 語（1〜{TRIGGERS_MAX}）: {rel}")
+            bad += 1
+    print(f"RESULT: triggers fail={bad}")
+    return bad
+
+
 def main():
     ap = argparse.ArgumentParser(description="exmem/lessons/ を、キーワードで検索する")
     ap.add_argument("keyword", nargs="*")
     ap.add_argument("--top", type=int, default=3)
     ap.add_argument("--body", action="store_true")
     ap.add_argument("--lessons", help="lessons/ の場所（省略時は kit の隣の exmem/lessons）")
+    ap.add_argument("--triggers", metavar="依頼文", help="依頼文の言葉から、triggers: が当たるノートを引く（lessons・guides/explain・未統合の inbox。--top の既定は 5）")
+    ap.add_argument("--check-triggers", action="store_true", help="lessons と guides/explain の全ノートに triggers: があるか点検する")
+    ap.add_argument("--list-triggers", action="store_true", help="全ノートの triggers: を「語 → ノート」の表で出す（人が見る用。毎回ノートから作る）")
     args = ap.parse_args()
+    repo = Path(__file__).resolve().parent.parent.parent
+    if args.check_triggers:
+        return check_triggers(repo)
+    if args.list_triggers:
+        for label, f in trigger_files(repo):
+            words = read_triggers(f)
+            if words:
+                print(f"- {' / '.join(words)} → `{f.relative_to(repo).as_posix()}`" + ("（未統合）" if label == "inbox" else ""))
+        return 0
+    if args.triggers is not None:
+        return lookup_triggers(repo, args.triggers, args.top if args.top != 3 else 5)
     keywords = [k for a in args.keyword for k in a.split(",") if k]
     if not keywords:
         print("キーワードを2〜4語、空白で並べる")

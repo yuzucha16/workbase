@@ -7,6 +7,7 @@ tags:
   - harness
   - para
   - knowledge-management
+triggers: [原本, 成果物, データの置き場, _noai, ai/out, マスク, 復元, 部屋のデータ, 知識の流れ]
 ---
 
 # AI 作業部屋のデータの置き場と流れ（原本・成果物・知識）

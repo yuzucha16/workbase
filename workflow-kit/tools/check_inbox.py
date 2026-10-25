@@ -165,6 +165,9 @@ def check_file(path, today, c, spans):
     c.report(3 <= len(tags) <= 6, "tags が3〜6個", "FAIL", f"{len(tags)}個")
     c.report(not [t for t in tags if not re.match(r"^[a-z0-9]+([-/][a-z0-9]+)*$", t)], "tags が英小文字の kebab-case（階層は /）")
     c.report(not [t for t in tags if t.lower() in ("inbox", "knowledge", "active", "superseded", "project", "index")], "tags に type / status の値を含まない")
+    m = re.search(r"^triggers:\s*\[(.*?)\]\s*$", front, re.M)
+    words = [w.strip() for w in m.group(1).split(",") if w.strip()] if m else []
+    c.report(1 <= len(words) <= 15, "triggers が1〜15語（`triggers: [語, 語]` の1行）", "FAIL", f"{len(words)}語")
     m = re.search(r"sources:\n(.*)", front, re.S)
     src_block = m.group(1) if m else ""
     srcs = re.findall(r"^\s+-\s+(.+)$", src_block, re.M)

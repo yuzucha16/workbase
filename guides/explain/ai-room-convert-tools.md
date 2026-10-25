@@ -5,6 +5,7 @@ tags:
   - security
   - tool/wsl
   - tool/excel
+triggers: [LibreOffice, Chromium, pandoc, mermaid, 変換, Excel変換, room run, 画像出力, HTML化, 再計算, 日本語フォント]
 ---
 
 # AI 作業部屋: 変換の道具を部屋に入れた理由と、room run の案（理解ガイド）

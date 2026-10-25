@@ -6,6 +6,7 @@ tags:
   - tool/git
   - tool/docker
   - windows
+triggers: [SSL, 証明書, 証明書エラー, SSLインスペクション, プロキシ, TLS, CA, git, docker, 自己署名]
 ---
 
 # SSL証明書とSSLインスペクション:理解ガイド

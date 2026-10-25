@@ -5,6 +5,7 @@ tags:
   - workflow
   - knowledge-management
   - ai/claude
+triggers: [review, 見直して, 週次見直し, 遠回り, 読み込み字数, 警告の目安, フック改善]
 ---
 
 # review（見直して）: なぜ導入したか、ここまでの経緯、これからやること（理解ガイド）

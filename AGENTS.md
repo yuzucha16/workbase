@@ -11,6 +11,10 @@
 
 共通ルールの置き場は `workflow-kit/`（`$HOME\works\resources\workflow-kit`）。ユーザーが合言葉（手順書を呼ぶ短い言葉。日本語の別名つき）を言ったら、そこの `hooks.md` の表に従って手順書を読み、実行する（言われたときだけ）。`docs-rules.md` は、`docs/` を更新するときと、コミット・push の前に読む。読めない場合は、記憶で代用せず、ユーザーに伝えて止まる。
 
+## 知識を引く（作業の前）
+
+作業を始める前に、依頼の言葉で `python -I workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` を実行し、出たノートを読む（`exmem/lessons/`、`guides/explain/`、未統合の `exmem/inbox/` の `triggers:` と照合する。2026-10-25 ユーザーの決定。設計は `topics/md-link-graph/records/design-triggers.md`）。
+
 ## 読む順番
 
 1. `README.md`（窓口）

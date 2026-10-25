@@ -78,6 +78,8 @@
 - `sources`: `<実行中のAI名> conversation "<テーマ>"`（例: `Claude Code conversation "fzf のキーバインド整理"`）。`"<テーマ>"` の後ろに、日付などを足さない（点検スクリプトが FAIL にする）。
 - `tags`: 英小文字の kebab-case で3〜6個。`exmem/tags.md` は読まない。自由に書く（語彙への正規化は、統合のときに exmem 側で行う）。ソフトウェアは `tool/<名前>`、AIサービスは `ai/<名前>`。`type` や `status` の値（`inbox`、`knowledge` など）はタグにしない。
 
+- `triggers`（必須。2026-10-25）: 後で同じ作業をするとき、依頼文に出そうな言葉（コマンド名、拡張子、症状、作業名）を、同義語・言い換えを含めて15語まで、`triggers: [語, 語]` の1行で書く（`tags` の次の行）。`find_knowledge.py --triggers "<依頼文>"` が、この語を依頼文と部分一致で照合して、作業の前にノートを引き当てる。書いた直後から、未統合のメモとして引かれる。`integrate` が、統合先に引き継ぐ。「理解」も同じ。
+
 ### 文章の規則
 
 - **単体で読めるように書く。** 「上記」「この会話」「さっきの」など会話に依存する表現を避ける。
@@ -132,4 +134,4 @@ AI が提案した内容で、ユーザーの承認を確認できないもの�
 
 ## 形式
 
-「ナレッジ」の見出しは次の7つを、この順番で、省略せずに書く（「理解」の6見出しは `stock-explain.md`）: Goal / Principles / Decisions / Facts / Gotchas / Open Questions / Next Actions。該当が無い見出しは「なし」と書く。**「なし」は、見出しの直後に、1語だけの行として書く**（点検スクリプトが `なし` との完全一致で見る。補足を同じ行に書くと、項目ありとみなされ、Gotchas などが3行セットでないとして FAIL になる）。補足は、別の見出しか、別のファイルに書く。frontmatter（`type: inbox`、`title`、`tags`、`created`、`sources`）から全見出しまでの通しの形は、`examples/inbox-example.md` が正本。
+「ナレッジ」の見出しは次の7つを、この順番で、省略せずに書く（「理解」の6見出しは `stock-explain.md`）: Goal / Principles / Decisions / Facts / Gotchas / Open Questions / Next Actions。該当が無い見出しは「なし」と書く。**「なし」は、見出しの直後に、1語だけの行として書く**（点検スクリプトが `なし` との完全一致で見る。補足を同じ行に書くと、項目ありとみなされ、Gotchas などが3行セットでないとして FAIL になる）。補足は、別の見出しか、別のファイルに書く。frontmatter（`type: inbox`、`title`、`tags`、`triggers`、`created`、`sources`）から全見出しまでの通しの形は、`examples/inbox-example.md` が正本。

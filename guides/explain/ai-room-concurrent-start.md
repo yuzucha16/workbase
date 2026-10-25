@@ -6,6 +6,7 @@ tags:
   - concurrency
   - tool/wsl
   - workflow
+triggers: [並行, 同時, 同じ部屋, room start, 共有, 衝突, 複数Project, 排他, マウント]
 ---
 
 # 同じ部屋で Project を並行して開くとき何が共有されるか

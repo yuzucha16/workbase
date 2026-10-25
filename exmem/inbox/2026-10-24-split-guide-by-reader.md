@@ -6,6 +6,7 @@ tags:
   - workflow
   - structure
   - taxonomy
+triggers: [手順書, 分割, 読む条件, 構成, 用途, 読み手, ガイド, 見直し, dev-deliverable-guide, 重複, 1か所]
 created: 2026-10-24
 sources:
   - Claude Code conversation "dev-deliverable-guide の見直し"

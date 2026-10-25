@@ -6,6 +6,7 @@ tags:
   - para
   - security
   - harness
+triggers: [Area, 共有知, 会議録, room pull, knowledge, Area跨ぎ, 横断, 業務知識]
 ---
 
 # Area を跨ぐ共有知: workbase の共有知との違いと、設計の軸（理解ガイド）

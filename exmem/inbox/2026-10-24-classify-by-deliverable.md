@@ -6,6 +6,7 @@ tags:
   - refactoring
   - documentation
   - workflow
+triggers: [type, 種別, 分類, 統合, 集約, 成果物, room open, リファクタリング, 命名, 分け方]
 created: 2026-10-24
 sources:
   - Claude Code conversation "room open の type 集約"

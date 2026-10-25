@@ -7,6 +7,7 @@ tags:
   - tool/wsl
   - ai/claude
   - para
+triggers: [AI作業部屋, 導入理由, 顧客データ, 社外秘, WSL, 隔離, 選択肢, 境界]
 ---
 
 # AI 作業部屋: なぜこの仕組みを導入するのか（理解ガイド）

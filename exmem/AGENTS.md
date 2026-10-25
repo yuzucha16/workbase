@@ -12,6 +12,7 @@ exmem（external memory、外部メモリ）は、AIと人間が共有するナ�
 
 ## 読む順番
 
+0. 作業の前に、依頼の言葉で `python -I workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` を実行し、出たノートを読む（各ノートの `triggers:` と部分一致で照合する。`lessons/`、`guides/explain/`、未統合の `inbox/` が対象）。
 1. `exmem-index.md`（知識の索引）で、該当する知識を探し、その `lessons/*.md` を読む（全件は読まない）。大きいノート（目安 10KB 超）は、見出しの一覧か `find-knowledge.ps1` が示す行の範囲を見て、必要な節だけを読む。
 2. 作業の途中の状態は、その `lessons/` のノートの `Open Questions` と `Next Actions`。
 3. タグの一覧は `tags.md`。
@@ -42,6 +43,7 @@ sources:
 ```
 
 - `type` / `title` / `status` / `tags` / `created` / `updated` は必須。
+- `triggers: [語, 語]`（`lessons/` の必須項目。2026-10-25）: 後で同じ作業をするとき、依頼文に出そうな言葉（コマンド名、拡張子、症状、作業名）を、同義語・言い換えを含めて15語まで、1行で書く。上の「読む順番」0 の検索が使う。`integrate` が統合のときに合わせ、`find_knowledge.py --check-triggers` が点検する。
 - `aliases` には日本語名や別名を入れる。Obsidianのリンク補完・検索で使われる。
 - 日付は `YYYY-MM-DD`。知識ファイルを変更したら `updated` を今日の日付にする。
 
