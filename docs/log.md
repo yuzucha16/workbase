@@ -28,6 +28,7 @@
 3. フックと room の整合: `mkworks` の実機確認、旧名の注記の削除、dotfiles のスキルの入口（`topics/hook-room-alignment/docs/log.md`）。
 4. 人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（同上）。未決は `release` の束ね先。
 5. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
+6. 期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`。仮決め、実装前）。
 
 ## Open Questions
 
