@@ -12,6 +12,7 @@ aliases:
   - コマンドヒストリの種
   - シェル履歴のユースケース
   - history seed
+triggers: [コマンド履歴, ヒストリ, history, 利用傾向, シェル履歴, ターミナル, よく使うコマンド, エイリアス案, ヒストリの種]
 created: 2026-10-04
 updated: 2026-10-11
 sources:

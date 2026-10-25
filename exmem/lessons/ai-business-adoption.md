@@ -11,6 +11,7 @@ aliases:
   - AI活用の費用対効果
   - 実務ROIファースト
   - AI業務適用の習得工程
+triggers: [AI活用, 業務負荷, 費用対効果, ROI, 習得, 業務適用, 導入, 定型業務, 研修]
 created: 2026-10-02
 updated: 2026-10-02
 sources:

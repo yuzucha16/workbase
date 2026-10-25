@@ -11,6 +11,7 @@ tags:
 aliases:
   - WSLのファイル配置
   - Windows側とWSL側の置き場所
+triggers: [WSL, ファイル配置, Windows側, WSL側, 置き場所, /mnt/c, パフォーマンス, Zed, 配置方針, ホーム]
 created: 2026-10-02
 updated: 2026-10-18
 sources:

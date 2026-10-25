@@ -10,6 +10,7 @@ tags:
 aliases:
   - Notepad++の設定
   - Notepad++ config.xml
+triggers: [Notepad++, notepad++, config.xml, エディタ設定, テキストエディタ, scoop, 設定の管理, 配色]
 created: 2026-10-04
 updated: 2026-10-16
 sources:

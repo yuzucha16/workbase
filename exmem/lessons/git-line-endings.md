@@ -12,6 +12,7 @@ aliases:
   - 改行コード
   - gitattributes
   - autocrlf
+triggers: [改行, LF, CRLF, .gitattributes, autocrlf]
 created: 2026-10-06
 updated: 2026-10-16
 sources:

@@ -13,6 +13,7 @@ aliases:
   - Power Automate学習計画
   - 週次・月次作業レポート自動化
   - 入力層設計
+triggers: [Power Automate, Office Scripts, 業務自動化, 週次, 月次, レポート, フロー, Excel自動化, 入力層, 定期作業]
 created: 2026-10-02
 updated: 2026-10-02
 sources:

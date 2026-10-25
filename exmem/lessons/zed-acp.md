@@ -12,6 +12,7 @@ tags:
   - windows
 aliases:
   - Zed ACP
+triggers: [Zed, ACP, Claude Code, Codex, エージェント, 接続, agent_servers, 設定, AIパネル, Agent]
 created: 2026-09-26
 updated: 2026-10-16
 sources:

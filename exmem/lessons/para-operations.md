@@ -13,6 +13,7 @@ aliases:
   - Project と Area の判断基準
   - 開始インタビュー
   - 質問の指標
+triggers: [PARA, Project, Area, Archive, 運用, 判断基準, 開始インタビュー, 質問, 案件, 仕分け]
 created: 2026-10-06
 updated: 2026-10-17
 sources:

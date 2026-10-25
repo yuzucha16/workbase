@@ -13,6 +13,7 @@ aliases:
   - Office成果物の作業環境
   - xlsx/pptxのAI作業設計
   - Master/view分離
+triggers: [Office, xlsx, pptx, Excel, PowerPoint, 成果物, 作業環境, データ配置, Master, view, Word, 資料作成]
 created: 2026-10-02
 updated: 2026-10-16
 sources:

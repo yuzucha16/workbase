@@ -9,6 +9,7 @@ tags:
 aliases:
   - ユーザーの取扱説明書
   - 口癖と AI の動き
+triggers: [ユーザー, 取扱説明書, 口癖, 思考パターン, 依頼の読み方, 指示の癖, 補正, ee, 好み]
 created: 2026-10-13
 updated: 2026-10-18
 sources:

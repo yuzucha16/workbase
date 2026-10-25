@@ -11,6 +11,7 @@ aliases:
   - VS Codeライトユーザー向け運用
   - VS Code Workspace
   - extensions.json
+triggers: [VS Code, VSCode, 拡張機能, extension, extensions.json, .vscode, Workspace, formatter]
 created: 2026-10-02
 updated: 2026-10-02
 sources:

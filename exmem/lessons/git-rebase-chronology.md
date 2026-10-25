@@ -9,6 +9,7 @@ tags:
 aliases:
   - rebase の順序確認
   - 分岐した main の rebase
+triggers: [rebase, 時系列, 分岐]
 created: 2026-10-06
 updated: 2026-10-16
 sources:

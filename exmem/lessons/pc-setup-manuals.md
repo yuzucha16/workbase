@@ -14,6 +14,7 @@ aliases:
   - cheatsheets/env
   - guides/howto
   - PC再セットアップ
+triggers: [セットアップ, 再セットアップ, 新しいPC, 手順書, Win11, Debian, 環境構築, 初期設定, git設定, 証明書, 導入手順]
 created: 2026-10-03
 updated: 2026-10-16
 sources:

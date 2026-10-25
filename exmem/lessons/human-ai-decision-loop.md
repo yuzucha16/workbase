@@ -10,6 +10,7 @@ tags:
 aliases:
   - Decision Loop
   - 人間とAIの意思決定ループ設計
+triggers: [意思決定, Decision Loop, 決定, 承認, 差し戻し, 人とAI, 判断, 先行する決定, 確認の取り方]
 created: 2026-10-02
 updated: 2026-10-08
 sources:

@@ -10,6 +10,7 @@ aliases:
   - セッション切り替え
   - スレッドの引継ぎ
   - 別スレッドで進める
+triggers: [セッション, スレッド, 引継ぎ, 引き継ぎ, 切り替え, 新しい会話, handover, キャッシュ, TTL, resume]
 created: 2026-10-10
 updated: 2026-10-19
 sources:

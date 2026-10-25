@@ -12,6 +12,7 @@ aliases:
   - Claude Codeプラグインの導入
   - 外部スキルの取り込み
   - obsidian-skills の導入
+triggers: [プラグイン, スキル, 外部スキル, 取り込み, marketplace, obsidian-skills, 導入, skill, 拡張]
 created: 2026-10-14
 updated: 2026-10-14
 sources:

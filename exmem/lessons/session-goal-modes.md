@@ -9,6 +9,7 @@ tags:
 aliases:
   - brief のモード
   - 確定型と探索型
+triggers: [brief, モード, ゴール, 確定型, 探索型, セッションの進め方, 目的, 工程, 達成]
 created: 2026-10-14
 updated: 2026-10-14
 sources:

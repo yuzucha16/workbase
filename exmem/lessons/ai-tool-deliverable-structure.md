@@ -11,6 +11,7 @@ tags:
 aliases:
   - 成果物の構成と文書の型
   - 仕様書とテストの型
+triggers: [成果物の構成, 仕様書, テスト, 小さなツール, README, 文書の型, スクリプト, 構成, 設計]
 created: 2026-10-14
 updated: 2026-10-15
 sources:

@@ -10,6 +10,7 @@ aliases:
   - git filter-repo
   - リポジトリの切り出し
   - サブディレクトリの分離
+triggers: [filter-repo, 切り出し, 分離, サブディレクトリ, 別リポジトリ, 履歴を保つ, subtree, bundle]
 created: 2026-10-05
 updated: 2026-10-06
 sources:

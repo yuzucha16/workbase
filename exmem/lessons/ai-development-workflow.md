@@ -11,6 +11,7 @@ tags:
   - tool/obsidian
 aliases:
   - AI開発ワークフロー
+triggers: [AI開発, ワークフロー, 作業ログ, 引継ぎ, スマホ, モバイル, Obsidian, Zed, コンテキスト, 開発の進め方]
 created: 2026-09-26
 updated: 2026-10-16
 sources:

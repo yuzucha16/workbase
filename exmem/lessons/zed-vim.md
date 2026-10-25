@@ -11,6 +11,7 @@ tags:
 aliases:
   - Zed Vim環境
   - ZedへのVim環境移行
+triggers: [Zed, Vim, Neovim, キーマップ, キーバインド, keymap.json, vim_mode, エディタ設定]
 created: 2026-09-26
 updated: 2026-10-10
 sources:

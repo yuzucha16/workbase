@@ -12,6 +12,7 @@ aliases:
   - Claude Code vs Cowork
   - excel-aggregationスキル
   - CoworkのWindows要件
+triggers: [Cowork, 使い分け, Excelスキル, Windows要件, 集計, Claude Desktop, Office, スキル]
 created: 2026-10-02
 updated: 2026-10-02
 sources:

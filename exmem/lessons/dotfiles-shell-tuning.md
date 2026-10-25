@@ -12,6 +12,7 @@ aliases:
   - シェルの起動時間
   - WSL の配色とメモリ
   - dotfiles の追跡方針
+triggers: [起動時間, シェル, 遅い, WSL, 配色, メモリ, 追跡方針, dotfiles, プロファイル, zsh, 高速化]
 created: 2026-10-06
 updated: 2026-10-06
 sources:

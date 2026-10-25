@@ -7,6 +7,10 @@
 - 決定（`decisions.md` の 2026-10-24〜25 の項）: 名前は `run` / `verify` / `release`、目視は bat が y/n、診断ログ（`verify-result.json`）は毎回出す、版は `YYYY-MM-DD.N`。`artifacts/` を Project 直下に置く案は、成果物の経路を `ai/out/` 1本にするため取り下げた（人の直接編集はマスクに関係しない箇所だけ。`restore` は `ai/out` を丸ごと `_noai/final` に流す仕組みで、確認済み）。
 - 実装（`5e7659f`）: `script-guide.md` に `verify.py` `release.py` の型、`check_py.py` に名前と結果ファイルの点検。部屋の Linux で動作確認（非対話・対話・release の各止まり方）。Windows は未確認。`dev-deliverable-guide.md` の壊れた重複行も削除した（`408999e`）。
 
+### 2026-10-25（md-link-graph の続き: 計測と `triggers:` の試作）
+- トピック `topics/md-link-graph/` で論点 A・B・D を詰めた。バッククォートのパスも辺に数える（ユーザーの決定）。届きやすさは、場面ごとの到達で測る。原因は、自動で読まれる起点に「作業の前に索引を引く」の指示が無いこと。ユーザーの方針は「今の構造は前提にしない。抜本的な改善」。
+- `exmem/lessons/` の全 67 本に `triggers:`（15 語まで）を足した。届かない場面は 26 件中 20 件から 1 件。詳細はトピックの `docs/log-history.md`。本実装（起点の入口、フック）は未着手で、承認が要る。
+
 ### 2026-10-25（review 消化）
 - 待ち行列 2 件をサブエージェントでスクリーニング。kit-growth の行き先（覆す可能性が高い判定）は、ユーザーが削除（次の機会に回す）。stock 理解の既存ガイドの扱いは正式化し、出口を「統合時の修正」に揃えた（`aeadf54`）。
 - 18（Stop フックの実機）: ユーザーが確認。記録先が `ai/ai/records/` と二重になる誤りを `record_dir` で直した（`0e7c591`）。18 は close。

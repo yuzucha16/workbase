@@ -13,6 +13,7 @@ aliases:
   - 設定ディレクトリの置き場
   - 自動で書き換わるファイルの追跡
   - data.jsonの追跡
+triggers: [.obsidian, 設定ディレクトリ, 置き場, dotfiles]
 created: 2026-10-04
 updated: 2026-10-16
 sources:

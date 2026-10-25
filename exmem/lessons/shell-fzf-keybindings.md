@@ -11,6 +11,7 @@ aliases:
   - fzfのキーバインド
   - Ctrl+R Ctrl+T
   - Alt+j Alt+k
+triggers: [fzf, キー割り当て, キーバインド, Ctrl+R, Ctrl+T, 履歴検索, PSReadLine, zsh, bash, pwsh]
 created: 2026-10-04
 updated: 2026-10-16
 sources:

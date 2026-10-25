@@ -10,6 +10,7 @@ aliases:
   - 変更のやり方1
   - 基準文書
   - 基点つきの最小変更
+triggers: [変更, 基準文書, 基点, 最小の変更, 差分, 修正のやり方, Must, Want, 改修]
 created: 2026-10-16
 updated: 2026-10-17
 sources:

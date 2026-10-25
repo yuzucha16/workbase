@@ -10,6 +10,7 @@ aliases:
   - Obsidianの見た目
   - ファイルエクスプローラーの配色
   - file-explorer-compact
+triggers: [Obsidian, 色分け, CSS, ファイル一覧, 配色, テーマ, 見た目, file-explorer, スニペット]
 created: 2026-10-05
 updated: 2026-10-05
 sources:

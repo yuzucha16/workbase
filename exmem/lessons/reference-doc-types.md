@@ -11,6 +11,7 @@ aliases:
   - 理解ガイド
   - クイックリファレンス
   - cheatsheet の書き方
+triggers: [手順書, 理解ガイド, クイックリファレンス, cheatsheet, 文書の種類, guides, howto, explain, 人が読む文書, マニュアル]
 created: 2026-10-10
 updated: 2026-10-21
 sources:

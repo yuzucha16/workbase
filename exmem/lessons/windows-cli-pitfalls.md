@@ -11,6 +11,7 @@ tags:
 aliases:
   - Windows CLI の落とし穴
   - PowerShell の落とし穴
+triggers: [PowerShell, パイプ, here-string, 引数, 文字化け, 改行コード, Set-Content, 一括置換, エイリアス, git update-index, 実行権限, symlink, バッチ, Format-Table]
 created: 2026-10-06
 updated: 2026-10-08
 sources:

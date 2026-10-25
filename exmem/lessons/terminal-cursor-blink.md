@@ -12,6 +12,7 @@ aliases:
   - カーソル点滅の停止
   - DECSCUSR
   - 点滅を止める
+triggers: [カーソル, 点滅, DECSCUSR, Windows Terminal, cursor_blink, 視覚の負担, 端末]
 created: 2026-10-04
 updated: 2026-10-16
 sources:

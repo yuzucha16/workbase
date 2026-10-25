@@ -12,6 +12,7 @@ aliases:
   - scoop管理
   - scoopと管理外アプリ
   - アプリの整理
+triggers: [scoop, winget, アプリの管理, インストール, アンインストール, manifest, 二重管理, pnputil, ドライバ]
 created: 2026-10-04
 updated: 2026-10-16
 sources:

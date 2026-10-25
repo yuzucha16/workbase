@@ -12,6 +12,7 @@ aliases:
   - プロジェクト憲章
   - 成果物 WBS
   - brief 計画
+triggers: [計画, 6R, 憲章, WBS, マイルストーン, 成果物, ゴール, 要求, brief 計画, スケジュール, 目的]
 created: 2026-10-20
 updated: 2026-10-21
 sources:

@@ -10,6 +10,7 @@ aliases:
   - .claudeの管理方針
   - settings.local.json
   - Claude Codeのプロジェクト設定
+triggers: [.claude, settings.local.json, プロジェクト設定, settings.json, 権限設定, 管理方針, 追跡, gitignore]
 created: 2026-10-02
 updated: 2026-10-16
 sources:

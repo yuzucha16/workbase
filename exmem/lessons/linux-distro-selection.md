@@ -12,6 +12,7 @@ aliases:
   - Linuxディストロ選定
   - MX Linux採用
   - ThinkPad X13のLinux移行
+triggers: [Linux, ディストロ, MX Linux, ThinkPad, 自宅PC, 選定, Debian, 移行, OS選び]
 created: 2026-10-02
 updated: 2026-10-02
 sources:

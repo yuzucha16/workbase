@@ -10,6 +10,7 @@ aliases:
   - 調査のやり方1
   - 調査モード
   - brief 調査
+triggers: [調査, 問い, 構造化, 読者, 一次情報, 事実と所感, brief 調査, 調査モード, リサーチ, まとめ方]
 created: 2026-10-16
 updated: 2026-10-17
 sources:

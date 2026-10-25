@@ -15,6 +15,7 @@ aliases:
   - Bedrock 設定
   - apiKeyHelper
   - OAuth と API キーの切り替え
+triggers: [Bedrock, 認証, モデル指定, AWS]
 created: 2026-10-11
 updated: 2026-10-20
 sources:

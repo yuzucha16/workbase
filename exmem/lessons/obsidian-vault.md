@@ -14,6 +14,7 @@ aliases:
   - Obsidian Vault
   - Obsidianの設定
   - vaultのバックアップ
+triggers: [Obsidian, Vault, vault, バックアップ, 設定, プラグイン, リンク, wikilink, 同期, .obsidian, 日付, ノート]
 created: 2026-10-01
 updated: 2026-10-18
 sources:

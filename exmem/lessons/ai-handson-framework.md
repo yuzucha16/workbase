@@ -13,6 +13,7 @@ aliases:
   - AIハンズオン設計
   - 情報ダイジェストの自動化
   - ai-handson
+triggers: [ハンズオン, 研修, 情報ダイジェスト, 自動化, Copilot, Claude, 勉強会, 教材, Power Automate]
 created: 2026-10-02
 updated: 2026-10-02
 sources:

@@ -11,6 +11,7 @@ aliases:
   - 横並びの表
   - Must と Want
   - 手順書群の整合性
+triggers: [横並びの表, 星取り表, Must, Want, 手順書群, 整合性, 揃える範囲, 抽象と具体, 点検, 参照の実在]
 created: 2026-10-08
 updated: 2026-10-08
 sources:

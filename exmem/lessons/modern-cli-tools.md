@@ -11,6 +11,7 @@ tags:
 aliases:
   - modern CLI
   - eza fd ripgrep bat fzf zoxide
+triggers: [eza, fd, ripgrep, bat, fzf, zoxide, rg, CLIツール, 検索, ls, grep, find]
 created: 2026-10-02
 updated: 2026-10-05
 sources:

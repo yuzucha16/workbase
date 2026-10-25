@@ -10,6 +10,7 @@ aliases:
   - ダンピング
   - IQUNIX MQ80
   - スタビライザー
+triggers: [キーボード, スイッチ, スタビライザー, スタビラトル, ダンピング, 打鍵感, 静音, 自作キーボード, IQUNIX, 軸]
 created: 2026-10-02
 updated: 2026-10-02
 sources:

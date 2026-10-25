@@ -12,6 +12,7 @@ aliases:
   - 組込み C の制約検査
   - nm と呼び出しグラフの検査
   - freestanding の検査
+triggers: [組込み, 組み込み, C言語, 制約, nm, 呼び出しグラフ, freestanding, 静的解析, 検査, ビルド, リンカ]
 created: 2026-10-06
 updated: 2026-10-06
 sources:

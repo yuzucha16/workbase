@@ -12,6 +12,7 @@ aliases:
   - 共通機能
   - ナレッジ化して
   - 改善の受け皿
+triggers: [workflow-kit, フック, ナレッジ化, 作業ログ, 共通機能, wrap, 終了処理, docs, 受け皿, 合言葉, log.md, 改善]
 created: 2026-10-04
 updated: 2026-10-21
 sources:

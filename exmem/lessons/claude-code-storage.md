@@ -13,6 +13,7 @@ tags:
 aliases:
   - Claude Codeの履歴の保存場所
   - Claudeチャット履歴の移行
+triggers: [チャット履歴, 会話履歴, メモリ, 保存場所, .claude, jsonl, 履歴の移行, プロジェクトの移動]
 created: 2026-10-01
 updated: 2026-10-18
 sources:

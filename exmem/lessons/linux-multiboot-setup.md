@@ -10,6 +10,7 @@ aliases:
   - マルチブートLinux
   - 共有ESP構成
   - MX Linuxインストール
+triggers: [マルチブート, デュアルブート, ESP, SSD, インストール, MX Linux, パーティション, ブートローダー, GRUB]
 created: 2026-10-02
 updated: 2026-10-10
 sources:

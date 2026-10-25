@@ -10,6 +10,7 @@ aliases:
   - gh release download
   - gh未ログイン
   - GitHub Releasesの取得
+triggers: [gh release download, リリース, 成果物の取得]
 created: 2026-10-04
 updated: 2026-10-16
 sources:

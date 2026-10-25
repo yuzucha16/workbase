@@ -13,6 +13,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("root", nargs="?", default=str(HERE.parents[3]))
 ap.add_argument("--out", default=None)
 ap.add_argument("--start", nargs="*", default=["AGENTS.md", "README.md", "docs/log.md"])
+ap.add_argument("--kinds", nargs="*", default=["wiki", "md", "include", "tick"], help="数える辺の種類（wiki md include tick）")
 a = ap.parse_args()
 root = Path(a.root).resolve()
 out = Path(a.out) if a.out else HERE.parents[1] / "records" / "graph.html"
@@ -56,6 +57,8 @@ edges = collections.defaultdict(lambda: collections.defaultdict(set))  # src -> 
 for p in files:
     text = p.read_text(encoding="utf-8", errors="replace")
     for rx, k in ((WIKI, "wiki"), (MDL, "md"), (INC, "include"), (TICK, "tick")):
+        if k not in a.kinds:
+            continue
         for m in rx.finditer(text):
             t = resolve(p, m.group(1))
             if t and t != rel[p]:
@@ -169,8 +172,8 @@ document.getElementById('sum').innerHTML=`<h2>要約</h2><table>
 <tr><td>最大の深さ</td><td class=n>${maxd}</td></tr>
 <tr><td>最大の循環の大きさ</td><td class=n>${S.scc_big}（全体の ${Math.round(100*S.scc_big/S.files)}%）</td></tr></table>
 <h2 style="margin-top:8px">深さ別の件数</h2><table>${Object.entries(S.depth).map(([d,c])=>`<tr><td>${d}</td><td class=n>${c}</td><td><span class=bar style="width:${Math.round(c/S.files*220)}px"></span></td></tr>`).join('')}</table>`;
-const top=(k)=>N.map((n,i)=>[n,i]).sort((a,b)=>b[0][k]-a[0][k]).slice(0,10).map(([n,i])=>`<tr><td>${esc(n.id)}</td><td class=n>${n[k]}</td></tr>`).join('');
-hubOut.innerHTML=top('out');hubIn.innerHTML=top('in');
+const topN=(k)=>N.map((n,i)=>[n,i]).sort((a,b)=>b[0][k]-a[0][k]).slice(0,10).map(([n,i])=>`<tr><td>${esc(n.id)}</td><td class=n>${n[k]}</td></tr>`).join('');
+hubOut.innerHTML=topN('out');hubIn.innerHTML=topN('in');
 const lst=a=>a.length?'<ul>'+a.map(x=>`<li><code>${esc(x)}</code></li>`).join('')+'</ul>':'なし';
 orph.innerHTML=lst(S.orphans);unr.innerHTML=lst(S.unreached);
 // force layout

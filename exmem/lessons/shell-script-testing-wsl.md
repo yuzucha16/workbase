@@ -16,6 +16,7 @@ aliases:
   - シェルスクリプトの試験
   - 偽の HOME
   - 環境判定の差し替え
+triggers: [.bat, バッチ, バッチファイル, chcp, cp932, 文字化け, 日本語表示, pause, ASCII, シェルスクリプト, WSL, 試験]
 created: 2026-10-06
 updated: 2026-10-21
 sources:

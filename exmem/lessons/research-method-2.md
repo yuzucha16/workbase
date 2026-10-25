@@ -10,6 +10,7 @@ aliases:
   - 調査のやり方2
   - 手順を調べる
   - brief 調査
+triggers: [調査, 手順を調べる, 手順書, 前提, 骨格, brief 調査, 実行できる手順, 調べ方, やり方を調べる]
 created: 2026-10-17
 updated: 2026-10-17
 sources:

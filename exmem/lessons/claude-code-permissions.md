@@ -15,6 +15,7 @@ aliases:
   - allowlist
   - サンドボックス運用
   - 自走期間
+triggers: [permissions, allow, deny, 許可, settings.json]
 created: 2026-10-02
 updated: 2026-10-19
 sources:

@@ -11,6 +11,7 @@ aliases:
   - フォント
   - PlemolJP
   - メインフォント
+triggers: [フォント, font, 導入]
 created: 2026-10-03
 updated: 2026-10-16
 sources:

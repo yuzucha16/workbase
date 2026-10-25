@@ -12,6 +12,7 @@ tags:
 aliases:
   - VBAマクロのAI開発
   - Excel VBA の落とし穴
+triggers: [Excel, VBA, マクロ, .bas, .xlsm, VBE, Shift-JIS, cp932, ピボット, UserForm, MsgBox, COM]
 created: 2026-10-14
 updated: 2026-10-15
 sources:

@@ -10,6 +10,7 @@ tags:
 aliases:
   - Zedのdotfiles管理
   - Zedの設定の再現
+triggers: [Zed, dotfiles, settings.json, 設定の再現, 同期, 管理, シンボリックリンク, エディタ設定, 配置]
 created: 2026-10-01
 updated: 2026-10-16
 sources:

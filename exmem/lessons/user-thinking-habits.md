@@ -9,6 +9,7 @@ tags:
 aliases:
   - 思考の癖
   - thinking habits
+triggers: [思考の癖, 悪影響, 補正策, ユーザーの傾向, 認知, 習慣, 判断の癖, 依頼文]
 created: 2026-10-17
 updated: 2026-10-18
 sources:

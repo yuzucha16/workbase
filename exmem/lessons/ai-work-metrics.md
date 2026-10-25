@@ -11,6 +11,7 @@ aliases:
   - AI 活用の指標
   - 会話履歴の集計
   - 自走時間
+triggers: [指標, 会話履歴, 集計, 自走時間, トークン, 費用, 測る, jsonl, メトリクス, 使用量]
 created: 2026-10-06
 updated: 2026-10-10
 sources:
