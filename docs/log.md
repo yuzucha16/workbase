@@ -26,7 +26,7 @@
 1. 振り返り（改善4・5）: 材料と施策は `topics/kit-growth/records/` と `decisions.md`（2026-10-25 の項）。次は週次 11-01、月次 11-29。
 2. 整合の基準のギャップ 8（公開リポジトリの履歴にユーザー名入りのパス）: workbase は 10-25 に書き換えて force push した。works（26 コミット）と dotfiles（5 コミット）が残る。他の PC の clone は `git fetch origin && git reset origin/main` で合わせる。
 3. フックと room の整合（`topics/hook-room-alignment/`）: `mkworks` の実機確認（`room mksub` で `works_sub<N>` を作って試す。10-25 に実装、単体テスト済み。実機は未実施）、旧名（`init` `open` `start`）の注記を消す、dotfiles の Claude 用スキルの入口。
-4. 人が叩くスクリプト: PC2 の Windows で `verify.bat` を 1 回実行して確かめる。`run.py` の型と ps1 版（`verify.ps1` `release.ps1`）は 10-25 に足した（Linux で確認）。PC2 では `verify.ps1` も 1 回（日本語のひとことの入力を含めて）。未実装は原因の台帳（承認待ち）、`release` の束ね先（未決）。
+4. 人が叩くスクリプト: PC2 の Windows で `verify.bat` を 1 回実行して確かめる。`run.py` の型と ps1 版（`verify.ps1` `release.ps1`）は 10-25 に足した（Linux で確認）。PC2 では `verify.ps1` も 1 回（日本語のひとことの入力を含めて）。原因の台帳も 10-25 に足した（`script-guide.md` の節。最初の失敗で使う）。未決は `release` の束ね先。
 5. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
 
 ## Open Questions

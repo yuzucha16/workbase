@@ -10,6 +10,7 @@
 - 変更範囲（案）: `script-guide.md`（束ねる役の型 Python・ps1 に診断ログ、台帳の節）、`tools/check_py.py` と `check-ps1.ps1`（診断ログの有無を WARN）、`room-context.md`（失敗報告を受けたときの数行）、`docs/decisions.md`（2026-10-21「再訂正」の「既定ではログを出さない」を、診断に限って変える旨）。変えない: `room.py` の動作、境界、全文ログの既定。部屋用 `CLAUDE.md` の文面（`room.py` 内）に1行足す場合は文面だけ。
 - 確認済み（2026-10-24）: `check_py.py` は `--log` と `'work'` と `argparse` の有無を見る（92 行）。型は `script-guide.md` にあり、既定ではログを出さない。`SHARE_PATHS` に `exmem/lessons` と `workflow-kit` が含まれる。WSL の `interop` は実行ファイルを限定できない（公式文書に該当の設定が無い）。
 - 未確認: 診断ログの型を Windows の Python と pwsh で動かすこと（実装後に PC2 で1回）。伏せ字がユーザー名・ホスト名・パスを漏らさないこと。台帳が実際に参照されるか。
+- 実装（2026-10-25、ユーザーの承認「今実装する」）: ② は root の `run` / `verify` / `release` の項の結果ファイル（`<名前>-result.json`、Python と ps1）で済ませた。③ は `script-guide.md` の「原因の台帳」（台帳は1ファイル `ai/out/knowledge/windows-run-causes.md`、title `Windows 実行の原因の台帳`、原因は Gotchas の3行セットに回数と最終日を付ける）と `room-context.md` の1項。`room pull` は名前をハッシュに変えるので、受け取った台帳は title で探す。`check_py.py` `check-ps1.ps1` の診断ログの WARN は結果ファイルの点検で済ませた。
 - 見直しの条件: 診断ログを入れても環境の違いのラリーが減らないとき。PC1 → PC2 の遅れで同じ原因が複数の Area で再発したとき（works 層を再検討）。
 
 ### 【この件】フックと room の整合の決定（2026-10-24）

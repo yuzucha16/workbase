@@ -391,7 +391,19 @@ Project の成果物は、`ai/out/`（マスクした Project は復元後の `_
       sys.exit(main())
   ```
 
-未実装（2026-10-25）: 原因の台帳（`room-windows-balance`）。`release` の束ね先は未決。
+`release` の束ね先は未決（2026-10-25）。
+
+### 原因の台帳（Windows で実行したときの失敗）
+
+環境の違い（文字コード、パス、権限、uv の取得など）で同じ失敗を繰り返さないための置き場（2026-10-25 ユーザーの承認。仮決めは `topics/hook-room-alignment/docs/decisions.md` の 2026-10-24）。works 共通の置き場は作らない。Area ごとに持ち、一般の原因だけ workbase に上げる。
+
+1. **人が失敗を伝えたら**（「verify が失敗した」など）、部屋の AI はまず `ai/work/<名前>-result.json`（`verify-result.json` か `run-result.json`）を読む。`env` と `failure`（型と `ファイル名:行`）から当たりを付ける。それで足りないときだけ、`--log`（ps1 は `-Log`）での再実行を頼む。
+2. **直す前に台帳を引く**: Area の台帳は、人が `room pull --where kind=lesson` で渡すと `ai/in/area/` に入る（ファイル名はハッシュに変わるので、`title: Windows 実行の原因の台帳` の行で探す）。あれば読む。一般の原因は `python3 ~/shared/workflow-kit/tools/find_knowledge.py <失敗の型や語>` で `exmem/lessons/` を探す。
+3. **原因が分かったら台帳に書く**: `ai/out/knowledge/windows-run-causes.md`（title は `Windows 実行の原因の台帳`）に書く。`ai/in/area/` に前の版があれば、それを写して足す（`restore` が Area の同じ名前のファイルを置き換える）。形は `room-context.md` の `stock` の `area`（`kind: lesson`、`stock-hook.md` の7見出し）。原因は Gotchas に、3行セットで1件ずつ書く。`状況:` の行の末尾に `（回数 N、最終 YYYY-MM-DD）` を付け、同じ原因がまた出たら新しく足さずに回数を増やす。マスクのまま書き、業務の値は書かない。人が `room restore` で Area に置く。
+4. **一般の原因**（実名や社内の事情を剥がしても成り立つ。例: cp932 の bat、`PYTHONUTF8` が無い）は、`scope: public` の `stock` の下書き（`ai/out/stock/`）にも書く。人が `room stock` で `exmem/inbox/` に運び、`exmem/lessons/` に統合する。
+5. **3 回で点検に昇格する**: 同じ原因の回数が 3 になったら、`check_py.py`（ps1 なら `check-ps1.ps1`）の規則の候補として、`public` の下書きの Open Questions に「提案」と書く。規則を足すかは workbase 側で決める。
+
+弱点（承知の上）: PC1 の知見が他の Area に届くのは、人が PC2 へ運んだ後。業務固有の原因は Area ごとに重複しうる。
 
 ### ps1 の薄い層（Python が使えないときだけ）
 

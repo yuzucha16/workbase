@@ -3,7 +3,7 @@
 ## Log
 
 ### 2026-10-25（人が叩くスクリプトの残り: run.py の型と ps1 版）
-- 「hook-room-alignment の続き、実機なしでできるアイテム」の依頼で、承認済みの範囲から実機の要らないものを進めた。`script-guide.md` に `run.py` の型と、ps1 版の `verify.ps1` `release.ps1` の型を足し、`check_py.py` `check-ps1.ps1` に結果ファイル（`<名前>-result.json`）と名前の点検（WARN）を足した。Linux の Python 3.13 と pwsh 7.4.6 で、成功・失敗・前提なし・Project の外・`release` の各 STOP と連番・両版のハッシュの一致を確認。Windows は未確認（PC2 で 1 回）。原因の台帳は、実装の承認を確かめてから（`topics/hook-room-alignment/docs/log.md` の Open Questions）。決定は `decisions.md` の `run` / `verify` / `release` の項の「実装」。
+- 「hook-room-alignment の続き、実機なしでできるアイテム」の依頼で、承認済みの範囲から実機の要らないものを進めた。`script-guide.md` に `run.py` の型と、ps1 版の `verify.ps1` `release.ps1` の型を足し、`check_py.py` `check-ps1.ps1` に結果ファイル（`<名前>-result.json`）と名前の点検（WARN）を足した。Linux の Python 3.13 と pwsh 7.4.6 で、成功・失敗・前提なし・Project の外・`release` の各 STOP と連番・両版のハッシュの一致を確認。Windows は未確認（PC2 で 1 回）。原因の台帳は、承認（「今実装する」）を受けて `script-guide.md` に節を、`room-context.md` に1項を足した（`topics/hook-room-alignment/docs/decisions.md` の同件の「実装」）。決定は `decisions.md` の `run` / `verify` / `release` の項の「実装」。
 - 触らなかった実機の要る項目: `verify.bat` / `verify.ps1` の Windows での実行、`mkworks` の実機確認、`stock` の `scope: area` の実機確認、旧名の注記の削除（`mkworks` の実機確認が条件）、dotfiles の Claude 用スキルの入口（dotfiles 側）。
 - このファイルの「review 1回と、log.md の縮小」の項に、制御文字が 6 個（CR、NUL、FF、TAB）混ざり、テキストとして編集できなかった。PowerShell の二重引用符の中でバッククォート（`` ` ``）がエスケープとして解釈されたもの（`` `r `` → CR など）と見て、元の文字（r、0、f、t）に戻した。同じ項のバッククォートは全部消えている（戻していない）。書いたスクリプトの側は未調査。
 
