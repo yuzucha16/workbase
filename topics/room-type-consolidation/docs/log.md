@@ -12,6 +12,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。最初の実利用�
 - 【済 10-25】`tests/` だけの実測(`sample_devtest`、成果物 `ai/out/devenv-tests/`): 要求 14 ID すべてに対応して実行(65 件実行、PASS 62、FAIL 3、SKIP 1)。型は機能した。対象の不具合 3 件と仕様の曖昧さ 2 件を `report.md` に書き、`ai/in/` は直さずハッシュで不変を確認した。観察: (1) 質問の推奨の置き場が `work/` で、ガイドの `ai/out/<成果物名>/` と食い違った(人が正した)。(2) テストを実装に合わせて緩めた件は、変更前後と理由を `report.md` に書かせた(依頼が要った)。(3) `tests/t_static.sh`(文書と実装の整合の検査)は、上の起票(型を足すか)の2例目。
 - 【済 10-25】`docs/` だけの `dev` の実測(`sample_devdoc`)。「文書作成」の項は残す。基準文書の形を仮決め(`project-structure.md` の未決)。
 - 【済 10-25】`room.py:1197`(`ROOM.md` の元)と `room-context.md:67` の「人が読む最終版」の記述を、「Area に実名で戻したい最終版だけ `deliverable/`。Project の成果物は `ai/out/<成果物名>/`」に直した。`brief-work-types.md` に、`dev` の最初の `brief` で `project-structure.md` と `dev-deliverable-guide.md` を読む指示を足した。`room` の単体テスト 139 件 OK(skip 3)。
+- 【実施待ち】1 Project で `env/` と `tests/` と `docs/` を通す実測(題材は同じ WSL の Python 環境)。観察点: 構成要素の選び方(`docs/` が運用マニュアルと重複するか)、置き場の取り違えの再発、検証が自己向けになって弱くならないか。分離した 3 本との差を知識として残す(ユーザー、10-25)。サブエージェントで一部のループを回す案は、未承認(`exmem/inbox/2026-10-25-procedure-validation-trial-runs.md`)。
 - 【確認待ち】直した `ROOM.md` が部屋に届いたあと、次の `dev` の実測で置き場の取り違えが再発しないか。`ROOM.md` は `room start` が生成するので、既存の部屋は次の `room start` で更新される。
 
 ## Open Questions
