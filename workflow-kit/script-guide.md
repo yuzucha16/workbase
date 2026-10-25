@@ -215,7 +215,7 @@
 
 | 工程 | 名前 | 役目 |
 |---|---|---|
-| 本番実行 | `run.py` / `run.bat` | 実データに対して使う（繰り返し使うツールだけ）。ログは `ai/` の外（`_noai/`） |
+| 本番実行 | `run.py` / `run.bat` | 実データに対して使う（繰り返し使うツールだけ）。結果ファイルは `ai/work/run-result.json`（業務の値は入れない）、全文ログは `ai/` の外（`_noai/user/`） |
 | 動作確認 | `verify.py` / `verify.bat` | Windows でしか動かない層の実行、実アプリでの単体テスト、目視の確認 |
 | リリース | `release.py` / `release.bat` | 動作確認の済んだ成果物に版を振り、記録する（束ね先は未決） |
 
@@ -289,7 +289,109 @@ Project の成果物は、`ai/out/`（マスクした Project は復元後の `_
 
 `verify-result.json` の中身: `env`（OS、Python・uv の版、`preferred_encoding`、`stdout_encoding`、`PYTHONUTF8`）、`steps`（名前・終了コード・秒）、`manual`（目視の項目・ok・ひとこと）、`failure`（例外の型と `ファイル名:行`。メッセージは入れない）、`ok`、`out_hash`。ホームのパスは `%USERPROFILE%` に置換する。2026-10-21 の「既定ではログを出さない」は、全文ログ（`--log`）に限る（ユーザーの承認: 2026-10-25）。
 
-未実装（2026-10-25）: `run.py` の型、ps1 版、原因の台帳（`room-windows-balance`）。
+**`run` の手順**（実データに対して使う。`verify` と `release` の済んだツールを、人が繰り返し叩く）:
+
+1. プリフライト: 前提のコマンドと、入力のパスがあるかを確かめ、無ければ止まる。
+2. 工程を順に実行する。入力のパス（`run.bat <ファイル>` の引数）は、各工程に渡す。
+3. `ai/work/run-result.json` を**毎回**上書きで出す（`verify-result.json` から `manual` と `out_hash` を除き、入力の件数 `inputs` を足したもの）。実データの名前と業務の値は入れない（失敗の型と `ファイル名:行` だけ）。
+4. 全文ログは `--log` のときだけ、Project の `_noai/user/run.log` に出す（実データの語が出うるので `ai/` の外。AI に見せるのは人が伏せてから）。
+
+型（`verify.py` の `find_ai` `scrub` `env_facts` `Tee` を使うので、同じ `tools/` に置く。部屋の Linux の Python 3.13 と `uv` の偽物で、成功、工程の失敗と `--log`、入力が無いとき、`uv` が無いときを確認した。結果ファイルに入力の名前が出ないことも確認。**Windows の Python 3.13 と uv では未確認**）:
+
+  ```python
+  # /// script
+  # requires-python = ">=3.12"
+  # dependencies = []
+  # ///
+  """本番実行の束ねる役。実データに対して工程を順に実行し、結果（業務の値は入れない）を ai/work/run-result.json に毎回出す。--log のときだけ全文ログを _noai/user/ に出す。"""
+  import argparse
+  import json
+  import os
+  import shutil
+  import subprocess
+  import sys
+  import time
+  import traceback
+  from pathlib import Path
+
+  sys.path.insert(0, str(Path(__file__).resolve().parent))
+  import verify  # 同じ場所の verify.py（find_ai、scrub、env_facts、Tee を共有する）
+
+  STEPS = ["step1.py", "step2.py"]                # 実際の工程名に変える。入力のパスは各工程に渡す
+  NEEDS = ["uv"]                                  # 前提のコマンド。実際に変える
+  HERE = Path(__file__).resolve().parent
+
+
+  def run(result: dict, inputs: list[str]) -> int:
+      try:
+          missing = [c for c in NEEDS if not shutil.which(c)]
+          if missing:
+              print(f"[STOP] 前提が足りない: {', '.join(missing)}（入れてから、もう一度実行する）")
+              result["failure"] = {"type": "Preflight", "where": ",".join(missing)}
+              return 1
+          absent = [p for p in inputs if not Path(p).exists()]
+          if absent:
+              print(f"[STOP] 入力が無い: {', '.join(absent)}")
+              result["failure"] = {"type": "Preflight", "where": f"入力 {len(absent)} 件"}   # 実データの名前は結果ファイルに入れない
+              return 1
+          for step in STEPS:
+              print(f"[STEP] {step}", flush=True)
+              t0 = time.time()
+              p = subprocess.Popen(["uv", "run", "--script", str(HERE / step), *inputs], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   text=True, encoding="utf-8", errors="replace", env={**os.environ, "PYTHONUTF8": "1"})
+              for line in p.stdout:
+                  print(line, end="")
+              rc = p.wait()
+              result["steps"].append({"name": step, "rc": rc, "sec": round(time.time() - t0, 1)})
+              if rc != 0:
+                  raise RuntimeError(f"{step} が終了コード {rc} で終わった")
+          print("[OK] すべて完了")
+          return 0
+      except Exception as e:
+          print(f"[ERROR] {e}")
+          traceback.print_exc(file=sys.stdout)
+          tb = traceback.extract_tb(e.__traceback__)[-1]
+          result["failure"] = {"type": type(e).__name__, "where": f"{Path(tb.filename).name}:{tb.lineno}"}
+          return 1
+
+
+  def main() -> int:
+      ap = argparse.ArgumentParser()
+      ap.add_argument("inputs", nargs="*", help="実データのパス（各工程に渡す）")
+      ap.add_argument("--log", action="store_true", help="Project の _noai/user/<名前>.log に全文を出す")
+      ap.add_argument("--log-dir", type=Path, help="この場所に全文ログを出す（--log は不要）")
+      a = ap.parse_args()
+      sys.stdout.reconfigure(errors="replace")
+      ai = verify.find_ai()
+      work = (ai / "work") if ai else HERE / "work"          # Project の外（配布先）で実行したとき
+      noai = (ai.parent / "_noai" / "user") if ai else work  # 実データの語が出うるので、全文ログは ai/ の外
+      result = {"tool": "run", "env": verify.env_facts(), "inputs": len(a.inputs), "steps": [], "failure": None}
+      log, real = None, sys.stdout
+      if a.log or a.log_dir:                                  # 既定では全文ログを出さない
+          lp = (a.log_dir or noai) / f"{Path(__file__).stem}.log"
+          lp.parent.mkdir(parents=True, exist_ok=True)
+          log = open(lp, "w", encoding="utf-8")
+          sys.stdout = verify.Tee(real, log)
+          print(f"[LOG] {lp}")
+      try:
+          rc = run(result, a.inputs)
+      finally:
+          sys.stdout = real
+          if log:
+              log.close()
+      result["ok"] = rc == 0
+      result["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+      work.mkdir(parents=True, exist_ok=True)                 # 結果ファイルは毎回出す（業務の値・入力の名前は入れない）
+      (work / "run-result.json").write_text(verify.scrub(json.dumps(result, ensure_ascii=False, indent=1)), encoding="utf-8")
+      print(f"[RESULT] {verify.scrub(str(work / 'run-result.json'))}")
+      return rc
+
+
+  if __name__ == "__main__":
+      sys.exit(main())
+  ```
+
+未実装（2026-10-25）: 原因の台帳（`room-windows-balance`）。`release` の束ね先は未決。
 
 ### ps1 の薄い層（Python が使えないときだけ）
 
@@ -349,6 +451,146 @@ Project の成果物は、`ai/out/`（マスクした Project は復元後の `_
   ```
 
   **`-Log` のログは `ai/` の中に出るので、部屋の AI から読める**（マスクを通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（マスクして復元する Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/user/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
+- **人が叩く名前（`run` / `verify` / `release`）は ps1 でも同じ**。`verify.ps1` と `release.ps1` の型を下に置く（2026-10-25）。手順・結果ファイル・止まる条件は、上の「人が叩くスクリプトの名前」と同じ。`verify-result.json` の `env` は Python 版と項目が違う（`pwsh`、`culture`、`ansi_codepage`〔日本語の Windows なら 932〕、`console_encoding`、`output_encoding`）。成果物のハッシュは Python 版と同じ値になる（隠しファイルも含める）ので、`verify.ps1` の結果を `release.py` が読んでもよい。`run.ps1` は、`verify.ps1` から目視とハッシュを除き、結果ファイルの名前を `run-result.json`、`-Log` の既定の置き場を Project の `_noai/user/` に変えて作る。部屋の Linux の pwsh 7.4 で、非対話（目視が未確認になり NG）、対話の y と n、前提が無いとき、工程の失敗と `-Log`、Project の外、`release` の各 STOP と版の連番、Python 版とのハッシュの一致を確認した。対話の日本語のひとことは、部屋の pwsh（globalization が invariant）では文字化けした（Python 版は化けない）。**Windows の pwsh では未確認**（日本語の入力を含めて PC2 で 1 回確かめる）。
+
+  `verify.ps1`（上の束ねる ps1 の型に、プリフライト・目視・結果ファイルを足したもの。`release.ps1` から関数だけを読み込めるよう、関数の後で止まる）:
+
+  ```powershell
+  #Requires -Version 7
+  # 動作確認の束ねる役（ps1 版）。前提を確かめ、工程を順に実行し、目視の項目を聞き、結果を ai/work/verify-result.json に毎回出す。-Log のときだけ全文ログも出す。
+  param([switch]$Log, [string]$LogDir)
+  Set-StrictMode -Version Latest
+  $ErrorActionPreference = 'Stop'
+
+  $Name     = 'demo'                                  # 成果物名（ai/out/<Name>/）。実際の名前に変える
+  $Steps    = @('step1.ps1', 'step2.ps1')             # 実際の工程名に変える
+  $Checks   = @('画面の見た目が仕様どおりか')           # 目視の項目。無ければ @() にする
+  $Needs    = @()                                     # 前提のコマンド。実際に変える
+  $SkipHash = @('release.json')                       # release が書くファイルはハッシュに入れない
+
+  function Find-Ai {
+    $dir = Get-Item -LiteralPath $PSScriptRoot
+    while ($dir) {
+      if ($dir.Name -eq 'ai' -and (Test-Path -LiteralPath (Join-Path $dir.FullName 'work'))) { return $dir.FullName }
+      $dir = $dir.Parent
+    }
+    return $null
+  }
+
+  function Protect-Text([string]$s) {                  # ユーザー名を含むホームのパスを伏せる
+    if ($HOME) { return $s.Replace($HOME, '%USERPROFILE%') } else { return $s }
+  }
+
+  function Get-TreeHash([string]$root) {              # verify.py の tree_hash と同じ値になる
+    [string[]]$files = @(Get-ChildItem -LiteralPath $root -Recurse -File -Force | Where-Object { $_.Name -notin $SkipHash -and $_.FullName -notmatch '[\\/]__pycache__[\\/]' } |
+      ForEach-Object { [IO.Path]::GetRelativePath($root, $_.FullName).Replace('\', '/') })
+    if ($files.Count -gt 1) {                         # 階層ごとに比べる（Python の Path の並びと同じ）
+      [string[]]$keys = $files | ForEach-Object { $_.Replace('/', "`0") }
+      [Array]::Sort($keys, $files, [StringComparer]::Ordinal)
+    }
+    $h = [Security.Cryptography.IncrementalHash]::CreateHash('SHA256')
+    foreach ($rel in $files) {
+      $h.AppendData([Text.Encoding]::UTF8.GetBytes($rel))
+      $h.AppendData([IO.File]::ReadAllBytes((Join-Path $root $rel)))
+    }
+    return ([Convert]::ToHexString($h.GetHashAndReset())).ToLower().Substring(0, 16)
+  }
+
+  if ($MyInvocation.InvocationName -eq '.') { return } # release.ps1 が関数だけを読み込むとき
+
+  $ai = Find-Ai
+  $work = if ($ai) { Join-Path $ai 'work' } else { Join-Path $PSScriptRoot 'work' }       # Project の外（配布先）で実行したとき
+  $out = if ($ai) { Join-Path $ai 'out' $Name } else { Split-Path -Parent $PSScriptRoot }
+  $result = [ordered]@{
+    tool    = 'verify'
+    env     = [ordered]@{ os = [Runtime.InteropServices.RuntimeInformation]::OSDescription; pwsh = $PSVersionTable.PSVersion.ToString()
+                          culture = (Get-Culture).Name; ansi_codepage = (Get-Culture).TextInfo.ANSICodePage
+                          console_encoding = [Console]::OutputEncoding.WebName; output_encoding = $OutputEncoding.WebName }
+    steps   = [Collections.Generic.List[object]]::new()
+    manual  = [Collections.Generic.List[object]]::new()
+    failure = $null
+  }
+  $logging = $Log -or [bool]$LogDir                   # 既定では全文ログを出さない（-Log か -LogDir を付けたときだけ）
+  if ($logging) {
+    if (-not $LogDir) { $LogDir = $work }
+    $logPath = Join-Path $LogDir ([IO.Path]::GetFileNameWithoutExtension($PSCommandPath) + '.log')
+    New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
+    Start-Transcript -Path $logPath -Force | Out-Null
+    Write-Host "[LOG] $logPath"
+  }
+  $exitCode = 0
+  try {
+    $missing = @($Needs | Where-Object { -not (Get-Command $_ -ErrorAction SilentlyContinue) })
+    if ($missing) {
+      Write-Host "[STOP] 前提が足りない: $($missing -join ', ')（入れてから、もう一度実行する）"
+      $result.failure = [ordered]@{ type = 'Preflight'; where = $missing -join ',' }
+      $exitCode = 1
+    } else {
+      foreach ($step in $Steps) {
+        Write-Host "[STEP] $step"
+        $sw = [Diagnostics.Stopwatch]::StartNew()
+        $global:LASTEXITCODE = 0                        # Set-StrictMode の下で、未設定の参照を避ける
+        & (Join-Path $PSScriptRoot $step)
+        $result.steps.Add([ordered]@{ name = $step; rc = $LASTEXITCODE; sec = [math]::Round($sw.Elapsed.TotalSeconds, 1) })
+        if ($LASTEXITCODE -ne 0) { throw "$step が終了コード $LASTEXITCODE で終わった" }
+      }
+      foreach ($item in $Checks) {
+        if ([Console]::IsInputRedirected) { $result.manual.Add([ordered]@{ item = $item; ok = $null; note = '対話できないので未確認' }); continue }
+        $ans = (Read-Host "[CHECK] $item  (y/n、ひとこと)").Trim()
+        $result.manual.Add([ordered]@{ item = $item; ok = $ans -like 'y*'; note = if ($ans.Length -gt 1) { $ans.Substring(1).Trim() } else { '' } })
+      }
+      $bad = @($result.manual | Where-Object { $_.ok -ne $true } | ForEach-Object { $_.item })
+      if ($bad) { Write-Host "[NG] 目視が未確認または不合格: $($bad -join ', ')"; $exitCode = 1 }
+      else { Write-Host '[OK] すべて完了' }
+    }
+  } catch {
+    Write-Host "[ERROR] $($_.Exception.Message)"      # catch の中で書く（finally の後ではログに入らない）
+    Write-Host $_.ScriptStackTrace
+    $inv = $_.InvocationInfo
+    $result.failure = [ordered]@{ type = $_.Exception.GetType().Name; where = "$(Split-Path -Leaf $inv.ScriptName):$($inv.ScriptLineNumber)" }
+    $exitCode = 1
+  } finally {
+    if ($logging) { Stop-Transcript | Out-Null }
+  }
+  $result.ok = $exitCode -eq 0
+  $result.out_hash = if (Test-Path -LiteralPath $out -PathType Container) { Get-TreeHash $out } else { $null }
+  $result.finished = Get-Date -Format 'yyyy-MM-ddTHH:mm:ss'
+  New-Item -ItemType Directory -Force -Path $work | Out-Null   # 結果ファイルは毎回出す（業務の値は入れない）
+  $rf = Join-Path $work 'verify-result.json'
+  [IO.File]::WriteAllText($rf, (Protect-Text ($result | ConvertTo-Json -Depth 5)), [Text.UTF8Encoding]::new($false))
+  Write-Host "[RESULT] $(Protect-Text $rf)"
+  exit $exitCode
+  ```
+
+  `release.ps1`（同じ場所の `verify.ps1` を読み込む。変数名 `$Log` は `verify.ps1` の引数と重なるので使わない）:
+
+  ```powershell
+  #Requires -Version 7
+  # リリース（ps1 版）。verify の結果が全部 OK で、成果物が verify したときと同じでなければ止まる。版 YYYY-MM-DD.N を振り、release.json に記録する。
+  Set-StrictMode -Version Latest
+  $ErrorActionPreference = 'Stop'
+  . (Join-Path $PSScriptRoot 'verify.ps1')            # 同じ場所の verify.ps1（$Name、Get-TreeHash、Find-Ai を共有する）
+
+  $ai = Find-Ai
+  if (-not $ai) { Write-Host '[STOP] Project の ai/ の中で実行する'; exit 1 }
+  $rf = Join-Path $ai 'work' 'verify-result.json'
+  $out = Join-Path $ai 'out' $Name
+  if (-not (Test-Path -LiteralPath $rf)) { Write-Host '[STOP] verify の結果が無い。先に verify を実行する'; exit 1 }
+  $r = Get-Content -LiteralPath $rf -Raw -Encoding utf8 | ConvertFrom-Json
+  if (-not $r.ok) { Write-Host '[STOP] verify が OK でない。直して verify をやり直す'; exit 1 }
+  if ($r.out_hash -ne (Get-TreeHash $out)) { Write-Host '[STOP] verify のあとに成果物が変わっている。verify をやり直す'; exit 1 }
+  $histPath = Join-Path $out 'release.json'
+  $history = @(if (Test-Path -LiteralPath $histPath) { Get-Content -LiteralPath $histPath -Raw -Encoding utf8 | ConvertFrom-Json })
+  if ($history.Count -and $history[-1].out_hash -eq $r.out_hash) {
+    Write-Host "[STOP] この版はリリース済み（$($history[-1].version)）。変更が無いので振り直さない"; exit 1
+  }
+  $today = Get-Date -Format 'yyyy-MM-dd'
+  $ver = "$today.$(1 + @($history | Where-Object { $_.version.StartsWith("$today.") }).Count)"
+  $history += [ordered]@{ version = $ver; out_hash = $r.out_hash; released = Get-Date -Format 'yyyy-MM-ddTHH:mm:ss' }
+  [IO.File]::WriteAllText($histPath, (ConvertTo-Json -InputObject $history -Depth 3), [Text.UTF8Encoding]::new($false))
+  Write-Host "[OK] リリース $ver（release.json）。README の状況表に版を書く"
+  exit 0
+  ```
 - **実行は PowerShell 7（`pwsh`）に固定する**。ps1 の先頭に `#Requires -Version 7`、`Set-StrictMode -Version Latest`、`$ErrorActionPreference = 'Stop'` を置く。5.1（`powershell.exe`）では動かさない（UTF-8 の扱いと文字化けの差を避けるため）。ps1 は UTF-8 で保存する。
 - **部屋の中で、作った直後に静的チェッカーを実行する**。実行はしない（部屋には Windows が無い）が、構文と規約の誤りは、人が Windows で実行する前に取れる:
 

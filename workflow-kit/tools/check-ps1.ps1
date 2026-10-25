@@ -24,6 +24,7 @@
   見る項目: 文字コードが UTF-8、改行が混在していない、構文（Parser）、#Requires -Version 7、
   $ErrorActionPreference と Set-StrictMode、PSScriptAnalyzer（Error は FAIL、Warning は WARN）、
   起動用 .bat が 3 行の型（@echo off / pwsh -NoProfile -File "%~dp0<名前>.ps1" / pause）で、ASCII・CRLF・BOM なし、呼び先の .ps1 が同じ場所にある。
+  束ねる .ps1 の -Log のログ機能（release は除く）、bat の名前が工程名（run / verify / release）、verify.ps1 と run.ps1 が毎回 <名前>-result.json を出す機能（どれも WARN）。
   見ないもの（人が Windows で実行して確かめる）: Windows 固有のコマンド（レジストリ、scoop、setx）、Windows のパス、PowerShell 5.1 との差。
 #>
 [CmdletBinding(PositionalBinding = $false)]
@@ -88,8 +89,11 @@ function Test-Launcher([IO.FileInfo]$file) {
     Report $exists "起動用 bat の呼び先 $target が同じ場所にある"
     if ($exists) {  # 束ねる ps1 は、-Log のときだけ ai/work/<名前>.log の 1 本にログを出す機能を持つ（既定は出さない。型は script-guide.md）
       $body = [IO.File]::ReadAllText($targetPath)
-      Report ($body -match 'Start-Transcript' -and $body -match 'Stop-Transcript' -and $body -match "'work'" -and $body -match '\[switch\]\$Log\b') "束ねる $target が -Log のときのログ出力の機能を持つ（[switch]`$Log、Start-Transcript と Stop-Transcript、'work'）" 'WARN'
+      $stem = [IO.Path]::GetFileNameWithoutExtension($target)
+      Report ($stem -eq 'release' -or ($body -match 'Start-Transcript' -and $body -match 'Stop-Transcript' -and $body -match "'work'" -and $body -match '\[switch\]\$Log\b')) "束ねる $target が -Log のときのログ出力の機能を持つ（[switch]`$Log、Start-Transcript と Stop-Transcript、'work'）" 'WARN'
+      if ($stem -in 'verify', 'run') { Report ($body -match "$stem-result\.json") "束ねる $target が毎回 $stem-result.json を出す機能を持つ" 'WARN' }
     }
+    Report ($file.BaseName -in 'run', 'verify', 'release') "起動用 bat の名前 $($file.Name) が工程名（run / verify / release）" 'WARN'
   }
   $last = if ($lines.Count) { $lines[-1] } else { '' }
   Report ($last -imatch '^pause$') '起動用 bat の最後が pause（終わっても画面が閉じない）'
