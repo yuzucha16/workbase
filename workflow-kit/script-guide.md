@@ -42,13 +42,13 @@
 
 ### Python の薄い層（既定）
 
-- **個別の処理は `<名前>.py`（snake_case）、それらを順に呼ぶ束ねる役を 1 本（例: `run_all.py`）にする。** 失敗したら止まる、最後に結果を出す、ログを 1 か所に出す、を束ねる側に持たせる。人は `uv run --script run_all.py` を 1 回打つだけにする。判定・変換・検証は薄い層に置かない（上の「切り分けの手順」の 4）。
+- **個別の処理は `<名前>.py`（snake_case）、それらを順に呼ぶ束ねる役を 1 本（動作確認なら `verify.py`。名前は下の「人が叩くスクリプトの名前」）にする。** 失敗したら止まる、最後に結果を出す、ログを 1 か所に出す、を束ねる側に持たせる。人は `uv run --script verify.py` を 1 回打つだけにする。判定・変換・検証は薄い層に置かない（上の「切り分けの手順」の 4）。
 - **依存は、各 `.py` の先頭の `# /// script`（PEP 723）に書く**（`requires-python`、`dependencies`。Excel の COM なら `pywin32`）。実行は `uv run --script`。束ねる役が個別の処理を呼ぶときも `uv run --script` で呼ぶ（自分の Python には、呼び先の依存が無い）。
 - **bat は、起動用の 3 行だけ許す**。ロジックは書かない。型は固定（`%*` は引数を渡したいときだけ。全体 ASCII、CRLF、BOM なし、`pause` を最後に必ず置く）:
 
   ```bat
   @echo off
-  uv run --script "%~dp0run_all.py" %*
+  uv run --script "%~dp0verify.py" %*
   pause
   ```
 - **束ねる役に、ログ出力の機能を持たせる。ただし既定では出さない**（ps1 と同じ決定。理由と実データの注意は、下の ps1 の節）。`--log` を付けると、Project の `ai/work/<束ねる役の名前>.log` の 1 本に出す。`--log-dir <パス>` なら、その場所に出す。個別の処理は、ログを作らない。型（動作確認済み: Windows の Python 3.13 と uv 0.13.0。既定ではログが出ない、`--log` で `ai/work/` に出る、失敗した工程・終了コード・スタックがログに残り終了コードが 1 になる。bat 経由の `--log` も同じ）:
@@ -58,23 +58,55 @@
   # requires-python = ">=3.12"
   # dependencies = []
   # ///
-  """工程を順に実行する束ねる役。失敗したら止まり、最後に結果を出す。--log のときだけログを出す。"""
+  """動作確認の束ねる役。前提を確かめ、工程を順に実行し、目視の項目を聞き、結果を ai/work/verify-result.json に毎回出す。--log のときだけ全文ログも出す。"""
   import argparse
+  import hashlib
+  import json
+  import locale
   import os
+  import platform
+  import shutil
   import subprocess
   import sys
+  import time
   import traceback
   from pathlib import Path
 
-  STEPS = ["step1.py", "step2.py"]  # 実際の工程名に変える
+  NAME = "demo"                                   # 成果物名（ai/out/<NAME>/）。実際の名前に変える
+  STEPS = ["step1.py", "step2.py"]                # 実際の工程名に変える
+  CHECKS = ["画面の見た目が仕様どおりか"]           # 目視の項目。無ければ空にする
+  NEEDS = ["uv"]                                  # 前提のコマンド。実際に変える
   HERE = Path(__file__).resolve().parent
+  HOME = str(Path.home())
+  SKIP_HASH = {"release.json"}                    # release が書くファイルはハッシュに入れない
 
 
-  def find_ai_work() -> Path:
+  def find_ai() -> Path | None:
       for d in (HERE, *HERE.parents):
           if d.name == "ai" and (d / "work").is_dir():
-              return d / "work"
-      return HERE / "work"  # Project の外（配布先）で実行したとき
+              return d
+      return None
+
+
+  def scrub(s: str) -> str:
+      """ユーザー名を含むホームのパスを伏せる。"""
+      return s.replace(HOME, "%USERPROFILE%") if HOME else s
+
+
+  def tree_hash(root: Path) -> str:
+      h = hashlib.sha256()
+      for f in sorted(p for p in root.rglob("*") if p.is_file() and p.name not in SKIP_HASH and "__pycache__" not in p.parts):
+          h.update(f.relative_to(root).as_posix().encode())
+          h.update(f.read_bytes())
+      return h.hexdigest()[:16]
+
+
+  def env_facts() -> dict:
+      uv = shutil.which("uv")
+      ver = subprocess.run([uv, "--version"], capture_output=True, text=True).stdout.strip() if uv else None
+      return {"os": platform.platform(), "python": platform.python_version(), "uv": ver,
+              "preferred_encoding": locale.getpreferredencoding(False), "stdout_encoding": sys.stdout.encoding,
+              "PYTHONUTF8": os.environ.get("PYTHONUTF8")}
 
 
   class Tee:
@@ -91,46 +123,74 @@
               st.flush()
 
 
-  def run_steps() -> int:
+  def run(result: dict) -> int:
       try:
+          missing = [c for c in NEEDS if not shutil.which(c)]
+          if missing:
+              print(f"[STOP] 前提が足りない: {', '.join(missing)}（入れてから、もう一度実行する）")
+              result["failure"] = {"type": "Preflight", "where": ",".join(missing)}
+              return 1
           for step in STEPS:
               print(f"[STEP] {step}", flush=True)
-              p = subprocess.Popen(
-                  ["uv", "run", "--script", str(HERE / step)],
-                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                  text=True, encoding="utf-8", errors="replace",
-                  env={**os.environ, "PYTHONUTF8": "1"},
-              )
+              t0 = time.time()
+              p = subprocess.Popen(["uv", "run", "--script", str(HERE / step)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   text=True, encoding="utf-8", errors="replace", env={**os.environ, "PYTHONUTF8": "1"})
               for line in p.stdout:
                   print(line, end="")
-              if p.wait() != 0:
-                  raise RuntimeError(f"{step} が終了コード {p.returncode} で終わった")
+              rc = p.wait()
+              result["steps"].append({"name": step, "rc": rc, "sec": round(time.time() - t0, 1)})
+              if rc != 0:
+                  raise RuntimeError(f"{step} が終了コード {rc} で終わった")
+          for item in CHECKS:
+              if not sys.stdin.isatty():
+                  result["manual"].append({"item": item, "ok": None, "note": "対話できないので未確認"})
+                  continue
+              ans = input(f"[CHECK] {item}  (y/n、ひとこと): ").strip()
+              result["manual"].append({"item": item, "ok": ans[:1].lower() == "y", "note": ans[1:].strip()})
+          bad = [m["item"] for m in result["manual"] if m["ok"] is not True]
+          if bad:
+              print(f"[NG] 目視が未確認または不合格: {', '.join(bad)}")
+              return 1
           print("[OK] すべて完了")
           return 0
-      except Exception as e:  # ログに残すため、ここで書く
+      except Exception as e:
           print(f"[ERROR] {e}")
           traceback.print_exc(file=sys.stdout)
+          tb = traceback.extract_tb(e.__traceback__)[-1]
+          result["failure"] = {"type": type(e).__name__, "where": f"{Path(tb.filename).name}:{tb.lineno}"}
           return 1
 
 
   def main() -> int:
       ap = argparse.ArgumentParser()
-      ap.add_argument("--log", action="store_true", help="ai/work/<名前>.log に出す")
-      ap.add_argument("--log-dir", type=Path, help="この場所にログを出す（--log は不要）")
+      ap.add_argument("--log", action="store_true", help="ai/work/<名前>.log に全文を出す")
+      ap.add_argument("--log-dir", type=Path, help="この場所に全文ログを出す（--log は不要）")
       a = ap.parse_args()
       sys.stdout.reconfigure(errors="replace")
-      if not (a.log or a.log_dir):  # 既定ではログを出さない
-          return run_steps()
-      log_path = (a.log_dir or find_ai_work()) / f"{Path(__file__).stem}.log"
-      log_path.parent.mkdir(parents=True, exist_ok=True)
-      with open(log_path, "w", encoding="utf-8") as f:  # 実行のたびに上書きする
-          real = sys.stdout
-          sys.stdout = Tee(real, f)
-          try:
-              print(f"[LOG] {log_path}")
-              return run_steps()
-          finally:
-              sys.stdout = real
+      ai = find_ai()
+      work = (ai / "work") if ai else HERE / "work"          # Project の外（配布先）で実行したとき
+      out = (ai / "out" / NAME) if ai else HERE.parent
+      result = {"tool": "verify", "env": env_facts(), "steps": [], "manual": [], "failure": None}
+      log, real = None, sys.stdout
+      if a.log or a.log_dir:                                  # 既定では全文ログを出さない
+          lp = (a.log_dir or work) / f"{Path(__file__).stem}.log"
+          lp.parent.mkdir(parents=True, exist_ok=True)
+          log = open(lp, "w", encoding="utf-8")
+          sys.stdout = Tee(real, log)
+          print(f"[LOG] {lp}")
+      try:
+          rc = run(result)
+      finally:
+          sys.stdout = real
+          if log:
+              log.close()
+      result["ok"] = rc == 0
+      result["out_hash"] = tree_hash(out) if out.is_dir() else None
+      result["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+      work.mkdir(parents=True, exist_ok=True)                 # 結果ファイルは毎回出す（業務の値は入れない）
+      (work / "verify-result.json").write_text(scrub(json.dumps(result, ensure_ascii=False, indent=1)), encoding="utf-8")
+      print(f"[RESULT] {scrub(str(work / 'verify-result.json'))}")
+      return rc
 
 
   if __name__ == "__main__":
@@ -159,7 +219,7 @@
 | 動作確認 | `verify.py` / `verify.bat` | Windows でしか動かない層の実行、実アプリでの単体テスト、目視の確認 |
 | リリース | `release.py` / `release.bat` | 動作確認の済んだ成果物に版を振り、記録する（束ね先は未決） |
 
-`finalize` は使わない（release と意味が紛れる）。`verify` の「束ねる役」は、上の型（`run_all.py`）の名前を `verify.py` に変えたもの。
+`finalize` は使わない（release と意味が紛れる）。`verify.py` が、上の「Python の薄い層」の束ねる役の型（`verify.py` として載せた）。
 
 **`verify` の手順**（1 回叩けば済むようにする）:
 
@@ -169,14 +229,67 @@
 4. `ai/work/verify-result.json` を**毎回**上書きで出す（環境の事実、工程ごとの結果、失敗の型と場所、目視の回答、`ai/out/<成果物名>/` のハッシュ）。業務の値・ユーザー名は入れない。全文ログは今まで通り `--log` のとき。
 5. 人が AI に返すのは「verify 済み」の一言。AI は結果ファイルを読む。
 
-**`release` の手順**（2026-10-24 に見直し中。`artifacts/` に束ねる案は取り下げ。置き場は未決）:
+**`release` の手順**（束ね先は未決。`artifacts/` の案は取り下げ）。型は `release.py`（`verify.py` の `NAME` `tree_hash` `find_ai` を使うので、同じ `tools/` に置く。release が書く `release.json` はハッシュに入れない。変更が無いのに再リリースはしない）:
 
 1. `verify-result.json` が全部 OK で、そのハッシュが今の成果物と一致しなければ、止まる（古い版を出さない）。
 2. 版を振り、`verify-result.json` を添えて、README の状況表に記録する。版は `YYYY-MM-DD.N`（日付と、その日の連番。N は 1 から。kit が使っていた版と同じ書式）。束ねる先（Project の成果物の置き場）は未決。
 
 Project の成果物は、`ai/out/`（マスクした Project は復元後の `_noai/final/`）の1本（ユーザー、2026-10-25。人の成果物を別の置き場から混ぜる案は取り下げ）。人が `ai/out/` を直接直すのは、マスクに関係しない箇所だけ。`release` の入力はこの成果物で、束ね先は未決。
 
-未実装（2026-10-24）: 上の手順の型と、`check_py.py` での点検（名前、`verify-result.json` を出す機能）は、まだ書いていない。
+型（`verify.py` は上の束ねる役の型。`release.py` は下。部屋の Linux の Python 3.13 と、`uv` の代わりの偽物で、非対話（目視が未確認になり NG）、対話（y で OK）、`release` の各 STOP と版の連番を確認した。**Windows の Python 3.13 と uv では未確認**）:
+
+  ```python
+  # /// script
+  # requires-python = ">=3.12"
+  # dependencies = []
+  # ///
+  """リリース。verify の結果が全部 OK で、成果物が verify したときと同じでなければ止まる。版 YYYY-MM-DD.N を振り、release.json に記録する。"""
+  import json
+  import sys
+  import time
+  from pathlib import Path
+
+  sys.path.insert(0, str(Path(__file__).resolve().parent))
+  import verify  # 同じ場所の verify.py（NAME、tree_hash、find_ai を共有する）
+
+
+  def main() -> int:
+      ai = verify.find_ai()
+      if not ai:
+          print("[STOP] Project の ai/ の中で実行する")
+          return 1
+      rf = ai / "work" / "verify-result.json"
+      out = ai / "out" / verify.NAME
+      if not rf.exists():
+          print("[STOP] verify の結果が無い。先に verify を実行する")
+          return 1
+      r = json.loads(rf.read_text(encoding="utf-8"))
+      if not r.get("ok"):
+          print("[STOP] verify が OK でない。直して verify をやり直す")
+          return 1
+      if r.get("out_hash") != verify.tree_hash(out):
+          print("[STOP] verify のあとに成果物が変わっている。verify をやり直す")
+          return 1
+      log = out / "release.json"
+      history = json.loads(log.read_text(encoding="utf-8")) if log.exists() else []
+      if history and history[-1]["out_hash"] == r["out_hash"]:
+          print(f"[STOP] この版はリリース済み（{history[-1]['version']}）。変更が無いので振り直さない")
+          return 1
+      today = time.strftime("%Y-%m-%d")
+      ver = f"{today}.{1 + sum(1 for h in history if h['version'].startswith(today + '.'))}"
+      history.append({"version": ver, "out_hash": r["out_hash"], "released": time.strftime("%Y-%m-%dT%H:%M:%S")})
+      log.write_text(json.dumps(history, ensure_ascii=False, indent=1), encoding="utf-8")
+      print(f"[OK] リリース {ver}（{log.name}）。README の状況表に版を書く")
+      return 0
+
+
+  if __name__ == "__main__":
+      sys.exit(main())
+  ```
+
+`verify-result.json` の中身: `env`（OS、Python・uv の版、`preferred_encoding`、`stdout_encoding`、`PYTHONUTF8`）、`steps`（名前・終了コード・秒）、`manual`（目視の項目・ok・ひとこと）、`failure`（例外の型と `ファイル名:行`。メッセージは入れない）、`ok`、`out_hash`。ホームのパスは `%USERPROFILE%` に置換する。2026-10-21 の「既定ではログを出さない」は、全文ログ（`--log`）に限る（ユーザーの承認: 2026-10-25）。
+
+未実装（2026-10-25）: `run.py` の型、ps1 版、原因の台帳（`room-windows-balance`）。
 
 ### ps1 の薄い層（Python が使えないときだけ）
 

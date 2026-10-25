@@ -12,7 +12,7 @@ script-guide.md の「Windows で実行するスクリプト（Python）」の�
 
 見る項目: UTF-8（BOM なし）、改行の混在、構文（ast）、ruff（あれば。無ければ WARN）、
 起動用 .bat が 3 行の型（@echo off / uv run --script "%~dp0<名前>.py" [%*] / pause）で、ASCII・CRLF・BOM なし、呼び先の .py が同じ場所にある、
-束ねる .py が --log のときだけ ai/work/<名前>.log に出すログ機能（既定は出さない）を持つこと。
+束ねる .py が --log のときだけ ai/work/<名前>.log に出すログ機能（既定は出さない）を持つこと、bat の名前が工程名（run / verify / release）で、verify.py が毎回 verify-result.json を出す機能を持つこと（どちらも WARN）。
 見ないもの（人が Windows で実行して確かめる）: Windows 固有の動作（COM、レジストリ、パスと権限）、実行先の uv と依存の取得。
 pwsh を呼ぶ起動用 .bat は対象外（check-ps1.ps1 の担当）。
 """
@@ -89,8 +89,11 @@ def check_launcher(f, c):
         c.report(tp.exists(), f"起動用 bat の呼び先 {target} が同じ場所にある")
         if tp.exists():
             body = tp.read_text(encoding="utf-8", errors="replace")
-            ok = "--log" in body and "'work'" in body.replace('"', "'") and "argparse" in body
+            ok = Path(target).stem == "release" or "--log" in body and "'work'" in body.replace('"', "'") and "argparse" in body
             c.report(ok, f"束ねる {target} が --log のときのログ出力の機能を持つ（argparse の --log、'work'）", "WARN")
+            if Path(target).stem == "verify":
+                c.report("verify-result.json" in body, f"束ねる {target} が毎回 verify-result.json を出す機能を持つ", "WARN")
+        c.report(f.stem in ("run", "verify", "release"), f"起動用 bat の名前 {f.name} が工程名（run / verify / release）", "WARN")
     c.report(bool(lines) and lines[-1].lower() == "pause", "起動用 bat の最後が pause（終わっても画面が閉じない）")
 
 
