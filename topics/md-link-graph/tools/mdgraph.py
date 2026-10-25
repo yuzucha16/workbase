@@ -219,4 +219,5 @@ out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(PAGE.replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")), encoding="utf-8", newline="\n")
 s = data["stats"]
 print(f"{len(nodes)} ファイル / {s['edges']} 辺 / 到達 {s['reach']} / 最大の循環 {s['scc_big']} / 深さ {s['depth']}")
+print(f"未到達 {s['unreach']} / 入次数 0 {len(s['orphans'])} / 最大の循環の割合 {round(100 * s['scc_big'] / s['files'])}%")
 print(f"出力: {out}")
