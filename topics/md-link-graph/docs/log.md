@@ -15,11 +15,8 @@
 ## Next Actions
 
 1. 実作業での引き当て率: 初回は 2026-11-08（root `docs/log.md` の期日）。`python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。以後は `review` の入力 9。取りこぼしは `triggers:` の語を足す案にする。初日は 1 依頼だけで、判断できない。
-2. （見送り・閉じた。2026-10-25 ユーザー: 対象のノートはそんなに重要ではなかった。B07 `linux-multiboot-setup` と S16 `zed-vim` の語は足さない）
-3. （済み。2026-10-25）`mdgraph.py` は雛形と `@` だけの `CLAUDE.md` を数えない。root `README.md` に topics と guides の窓口を書いた。未到達 0、入次数 0 が 0。
-4. （済み。2026-10-25）索引は生成せず、`find_knowledge.py --check-index` を `integrate` の最後と `review` の入力 9 に足した。
-5. S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は、入口 1 節とフックで届くので付けない方針。実測で届かなければ見直す。
-6. 完了の判断: 完了条件（構造の問題点を数字で示し、直す案をユーザーが決める）は満たした。引き当て率の初回（11-08）の後に、閉じるかをユーザーに聞く。閉じるときは、`mdgraph.py` `mdreach.py` `mktriggers.py` `mdrank.py` と `records/scenarios.md` `records/graph.html` を kit に移し、`review-hook.md` の入力 9 のコマンドを直す。
+2. S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は、入口 1 節とフックで届くので付けない方針。実測で届かなければ見直す。
+3. 完了の判断: 完了条件（構造の問題点を数字で示し、直す案をユーザーが決める）は満たした。引き当て率の初回（11-08）の後に、閉じるかをユーザーに聞く。閉じるときは、`mdgraph.py` `mdreach.py` `mktriggers.py` `mdrank.py` と `records/scenarios.md` `records/graph.html` を kit に移し、`review-hook.md` の入力 9 のコマンドを直す。
 
 ## 論点（Open Questions）
 
