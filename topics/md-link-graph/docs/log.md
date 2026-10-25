@@ -6,9 +6,9 @@
 
 - 本実装は済み（2026-10-25）。索引の正本は各ノートの `triggers:`（15 語まで）。表はコミットせず、`workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` が毎回 frontmatter を読む（`--check-triggers` `--list-triggers` もある）。対象は `exmem/lessons/`、`guides/explain/`、未統合の `exmem/inbox/`。
 - 付く時点: 既存は付与済み（lessons 67、explain 9、inbox 3）。`stock` はメモに必須（`check_inbox` が点検）、`integrate` は統合先に合わせて 15 語に収める。入口は root `AGENTS.md` の 1 節と `exmem/AGENTS.md`。
-- 押し出し: dotfiles の `UserPromptSubmit` フックが `workflow-kit/tools/triggers_hook.py` を呼ぶ（dotfiles `42c7c6a`、未 push）。このセッションで発火を確認した。
+- 押し出し: dotfiles の `UserPromptSubmit` フックが `workflow-kit/tools/triggers_hook.py` を呼ぶ（dotfiles `42c7c6a`、未 push。push はユーザーが dotfiles 側の AI に頼む。2026-10-25 にプロンプトを渡した）。発火は確認済み。
 - 定期チェック: `review` の入力 9（引当率 = `triggers_stats.py`、コールグラフ = `mdgraph.py` `mdreach.py` `mktriggers.py`、依頼の文での順位 = `mdrank.py`。`graph.html` の作り直しと場面の追加も含む。2026-10-25 にトピックと同じ測り方にした）。
-- 計測の数字（2026-10-25 の再計測）: 178 ファイル、辺 1,516、最大の循環 92%（163/178）、未到達 6、入次数 0 が 6（同じ 6 件）、届かない場面 1/26（S11。語の列で測った数）。
+- 計測の数字（2026-10-25 の再計測）: 179 ファイル、辺 1,550、最大の循環 92%（164/179）、未到達 6、入次数 0 が 6（同じ 6 件）、届かない場面 1/26（S11。語の列で測った数）、依頼の文での順位（`mdrank.py`）1 位 30/43、上位 5 件 40/43。
 - 盲検に近い再測定（`records/scenarios.md` の B01〜B18。`triggers` を読まずに書いた依頼文を、本番の `--triggers` で引いた）: 上位 5 件 17/18、1 位 12/18。S01〜S26 を依頼の文で引くと 1 位 17/24、上位 5 件の外は S16 だけ。並べ方を IDF に変える試算は悪くなった（変えない）。
 - 未確認: 大きいノートの `triggers` は本文を読まず、題・別名・タグから書いた。
 
