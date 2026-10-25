@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-25（本実装: 言葉の索引、dotfiles のフック、review の定期チェック）
+- ユーザーが案 1（言葉の索引を検索スクリプトで引く）を選び、「stock ナレッジ」「integrate」にも索引が作られるか、既存は今・これからのナレッジはどこで索引化されるかをまとめて設計するよう依頼。設計案（`records/design-triggers.md`）を出し、3 点（表をコミットしない、`guides/explain/` を含める、`stock` で必須・`integrate` で合わせる）をユーザーが承認。
+- 実装（`b49b65e`）: `find_knowledge.py` に `--triggers` `--check-triggers` `--list-triggers`、`guides/explain/` 9 本と `exmem/inbox/` 3 本に付与、`check_inbox` に `triggers` の点検、`stock` `integrate` の手順書と見本、root `AGENTS.md` と `exmem/AGENTS.md`。人用の表は `stock 理解` の下書き（`exmem/inbox/2026-10-25-triggers-knowledge-index.md`、未追跡）にし、表自体は `--list-triggers` で毎回出す形にした。
+- dotfiles のフック: `triggers_hook.py`（`80f15e5`）と dotfiles `home/.claude/settings.json` の `UserPromptSubmit`（`42c7c6a`）。`workbase` が無い PC で依頼が止まらないよう `Test-Path` で守る。このセッション内で発火を確認（出力は文脈に入る）。
+- `review` の入力 9（`4e1250d`）: 引当率（`triggers_stats.py`。会話記録のフック出力と、その依頼で読まれたファイルを突き合わせる）とコールグラフ。初日の記録は 1 依頼で 0/5（依頼が `review` の話で、ノイズの可能性）。初回の本測定は 11-08。
+- `log.md` が 4KB の予算を超えていたため、現在状態だけに書き直した。
+
 ### 2026-10-25（論点 A〜D の計測と、`triggers:` の全 lesson への付与）
 - グラフが空だった不具合を直した（`const top` が `window.top` と衝突。`topN` に改名）。ユーザーが表示を確認。
 - 論点 A（`--kinds` で辺の種類を絞る。189 ファイル）: wikilink のみ（辺 544、起点から到達 3、最大の循環 61、入次数 0 が 72）、バッククォートのみ（927、118、97、53）、すべて（1,461、177、167、7）。起点に wikilink が無く、パスはバッククォートで書いてあるため、AI の到達を見るにはバッククォートを数える。ユーザーが決定（`decisions.md`）。

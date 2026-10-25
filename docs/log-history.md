@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-25（作業の言葉の索引の本実装。md-link-graph の続き）
+- ユーザーが案 1 を選び、`stock` `integrate` を含む索引化の設計を依頼。承認（表をコミットしない、`guides/explain/` を含める、`stock` 必須・`integrate` で合わせる）を得て実装した（`b49b65e`。詳細は `topics/md-link-graph/docs/log-history.md` の同日の項）。
+- kit の変更: `find_knowledge.py`（`--triggers` `--check-triggers` `--list-triggers`）、`triggers_hook.py`（`80f15e5`）、`triggers_stats.py` と `review-hook.md` の入力 9（`4e1250d`）、`stock-hook.md` `stock-explain.md` `integrate-hook.md`、点検（`check_inbox.py` `check-inbox.ps1`）、見本、`exmem/inbox/README.md`、root `AGENTS.md` `exmem/AGENTS.md`。dotfiles `42c7c6a` が配線。
+- ユーザーの指示: dotfiles のフックを同じセッションでやる（コミットを許可）、`review` で引当率とコールグラフを定期チェックする、実作業での引当率の初回は別に測る（11-08 を期日に置いた）。振り返り系の期日は別セッションで行う。
+- 未追跡のまま: `exmem/inbox/` の 2026-10-21 と 2026-10-25 のメモ（`stock` のメモはコミットしない規則）。push は workbase・dotfiles とも未実施。
+
 ### 2026-10-25（10-22 の daily を第5回に含めて閉じた）
 - 期日表の 10-22 の daily で、10-22 のコミットが0件だと確認した（10-21 22:56 の次は 10-25 07:52）。第5回（10-21 20:50〜10-25 07:52、37コミット）が 10-22・23 を含むため、別に書かず閉じた。ユーザーの承認と説明: 10-22〜24 はトークン消費の制限で作業できなかった。期日表の定例の行は次回の 10-26 に書き換えた。記録は `topics/kit-growth/records/retrospective-daily-record.md`。
 
