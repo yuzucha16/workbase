@@ -2,6 +2,7 @@
 
 ## Log
 
+- 2026-10-26（hook-common の 6 万）: ee が承認。`hook-common.md` 38〜39 行の「会話が約10万トークン未満／以上」を約6万に直した（5d6ca15。約2万未満の例外は変更なし）。残りは `log.md` の予算超え（`logbook-design` 6.4KB）。wrap。
 - 2026-10-26（brief の読む量）: ee が案 1・2 を承認。`brief-hook.md` の `hook-common.md` 参照を節指定（報告の型、他のフックを勧める条件。約 4KB／13KB）にし、引数つきモード（解決・改善・変更・調査・計画）を `brief-modes.md`（4.8KB）に切り出した（`brief-hook.md` 12.0→8.0KB）。切り出しの途中で `check-hook-outline.ps1` が参照の書き方（手順名にフックのファイル名が要る）で FAIL し、直して全件 OK。見込みは 1 会話 3〜4k 減で、実測は 10-27 以降。`hook-common.md` の「約 10 万で切る」が 60k 運用と食い違うのを見つけ、Next Actions に起票。wrap。
 
 - 2026-10-26（exmem-index.md の読み方）: ee が提案を承認し、`exmem/AGENTS.md` の読む順番 1 を「`find_knowledge.py --triggers` で出なかったときだけ、索引を Grep で引く」に変えた。索引は 7.2KB（約 3.4k）で、+16k は直前の Glob との重なり。見込みは 1 会話 3〜4k 減で、実測は 10-27 以降。この会話では `python` がブロックされ、`--triggers` は実行できなかった。wrap。
