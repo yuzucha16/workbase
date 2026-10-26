@@ -13,7 +13,7 @@
 
 ## Next Actions
 
-1. 最小の `logbook/` の型を決める: 節（いま／明細）、frontmatter（`review_by` `budget`）、スクリーニング（`find_knowledge.py` に `--check-aging` 相当を足すか。日数は暫定 60）、`triggers` 索引の対象にするか。実装は承認の後。下の 5 の「移す」は、これが決まってから。
+1. 最小の `logbook/` の型を決める: 叩き台は `records/2026-10-26-logbook-type-draft.md`（7 点。待ち行列に置いた。次の `review 消化` で判断）。実装は承認の後。下の 5 の「移す」は、これが決まってから。
 2. 版依存の印を付ける（2026-10-26 承認。logbook の型と無関係なのですぐできる）: `claude-code-storage` の Facts（一方向。`ai-work-metrics` の形式の事実はここにまとめ、`ai-work-metrics` からは指す）、第2陣 6 ファイルの ② の節（`records/2026-10-26-wave2-review.md` の 2 の 5）、第3陣の単価・TTL（`session-handoff` など）。
 3. 第2陣の旧名（`init`/`open` の廃止、2026-10-24）が残る箇所を更新する（2026-10-26 承認。書き換え）。
 4. 畳む候補を列挙し、ユーザーが削除する（2026-10-26 承認。AI は挙げるだけ）: `claude-code-storage`（Stop フックの OQ・NA と 1 回きりの移行の Decisions。Stop フックの実機確認の状態を添える）、第2陣 6 ファイルの X と古い ③（`obsidian-vault` の Next Actions にバックアップ（robocopy）の未設定を残す。旧 `C:\vault` の削除はユーザーが PC 上で行う）、第3陣 2 ファイルの Open Questions と未決の雛形の節。
@@ -32,3 +32,4 @@
 - 【保留 2026-10-26】場所: 仕組み（lessons の追記の型） / 問題: 追記のたびに Facts／OQ／NA を持つ形が、ファイルを太らせる / 案: (b) 追記の型を変え、OQ・NA は本体の 1 つにまとめる。代替: lessons の NA に起票日を付けるだけにする。10-19 の R-02（NA の追記は 3 回まで）の却下と同じ理由で覆りやすい。(a)（`review 消化` で列挙だけ）は 2026-10-26 に正式化済み（`docs/decisions.md` 直下）。
 - 【保留 2026-10-26】場所: `exmem/lessons/shell-command-usecases.md` の素材（履歴の種、約 15.5KB。dotfiles が正本として読む元） / 問題: lesson 内で読み込みが重い / 案: 推奨なしで選ぶ。(a) lesson に残して節に `素材` の印を付け、開始時に読まない。(b) `exmem/seeds/` を新設して切り出す（dotfiles 側の読み先も変わる）。dotfiles 側へ移す案は依存の向きに反するので除く。「サイズの予算」は 10-15 に lessons の字数の目安を見送っているので前提にしない。
 - 場所: 単価の記述（`session-handoff` ほか複数の lessons。`records/2026-10-26-wave3-review.md` の観察 3） / 問題: 同じ単価が複数のファイルにあり、版が上がると直し漏れる / 案: 1 か所にまとめ、他は指す。まとめ先は実施の前に 3 行で示す（2026-10-26 に置いた）。
+- 場所: `logbook/` の最小の型（`records/2026-10-26-logbook-type-draft.md`） / 問題: 型が決まらないと、移す 6 件に進めない。一部だけ移すと、lesson と同じファイル名になり、Vault 内で一意の規則に反する / 案: 7 点（ファイル名は `<名前>-log.md`、節、frontmatter、既定の値、`--check-aging`、窓口、降格の書き方）を 1 点ずつ判断する（2026-10-26 に置いた）。
