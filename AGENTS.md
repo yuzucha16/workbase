@@ -28,7 +28,7 @@
 2. `docs/log.md`（開始時に読むのはここまで。「期日」の節があれば、今日以前または3日以内の項目を、最初の返答で知らせて判断を求める）
 3. `docs/decisions.md` と `docs/log-history.md` は開始時に読まない。何かを決める・変える前に `decisions.md` を検索する。経緯が要るときは `log-history.md` を検索する。
 
-下位の単位（トピック、`guides/` など）の「<名前> の続き」は、`workflow-kit/docs-rules.md` の「上の階層で起動して…」に従う。
+下位の単位（トピック、`guides/` など）の「<名前> の続き」は、`workflow-kit/docs-rules.md` の「上の階層で起動して…」の節（24 行付近の 3 行。`offset` 24・`limit` 5 で読む。Grep と全文読みはしない）に従う。
 
 ## wrap の記録先
 

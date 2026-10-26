@@ -4,7 +4,7 @@
 
 ## 「<トピック名> の続き」と言われたら
 
-`workflow-kit/docs-rules.md` の「上の階層で起動して…」に従う。トピックでの差分は、窓口が `*-start-here.md`（無ければ `*-handover.md`）であることと、`notes/` は必要なときだけ読むこと。
+`workflow-kit/docs-rules.md` の「上の階層で起動して…」の節（24 行付近の 3 行。`offset` 24・`limit` 5 で読む。Grep と全文読みはしない）に従う。トピックでの差分は、窓口が `*-start-here.md`（無ければ `*-handover.md`）であることと、`notes/` は必要なときだけ読むこと。
 
 ## 書くとき
 
