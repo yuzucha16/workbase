@@ -14,7 +14,7 @@
 ## Next Actions
 
 1. 次の `review 消化`（「logbook-design の続き」）で、待ち行列の 7 件をスクリーニングし、ユーザーが 1 件ずつ判断する。
-2. 第2陣の現況確認（ユーザーにしか分からないもの）: MX Linux の導入、旧 `C:\vault` の後始末、vault のバックアップ（robocopy）の設定、`claude-code-auth-providers` の Next Actions。
+2. 第2陣の現況確認の残り: 旧 `C:\vault` の後始末。回答済み（2026-10-26）: MX Linux は導入済み（`linux-distro-selection` の Next Actions は畳める）、`claude-code-auth-providers` の Next Actions は完了（畳める）、vault のバックアップ（robocopy）は未設定（`obsidian-vault` の Next Actions に残す）。畳みは待ち行列の第2陣の項で行う。
 3. 第3陣（`para-operations` `session-handoff`）の本文確認。
 4. 最小の `logbook/` の型を決める: 節（いま／明細）、frontmatter（`review_by` `budget`）、スクリーニング（`find_knowledge.py` に `--check-aging` 相当を足すか。日数は暫定 60）、`triggers` 索引の対象にするか。実装は承認の後。
 5. 別セッションで、`logbook/` に上位の md（`AGENTS.md` `README.md` `exmem/` の索引など）から辿れるかを確かめる（引当率、`topics/md-link-graph/` の道具。`find_knowledge.py --triggers` の対象にするかも同時に決める）。実装の後。
