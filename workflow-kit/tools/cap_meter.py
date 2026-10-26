@@ -6,7 +6,8 @@
 1回の応答の大きさ = input + output + cache_read + cache_write（Zed の表示 `used` と同じ数え方）。上限への算入 = 全応答の大きさの合計。
 上限の数え方（読みを含むか）は勤務先の案内で確かめる。違うときは、usage_report.py の種別ごとの量で読み替える。
 
-使い方: python -I cap_meter.py [--budget 200000000] [--cut 60000] [--month YYYY-MM] [--days 7] [--root DIR]
+使い方: python -I cap_meter.py [--budget 200000000] [--cut 60000] [--month YYYY-MM] [--days 7] [--latest] [--root DIR]
+  --latest  月の集計の代わりに、いちばん新しい会話（最後の応答の時刻が最新）の 応答数・積算・いまの大きさ・土台 だけを出す（`wrap` の前に見る用）
 数え方: 1つの応答は jsonl の複数行に分かれるので、message.id + requestId で1回だけ数える。サブエージェントも合計に含める。
 ログは作業内容を含むので、出力は数字だけ（題名は出さない）。プロジェクト名は出さない。
 """
@@ -59,10 +60,19 @@ def main():
     ap.add_argument("--cut", type=int, default=60_000)
     ap.add_argument("--month", default=datetime.now().strftime("%Y-%m"))
     ap.add_argument("--days", type=int, default=7)
+    ap.add_argument("--latest", action="store_true")
     ap.add_argument("--root", default=str(Path.home() / ".claude" / "projects"))
     a = ap.parse_args()
 
     rows = [(sid, local(ts), n, side) for sid, ts, n, side in read(Path(a.root))]
+    if a.latest:
+        if not rows:
+            raise SystemExit("応答が無い")
+        sid = max(rows, key=lambda r: r[1])[0]
+        mine = sorted((r for r in rows if r[0] == sid), key=lambda r: r[1])
+        main_rows = [r for r in mine if not r[3]] or mine
+        print(f"最新の会話 [{sid[:8]}]: 応答 {len(mine)}、積算 {sum(r[2] for r in mine):,}、いまの大きさ {main_rows[-1][2]:,}、土台 {main_rows[0][2]:,}、開始 {mine[0][1]:%m-%d %H:%M}")
+        return
     rows = [r for r in rows if r[1].strftime("%Y-%m") == a.month]
     if not rows:
         raise SystemExit(f"{a.month} の応答が無い")
