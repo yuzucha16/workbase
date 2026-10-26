@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-26（log.md の予算超え）: ee が a を選択。`topics/logbook-design/docs/log.md` を 6.4→3.8KB（予算 4KB 内）に縮めた。状態の節を圧縮し、Next Actions・Open Questions・待ち行列 3 件は意味を変えずに残した。縮めた旨は `logbook-design/docs/log-history.md` にも追記。これで読む量の削減の一手は一巡。wrap。
+
 - 2026-10-26（hook-common の 6 万）: ee が承認。`hook-common.md` 38〜39 行の「会話が約10万トークン未満／以上」を約6万に直した（5d6ca15。約2万未満の例外は変更なし）。残りは `log.md` の予算超え（`logbook-design` 6.4KB）。wrap。
 - 2026-10-26（brief の読む量）: ee が案 1・2 を承認。`brief-hook.md` の `hook-common.md` 参照を節指定（報告の型、他のフックを勧める条件。約 4KB／13KB）にし、引数つきモード（解決・改善・変更・調査・計画）を `brief-modes.md`（4.8KB）に切り出した（`brief-hook.md` 12.0→8.0KB）。切り出しの途中で `check-hook-outline.ps1` が参照の書き方（手順名にフックのファイル名が要る）で FAIL し、直して全件 OK。見込みは 1 会話 3〜4k 減で、実測は 10-27 以降。`hook-common.md` の「約 10 万で切る」が 60k 運用と食い違うのを見つけ、Next Actions に起票。wrap。
 

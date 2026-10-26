@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（log.md の予算超えの整理、token-cap）
+- `log.md` を 6.4KB から約 4KB に縮めた。経緯の細部（第1陣 5 ファイルの確認、`ai-work-metrics` の ③ の畳み、移した先の `logbook/*-log.md` の名前、`user-thinking-habits` の公開範囲の解消の経過）は `decisions.md` と `records/` にある。Next Actions の意味は変えていない。
+
 ### 2026-10-26（型の判断と実装）
 - 叩き台の 7 点を、ユーザーがカードで 1 点ずつ判断した（すべて推奨どおり。`decisions.md`）。待ち行列の「`logbook/` の最小の型」の項を消した。
 - 実装: `logbook/README.md`、`find_knowledge.py --check-aging`（`--today` で基準日を変えられる。一時ディレクトリの 4 ファイルで、欠け・type 違い・日付でない・budget が読めない・期限切れ・budget 超過の 7 件の FAIL と、正常なファイルの通過を確かめた）、ルートの `README.md` の構成の表、`exmem/AGENTS.md` のディレクトリの役割、`review-hook.md` の入力 3 に 1 行ずつ。消した Next Actions: 「最小の `logbook/` の型を決める」（完了）。
