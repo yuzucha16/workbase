@@ -3,6 +3,7 @@
 ## Log
 
 ### 2026-10-26（続き）
+- ユーザー: `para-operations` と `session-handoff` の Next Actions は置き換わり。畳んだ。
 - ユーザー: 旧 `C:\vault` は消してよい。第3陣（`para-operations` `session-handoff`）の本文確認を `records/2026-10-26-wave3-review.md` に記録。降格は測定値だけで、残りは古い ③ の畳みと印。
 - 第2陣の現況をユーザーが回答: MX Linux 導入済み、auth の Next Actions 完了、vault のバックアップは未了。
 - 第1陣の 5 項目を、ユーザーの選択でこのトピックの Open Questions の待ち行列に置いた。`review 消化` の 3 段チェックの 1 段目。

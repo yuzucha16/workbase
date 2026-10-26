@@ -10,7 +10,6 @@
 ## あなた待ち
 
 - 待ち行列 7 件の判断（次の `review 消化` で、スクリーニングの後に 1 件ずつ）。
-- 第3陣の現況: `para-operations` と `session-handoff` の Next Actions が今も現役か。
 
 ## 次の一手
 

@@ -102,11 +102,7 @@ PARA の `projects/` と `areas/` の役割・判断基準・構造・フック�
 
 ## Next Actions
 
-- Area の雛形を決める（叩き台: `README.md` に `type: area` と `status`、案件の概要・目的、タスク候補、Project 一覧の Bases。`docs/log.md`、`docs/decisions.md`。2026-10-07 時点）。
-- その後に、open の雛形と手順書（上の論点）、続けて close の雛形（status の更新、`archives/` への移動、【案件】の残りの点検、【汎用】のナレッジ化）を決める。
-- 3ラベルを `docs-rules.md` の【汎用】【この件】に足すか、works ローカルの規則で試すかを決める。kit を変えるときは承認を取る。
-- works 側の手順書（`project-open.md`、`project-close.md`）と既存の Area・Project を、上の決定と照合する。Area の定義と Decisions を書き換える。
-- 2回目の Project を、新しいセッションで「作業を始めて」から開始し、`live` のデータを溜める（2026-10-06 時点）。
+- なし。2026-10-06〜07 時点の項目（Area・open・close の雛形、2 回目の Project の開始）は、`topics/` 型と `room` の整備に置き換わった（ユーザーの判断、2026-10-26）。履歴は Git。
 
 ## Related
 

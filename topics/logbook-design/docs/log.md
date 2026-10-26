@@ -15,7 +15,7 @@
 
 1. 次の `review 消化`（「logbook-design の続き」）で、待ち行列の 7 件をスクリーニングし、ユーザーが 1 件ずつ判断する。
 2. 第2陣の現況確認は済み。旧 `C:\vault` は消してよい（ユーザー、2026-10-26。消す作業自体は PC 上で、ユーザーが行う）。回答済み（2026-10-26）: MX Linux は導入済み（`linux-distro-selection` の Next Actions は畳める）、`claude-code-auth-providers` の Next Actions は完了（畳める）、vault のバックアップ（robocopy）は未設定（`obsidian-vault` の Next Actions に残す）。畳みは待ち行列の第2陣の項で行う。
-3. 第3陣の現況をユーザーに確認する: `para-operations` の Next Actions（Area の雛形、open の雛形、2 回目の Project）が今も現役か、`session-handoff` の Next Actions（2026-10-17〜18 時点）が現役か。
+3. 第3陣の現況は確認済み: 両ファイルの Next Actions は置き換わり、畳んだ（2026-10-26）。
 4. 最小の `logbook/` の型を決める: 節（いま／明細）、frontmatter（`review_by` `budget`）、スクリーニング（`find_knowledge.py` に `--check-aging` 相当を足すか。日数は暫定 60）、`triggers` 索引の対象にするか。実装は承認の後。
 5. 別セッションで、`logbook/` に上位の md（`AGENTS.md` `README.md` `exmem/` の索引など）から辿れるかを確かめる（引当率、`topics/md-link-graph/` の道具。`find_knowledge.py --triggers` の対象にするかも同時に決める）。実装の後。
 6. 試行: 2026-11-29 の月次の振り返りで、週次の記録（`kit-growth/records/`）を 1 回手で畳んでみる（置き場は変えない）。

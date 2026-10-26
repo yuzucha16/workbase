@@ -31,3 +31,8 @@
 ### 【この件】`ai-work-metrics` の試行（`bare`/`briefed`）と運用は続けていない。③ は畳む（2026-10-26）
 - 決めたこと（ユーザー）: Next Actions（2026-10-06〜07 時点）の運用は続けておらず、`usage_report.py` と `heavy_sessions.py` に置き換わっている。畳む。`exmem/lessons/ai-work-metrics.md` の Next Actions を「なし」にし、`briefed` の雛形の節を削除し、試行に結びついた Open Questions 2 項を削除した。
 - 根拠: ユーザーの発言: 「もう続けてないです。置き換わっているので畳んで下さい」。
+
+### 【この件】`para-operations` と `session-handoff` の Next Actions は置き換わっているので畳む（2026-10-26）
+- 決めたこと（ユーザー）: どちらも置き換わっている。両ファイルの Next Actions を「なし」にした。Open Questions は、待ち行列の判断（第3陣の項）で扱う。
+- 根拠: ユーザーの発言: 「置き換わってます」。
+
