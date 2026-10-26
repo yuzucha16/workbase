@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（token-cap: コミットと push の切り出しと、読み込みを抑える規則）
+- ユーザーの承認で、`workflow-kit/docs-rules.md` の「コミットと push」を `workflow-kit/commit-push-rules.md` に切り出した（`ce52646`。`docs-rules.md` は 24.6KB→12.4KB。参照元は `AGENTS.md`、`workflow-kit/AGENTS.md`、`hook-common.md`、`README.md`、`hooks.md`。`templates/` の `AGENTS.md` は未変更）。続けて、`review 消化` が 100k に届いた原因（大きい Grep と全文読み）を調べ、読み込みを抑える規則を `AGENTS.md` に足した。判断は `decisions.md` の同日の項、詳細は `topics/token-cap/`。
+
 ### 2026-10-26（review 消化の続き: 延長と公開範囲）
 - ユーザーの判断: Next Actions 4（md-link-graph）を 11-08 まで延長（引き当て率の初回の後に閉じるか聞く）。`user-thinking-habits` の「癖の評価と個人的な事情は、公開側に置かない」の一文を削除（公開範囲の食い違いの解消）。Next Actions 2（旧名の注記）は閉じた。python が この PC でブロックされ、`--check-aging` は未実行。
 

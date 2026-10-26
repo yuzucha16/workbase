@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】コミットと push の規則は `workflow-kit/commit-push-rules.md` に置く。`AGENTS.md` に読み込みを抑える規則を足す（2026-10-26）
+- 決めたこと（ユーザー）: `docs-rules.md` の「コミットと push」を別ファイルに切り出す。大きい出力の Grep を避け、ファイルは必要な節だけ読む規則を `AGENTS.md` に書く。
+- 根拠: ユーザーの発言: 「token-cap の続き docs-rules.md の切り出しを承認します」「判断してほしいこと：承認します。書いてください。」会話記録の実測（全文読みと大きい Grep が会話の伸びの主因）は `topics/token-cap/records/`。
+- 反映先: `workflow-kit/commit-push-rules.md`（`ce52646`）、`AGENTS.md`。効果は `cap_meter.py` の 10-27 以降で確かめる。
+
 ### 【汎用】`review 消化` の「すでに close していそうなもの」に、lessons の古い試行の途中と 1 回きりの記録を挙げる。挙げるだけで、削除はユーザー（2026-10-26）
 - 決めたこと（ユーザー、待ち行列 7 の判断で「(a)列挙だけ、(b)保留」を選んだ）: (a) 消化モードの 1 で、そのセッションで読んだ・書いた `exmem/lessons/` のノートの、置き換わった Open Questions・Next Actions と 1 回きりの構成記録を挙げる。AI は挙げるだけで、削除はユーザーが行う。(b) 追記の型を変えて OQ・NA を本体の 1 つにまとめる案は、保留（待ち行列に残す）。
 - 根拠: 2026-10-26 の決定「1 回きりの構成記録はユーザーが直接削除する」と両立させ、見落としだけを防ぐ。(b) は 10-19 の R-02（NA の追記は 3 回まで）の却下と同じ理由で覆りやすい（スクリーニングの結果、`topics/logbook-design/records/2026-10-26-queue-screening.md`）。

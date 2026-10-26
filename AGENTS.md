@@ -15,6 +15,13 @@
 
 作業を始める前に、依頼の言葉で `python -I workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` を実行し、出たノートを読む（`exmem/lessons/`、`guides/explain/`、未統合の `exmem/inbox/` の `triggers:` と照合する。2026-10-25 ユーザーの決定。設計は `topics/md-link-graph/records/design-triggers.md`）。
 
+## 読み込みの量を抑える
+
+読んだ内容は、以後の全応答に乗る（日本語は約 0.47 トークン/バイト。2026-10-26 ユーザーの決定。根拠は `topics/token-cap/records/2026-10-26-review-digest-100k.md`）。
+
+- Grep は、まず `files_with_matches` か `count` で件数とファイル名を見てから、必要なファイルだけ内容を見る。広い語で行の内容つきの出力を一度に取らない（旧名の読み替えの掃除では、1 回 12〜19KB の出力が 3 回あった）。
+- ファイルは、必要な節だけ `offset` と `limit` で読む。全文を読むのは、全体を書き換えるときだけ。
+
 ## 読む順番
 
 1. `README.md`（窓口）

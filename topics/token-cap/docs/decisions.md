@@ -22,3 +22,9 @@
 - 決めたこと（ユーザー）: 端末は使う予定がないので、端末のツール遅延読み込みの調査は今は不要。必要になったら依頼する。
 - 根拠: ユーザーの発言: 「端末は使う予定がないので今は不要です。必要になったら調査をお願いしますね」
 - 確認済み: `/context` の実測で、土台は端末 36.4k、Zed 19.4k（`records/2026-10-26-context-measure.md`）。
+
+### 【汎用】`docs-rules.md` から「コミットと push」を `commit-push-rules.md` に切り出す。読み込みの量を抑える規則を `AGENTS.md` に書く（2026-10-26）
+- 決めたこと（ユーザー）: (1) 切り出しを承認。(2) 大きい出力の Grep を避け、ファイルは必要な節だけ読む規則を `resources/AGENTS.md` に書く。
+- 根拠: ユーザーの発言: 「token-cap の続き docs-rules.md の切り出しを承認します」「判断してほしいこと：承認します。書いてください。」実測は `records/2026-10-26-growth-by-reads.md`、`records/2026-10-26-review-digest-100k.md`。
+- 確認済み: `docs-rules.md` は 24.6KB から 12.4KB。切り出した節は 13KB なので、`wrap` のように両方読む会話は減らない。効果の検証は `cap_meter.py` の 10-27 以降の値（基準は 10-25 と 10-26）。
+- 反映先: `workflow-kit/commit-push-rules.md`、`AGENTS.md`、`workflow-kit/hook-common.md` ほか（コミット `ce52646`）、`AGENTS.md` の「読み込みの量を抑える」。
