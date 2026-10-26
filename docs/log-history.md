@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（review 消化: 旧名の注記の削除）
+- ユーザーの判断: Next Actions 2（フックと room の整合）の残りをこのセッションでやり、閉じる。旧名（`init` `open` `start` `close` と旧ファイル名）の読み替えと注記を消した。`hooks.md` の旧名の項 4 つと、`room` 表の旧 `init` の言及、`workflow-kit/README.md` の旧ファイル名、`project-structure.md` `room-context.md` `session-goal-modes.md` `ai-development-workflow.md` の注記。履歴（`records/` `log-history.md` `decisions.md`）と `guides/explain/` の経緯の説明、ディレクトリ名の改名（`hooks.md`）、`Template-Rev` の記述（`docs-rules.md`）は残した。`stock` の `scope: area` の実機確認は `topics/hook-room-alignment/docs/log.md` に残る。
+
 ### 2026-10-26（kit-growth: 実機なしで進めた分、2 回目）
 - ユーザーの依頼「kit-growth の続き、実機なしでできるアイテム」。前回（10-25）の後に、logbook・cleankit・token-cap の項が足され、`docs/log.md` が 5.0KB に戻っていた。新しい判断はせず、`docs-rules.md` の決まりに合わせる直しだけをした。
 - `docs/log.md` を 5.0KB から 4.0KB に縮めた（4KB 目安）。① Next Actions 1「振り返り（改善4・5）: 材料は `topics/kit-growth/records/` と `decisions.md`（2026-10-25）。次は週次 11-01、月次 11-29。」を消した。周期のある項目は Next Actions に置かない決まりで、期日の節の 11-01・11-29 の行と重なっていたため。材料の置き場は 11-01 の行に移した。② 各項の詳細は各トピックの `docs/log.md` にあるので、窓口を指す形に縮めた（縮める前の全文は `git show f9ac3d6:docs/log.md`）。③ 起票日の無い項目に `【起票 MM-DD】` を付けた（日付はこのファイルの過去の Next Actions と各トピックの起票から）。`md-link-graph` の項は 10-20 の起票で、1 週間の期限が 10-27 に来る。

@@ -11,22 +11,18 @@
 | `review` | 「見直して」<br>`review 消化`＝「next action を消化して」 | `review-hook.md` | 随時（週1回・15分を目途） | 遠回りの事例を見て、1つ直すか1つ畳む。`review 消化` で Next Actions / Open Questions の消化 |
 | （常時） | | `docs-rules.md` | `docs/` を更新するとき、コミット・push の前 | `docs/` の運用規則 |
 
-- 連鎖: `[brief → 作業 → wrap]×N`。`stock` と `integrate` は随時。works の作成と雛形の反映（旧 `init`）、Project の開始（旧 `open`）と終了は合言葉を持たず、人が `room mkworks` `room open` `room close` で行う（部屋の AI が書く `ai/out/close.md` の書き方は `room-context.md`）。トピックの終了は `topics/AGENTS.md`。
+- 連鎖: `[brief → 作業 → wrap]×N`。`stock` と `integrate` は随時。works の作成と雛形の反映、Project の開始と終了は合言葉を持たず、人が `room mkworks` `room open` `room close` で行う（部屋の AI が書く `ai/out/close.md` の書き方は `room-context.md`）。トピックの終了は `topics/AGENTS.md`。
 - 全フックの共通規則（冒頭の定型、改善、承認、フックを足す・消すとき）は `hook-common.md`。
 - 上のファイルが読めない場合（`workbase` を clone していない PC など）は、記憶で代用せず、ユーザーに伝えて止まる。
 - ディレクトリ名: `exmem/knowledge/` は `exmem/lessons/` に、`cheatsheets/` は `guides/`（`howto/` `explain/` `quickref/`）に、2026-10-10 に改名した。履歴の中の旧名は、これで読み替える。
-- 旧ファイル名 `closing-hook.md` `knowledge-hook.md` `setup-hook.md` は、2026-10-08 に削除した（新名は `wrap` `stock` `init`）。履歴の中の旧名は、この表で読み替える。
-- `init` `open` の合言葉と `init-hook.md`（`init-workspace.md` `init-update.md` `init-restore.md` を含む）`open-hook.md` は、2026-10-24 に削除した（works の作成と雛形の反映は `room mkworks`、Project のひな形は `room open`、README 本文の下書きの書き方は `room-context.md`。他のリポジトリへの導入と履歴からの復元は廃止）。履歴の中の `init` `open` は、これで読み替える。
-- `start` の合言葉は、2026-10-24 に `brief` に改名した（`room start` との名前の重なりをなくすため。別名「作業を始めて」と引数 `解決` `改善` `調査` `計画` は同じ。`start-hook.md` `start-plan.md` `start-work-types.md` は `brief-hook.md` `brief-plan.md` `brief-work-types.md` に改名）。履歴の中の `start` は、これで読み替える（`room start` は変わらない）。
-- `close-hook.md` は、2026-10-16 に削除した（Project の終了は `room close`、判断の部分は `room-context.md`。トピックの終了は `topics/AGENTS.md`）。履歴の中の `close` は、これで読み替える。
 
 ## 運用コマンド（`room`）
 
-合言葉のフックとは別の層。人が端末で打つスクリプトで、AI は実行しない。呼び出し表と正本は `room/README.md`。合言葉（`brief` など）と区別するため、会話と文書では必ず `room` を前置する（2026-10-24 までは、`start` が両方にあった）。部屋の中でフックを使うときの読み替えと分担は `room-context.md`。
+合言葉のフックとは別の層。人が端末で打つスクリプトで、AI は実行しない。呼び出し表と正本は `room/README.md`。合言葉（`brief` など）と区別するため、会話と文書では必ず `room` を前置する。部屋の中でフックを使うときの読み替えと分担は `room-context.md`。
 
 | コマンド | すること |
 |---|---|
-| `room mkworks` | works のトップの作成（PC に1回）と、雛形の変更の反映（`--update`）。旧 `init` フックの項目 5 と `init 更新` |
+| `room mkworks` | works のトップの作成（PC に1回）と、雛形の変更の反映（`--update`） |
 | `room open` / `start` / `close` | Project のひな形、起動の準備（マスク、写しの送付、マウント）と回収（復元、works へのコミット）、Area への引き渡しと `archives/` への移動 |
 | `room stock` | 部屋の AI の `stock` の下書き（`ai/out/stock/`）を、人が確認して `exmem/inbox/` に運ぶ |
 | `room readme` | AI の下書き（`ai/out/readme-draft.md`）を README に反映する |

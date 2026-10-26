@@ -24,8 +24,7 @@
 ## Next Actions
 
 1. 【起票 10-25】整合の基準のギャップ 8: works と dotfiles の履歴にユーザー名入りのパス（`docs/alignment-baseline.md`）。
-2. 【起票 10-24】フックと room の整合: `mkworks` の実機確認、旧名の注記の削除、dotfiles のスキルの入口（`topics/hook-room-alignment/`）。
-3. 【起票 10-25】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（同上）。未決は `release` の束ね先。
+2. 【起票 10-25】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（同上）。未決は `release` の束ね先。
 4. 【起票 10-20】ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
 5. 【起票 10-25】期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`）: 型は入れた。次は lessons から 6 件を移す。
 6. 【起票 10-26】xlsx・pptx の点検・掃除（`room/cleankit.py`）: PC1 の実ファイルで `check`。結果で掃除の既定と `mask` への組み込みを決める。

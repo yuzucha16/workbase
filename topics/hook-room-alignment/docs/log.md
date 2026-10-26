@@ -6,8 +6,7 @@
 
 - `stock` の `scope: area` の実機確認: 部屋の AI が `ai/out/knowledge/` に `kind: lesson` で書く → `restore` で Area に実名で置く → 次の Project の `room pull --where kind=lesson` で受け取れるか。`room pull --where` の仕様変更（ユーザーの予告）があれば、`room-context.md` の `stock` の節と合わせて見直す（単体テストのみ。2026-10-24）。
 
-- 旧名の読み替えと注記を消す（ユーザーの決定 2026-10-24。「現在の仕様が回りだしたら、読み替えもなくして消す」）。対象: `hooks.md` の旧名・旧ファイル名の項、各ノートの「旧 `init`」「旧 `start`」の注記、記録中の旧名。条件: `mkworks` の実機確認と、`brief` の運用で問題が出ないこと。
-- `room mkworks` の実機確認は 2026-10-26 にユーザーが済ませた（問題なし）。残るのは、旧名の読み替えを消す前の `brief` の運用確認だけ。
+- 旧名の読み替えと注記は 2026-10-26 に消した（`hooks.md` の旧名の項 4 つ、`workflow-kit/README.md` の旧ファイル名、`project-structure.md` `room-context.md` `session-goal-modes.md` `ai-development-workflow.md` の注記）。残したもの: `hooks.md` のディレクトリ名の改名（`knowledge/` `cheatsheets/`）、`docs-rules.md` の `Template-Rev`（`mkworks --update` が読む）、`guides/explain/` の経緯の説明、各 `records/` と `log-history.md` の履歴。`mkworks` の実機確認は同日にユーザーが済ませた（問題なし）。
 - 【起票 10-25】PC2 の Windows で `verify.bat` と `verify.ps1` を 1 回ずつ叩く（uv の取得、文字コード、y/n と日本語のひとこと）。最初の失敗が、原因の台帳（`script-guide.md`）の初めての使用になる。`run.py` の型と ps1 版は Linux でのみ確認（2026-10-25）。
 - dotfiles の旧入口（10-26 に調べた）: Claude 用スキル（`SKILL.md`、commands）は dotfiles に無い。旧入口は `docs/setup/win11.md` の「workflowを導入して」1か所だけで、`room mkworks` に直してコミットした（dotfiles の `e53f684`、2026-10-26 に push 済み）。
 
