@@ -11,8 +11,11 @@
 - 指標の道具: `workflow-kit/tools/cap_meter.py`（累計、60k 超の応答の割合、土台を記録から出す。PC2 の実記録で動作を確認）。切る目安は 60k（会話の大きさ）で、2026-10-27 から運用。`--latest` で最新の会話の積算が出る。
 - 下準備（`records/2026-10-26-desk-prep.md`）: workbase の常駐分は約 4〜5k。`brief` は約 1.2万を足すので、60k 運用で作業に使える幅は 3.6万から 2.4万に減る。削減量の式と、勤務先への確認の文面がある。
 - `/context` の実測（`records/2026-10-26-context-measure.md`）: 土台は端末 36.4k、Zed 19.4k。差の大半は Zed のツール定義の遅延読み込み。自前で動かせるのは skills 約 6k と memory 約 2〜3.7k。
+- 会話の伸びの原因（`records/2026-10-26-growth-by-reads.md`）: 土台は固定で約 28k、その先はファイルの全文読みが支配的（`docs-rules.md` 全文 +7〜12k、`exmem-index.md` +16k、大きい `log.md` +12k）。読んだ分は以後の全応答に乗る。フックを使わない会話も 1 応答目で 55k（`AGENTS.md` 経由の読み込みと、AI の自発の読み）。したがって土台より読み込みの削減が先で、フックと `AGENTS.md` の両方に余地がある（ee の予想と一致）。
 
 ## Next Actions
+
+0. 【起票 10-26、最初の一手】別セッションで `docs-rules.md` の「コミットと push」（93〜127 行、約 4k）を別ファイルに切り出す。`workflow-kit/` なので ee の承認の上で。同時に、会話「コミット残件と承認待ちの整理」と `review 消化` の 2 応答目で何を読んで 100k に達したかを、`records/2026-10-26-growth-by-reads.md` の方法で調べる。その後、`exmem-index.md` の読み方、`brief` の読む量、`log.md` の予算超え（`logbook-design` 6.4KB）の順。
 
 1. 【起票 10-26】ee が PC1 で取る（2026-10-27 予定）: `cap_meter.py`、`usage_report.py --by month --last 2 --top 10`、`heavy_sessions.py --since 2026-10-01 --top 10`（`python -I workflow-kit/tools/` の下）。題名に機密が出ていないか見てから、集計だけを持ち帰る。読取率が以前の実測（量の約 96%）より低ければ、Bedrock の global でキャッシュが効いていない疑い（未確認）。
 2. 【起票 10-26】PC1 の分が届いたら、PC2 の見積もり（`records/2026-10-26-cap-meter-pc2.md`）と比べ、上位の会話の作業の種類（マクロの実装か）を見る。10-27 以降は `cap_meter.py` の日ごとの値で、60k 運用の前後を比べる（基準は 10-25 と 10-26）。
