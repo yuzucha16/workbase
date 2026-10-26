@@ -30,7 +30,7 @@
 5. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
 6. 期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`。仮決め、実装前）。
 7. xlsx・pptx の点検・掃除（`workflow-kit/room/cleankit.py`）: PC1 の実ファイルで `check` を 1 回（報告は AI に見せない）。結果を見て、掃除の既定と room の `mask` への組み込みを決める。Excel・PowerPoint で掃除の出力が開くかも確かめる。
-8. 【最優先】トークン削減の見直し（`topics/token-cap/`。職場の月次上限 2億トークン、10 月は 26 日で 90%）: PC1 の集計（2026-10-27 に ee が取る）を待って、角度ごとの削減量を見積もる。
+8. 【最優先】トークン削減の見直し（`topics/token-cap/`。職場の月次上限 2億トークン、10 月は 26 日で 90%）: 切る目安 6万で 10-27 から運用。PC1 の集計（`cap_meter.py` など、10-27 に ee が取る）と、ベーストークンの内訳（`/context`）を待って、角度ごとの削減量を見積もる。
 
 ## Open Questions
 
