@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-26（review 消化）
+- 待ち行列 8 件をサブエージェントでスクリーニングし（`records/2026-10-26-queue-screening.md`）、ユーザーが 1 件ずつ判断した（`decisions.md`）。消した Next Actions: 「次の `review 消化` で待ち行列 8 件を判断する」（完了）。`obsidian-vault` の未設定を残す項は、畳みの列挙（Next Actions 4）に合流した。
+- 7(a) を kit に反映した（`review-hook.md` の消化モード、04ac4c7）。
+
 ### 2026-10-26（続き）
 - ユーザー: `para-operations` と `session-handoff` の Next Actions は置き換わり。畳んだ。
 - ユーザー: 旧 `C:\vault` は消してよい。第3陣（`para-operations` `session-handoff`）の本文確認を `records/2026-10-26-wave3-review.md` に記録。降格は測定値だけで、残りは古い ③ の畳みと印。
