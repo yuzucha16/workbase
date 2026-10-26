@@ -19,5 +19,6 @@ updated: 2026-10-26
 | `hook-room-alignment/` | Project（フックと `room` コマンドの整合。`init` `open` 廃止、`mkworks`、`brief` 改名は反映済み） | [[hook-room-alignment-start-here]] | 0 |
 | `md-link-graph/` | Project（Markdown の参照構造の可視化と、ルールの届きやすさの論点整理） | [[md-link-graph-start-here]] | 0 |
 | `logbook-design/` | Project（期限のあるナレッジの置き場 `logbook/` の設計。型は仮決め、実装前） | [[logbook-design-start-here]] | 2 |
+| `token-cap/` | Project（職場の月次上限 2億トークンに向けたトークン削減の見直し。最優先。PC1 の集計待ち） | [[token-cap-start-here]] | 3 |
 
 型と書き方、終わらせ方の規則は `AGENTS.md`。
