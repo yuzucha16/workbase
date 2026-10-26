@@ -29,7 +29,7 @@
 4. 【起票 10-20】ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
 5. 【起票 10-25】期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`）: 型は入れた。次は lessons から 6 件を移す。
 6. 【起票 10-26】xlsx・pptx の点検・掃除（`room/cleankit.py`）: PC1 の実ファイルで `check`。結果で掃除の既定と `mask` への組み込みを決める。
-7. 【起票 10-26】【最優先】トークン削減の見直し（`topics/token-cap/`。月次上限 2億トークン）: PC1 の集計（10-27）と `/context` を待って、削減量を見積もる。
+7. 【起票 10-26】【最優先】トークン削減の見直し（`topics/token-cap/`。月次上限 2億トークン）: `/context` は取れた（Zed 19.4k、端末 36.4k）。PC1 の集計（10-27）を待って、削減量を見積もる。
 
 ## Open Questions
 
