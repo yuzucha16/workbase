@@ -2,6 +2,18 @@
 
 ## Decisions
 
+### 【この件】`logbook/` の最小の型（2026-10-26、カードで 1 点ずつ）
+- 決めたこと（ユーザー、7 点すべて推奨どおり。叩き台は `records/2026-10-26-logbook-type-draft.md`）:
+  - 1 ファイル名: ファイルごと移すものは名前を保つ。一部（節）を移すものは `<lesson の名前>-log.md`（lesson と同名にすると Vault 内で一意に反する）。
+  - 2 節: `## いま`（要約。降格元へのリンク 1 行）と `## 明細`（日付つき、新しい順。開始時に読まない）の 2 つ。
+  - 3 frontmatter: `type: logbook`、`title`、`source`（降格元。新規なら無し）、`created`、`updated`、`review_by`、`budget`。`tags` `aliases` `triggers` は付けない。
+  - 4 既定の値: `review_by` は 60 日、`budget` は 8KB（どちらも暫定。11-29 の月次の試行の後に実測で直す）。
+  - 5 点検の道具: `find_knowledge.py --check-aging` を作り、`review` の入力 3 で数える。判断は月次の振り返り。
+  - 6 窓口: `logbook/README.md` を作り、ルートの `README.md` と `exmem/AGENTS.md` に 1 行ずつ足す。
+  - 7 降格の書き方: lesson 側に結論 1 行と `→ [[<名前>-log]]`、logbook 側の `## いま` の先頭に `元: [[lesson]]`。明細は原文のまま移し、圧縮は別の判断にする。
+- 根拠: ユーザーの選択（カード 7 枚）。
+- 反映先: `logbook/README.md`、`workflow-kit/tools/find_knowledge.py`、`README.md`、`exmem/AGENTS.md`、`workflow-kit/review-hook.md` の入力 3。
+
 ### 【この件】待ち行列 8 件の判断（2026-10-26、`review 消化`）
 - 決めたこと（ユーザー、カードで 1 件ずつ選んだ。スクリーニングは `records/2026-10-26-queue-screening.md`）:
   - 1 `user-thinking-habits`: 正式化。logbook の型が決まったらファイルごと移す。移す前に公開範囲を確かめる（2026-10-18 の「癖の評価は auto-memory」と食い違うと指摘あり。logbook も公開の中）。

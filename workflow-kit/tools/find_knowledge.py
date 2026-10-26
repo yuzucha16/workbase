@@ -15,8 +15,12 @@ exmem/lessons/ のファイル名、見出し（^#）、frontmatter の tags / a
   python find_knowledge.py --list-triggers                   全ノートの「語 → ノート」の表（人が見る用）
   python find_knowledge.py --check-triggers                  lessons と guides/explain の全ノートに triggers:（1〜15 語）があるか
   python find_knowledge.py --check-index                      exmem-index.md の行と lessons/ のノートが一致するか（抜け・存在しない行・重複）
+
+期限のあるナレッジ（logbook/。型は logbook/README.md。2026-10-26）:
+  python find_knowledge.py --check-aging [--today YYYY-MM-DD]  review_by を過ぎた・budget を超えた・frontmatter が欠けたファイル
 """
 import argparse
+import datetime
 import re
 import sys
 from pathlib import Path
@@ -190,6 +194,73 @@ def check_index(repo):
     return bad
 
 
+AGING_REQUIRED = ("type", "title", "created", "updated", "review_by", "budget")
+
+
+def read_front(path):
+    """frontmatter の `キー: 値` の辞書（1 行の値だけ）。frontmatter が無いときは None。"""
+    head = path.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+    m = re.match(r"---\n(.*?)\n---(?:\n|$)", head, re.S)
+    if not m:
+        return None
+    front = {}
+    for line in m.group(1).split("\n"):
+        kv = re.match(r"^([A-Za-z_]+):\s*(.*?)\s*(?:#.*)?$", line)
+        if kv:
+            front[kv.group(1)] = kv.group(2).strip("\"'")
+    return front
+
+
+def parse_budget(text):
+    """`8KB` `512B` `1MB` をバイト数に。読めなければ None。"""
+    m = re.fullmatch(r"(\d+(?:\.\d+)?)\s*(B|KB|MB)", text.strip(), re.I)
+    if not m:
+        return None
+    return int(float(m.group(1)) * {"B": 1, "KB": 1024, "MB": 1024 * 1024}[m.group(2).upper()])
+
+
+def check_aging(repo, today):
+    """logbook/ の各ファイル（README を除く）を点検し、問題の数を返す。判断（捨てる・圧縮・昇格・延長）は月次の振り返りで行う。"""
+    d = repo / "logbook"
+    files = [f for f in sorted(d.glob("*.md")) if f.name.lower() != "readme.md"] if d.is_dir() else []
+    bad = 0
+    for f in files:
+        rel = f.relative_to(repo).as_posix()
+        front = read_front(f)
+        if front is None:
+            print(f"FAIL: frontmatter が無い: {rel}")
+            bad += 1
+            continue
+        missing = [k for k in AGING_REQUIRED if not front.get(k)]
+        if missing:
+            print(f"FAIL: frontmatter に {', '.join(missing)} が無い: {rel}")
+            bad += 1
+        if front.get("type") and front["type"] != "logbook":
+            print(f"FAIL: type が logbook でない（{front['type']}）: {rel}")
+            bad += 1
+        if front.get("review_by"):
+            try:
+                due = datetime.date.fromisoformat(front["review_by"])
+            except ValueError:
+                print(f"FAIL: review_by が日付でない（{front['review_by']}）: {rel}")
+                bad += 1
+            else:
+                if due < today:
+                    print(f"FAIL: review_by を過ぎた（{due}、{(today - due).days} 日）: {rel}")
+                    bad += 1
+        if front.get("budget"):
+            limit = parse_budget(front["budget"])
+            size = f.stat().st_size
+            if limit is None:
+                print(f"FAIL: budget が読めない（{front['budget']}。例: 8KB）: {rel}")
+                bad += 1
+            elif size > limit:
+                print(f"FAIL: budget を超えた（{round(size / 1024, 1)}KB > {front['budget']}）: {rel}")
+                bad += 1
+    print(f"RESULT: aging fail={bad}（logbook {len(files)} 本、基準日 {today}）")
+    return bad
+
+
 def main():
     ap = argparse.ArgumentParser(description="exmem/lessons/ を、キーワードで検索する")
     ap.add_argument("keyword", nargs="*")
@@ -200,8 +271,13 @@ def main():
     ap.add_argument("--check-triggers", action="store_true", help="lessons と guides/explain の全ノートに triggers: があるか点検する")
     ap.add_argument("--check-index", action="store_true", help="exmem-index.md の行と lessons/ のノートが一致するか点検する")
     ap.add_argument("--list-triggers", action="store_true", help="全ノートの triggers: を「語 → ノート」の表で出す（人が見る用。毎回ノートから作る）")
+    ap.add_argument("--check-aging", action="store_true", help="logbook/ の review_by・budget・frontmatter を点検する")
+    ap.add_argument("--today", type=datetime.date.fromisoformat, default=datetime.date.today(), help="--check-aging の基準日（既定は今日。YYYY-MM-DD）")
+    ap.add_argument("--repo", help=argparse.SUPPRESS)  # 単体の確認用。既定は kit の 2 つ上
     args = ap.parse_args()
-    repo = Path(__file__).resolve().parent.parent.parent
+    repo = Path(args.repo) if args.repo else Path(__file__).resolve().parent.parent.parent
+    if args.check_aging:
+        return check_aging(repo, args.today)
     if args.check_triggers:
         return check_triggers(repo)
     if args.check_index:

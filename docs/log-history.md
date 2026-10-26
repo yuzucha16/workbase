@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（`logbook/` の型）
+- 「workbase の続き」で、Next Actions を見直した（机の上で進められるのは logbook の型の判断だけ。ほかは実機か判断待ち）。logbook の型の 7 点をユーザーが判断し、`logbook/README.md` と `find_knowledge.py --check-aging` を入れた（詳細は `topics/logbook-design/docs/log-history.md`）。
+
 ### 2026-10-26（xlsx・pptx の残存情報の点検・掃除 `cleankit.py`）
 - ユーザーの依頼: シートや個人名を消した xlsx を AI に見せたら、消したシートが XML に残っていて見えた。仕組みの理解と、AI に渡す前のクリーン化。方式はユーザーが「点検 + 掃除（元ファイルは変えない）」に決めた（作り直し方式は見送り）。
 - `workflow-kit/room/cleankit.py`（標準ライブラリだけ、人が実行）と単体テスト、理解ガイド `guides/explain/ooxml-residue.md` を足した。ダミーで確認: グラフのキャッシュ・定義名・コメント・プロパティが残る、pptx はグラフの元ブックを丸ごと埋め込む。掃除の出力は LibreOffice で開き、値が保たれた。Excel・PowerPoint 本体と、room への組み込みは未定。

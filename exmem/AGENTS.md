@@ -21,6 +21,7 @@ exmem（external memory、外部メモリ）は、AIと人間が共有するナ�
 
 - `inbox/`: 未整理の会話メモの一時置き場。知識へ統合したら削除する（`inbox/README.md` は除く）。
 - `lessons/`: AI が今後の参考にする、判断・原則・落とし穴の記録。1ファイル1トピック。旧名は `knowledge/`（2026-10-10 に改名。履歴の中の旧名は読み替える。frontmatter の `type: knowledge` は、ノートの種類名としてそのまま）。
+- `lessons/` の節のうち、時系列の観測・測定と試行の途中は、`../logbook/` へ降格できる（承認の 3 段チェックで決める。版・時点依存の節は降格せず印を付ける。型は `logbook/README.md`。2026-10-26）。
 - 人が手順や仕組みを思い出すための文書は、exmem でなく `../guides/` に置く（`reference-doc-types.md`）。
 
 ## Frontmatter

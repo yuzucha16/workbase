@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-26（型の判断と実装）
+- 叩き台の 7 点を、ユーザーがカードで 1 点ずつ判断した（すべて推奨どおり。`decisions.md`）。待ち行列の「`logbook/` の最小の型」の項を消した。
+- 実装: `logbook/README.md`、`find_knowledge.py --check-aging`（`--today` で基準日を変えられる。一時ディレクトリの 4 ファイルで、欠け・type 違い・日付でない・budget が読めない・期限切れ・budget 超過の 7 件の FAIL と、正常なファイルの通過を確かめた）、ルートの `README.md` の構成の表、`exmem/AGENTS.md` のディレクトリの役割、`review-hook.md` の入力 3 に 1 行ずつ。消した Next Actions: 「最小の `logbook/` の型を決める」（完了）。
+
 ### 2026-10-26（review 消化）
 - 待ち行列 8 件をサブエージェントでスクリーニングし（`records/2026-10-26-queue-screening.md`）、ユーザーが 1 件ずつ判断した（`decisions.md`）。消した Next Actions: 「次の `review 消化` で待ち行列 8 件を判断する」（完了）。`obsidian-vault` の未設定を残す項は、畳みの列挙（Next Actions 4）に合流した。
 - 7(a) を kit に反映した（`review-hook.md` の消化モード、04ac4c7）。
