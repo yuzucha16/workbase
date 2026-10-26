@@ -13,7 +13,7 @@ exmem（external memory、外部メモリ）は、AIと人間が共有するナ�
 ## 読む順番
 
 0. 作業の前に、依頼の言葉で `python -I workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` を実行し、出たノートを読む（各ノートの `triggers:` と部分一致で照合する。`lessons/`、`guides/explain/`、未統合の `inbox/` が対象）。
-1. `exmem-index.md`（知識の索引）で、該当する知識を探し、その `lessons/*.md` を読む（全件は読まない）。大きいノート（目安 10KB 超）は、見出しの一覧か `find-knowledge.ps1` が示す行の範囲を見て、必要な節だけを読む。
+1. 0 で該当が出なかったときだけ、`exmem-index.md`（知識の索引）を Grep で引き、該当する `lessons/*.md` を読む（索引の全文読みと、`lessons/` の Glob での一覧はしない。全件は読まない。2026-10-26 ユーザーの決定。根拠は `topics/token-cap/records/2026-10-26-growth-by-reads.md`）。大きいノート（目安 10KB 超）は、見出しの一覧か `find-knowledge.ps1` が示す行の範囲を見て、必要な節だけを読む。
 2. 作業の途中の状態は、その `lessons/` のノートの `Open Questions` と `Next Actions`。
 3. タグの一覧は `tags.md`。
 

@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】`exmem-index.md` は、`find_knowledge.py --triggers` で該当が出なかったときだけ Grep で引く（2026-10-26）
+- 決めたこと（ユーザー）: `exmem/AGENTS.md` の読む順番 1 を変える。索引の全文読みと `lessons/` の Glob での一覧はしない。
+- 根拠: ユーザーの発言: 「提案を承認します。変更を入れてください。」実測は `topics/token-cap/records/2026-10-26-growth-by-reads.md`（索引 +16k。直前の Glob を含む）。
+- 反映先: `exmem/AGENTS.md`。効果（1 会話 3〜4k 減の見込み）は 10-27 以降の `cap_meter.py` で確かめる。
+
 ### 【汎用】コミットと push の規則は `workflow-kit/commit-push-rules.md` に置く。`AGENTS.md` に読み込みを抑える規則を足す（2026-10-26）
 - 決めたこと（ユーザー）: `docs-rules.md` の「コミットと push」を別ファイルに切り出す。大きい出力の Grep を避け、ファイルは必要な節だけ読む規則を `AGENTS.md` に書く。
 - 根拠: ユーザーの発言: 「token-cap の続き docs-rules.md の切り出しを承認します」「判断してほしいこと：承認します。書いてください。」会話記録の実測（全文読みと大きい Grep が会話の伸びの主因）は `topics/token-cap/records/`。

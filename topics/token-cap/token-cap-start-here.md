@@ -5,7 +5,7 @@
 
 ## いま
 
-切る目安 60k で明日から運用。伸びの主因は土台でなくファイルの全文読みと分かった（`records/2026-10-26-growth-by-reads.md`）。最初の一手の `docs-rules.md` の「コミットと push」の切り出しは完了（`workflow-kit/commit-push-rules.md`）。`review 消化` の 100k の原因も判明（旧名の横断の掃除での大きい Grep と全文読み）し、読み込みを抑える規則を `AGENTS.md` に書いた。次は `exmem-index.md` の読み方。PC1 の集計は明日 ee が取る（2026-10-26）。
+切る目安 60k で明日から運用。伸びの主因は土台でなくファイルの全文読みと分かった（`records/2026-10-26-growth-by-reads.md`）。最初の一手の `docs-rules.md` の「コミットと push」の切り出しは完了（`workflow-kit/commit-push-rules.md`）。`review 消化` の 100k の原因も判明（旧名の横断の掃除での大きい Grep と全文読み）し、読み込みを抑える規則を `AGENTS.md` に書いた。`exmem-index.md` の読み方も `exmem/AGENTS.md` で完了。次は `brief` の読む量。PC1 の集計は明日 ee が取る（2026-10-26）。
 
 ## あなた待ち
 

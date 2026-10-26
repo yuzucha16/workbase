@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（token-cap: exmem-index.md の読み方）
+- ユーザーの承認で、`exmem/AGENTS.md` の読む順番 1 を「0 で出なかったときだけ `exmem-index.md` を Grep で引く」に変えた。索引は 7.2KB で単体は約 3.4k だが、直前の Glob と重なって +16k になっていた。判断は `decisions.md` の同日の項、詳細は `topics/token-cap/`。この会話では `python` がアプリケーション制御ポリシーでブロックされ、`find_knowledge.py` は実行できなかった。
+
 ### 2026-10-26（token-cap: コミットと push の切り出しと、読み込みを抑える規則）
 - ユーザーの承認で、`workflow-kit/docs-rules.md` の「コミットと push」を `workflow-kit/commit-push-rules.md` に切り出した（`ce52646`。`docs-rules.md` は 24.6KB→12.4KB。参照元は `AGENTS.md`、`workflow-kit/AGENTS.md`、`hook-common.md`、`README.md`、`hooks.md`。`templates/` の `AGENTS.md` は未変更）。続けて、`review 消化` が 100k に届いた原因（大きい Grep と全文読み）を調べ、読み込みを抑える規則を `AGENTS.md` に足した。判断は `decisions.md` の同日の項、詳細は `topics/token-cap/`。
 

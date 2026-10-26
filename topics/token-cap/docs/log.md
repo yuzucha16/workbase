@@ -15,7 +15,7 @@
 
 ## Next Actions
 
-0. 【起票 10-26】最初の一手は完了（10-26、ee の承認）: `docs-rules.md` の「コミットと push」を `workflow-kit/commit-push-rules.md` に切り出した（`docs-rules.md` 24.6KB→12.4KB、切り出した節は 13KB で、両方読む会話は減らない。参照元 `AGENTS.md` `workflow-kit/AGENTS.md` `hook-common.md` `README.md` `hooks.md` を直した。`templates/` の `AGENTS.md` は「増やさない・変えない」ので未変更）。100k の調査も完了（`records/2026-10-26-review-digest-100k.md`）: 旧名の横断の掃除で、行内容つきの大きい Grep（合計 37KB）と全文読みが原因。大きい Grep を避ける運用は `resources/AGENTS.md` の「読み込みの量を抑える」に書いた（ee の承認）。残り（この順）: `exmem-index.md` の読み方、`brief` の読む量、`log.md` の予算超え（`logbook-design` 6.4KB）の順。
+0. 【起票 10-26】最初の一手は完了（10-26、ee の承認）: `docs-rules.md` の「コミットと push」を `workflow-kit/commit-push-rules.md` に切り出した（`docs-rules.md` 24.6KB→12.4KB、切り出した節は 13KB で、両方読む会話は減らない。参照元 `AGENTS.md` `workflow-kit/AGENTS.md` `hook-common.md` `README.md` `hooks.md` を直した。`templates/` の `AGENTS.md` は「増やさない・変えない」ので未変更）。100k の調査も完了（`records/2026-10-26-review-digest-100k.md`）: 旧名の横断の掃除で、行内容つきの大きい Grep（合計 37KB）と全文読みが原因。大きい Grep を避ける運用は `resources/AGENTS.md` の「読み込みの量を抑える」に書いた（ee の承認）。`exmem-index.md` の読み方も完了（10-26、ee の承認。`exmem/AGENTS.md` の読む順番 1 を「0 で出なかったときだけ Grep」に変更。見込み 1 会話 3〜4k 減。実測は 10-27 以降）。残り（この順）: `brief` の読む量、`log.md` の予算超え（`logbook-design` 6.4KB）の順。
 
 1. 【起票 10-26】ee が PC1 で取る（2026-10-27 予定）: `cap_meter.py`、`usage_report.py --by month --last 2 --top 10`、`heavy_sessions.py --since 2026-10-01 --top 10`（`python -I workflow-kit/tools/` の下）。題名に機密が出ていないか見てから、集計だけを持ち帰る。読取率が以前の実測（量の約 96%）より低ければ、Bedrock の global でキャッシュが効いていない疑い（未確認）。
 2. 【起票 10-26】PC1 の分が届いたら、PC2 の見積もり（`records/2026-10-26-cap-meter-pc2.md`）と比べ、上位の会話の作業の種類（マクロの実装か）を見る。10-27 以降は `cap_meter.py` の日ごとの値で、60k 運用の前後を比べる（基準は 10-25 と 10-26）。
