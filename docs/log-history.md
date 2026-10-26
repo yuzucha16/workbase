@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-26（kit-growth: 実機なしで進めた分、2 回目）
+- ユーザーの依頼「kit-growth の続き、実機なしでできるアイテム」。前回（10-25）の後に、logbook・cleankit・token-cap の項が足され、`docs/log.md` が 5.0KB に戻っていた。新しい判断はせず、`docs-rules.md` の決まりに合わせる直しだけをした。
+- `docs/log.md` を 5.0KB から 4.0KB に縮めた（4KB 目安）。① Next Actions 1「振り返り（改善4・5）: 材料は `topics/kit-growth/records/` と `decisions.md`（2026-10-25）。次は週次 11-01、月次 11-29。」を消した。周期のある項目は Next Actions に置かない決まりで、期日の節の 11-01・11-29 の行と重なっていたため。材料の置き場は 11-01 の行に移した。② 各項の詳細は各トピックの `docs/log.md` にあるので、窓口を指す形に縮めた（縮める前の全文は `git show f9ac3d6:docs/log.md`）。③ 起票日の無い項目に `【起票 MM-DD】` を付けた（日付はこのファイルの過去の Next Actions と各トピックの起票から）。`md-link-graph` の項は 10-20 の起票で、1 週間の期限が 10-27 に来る。
+- 触らなかった: 実機が要るもの（`mkworks`、`verify.bat`/`verify.ps1`、`cleankit.py` の `check`、token-cap の PC1 の集計、`restore` の保護）、他のスレッドが進めているもの（logbook の 6 件の移動）、workbase の外（works・dotfiles の履歴の書き換え）、ユーザーの判断待ち（11-09 の仮決め 3 件、11-11 の計画を振り返りの入力にする案）。inbox の未選別 1 件は 11-11 の判断と同じ話なので、そのときに選別する。
+
 ### 2026-10-26（`logbook/` の型）
 - 「workbase の続き」で、Next Actions を見直した（机の上で進められるのは logbook の型の判断だけ。ほかは実機か判断待ち）。logbook の型の 7 点をユーザーが判断し、`logbook/README.md` と `find_knowledge.py --check-aging` を入れた（詳細は `topics/logbook-design/docs/log-history.md`）。
 
