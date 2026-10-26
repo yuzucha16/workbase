@@ -96,6 +96,23 @@ WSL は差し替えて、一時ディレクトリの git で行う（実際の�
 - 復元: 説明文などで `⟦` `⟧` が壊れた形（例: `⟦CUST_nnn⟧`）で残ると止まる。部屋の `ROOM.md` に、書かないよう指示してある（2026-10-19）。
 - 復元: csv・md・txt・bas・json・html は文字列、xlsx は zip。`ai/out/close.md` と `ai/out/stock/` は対象外。ピボットは Excel の「すべて更新」が要る（人が PC で）。
 
+## クリーン化（`cleankit.py`）
+
+xlsx・xlsm・pptx・pptm の、消したつもりで残っている情報（非表示シート、グラフ・ピボットのキャッシュ、定義名、コメント、文書プロパティ、ノート、埋め込みなど）を点検し、掃除した別ファイルを書く（2026-10-26。ダミーの単体テストと、LibreOffice で開き直す確認まで。Excel・PowerPoint 本体は未確認）。仕組みは `guides/explain/ooxml-residue.md`。**人が実行する**（原本と、残っていた実データを読むため）。room への組み込みは未定（実ファイルの点検の結果を見て決める）。
+
+```powershell
+uv run --script cleankit.py check <ファイル>              # 点検だけ。報告は <ファイル>.check-report.md
+uv run --script cleankit.py clean <ファイル> <出力先>     # 掃除。報告は <出力>.clean-report.md
+uv run --script cleankit.py clean <ファイル> <出力先> --keep notes,comments   # 動作を外す
+```
+
+- 元ファイルは変えない。出力が元と同じ・既にあるときは止まる（`--force` で上書き）。
+- 報告には実データの抜粋が載る。**報告は AI に見せない**（`_noai/` の下か、AI が読めない場所に置く）。画面には件数だけを出す。
+- 終了コード: 0 = 要確認なし、1 = 要確認あり（報告を見る）、2 = 実行できない。
+- 掃除の既定（`--keep` で外せる）: `hidden-sheets`（非表示シートを消し、参照する数式は値に、定義名は削除）、`hidden-slides`、`notes`、`comments`、`props`、`abspath`、`printer`、`thumbnail`、`calcchain`、`revisions`、`ref-names`（`#REF!` の定義名）、`shared-strings`（使っていない共有文字列）、`orphans`（関係からたどれない部品）。
+- 消さずに報告だけするもの: グラフ・ピボットのキャッシュ（語は `mask.toml` のマスクで消す）、外部リンク・接続・データモデル、埋め込み・画像、マクロ、非表示の行・列、スライドの外や非表示の図形、代替テキスト、使っていないレイアウト。
+- 掃除の後に、出力を点検し直し、整合（XML が読める、関係の先がある、型がある）を確かめる。整合の問題があれば、出力を AI に渡さない。
+
 ## 未実装
 
 - reap で、消す前に会話履歴を記録に写す（今は写さずに消す）

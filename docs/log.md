@@ -29,6 +29,7 @@
 4. 人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（同上）。未決は `release` の束ね先。
 5. ルールが見つかりにくい構造（`topics/md-link-graph/`。完了は同窓口の条件）。
 6. 期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`。仮決め、実装前）。
+7. xlsx・pptx の点検・掃除（`workflow-kit/room/cleankit.py`）: PC1 の実ファイルで `check` を 1 回（報告は AI に見せない）。結果を見て、掃除の既定と room の `mask` への組み込みを決める。Excel・PowerPoint で掃除の出力が開くかも確かめる。
 
 ## Open Questions
 

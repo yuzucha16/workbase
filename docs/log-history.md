@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-26（xlsx・pptx の残存情報の点検・掃除 `cleankit.py`）
+- ユーザーの依頼: シートや個人名を消した xlsx を AI に見せたら、消したシートが XML に残っていて見えた。仕組みの理解と、AI に渡す前のクリーン化。方式はユーザーが「点検 + 掃除（元ファイルは変えない）」に決めた（作り直し方式は見送り）。
+- `workflow-kit/room/cleankit.py`（標準ライブラリだけ、人が実行）と単体テスト、理解ガイド `guides/explain/ooxml-residue.md` を足した。ダミーで確認: グラフのキャッシュ・定義名・コメント・プロパティが残る、pptx はグラフの元ブックを丸ごと埋め込む。掃除の出力は LibreOffice で開き、値が保たれた。Excel・PowerPoint 本体と、room への組み込みは未定。
+
 ### 2026-10-25（md-link-graph の論点 C と索引の点検を実装）
 - ユーザーの決定（`decisions.md` の同日の項）を実装: `mdgraph.py` の定義変更と root `README.md` の窓口 2 件で未到達 0、`--check-index` を新設（`integrate` と `review` に配線）。取りこぼし 2 件は見送り。
 
