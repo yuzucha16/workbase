@@ -50,7 +50,18 @@ Claude Code（ZedのACP経由を含む）のチャット履歴とメモリがど
 - プロジェクト直下の `.claude\` にあるのは `settings.local.json` だけで、履歴は入っていない。
 - ZedのACP経由のチャットも、Zedの `threads.db` ではなくここに保存される（[[zed-dotfiles]]）。会話の中身はここだが、Zed 側にも `db.sqlite` の `sidebar_threads` があり、スレッドの一覧と作業フォルダはそこにある（2026-10-07 の補足。[[zed-acp]]）。
 - Claude Desktop の Projects はクラウド（アカウント側）に保存され、`~/.claude` のローカル履歴とは独立している。
-- `.jsonl` の構造（1応答が複数行に分かれ、同じ `message.id` と `usage` が繰り返される、など）と、履歴から作業の指標を取る方法は [[ai-work-metrics]]。
+- 履歴から作業の指標を取る方法は [[ai-work-metrics]]。実測の数字は [[ai-work-metrics-log]]。
+
+## jsonl の形式
+<!-- 版依存: 一方向 / 確認: 2026-10-06 -->
+
+[[ai-work-metrics]] の Facts から、形式の事実だけを移した（2026-10-26。数字つきの実測は [[ai-work-metrics-log]]）。確認は 2026-10-06、根拠は会話履歴の集計。内部形式なので版で変わりうる（Stop フックの節にも同じ注意がある）。
+
+- 1応答は複数の行に分かれ、同じ `message.id` と同じ `usage` が各行に繰り返される。`message.id` で一意化しないと、トークンを過大計上する。
+- ユーザーの実プロンプトと、ツール結果は、どちらも `type` が `user`。ツール結果には `toolUseResult` がある。ほとんどはツール結果。
+- 各行に時刻（`timestamp`）、ツール呼び出し、トークン数（`usage`）がある。
+- コンテキストの圧縮（compact）の記録は見当たらなかった（`isCompactSummary` と `compact_boundary` の検索）。
+- Vault のディレクトリ名を変えて履歴をコピーすると、同じ会話 ID が旧キーと新キーの両方に残る。会話 ID で重複を除く。
 
 ## プロジェクトを移動したとき
 

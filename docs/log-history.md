@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（review 消化: logbook へ 4 件を降格）
+- ユーザーの判断: Next Actions 5（logbook へ lessons の 6 件を移す）をこのセッションで行う。`ai-work-metrics`、`shell-command-usecases`、`para-operations`、`session-handoff` の実測・傾向・費用を `logbook/*-log.md` に原文のまま移し、lesson に結論 1 行と `→` を残した。`ai-work-metrics` の形式の事実は `claude-code-storage` の「jsonl の形式」へ。`user-thinking-habits`（公開範囲の確認が先）と `user-manual`（対応表が先）は残した。この PC では Python がブロックされ、`--check-aging` は未実行。
+
 ### 2026-10-26（review 消化: 旧名の注記の削除）
 - ユーザーの判断: Next Actions 2（フックと room の整合）の残りをこのセッションでやり、閉じる。旧名（`init` `open` `start` `close` と旧ファイル名）の読み替えと注記を消した。`hooks.md` の旧名の項 4 つと、`room` 表の旧 `init` の言及、`workflow-kit/README.md` の旧ファイル名、`project-structure.md` `room-context.md` `session-goal-modes.md` `ai-development-workflow.md` の注記。履歴（`records/` `log-history.md` `decisions.md`）と `guides/explain/` の経緯の説明、ディレクトリ名の改名（`hooks.md`）、`Template-Rev` の記述（`docs-rules.md`）は残した。`stock` の `scope: area` の実機確認は `topics/hook-room-alignment/docs/log.md` に残る。
 
