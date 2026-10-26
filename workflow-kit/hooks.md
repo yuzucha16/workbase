@@ -9,7 +9,8 @@
 | `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。部屋では下書きまで（`ai/out/stock/`）で、人が `room stock` で運ぶ。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
 | `review` | 「見直して」<br>`review 消化`＝「next action を消化して」 | `review-hook.md` | 随時（週1回・15分を目途） | 遠回りの事例を見て、1つ直すか1つ畳む。`review 消化` で Next Actions / Open Questions の消化 |
-| （常時） | | `docs-rules.md` | `docs/` を更新するとき、コミット・push の前 | `docs/` の運用規則 |
+| （常時） | | `docs-rules.md` | `docs/` を更新するとき | `docs/` の運用規則 |
+| （常時） | | `commit-push-rules.md` | コミット・push の前 | コミットと push の規則 |
 
 - 連鎖: `[brief → 作業 → wrap]×N`。`stock` と `integrate` は随時。works の作成と雛形の反映、Project の開始と終了は合言葉を持たず、人が `room mkworks` `room open` `room close` で行う（部屋の AI が書く `ai/out/close.md` の書き方は `room-context.md`）。トピックの終了は `topics/AGENTS.md`。
 - 全フックの共通規則（冒頭の定型、改善、承認、フックを足す・消すとき）は `hook-common.md`。
