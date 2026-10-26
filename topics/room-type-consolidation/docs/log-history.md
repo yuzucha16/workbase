@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（`dev` の成果物が `ai/work/` に出る件の起票）
+ユーザーが、PC1 の `dev` の部屋の AI が成果物をすべて `ai/work/` に出したと報告(一貫して `work/` だったので読み替えられたが、`work/` と `out/` が混ざると困る)。手順書を調べ、原因の候補を 3 つ挙げた(写しが修正前、`work` と `out` の線の曖昧さ、`script-guide.md` の `ai/work/` の記述の多さ)。PC1 の部屋は見られないため特定できず、ユーザーが「部屋の AI に聞くやり方で最適化しましょう」と決め、Next Actions に積んだ。同日、メモリの「次は考え方の文書」は、10-24 に済んでいたため直した(`project-structure.md` の「type の考え方」)。
+
 ### 2026-10-25（`env/` だけ・`tests/` だけ・`docs/` だけの実測と、置き場の取り違えの修正）
 ユーザーが手元で 3 本を作り、AI の質問と成果物を見て手順書を直した。`sample_devenv`(Ubuntu 24.04 実機で ENV-001〜010 全件 PASS、SET-001 も中止を確認)、`sample_devtest`(要求 14 ID に対応、65 件実行で不具合 3 件と仕様の曖昧さ 2 件。`ai/in/` は不変)、`sample_devdoc`(骨子と図の要否を聞いた。基準文書の形を仮決め)。置き場の取り違えが 5 回(`work/`、`deliverable/` 3 回、README、レビュー版を `ai/docs/`)。部屋の AI に読んだ手順書を聞き、原因は `ROOM.md`/`room-context.md` の「人が読む最終版は `deliverable/`」と、`project-structure.md` を読んでいないことと分かった。直した(単体テスト 139 件 OK)。旧名の説明の削除、`dev` の「テスト」に文書と実装の整合の検査の型、`brief-work-types.md` に `project-structure.md` を読む指示も同日。決定は `decisions.md`。確認待ちは、直した `ROOM.md` で次の `dev` が取り違えないか。
 

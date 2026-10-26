@@ -13,6 +13,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。最初の実利用�
 - 【済 10-25】`docs/` だけの `dev` の実測(`sample_devdoc`)。「文書作成」の項は残す。基準文書の形を仮決め(`project-structure.md` の未決)。
 - 【済 10-25】`room.py:1197`(`ROOM.md` の元)と `room-context.md:67` の「人が読む最終版」の記述を、「Area に実名で戻したい最終版だけ `deliverable/`。Project の成果物は `ai/out/<成果物名>/`」に直した。`brief-work-types.md` に、`dev` の最初の `brief` で `project-structure.md` と `dev-deliverable-guide.md` を読む指示を足した。`room` の単体テスト 139 件 OK(skip 3)。
 - 【実施待ち】1 Project で `env/` と `tests/` と `docs/` を通す実測(題材は同じ WSL の Python 環境)。観察点: 構成要素の選び方(`docs/` が運用マニュアルと重複するか)、置き場の取り違えの再発、検証が自己向けになって弱くならないか。分離した 3 本との差を知識として残す(ユーザー、10-25)。サブエージェントで一部のループを回す案は、未承認(`exmem/inbox/2026-10-25-procedure-validation-trial-runs.md`)。
+- 【実施待ち】`dev` の成果物が `ai/work/` に出る件(2026-10-26、PC1 の `dev` の部屋。全件が一貫して `work/` で、`out/` と混在はしなかった)の原因を、部屋の AI に聞く方法で特定し、手順書を最適化する(ユーザー「部屋の AI に聞くやり方で最適化しましょう」)。10-25 の置き場の取り違えと同じ手順: 部屋の AI に「`ai/work/` に置いた理由と、そのとき読んだ手順書」を聞く。候補は 3 つ: (1) PC1 の写しが修正前(cfd3b81、10-25 22:35 より前。部屋の `~/shared/ROOM.md` の基準コミットで確かめる)、(2) `project-structure.md` の `work/`(試行、使い捨てのスクリプト)と `out/`(基準文書と検証を伴う最終成果物)の線が、基準文書の無い段階で曖昧、(3) `script-guide.md` が `verify-result.json` やログを `ai/work/` に出すと繰り返し書くので、`dev` のスクリプトが `work` の物と読まれる。(1) か (3) なら、`ROOM.md`(`room.py`)と `brief-work-types.md` に「コードやスクリプトも成果物は `ai/out/<成果物名>/`。`ai/work/` は捨ててよい下書きだけ」を明記する。ユーザーが PC1 で聞いた答えと基準コミット、その README の成果物の行を待つ。
 - 【確認待ち】直した `ROOM.md` が部屋に届いたあと、次の `dev` の実測で置き場の取り違えが再発しないか。`ROOM.md` は `room start` が生成するので、既存の部屋は次の `room start` で更新される。
 
 ## Open Questions
