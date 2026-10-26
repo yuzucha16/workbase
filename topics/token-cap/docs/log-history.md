@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-26（brief の読む量）: ee が案 1・2 を承認。`brief-hook.md` の `hook-common.md` 参照を節指定（報告の型、他のフックを勧める条件。約 4KB／13KB）にし、引数つきモード（解決・改善・変更・調査・計画）を `brief-modes.md`（4.8KB）に切り出した（`brief-hook.md` 12.0→8.0KB）。切り出しの途中で `check-hook-outline.ps1` が参照の書き方（手順名にフックのファイル名が要る）で FAIL し、直して全件 OK。見込みは 1 会話 3〜4k 減で、実測は 10-27 以降。`hook-common.md` の「約 10 万で切る」が 60k 運用と食い違うのを見つけ、Next Actions に起票。wrap。
+
 - 2026-10-26（exmem-index.md の読み方）: ee が提案を承認し、`exmem/AGENTS.md` の読む順番 1 を「`find_knowledge.py --triggers` で出なかったときだけ、索引を Grep で引く」に変えた。索引は 7.2KB（約 3.4k）で、+16k は直前の Glob との重なり。見込みは 1 会話 3〜4k 減で、実測は 10-27 以降。この会話では `python` がブロックされ、`--triggers` は実行できなかった。wrap。
 
 - 2026-10-26（切り出しと 100k の調査）: ee が `docs-rules.md` の切り出しを承認し、「コミットと push」を `workflow-kit/commit-push-rules.md` に切り出した（`ce52646`。参照元 5 ファイルを修正、`docs-rules.md` は 24.6KB→12.4KB）。切り出した節は 13KB で、「約 4k」は誤りだった（両方読む会話は減らない）。続けて、`review 消化`（会話「コミット残件と承認待ちの整理」）が 100k に届いた原因を、uv run python の一時スクリプトで調べた: 2 回目のユーザー発言の実行中（API 18 回目）に、旧名の横断の掃除で行内容つきの Grep（12〜19KB が 3 回）と全文読みが積み上がった。ee の承認で、読み込みを抑える規則を `AGENTS.md` に書いた。`records/2026-10-26-review-digest-100k.md`。wrap。
