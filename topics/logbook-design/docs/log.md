@@ -33,5 +33,5 @@
 - 場所: `exmem/lessons/shell-command-usecases.md` の「傾向（2026-10-04 時点）」 / 問題: 件数つきの 1 回の測定（①）。素材（履歴の種、約 15.5KB）は lesson 内で読み込みが重い / 案: 傾向を `logbook/` の「明細」へ移し、lesson には結論 1 行を残す。素材は (a) lesson に残して節に `素材` の印を付け、サイズの予算の対象外にする。
 - 場所: `exmem/lessons/claude-code-storage.md` / 問題: 3 回の追記が別々の Principles／Decisions／Facts を持つ。Stop フックの Open Questions と Next Actions（2026-10-17 時点）は 10-21 に実装済みで古い。1 回きりの移行の Decisions が残る / 案: Facts に ②一の印を付け、古い ③ と 1 回きりの移行の記録を畳む。
 - 場所: 第2陣 6 ファイル（`records/2026-10-26-wave2-review.md` の 3） / 問題: 降格より整理が主。② の節への印の付与と、X・古い ③ の畳みの 2 件にまとまる。現況の確認が先に要る項目がある / 案: 2 件に分けて載せる。
-- 場所: 仕組み（lessons の整理の経路） / 問題: 「1 回きりの構成記録はユーザーが直接削除する」と決めてあるが、AI が古い ③ と X を見つけて畳む案を出す経路が無い。追記のたびに Facts／OQ／NA を持つ形が、ファイルを太らせる / 案: (a) `review 消化` の 1 段目（すでに close していそうなもの）を lessons に広げる。(b) 追記の型を変え、OQ・NA は本体の 1 つにまとめる。
+- 【保留 2026-10-26】場所: 仕組み（lessons の追記の型） / 問題: 追記のたびに Facts／OQ／NA を持つ形が、ファイルを太らせる / 案: (b) 追記の型を変え、OQ・NA は本体の 1 つにまとめる。代替: lessons の NA に起票日を付けるだけにする。(a)（`review 消化` で列挙だけ）は 2026-10-26 に正式化済み（`docs/decisions.md` 直下）。
 - 場所: 第3陣 2 ファイル（`records/2026-10-26-wave3-review.md` の 3） / 問題: 降格は測定値（`para-operations` の Facts、`session-handoff` の実験の費用）だけ。残りは古い ③ の畳みと、単価・TTL への印 / 案: 2 件に分けて載せる。現況の確認が先。

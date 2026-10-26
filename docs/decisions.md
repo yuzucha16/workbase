@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】`review 消化` の「すでに close していそうなもの」に、lessons の古い試行の途中と 1 回きりの記録を挙げる。挙げるだけで、削除はユーザー（2026-10-26）
+- 決めたこと（ユーザー、待ち行列 7 の判断で「(a)列挙だけ、(b)保留」を選んだ）: (a) 消化モードの 1 で、そのセッションで読んだ・書いた `exmem/lessons/` のノートの、置き換わった Open Questions・Next Actions と 1 回きりの構成記録を挙げる。AI は挙げるだけで、削除はユーザーが行う。(b) 追記の型を変えて OQ・NA を本体の 1 つにまとめる案は、保留（待ち行列に残す）。
+- 根拠: 2026-10-26 の決定「1 回きりの構成記録はユーザーが直接削除する」と両立させ、見落としだけを防ぐ。(b) は 10-19 の R-02（NA の追記は 3 回まで）の却下と同じ理由で覆りやすい（スクリーニングの結果、`topics/logbook-design/records/2026-10-26-queue-screening.md`）。
+- 反映先: `workflow-kit/review-hook.md`（消化モード）、`topics/logbook-design/docs/log.md`（待ち行列）。
+
 ### 【この件】参照構造の測り方から雛形と `@` だけの CLAUDE.md を除き、索引は生成せず点検を足す（2026-10-25）
 - 決めたこと（ユーザー、「3. 採用」「4. 推奨案を採用」「2. 見送ります」）: ① `mdgraph.py` は `templates/` 配下と、`@x.md` だけの `CLAUDE.md` を数えない。root `README.md` に `topics/README.md` と `guides/README.md` を書く（未到達 6→0）。② `exmem-index.md` は自動生成せず、`find_knowledge.py --check-index`（抜け・存在しない行・重複）を `integrate` の最後と `review` の入力 9 に足す。③ 取りこぼし 2 件（B07、S16）の語は足さない（対象のノートがそんなに重要ではない）。
 - 根拠: 雛形と shim は読まれる知識でなく、定義を変えるのが正確。索引は 67/67 で揃い、手書きの補足 9 行に価値がある。
