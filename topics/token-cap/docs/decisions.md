@@ -34,3 +34,8 @@
 - 根拠: ユーザーの発言: 「影響が少ないので、どれも選択しないようにします。ありがとう。」
 - 確認済み: 手順書へ移す案は `workflow-kit/AGENTS.md`（特定のディレクトリの固有事情を書かない）に反する。見込みは月の約 1%。
 - 再判断: 60k 運用の結果（10-27 以降）を見てから。案は `records/2026-10-26-base-trim.md`。
+
+### 【この件】使わない skills を切る。`xlsx` `docx` `pptx` `pdf` は残す（2026-10-27）
+- 決めたこと（ユーザー）: 同期の skills のうち、使っていない 9 件（`skill-creator` `google-workspace` `deep-research` `import-memory` `morning` `docs` `computer-use` `built-in-browser` `chrome-browser`）をオフにし、obsidian プラグインを uninstall した。第 2 段階（`xlsx` `docx` `pptx` `pdf`）は残す。
+- 根拠: ユーザーの発言: 「前半の5件を削除して、obsidian skillをuninstallしました」「第一段階をやったところ、skillsが3.5Kに減りました」「第二段階は残すことにしました。」
+- 確認済み: Zed の Skills は 5.8k → 3.5k（`records/2026-10-27-skills-trim.md`）。切るときは claude.ai でオフにする（ローカルで消した同期コピーは再ダウンロードされる）。
