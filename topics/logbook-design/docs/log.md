@@ -16,14 +16,13 @@
 1. 畳む候補（`records/2026-10-26-fold-candidates.md`）の「聞」にユーザーが答え、削除する（AI は挙げるだけ。2026-10-26 承認）。「済」は根拠つきなので、そのまま消してよい。Stop フックの実機での記録、旧 `C:\vault` の削除、`obsidian-vault` のバックアップ（robocopy）の未設定は、ユーザーの PC でしか確かめられない。
 2. 第2陣の旧名の更新は、調べた結果、書き換える対象がほぼ無かった（`room` のコマンドの `init` `open` `start` `close` は今もある）。畳み（1）で消えるので、閉じてよいかをユーザーに聞く。残る 1 か所は `para-operations` の開始インタビュー（旧 `start`）。
 3. 印の付け忘れの確認: `shell-script-testing-wsl` は節単位の版依存が無く付けていない。単価・TTL の 1 か所化は別件で待ち行列にある。
-4. 移す（2026-10-26 承認。型は同日に決定・実装済み）。済み（2026-10-26）: `ai-work-metrics`（実測は `logbook/ai-work-metrics-log.md`、形式の事実は `claude-code-storage` の「jsonl の形式」）、`shell-command-usecases` の傾向、`para-operations` の開始時の実測、`session-handoff` の実験の費用（それぞれ `logbook/*-log.md`、lesson に結論 1 行と `→` を残した）。残り: `user-thinking-habits`（ファイルごと。移す前に公開範囲をユーザーが確認）、`user-manual` の Facts 9 項（先に各項と Principles の対応表を出し、未昇格の項を確かめてから明細へ合流）。`--check-aging` は、この PC で Python がブロックされ未実行。
+4. 移す（2026-10-26 承認。型は同日に決定・実装済み）。済み（2026-10-26）: `ai-work-metrics`（実測は `logbook/ai-work-metrics-log.md`、形式の事実は `claude-code-storage` の「jsonl の形式」）、`shell-command-usecases` の傾向、`para-operations` の開始時の実測、`session-handoff` の実験の費用（それぞれ `logbook/*-log.md`、lesson に結論 1 行と `→` を残した）。残り: `user-thinking-habits`（ファイルごと。公開範囲の食い違いは、ユーザーが「癖の評価は公開側に置かない」の一文を削除して解消した。2026-10-26。癖の表を公開側に置いてよいかは、ユーザーが一文を削除したことで決着とみなした）、`user-manual` の Facts 9 項（先に各項と Principles の対応表を出し、未昇格の項を確かめてから明細へ合流）。`--check-aging` は、この PC で Python がブロックされ未実行。
 5. 別セッションで、`logbook/` に上位の md（`AGENTS.md` `README.md` `exmem/` の索引など）から辿れるかを確かめる（引当率、`topics/md-link-graph/` の道具。`find_knowledge.py --triggers` の対象にするかも同時に決める）。実装の後。
 6. 試行: 2026-11-29 の月次の振り返りで、週次の記録（`kit-growth/records/`）を 1 回手で畳んでみる（置き場は変えない）。
 
 ## Open Questions
 
 - `logbook/` を `find_knowledge.py --triggers` の対象にするか、上位の md から辿れるか（短命の内容が引き当てを汚す一方、取扱説明書の観測は引きたい）。別セッションで引当率を測って決める（Next Actions 5）。
-- 公開範囲: `user-thinking-habits` の追補は「癖の評価は公開側に置かない」と書きつつ癖の表を載せている。降格のときに合わせて確認する。
 - 素材の節の扱い: lesson に残して印を付ける案（推奨）でよいか。
 
 ### 待ち行列（3 段チェックの 1 段目。判断は、置いたセッションの次の `review 消化` 以降）

@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（review 消化の続き: 延長と公開範囲）
+- ユーザーの判断: Next Actions 4（md-link-graph）を 11-08 まで延長（引き当て率の初回の後に閉じるか聞く）。`user-thinking-habits` の「癖の評価と個人的な事情は、公開側に置かない」の一文を削除（公開範囲の食い違いの解消）。Next Actions 2（旧名の注記）は閉じた。python が この PC でブロックされ、`--check-aging` は未実行。
+
 ### 2026-10-26（review 消化: logbook へ 4 件を降格）
 - ユーザーの判断: Next Actions 5（logbook へ lessons の 6 件を移す）をこのセッションで行う。`ai-work-metrics`、`shell-command-usecases`、`para-operations`、`session-handoff` の実測・傾向・費用を `logbook/*-log.md` に原文のまま移し、lesson に結論 1 行と `→` を残した。`ai-work-metrics` の形式の事実は `claude-code-storage` の「jsonl の形式」へ。`user-thinking-habits`（公開範囲の確認が先）と `user-manual`（対応表が先）は残した。この PC では Python がブロックされ、`--check-aging` は未実行。
 
