@@ -4,7 +4,7 @@
 
 ## 状態
 
-- 実装はまだ無い（`logbook/` ディレクトリも、`exmem` の変更も無い）。決定は `decisions.md` の 2026-10-26。
+- `logbook/` ディレクトリはまだ無い。`exmem/lessons/` の 6 ファイルに版依存の印を付けた（2026-10-26、78df71b）。決定は `decisions.md` の 2026-10-26。
 - 置き場: workbase 直下の `logbook/`（仮決め）。入る型は 3 つ: ①時系列の観測・測定、②版・時点に縛られる事実（版が上がるだけのものを含む）、③試行の途中。個人の好み・1 回きりの構成記録は含めない（ユーザーが直接削除する）。素材（履歴の種など）は別扱い。
 - ② は `logbook/` に移さず、lessons の節に印（`<!-- 版依存: 一方向|並存 / 確認: 日付 -->`）を付けて残す。並存型（Python のように下げうる）は版つきの表、一方向型は上書きして古いものを捨てる。降格するのは ①③ だけ。
 - 降格は承認プロセスの 3 段チェックで決める。確認の単位はファイル、降格と印の単位は節。
@@ -14,9 +14,9 @@
 ## Next Actions
 
 1. 最小の `logbook/` の型を決める: 叩き台は `records/2026-10-26-logbook-type-draft.md`（7 点。待ち行列に置いた。次の `review 消化` で判断）。実装は承認の後。下の 5 の「移す」は、これが決まってから。
-2. 版依存の印を付ける（2026-10-26 承認。logbook の型と無関係なのですぐできる）: `claude-code-storage` の Facts（一方向。`ai-work-metrics` の形式の事実はここにまとめ、`ai-work-metrics` からは指す）、第2陣 6 ファイルの ② の節（`records/2026-10-26-wave2-review.md` の 2 の 5）、第3陣の単価・TTL（`session-handoff` など）。
-3. 第2陣の旧名（`init`/`open` の廃止、2026-10-24）が残る箇所を更新する（2026-10-26 承認。書き換え）。
-4. 畳む候補を列挙し、ユーザーが削除する（2026-10-26 承認。AI は挙げるだけ）: `claude-code-storage`（Stop フックの OQ・NA と 1 回きりの移行の Decisions。Stop フックの実機確認の状態を添える）、第2陣 6 ファイルの X と古い ③（`obsidian-vault` の Next Actions にバックアップ（robocopy）の未設定を残す。旧 `C:\vault` の削除はユーザーが PC 上で行う）、第3陣 2 ファイルの Open Questions と未決の雛形の節。
+2. 畳む候補（`records/2026-10-26-fold-candidates.md`）の「聞」にユーザーが答え、削除する（AI は挙げるだけ。2026-10-26 承認）。「済」は根拠つきなので、そのまま消してよい。Stop フックの実機での記録、旧 `C:\vault` の削除、`obsidian-vault` のバックアップ（robocopy）の未設定は、ユーザーの PC でしか確かめられない。
+3. 第2陣の旧名の更新は、調べた結果、書き換える対象がほぼ無かった（`room` のコマンドの `init` `open` `start` `close` は今もある）。畳み（2）で消えるので、閉じてよいかをユーザーに聞く。残る 1 か所は `para-operations` の開始インタビュー（旧 `start`）。
+4. 印の付け忘れの確認: `shell-script-testing-wsl` は節単位の版依存が無く付けていない。単価・TTL の 1 か所化は別件で待ち行列にある。
 5. logbook の型の後に移す（2026-10-26 承認）: `user-thinking-habits`（ファイルごと。移す前に公開範囲をユーザーが確認）、`user-manual` の Facts 9 項（先に各項と Principles の対応表を出し、未昇格の項を確かめてから明細へ合流）、`ai-work-metrics` の実測値、`shell-command-usecases` の傾向（lesson に結論 1 行を残す）、`para-operations` の Facts、`session-handoff` の実験の費用。
 6. 別セッションで、`logbook/` に上位の md（`AGENTS.md` `README.md` `exmem/` の索引など）から辿れるかを確かめる（引当率、`topics/md-link-graph/` の道具。`find_knowledge.py --triggers` の対象にするかも同時に決める）。実装の後。
 7. 試行: 2026-11-29 の月次の振り返りで、週次の記録（`kit-growth/records/`）を 1 回手で畳んでみる（置き場は変えない）。

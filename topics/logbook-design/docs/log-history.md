@@ -5,6 +5,7 @@
 ### 2026-10-26（review 消化）
 - 待ち行列 8 件をサブエージェントでスクリーニングし（`records/2026-10-26-queue-screening.md`）、ユーザーが 1 件ずつ判断した（`decisions.md`）。消した Next Actions: 「次の `review 消化` で待ち行列 8 件を判断する」（完了）。`obsidian-vault` の未設定を残す項は、畳みの列挙（Next Actions 4）に合流した。
 - 7(a) を kit に反映した（`review-hook.md` の消化モード、04ac4c7）。
+- 版依存の印を lessons 6 ファイルの 14 か所に付けた（78df71b）。旧名の更新は対象がほぼ無いと分かった。畳む候補の一覧（d8a52c8）と `logbook/` の最小の型の叩き台（64bcc85）を出した。消した Next Actions: 「版依存の印を付ける」（完了）。
 
 ### 2026-10-26（続き）
 - ユーザー: `para-operations` と `session-handoff` の Next Actions は置き換わり。畳んだ。
