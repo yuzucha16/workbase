@@ -14,7 +14,7 @@
 
 ## Next Actions
 
-1. ee が PC1 で取る（2026-10-27 予定）: `python -I workflow-kit/tools/cap_meter.py`（当月の合計と上限に対する割合、60k 超の応答の割合、会話の土台の分布。題名は出ない）、`python -I workflow-kit/tools/usage_report.py --by month --last 2 --top 10`、`python -I workflow-kit/tools/heavy_sessions.py --since 2026-10-01 --top 10`。題名に機密が出ていないか見てから、集計だけを持ち帰る。
+1. ee が PC1 で取る（2026-10-27 予定）: `python -I workflow-kit/tools/cap_meter.py`（当月の合計と上限に対する割合、60k 超の応答の割合、会話の土台の分布。題名は出ない）、`python -I workflow-kit/tools/usage_report.py --by month --last 2 --top 10`、`python -I workflow-kit/tools/heavy_sessions.py --since 2026-10-01 --top 10`。題名に機密が出ていないか見てから、集計だけを持ち帰る。読取率が以前の実測（量の約 96%）より低ければ、Bedrock の global で振り分けられてキャッシュが効いていない疑い（ee の疑問、2026-10-26。未確認）。
 2. 届いたら、月の合計が約 1.8 億（読みを含む）かを確かめ、上位の会話の作業の種類（マクロの実装か）を見て、角度ごとの削減量を見積もる（式は `records/2026-10-26-desk-prep.md` の 3）。
 3. 勤務先に、上限の数え方（読みを含むか、モデルの重み、Desktop の分）を確かめる。文面は `records/2026-10-26-desk-prep.md` の 4（ee が送る）。
 4. マクロの現況を聞いて、役割分割の案（基準文書、部品化、台帳）を具体化する。
