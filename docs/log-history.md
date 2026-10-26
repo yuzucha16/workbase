@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-26（daily の振り返り 第6回）
+- ユーザーの指示（`brief 振り返り daily`）で、10-25 07:52〜10-26 21:36 の約100コミットを振り返った。手戻り 8件（数値の訂正3、ルールの取り消し1ほか）。施策 R-2026-10-26-01（数値に出典を添える）はユーザーが却下した（理由は聞いていない）。字数は規模（450〜550字）を超えた可能性があり、未測定。記録は `topics/kit-growth/records/retrospective-daily-record.md`、決定は `decisions.md` の同日の項。
+
 ### 2026-10-26（token-cap: exmem-index.md の読み方）
 - ユーザーの承認で、`exmem/AGENTS.md` の読む順番 1 を「0 で出なかったときだけ `exmem-index.md` を Grep で引く」に変えた。索引は 7.2KB で単体は約 3.4k だが、直前の Glob と重なって +16k になっていた。判断は `decisions.md` の同日の項、詳細は `topics/token-cap/`。この会話では `python` がアプリケーション制御ポリシーでブロックされ、`find_knowledge.py` は実行できなかった。
 

@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【汎用】R-2026-10-26-01（数値を書くときは出典を添える）を却下（2026-10-26）
+- 決めたこと（ユーザー）: 10-26 の daily の施策 R-2026-10-26-01 は不採用。理由は聞いていない。
+- 根拠: ユーザーの発言: 「R-2026-10-26-01は不採用です」。記録は `topics/kit-growth/records/retrospective-daily-record.md`。
+
 ### 【汎用】`exmem-index.md` は、`find_knowledge.py --triggers` で該当が出なかったときだけ Grep で引く（2026-10-26）
 - 決めたこと（ユーザー）: `exmem/AGENTS.md` の読む順番 1 を変える。索引の全文読みと `lessons/` の Glob での一覧はしない。
 - 根拠: ユーザーの発言: 「提案を承認します。変更を入れてください。」実測は `topics/token-cap/records/2026-10-26-growth-by-reads.md`（索引 +16k。直前の Glob を含む）。
