@@ -69,6 +69,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 ## Facts
 
 ### 認証と設定（確認: 2026-10-08、根拠: code.claude.com の各ページ。特記以外）
+<!-- 版依存: 一方向 / 確認: 2026-10-08 -->
 
 - 認証の優先順位は、クラウドプロバイダ（`CLAUDE_CODE_USE_BEDROCK` など）、`ANTHROPIC_AUTH_TOKEN`、`ANTHROPIC_API_KEY`、`apiKeyHelper`、`CLAUDE_CODE_OAUTH_TOKEN`、Anthropic プロファイル、`/login` のサブスク OAuth の順（authentication ページ）。
 - `ANTHROPIC_API_KEY` が環境にあると、初回の承認後にサブスクより優先される。解除は `unset ANTHROPIC_API_KEY`（同ページ）。
@@ -84,6 +85,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - PowerShell の SecretManagement（`Get-Secret -AsPlainText`）を `apiKeyHelper` に使えること（仮説）。実機では未実行。
 
 ### モデルと料金（2026-10-08 時点）
+<!-- 版依存: 一方向 / 確認: 2026-10-08 -->
 
 - モデル指定の環境変数は `ANTHROPIC_MODEL`（セッション）、`ANTHROPIC_DEFAULT_OPUS_MODEL` `_SONNET_MODEL` `_HAIKU_MODEL` `_FABLE_MODEL`（エイリアスの解決先）。優先順位は `--model`、`ANTHROPIC_MODEL`、settings の `model` の順（model-config ページ）。
 - `ANTHROPIC_SMALL_FAST_MODEL` は非推奨で、後継は `ANTHROPIC_DEFAULT_HAIKU_MODEL`。`ANTHROPIC_MODEL_FAST_MODE` という変数は model-config と amazon-bedrock のページに記載が無かった。
@@ -95,6 +97,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - fast mode は Anthropic 直接（Claude API）のみで、Bedrock では使えない。WebSearch も Bedrock では使えない（pricing ページと Claude Code の amazon-bedrock ページ）。
 
 ### Bedrock（確認: 2026-10-08、根拠: amazon-bedrock ページと claude-in-amazon-bedrock ページ）
+<!-- 版依存: 一方向 / 確認: 2026-10-08 -->
 
 - 経路が2つある。既定の Invoke API は推論プロファイル ID（`us.anthropic.claude-...`）を使う。Mantle は `CLAUDE_CODE_USE_MANTLE=1` で有効にし、`anthropic.claude-...` をそのまま指定する。
 - Global エンドポイントは割増なし、地域固定は 10% 割増。東京 `ap-northeast-1` は Global・JP・単一リージョン、大阪 `ap-northeast-3` は Global・JP に対応する。
@@ -112,6 +115,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - スクリプトが dot-source されたかは、トップレベルで `$MyInvocation.InvocationName -eq '.'` により判定でき、関数だけ定義して `return` で終えられる。
 
 ### 部屋（専用 WSL）での Bedrock の認証（確認: 2026-10-19、根拠: ユーザーの実機の報告。特記以外）
+<!-- 版依存: 一方向 / 確認: 2026-10-19 -->
 
 - 部屋の `claude` は、OAuth 以外の認証（IAM アカウント、SSO など）を、`claude` の画面の操作では設定できなかった。環境変数を `export` すると対応できた。
 - Zed の `agent_servers` の `env` の値は、リモートサーバーの起動時にも引き継がれる。手で `export` する環境変数を減らせ、残るのは秘密（アクセスキー）だけになる。
@@ -122,6 +126,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - 部屋の仕様（`aws-key`）は `workflow-kit/room/` にある。実物で `cmd_aws_key` の存在を確認した（2026-10-19、根拠: `room.py` を読んだ）。
 
 ### 組織の OIDC ゲートウェイ（確認: 2026-10-20、根拠: 特記以外は下の各項に記載）
+<!-- 版依存: 一方向 / 確認: 2026-10-20 -->
 
 - 汎用の LLM ゲートウェイ + OIDC の構成では、Claude Desktop の「Configure Third-Party Inference」で、Inference provider = Gateway、Credential kind = Interactive sign-in にすると、Desktop が発行者 URL・クライアント ID・スコープで OIDC のブラウザサインイン（認可コード + PKCE、`127.0.0.1` への loopback リダイレクト）を行い、既定では ID トークンを `Authorization: Bearer` でゲートウェイに送る（根拠: Anthropic の Claude Desktop ゲートウェイ設定の公式ページ）。
 - Claude Code の `/login` の Cloud gateway（Claude apps gateway）は、公開アドレスのゲートウェイを拒否し、`gateway hosts must be on your organization's private network` を出す。社内のプライベートアドレスが前提（根拠: 実機のエラーと公式ドキュメント）。

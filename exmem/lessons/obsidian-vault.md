@@ -39,6 +39,7 @@ sources:
 ## Vault
 
 ### 現在の構造（2026-10-05）
+<!-- 版依存: 一方向 / 確認: 2026-10-06 -->
 
 2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた（同日のうちに、置き場を `$HOME\.certs` に変更した。下の「rename と旧名の扱い」の Decisions）。以下の図は `works` に直した。本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。
 
@@ -187,12 +188,14 @@ $HOME\works\           # PC ごとのローカルなリポジトリ（実ディ�
 - （2026-10-05 に変更: トップの `AGENTS.md` は PC ごとのローカルなファイルになり、Vault 全体の規約は `workbase` のルートの `AGENTS.md` に移った。以下は当時の記述）Vault のルートに共有の `AGENTS.md` と `CLAUDE.md`（`@AGENTS.md`）を置く。ルートで起動した AI に、共有とローカルの境界、`_local/`、リンクの規則、`.obsidian` の編集時の注意、書式を伝える。内容に機密が無いので共有する。却下案: ローカル専用にする。
 
 ### コアプラグイン
+<!-- 版依存: 一方向 / 確認: 2026-10-04 -->
 
 - 有効: `file-explorer`、`global-search`、`switcher`、`backlink`、`outgoing-link`、`tag-pane`、`properties`、`page-preview`、`command-palette`、`editor-status`、`bookmarks`、`outline`、`word-count`、`file-recovery`、`sync`、`bases`
 - 無効: `graph`、`canvas`、`daily-notes`、`templates`、`note-composer`、`footnotes`、`slash-command`、`markdown-importer`、`zk-prefixer`、`random-note`、`slides`、`audio-recorder`、`workspaces`、`publish`、`webviewer`
 - 2026-10-01 時点では `graph`、`canvas`、`daily-notes`、`templates`、`note-composer` が有効で、`properties` が無効だった。2026-10-03 の `82953b7`（コミットメッセージは「使っていないプラグインと古い設定を削除」）で逆になった。
 
 ### コミュニティプラグイン
+<!-- 版依存: 一方向 / 確認: 2026-10-04 -->
 
 - `colored-tags`（タグを色分けする。階層タグの親ごとに色が変わる）だけ。
 - 2026-10-01 時点で入っていた `calendar` と `obsidian-icon-folder` は、2026-10-03 に削除した（`82953b7`）。
