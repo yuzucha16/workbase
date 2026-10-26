@@ -5,12 +5,13 @@
 
 ## いま
 
-切る目安 60k で明日から運用。伸びの主因は土台でなくファイルの全文読みと分かった（`records/2026-10-26-growth-by-reads.md`）。最初の一手の `docs-rules.md` の「コミットと push」の切り出しは完了（`workflow-kit/commit-push-rules.md`）。`review 消化` の 100k の原因も判明（旧名の横断の掃除での大きい Grep と全文読み）し、読み込みを抑える規則を `AGENTS.md` に書いた。`exmem-index.md` の読み方も `exmem/AGENTS.md` で完了。`brief` の読む量も完了（`brief-modes.md` を切り出し）。`hook-common.md` の「10 万で切る」も 6 万に直した。`log.md` の予算超えの整理も完了し、読む量の一手は一巡した。次は土台（Next Actions 6）。PC1 の集計は明日 ee が取る（2026-10-26）。
+切る目安 60k で明日から運用。伸びの主因は土台でなくファイルの全文読み（`records/2026-10-26-growth-by-reads.md`）。読む量の一手は一巡した。土台の下調べも済み（`records/2026-10-26-base-trim.md`）、最大は claude.ai 同期の skills（月の約 3.3%）。`AGENTS.md` の整理は効きが小さいので見送り。PC1 の集計は明日 ee が取る。
 
 ## あなた待ち
 
 - PC1 で `usage_report.py` と `heavy_sessions.py` の出力を取る（`docs/log.md` Next Actions 1）。
 - 上限が「キャッシュ読みを含む総量」か、モデルで重みが違うかの確認（haiku 案の前提）。
+- claude.ai の設定で、同期の skills を個別にオフにできるか、Claude Code の一覧から消えるかの確認（Next Actions 6）。
 - マクロの現況（規模・残り・実行できる環境）の回答（`records/2026-10-26-macro-split.md` の末尾）。
 
 ## 次の一手

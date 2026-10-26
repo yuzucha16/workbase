@@ -28,3 +28,9 @@
 - 根拠: ユーザーの発言: 「token-cap の続き docs-rules.md の切り出しを承認します」「判断してほしいこと：承認します。書いてください。」実測は `records/2026-10-26-growth-by-reads.md`、`records/2026-10-26-review-digest-100k.md`。
 - 確認済み: `docs-rules.md` は 24.6KB から 12.4KB。切り出した節は 13KB なので、`wrap` のように両方読む会話は減らない。効果の検証は `cap_meter.py` の 10-27 以降の値（基準は 10-25 と 10-26）。
 - 反映先: `workflow-kit/commit-push-rules.md`、`AGENTS.md`、`workflow-kit/hook-common.md` ほか（コミット `ce52646`）、`AGENTS.md` の「読み込みの量を抑える」。
+
+### 【この件】`resources/AGENTS.md` の整理は見送る。skills の確認を先にする（2026-10-26）
+- 決めたこと（ユーザー）: 「記録先」2 節の移動（手順書へ、または `docs/record-destinations.md` へ）は、影響が少ないので、どの案も選ばない。
+- 根拠: ユーザーの発言: 「影響が少ないので、どれも選択しないようにします。ありがとう。」
+- 確認済み: 手順書へ移す案は `workflow-kit/AGENTS.md`（特定のディレクトリの固有事情を書かない）に反する。見込みは月の約 1%。
+- 再判断: 60k 運用の結果（10-27 以降）を見てから。案は `records/2026-10-26-base-trim.md`。

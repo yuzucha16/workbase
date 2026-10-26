@@ -4,27 +4,25 @@
 
 ## 状態
 
-- 上限は月 2億トークン（最初に「2万」と伝えられ、2026-10-26 に訂正）。26 日時点で 90%（約 1.8 億、1 日約 700 万）。キャッシュ読みを含む数かは未確認。上限は PC1 のもので、PC1 と PC2 は別々に数える（ee、2026-10-26）。
-- PC2 の `cap_meter.py` 実測（2026-10-26、`records/2026-10-26-cap-meter-pc2.md`）: 合計 2.33 億、会話 70、応答 2,412（平均 96.5k）。60k 超の応答は件数の 74%、トークンの 89%。土台は中央値 27.9k（合計の 29%）。60k で切ると平均 約 44k（約 54% 減の見込み）、土台 6k 減は切る前 約 6%・切った後 約 14%。順序は、切る → 土台。10-25 と 10-26 が運用前の比較の基準。理解ガイドの下書きは `exmem/inbox/2026-10-26-token-cap-meter-reading.md`。
-- 角度の一覧は `records/2026-10-26-angles.md`（A〜L と、末尾の追記）。優先は、会話を切る → ベーストークン → AI の線引き。間（TTL）とモデルの切替は、上限がモデルで重み付けされるか分かるまで保留。
-- haiku 案は、重み付けかモデルごとの枠があるときだけ効く。Zed の表示は累計でなく会話の大きさ（`records/2026-10-26-zed-usage-display.md`）。主因はマクロの全面実装（`records/2026-10-26-macro-split.md`）。
-- 指標の道具: `workflow-kit/tools/cap_meter.py`（累計、60k 超の応答の割合、土台を記録から出す。PC2 の実記録で動作を確認）。切る目安は 60k（会話の大きさ）で、2026-10-27 から運用。`--latest` で最新の会話の積算が出る。
-- 下準備（`records/2026-10-26-desk-prep.md`）: workbase の常駐分は約 4〜5k。`brief` は約 1.2万を足すので、60k 運用で作業に使える幅は 3.6万から 2.4万に減る。削減量の式と、勤務先への確認の文面がある。
-- `/context` の実測（`records/2026-10-26-context-measure.md`）: 土台は端末 36.4k、Zed 19.4k。差の大半は Zed のツール定義の遅延読み込み。自前で動かせるのは skills 約 6k と memory 約 2〜3.7k。
-- 会話の伸びの原因（`records/2026-10-26-growth-by-reads.md`）: 土台は固定で約 28k、その先はファイルの全文読みが支配的（`docs-rules.md` 全文 +7〜12k、`exmem-index.md` +16k、大きい `log.md` +12k）。読んだ分は以後の全応答に乗る。フックを使わない会話も 1 応答目で 55k（`AGENTS.md` 経由の読み込みと、AI の自発の読み）。したがって土台より読み込みの削減が先で、フックと `AGENTS.md` の両方に余地がある（ee の予想と一致）。
+- 上限は月 2億トークン。26 日時点で 90%（約 1.8 億、1 日約 700 万）。キャッシュ読みを含む数かは未確認。上限は PC1 のもので、PC1 と PC2 は別々に数える。
+- PC2 の `cap_meter.py` 実測（`records/2026-10-26-cap-meter-pc2.md`）: 合計 2.33 億、応答 2,412（平均 96.5k）。60k 超の応答は件数の 74%、トークンの 89%。土台は中央値 27.9k。60k で切ると平均 約 44k（約 54% 減の見込み）。順序は、切る → 土台。10-25 と 10-26 が運用前の比較の基準。理解ガイドの下書きは `exmem/inbox/2026-10-26-token-cap-meter-reading.md`。
+- 切る目安は 60k（会話の大きさ）で、2026-10-27 から運用。`cap_meter.py --latest` で最新の会話の積算が出る。
+- 角度の一覧は `records/2026-10-26-angles.md`。優先は、会話を切る → ベーストークン → AI の線引き。間（TTL）とモデルの切替は、上限の重み付けが分かるまで保留。haiku 案は、重み付けかモデルごとの枠があるときだけ効く。主因はマクロの全面実装（`records/2026-10-26-macro-split.md`）。
+- 会話の伸びの原因（`records/2026-10-26-growth-by-reads.md`）: 土台は固定で約 28k、その先はファイルの全文読みが支配的。読んだ分は以後の全応答に乗る。
+- 読む量の一手は一巡（`docs-rules.md` の切り出し、`AGENTS.md` の読み込み規則、`exmem-index.md`、`brief`、`hook-common.md` の 6 万、`logbook-design` の `log.md`）。見込みの実測は 10-27 以降。
+- 土台の下調べ（10-26、`records/2026-10-26-base-trim.md`）: skills（claude.ai 同期 13 件、約 3.2k、月の約 3.3%）が最大で、外し方は claude.ai 側（未確認）。`resources/AGENTS.md` の整理は約 1%、`works/AGENTS.md` も約 1%。効きが小さいので、ee は `resources/AGENTS.md` の整理を見送った（kit は固有事情を書かない規則なので、手順書へ移す案は不可）。
+- 下準備は `records/2026-10-26-desk-prep.md`（削減量の式、勤務先への確認の文面）、`/context` の実測は `records/2026-10-26-context-measure.md`（土台は端末 36.4k、Zed 19.4k）。
 
 ## Next Actions
 
-0. 【起票 10-26】最初の一手は完了（10-26、ee の承認）: `docs-rules.md` の「コミットと push」を `workflow-kit/commit-push-rules.md` に切り出した（`docs-rules.md` 24.6KB→12.4KB、切り出した節は 13KB で、両方読む会話は減らない。参照元 `AGENTS.md` `workflow-kit/AGENTS.md` `hook-common.md` `README.md` `hooks.md` を直した。`templates/` の `AGENTS.md` は「増やさない・変えない」ので未変更）。100k の調査も完了（`records/2026-10-26-review-digest-100k.md`）: 旧名の横断の掃除で、行内容つきの大きい Grep（合計 37KB）と全文読みが原因。大きい Grep を避ける運用は `resources/AGENTS.md` の「読み込みの量を抑える」に書いた（ee の承認）。`exmem-index.md` の読み方も完了（10-26、ee の承認。`exmem/AGENTS.md` の読む順番 1 を「0 で出なかったときだけ Grep」に変更。見込み 1 会話 3〜4k 減。実測は 10-27 以降）。`brief` の読む量も完了（10-26、ee の承認。`brief-hook.md` が `hook-common.md` を節だけ読むよう明記、引数つきモードを `brief-modes.md` に切り出し 12.0→8.0KB。見込み 1 会話 3〜4k 減、実測は 10-27 以降）。`hook-common.md` 38〜39 行の「約 10 万で切る」も 6 万に直した（10-26、ee の承認、5d6ca15）。`log.md` の予算超えも完了（10-26、ee の承認。`logbook-design/docs/log.md` を 6.4→3.8KB に縮めた。中身は変えず、経緯の細部は `decisions.md` と `records/` に任せた）。0 は全部完了。次は 1（PC1 の集計）と 6（土台）。
-
-1. 【起票 10-26】ee が PC1 で取る（2026-10-27 予定）: `cap_meter.py`、`usage_report.py --by month --last 2 --top 10`、`heavy_sessions.py --since 2026-10-01 --top 10`（`python -I workflow-kit/tools/` の下）。題名に機密が出ていないか見てから、集計だけを持ち帰る。読取率が以前の実測（量の約 96%）より低ければ、Bedrock の global でキャッシュが効いていない疑い（未確認）。
-2. 【起票 10-26】PC1 の分が届いたら、PC2 の見積もり（`records/2026-10-26-cap-meter-pc2.md`）と比べ、上位の会話の作業の種類（マクロの実装か）を見る。10-27 以降は `cap_meter.py` の日ごとの値で、60k 運用の前後を比べる（基準は 10-25 と 10-26）。
+1. 【起票 10-26】ee が PC1 で取る（2026-10-27 予定）: `cap_meter.py`、`usage_report.py --by month --last 2 --top 10`、`heavy_sessions.py --since 2026-10-01 --top 10`（`python -I workflow-kit/tools/` の下）。題名に機密が出ていないか見てから、集計だけを持ち帰る。読取率が以前の実測（約 96%）より低ければ、Bedrock の global でキャッシュが効いていない疑い（未確認）。
+2. PC1 の分が届いたら、PC2 の見積もりと比べ、上位の会話の作業の種類（マクロの実装か）を見る。10-27 以降は `cap_meter.py` の日ごとの値で、60k 運用の前後を比べる。
 3. 勤務先に、上限の数え方（読みを含むか、モデルの重み、Desktop の分）を確かめる。文面は `records/2026-10-26-desk-prep.md` の 4（ee が送る）。
 4. マクロの現況を聞いて、役割分割の案（基準文書、部品化、台帳）を具体化する。
-5. 切る基準を「会話の大きさ（Zed の表示）」と「会話ごとの積算」のどちらにするか、PC1 の実測で決める。ee は積算が分かりやすいという感触（2026-10-26）。当面は 60k で切り、`cap_meter.py --latest` で積算を記録して比べる。
-6. 土台を減らす（60k で切った後に効きが上がる）: claude.ai 同期の skills（約 3.2k）の外し方を、claude.ai のコネクタ設定で確認する。`resources/AGENTS.md`（約 2k）と常駐連鎖（3.7k）を短くできるか検討する。端末の遅延読み込みは保留（ee）。
+5. 切る基準を「会話の大きさ」と「会話ごとの積算」のどちらにするか、PC1 の実測で決める（ee は積算が分かりやすい感触）。当面は 60k。
+6. 土台を減らす: ee が claude.ai の設定で、同期の skills を個別にオフにできるか、Claude Code の一覧から消えるか確かめる（その後 `/context` で 6.4k から下がるか）。`AGENTS.md` の整理は、60k 運用の結果を見てから再判断する（案は `records/2026-10-26-base-trim.md`）。
 
 ## Open Questions
 
 - Desktop（添付やチャット）の分が上限にどれだけ入っているか。
-- マクロの会話を `brief` でなく「<名前> の続き」で始めるか（B1）、`hooks.md` の表を分けるか（B3）。`/context` の実測の後に決める。
+- マクロの会話を `brief` でなく「<名前> の続き」で始めるか（B1）、`hooks.md` の表を分けるか（B3）。

@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-26（土台の下調べ）: Next Actions 6 の下調べ。最大は claude.ai 同期の skills（約 3.2k、月の約 3.3%）で、外し方は claude.ai 側（未確認）。`resources/AGENTS.md` の整理は約 1%。「記録先」2 節を手順書へ移す案は、`workflow-kit/AGENTS.md`（固有事情を書かない）に反すると分かって取り下げ、`docs/record-destinations.md` に寄せる代案も含め、ee が影響が少ないとして全案を見送った。`records/2026-10-26-base-trim.md`。`log.md` は 4KB に圧縮（6.6KB→）。wrap。
+
 - 2026-10-26（log.md の予算超え）: ee が a を選択。`topics/logbook-design/docs/log.md` を 6.4→3.8KB（予算 4KB 内）に縮めた。状態の節を圧縮し、Next Actions・Open Questions・待ち行列 3 件は意味を変えずに残した。縮めた旨は `logbook-design/docs/log-history.md` にも追記。これで読む量の削減の一手は一巡。wrap。
 
 - 2026-10-26（hook-common の 6 万）: ee が承認。`hook-common.md` 38〜39 行の「会話が約10万トークン未満／以上」を約6万に直した（5d6ca15。約2万未満の例外は変更なし）。残りは `log.md` の予算超え（`logbook-design` 6.4KB）。wrap。
