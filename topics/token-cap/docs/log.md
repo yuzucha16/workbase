@@ -9,11 +9,11 @@
 - haiku 案: 量で数える上限では数が減らない。重み付けがあるか、モデルごとの枠があるときだけ効く。
 - Zed のチャット欄下の表示は、リアルタイムの累計ではなく、直近の応答時点の会話の大きさ（`records/2026-10-26-zed-usage-display.md`）。
 - 主因は Excel マクロの全面実装。役割分割の案は `records/2026-10-26-macro-split.md`。
-- 実装は無い。kit は未変更。
+- 指標の道具: `workflow-kit/tools/cap_meter.py`（2026-10-26。Zed の表示は累計でないので、累計と「60k を超えた応答の割合」「土台」を記録から出す。合成データでの確認のみ。PC1 の実記録は未）。切る目安は 60k で運用開始（ee、2026-10-27 から）。
 
 ## Next Actions
 
-1. ee が PC1 で取る（2026-10-27 予定）: `python -I workflow-kit/tools/usage_report.py --by month --last 2 --top 10` と `python -I workflow-kit/tools/heavy_sessions.py --since 2026-10-01 --top 10`。題名に機密が出ていないか見てから、集計だけを持ち帰る。
+1. ee が PC1 で取る（2026-10-27 予定）: `python -I workflow-kit/tools/cap_meter.py`（当月の合計と上限に対する割合、60k 超の応答の割合、会話の土台の分布。題名は出ない）、`python -I workflow-kit/tools/usage_report.py --by month --last 2 --top 10`、`python -I workflow-kit/tools/heavy_sessions.py --since 2026-10-01 --top 10`。題名に機密が出ていないか見てから、集計だけを持ち帰る。
 2. 届いたら、月の合計が約 1.8 億（読みを含む）かを確かめ、上位の会話の作業の種類（マクロの実装か）を見て、角度ごとの削減量を見積もる。
 3. 勤務先の案内で、上限の数え方（読みを含むか、モデルの重み、Desktop の分）を確かめる。
 4. マクロの現況を聞いて、役割分割の案（基準文書、部品化、台帳）を具体化する。
