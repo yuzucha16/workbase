@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】`wrap` が解決済みの Next Actions・Open Questions を log-history へ移す（2026-10-28）
+- 決めたこと（ユーザー）: `wrap` の手順 2 で、残っている項目をすべて「済／一部済／未」に分ける。済は根拠（コミット・ファイル）つきで `log-history.md` へ移して消す。一部済は済んだ部分を移し、残りだけの文に書き直す。確かめられないものは報告で聞く。上の階層の `log.md` でその単位を指す項目も直す。`log.md` に進み（子項目、「（済）」の印）を積まない。
+- 根拠: ユーザーの発言「log.mdに解決のnext actionがあってもlog-historyに移されないケースが多い…wrapで能動的に移してクリーンにしたい」。原因は、手順に掃除の工程が無いこと、一部済の規則が無いこと（`f4cbd96` は進みを足すだけ）、閉じる判断が `review 消化` のユーザーだけだったこと（2026-10-16 の決定。`59e6456` はユーザーの明示で移した例）、上の階層の項目が置き去りになったこと。修正案はユーザーが判断カードで承認した。
+- 反映先: `workflow-kit/wrap-hook.md`、`docs-rules.md`、`review-hook.md`。今ある root と各トピックの `log.md` も同じ規則で一度掃除した。
+
 ### 【汎用】`triggers:` の上限を 15 語から 30 語に増やす（2026-10-27）
 - 決めたこと（ユーザー）: 15 語ではすぐ超えるため、30 語にする。`find_knowledge.py`（`TRIGGERS_MAX`）、`check_inbox.py`、`check-inbox.ps1`、`integrate-hook.md`、`stock-hook.md`、`exmem/AGENTS.md`、`exmem/inbox/README.md`、`guides/explain/triggers-knowledge-index.md`、`design-triggers.md` を合わせた。
 - 残る確認: 語が増えると誤爆（部分一致）が増えうる。11-08 の引き当て率の初回で見る。
