@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-27（済みの Next Actions を log.md から移した）
+10-25 に済んだ 7 件の詳細。(1) `report.md` の置き場: コードは `ai/out/deliverable/` だけ Area に、それ以外は `_noai/final/` に戻す。食い違いは `methods.md` の書き方だけだったので `ai/out/<成果物名>/report.md` に直した(決定は不要)。(2) 単一の問いの章立て(`brief-hook.md`、`research-method.md`)。(3) `dev` の「テスト」に文書と実装の食い違いを機械で検査する型を足した(ユーザー承認)。(4) `dev-deliverable-guide.md` の旧名(`dev-env` `dev-test`)の説明を削った(承認)。(5) `sample_devenv`: ENV-001〜010 全件 PASS、SET-001(root で中止)も確認。型は機能した。静的検査は shellcheck と ruff が部屋に無く `bash -n` まで。uv の版は固定していない。(6) `sample_devtest`(`ai/out/devenv-tests/`): 要求 14 ID に対応、65 件実行で PASS 62・FAIL 3・SKIP 1。観察は、質問の推奨の置き場が `work/` でガイドの `ai/out/<成果物名>/` と食い違った(人が正した)、テストを実装に合わせて緩めた件は変更前後と理由を `report.md` に書かせる依頼が要った、`tests/t_static.sh` が(3)の起票の 2 例目。同日、サブエージェントでループを回す案を見送りと決めた(トークン使用量を抑えるため。`decisions.md`)。(7) `sample_devdoc`: 「文書作成」の項は残す。基準文書の形を仮決め(`project-structure.md` の未決)。あわせて `room.py:1197`(`ROOM.md` の元)と `room-context.md:67` を「Area に実名で戻したい最終版だけ `deliverable/`。Project の成果物は `ai/out/<成果物名>/`」に直し、`brief-work-types.md` に `dev` の最初の `brief` で `project-structure.md` と `dev-deliverable-guide.md` を読む指示を足した(単体テスト 139 件 OK、skip 3)。
+
 ### 2026-10-26（`dev` の成果物が `ai/work/` に出る件の起票）
 ユーザーが、PC1 の `dev` の部屋の AI が成果物をすべて `ai/work/` に出したと報告(一貫して `work/` だったので読み替えられたが、`work/` と `out/` が混ざると困る)。手順書を調べ、原因の候補を 3 つ挙げた(写しが修正前、`work` と `out` の線の曖昧さ、`script-guide.md` の `ai/work/` の記述の多さ)。PC1 の部屋は見られないため特定できず、ユーザーが「部屋の AI に聞くやり方で最適化しましょう」と決め、Next Actions に積んだ。同日、メモリの「次は考え方の文書」は、10-24 に済んでいたため直した(`project-structure.md` の「type の考え方」)。
 
