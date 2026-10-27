@@ -33,8 +33,8 @@
 ## Open Questions
 
 - 相談の型（`decisions.md` の 2026-10-21）: 4回使った。5回目で、残す・格上げする・やめるを決める。
-- 会議録の Area 側の保管場所と同期（Git か、PC ごとのローカルか）。
-- 【案件】の行き先: `para-operations` は Area の `docs/decisions.md`、実装は Area の `ai/docs/inbox.md`。現行はどちらか。
+- 【起票 10-27】会議録の Area 側の保管場所と同期（Git か、PC ごとのローカルか）。
+- 【起票 10-27】【案件】の行き先: `para-operations` は Area の `docs/decisions.md`、実装は Area の `ai/docs/inbox.md`。現行はどちらか。
 - `repos/` の受け渡し: `dev` の `env/` の実使用の後に決める。【保留 〜2026-11-05】
-- `brief 計画` は実務で3回使うまで試験運用（`decisions.md` の 2026-10-25）。使った回数: 0。
+- 【起票 10-27】`brief 計画` は実務で3回使うまで試験運用（`decisions.md` の 2026-10-25）。使った回数: 0。
 - `restore_project` の `_noai/final/` の上書き: 実機で保護を試してから決める。【保留 〜2026-11-05】
