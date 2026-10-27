@@ -13,4 +13,5 @@
 ## Open Questions
 
 - 【起票 10-24】場所: `script-guide.md` の束ねる役の型（Python・ps1）、`check_py.py` / `check-ps1.ps1`、`room-context.md` / 問題: 実行環境の違い（文字コードなど）のデバッグのラリー。既定ではログを出さないため、最初の失敗に情報が無く、再実行が1周余分に要る。原因の蓄積先も無い / 案: 毎回 `ai/work/diag.json`（環境、結果、失敗の型と場所。伏せ字つき）を出し、原因は `ai/out/knowledge/`（`scope: area`）の台帳に貯め、一般の原因は `scope: public` で上げて、3回で `check_py.py` に昇格する。works 共通の置き場は作らない。2026-10-21 の「既定ではログを出さない」を、診断に限って変える。承認済みで確定（2026-10-27、`decisions.md`）。進み（10-25）: 診断ログは `verify-result.json` / `run-result.json` として実装済み（Python と ps1。`diag.json` の名前は使わない。root の `decisions.md` の `run` / `verify` / `release` の項）。原因の台帳も 10-25 に実装した（ユーザーの承認。`script-guide.md` の「原因の台帳」、`room-context.md` に1項）。残りは実機: PC2 で verify を叩き、最初の失敗で台帳が使われるかを見る。
+- 【10-28】`brief` の引数（モード）の絞り方と、入力/出力への分離は `topics/token-cap/docs/log.md` の Next Actions 6 に移した（使われた引数は改善・振り返り中心、解決・変更・調査は 0 回）。この topic の完了条件には含めない。
 - `mkworks` は `Template-Rev` を新規に付けず `Room-Rev` に統一した。旧版の `room.py` で `--update` した works との行き来は考えていない。
