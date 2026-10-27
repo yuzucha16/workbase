@@ -31,6 +31,7 @@
 7. 【起票 10-26】【最優先】トークン削減の見直し（`topics/token-cap/`。月次上限 2億トークン）。残り: room の 107k の確認（トピックの NA 1）。規則側の削減と lessons の分割の効果を、10-28 以降の `cap_meter.py` で確かめる。`exmem/` の 2 か所と `templates/workspace/AGENTS.md` の参照文は未変更。
 8. 【起票 10-27】公開リポジトリの文言の整理（`topics/wording-neutralize/`）: 残りは段階 4（履歴の書き換え。ユーザーが後日、急がない）。
 9. 【起票 10-28】`wrap` の済／一部済／未の分け方（`workflow-kit/wrap-hook.md` の手順 2）の確認: 次の数回の `wrap` で、済んだ項目が移されるか、誤って閉じていないか、報告に閉じた数と聞く項目が出るかを見る。ずれたら `review` の入力に足す。
+10. 【起票 10-28】トピックを閉じる手順（`topics/close-procedure.md`）の残り 2 件（ユーザーが後で行う）: (a) すでに切れたリンク 2 か所（`docs/log-history.md` → `private-knowledge/records/private-knowledge-checks.md`、`topics/kit-growth/records/planning-method-record.md` → `private-knowledge/records/`）の修復。(b) 閉じたトピックで git の履歴にだけ残る有益なデータ・スクリプト・見本（`private-knowledge` の通し試験の手順 `pull-e2e-test.md` と会議メモの見本、`usage-viz` `stock-modes` `plan-room-link` の 6R・憲章・WBS の実例など）のサルベージ。行き先は `close-procedure.md` の表。新しい手順を最初に当てはめる対象は、外から指される records が多い `topics/token-cap/`。
 
 ## Open Questions
 

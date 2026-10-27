@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-28（トピックを閉じるときの振り分けを決め、手順を分けた）
+- ユーザーが「トピックを閉じるときの作業と、トピックの枠を超えて溜まる実験データ・経験則の扱い」の現状確認を求め、論点 6 つを順に決めた。閉じた 9 件の行き先と穴（外から指される records 15 か所、切れたリンク 2 か所、見本・試験手順の置き場なし）は、その場の確認で洗い出した。
+- 決定は `docs/decisions.md` の同日の項。手順は `topics/close-procedure.md` に分け、`topics/AGENTS.md` を 4.3KB から約 2.2KB に縮めた（`888ca4d`）。切れたリンクの修復とサルベージは、ユーザーが後で行う（NA10）。
 ### 2026-10-28（wrap の新しい規則で log.md を掃除）
 - ユーザーが、解決済みの Next Actions が log-history に移されないと指摘した。原因は、`wrap` の手順に掃除の工程が無いこと、一部済の規則が無いこと（進みを子項目で足す）、閉じる判断が `review 消化` のユーザーだけだったこと、上の階層の項目が置き去りになること。`wrap-hook.md` の手順 2 に「済／一部済／未」の分けを足し、`docs-rules.md` と `review-hook.md` を合わせた（`11f672f`。決定は `decisions.md`、根拠と差分は project files の `notes/wrap-close-na/`）。
 - `wrap` の新しい規則（済／一部済／未。`workflow-kit/wrap-hook.md` の手順 2、`11f672f`）で、root の Next Actions の済んだ部分を移した。NA5（logbook）: 型の導入、lessons から 4 件の移動（10-26）、`user-thinking-habits` と `user-manual` の Facts の移動、「聞」の回答による 9 ファイルの畳み（10-27）。NA6（cleankit）: PC1 の実ファイルで掃除の残りが 0 件（10-27）。NA7（token-cap）: 規則側の削減（10-26）、`integrate` の読む量の上限（10-27、仮 〜11-29）、大きい lessons の分割（`1d545aa`、`29bb5e0`。6 本とも済）。NA8（wording-neutralize）: 段階 1〜3 を適用（`8918ed6`、`f4cbd96` ほか）。
