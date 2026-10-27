@@ -81,7 +81,6 @@ updated: 2026-10-16
 - [[shell-script-testing-wsl]]: WSL でシェルスクリプトを試験する（Windows の `.bat` の文字化け・cp932・ASCII・改行・pause・日本語表示も）
 - [[terminal-cursor-blink]]: ターミナルのカーソル点滅を止める（DECSCUSR）
 - [[user-manual]]: ユーザー（ee）の取扱説明書: 口癖から読む思考・行動パターン
-- [[user-thinking-habits]]: ユーザー（ee）の思考の癖、その悪影響、AI の補正策（取扱説明書の根拠）
 - [[vscode-workspace]]: VS Codeの拡張機能とWorkspace運用
 - [[windows-8dot3-relative-to]]: Windows の 8.3 短縮名で relative_to が失敗するのを避ける
 - [[windows-bat-testing]]: Windows の .bat の試験（dry-run・偽コマンド）

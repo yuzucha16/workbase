@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-27
+- 畳み候補の「済」をユーザーが承認し、8 ファイル 39 行を削除した（claude-code-storage、claude-code-auth-providers、linux-distro-selection、obsidian-vault-backup、obsidian-vault、workflow-kit、workflow-kit-closing、para-operations）。「たぶん」「一部」「大半」の付いた行と「聞」「前」「残」は残した。
+- 旧名の更新（Next Actions 2）は、畳みで吸収したとして閉じた。
+- `user-thinking-habits` を `exmem/lessons/` から `logbook/` へ移した（`exmem-index.md` の行を削除。名前は同じで `[[ ]]` は有効）。
+- `user-manual` の Facts と Principles の対応表を作り（`records/2026-10-27-user-manual-facts-map.md`）、昇格済みの 6 項を `logbook/user-thinking-habits.md` の明細へ移した。未昇格の 3 項（やらないことを先に決める、引き継ぐ前提で終える、理解してから決める）は、ユーザーが捨てると決め、削除した。
 ### 2026-10-26（log.md の予算超えの整理、token-cap）
 - `log.md` を 6.4KB から約 4KB に縮めた。経緯の細部（第1陣 5 ファイルの確認、`ai-work-metrics` の ③ の畳み、移した先の `logbook/*-log.md` の名前、`user-thinking-habits` の公開範囲の解消の経過）は `decisions.md` と `records/` にある。Next Actions の意味は変えていない。
 

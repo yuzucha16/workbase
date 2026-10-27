@@ -88,12 +88,7 @@ sources:
 ### Open Questions
 
 - バックアップ対象: （2026-10-03 時点の記述。2026-10-05 にトップは実ディレクトリ `C:\vault\works`（旧 `notes`）になり、ジャンクションではなくなった。2026-10-06 にさらに `$HOME\works` へ移った。見直しが必要）ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
-- 解決（2026-10-05）: 旧 `notes` の公開範囲の問いは、`workbase` を非公開で新設したので、`workbase` の公開範囲の問い（公開するなら、先に exmem に勤務先固有の情報が無いか確認する）に置き換わった。
-- 解決（2026-10-05）: `links.map` から `..\notes|%NOTES_DIR%` を外した。`30_link.bat link -n`（ドライラン）で、`windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` が解決されることを確認し、同じ内容の `mklink /J` で `.obsidian` のジャンクションを張った（通しの実行は未確認）。
-- 解決（2026-10-05、Windows のみ）: `50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、既にあれば skip）を足した。Linux は未対応（TODO）。
 - 旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか（2026-10-05 時点で未決）。あわせて、旧 GitHub リポジトリを削除する時期（残し続けるか）、`git bundle` の保存先（Vault のディスクの外）と世代管理、旧 clone を消すときに Claude の履歴キー4つを残すか、バックアップを定期実行する仕組みを入れるか（2026-10-06 に追加）。
-- 解決（2026-10-06）: 他の PC で新規にトップを作るときの `certs` の置き場は、`$HOME\.certs` に変えたので、「workflowを導入して」の生成に含めない（作成は dotfiles の `10_env.bat`）。
-- 解決（2026-10-18）: `WSLENV` の `名前/p` は、Windows のパスを WSL のパスに変換して渡す指定で、実機で動いた。2026-10-06 に渡らなかった原因は、区切りが `;` だったこと（上の「置き場を `$HOME\works` へ移す」の Facts）。他の PC は、`10_env.bat` の再実行まで `;` のままなので、渡らない（`10_env.bat` は `;` を `:` に直す）。
 - 既存の WSL の `~/vault`（旧 `GHQ_ROOT`。`ghq` の clone を含む）の中身を、`~/works` へ移すか。WSL の dotfiles のリンク（旧 `/mnt/c/vault/repos/…` を指す）を張り直すか。`C:\vault` を消す前に決める。
 - 新しい業務用 PC で、dotfiles の `50_repos` から `room mkworks`（旧「workflowを導入して」）までの順で、この構造を再現して確認する。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。

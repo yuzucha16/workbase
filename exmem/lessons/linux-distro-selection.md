@@ -99,7 +99,6 @@ sources:
 
 ## Next Actions
 
-- MX Linux 25をインストールし、Xfce環境に慣れる。
 - Zedは公式インストールスクリプトまたはFlatpakで導入する（debian.griffo.ioのtrixie対応を事前に確認）。
 - Neovimは当面apt標準版で運用し、不足を感じたら公式リリース版を検討する。
 - Mozcセットアップ（fcitx5 + fcitx5-mozcなど）とUSBデバイス周り（`lsusb` / udevルール作成）の学習用お題を決める。

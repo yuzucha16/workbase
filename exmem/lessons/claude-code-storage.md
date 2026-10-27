@@ -176,10 +176,8 @@ Claude Code（Zed の ACP 経由を含む）で、セッションの費用・ID 
 - Zed 経由で Stop フックが動くか。アダプタが設定を読むのでコード上は動くはずだが、実機では未確認。
 - WSL2 の対話モードで入力が同じ形か。
 - サブエージェントの分が、メインの transcript に入るか。
-- 提案: 費用の記録と応答本文の保存を、同じ1つの Stop フックのスクリプトにまとめる。応答本文は日付ごとの Markdown に追記する（AI の提案。未承認）。
 - 提案: 画面の見づらさは、まず `/focus` を試す（AI の提案。未承認）。
 - `/focus` で、直前のターンより前の過去ログがどう見えるか。
-- 応答本文の保存先を、AI 作業部屋の中では `ai/records/` の下、部屋の外ではリポジトリの外にする案で足りるか。
 
 ### Next Actions（Stop フックによる記録）
 
@@ -232,11 +230,9 @@ Claude Code（Zed の ACP 経由を含む）で、セッションの費用・ID 
 
 - `~/.claude` の手書き設定のうち、`settings.json` は管理済み（dotfiles が管理。WSL・Windowsとも適用済み、2026-10-04 に確認。[[claude-code-permissions]]）。`CLAUDE.md` と `projects\<プロジェクト名>\memory\` をdotfilesで管理するかは未決。
 - Claude Desktop の Code 機能から、ローカルの履歴が見えるか。
-- 解決（2026-10-07）: `claude --resume` が通らない原因は何か。picker が SDK 経由のセッションを除外していたことと、`cwd` が旧パスだったこと（「履歴の移行と再開」）。
 
 ## Next Actions
 
-- （2026-10-07 に解消）`--resume` が通らない原因は特定できた。上の「履歴の移行と再開」の手順を使う。構造的な旧パス（`attachment` の約6件）の書き換えは、結局試していない。
 - ターミナルで `$HOME\works\resources\exmem`（2026-10-06 以前は `C:\vault\works\resources\exmem`）に移動して `claude --resume` を実行し、コピーした履歴が表示されるか確認する。あわせて、`projects\` のどちらのフォルダに書き込まれるかを確認し、使われなかった方を削除する。
 
 ## Related
