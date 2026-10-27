@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-27（integrate の読む量の上限）: Next Actions 2 を実行。xmem/inbox/ は今は空で、172k の型（下書き 14 本の全文読み）は再発しない。次に効くのは大きい lessons（workflow-kit.md 60KB、i-isolated-work-room.md 58KB、obsidian-vault.md 56KB、shell-script-testing-wsl.md 41KB）。ee が承認（数値は「3、20KB」）し、integrate-hook.md に「読む量の上限【仮 〜11-29】」を追加（下書き 3 本、20KB 超は節読み、重複読みなし、100k で区切る）。大きい lessons の分割は Next Actions に積んだ。room の 107k の確認は room 側データ待ち。wrap。
+
 - 2026-10-27（PC2 の 172k の分解）: 傾向分析の「1 依頼で大きく増える会話」を PC2 の 1 本（172k、依頼 1）で分解。最初に「98 回の自走」と報告したが、jsonl の行数（内容ブロックごとに重複）を数えた誤りで、実際は応答 27 回。主因は全文読み 47 回（Read 58 回）。28 ファイルの 66% は `exmem/inbox/` の下書き 14 本と `exmem/lessons/` 5 本で、`integrate` の型。`usage_report.py` と `cap_meter.py` は重複を除いており、合計は正しいと確認。ee の順番は、重複の確認 → 種類別の仕訳 → wrap、止める基準の案は別セッション。`records/2026-10-27-pc2-one-request-172k.md`。wrap。
 
 - 2026-10-27（PC1 の room 側の実測）: ee の「10-20 以降は WSL 側」の推測を確かめた。この PC の room-myenv には 10-25 の試運転の 5 会話（7.25M）だけ。ee が PC1 の room 内で `cap_meter.py --root /home/ai/.claude/projects` を実行し、10-21〜27 は 78.80M（37 会話）。合算 約 170.7M（85%）で、勤務先の表示との差は 88M → 約 16M。room の土台は約 18k（Windows 側 31k）。残り約 29M で 1〜2 日で尽きる見込みを伝え、ee は重い作業を止める、退避の手順を作る、分析は別セッションと決めた。`records/2026-10-27-pc1-room-meter.md`。wrap。

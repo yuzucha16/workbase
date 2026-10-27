@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-27（token-cap: integrate の読む量の上限）
+- ユーザーが承認し、workflow-kit/integrate-hook.md に「読む量の上限【仮 〜11-29】」を足した（下書き 3 本、20KB 超は節読み、重複読みなし、100k で区切る）。大きい lessons の分割は token-cap の Next Actions に積んだ。
 ### 2026-10-27（review 消化: md-link-graph の道具を kit へ、仮決めの整理）
 - 待ち行列は無し。期限切れの【仮】のうち、定例（10-20）を正式化、v7 を採用、v5 を取り下げ。11-09 の仮決めは 2 件（字数の数え方、v6）。
 - NA 4: 道具 3 本と場面の一覧を `workflow-kit/` へ移し、`mktriggers.py` を統合、`graph.html` を都度生成にした（`89f7adb`）。トピックは 11-08 まで残す。

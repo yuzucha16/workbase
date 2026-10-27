@@ -48,6 +48,15 @@
 8. 統合したメモを inbox から削除する。削除の前に、上の「手順」の「メモと統合先の照合」を行う。
 9. 削除の後、`python <kit>/tools/find_knowledge.py --check-triggers` を実行する（`lessons/` と `guides/explain/` の全ノートに `triggers:` が1〜15語あるか）と、`--check-index`（`exmem-index.md` の行と `lessons/` のノートが一致するか）を実行する。FAIL は直してからコミットする。
 
+### 読む量の上限【仮 〜2026-11-29】
+
+読んだ内容は以後の全応答に乗る（2026-10-27 ユーザーの承認。根拠は `topics/token-cap/records/2026-10-27-pc2-one-request-172k.md`）。
+
+1. 1 会話で統合する下書きは 3 本までにする。超える分は次の会話に回す。
+2. 統合先の `lessons/` が 20KB を超えるときは、見出しを Grep で探し、該当節だけを `offset` と `limit` で読む（全文読みはしない）。
+3. 同じファイルを 2 回読まない。照合で読み直すときは、節だけにする。
+4. 会話が 100k に近づいたら、統合を区切ってコミットし、会話を切る。
+
 ### `kind: explain` のメモ（理解ガイド）
 
 frontmatter の `kind` が `explain` のメモは、上の統合の細則のうち次を読み替える。`kind` が無い、または `lesson` のメモは、上のとおり。
