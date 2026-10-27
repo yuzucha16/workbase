@@ -9,7 +9,7 @@
 - **ee は今月の残りの重い作業を止める**（10-27）。切る目安は「作業の区切り（Task 1 件）、または 100k」の早いほう（`docs/decisions.md`）。
 - room の会話記録の置き場は `/home/ai/.claude/projects/`。部屋を消すと記録も消える。
 - room の重い会話: 上位 10 件の最大入力はすべて 100k 超（最大 216k。Windows 側は 408k）。10-27 03:22 は 1 依頼で 107k（大きな読み込みを疑う）。`records/2026-10-27-pc1-room-heavy.md`。
-- room の会話別（10-27 時点）: 上位 1 本 14%、上位 3 本 31%、上位 10 本 66%、中央値 1.16M。ただし room は複数の mount をまとめて 1 会話で扱うので大きく見える（ee）。Windows は上位 10 本で 91%。
+- room の会話別（10-27 時点）: 上位 1 本 14%、上位 3 本 31%、上位 10 本 66%、中央値 1.16M。内訳は `records/2026-10-27-pc1-room-ranking.md`。ただし room は複数の mount をまとめて 1 会話で扱うので大きく見える（ee）。Windows は上位 10 本で 91%。
 - PC2（10-27 時点）: 251.1M（目安）、88 会話、2,733 応答、土台 27.9k、60k 超の応答 70%（トークンの 86%）。3 か所の比較表と傾向分析の骨子は `records/2026-10-27-trend-skeleton.md`。
 - 解説は `guides/explain/claude-code-cost-session-size.md`。未統合の下書き `exmem/inbox/2026-10-26-token-cap-meter-reading.md` の統合先候補はこのガイド。
 
