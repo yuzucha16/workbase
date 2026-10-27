@@ -656,9 +656,26 @@ def hidden_content(xml):
     return rows, cols
 
 
+_F_RE = re.compile(r"<f\b([^>]*?)(?:/>|>.*?</f>)", re.S)
+_CELL_RE = re.compile(r"<c\b([^>]*?)(?:/>|>(.*?)</c>)", re.S)
+
+
 def blank_hidden(xml, do_rows, do_cols):
-    """非表示の行・列のセルから、値・文字・数式（共有数式は除く）を外す。書式とセルは残す。"""
+    """非表示の行・列のセルから、値・文字・数式を外す。書式とセルは残す。
+    共有数式の親（ref を持つ f）は、空にならないセルがまだ使っているときだけ残す（残すと子が壊れるため）。"""
     hc = hidden_cols(xml) if do_cols else set()
+    rows = [(m, do_rows and attrs(m.group(1)).get("hidden") in ("1", "true")) for m in re.finditer(r"<row\b([^>]*?)>(.*?)</row>", xml, re.S)]
+
+    def target(hr, c):
+        return (hr or col_num(attrs(c.group(1)).get("r", "A1")) in hc) and _has_content(c.group(2))
+    used = set()
+    for m, hr in rows:
+        for c in _CELL_RE.finditer(m.group(2)):
+            if not target(hr, c):
+                for f in _F_RE.finditer(c.group(2) or ""):
+                    fa = attrs(f.group(1))
+                    if fa.get("t") == "shared":
+                        used.add(fa.get("si"))
     n = 0
 
     def row(m):
@@ -667,15 +684,19 @@ def blank_hidden(xml, do_rows, do_cols):
 
         def cell(c):
             nonlocal n
-            a, body = c.group(1), c.group(2) or ""
-            if not (hr or col_num(attrs(a).get("r", "A1")) in hc) or not _has_content(body):
+            if not target(hr, c):
                 return c.group(0)
             n += 1
+            a, body = c.group(1), c.group(2) or ""
             body = re.sub(r"<v>.*?</v>|<is>.*?</is>", "", body, flags=re.S)
-            body = re.sub(r'<f\b(?![^>]*t="shared")[^>]*?(?:/>|>.*?</f>)', "", body, flags=re.S)
+
+            def f(fm):
+                fa = attrs(fm.group(1))
+                return fm.group(0) if fa.get("t") == "shared" and "ref" in fa and fa.get("si") in used else ""
+            body = _F_RE.sub(f, body)
             a = re.sub(r'\s+t="[^"]*"', "", a)
             return f"<c{a}>{body}</c>" if body else f"<c{a}/>"
-        return "<row" + m.group(1) + ">" + re.sub(r"<c\b([^>]*?)(?:/>|>(.*?)</c>)", cell, m.group(2), flags=re.S) + "</row>"
+        return "<row" + m.group(1) + ">" + _CELL_RE.sub(cell, m.group(2)) + "</row>"
     xml = re.sub(r"<row\b([^>]*?)>(.*?)</row>", row, xml, flags=re.S)
     return xml, n
 
