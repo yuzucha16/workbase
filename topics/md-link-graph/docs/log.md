@@ -16,8 +16,8 @@
 
 1. 実作業での引き当て率: 初回は 2026-11-08（root `docs/log.md` の期日）。`python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。以後は `review` の入力 9。取りこぼしは `triggers:` の語を足す案にする。初日は 1 依頼だけで、判断できない。
 2. S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は、入口 1 節とフックで届くので付けない方針。実測で届かなければ見直す。
-3. 完了の判断: 完了条件（構造の問題点を数字で示し、直す案をユーザーが決める）は満たした。引き当て率の初回（11-08）の後に、閉じるかをユーザーに聞く。道具（`mdgraph.py` `mdreach.py` `mdrank.py`）と場面の一覧は 2026-10-27 に kit へ移した（`mktriggers.py` は `mdreach.py --table` に統合、`graph.html` と `triggers-prototype.md` は都度生成にして削除）。
+3. 完了の判断: 完了条件（構造の問題点を数字で示し、直す案をユーザーが決める）は満たした。引き当て率の初回（11-08）の後に、閉じるかをユーザーに聞く。
 
 ## 論点（Open Questions）
 
-- なし（論点 C は 2026-10-25 に解決）。
+- なし。

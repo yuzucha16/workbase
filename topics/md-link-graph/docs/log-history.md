@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-28（wrap の新しい規則で log.md を掃除）
+- `wrap` の新しい規則で、済んだ部分を移した。NA3: 道具（`mdgraph.py` `mdreach.py` `mdrank.py`）と場面の一覧を kit へ移した（10-27。`mktriggers.py` は `mdreach.py --table` に統合、`graph.html` と `triggers-prototype.md` は都度生成にして削除）。
 ### 2026-10-25（実機なしでできる分: 盲検に近い再測定、論点 C、索引の自動生成の案）
 - ユーザーの依頼「MD-link-graph の続き、実機なしでできるアイテム」。Next Actions のうち、1（11-08 の引き当て率）と 6（完了の判断）は日付待ち、5 は方針どおり何もしない。実機（PC1/PC2）が要る項目は、このトピックには無い（dotfiles `42c7c6a` の push は dotfiles 側の作業）。
 - 2: `triggers` を読まずに依頼文 18 件（B01〜B18）を書き、本番の `find_knowledge.py --triggers` で引いた。上位 5 件 17/18、1 位 12/18。取りこぼし B07。S01〜S26 を依頼の文で引くと S16 が 6 位（`Zed` の 1 語で同点）。IDF の重みの試算は悪くなった。

@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-28（wrap の新しい規則で log.md を掃除）
+- `wrap` の新しい規則で、済んだ項目を移した。旧名の読み替えと注記の削除（10-26。`hooks.md` の旧名の項 4 つ、`workflow-kit/README.md` の旧ファイル名、`project-structure.md` `room-context.md` `session-goal-modes.md` `ai-development-workflow.md` の注記。ディレクトリ名の改名、`Template-Rev`、`guides/explain/` の経緯、履歴は残した）と、`mkworks` の実機確認（10-26、ユーザー、問題なし）。dotfiles の旧入口を `room mkworks` に直した（dotfiles の `e53f684`、10-26 に push 済み）。OQ の診断ログと原因の台帳は承認済みで実装済み（10-25、`decisions.md` 10-27）。残りの実機（PC2 で verify）は Next Actions に残る。OQ の `brief` の引数は `topics/token-cap/` の NA 6 に移した（10-28）。
 ### 2026-10-25（実機なしで進めた分: 診断ログ・run.py・ps1 版・原因の台帳）
 - ユーザーの依頼「実機なしでできるアイテム」で、承認済みの範囲を進めた。`script-guide.md` に `run.py` の型と ps1 版（`verify.ps1` `release.ps1`）、「原因の台帳」の節を足し、`room-context.md` に1項、`check_py.py` `check-ps1.ps1` に結果ファイルと名前の点検を足した。診断ログは `diag.json` でなく `<名前>-result.json`（毎回出す）にした。台帳の実装はユーザーの承認（「今実装する」）を受けた。Linux の Python 3.13 と pwsh 7.4 で確認、Windows は未確認。コミット `483abea` `0c808b5` `f7e4d7a`（決定は root の `decisions.md` と、このトピックの `decisions.md`）。
 - 触らなかった実機の項目: `verify.bat` / `verify.ps1` の Windows での実行、`mkworks` の実機確認、`stock` の `scope: area` の実機確認、旧名の注記の削除、dotfiles のスキルの入口。

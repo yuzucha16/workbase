@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-28（wrap の新しい規則で log.md を掃除）
+- `wrap` の新しい規則（済／一部済／未。`workflow-kit/wrap-hook.md` の手順 2、`11f672f`）で、root の Next Actions の済んだ部分を移した。NA5（logbook）: 型の導入、lessons から 4 件の移動（10-26）、`user-thinking-habits` と `user-manual` の Facts の移動、「聞」の回答による 9 ファイルの畳み（10-27）。NA6（cleankit）: PC1 の実ファイルで掃除の残りが 0 件（10-27）。NA7（token-cap）: 規則側の削減（10-26）、`integrate` の読む量の上限（10-27、仮 〜11-29）、大きい lessons の分割（`1d545aa`、`29bb5e0`。6 本とも済）。NA8（wording-neutralize）: 段階 1〜3 を適用（`8918ed6`、`f4cbd96` ほか）。
 ### 2026-10-27（review 消化: NA5・NA7 の済みの部分を log から移す）
 - ユーザーが完了を確認した。NA5（logbook）の「前」の行の圧縮は `fd2b0ee` で済み、残りは引当率の確認だけにした。NA7（token-cap）の `room reap` の会話履歴の退避（`f6da784`、`85124e5`）は済みで、log の文から外した。
 ### 2026-10-27（exmem: lessons 3 本の削除）
