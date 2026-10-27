@@ -49,3 +49,5 @@
 - 2026-10-27（room の退避）: ee が「ここでやる」と決め、`room reap` が消す前に部屋の会話履歴を Windows 側 `~/.claude/room-history/<部屋>/` へ tar で写すようにした（`f6da784`。写せなければ消さずに止まる。room のテスト全 150 件 OK、実機の WSL は未確認）。集計は `cap_meter.py --root` で読める。`-home-ai` は対象外。`--check-triggers` の FAIL（16 語）は、上限を 30 語にした意図的な変更で解消済みと ee が訂正。wrap。
 
 - 2026-10-27（lessons の分割の続き）: ee の依頼で、obsidian-vault-structure（25KB）を 3 本（本体 12KB、obsidian-vault-rename、obsidian-vault-home-works）、windows-bat-testing（23KB）を 3 本（本体 7KB、windows-bat-pitfalls、windows-bat-eol-and-log）に分けた。索引・triggers 点検（fail=0）・リンクは確認済み。これで大きい lessons 6 本の分割が済んだ。
+
+- 2026-10-28（brief の引数を絞るか）: Next Actions 6 の机上の部分を進めた。引数つき `brief` の開始時の読み込みは 約 7k でなく 17〜24k（`methods.md` 全文とやり方のノートまで読むため）と測り、出力の型だけなら 1 型 0.5〜2k と分かった（`691c5a4`、`records/2026-10-28-brief-mode-load.md`）。ee は「振り返りだけで試す」を選び、`retrospective-method-output` と `-2-output` に切り出して、依頼の語を型のノートへ移した（`a9a6c5c`。`decisions.md` に記録）。索引の部分一致は「振り返って」に当たらないため、語は語幹（`振り返`）にした。
