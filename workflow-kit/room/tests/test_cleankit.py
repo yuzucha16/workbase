@@ -68,6 +68,8 @@ def build_xlsx():
           "<definedName name=\"公開範囲\">'公開'!$A$1:$B$1</definedName>"
           '<definedName name="消えた範囲">#REF!$A$1</definedName>'
           '<definedName name="外部名">[1]Sheet1!$A$1</definedName>'
+          '<definedName name="AccessDatabase" hidden="1">"C:\\Users\\dummyuser\\dummy.mdb"</definedName>'
+          '<definedName name="_xlfn.DUMMY" hidden="1">#NAME?</definedName>'
           '</definedNames></workbook>')
     s1 = (HDR + f'<worksheet {M} {R}><sheetData>'
           '<row r="1"><c r="A1" t="s"><v>0</v></c><c r="B1"><f>SUM(\'社外秘\'!B1:B2)</f><v>300</v></c>'
@@ -188,7 +190,7 @@ class XlsxTest(unittest.TestCase):
         chart = next(f for f in fs if f.code == "chart-cache")
         self.assertIn("社外秘", chart.detail)
         names = next(f for f in fs if f.code == "defined-name")
-        self.assertEqual(len(names.samples), 3)  # 社外秘を参照、極秘の印刷範囲、#REF!。公開範囲は出さない
+        self.assertEqual(len(names.samples), 4)  # 社外秘を参照、極秘の印刷範囲、#REF!、非表示の AccessDatabase。公開範囲と _xl の内部名は出さない
 
     def test_clean_removes(self):
         out, log = ck.clean(self.data, ".xlsx", list(ck.CLEAN_ACTIONS))
@@ -215,6 +217,9 @@ class XlsxTest(unittest.TestCase):
         self.assertIn('<c r="F1"><v>77</v></c>', s1)  # 外部リンクの数式は値にする
         self.assertNotIn("externalLink", "".join(t))
         self.assertNotIn("外部名", wb)
+        self.assertNotIn("AccessDatabase", wb)
+        self.assertNotIn("dummy.mdb", allt)
+        self.assertIn("_xlfn.DUMMY", wb)  # Excel 内部の名前は残す
         self.assertNotIn("ダミー外部シート", allt)
         self.assertNotIn("12345", allt)
         self.assertIn("<f>E1+1</f>", s1)  # 非表示の行の数式は、--also hidden-rows のときだけ外す

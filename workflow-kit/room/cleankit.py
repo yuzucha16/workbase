@@ -42,6 +42,7 @@ CLEAN_ACTIONS = {
     "calcchain": "計算順の一覧（calcChain）を外す（Excel が作り直す）",
     "revisions": "変更履歴（revisions）を外す",
     "ref-names": "参照先が無い（#REF!）定義名を消す",
+    "hidden-names": "非表示の定義名を消す（取り込み元のパスを持つ AccessDatabase など。_xl で始まる Excel 内部の名前は残す）",
     "external-links": "外部ブックへのリンクを切る（数式は値に、リンクの部品・外部パス・値の写し・外部を参照する定義名を消す）",
     "shared-strings": "どのセルも使っていない共有文字列を消す",
     "orphans": "関係からたどれない部品を消す",
@@ -304,7 +305,7 @@ def check_xlsx(pkg, fs):
         flag = []
         if "#REF!" in m.group(2):
             flag.append("#REF!")
-        if a.get("hidden") in ("1", "true") and not a.get("name", "").startswith("_xlnm."):
+        if a.get("hidden") in ("1", "true") and not a.get("name", "").startswith("_xl"):
             flag.append("非表示")
         if any(sheet_ref_re(s["name"]).search(_unesc(m.group(2), _XML_UNESC)) for s in hidden):
             flag.append("非表示シートを参照")
@@ -571,6 +572,15 @@ def clean_xlsx(pkg, actions, log):
         t2 = re.sub(r"<definedNames>\s*</definedNames>", "", t2)
         if t2 != t:
             log.append(f"参照先が無い定義名を消した: {len(re.findall(r'<definedName\b', t)) - len(re.findall(r'<definedName\b', t2))} 件")
+        t = t2
+    if "hidden-names" in actions:
+        def hn(m):
+            a = attrs(m.group(1))
+            return "" if a.get("hidden") in ("1", "true") and not a.get("name", "").startswith("_xl") else m.group(0)
+        t2 = re.sub(r"<definedName\b([^>]*)>.*?</definedName>", hn, t, flags=re.S)
+        t2 = re.sub(r"<definedNames>\s*</definedNames>", "", t2)
+        if t2 != t:
+            log.append(f"非表示の定義名を消した: {len(re.findall(r'<definedName\b', t)) - len(re.findall(r'<definedName\b', t2))} 件")
         t = t2
     if "abspath" in actions:
         t2 = re.sub(r"<mc:AlternateContent\b[^>]*>(?:(?!</mc:AlternateContent>).)*?x15ac:absPath(?:(?!</mc:AlternateContent>).)*?</mc:AlternateContent>",
