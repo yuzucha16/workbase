@@ -138,10 +138,8 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 
 ### この PC の実物（確認: 2026-10-11、根拠: ファイルと環境変数の取得。値は出していない）
 
-- 起動関数と設定ファイルの実体（`claude-api-key`、`claude-bedrock-setup`、`settings-api.json`、ACP 用のランチャー）と試験は、dotfiles の `windows/claude/README.md` が正（2026-10-16 に、ファイル一覧とモデルのピン留めの写しを削った）。`settings-api.json` は `~/.claude/` にリンクされ、`apiKeyHelper`、`model`、`env` のモデルのピン留めを持つ。Bedrock の設定は `~/.claude/settings-bedrock.json`（この PC 専用。リポジトリには置かない。秘密を含まない）に生成される。
-- PowerShell のプロファイルの起動関数は `claude-api`（`claude --settings "$HOME\.claude\settings-api.json"`）、`claude-bedrock`、`claude-oauth`、`claude-pick`。
-- 共通の `~/.claude/settings.json` のキーは `theme` と `permissions` だけで、`env`・`apiKeyHelper` は無い。ユーザー環境変数に `ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_USE_BEDROCK` は無い。`~/.claude/settings-api-key.dpapi` と `.credentials.json` がある。
-- Zed 経由の Claude Code（ACP）のプロセスの環境に、値が空の `ANTHROPIC_API_KEY` が存在する（確認: 2026-10-08、根拠: `Get-ChildItem Env:` の実行。転記元の記録で、再確認は未実施）。
+- 起動関数（`claude-api`、`claude-bedrock`、`claude-oauth`、`claude-pick`）と設定ファイルの実体は、dotfiles の `windows/claude/README.md` が正。共通の `~/.claude/settings.json` は `theme` と `permissions` だけで、`env`・`apiKeyHelper`・認証用のユーザー環境変数は無い。Bedrock の設定は `~/.claude/settings-bedrock.json`（この PC 専用。リポジトリには置かない）に生成される。
+- Zed 経由（ACP）のプロセスの環境に、値が空の `ANTHROPIC_API_KEY` がある（確認: 2026-10-08。再確認は未実施）。
 
 ## Gotchas
 

@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-27（畳み候補の「前」の圧縮）
+- 「前」の 8 行を圧縮した（auth-providers、obsidian-vault-backup、obsidian-vault-structure、shell-script-testing-wsl、workflow-kit 2 件、para-operations 2 件）。一覧の行番号が現状とずれていたため、grep で現在の節を探して直した。6 ファイルの `updated:` を更新。`decisions.md` に 1 項。
+- 旧名の更新（旧 Next Actions 3）は畳みで吸収として閉じ済み。
+
 ### 2026-10-27（畳み候補の「聞」への回答）
 - ユーザーが「聞」に回答し、AI が 9 ファイルを編集した（auth-providers、linux-distro-selection、shell-script-testing-wsl、ai-isolated-work-room、session-handoff、claude-code-storage、obsidian-vault-backup、obsidian-vault、obsidian-vault-home-works）。room は決定 2 件を足した。session-handoff の TTL は Next Actions へ。範囲の判断は `decisions.md`。
 - 旧名の更新（Next Actions 3）は「畳みで吸収」として閉じた。

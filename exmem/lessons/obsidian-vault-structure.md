@@ -24,9 +24,7 @@ sources:
 ### 現在の構造（2026-10-05）
 <!-- 版依存: 一方向 / 確認: 2026-10-06 -->
 
-2026-10-06 の変更: トップの名前を `notes` から `works` に改め（`C:\vault\works`、環境変数は `NOTES_DIR` から `WORKS_DIR`）、`C:\vault\certs` を `works\areas\dev-env\certs\`（`CERTS_DIR`）へ移すと決めた（同日のうちに、置き場を `$HOME\.certs` に変更した。[[obsidian-vault-rename]] の Decisions）。以下の図は `works` に直した。本文の `notes` は、2026-10-05 時点の名前のまま残す（旧 `notes` は、アーカイブ済みの GitHub リポジトリの呼称でもある）。根拠と却下案は、トップの `docs/decisions.md`。
-
-2026-10-06 の第2の変更（同日の夕方）: トップを `C:\vault\works` から `$HOME\works`（Windows は `%USERPROFILE%\works`）へ移し、ghq の root を `$HOME\works\repos` にした。置き場は1つだけなので、親の `C:\vault` を畳んだ（ユーザーの決定）。以下の現在形の記述（図、環境変数、場所）は `$HOME\works` に直した。`C:\vault\works` と書かれた日付つきの履歴は、当時のパスのまま残す。Linux 側（WSL・ネイティブ）も `~/works`、`~/works/repos` にそろえた。この移動の原則・決定・事実・遭遇したことは、[[obsidian-vault-home-works]]にまとめた。
+2026-10-06 の変更: トップの名前を `notes` から `works` に改め（環境変数は `NOTES_DIR` から `WORKS_DIR`）、`certs` の置き場を `$HOME\.certs`（`CERTS_DIR`）にした（[[obsidian-vault-rename]] の Decisions）。同日の夕方、トップを `$HOME\works` へ移し、ghq の root を `$HOME\works\repos` にした（親の `C:\vault` は畳んだ。Linux 側も `~/works`）。以下の図と現在形の記述は `$HOME\works` に直した。本文の `notes` と日付つきの履歴は、当時の名前・パスのまま。移動の原則・決定・事実は [[obsidian-vault-home-works]] にある。根拠と却下案は、トップの `docs/decisions.md`。
 
 **現在の状態（確認: 2026-10-06、根拠: ユーザーの確認、起動したセッション、dotfiles の試験）**: 環境変数は `WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` は `%USERPROFILE%\.certs`（`VAULT_HOME` は廃止。`NOTES_DIR` は未設定）。Obsidian と Claude Code は、新しい場所で動いた。`.obsidian` は dotfiles へのジャンクション。WSL へは `WSLENV` の `WORKS_DIR/p` で渡す設計だが、実機の WSL では渡っていなかった（確認: 2026-10-06、[[obsidian-vault-home-works]]の Facts）。dotfiles の Linux の試験は 51/51 合格（再実行で再確認: 2026-10-06）。未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。旧 `C:\vault`（旧 clone とバックアップ）は、この `--resume` の試験のために、削除せずに残している（ユーザーの指示）。rename の判断・原則・遭遇したことは、[[obsidian-vault-rename]]にまとめた。
 2026-10-05 に、2026-10-02 に決めた目標の構造から変更した。経緯は、下の「過去の構造」と、Decisions の「撤回済み」の注記に残す。

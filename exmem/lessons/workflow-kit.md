@@ -142,10 +142,9 @@ sources:
 - 根拠: 統合のときに、見出しの有無を迷わずに済む。
 - 却下案: 該当が無い見出しを省略する（旧モバイル用プロンプトの方式）。
 
-### 改善の受け皿は `improvements.md` 1つ。確認は「ナレッジ化して」の実行後の手順に組み込み、承認制にする（2026-10-04）
+### 改善の受け皿は `improvements.md` 1つ（2026-10-04。撤回・置換済み）
 
-- 根拠: 1か所で、日付・発生元・提案・状態を1行ずつ並べて見られる。フックを使った直後が、不足に最も気づきやすい。共通機能の変更は、全ディレクトリの出力に影響する。
-- 却下案: 各ディレクトリの `docs/log.md` にだけ残す（散る）、外部の課題管理ツール（小さく始める方針に合わない）、定期レビューだけにする（記憶が薄れる）、AI が提案と同時に直す（承認なしの変更で出力が揺れる）。
+- `improvements.md` は 2026-10-15 に凍結し、受け皿は `topics/kit-growth/` に移った。
 
 ### 校正の3原則を、共通機能の README に常設する（2026-10-04。ユーザーの指示）
 
@@ -168,7 +167,7 @@ sources:
 
 - 復元の手順（2026-10-04、実際に実行）: 一覧は `git log --format='%h %ad %s' --date=short -- <パス>`、変更範囲は `git show --stat <ハッシュ> -- <パス>`、設定値の変化は `git show <ハッシュ> -- <ファイル>` の差分。差分から正確に分かるのは、ファイルの追加・削除と設定値の変化。多くのコミットメッセージは、変更内容だけで理由が書かれていない（11コミットで確認）。理由の手掛かりは、`.gitattributes` や CSS のコメント、既存ナレッジの Proposals など。
 - 履歴を作り直した（単一コミットにした）リポジトリでは、それより前の履歴が残っていない（移管元で `git log --all -- <パス>` が初期コミットと移管コミットしか返さなかった）。
-- 実物（2026-10-04）: `resources/workflow-kit/` に `AGENTS.md`、`README.md`、`docs-rules.md`、`knowledge-hook.md`、`setup-hook.md`、`improvements.md`、`examples/`、`templates/` がある（2026-10-06 に再確認: `tools/` に `check-inbox.ps1`、`find-knowledge.ps1`、`check-docs.ps1` が加わった。`docs-rules.md` に「decisions.md の項目の行き先」の節がある）。`notes/AGENTS.md` が共通ルールの参照先と読む時機を持ち、`notes/docs/` に `log.md` と `decisions.md` がある（`notes/docs/` はローカル専用）。`improvements.md` には採用済みの提案が大半で、「提案」の状態が3件ある（Claude 用スキル、`contexts/` を消化する手段、実際のメモでの校正。kit の版の記録は採用済み）。
+- 実物（2026-10-04 の構成。現況は `workflow-kit/README.md` が正）: `notes/AGENTS.md` が共通ルールの参照先と読む時機を持ち、`notes/docs/`（ローカル専用）に `log.md` と `decisions.md` がある。
 - （2026-10-05 以前の記述）`notes` では `resources/` だけが Git 共有で、`projects/` `areas/` `archives/` はローカル専用だった。2026-10-05 以降は、`workbase`（`resources/`）が共有で、Vault のトップ（`projects/` `areas/` `archives/` `docs/`）は PC ごとのローカルなリポジトリ。そこに置いた `docs/` は、共有の `workbase` には載らない。
 - Windows の `$HOME\works\resources\workflow-kit\` 以下を読める。WSL からも `/mnt/c/Users/<Windows のユーザー名>/works/resources/workflow-kit/` が読める（確認: 2026-10-06、根拠: 移動前の `C:\vault\works` で、WSL の `ls`。移動後の実機の WSL での確認は未実施）。作業ディレクトリの外のファイルを `@` で取り込むと、初回に承認が要る可能性がある（仮説）。
 - コミットの身元とトレーラー（2026-10-06 に実物と照合）: `docs-rules.md` と `improvements.md`、`README.md` の版 `2026-10-06.1` の記述が、決定の内容と一致した。`git commit --trailer` で付け、`git log -1 --format='%(trailers:key=Kit-Rev,valueonly)'` で取り出せる（git 2.56.0 Windows で確認）。`-dirty` は、クリーン=なし、変更=あり、変更を戻した=なし、未追跡=あり、ステージのみ=あり、`.gitignore` 除外=なし（一時ディレクトリで確認）。kit 自身のコミットは、コミット前に未コミットの変更があるため `Kit-Rev` が `<親のハッシュ>-dirty` になる。
@@ -179,7 +178,6 @@ sources:
 - 一時ディレクトリの試験で、空のトップ、既存の中身がある場合（中身は追跡されず、実ディレクトリの `.obsidian` も含まれない）、中止条件3種（既にコミットがある、`user.email` が仮値、機密らしき行）が、期待どおりだった（確認: 2026-10-05、根拠: メモに記録された試験の出力）。
 - 取り消しは、`git revert --no-commit` で戻し、戻した後の内容が元の版と一致することを `git diff` で確認してから、取り消しの記録を足してコミットした（確認: 2026-10-05、根拠: メモの記録）。
 - inbox のメモをコミットしない規則は、すぐに効いた。別のセッションが作った未追跡のメモが、コミットの対象から外れて残った（確認: 2026-10-05、根拠: メモの記録。この整理の開始時の `git status` でも、inbox のメモが未追跡だった）。
-- kit の版は、2026-10-05.8 になっている（確認: 2026-10-05、根拠: `workflow-kit/README.md`）。.8 は、自己点検の機械確認（`tools/check-inbox.ps1`）と、同じスレッドで `knowledge/` を編集済みのときの「統合時の重複」の記載を足した。
 
 ## Gotchas
 

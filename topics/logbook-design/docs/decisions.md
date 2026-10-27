@@ -2,6 +2,12 @@
 
 ## Decisions
 
+### 【この件】畳み候補の「前」の 8 行を圧縮する（2026-10-27）
+- 決めたこと（ユーザー）: 「前」の 8 行を、AI の案のとおり圧縮する。para-operations の開始インタビューの項も、確認でなく圧縮する。
+- 根拠: ユーザーの発言: 「まとめて承認します。進めてください。」「開始インタビュー（旧 start）の項は「確認」とありますが、圧縮してください。」
+- 範囲の判断（AI）: 一覧の行番号は分割前の `obsidian-vault` などのものだったため、現在の `exmem/lessons/` の該当節に当てた（撤回済み 3 項は `obsidian-vault-backup`、移動の経緯は `obsidian-vault-structure`）。`workflow-kit` の版 `2026-10-05.8` の行は削除した。
+- 見直しの条件: 圧縮前の中身が要ると分かったら git から戻す。
+
 ### 【この件】畳み候補の「聞」への回答と閉鎖（2026-10-27）
 - 決めたこと（ユーザー）: ① Stop フック（Zed・WSL2）は確認済みで、関連の OQ/NA を閉じる。② 旧 `C:\vault` は削除済みで、後始末の OQ/NA を閉じる。58em は使用継続で確定。③ auth-providers の AI の提案 4 項と OIDC の項は捨てる。④ room: 16 KiB 警告（a）は承認、Ubuntu 26.04（e）は決定にする、b〜d は捨てる、実機確認 9 項は完了で閉じる。⑤ linux-distro-selection と shell-script-testing-wsl の残りは消す。⑥ session-handoff の OQ 1・2 は閉じ、3（ローカルの TTL）は扱われていなければ Next Actions に移して閉じる。⑦ 旧名の更新（Next Actions 3）は畳みで吸収として閉じる。
 - 根拠: ユーザーの発言: 「できていました。close」「vaultは消しました close」「使用を続けています。close」「auth-providersはすべて捨てます」「eは対応したので決定にしてください。aは承認。b-dはomitします」「1-9すべて完了してます。問題なし。close」「linux:消します」「shell-script:消します」「あなたの理解でOK」「良いです。閉じてください」。

@@ -7,11 +7,11 @@
 - `logbook/` の型を 2026-10-26 に決め（7 点、`decisions.md`）、`logbook/README.md` と `find_knowledge.py --check-aging` を入れた。`exmem/lessons/` の 6 ファイルに版依存の印を付けた（78df71b）。
 - 置き場: workbase 直下の `logbook/`（仮決め）。入る型は ①時系列の観測・測定、②版・時点に縛られる事実、③試行の途中。個人の好み・1 回きりの構成記録は含めない。
 - ② は移さず、lessons の節に印（`<!-- 版依存: 一方向|並存 / 確認: 日付 -->`）を付けて残す。降格するのは ①③ だけ。判断は 3 段チェック（確認の単位はファイル、降格と印の単位は節）。
-- 第1〜3陣の本文確認は済み（`records/2026-10-26-wave{1,2,3}-review.md`）。第1陣の待ち行列 8 件は判断済み。2026-10-27 に畳み候補の「済」を削除し、`user-thinking-habits` と `user-manual` の Facts を移し、「聞」にユーザーが回答して 9 ファイルを畳んだ（`decisions.md`）。
+- 第1〜3陣の本文確認は済み（`records/2026-10-26-wave{1,2,3}-review.md`）。第1陣の待ち行列 8 件は判断済み。2026-10-27 に畳み候補の「済」を削除し、`user-thinking-habits` と `user-manual` の Facts を移し、「聞」にユーザーが回答して 9 ファイルを畳んだ。「前」の 8 行も圧縮した（`decisions.md`）。
 
 ## Next Actions
 
-1. 畳み候補（`records/2026-10-26-fold-candidates.md`）の残り: 「前」（書き直すか圧縮する行）と「残」。「聞」は回答済みで畳んだが、判断が付かず残した項目がある（room の OQ 4 項、obsidian-vault-backup の NA 3 項、claude-code-storage の旧キーの OQ/NA、para-operations の OQ。範囲の判断は `decisions.md`）。
+1. 畳み候補（`records/2026-10-26-fold-candidates.md`）の残り: 「残」（残す）だけ。「前」は 2026-10-27 に圧縮した。「聞」は回答済みで畳んだが、判断が付かず残した項目がある（room の OQ 4 項、obsidian-vault-backup の NA 3 項、claude-code-storage の旧キーの OQ/NA、para-operations の OQ。範囲の判断は `decisions.md`）。
 2. 印の付け忘れの確認: `shell-script-testing-wsl` は節単位の版依存が無く付けていない。
 3. `--check-aging` は、この PC で Python がブロックされ未実行（別の PC で実行する）。
 4. 別セッションで、`logbook/` が上位の md から辿れるかを確かめる(引当率、`topics/md-link-graph/` の道具)。
