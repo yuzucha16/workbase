@@ -17,8 +17,9 @@
 
 ## 使い方
 
-- 再生成: リポジトリのトップで `python -I topics/md-link-graph/tools/mdgraph.py`。出力は `records/graph.html`（1枚、外部通信なし。ブラウザで開く）。
-- 場面ごとの到達: `python -I topics/md-link-graph/tools/mktriggers.py` で表を作り、`python -I topics/md-link-graph/tools/mdreach.py --table topics/md-link-graph/records/triggers-prototype.md`。場面は `records/scenarios.md`。`mdgraph.py` は `--kinds wiki md include tick` で辺の種類を絞れる。
+- 道具は 2026-10-27 に `workflow-kit/tools/` へ移した（測り方は `review-triggers-check.md`）。
+- 再生成: リポジトリのトップで `python -I workflow-kit/tools/mdgraph.py`。出力は一時フォルダの `md-link-graph.html`（1枚、外部通信なし。ブラウザで開く。コミットしない）。
+- 場面ごとの到達: `python -I workflow-kit/tools/mdreach.py --table`。場面は `triggers-scenarios.md`（kit）。`mdgraph.py` は `--kinds wiki md include tick` で辺の種類を絞れる。
 - 数える辺: `[[wikilink]]`、`[](x.md)`、行頭の `@x.md`、バッククォート内の `x.md`。起点（`AGENTS.md` `README.md` `docs/log.md`）からの最短の深さ、強連結成分（循環）、入次数 0、未到達を出す。
 
 ## 読む順

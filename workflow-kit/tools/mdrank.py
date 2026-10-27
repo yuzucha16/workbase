@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """場面の依頼文を、本番の索引（find_knowledge.py --triggers）で引き、期待ノートの順位を数える（2026-10-25）。
 
-使い方: python -I topics/md-link-graph/tools/mdrank.py [リポジトリのルート] [--scenarios 場面.md] [--top 5]
-場面は records/scenarios.md の S 行（2列目の「場面」の文）と B 行（2列目の依頼文）。期待ノートは、S 行は4列目、B 行は3列目のバッククォートのパス。
+使い方: python -I workflow-kit/tools/mdrank.py [リポジトリのルート] [--scenarios 場面.md] [--top 5]
+場面は workflow-kit/triggers-scenarios.md の S 行（2列目の「場面」の文）と B 行（2列目の依頼文）。期待ノートは、S 行は4列目、B 行は3列目のバッククォートのパス。
 期待ノートが索引の対象（lessons・guides/explain・inbox）に無い場面は「対象外」として数えない。
 出力は件数と、1 位でない場面だけ（読むだけ。ノートは直さない）。mdreach.py が語の列で測るのに対し、こちらは依頼の文で測る。
 """
@@ -12,8 +12,8 @@ from pathlib import Path
 sys.dont_write_bytecode = True  # kit の tools/ に __pycache__ を作らない
 HERE = Path(__file__).resolve()
 ap = argparse.ArgumentParser()
-ap.add_argument("root", nargs="?", default=str(HERE.parents[3]))
-ap.add_argument("--scenarios", default=str(HERE.parents[1] / "records" / "scenarios.md"))
+ap.add_argument("root", nargs="?", default=str(HERE.parents[2]))
+ap.add_argument("--scenarios", default=str(HERE.parents[1] / "triggers-scenarios.md"))
 ap.add_argument("--top", type=int, default=5, help="本番の既定（find_knowledge.py --triggers の上位件数）")
 a = ap.parse_args()
 root = Path(a.root).resolve()

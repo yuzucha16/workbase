@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """Markdown の参照グラフを数えて、1枚の HTML（外部通信なし）にする。
 
-使い方: python -I topics/md-link-graph/tools/mdgraph.py [リポジトリのルート] [--out 出力.html] [--start AGENTS.md ...]
-既定: ルート = この files の 3 つ上（リポジトリのトップ）、起点 = AGENTS.md README.md docs/log.md、
-出力 = topics/md-link-graph/records/graph.html。辺の種類: wiki（[[名前]]）、md（[](x.md)）、include（行頭の @x.md）、tick（`x.md`）。
+使い方: python -I workflow-kit/tools/mdgraph.py [リポジトリのルート] [--out 出力.html] [--start AGENTS.md ...]
+既定: ルート = この files の 2 つ上（リポジトリのトップ）、起点 = AGENTS.md README.md docs/log.md、
+出力 = 一時フォルダの md-link-graph.html（コミットしない。都度生成）。辺の種類: wiki（[[名前]]）、md（[](x.md)）、include（行頭の @x.md）、tick（`x.md`）。
 """
-import argparse, collections, html, json, re, sys
+import argparse, collections, html, json, re, sys, tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve()
 ap = argparse.ArgumentParser()
-ap.add_argument("root", nargs="?", default=str(HERE.parents[3]))
+ap.add_argument("root", nargs="?", default=str(HERE.parents[2]))
 ap.add_argument("--out", default=None)
 ap.add_argument("--start", nargs="*", default=["AGENTS.md", "README.md", "docs/log.md"])
 ap.add_argument("--kinds", nargs="*", default=["wiki", "md", "include", "tick"], help="数える辺の種類（wiki md include tick）")
 a = ap.parse_args()
 root = Path(a.root).resolve()
-out = Path(a.out) if a.out else HERE.parents[1] / "records" / "graph.html"
+out = Path(a.out) if a.out else Path(tempfile.gettempdir()) / "md-link-graph.html"
 
 SKIP = {".git", "node_modules", ".obsidian"}
 def is_unlinked_by_design(p):
@@ -226,6 +226,7 @@ const infoEl=document.getElementById('info');
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(PAGE.replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")), encoding="utf-8", newline="\n")
 s = data["stats"]
+print(f"出力: {out}")
 print(f"{len(nodes)} ファイル / {s['edges']} 辺 / 到達 {s['reach']} / 最大の循環 {s['scc_big']} / 深さ {s['depth']}")
 print(f"未到達 {s['unreach']} / 入次数 0 {len(s['orphans'])} / 最大の循環の割合 {round(100 * s['scc_big'] / s['files'])}%")
 for label, key in (("未到達", "unreached"), ("入次数 0", "orphans")):

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """場面ごとの到達を数える（md-link-graph の論点 D の (a)）。
 
-使い方: python -I topics/md-link-graph/tools/mdreach.py [リポジトリのルート] [--scenarios 場面.md]
+使い方: python -I workflow-kit/tools/mdreach.py [リポジトリのルート] [--scenarios 場面.md] [--table]
+--table: lessons の frontmatter の triggers: から作業の言葉の表を（ファイルにせず）メモリ上で作り、起点に足す。
 各場面で、起点（AGENTS.md README.md docs/log.md）から、作業の言葉が書かれた行にあるリンクだけを辿り、
 期待ノートに何ホップで着くかを出す。比較として、言葉を問わず辿った最短ホップ（構造上の距離）も出す。
 辺の種類は mdgraph.py と同じ（wiki / md / include / tick）。
@@ -11,13 +12,14 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve()
 ap = argparse.ArgumentParser()
-ap.add_argument("root", nargs="?", default=str(HERE.parents[3]))
-ap.add_argument("--scenarios", default=str(HERE.parents[1] / "records" / "scenarios.md"))
+ap.add_argument("root", nargs="?", default=str(HERE.parents[2]))
+ap.add_argument("--scenarios", default=str(HERE.parents[1] / "triggers-scenarios.md"))
 ap.add_argument("--start", nargs="*", default=["AGENTS.md", "README.md", "docs/log.md"])
-ap.add_argument("--table", default=None, help="作業の言葉の表。起点の AGENTS.md の 1 行の指示で毎回読まれる前提で、起点に足す")
+ap.add_argument("--table", action="store_true", help="作業の言葉の表（triggers: から作る）。毎回読まれる前提で、起点に足す")
 a = ap.parse_args()
+TABLE = "(triggers-table)"
 if a.table:
-    a.start = a.start + [Path(a.table).resolve().relative_to(Path(a.root).resolve()).as_posix()]
+    a.start = a.start + [TABLE]
 root = Path(a.root).resolve()
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -59,6 +61,15 @@ for r, p in files.items():
                 t = resolve(r, m.group(1))
                 if t and t != r:
                     links[r].append((t, line))
+
+
+if a.table:
+    files[TABLE] = None
+    for p in sorted((root / "exmem" / "lessons").glob("*.md")):
+        m = re.search(r"^triggers:\s*\[(.*?)\]\s*$", p.read_text(encoding="utf-8").split("\n---", 1)[0], re.M)
+        if m:
+            words = [w.strip() for w in m.group(1).split(",") if w.strip()]
+            links[TABLE].append((p.relative_to(root).as_posix(), " / ".join(words)))
 
 
 def hops(goal_set, words):
