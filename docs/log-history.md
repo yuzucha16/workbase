@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-27（review 消化: NA5・NA7 の済みの部分を log から移す）
+- ユーザーが完了を確認した。NA5（logbook）の「前」の行の圧縮は `fd2b0ee` で済み、残りは引当率の確認だけにした。NA7（token-cap）の `room reap` の会話履歴の退避（`f6da784`、`85124e5`）は済みで、log の文から外した。
 ### 2026-10-27（exmem: lessons 3 本の削除）
 - ユーザーの依頼で `exmem/lessons/` から `keyboard-switches`、`linux-distro-selection`、`zed-vim` を削除した。これらの Next Actions と Open Questions も一緒に消えた。リンク元のノートは消さず、3 本への `[[…]]` だけを文ごと外した（`exmem-index.md`、`triggers-scenarios.md` の S16・S19・B04 の行も）。`topics/logbook-design/` の経緯の記録にある旧名は、履歴として残した。
 ### 2026-10-27（wording-neutralize: トピックの起票）
