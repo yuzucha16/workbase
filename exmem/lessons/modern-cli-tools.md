@@ -106,7 +106,7 @@ WSLの既定ディストロでコマンドの有無を確認した。
 | `eza` / `broot` / `ghq` | なし |
 | `nvim` | なし |
 
-- Zedのターミナルは `pwsh.exe` になっている（2026-10-02 確認）。メモが前提にしていたWSL/Zshは、Zedの既定シェルではない（[[wsl-file-placement]]、[[zed-vim]]）。
+- Zedのターミナルは `pwsh.exe` になっている（2026-10-02 確認）。メモが前提にしていたWSL/Zshは、Zedの既定シェルではない（[[wsl-file-placement]]）。
 
 ## Gotchas
 
@@ -137,6 +137,4 @@ WSLの既定ディストロでコマンドの有無を確認した。
 ## Related
 
 - [[wsl-file-placement]]
-- [[linux-distro-selection]]
-- [[zed-vim]]
 - [[obsidian-vault]]

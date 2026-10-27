@@ -48,9 +48,7 @@ updated: 2026-10-16
 - [[improvement-coverage-matrix]]: 改善のやり方3: 観点を絞り込み、星取り表から修正・削除・追加の案を出して実施項目を決める
 - [[improvement-expectation-gap]]: 改善のやり方2: 想定と実際のズレを仮説にして修正する
 - [[improvement-quantified-options]]: 改善のやり方1: 現状を数値にして、改善幅ごとの選択肢を比べてから動く
-- [[keyboard-switches]]: キーボードのスイッチの好みとスタビラトル対策
 - [[layered-third-party-review]]: 仕組みの層別・第三者レビューの進め方
-- [[linux-distro-selection]]: 自宅PCのLinuxディストロ選定
 - [[linux-multiboot-setup]]: 256GB SSDのマルチブートLinux構成（MX Linuxインストール）
 - [[modern-cli-tools]]: modern CLIツールの役割整理
 - [[notepad-plus-plus]]: Notepad++（scoop 版）の設定管理
@@ -101,4 +99,3 @@ updated: 2026-10-16
 - [[wsl-file-placement]]: ZedとWSLのファイル配置方針
 - [[zed-acp]]: Zed ACP
 - [[zed-dotfiles]]: Zedのdotfiles管理
-- [[zed-vim]]: Zed Vim環境

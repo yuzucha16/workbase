@@ -21,7 +21,7 @@ sources:
 
 ## Purpose
 
-256GBのSSDに複数のLinuxディストロを共存させる。共有ESP + 共有swap + ディストロごとに独立したrootパーティションという「お手軽」構成で、ディストロ追加時は未割り当て領域から新しいrootを切り出す。第一弾としてMX Linuxを入れた（[[linux-distro-selection]]）。
+256GBのSSDに複数のLinuxディストロを共存させる。共有ESP + 共有swap + ディストロごとに独立したrootパーティションという「お手軽」構成で、ディストロ追加時は未割り当て領域から新しいrootを切り出す。第一弾としてMX Linuxを入れた。
 
 ## Principles
 
@@ -33,12 +33,12 @@ sources:
 
 `/dev/nvme0n1`、256GB（実測238.5GB）、GPT。
 
-| パーティション | サイズ | 種類 | 用途 |
-|---|---|---|---|
-| `nvme0n1p1` | 1.0GB | ESP、FAT32 | 全ディストロ共有 |
-| `nvme0n1p2` | 8.0GB | linux-swap | 全ディストロ共有 |
-| `nvme0n1p3` | 64.0GB | ext4 | MX Linuxのroot |
-| 残り | 約165GB | 未割り当て | 今後のディストロ追加用 |
+| パーティション     | サイズ    | 種類         | 用途            |
+| ----------- | ------ | ---------- | ------------- |
+| `nvme0n1p1` | 1.0GB  | ESP、FAT32  | 全ディストロ共有      |
+| `nvme0n1p2` | 8.0GB  | linux-swap | 全ディストロ共有      |
+| `nvme0n1p3` | 64.0GB | ext4       | MX Linuxのroot |
+| 残り          | 約165GB | 未割り当て      | 今後のディストロ追加用   |
 
 `/home` は分離せず、rootのみ（「お手軽」重視）。
 
@@ -94,8 +94,6 @@ sources:
 - ディストロ追加後、os-proberが全ディストロを検出しているか確認する。
 - Zed を公式インストールスクリプトまたは Flatpak で導入する。Neovim は当面 apt 標準版（0.10.4 系）で使う。
 - Mozc（fcitx5 + fcitx5-mozc）と udev ルールを、勉強用に手動で構築する（お題は未決）。
-- 慣れたら Mint 22 への移行を検討する（[[linux-distro-selection]]）。
+- 慣れたら Mint 22 への移行を検討する。
 
 ## Related
-
-- [[linux-distro-selection]]

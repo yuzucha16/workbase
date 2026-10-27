@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-27（exmem: lessons 3 本の削除）
+- ユーザーの依頼で `exmem/lessons/` から `keyboard-switches`、`linux-distro-selection`、`zed-vim` を削除した。これらの Next Actions と Open Questions も一緒に消えた。リンク元のノートは消さず、3 本への `[[…]]` だけを文ごと外した（`exmem-index.md`、`triggers-scenarios.md` の S16・S19・B04 の行も）。`topics/logbook-design/` の経緯の記録にある旧名は、履歴として残した。
 ### 2026-10-27（wording-neutralize: トピックの起票）
 - ユーザーが、公開リポジトリから環境を特定する語を消したいと相談した。影響分析（182 件・62 ファイル）をして、新しい語に置き換えず性質で書く方式に決めた。履歴は 86 コミットに残るため、現在の文言の整理の後に、1 回だけ書き換えて force push する（急がない）。トピック `topics/wording-neutralize/` を作った。実装は未着手。決定は同トピックの `docs/decisions.md`。
 ### 2026-10-27（token-cap: integrate の読む量の上限）

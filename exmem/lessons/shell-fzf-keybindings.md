@@ -93,5 +93,4 @@ sources:
 - [[shell-command-usecases]]
 - [[modern-cli-tools]]
 - [[terminal-cursor-blink]]
-- [[zed-vim]]
 - dotfiles リポジトリ（`docs/decisions.md`: fzf とキーバインドの現仕様と経緯）。リンクではなく参照のみ

@@ -24,7 +24,7 @@ sources:
 
 ## Purpose
 
-キーボード購入を題材に、人間とAIの工程界面・インターフェースを可視化する。単発の質問と回答ではなく、意思決定の状態が反復的に変わる汎用モデル「Decision Loop（仮称）」を小さく設計する。目的は製品選定そのものより、AI活用の工程設計を学ぶこと（題材は [[keyboard-switches]]）。
+キーボード購入を題材に、人間とAIの工程界面・インターフェースを可視化する。単発の質問と回答ではなく、意思決定の状態が反復的に変わる汎用モデル「Decision Loop（仮称）」を小さく設計する。目的は製品選定そのものより、AI活用の工程設計を学ぶこと。
 
 ## Principles
 
@@ -182,7 +182,6 @@ Vault の構造変更の検討で、判断軸が途中で入れ替わり、AI �
 
 ## Related
 
-- [[keyboard-switches]]
 - [[ai-business-adoption]]
 - [[ai-harness-concepts]]
 - [[workflow-kit]]

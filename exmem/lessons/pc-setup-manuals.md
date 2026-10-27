@@ -176,6 +176,5 @@ Windows の git で、SSL バックエンドを schannel に切り替えるか�
 
 - [[fonts]]
 - [[linux-multiboot-setup]]
-- [[linux-distro-selection]]
 - [[shell-script-testing-wsl]]
 - [[obsidian-vault]]

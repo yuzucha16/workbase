@@ -70,7 +70,7 @@ Windows側の `code --list-extensions` の結果は次の12個。メモの導入
 - リモート: `ms-vscode-remote.remote-containers`、`remote-ssh`、`remote-ssh-edit`、`remote-wsl`、`ms-vscode.remote-explorer`
 - その他: `plorefice.devicetree`、`wayou.vscode-todo-highlight`
 
-- 実際の用途はテーマ、リモート接続（WSL / SSH / Dev Containers）、Devicetree。組み込み系の用途がうかがえる。エディタ操作の主戦場はZed（[[zed-vim]]）なので、VS CodeでVim拡張を入れるかは別の判断。
+- 実際の用途はテーマ、リモート接続（WSL / SSH / Dev Containers）、Devicetree。組み込み系の用途がうかがえる。エディタ操作の主戦場はZedなので、VS CodeでVim拡張を入れるかは別の判断。
 - WSL側にインストールされている拡張機能は、この確認では見ていない。
 
 ## Gotchas
@@ -96,6 +96,5 @@ Windows側の `code --list-extensions` の結果は次の12個。メモの導入
 
 ## Related
 
-- [[zed-vim]]
 - [[zed-dotfiles]]
 - [[wsl-file-placement]]

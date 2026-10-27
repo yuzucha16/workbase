@@ -59,7 +59,7 @@ Zedの設定・extension・ACPエージェントをdotfilesリポジトリで管
 - **Markdown だけ別設定**: `soft_wrap: editor_width`、`tab_size: 2`、`hard_tabs: true`、`format_on_save: off`、`remove_trailing_whitespace_on_save: false`。Obsidian の `app.json` は `tabSize: 2` で `useTab` 未設定（既定でタブ字下げ）。
 - **`file_scan_exclusions` に `**/.obsidian/plugins` と `**/.obsidian/workspace*.json` を足す**。`.obsidian/snippets` は除外しない（Zed から CSS を編集できる）。このキーは既定の除外リストを上書きするので、足すときは既定を再掲する。
 - **チャット画面の見出し緑・強調オレンジは諦める**。チャットの Markdown は `MarkdownStyle` で描画され、見出しはフォントサイズだけ、強調の専用項目は見つからなかった（`crates/markdown/src/markdown.rs` を確認。ソース全文は未読なので仮説）。コードブロックの中身だけがテーマの `syntax` 色に従う。強調色は Obsidian 側の CSS スニペットで表現する。
-- Vim は1週間オフにして試す（[[zed-vim]]）。
+- Vim は1週間オフにして試す。
 
 ### Facts
 
@@ -126,7 +126,6 @@ Zedの設定・extension・ACPエージェントをdotfilesリポジトリで管
 ## Related
 
 - [[zed-acp]]
-- [[zed-vim]]
 - [[terminal-cursor-blink]]
 - [[fonts]]
 - [[claude-code-storage]]

@@ -219,7 +219,6 @@ AIのコンテキスト
 ### D8: 知識ファイルの見出しを `Principles` / `Decisions` / `Gotchas` で使い分ける（2026-09-26）
 
 - 決定: `Gotchas` は実際に遭遇したエラーに限定し、方針や一般的な注意点は `Principles` に書く。
-- 根拠: Vim移行のinboxメモで、方針的な注意点が `Gotchas` に書かれ、`Decisions` と重複した（[[zed-vim]]）。
 
 ### D9: `aliases` に日本語名を入れる（2026-09-26）
 
@@ -231,7 +230,7 @@ AIのコンテキスト
 - 決定: `exmem/contexts/` と `context.md` を廃止する。決定と未完の項目は、各 `knowledge/` のノートの Open Questions / Next Actions に移した。
 - 根拠: 想定していた「モバイルの壁打ちの途中を預け、Claude Code で続ける」使い方は、実際には1件も無かった。実際の中身は、Vault の外のスレッドで進めた作業の現在地メモで、作業側の `docs/` と役割が重なった。モバイルからは「stock」で知識を渡せる。5件のうち3件は、2026-10-02 以降、更新が止まっていた。
 - 却下案: 期限つきの引継ぎ置き場として残す（今は需要が見えない。必要になったら、inbox に未完のメモを置く案を先に試す）。
-- 移し先: `ai-literacy-metrics` → [[ai-work-metrics]]。`para-area-project-flow` → [[para-operations]]。`linux-home-pc` → [[linux-multiboot-setup]]。`zed-vim-migration` → [[zed-vim]]。`ai-development-workflow` の履歴は削除した（git の履歴に残る）。残りの未完は下の「contexts から移した未完の項目」。
+- 移し先: `ai-literacy-metrics` → [[ai-work-metrics]]。`para-area-project-flow` → [[para-operations]]。`linux-home-pc` → [[linux-multiboot-setup]]。`ai-development-workflow` の履歴は削除した（git の履歴に残る）。残りの未完は下の「contexts から移した未完の項目」。
 
 ### D11: `knowledge/` を `lessons/` に、`cheatsheets/` を `guides/` に改名する（2026-10-10）
 
@@ -250,7 +249,7 @@ AIのコンテキスト
 ### inboxメモの内容が実際の設定と食い違った
 
 - 状況: Vim移行のメモでは「`keymap.json` は空」だったが、実際にはターミナル用の設定があった。
-- 解決: 実物を正として記録し、食い違いを `Open Questions` に残した（[[zed-vim]]）。統合時に実物と照合する手順を `AGENTS.md` に追加した。
+- 解決: 統合時に実物と照合する手順を `AGENTS.md` に追加した。
 
 ### READMEの構成図が実態とずれていた
 
