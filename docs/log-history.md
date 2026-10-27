@@ -2,6 +2,8 @@
 
 ## Log
 
+### 2026-10-27（wording-neutralize: トピックの起票）
+- ユーザーが、公開リポジトリから環境を特定する語を消したいと相談した。影響分析（182 件・62 ファイル）をして、新しい語に置き換えず性質で書く方式に決めた。履歴は 86 コミットに残るため、現在の文言の整理の後に、1 回だけ書き換えて force push する（急がない）。トピック `topics/wording-neutralize/` を作った。実装は未着手。決定は同トピックの `docs/decisions.md`。
 ### 2026-10-27（token-cap: integrate の読む量の上限）
 - ユーザーが承認し、workflow-kit/integrate-hook.md に「読む量の上限【仮 〜11-29】」を足した（下書き 3 本、20KB 超は節読み、重複読みなし、100k で区切る）。大きい lessons の分割は token-cap の Next Actions に積んだ。
 ### 2026-10-27（review 消化: md-link-graph の道具を kit へ、仮決めの整理）

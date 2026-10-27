@@ -29,6 +29,7 @@
 5. 【起票 10-25】期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`）: 型は入れた。lessons から 4 件を移した（10-26）。残りは `user-thinking-habits`（公開範囲の確認）と `user-manual`（対応表が先）。
 6. 【起票 10-26】xlsx・pptx の点検・掃除（`room/cleankit.py`）: PC1 の実ファイルで掃除（`--also hidden-rows,hidden-cols` 付き）の残りが 0 件になった（2026-10-27）。次: 出力が Excel で警告なしに開き、見た目と数式が崩れていないかを人が確認。その後、`mask` への組み込み（掃除 → マスク）と pptx の実ファイル確認を決める。
 7. 【起票 10-26】【最優先】トークン削減の見直し（`topics/token-cap/`。月次上限 2億トークン）。規則側の削減（`commit-push-rules.md` の切り出し、`AGENTS.md` の読み込み規則、`exmem-index.md` の読み方）は完了（10-26）。実測はトピックの `records/` と `decisions.md` にある。`integrate` の読む量の上限も入れた（10-27、仮 〜11-29）。`room reap` が消す前に会話履歴を `~/.claude/room-history/` へ退避するようにした（10-27、`f6da784`）。残り: 大きい lessons の分割（token-cap の NA 2a、残り 2 本）、room の 107k の確認。効果は 10-28 以降の `cap_meter.py` で確かめる。`exmem/` の 2 か所と `templates/workspace/AGENTS.md` の参照文は未変更。
+8. 【起票 10-27】公開リポジトリの文言の整理（`topics/wording-neutralize/`）: 環境を特定する語を性質で書く表現にする。影響分析と方針は決定済み。次: 段階 1（コマンド例など約 12 か所）の差分案。履歴の書き換えは最後に 1 回（急がない）。
 
 ## Open Questions
 
