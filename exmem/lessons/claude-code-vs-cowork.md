@@ -103,7 +103,7 @@ Claude CodeをWSL2で使うかWindowsネイティブで使うかの基準、Cowo
 
 ## Open Questions
 
-- 実際の業務環境にLibreOfficeとExcelのどちらが入っているか。Excel COM（pywin32）を勤務先の端末で使えるか。
+- 実際の業務環境にLibreOfficeとExcelのどちらが入っているか。Excel COM（pywin32）を PC1 で使えるか。
 - 現在のExcel集計表で、Master（データ羅列）とview（可視化）の分離がどこまでできているか。
 - Coworkを使う場合、WSLのファイルやCode用スキル資産を共有できるか。Cowork標準スキルの品質は自作スキルで足りるか。
 - Coworkを導入する場合のエディション、管理者権限、ネットワーク統制の条件を満たせるか。
