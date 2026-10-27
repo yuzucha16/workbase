@@ -44,7 +44,7 @@ sources:
 ```
 
 - `type` / `title` / `status` / `tags` / `created` / `updated` は必須。
-- `triggers: [語, 語]`（`lessons/` の必須項目。2026-10-25）: 後で同じ作業をするとき、依頼文に出そうな言葉（コマンド名、拡張子、症状、作業名）を、同義語・言い換えを含めて15語まで、1行で書く。上の「読む順番」0 の検索が使う。`integrate` が統合のときに合わせ、`find_knowledge.py --check-triggers` が点検する。
+- `triggers: [語, 語]`（`lessons/` の必須項目。2026-10-25）: 後で同じ作業をするとき、依頼文に出そうな言葉（コマンド名、拡張子、症状、作業名）を、同義語・言い換えを含めて30語まで、1行で書く。上の「読む順番」0 の検索が使う。`integrate` が統合のときに合わせ、`find_knowledge.py --check-triggers` が点検する。
 - `aliases` には日本語名や別名を入れる。Obsidianのリンク補完・検索で使われる。
 - 日付は `YYYY-MM-DD`。知識ファイルを変更したら `updated` を今日の日付にする。
 

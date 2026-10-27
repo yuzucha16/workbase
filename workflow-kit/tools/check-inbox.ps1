@@ -82,7 +82,7 @@ foreach ($p in $Path) {
   Report (-not ($tags | Where-Object { $_ -in 'inbox', 'knowledge', 'active', 'superseded', 'project', 'index' })) 'tags に type / status の値を含まない'
   $trg = [regex]::Match($front, '(?m)^triggers:\s*\[(.*?)\]\s*$')
   $trgWords = if ($trg.Success) { @($trg.Groups[1].Value -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) } else { @() }
-  Report (($trgWords.Count -ge 1) -and ($trgWords.Count -le 15)) 'triggers が1〜15語（`triggers: [語, 語]` の1行）' 'FAIL' "$($trgWords.Count)語"
+  Report (($trgWords.Count -ge 1) -and ($trgWords.Count -le 30)) 'triggers が1〜30語（`triggers: [語, 語]` の1行）' 'FAIL' "$($trgWords.Count)語"
   $srcBlock = [regex]::Match($front, '(?s)sources:\n(.*)').Groups[1].Value
   $srcs = [regex]::Matches($srcBlock, '(?m)^\s+-\s+(.+)$') | ForEach-Object { $_.Groups[1].Value }
   Report (($srcs.Count -ge 1) -and -not ($srcs | Where-Object { $_ -notmatch '^.+ conversation ".+"$' })) 'sources が `<AI名> conversation "<テーマ>"` の形'

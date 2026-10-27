@@ -13,7 +13,7 @@ exmem/lessons/ のファイル名、見出し（^#）、frontmatter の tags / a
 作業の言葉の索引（2026-10-25。設計は topics/md-link-graph/records/design-triggers.md）:
   python find_knowledge.py --triggers "<依頼文>" [--top N]   依頼文に triggers: の語を含むノートを示す（表は持たず、毎回 frontmatter を読む）
   python find_knowledge.py --list-triggers                   全ノートの「語 → ノート」の表（人が見る用）
-  python find_knowledge.py --check-triggers                  lessons と guides/explain の全ノートに triggers:（1〜15 語）があるか
+  python find_knowledge.py --check-triggers                  lessons と guides/explain の全ノートに triggers:（1〜30 語）があるか
   python find_knowledge.py --check-index                      exmem-index.md の行と lessons/ のノートが一致するか（抜け・存在しない行・重複）
 
 期限のあるナレッジ（logbook/。型は logbook/README.md。2026-10-26）:
@@ -107,7 +107,7 @@ def scan(path, keywords, body):
     return {"kinds": len(hit_kw), "hits": hits, "keywords": hit_kw, "evidence": evidence, "kb": round(path.stat().st_size / 1024)}
 
 
-TRIGGERS_MAX = 15
+TRIGGERS_MAX = 30
 
 
 def trigger_sources(repo):
@@ -158,7 +158,7 @@ def lookup_triggers(repo, query, top):
 
 
 def check_triggers(repo):
-    """lessons と explain の全ノートに triggers: があり、15 語以内か。問題の数を返す。inbox は check_inbox の担当。"""
+    """lessons と explain の全ノートに triggers: があり、30 語以内か。問題の数を返す。inbox は check_inbox の担当。"""
     bad = 0
     for label, f in trigger_files(repo):
         if label == "inbox":

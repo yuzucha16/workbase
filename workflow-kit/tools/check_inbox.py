@@ -167,7 +167,7 @@ def check_file(path, today, c, spans):
     c.report(not [t for t in tags if t.lower() in ("inbox", "knowledge", "active", "superseded", "project", "index")], "tags に type / status の値を含まない")
     m = re.search(r"^triggers:\s*\[(.*?)\]\s*$", front, re.M)
     words = [w.strip() for w in m.group(1).split(",") if w.strip()] if m else []
-    c.report(1 <= len(words) <= 15, "triggers が1〜15語（`triggers: [語, 語]` の1行）", "FAIL", f"{len(words)}語")
+    c.report(1 <= len(words) <= 30, "triggers が1〜30語（`triggers: [語, 語]` の1行）", "FAIL", f"{len(words)}語")
     m = re.search(r"sources:\n(.*)", front, re.S)
     src_block = m.group(1) if m else ""
     srcs = re.findall(r"^\s+-\s+(.+)$", src_block, re.M)

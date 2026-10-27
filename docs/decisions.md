@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【汎用】`triggers:` の上限を 15 語から 30 語に増やす（2026-10-27）
+- 決めたこと（ユーザー）: 15 語ではすぐ超えるため、30 語にする。`find_knowledge.py`（`TRIGGERS_MAX`）、`check_inbox.py`、`check-inbox.ps1`、`integrate-hook.md`、`stock-hook.md`、`exmem/AGENTS.md`、`exmem/inbox/README.md`、`guides/explain/triggers-knowledge-index.md`、`design-triggers.md` を合わせた。
+- 残る確認: 語が増えると誤爆（部分一致）が増えうる。11-08 の引き当て率の初回で見る。
+
 ### 【汎用】md-link-graph の道具を kit に移す。`mktriggers.py` は `mdreach.py` に統合、`graph.html` は都度生成（2026-10-27）
 - 決めたこと（ユーザー、`review 消化`）: ① `mdgraph.py` `mdreach.py` `mdrank.py` を `workflow-kit/tools/`、場面の一覧を `workflow-kit/triggers-scenarios.md` に移す。移す時期は今で、トピックは 11-08 の引き当て率の初回まで残す。② `mktriggers.py` を `mdreach.py --table` に統合する（表はメモリ上。`triggers-prototype.md` は廃止）。③ `graph.html` はコミットをやめ、一時フォルダに都度生成する。同じ回に、振り返りの定例（10-20）を正式化、v7 を採用、v5 を取り下げ、token-cap の NA を畳む。
 - 根拠: ユーザーの発言: 「①よい。②統合する。③やめる。都度生成にします。」、「decisions.md:327 正式化します」「decisions.md:72を採用します。decisions.md:379 は古い版なのでomitします。」
