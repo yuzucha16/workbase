@@ -55,7 +55,7 @@ sources:
 ## Open Questions
 
 - `--force` が要る条件（clone の状態）。
-- 切り出し元（旧 `notes`）の GitHub リポジトリを削除する時期と、`git bundle` の保存先・世代管理（[[obsidian-vault]] の「旧 GitHub リポジトリ（`notes`）の削除」）。
+- 切り出し元（旧 `notes`）の GitHub リポジトリを削除する時期と、`git bundle` の保存先・世代管理（[[obsidian-vault-backup]] の「旧 GitHub リポジトリ（`notes`）の削除」）。
 
 ## Related
 

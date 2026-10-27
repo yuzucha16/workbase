@@ -23,6 +23,9 @@ updated: 2026-10-16
 - [[ai-handson-framework]]: AI活用ハンズオンの設計と情報ダイジェスト
 - [[ai-harness-concepts]]: AIエージェントのモデルとハーネス
 - [[ai-output-consistency]]: AIの出力のブレを抑える設計と校正の進め方
+- [[ai-room-concurrent-start]]: AI 作業部屋の並行 start と Project の粒度
+- [[ai-room-convert-tools]]: AI 作業部屋の変換の道具と room run の設計
+- [[ai-room-data-layout]]: AI 作業部屋の実名の境界とデータの置き場
 - [[ai-tool-deliverable-structure]]: AI で作る小さなツールの成果物構成・文書・テストの型
 - [[ai-work-metrics]]: AI 活用の指標を会話履歴から測る
 - [[app-config-placement]]: アプリの設定ディレクトリを置くリポジトリの判断基準
@@ -55,6 +58,8 @@ updated: 2026-10-16
 - [[obsidian-vault]]: Obsidian Vault
 - [[office-ai-workspace]]: Office成果物をAIで作る作業環境とデータ配置
 - [[method-creation]]: 「〇〇のやり方」の作り方: 2ブロックで型にし、新しい会話で3回確かめて、手順書に取り込む
+- [[obsidian-vault-backup]]: Obsidian Vault の置き場所とバックアップ
+- [[obsidian-vault-structure]]: Obsidian Vault の構造（works・PARA・共有とローカルの分離）
 - [[para-operations]]: PARA の運用と、AI の質問・提案の指標
 - [[pc-setup-manuals]]: 環境セットアップ手順書（Win11 / Debian系）
 - [[power-automate-office-automation]]: Power Automate / Office Scriptsによる業務自動化
@@ -76,8 +81,20 @@ updated: 2026-10-16
 - [[user-manual]]: ユーザー（ee）の取扱説明書: 口癖から読む思考・行動パターン
 - [[user-thinking-habits]]: ユーザー（ee）の思考の癖、その悪影響、AI の補正策（取扱説明書の根拠）
 - [[vscode-workspace]]: VS Codeの拡張機能とWorkspace運用
+- [[windows-8dot3-relative-to]]: Windows の 8.3 短縮名で relative_to が失敗するのを避ける
+- [[windows-bat-testing]]: Windows の .bat の試験と落とし穴
 - [[windows-cli-pitfalls]]: Windows の PowerShell・バッチ・git 操作の落とし穴
+- [[windows-script-isolated-linux]]: Windows 向けスクリプトを隔離した Linux で作って検査する
 - [[workflow-kit]]: 作業ログとナレッジ化フックの共通機能（workflow-kit）
+- [[workflow-kit-closing]]: 長い取り組みを閉じるときの移管と二重管理の解消
+- [[workflow-kit-default-rules]]: AI が毎回聞く選択を優先順位の規則にして全経路へ入れる
+- [[workflow-kit-delegation]]: 承認を外す・権限をエージェントへ移すときの線引き
+- [[workflow-kit-digest]]: 並行作業で溜まった Next Actions の消化の分け方
+- [[workflow-kit-docs-transfer]]: docs の知識とルールを共有側へ運ぶ設計
+- [[workflow-kit-hook-naming]]: フック名の体系（寿命ごとの開始と終了の対）
+- [[workflow-kit-hook-outline]]: フック手順書の章立てを共通部と固有部で揃える
+- [[workflow-kit-inbox-check]]: メモの点検スクリプト（check-inbox / find-knowledge）の設計
+- [[workflow-kit-type-guides]]: 作業の種別の統合と、手順書の分け方
 - [[wsl-file-placement]]: ZedとWSLのファイル配置方針
 - [[zed-acp]]: Zed ACP
 - [[zed-dotfiles]]: Zedのdotfiles管理

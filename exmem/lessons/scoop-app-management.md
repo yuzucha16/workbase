@@ -113,7 +113,7 @@ Windows 11 のアプリを「scoop で管理するもの」と「それ以外」
 
 - 新しい Windows アカウントで、修正後の `20_apps.bat` が導入を通すか（未確認）。通らなければ、表示される `Get-ExecutionPolicy -List` と、旧コマンドを手で実行した結果から、原因を絞る。
 - 「アクセスが拒否されました。」の原因（上の未検証の候補のどれか）。
-- 試験の方法は [[shell-script-testing-wsl]] の「Windows のバッチ」の節。
+- 試験の方法は [[windows-bat-testing]]。
 
 ## suggest と VC++ ランタイム（vcredist2022。2026-10-06 追記）
 

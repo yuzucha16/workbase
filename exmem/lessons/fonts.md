@@ -79,7 +79,7 @@ Win11 のメインフォントを、目の負担を最優先に選び、Zed / Wi
 - **Myrica のフォント名が想定と違う**: `MyricaMMonospace Nerd Font`（`Myrica M` ではない）。`Proportional` は使わない。
 - **「Console は行間を詰めた派生」は誤りだった**。実際は記号の幅の違い。
 - **比較ページで全フォントが「未検出」**: スマホで開いていた、フォント名の不一致、ブラウザ再起動が必要、埋め込み表示の制限が原因。ページ内の `queryLocalFonts` ボタンで実名を取得して解決した。「全部同じ見た目」は、HTML の style 属性内で `font-family` の引用符が二重引用符になり属性が壊れていたため。
-- **`Set-Content` が失敗**: 同じファイルを `Get-Content -Raw` した直後の書き戻しで、ファイルロックのエラー（[[obsidian-vault]] の同種の事例も参照）。Edit ツールで解決した。
+- **`Set-Content` が失敗**: 同じファイルを `Get-Content -Raw` した直後の書き戻しで、ファイルロックのエラー（[[obsidian-vault-backup]] の同種の事例も参照）。Edit ツールで解決した。
 
 ## Open Questions
 
