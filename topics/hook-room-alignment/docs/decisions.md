@@ -2,7 +2,7 @@
 
 ## Decisions
 
-### 【この件】【仮】Windows 実行のデバッグのラリーを減らす仕組み: 診断ログを毎回出し、原因を台帳に貯める。works 共通の置き場は作らない（2026-10-24）
+### 【この件】Windows 実行のデバッグのラリーを減らす仕組み: 診断ログを毎回出し、原因を台帳に貯める。works 共通の置き場は作らない（2026-10-24）
 
 - 決めたこと（ユーザー、2026-10-24。「方向性はOK」「この2つなら許容できる。仮決めで3段に乗せましょう」）: ① 境界（`interop`、マウント、sudo 不可）は変えない。`interop` の有効化は却下のまま。別ユーザー・Sandbox は PC1 で使えない。② 束ねる役の型に、毎回 `ai/work/diag.json`（環境、工程の結果、失敗の型と場所。伏せ字つき。環境由来の例外型に限りメッセージも載せる）を出す機能を足す。全文ログは今まで通り `--log` のときだけ。③ 原因の台帳は `ai/out/knowledge/`（`scope: area`、`kind: lesson`）。一般の原因は `scope: public` の下書きにも書き、`room stock` → `exmem/lessons/` に上げ、同じ原因が3回出たら `check_py.py` の規則に昇格する。④ works 共通の置き場は作らない。許容する弱点: PC1 の知見が他の Area に届くのが遅い（PC1 → PC2 は手で運ぶ）、業務固有の原因が Area ごとに重複する。⑤ ダミー入力での先行運用は保留（ユーザー「行きすぎな気もする」）。
 - 根拠: ユーザーの回答（ラリーの主因は pwsh・bat の文字コードなど環境の違い。COM は未使用。対象は Excel、今後 pptx）。`script-guide.md` の型は既定ではログを出さず、最初の失敗では何も残らない（再実行がもう1周要る）。`baf6b64` で `stock` の行き先が `scope: public | area` になり、works 直下の層は却下済み。部屋には `exmem/lessons` と `workflow-kit` が全 Area に同じ写しで渡る（`room.py` の `SHARE_PATHS`）。
@@ -11,6 +11,7 @@
 - 確認済み（2026-10-24）: `check_py.py` は `--log` と `'work'` と `argparse` の有無を見る（92 行）。型は `script-guide.md` にあり、既定ではログを出さない。`SHARE_PATHS` に `exmem/lessons` と `workflow-kit` が含まれる。WSL の `interop` は実行ファイルを限定できない（公式文書に該当の設定が無い）。
 - 未確認: 診断ログの型を Windows の Python と pwsh で動かすこと（実装後に PC2 で1回）。伏せ字がユーザー名・ホスト名・パスを漏らさないこと。台帳が実際に参照されるか。
 - 実装（2026-10-25、ユーザーの承認「今実装する」）: ② は root の `run` / `verify` / `release` の項の結果ファイル（`<名前>-result.json`、Python と ps1）で済ませた。③ は `script-guide.md` の「原因の台帳」（台帳は1ファイル `ai/out/knowledge/windows-run-causes.md`、title `Windows 実行の原因の台帳`、原因は Gotchas の3行セットに回数と最終日を付ける）と `room-context.md` の1項。`room pull` は名前をハッシュに変えるので、受け取った台帳は title で探す。`check_py.py` `check-ps1.ps1` の診断ログの WARN は結果ファイルの点検で済ませた。
+- 確定（2026-10-27、ユーザー「診断ログと台帳の承認待ちは実施済みなので close。問題なし」）: 仮決めを正式な決定にした。`room mkworks --update` の試行も実施済みで問題なし。
 - 見直しの条件: 診断ログを入れても環境の違いのラリーが減らないとき。PC1 → PC2 の遅れで同じ原因が複数の Area で再発したとき（works 層を再検討）。
 
 ### 【この件】フックと room の整合の決定（2026-10-24）

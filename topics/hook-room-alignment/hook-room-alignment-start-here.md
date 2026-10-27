@@ -5,15 +5,15 @@
 
 ## いま
 
-`init` `open` の廃止、`room mkworks`、`brief` の改名は反映済み（2026-10-24）。残りのフックと `room` の整合も反映済み。残りは `mkworks` の実機確認と、旧名の読み替えの削除。詳細は `docs/log.md`。
+フックと `room` の整合、`mkworks` の実機確認、`room mkworks --update` の試行、旧名の読み替えの削除、診断ログと台帳の承認は、すべて済み（2026-10-27）。残りは実機の確認 2 件。詳細は `docs/log.md`。
 
 ## あなた待ち
 
-`review 消化` で、Windows 実行のデバッグのラリーを減らす仕組み（診断ログと原因の台帳。`docs/decisions.md` の仮決め）の承認。承認後に実装する。
+なし。
 
 ## 次の一手
 
-PC: `room mkworks --update` を既存の works で試す。
+PC2 の Windows で `verify.bat` と `verify.ps1` を叩く。`stock` の `scope: area` の実機確認（`docs/log.md` の Next Actions）。
 
 ## 読む順
 
