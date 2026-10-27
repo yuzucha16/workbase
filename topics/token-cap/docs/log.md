@@ -19,7 +19,7 @@
 2. （済 10-27）`integrate` の読む量の上限を `integrate-hook.md` に入れた（下書き 3 本、20KB 超は節読み、重複読みなし。仮 〜11-29）。
 2a. （済 10-27）大きい lessons 4本を追記の節ごとに分割した（workflow-kit 60→30KB、i-isolated-work-room 58→34KB、obsidian-vault 56→18KB、shell-script-testing-wsl 41→8KB。新ノート 17本、索引・triggers・参照は直した）。**obsidian-vault-structure（25KB）と windows-bat-testing（23KB）のさらなる分割は、別セッションで続ける**（ee 10-27）。--check-triggers の FAIL 1件は guides/explain/claude-code-cost-session-size.md の 16 語（別件）。
 
-3. room の会話記録を、部屋を消す前に退避する手順を作る（ee が決めた。10-27）。`room close` と、集計の `--root` との結びつけを検討する。
+3. （済 10-27、未コミット）`room reap` が消す前に、会話履歴を `~/.claude/room-history/<部屋>/` へ写す（`room.py` の `backup_history`。写せなければ消さずに止まる。テスト追加、全 150 件 OK）。集計は `cap_meter.py --root ~/.claude/room-history`。残り: `-home-ai`（Project に紐づかない履歴）は退避も削除もしない。部屋を直接消す場合は手で退避する。
 4. （低優先）マクロ側の常駐の文書に、ファイルの全文読みを避ける指示を入れる案。マクロの現況は聞き取り済みで閉じた（1 本 1000 行規模、微修正のみ、PC1 の Windows 11 で bas を取り込むだけ、失敗時はエラー文のみ。ee の決定 10-27）。役割分割の具体化はしない。
 5. `AGENTS.md` の整理は、100k 運用の結果を見てから再判断する（`records/2026-10-26-base-trim.md`）。
 
