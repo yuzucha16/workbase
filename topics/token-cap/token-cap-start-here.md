@@ -13,7 +13,7 @@ PC1 の 10-21 以降は room（WSL）側にあり、合算 約 170.7M（85%）�
 
 ## 次の一手
 
-「token-cap の続き」。止める基準の案（`integrate` の読む量を減らす。`docs/log.md` の Next Actions 2）、room の 107k の確認、room の会話記録の退避手順。どこでも可。
+「token-cap の続き」。止める基準の案（`integrate` の読む量を減らす。`docs/log.md` の Next Actions 2）、room の 107k の確認。lessons 2 本（`obsidian-vault-structure` `windows-bat-testing`）の分割。room の会話記録の退避は済み（`room reap`、10-27）。どこでも可。
 
 ## 読む順
 
