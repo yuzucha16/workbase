@@ -27,7 +27,7 @@
 2. 【起票 10-25】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（同上）。未決は `release` の束ね先。
 4. 【起票 10-20、10-26 に 11-08 まで延長】ルールが見つかりにくい構造（`topics/md-link-graph/`。完了条件は満たした。引き当て率の初回 11-08 の後に、閉じるかを聞く）。
 5. 【起票 10-25】期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`）: 型は入れた。lessons から 4 件を移した（10-26）。残りは `user-thinking-habits`（公開範囲の確認）と `user-manual`（対応表が先）。
-6. 【起票 10-26】xlsx・pptx の点検・掃除（`room/cleankit.py`）: PC1 の実ファイルで `check`。結果で掃除の既定と `mask` への組み込みを決める。
+6. 【起票 10-26】xlsx・pptx の点検・掃除（`room/cleankit.py`）: PC1 の実ファイルで掃除（`--also hidden-rows,hidden-cols` 付き）の残りが 0 件になった（2026-10-27）。次: 出力が Excel で警告なしに開き、見た目と数式が崩れていないかを人が確認。その後、`mask` への組み込み（掃除 → マスク）と pptx の実ファイル確認を決める。
 7. 【起票 10-26】【最優先】トークン削減の見直し（`topics/token-cap/`。月次上限 2億トークン）: `/context` は取れた（Zed 19.4k、端末 36.4k）。伸びの主因はファイルの全文読みと判明（10-26）。`docs-rules.md` の切り出し（`commit-push-rules.md`）と、読み込みを抑える規則（`AGENTS.md`）は完了（10-26）。`exmem-index.md` の読み方も完了（10-26。`exmem/AGENTS.md`）。次は `brief` の読む量。PC1 の集計（10-27）で削減量を見積もる。「続き」の実測（10-27）: 増分は中央値 約 7.3k で、固定費 約 28k の方が大きい。規則の節を探す Grep（5〜7KB）を、節だけ読む指定で止めた（`AGENTS.md`、`topics/AGENTS.md`）。効果は 10-28 以降の `cap_meter.py` で確かめる。`exmem/` の 2 か所と `templates/workspace/AGENTS.md` の参照文は未変更。
 
 ## Open Questions
