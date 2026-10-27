@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-27（PC2 の 172k の分解）: 傾向分析の「1 依頼で大きく増える会話」を PC2 の 1 本（172k、依頼 1）で分解。最初に「98 回の自走」と報告したが、jsonl の行数（内容ブロックごとに重複）を数えた誤りで、実際は応答 27 回。主因は全文読み 47 回（Read 58 回）。28 ファイルの 66% は `exmem/inbox/` の下書き 14 本と `exmem/lessons/` 5 本で、`integrate` の型。`usage_report.py` と `cap_meter.py` は重複を除いており、合計は正しいと確認。ee の順番は、重複の確認 → 種類別の仕訳 → wrap、止める基準の案は別セッション。`records/2026-10-27-pc2-one-request-172k.md`。wrap。
+
 - 2026-10-27（PC1 の room 側の実測）: ee の「10-20 以降は WSL 側」の推測を確かめた。この PC の room-myenv には 10-25 の試運転の 5 会話（7.25M）だけ。ee が PC1 の room 内で `cap_meter.py --root /home/ai/.claude/projects` を実行し、10-21〜27 は 78.80M（37 会話）。合算 約 170.7M（85%）で、勤務先の表示との差は 88M → 約 16M。room の土台は約 18k（Windows 側 31k）。残り約 29M で 1〜2 日で尽きる見込みを伝え、ee は重い作業を止める、退避の手順を作る、分析は別セッションと決めた。`records/2026-10-27-pc1-room-meter.md`。wrap。
 
 - 2026-10-26（土台の下調べ）: Next Actions 6 の下調べ。最大は claude.ai 同期の skills（約 3.2k、月の約 3.3%）で、外し方は claude.ai 側（未確認）。`resources/AGENTS.md` の整理は約 1%。「記録先」2 節を手順書へ移す案は、`workflow-kit/AGENTS.md`（固有事情を書かない）に反すると分かって取り下げ、`docs/record-destinations.md` に寄せる代案も含め、ee が影響が少ないとして全案を見送った。`records/2026-10-26-base-trim.md`。`log.md` は 4KB に圧縮（6.6KB→）。wrap。
