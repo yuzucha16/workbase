@@ -71,10 +71,10 @@ def build_xlsx():
           '<definedName name="AccessDatabase" hidden="1">"C:\\Users\\dummyuser\\dummy.mdb"</definedName>'
           '<definedName name="_xlfn.DUMMY" hidden="1">#NAME?</definedName>'
           '</definedNames></workbook>')
-    s1 = (HDR + f'<worksheet {M} {R}><sheetData>'
+    s1 = (HDR + f'<worksheet {M} {R}><cols><col min="7" max="7" width="9" hidden="1"/></cols><sheetData>'
           '<row r="1"><c r="A1" t="s"><v>0</v></c><c r="B1"><f>SUM(\'社外秘\'!B1:B2)</f><v>300</v></c>'
           '<c r="C1"><f t="shared" ref="C1:D1" si="0">社外秘!B1</f><v>100</v></c><c r="D1"><f t="shared" si="0"/><v>200</v></c>'
-          '<c r="E1"><f>B1*2</f><v>600</v></c><c r="F1"><f>[1]Sheet1!A1+1</f><v>77</v></c></row>'
+          '<c r="E1"><f>B1*2</f><v>600</v></c><c r="F1"><f>[1]Sheet1!A1+1</f><v>77</v></c><c r="G1"><v>9999</v></c></row>'
           '<row r="2" hidden="1"><c r="A2" t="s"><v>4</v></c><c r="B2"><f>E1+1</f><v>601</v></c></row>'
           '</sheetData><pageSetup r:id="rId9"/><legacyDrawing r:id="rId8"/></worksheet>')
     s2 = (HDR + f'<worksheet {M}><sheetData><row r="1"><c r="A1" t="s"><v>1</v></c><c r="B1"><v>100</v></c></row>'
@@ -235,7 +235,9 @@ class XlsxTest(unittest.TestCase):
         self.assertNotIn("hidden-sheet", codes(after))
 
     def test_also_hidden_rows(self):
-        out, log = ck.clean(self.data, ".xlsx", list(ck.CLEAN_ACTIONS) + ["hidden-rows"])
+        out, log = ck.clean(self.data, ".xlsx", list(ck.CLEAN_ACTIONS) + ["hidden-rows", "hidden-cols"])
+        self.assertNotIn("hidden-rowcol", codes(ck.check(ck.Pkg(out), ".xlsx")))  # 行・列は隠れたままでも、値が無ければ出さない
+        self.assertNotIn("9999", texts(out)["xl/worksheets/sheet1.xml"])
         self.assertEqual(ck.integrity(out), [])
         s1 = texts(out)["xl/worksheets/sheet1.xml"]
         self.assertIn('<row r="2" hidden="1"><c r="A2"/><c r="B2"/></row>', s1)

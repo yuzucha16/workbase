@@ -51,6 +51,7 @@ CLEAN_ACTIONS = {
 # 既定では行わず、--also で指定したときだけ行う動作（表の中身を変えるため）
 OPTIONAL_ACTIONS = {
     "hidden-rows": "非表示の行のセルの値と数式を空にする（行は残る。共有数式は残す）",
+    "hidden-cols": "非表示の列のセルの値と数式を空にする（列は残る。共有数式は残す）",
 }
 
 R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -329,10 +330,9 @@ def check_xlsx(pkg, fs):
     # セル: 非表示の行・列
     for s in sheets:
         st = pkg.text(s["path"]) or ""
-        rows = len(re.findall(r'<row\b[^>]*\bhidden="(?:1|true)"', st))
-        cols = len(re.findall(r'<col\b[^>]*\bhidden="(?:1|true)"', st))
+        rows, cols = hidden_content(st)
         if (rows or cols) and s["state"] == "visible":
-            fs.append(Finding("hidden-rowcol", s["path"], f"「{s['name']}」の非表示の行 {rows} 件・列の範囲 {cols} 件（値は入ったまま）"))
+            fs.append(Finding("hidden-rowcol", s["path"], f"「{s['name']}」の非表示の行にある値入りのセル {rows} 個・非表示の列にある値入りのセル {cols} 個（値は入ったまま）"))
     # 共有文字列: どのセルも使っていないもの
     sst = [tgt for _rid, ty, tgt in pkg.internal(wb, {"sharedStrings"})]
     if sst and pkg.has(sst[0]):
@@ -606,10 +606,10 @@ def clean_xlsx(pkg, actions, log):
                     st = re.sub(rf'<legacyDrawing\b[^>]*r:id="{re.escape(rid)}"[^>]*/>', "", st)
             if d:
                 log.append(f"「{s['name']}」のコメントを外した")
-        if "hidden-rows" in actions:
-            st, nh = blank_hidden_rows(st)
+        if "hidden-rows" in actions or "hidden-cols" in actions:
+            st, nh = blank_hidden(st, "hidden-rows" in actions, "hidden-cols" in actions)
             if nh:
-                log.append(f"「{s['name']}」の非表示の行 {nh} 行の中身を空にした")
+                log.append(f"「{s['name']}」の非表示の行・列のセル {nh} 個の中身を空にした")
         if "printer" in actions:
             for rid, _tgt in pkg.drop_rels_of(p, {"printerSettings"}):
                 st = re.sub(rf'\s+r:id="{re.escape(rid)}"', "", st)
@@ -621,18 +621,56 @@ def clean_xlsx(pkg, actions, log):
         shrink_sst(pkg, wb, [s["path"] for s in sheets], log)
 
 
-def blank_hidden_rows(xml):
-    """非表示の行のセルから、値・文字・数式（共有数式は除く）を外す。書式とセルは残す。"""
+def col_num(ref):
+    n = 0
+    for ch in re.match(r"[A-Za-z]+", ref).group(0).upper():
+        n = n * 26 + ord(ch) - 64
+    return n
+
+
+def hidden_cols(xml):
+    out = set()
+    for m in re.finditer(r"<col\b[^>]*>", xml):
+        a = attrs(m.group(0))
+        if a.get("hidden") in ("1", "true"):
+            out.update(range(int(a.get("min", 0)), min(int(a.get("max", 0)), 16384) + 1))
+    return out
+
+
+def _has_content(body):
+    return bool(re.search(r"<v>|<is>|<f\b", body or ""))
+
+
+def hidden_content(xml):
+    """非表示の行・列にある、中身の入ったセルの数（行, 列）。"""
+    hc, rows, cols = hidden_cols(xml), 0, 0
+    for r in re.finditer(r"<row\b([^>]*?)>(.*?)</row>", xml, re.S):
+        hr = attrs(r.group(1)).get("hidden") in ("1", "true")
+        for c in re.finditer(r"<c\b([^>]*?)(?:/>|>(.*?)</c>)", r.group(2), re.S):
+            if not _has_content(c.group(2)):
+                continue
+            if hr:
+                rows += 1
+            elif col_num(attrs(c.group(1)).get("r", "A1")) in hc:
+                cols += 1
+    return rows, cols
+
+
+def blank_hidden(xml, do_rows, do_cols):
+    """非表示の行・列のセルから、値・文字・数式（共有数式は除く）を外す。書式とセルは残す。"""
+    hc = hidden_cols(xml) if do_cols else set()
     n = 0
 
     def row(m):
         nonlocal n
-        if attrs(m.group(1)).get("hidden") not in ("1", "true"):
-            return m.group(0)
-        n += 1
+        hr = do_rows and attrs(m.group(1)).get("hidden") in ("1", "true")
 
         def cell(c):
+            nonlocal n
             a, body = c.group(1), c.group(2) or ""
+            if not (hr or col_num(attrs(a).get("r", "A1")) in hc) or not _has_content(body):
+                return c.group(0)
+            n += 1
             body = re.sub(r"<v>.*?</v>|<is>.*?</is>", "", body, flags=re.S)
             body = re.sub(r'<f\b(?![^>]*t="shared")[^>]*?(?:/>|>.*?</f>)', "", body, flags=re.S)
             a = re.sub(r'\s+t="[^"]*"', "", a)
