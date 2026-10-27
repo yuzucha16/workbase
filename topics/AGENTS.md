@@ -19,12 +19,4 @@
 
 ## トピックを終わらせるとき
 
-ユーザーが言ったときだけ行う。完了条件の確認、暫定の決定の見直し、未解決の整理は、`review 消化` と `docs/log.md` の Next Actions / Open Questions で行う（専用の手順は持たない）。Area 型のトピックは消さない。
-
-0. 閉じる・完了と判断する前に、トピックの `docs/log.md` の状態表と、上位（root）の `docs/log-history.md` の最新の経緯を突き合わせ、食い違いと結果を報告に書く（古い側で断定しない）。
-1. `docs/decisions.md` の【汎用】が `exmem/lessons/`、kit、`guides/` に反映済みか見る（見るだけ。反映するかの判断はユーザー）。行き先は内容の種類で決める: 設計と理由は `guides/explain/`、決定は `docs/decisions.md`、仕様は実装の隣、原則は `exmem/lessons/`、経緯は git。移し終えたノートは元を削除する（二重管理を残さない）。実装前の設計を移すときは、未実装の部分に「未実装」と注記する。残件は上位の Next Actions に移す（2026-10-19 承認）。
-1a. 消す前の条件（2026-10-21 ユーザーの決定。`usage-viz` で実施）: `stock`（知識の反映）と `wrap`（記録）が済んでいること。`wrap` で、トピックの `docs/decisions.md` の【この件】の決定を、root の `docs/decisions.md` に1項にまとめて移す（根拠はユーザーの発言のまま。【汎用】は手順1の行き先へ）。経緯は root の `docs/log-history.md` に追記し、root の `docs/log.md` の該当行を直す。未確認のことは root の `log.md` に1行残す。
-1b. `records/`（計画・見本・確認メモ）は移さず、ディレクトリごと削除する（履歴は git。実行後のフィードバックは `brief-plan.md` などに反映済みであること）。`kit-growth/records/` へ移すのは「測ったこと」だけで、閉じたトピックの出力は移さない。
-2. ディレクトリを削除し、`topics-index.md` の行を消す。窓口や他のノートの言及（`planning-method` の窓口など）も直す。
-3. 残ったファイルに、消えたノートへの `[[リンク]]` が無いか、grep で確かめる。
-4. 記録は `wrap` に任せる。
+ユーザーが言ったときだけ行う。手順は `close-procedure.md`（言われたときだけ読む。ふだんは読まない）。Area 型のトピックは消さない。
