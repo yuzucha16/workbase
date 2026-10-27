@@ -18,7 +18,7 @@ triggers: [AI作業部屋, 導入理由, 顧客データ, 社外秘, WSL, 隔離
 
 - 前提: Windows 11 と WSL2 がある。AI は Claude Code が主（Obsidian と Zed から使う）。作業の置き場は PARA 構成の works（`areas/` `projects/` `archives/`）で、works のルートはリモートを持たないローカルの git 管理
 - 確認状況: **実機で検証済み**（2026-10-12 に手作業で2巡、2026-10-14 にマスク・復元・共有知の送付・`stock` をダミーで、2026-10-18 に `init` から `reap` までの通し）。操作を自動化するスクリプト `room`（`workflow-kit/room/`）は、`init` `open` `mask` `start` `restore` `readme` `stock` `close` `reap` まで実装済み。実データでの確認と、いくつかの残りは 5 章にまとめる
-- 勤務先名、顧客名、実際の Project 名などの固有情報は、この文書に書かない
+- 組織名、顧客名、実際の Project 名などの固有情報は、この文書に書かない
 
 ## 1. 状況と解決（ダイジェスト）
 
