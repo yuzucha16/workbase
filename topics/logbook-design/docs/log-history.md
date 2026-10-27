@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-27（印の確認と `--check-aging` の初回）
+- `shell-script-testing-wsl` を見直し、Gotchas の節に一方向の印を付けた（ツールの安全チェックの挙動は版で変わる）。Facts の Ubuntu 24.04 は環境の記録として印なし。
+- `--check-aging` をクラウドの環境で初めて実行した。5 本中 1 本が FAIL（`user-thinking-habits.md` 32808 バイト > 32KB）。判断は月次に回す。
+
 ### 2026-10-27（畳み候補の「前」の圧縮）
 - 「前」の 8 行を圧縮した（auth-providers、obsidian-vault-backup、obsidian-vault-structure、shell-script-testing-wsl、workflow-kit 2 件、para-operations 2 件）。一覧の行番号が現状とずれていたため、grep で現在の節を探して直した。6 ファイルの `updated:` を更新。`decisions.md` に 1 項。
 - 旧名の更新（旧 Next Actions 3）は畳みで吸収として閉じ済み。
