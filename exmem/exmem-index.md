@@ -60,6 +60,8 @@ updated: 2026-10-16
 - [[method-creation]]: 「〇〇のやり方」の作り方: 2ブロックで型にし、新しい会話で3回確かめて、手順書に取り込む
 - [[obsidian-vault-backup]]: Obsidian Vault の置き場所とバックアップ
 - [[obsidian-vault-structure]]: Obsidian Vault の構造（works・PARA・共有とローカルの分離）
+- [[obsidian-vault-rename]]: Vault の rename（notes → works）と旧名の扱い、certs の置き場
+- [[obsidian-vault-home-works]]: Vault の置き場を $HOME\works へ移した件、旧 notes リポジトリの削除
 - [[para-operations]]: PARA の運用と、AI の質問・提案の指標
 - [[pc-setup-manuals]]: 環境セットアップ手順書（Win11 / Debian系）
 - [[power-automate-office-automation]]: Power Automate / Office Scriptsによる業務自動化
@@ -82,7 +84,9 @@ updated: 2026-10-16
 - [[user-thinking-habits]]: ユーザー（ee）の思考の癖、その悪影響、AI の補正策（取扱説明書の根拠）
 - [[vscode-workspace]]: VS Codeの拡張機能とWorkspace運用
 - [[windows-8dot3-relative-to]]: Windows の 8.3 短縮名で relative_to が失敗するのを避ける
-- [[windows-bat-testing]]: Windows の .bat の試験と落とし穴
+- [[windows-bat-testing]]: Windows の .bat の試験（dry-run・偽コマンド）
+- [[windows-bat-pitfalls]]: Windows の .bat の落とし穴と入力を伴う試験（ASCII・cp932・set /p）
+- [[windows-bat-eol-and-log]]: 生成した .bat の改行とラベル、セットアップ用 .bat のログ
 - [[windows-cli-pitfalls]]: Windows の PowerShell・バッチ・git 操作の落とし穴
 - [[windows-script-isolated-linux]]: Windows 向けスクリプトを隔離した Linux で作って検査する
 - [[workflow-kit]]: 作業ログとナレッジ化フックの共通機能（workflow-kit）

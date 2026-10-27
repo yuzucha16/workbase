@@ -72,7 +72,7 @@
 - 決めたこと（ユーザー）: 10KB を大きく超える lessons（`workflow-kit` `ai-isolated-work-room` `obsidian-vault` `shell-script-testing-wsl`）は、「（日付 追記）」の節ごとに別ノートへ切り出す。大きい 2 本は話題ごとに 2〜3 本。新ノートには固有の `triggers:` と索引の行を付け、本体の Related からリンクする。
 - 根拠: ユーザーの選択: 「追記の節ごとに別ノート（推奨）」「話題ごと 2〜3 本（推奨）」。
 - 却下案: まず 1 本だけ試す、分割せず節読みの運用にする（どちらも選ばれなかった）。
-- 残り: `obsidian-vault-structure` `windows-bat-testing` は別セッションで続ける（ユーザー）。
+- 残り: `obsidian-vault-structure` `windows-bat-testing` は別セッションで続ける（ユーザー）。→ 2026-10-27 の続きで、同じ方針で `obsidian-vault-rename` `obsidian-vault-home-works` `windows-bat-pitfalls` `windows-bat-eol-and-log` に分けた（ユーザーの依頼「分割をやります」）。
 ### 【この件】room の会話履歴は reap の前に退避する（2026-10-27）
 - 決めたこと（ユーザー）: 会話記録の退避手順は token-cap のセッションで作る。実装は、`room reap` が消す前に Windows 側（リポジトリの外）へ写す形にし、コミットを承認した。
 - 根拠: ユーザーの発言「3をここではやります」「承認します。進めてください」。
