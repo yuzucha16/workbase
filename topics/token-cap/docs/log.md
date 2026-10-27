@@ -4,28 +4,24 @@
 
 ## 状態
 
-- 上限は月 2億トークン。勤務先の表示は 26 日で 90%（約 1.8 億）。キャッシュ読みを含む数かは未確認で、勤務先への確認はしない（ee の決定 10-27）。
-- **PC1 は 2 か所に分かれていた**。10-09〜10-20 は Windows 側（91.85M。`records/2026-10-27-pc1-meter.md`）、10-21〜10-27 は room（WSL）側（78.80M、37 会話、1,056 応答。`records/2026-10-27-pc1-room-meter.md`）。合算 約 170.7M（85%）、残り約 29M。10-26 の 1 日分（23.7M）の勢いなら 1〜2 日で尽きる。勤務先の表示との差は約 16M（10-01〜08 の分、Desktop、別端末のいずれか）。
-- **ee は今月の残りの重い作業を止める**（10-27）。切る目安は「作業の区切り（Task 1 件）、または 100k」の早いほう（`docs/decisions.md`）。
-- room の会話記録の置き場は `/home/ai/.claude/projects/`。部屋を消すと記録も消える。
-- room の重い会話: 上位 10 件の最大入力はすべて 100k 超（最大 216k。Windows 側は 408k）。10-27 03:22 は 1 依頼で 107k（大きな読み込みを疑う）。`records/2026-10-27-pc1-room-heavy.md`。
-- room の会話別（10-27 時点）: 上位 1 本 14%、上位 3 本 31%、上位 10 本 66%、中央値 1.16M。内訳は `records/2026-10-27-pc1-room-ranking.md`。ただし room は複数の mount をまとめて 1 会話で扱うので大きく見える（ee）。Windows は上位 10 本で 91%。
-- PC2（10-27 時点）: 251.1M（目安）、88 会話、2,733 応答、土台 27.9k、60k 超の応答 70%（トークンの 86%）。3 か所の比較表と傾向分析の骨子は `records/2026-10-27-trend-skeleton.md`。
+- 上限は月 2億トークン。勤務先の表示は 26 日で 90%。キャッシュ読みを含む数かは確認しない（ee の決定 10-27）。
+- PC1 は 2 か所: Windows 側 10-09〜20 が 91.85M、room（WSL）側 10-21〜27 が 78.80M。合算 約 170.7M（85%）、残り約 29M。10-26 の勢い（23.7M/日）なら 1〜2 日で尽きる。`records/2026-10-27-pc1-meter.md`、`pc1-room-meter.md`。
+- **ee は今月の残りの重い作業を止める**。切る目安は「作業の区切り、または 100k」（`docs/decisions.md`）。
+- room の会話記録は `/home/ai/.claude/projects/`。`room reap` は消す前に退避する。
+- 会話別の偏り: room は上位 10 本で 66%、PC2 は 41%、Windows は 91%（`records/2026-10-27-pc1-room-ranking.md`）。
+- PC2（10-27）: 251.1M（目安）、2,733 応答、土台 27.9k、60k 超の応答はトークンの 86%。
+- **傾向分析の骨子は埋めた**（`records/2026-10-27-trend-skeleton.md`）。伸びの要因別（PC1 Windows、文字数の按分）: Read 45%、書き込み本文 23%、Grep 10%、AI 本文 9%、PowerShell 9%、ユーザー発言 1.6%。効く順: 区切る → 大きな読み込みを避ける → 土台。
 - 解説は `guides/explain/claude-code-cost-session-size.md`。未統合の下書き `exmem/inbox/2026-10-26-token-cap-meter-reading.md` の統合先候補はこのガイド。
 
 ## Next Actions
 
-1. **傾向分析の骨子（`records/2026-10-27-trend-skeleton.md`）を埋める**。PC2 の会話別の占有率は埋めた（上位 10 本で 41%、最大 8%。偏りは小さく、50〜100 依頼の長い会話が上位）。PC2 の 172k（1 依頼）は、27 回の応答で、全文読み 47 回（Read 58 回、重複読みあり）が主因。読んだ 28 ファイルの 66% は `exmem/inbox/` の下書き 14 本と `exmem/lessons/` 5 本で、`integrate` の型（`records/2026-10-27-pc2-one-request-172k.md`）。`usage_report.py` / `cap_meter.py` は重複を除いており、合計は正しい（確認済み）。残り: room の 107k の確認、対策の効く順の確定。
-2. （済 10-27）`integrate` の読む量の上限を `integrate-hook.md` に入れた（下書き 3 本、20KB 超は節読み、重複読みなし。仮 〜11-29）。
-2a. （済 10-27）大きい lessons 4本を追記の節ごとに分割した（workflow-kit 60→30KB、i-isolated-work-room 58→34KB、obsidian-vault 56→18KB、shell-script-testing-wsl 41→8KB。新ノート 17本、索引・triggers・参照は直した）。**obsidian-vault-structure（25KB）と windows-bat-testing（23KB）は、さらに分割した（10-27、未コミット。structure 12KB + rename 9KB + home-works 6KB、bat-testing 7KB + pitfalls 11KB + eol-and-log 7KB。索引・triggers 点検・リンクは確認済み）**。--check-triggers の FAIL 1件は guides/explain/claude-code-cost-session-size.md の 16 語（別件）。
-
-3. （済 10-27、未コミット）`room reap` が消す前に、会話履歴を `~/.claude/room-history/<部屋>/` へ写す（`room.py` の `backup_history`。写せなければ消さずに止まる。テスト追加、全 150 件 OK）。集計は `cap_meter.py --root ~/.claude/room-history`。残り: `-home-ai`（Project に紐づかない履歴）は退避も削除もしない。部屋を直接消す場合は手で退避する。
-4. （低優先）マクロ側の常駐の文書に、ファイルの全文読みを避ける指示を入れる案。マクロの現況は聞き取り済みで閉じた（1 本 1000 行規模、微修正のみ、PC1 の Windows 11 で bas を取り込むだけ、失敗時はエラー文のみ。ee の決定 10-27）。役割分割の具体化はしない。
-5. `AGENTS.md` の整理は、100k 運用の結果を見てから再判断する（`records/2026-10-26-base-trim.md`）。
-
-（勤務先への上限の数え方の確認は、ee の決定で省いた。haiku 案は、重みが同じ前提では扱わない。）
+1. 骨子の残り（任意）: PC2 と room で要因別の分解を同じ方法で行う。room の 107k（10-27 03:22）の確認は後日（会話のある room で。この PC の room-myenv は 10-25 22:27 まで）。172k の型は `records/2026-10-27-pc2-one-request-172k.md`。
+2. `integrate` の読む量の上限（`integrate-hook.md`、仮 〜11-29）と lessons の分割（全 6 本）は済み。効果は 10-27 以降の日ごとの値で測る。`--check-triggers` の FAIL 1 件は `claude-code-cost-session-size.md` の 16 語（別件）。
+3. （低優先）マクロ側の常駐文書に、全文読みを避ける指示を入れる案。マクロの現況は閉じた（ee の決定 10-27）。
+4. `room reap` の退避は済み。残り: `-home-ai`（Project に紐づかない履歴）は退避も削除もしない。部屋を直接消す場合は手で退避する。
+5. 土台の整理（`AGENTS.md` など）は、100k 運用の結果を見てから再判断する（`records/2026-10-26-base-trim.md`。前倒しはしない。ee の決定 10-27）。**漏らさない**: 土台は区切りまでの余裕を食い、1 会話の依頼数を減らす（作業性）。再判断のときは、動かせる土台の内訳を先に測る。
 
 ## Open Questions
 
-- 差の約 16M の出どころ（10-01〜08 の分、Desktop）は取らない（ee の決定 10-27）。今あるデータの範囲で傾向を見る。
+- 差の約 16M の出どころ（10-01〜08 の分、Desktop）は取らない（ee の決定 10-27）。
 - Zed の System tools が 9.0k → 9.9k に増えた原因（再起動でも戻らず）。
