@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-27（保留 3 件への回答）
+- 追記の型は (b)、素材は (a) と決まった（`decisions.md`）。単価の 1 か所化は進めてよいとの指示で、まとめ先を調べて案を出した（`session-handoff` の Facts に集約）。
+
 ### 2026-10-27（印の確認と `--check-aging` の初回）
 - `shell-script-testing-wsl` を見直し、Gotchas の節に一方向の印を付けた（ツールの安全チェックの挙動は版で変わる）。Facts の Ubuntu 24.04 は環境の記録として印なし。
 - `--check-aging` をクラウドの環境で初めて実行した。5 本中 1 本が FAIL（`user-thinking-habits.md` 32808 バイト > 32KB）。判断は月次に回す。

@@ -16,6 +16,8 @@
 3. （済 2026-10-27）印の付け忘れの確認: `shell-script-testing-wsl` の Gotchas（Claude Code の安全チェックの挙動）に一方向の印を付けた。Facts の Ubuntu 24.04 は作業時の環境の記録で、節単位の版依存ではないため付けない。
 4. 別セッションで、`logbook/` が上位の md から辿れるかを確かめる(引当率、`topics/md-link-graph/` の道具)。
 5. 試行: 2026-11-29 の月次の振り返りで、週次の記録(`kit-growth/records/`)を 1 回手で畳む(置き場は変えない)。
+6. `shell-command-usecases` の素材の節に `素材` の印を付け、`logbook/README.md` の表の「素材」行を更新する。
+7. 単価の 1 か所化: 案は `session-handoff` の Facts（版依存: 並存の節）に集約し、`claude-code-auth-providers` ほかは指す。承認後に実施。
 
 ## Open Questions
 
@@ -24,6 +26,6 @@
 
 ### 待ち行列(判断は、置いたセッションの次の `review 消化` 以降)
 
-- 【保留 2026-10-26】lessons の追記の型: 追記のたびの Facts／OQ／NA がファイルを太らせる。案 (b) OQ・NA を本体に 1 つにまとめる。代替: NA に起票日だけ付ける。10-19 の R-02 の却下と同じ理由で覆りやすい。(a) は正式化済み(`docs/decisions.md` 直下)。
-- 【保留 2026-10-26】`exmem/lessons/shell-command-usecases.md` の素材(約 15.5KB、dotfiles が正本として読む)。(a) lesson に残し `素材` の印、開始時に読まない。(b) `exmem/seeds/` を新設(dotfiles の読み先も変わる)。dotfiles へ移す案は依存の向きに反するので除く。
-- 単価の記述が複数の lessons にある(`records/2026-10-26-wave3-review.md` の観察 3)。1 か所にまとめ、他は指す。まとめ先は実施の前に 3 行で示す。
+- 【決定 2026-10-27】追記の型は案 (b)、OQ・NA を本体に 1 つにまとめる。実施は次の追記から（既存ファイルの直しは `review 消化` で）。
+- 【決定 2026-10-27】`shell-command-usecases` の素材は案 (a)、lesson に残して `素材` の印を付け、開始時に読まない。印の付与は未実施（Next Actions 6）。
+- 【案を提示 2026-10-27】単価の 1 か所化。まとめ先の案は、ユーザーの承認待ち（下の Next Actions 7）。
