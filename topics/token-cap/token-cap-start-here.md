@@ -5,17 +5,17 @@
 
 ## いま
 
-切る目安 60k で明日から運用。伸びの主因は土台でなくファイルの全文読み（`records/2026-10-26-growth-by-reads.md`）。読む量の一手は一巡した。skills の整理も済んだ（10-27、Zed の Skills 5.8k → 3.5k。`records/2026-10-27-skills-trim.md`）。`AGENTS.md` の整理は効きが小さいので見送り。PC1 の集計は ee が取る。
+PC1 の実測が届いた（`records/2026-10-27-pc1-meter.md`）。切る目安は「作業の区切り、または 100k」に変更（10-27。60k は PC1 の作業では 1 依頼で尽きる）。伸びの主因はファイルの全文読み。skills の整理は済み。解説は `guides/explain/claude-code-cost-session-size.md`。
 
 ## あなた待ち
 
-- PC1 で `usage_report.py` と `heavy_sessions.py` の出力を取る（`docs/log.md` Next Actions 1）。
+- PC1 の 10-21 以降の集計（画面は 10-20 まで。勤務先の表示との差の確認）。
 - 上限が「キャッシュ読みを含む総量」か、モデルで重みが違うかの確認（haiku 案の前提）。
 - マクロの現況（規模・残り・実行できる環境）の回答（`records/2026-10-26-macro-split.md` の末尾）。
 
 ## 次の一手
 
-「token-cap の続き」。PC1 の集計が届いたら、角度ごとの削減量を実数で見積もる。どこでも可。
+「token-cap の続き」。100k 運用の日ごとの値を見て、前後を比べる。どこでも可。
 
 ## 読む順
 

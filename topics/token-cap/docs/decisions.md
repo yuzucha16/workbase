@@ -39,3 +39,10 @@
 - 決めたこと（ユーザー）: 同期の skills のうち、使っていない 9 件（`skill-creator` `google-workspace` `deep-research` `import-memory` `morning` `docs` `computer-use` `built-in-browser` `chrome-browser`）をオフにし、obsidian プラグインを uninstall した。第 2 段階（`xlsx` `docx` `pptx` `pdf`）は残す。
 - 根拠: ユーザーの発言: 「前半の5件を削除して、obsidian skillをuninstallしました」「第一段階をやったところ、skillsが3.5Kに減りました」「第二段階は残すことにしました。」
 - 確認済み: Zed の Skills は 5.8k → 3.5k（`records/2026-10-27-skills-trim.md`）。切るときは claude.ai でオフにする（ローカルで消した同期コピーは再ダウンロードされる）。
+
+
+### 【この件】切る目安を「作業の区切り、または 100k」にする（2026-10-27）
+- 決めたこと（ユーザー）: 切る目安は「Task 1 件、または 100k」の早いほう。10-26 に決めた 60k は取り下げる。
+- 根拠: ユーザーの発言: 「切る目安：「Task 1 件、または 100k」にします。60KはPC2の値でしたが、pc1まで加味するとこちらの方が合理的です。」
+- 確認済み: PC1 は 1 依頼で約 30k 伸び、60k までの幅は約 17k（1 依頼で尽きる）。100k なら約 43% 減の見込み（推定）。`records/2026-10-27-pc1-meter.md`。
+- 再判断: 100k 運用の後の日ごとの値（60k 超の応答の割合、1 応答の平均）を見てから。
