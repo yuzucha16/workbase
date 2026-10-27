@@ -89,7 +89,7 @@ sources:
 - 確認済み（メモ記載）: スキルはClaude側の仕組みで、Office内のCopilotには効かない。
 - **実物との照合（2026-10-02。当時の配置。2026-10-06 以降は `$HOME\works`）**: 実際の配置はメモの想定と少し違う。vaultは `C:\vault\notes`、リポジトリは `C:\vault\repos\github.com\yuzucha16\`（`areas_shared` と `dotfiles`）にあり、`areas_shared` と `.obsidian` はジャンクションでvaultに入っている（[[obsidian-vault]]）。「コードをvaultに入れない」の原則に対し、`areas_shared` は例外的にvaultへ入れたリポジトリ（exmem）。
 - 仮説: anthropics/skillsのdocx / pptx / xlsx / pdfスキルは通常のOSSと異なるライセンス条件の可能性がある。改変・社内配布の前に要確認。
-- 仮説: 勤務先のMicrosoft 365にCopilotライセンスがあるかで、Copilot統一かClaude併用かが変わる。
+- 仮説: PC1 で使う Microsoft 365にCopilotライセンスがあるかで、Copilot統一かClaude併用かが変わる。
 
 ## Gotchas
 
@@ -100,7 +100,7 @@ sources:
 
 ## Open Questions
 
-- 勤務先のMicrosoft 365にCopilotライセンスがあるか。
+- PC1 で使う Microsoft 365にCopilotライセンスがあるか。
 - anthropics/skillsの各スキルのライセンス条件と、社内利用・改変時の扱い。
 - xlsx / pptxの履歴管理（クラウド同期のバージョン履歴で足りるか、Git LFSを使うか）。
 - 既存の集計ブックをMaster / viewへ分離する際、どのブックから着手するか。
@@ -112,7 +112,7 @@ sources:
 2. 既存の集計ブック1つを `src/` に原本として置き、コピーをMaster / view分離する（Excel内AIで実施）。
 3. `skill-creator` で、master-view分離スキルのたたき台を作る（[[claude-code-vs-cowork]] の `excel-aggregation` と整理する）。
 4. 作業ログ形式（目的・入力・実施内容・出力ファイル）をCLAUDE.mdに書いて、実際に回して調整する。
-5. anthropics/skillsのライセンス表記と、勤務先のCopilotライセンスの有無を確認する。
+5. anthropics/skillsのライセンス表記と、PC1 で使う Microsoft 365 の Copilot ライセンスの有無を確認する。
 
 ## 繰り返す成果物の手順と分担（2026-10-07 追記）
 

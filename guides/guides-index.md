@@ -30,9 +30,9 @@ updated: 2026-10-21
 |---|---|---|
 | 個人の AWS アカウントを作って、Bedrock 経由で Claude Code に「こんにちは」と話しかける | [[bedrock-first-hello]] | 手順書 |
 | Bedrock と Anthropic 直接の単価の差、リージョン指定の割増を思い出す | [[bedrock-first-hello#対応バージョン表]] | 手順書 |
-| 勤務先から「ゲートウェイのベース URL と発行者 URL」を渡された。Claude Code / Zed でどうつなぐのか、OIDC のサインインとトークンの流れを、自分で説明できるようにする | [[llm-gateway-oidc]] | 理解ガイド |
+| 管理側から「ゲートウェイのベース URL と発行者 URL」を渡された。Claude Code / Zed でどうつなぐのか、OIDC のサインインとトークンの流れを、自分で説明できるようにする | [[llm-gateway-oidc]] | 理解ガイド |
 | ゲートウェイにつながらない・`apiKeyHelper` が失敗する・約1時間で `401` になる、などの症状から原因を切り分ける | [[llm-gateway-oidc#3. チェックリスト（症状 → 原因 → 対処）]] | 理解ガイド |
-| Claude Code を勤務先のゲートウェイにつなぐ（URL・クライアント ID を入れて、サインインして起動する） | dotfiles の `windows/claude/README.md` 第4章（このリポジトリの外。スクリプトの隣に置く手順書） | 手順書 |
+| Claude Code を組織のゲートウェイにつなぐ（URL・クライアント ID を入れて、サインインして起動する） | dotfiles の `windows/claude/README.md` 第4章（このリポジトリの外。スクリプトの隣に置く手順書） | 手順書 |
 
 ### AI に顧客データ・社外秘を見せない
 
@@ -74,7 +74,7 @@ updated: 2026-10-21
 
 | やりたいこと・場面 | 見る文書 | 種類 |
 |---|---|---|
-| `SSL certificate problem` などの証明書エラーが出た（勤務先のプロキシ環境） | [[ssl-inspection#3. チェックリスト（症状 → 原因 → 対処）]] | 理解ガイド |
+| `SSL certificate problem` などの証明書エラーが出た（TLS 検査のあるプロキシ環境） | [[ssl-inspection#3. チェックリスト（症状 → 原因 → 対処）]] | 理解ガイド |
 | ブラウザは通るのに git / WSL / docker / pip / npm だけ通らない | [[ssl-inspection]] | 理解ガイド |
 | SSL インスペクションの仕組みを、自分で説明できるようにする | [[ssl-inspection#2. 理解のための基礎知識]] | 理解ガイド |
 

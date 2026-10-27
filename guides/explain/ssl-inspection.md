@@ -14,9 +14,9 @@ triggers: [SSL, 証明書, 証明書エラー, SSLインスペクション, プ�
 ベンダーA のようなクラウド型プロキシ（SSLインスペクション）がある業務環境で、証明書エラーが出たときに原因を切り分け、対処できるようにするための手順書。
 「症状 → 原因 → 対処」を引けるようにし、自分で説明できるところまでを目的とする。
 
-- 前提: 勤務先のルートCAが Windows 証明書ストアに配布済み。git / docker / WSL / 各言語ランタイムから外部に出る
+- 前提: 検査用のルートCAが Windows 証明書ストアに配布済み。git / docker / WSL / 各言語ランタイムから外部に出る
 - 確認状況: 内容は一般論と過去の経験に基づく。**実機での確認は未**（4.5 に要確認事項をまとめる）
-- 勤務先名・社内のCA名・配布方法などの固有情報は、このメモに書かない
+- 組織名・CA の名前・配布方法などの固有情報は、このメモに書かない
 
 ## 1. 当時の状況と解決（ダイジェスト）
 
@@ -27,15 +27,15 @@ triggers: [SSL, 証明書, 証明書エラー, SSLインスペクション, プ�
 
 **原因**
 
-1. システムA(クラウドプロキシ)が SSL インスペクションで通信を中継し、**勤務先CA署名の証明書**をクライアントに提示していた
-2. Git for Windows の TLS 実装は OpenSSL で、**独自のCAバンドル**（`ca-bundle.crt`）を見ていた。そこには勤務先CAがないため「発行元不明」で拒否された
-3. ブラウザは Windows 証明書ストアを見る。IT部門が配布した勤務先CAがそこにあるので通る
+1. システムA(クラウドプロキシ)が SSL インスペクションで通信を中継し、**検査用CA署名の証明書**をクライアントに提示していた
+2. Git for Windows の TLS 実装は OpenSSL で、**独自のCAバンドル**（`ca-bundle.crt`）を見ていた。そこには検査用CAがないため「発行元不明」で拒否された
+3. ブラウザは Windows 証明書ストアを見る。管理側が配布した検査用CAがそこにあるので通る
 
 **解決**
 
 - `git config --global http.sslBackend schannel` で、Windows 証明書ストアを見る実装に切り替えた
-- もしくは、勤務先CAをバンドルに追加して `http.sslCAInfo` で指定する
-- WSL は別のストア（`/etc/ssl/certs`）なので、勤務先CAを追加して `update-ca-certificates` を実行する
+- もしくは、検査用CAをバンドルに追加して `http.sslCAInfo` で指定する
+- WSL は別のストア（`/etc/ssl/certs`）なので、検査用CAを追加して `update-ca-certificates` を実行する
 
 ## 2. 理解のための基礎知識
 
@@ -68,32 +68,32 @@ triggers: [SSL, 証明書, 証明書エラー, SSLインスペクション, プ�
 - **ストア**: OS が管理する証明書の保管場所（Windows 証明書ストアなど）。GUI や API で出し入れする
 - **バンドル**: 信頼するルートCAの証明書を、PEM 形式で何枚も連結した **1つのファイル**。ライブラリが直接読み込む
   - 例: Git for Windows の `ca-bundle.crt`、Linux の `/etc/ssl/certs/ca-certificates.crt`、Python certifi の `cacert.pem`
-- OpenSSL 系のツールは、OS のストアでなくバンドルのファイルを読む。勤務先CAを使うには、バンドルの末尾に勤務先CAの PEM を追記するか、勤務先CA入りのバンドルを指定する
+- OpenSSL 系のツールは、OS のストアでなくバンドルのファイルを読む。検査用CAを使うには、バンドルの末尾に検査用CAの PEM を追記するか、検査用CA入りのバンドルを指定する
 
 ### SSL インスペクション
 
 - プロキシが TLS を2本に分ける
-  - クライアント ⇔ プロキシ: 勤務先CAで署名したリーフ証明書を、その場で生成して提示
+  - クライアント ⇔ プロキシ: 検査用CAで署名したリーフ証明書を、その場で生成して提示
   - プロキシ ⇔ 本物のサーバー: 通常の TLS
-- 通るかどうかの分かれ目は「勤務先CAを信頼しているか」だけ
-- 確認は `openssl s_client -connect github.com:443 -showcerts` で行う。issuer が勤務先CAなら、インスペクションされている
+- 通るかどうかの分かれ目は「検査用CAを信頼しているか」だけ
+- 確認は `openssl s_client -connect github.com:443 -showcerts` で行う。issuer が検査用CAなら、インスペクションされている
 
 ### 自分で説明するときの一言
 
-> プロキシが勤務先CA署名の証明書に差し替えている。だから、使っている TLS ライブラリの信頼ストアに勤務先CAがないと弾かれる。ストアはライブラリごとに別なので、対象ごとに勤務先CAを登録する。
+> プロキシが検査用CA署名の証明書に差し替えている。だから、使っている TLS ライブラリの信頼ストアに検査用CAがないと弾かれる。ストアはライブラリごとに別なので、対象ごとに検査用CAを登録する。
 
 ## 3. チェックリスト（症状 → 原因 → 対処）
 
 | 症状 | 原因 | 対処 |
 |---|---|---|
-| `unable to get local issuer certificate` / `SSL certificate problem` | 信頼ストアに勤務先CAがない | まず `s_client` で issuer を確認 |
+| `unable to get local issuer certificate` / `SSL certificate problem` | 信頼ストアに検査用CAがない | まず `s_client` で issuer を確認 |
 | Win のブラウザは通る、git は不可 | git が OpenSSL の独自バンドルを参照 | `http.sslBackend schannel` に切替、または `http.sslCAInfo` |
-| Win は通る、WSL は不可 | Linux 側のストアに勤務先CAがない | PEM を `/usr/local/share/ca-certificates/` に置き `update-ca-certificates` |
-| docker の pull / push だけ不可 | dockerd が見るストアに勤務先CAがない | ホストのストアに追加、または `/etc/docker/certs.d/` |
-| `docker build` 内の `apt` / `curl` が失敗 | イメージ内にCAがない | Dockerfile で勤務先CAをコピーして登録 |
+| Win は通る、WSL は不可 | Linux 側のストアに検査用CAがない | PEM を `/usr/local/share/ca-certificates/` に置き `update-ca-certificates` |
+| docker の pull / push だけ不可 | dockerd が見るストアに検査用CAがない | ホストのストアに追加、または `/etc/docker/certs.d/` |
+| `docker build` 内の `apt` / `curl` が失敗 | イメージ内にCAがない | Dockerfile で検査用CAをコピーして登録 |
 | pip / requests が失敗 | certifi バンドルを使っている | `REQUESTS_CA_BUNDLE` / `pip config set global.cert` |
 | Node / npm が失敗 | Node 同梱バンドルを使っている | `NODE_EXTRA_CA_CERTS` |
-| Java が失敗 | `cacerts` に勤務先CAがない | `keytool -importcert` |
+| Java が失敗 | `cacerts` に検査用CAがない | `keytool -importcert` |
 | 追加したのに通らない | リーフを入れた、または中間CAが欠けている | **ルート（必要なら中間）CA**を入れ直す |
 | 特定アプリだけ不可 | 証明書ピンニング | システムA 側でバイパス設定を依頼 |
 
@@ -109,11 +109,11 @@ triggers: [SSL, 証明書, 証明書エラー, SSLインスペクション, プ�
 | 提供元 | Microsoft（OS 同梱） | OpenSSL Project |
 | 信頼ストア | Windows 証明書ストア | 独自のCAバンドル（`ca-bundle.crt`） |
 | 更新 | Windows Update で更新 | git など利用側のバージョンアップに同梱 |
-| 勤務先CAの反映 | GPO / MDM 配布分が自動で反映 | 手動でバンドルに追加が必要 |
+| 検査用CAの反映 | GPO / MDM 配布分が自動で反映 | 手動でバンドルに追加が必要 |
 
 **schannel へ切り替えた影響**
 
-- **良い点**: 勤務先CAをバンドル管理なしで反映でき、CA更新にも追従する
+- **良い点**: 検査用CAをバンドル管理なしで反映でき、CA更新にも追従する
 - **失効確認が厳しくなる**: schannel は既定で失効確認（CRL / OCSP）を行う。プロキシ環境で到達できないと `CRYPT_E_NO_REVOCATION_CHECK` で失敗することがある。その場合は `http.schannelCheckRevoke` が論点になる
 - **`http.sslCAInfo` が効かなくなる**: schannel では既定で無視される（`http.schannelUseSSLCAInfo` で変更可）
 - **TLS バージョンや暗号スイートが OS 依存になる**
@@ -126,13 +126,13 @@ triggers: [SSL, 証明書, 証明書エラー, SSLインスペクション, プ�
 3. **変化②**: SaaS / クラウド利用とテレワークで、社外から直接インターネットへ出る通信が増えた。境界での検査が意味を失った
 4. **現在**: 検査機能をクラウド側（SASE / SSE。ベンダーA など）へ移し、端末のエージェントで通信をクラウドへ誘導する。クラウドプロキシが TLS を復号し、マルウェア検知、DLP（情報漏えい防止）、SaaS 利用制御を行う
 
-自社での導入時期や理由は、社内資料で確認して追記する（**要確認**）。
+PC1 の環境での導入時期や理由は、その環境の資料で確認して追記する（**要確認**）。
 
 ### 4.3 影響を受けやすいモジュール一覧
 
 「システムのストアを見るか、独自バンドルを持つか」で3分類すると、原因の切り分けがしやすい。
 
-#### A. OS / システムのストアを使う（勤務先CAが反映されやすい）
+#### A. OS / システムのストアを使う（検査用CAが反映されやすい）
 
 | モジュール | 備考 |
 |---|---|
@@ -179,7 +179,7 @@ triggers: [SSL, 証明書, 証明書エラー, SSLインスペクション, プ�
 
 **注意点**
 
-- Node はバンドルがファイルではないため、中身は `tls.rootCertificates` で取得する。勤務先CAは `NODE_EXTRA_CA_CERTS` で**追加**する形になる
+- Node はバンドルがファイルではないため、中身は `tls.rootCertificates` で取得する。検査用CAは `NODE_EXTRA_CA_CERTS` で**追加**する形になる
 - Node 製のツール（VS Code の拡張、AI 系 CLI など）は、`NODE_EXTRA_CA_CERTS` が効くことが多い
 - 新しめの Node には、システムストアを使うオプションがある。バージョンによるので **要確認**
 - cargo は Windows では schannel を使うビルドが多く、その場合は実質グループ A になる。OS によって分類が変わる
@@ -199,7 +199,7 @@ triggers: [SSL, 証明書, 証明書エラー, SSLインスペクション, プ�
 
 ### 4.5 要確認事項
 
-- Docker Desktop が勤務先CAをどこから取り込むか（Linux の dockerd とは挙動が異なる可能性）
+- Docker Desktop が検査用CAをどこから取り込むか（Linux の dockerd とは挙動が異なる可能性）
 - 各ツールの最新バージョンでの仕様（特に Node のシステムストア対応、git の schannel 関連設定）
 - schannel 運用時の失効確認（`http.schannelCheckRevoke`）の扱い
-- 自社での SSL インスペクション導入の経緯と、勤務先CAの配布方法
+- PC1 の環境での SSL インスペクション導入の経緯と、検査用CAの配布方法

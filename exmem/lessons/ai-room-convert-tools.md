@@ -70,8 +70,8 @@ sources:
 - mermaid-cli 12.0.0 で作った PNG に、日本語ラベルが四角にならず出た（確認: 2026-10-20、根拠: ユーザーが画像を目で確認）。
 - PlemolJP v3.1.0 の zip は約 220 MB で無圧縮、各書体は約 5.6 MB。ライセンスのファイルは zip に入っていない（確認: 2026-10-20、根拠: zip を取得して `unzip -l` で一覧した）。`room.py` は PlemolJP の取得を、コメントアウトして残している（確認: 2026-10-21、根拠: `room.py` を読んだ）。
 - 部屋を作る `init` は、LibreOffice・Chromium・mermaid-cli を含めて3分27秒で通った（確認: 2026-10-20、根拠: ユーザーが貼った画面）。
-- TLS 検査のある環境でも、Chromium と mermaid-cli の取得が通る（仮説）。補足: 勤務先の証明書を `--ca-cert` で入れ、Node の取得には `NODE_EXTRA_CA_CERTS` でシステムのバンドルを指しているが、その環境では試していない。
-- Windows 側の実行環境（pwsh 7）は、勤務先の PC で使える（確認: 2026-10-20、根拠: ユーザーの発言）。
+- TLS 検査のある環境でも、Chromium と mermaid-cli の取得が通る（仮説）。補足: 検査用の証明書を `--ca-cert` で入れ、Node の取得には `NODE_EXTRA_CA_CERTS` でシステムのバンドルを指しているが、その環境では試していない。
+- Windows 側の実行環境（pwsh 7）は、PC1 で使える（確認: 2026-10-20、根拠: ユーザーの発言）。
 - LibreOffice に寄せても残る範囲は、VBA の実行確認、ピボットの作成、見た目の完全な再現（仮説）。補足: LibreOffice のピボットや VBA は Excel と結果が違う、という一般的な認識に基づく。
 - 静的検査は、難読化したコードを防げず、最後の関門は人が全文を読むことになる（仮説）。補足: 実装がまだ無く、検査の実効性は試していない。`room run` は、`room.py` に実装が無い（確認: 2026-10-21、根拠: `room.py` に `cmd_run` が無いことを検索した）。
 
@@ -92,7 +92,7 @@ sources:
 
 ## Open Questions
 
-- TLS 検査のある環境（勤務先の PC）で、`init` を通して Chromium と mermaid-cli の取得が通るか。
+- TLS 検査のある環境（PC1）で、`init` を通して Chromium と mermaid-cli の取得が通るか。
 - 画像・PDF は、マスク後の語が絵になり、復元の対象にならない。マスクして復元する Project（復元の対象は `ai/out/`）では、画像・PDF をどこに置くか（`ai/work/` に置く、または復元の対象外の派生物置き場を作る）。
 - PlemolJP を `init` に戻す時期。
 - `room run` の `dist/` を、復元（`restore`）の対象外にする実装と、`dist/` の中の docx などの扱い。
@@ -101,7 +101,7 @@ sources:
 
 ## Next Actions
 
-- 勤務先の PC で `init`（`--ca-cert` あり）を通し、Chromium と mermaid-cli の取得を確かめる（2026-10-21 時点）。
+- PC1 で `init`（`--ca-cert` あり）を通し、Chromium と mermaid-cli の取得を確かめる（2026-10-21 時点）。
 - `room run` を実装するときに、この型（依頼と記録の分離、気づく場所）を実測で見直す（2026-10-21 時点）。
 
 ## Related

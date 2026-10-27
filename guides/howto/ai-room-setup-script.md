@@ -15,7 +15,7 @@ tags:
 
 - **ゴール（完了の目安）**: 部屋の中の Claude Code が、`/mnt/room/pilot2-1`（Project の `ai/`）だけを読み書きでき、成果物が works に現れる。`close` で `archives/pilot2-1/` に移り、会話履歴を `reap` で消せる
 - **実名について**: `pilot2` `pilot2-1` `pilot2-2` は試験用の名前。自分の Area と Project の名前に置き換えて読む。名前は英数字・`_`・`-` だけにする（`reap` が止まるため）
-- パスは `$HOME` で書く。固有情報（勤務先名、顧客名）は書かない
+- パスは `$HOME` で書く。固有情報（組織名、顧客名）は書かない
 
 ## 対応バージョン表
 
@@ -66,7 +66,7 @@ uv run room.py init pilot2 --boundary internal
 - 分離の確認が `user=ai, c=0, cmd=no, sudo=no` から外れると、**道具を入れずに止まる**（想定の動作）
 - 終わりに、Area の README だけを、既定でコミットする（`--no-commit` で省く）
 - 途中で止まったら、同じコマンドに `--resume` を付ける（設定と道具の入れ直し）
-- **TLS 検査のあるネットワーク（勤務先など）では、`--ca-cert` を付ける**: `curl` が「SSL certificate problem（終了コード 60）」で止まるときの対処。勤務先のルート証明書（PEM、5枚まで。秘密鍵が混ざると止まる）を指定すると、apt の後・uv の前に、root が `/usr/local/share/ca-certificates/` へ入れる。入れる前に SHA-256 を表示する。`ai` は読めるが書き換えられない。指定しなければ入れない。証明書は、このリポジトリに置かない（公開のため）
+- **TLS 検査のあるネットワークでは、`--ca-cert` を付ける**: `curl` が「SSL certificate problem（終了コード 60）」で止まるときの対処。検査用のルート証明書（PEM、5枚まで。秘密鍵が混ざると止まる）を指定すると、apt の後・uv の前に、root が `/usr/local/share/ca-certificates/` へ入れる。入れる前に SHA-256 を表示する。`ai` は読めるが書き換えられない。指定しなければ入れない。証明書は、このリポジトリに置かない（公開のため）
 
   ```powershell
   uv run room.py init pilot2 --resume --ca-cert <証明書ファイル>.crt
@@ -95,7 +95,7 @@ wsl -d room-pilot2 -- sh -c "id -un; ls /mnt/c | wc -l; command -v cmd.exe || ec
 
 部屋の Claude Code を、Anthropic のログインでなく Amazon Bedrock につなぐ。AWS CLI は要らない（IAM ユーザーのアクセスキーを、環境変数かファイルで渡せば足りる）。
 
-1. **Bedrock の設定は、Zed の設定の `agent_servers` の `env` に書く**。秘密を含まない値だけ（`CLAUDE_CODE_USE_BEDROCK`、`AWS_REGION`、`AWS_PROFILE`、モデルの ID、`AWS_CA_BUNDLE` と `NODE_EXTRA_CA_CERTS`（`/etc/ssl/certs/ca-certificates.crt`。TLS 検査のあるネットワークで、Node が勤務先のルート証明書を見るため））。エージェントは `command: npx`、`args: ["-y", "@agentclientprotocol/claude-agent-acp"]` の custom で定義する（実機で接続を確認: 2026-10-19）
+1. **Bedrock の設定は、Zed の設定の `agent_servers` の `env` に書く**。秘密を含まない値だけ（`CLAUDE_CODE_USE_BEDROCK`、`AWS_REGION`、`AWS_PROFILE`、モデルの ID、`AWS_CA_BUNDLE` と `NODE_EXTRA_CA_CERTS`（`/etc/ssl/certs/ca-certificates.crt`。TLS 検査のあるネットワークで、Node が検査用のルート証明書を見るため））。エージェントは `command: npx`、`args: ["-y", "@agentclientprotocol/claude-agent-acp"]` の custom で定義する（実機で接続を確認: 2026-10-19）
 2. **アクセスキーは、部屋の `~/.aws/credentials` に、プロファイルとして置く**:
 
    ```powershell
@@ -365,7 +365,7 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 
 | 症状 | 原因 | 対処 |
 |---|---|---|
-| `init` の `curl` が「SSL certificate problem」（終了コード 60）で止まる | TLS 検査のあるネットワークで、勤務先のルート証明書が部屋に無い。または、`WSLENV` 経由の壊れた `SSL_CERT_FILE` が残っている | `init --resume --ca-cert <ファイル>`（2 章）。`room.py` は `WSLENV` を渡さない |
+| `init` の `curl` が「SSL certificate problem」（終了コード 60）で止まる | TLS 検査のあるネットワークで、検査用のルート証明書が部屋に無い。または、`WSLENV` 経由の壊れた `SSL_CERT_FILE` が残っている | `init --resume --ca-cert <ファイル>`（2 章）。`room.py` は `WSLENV` を渡さない |
 | 部屋に入るたびに「failed to translate」が出る | Windows の `WSLENV` の `/p` 付きのパスが、`/mnt/c` の無い部屋で変換できない | `uv run room.py shell <Area>` で入る（動作には影響しない） |
 | Zed の Agent が `npx` を知らない（PATH に無い） | 部屋に Node.js が無い（`init` の古い版は入れない） | `init --resume`（Node 24 を入れる。2 章）。入れる前の部屋には、手で入れてもよい |
 | Zed の Agent で Bedrock の認証が通らない | `agent_servers` の `env` に、`AWS_PROFILE` などが無い。部屋の `~/.aws/credentials` にプロファイルが無い | 2.1 |

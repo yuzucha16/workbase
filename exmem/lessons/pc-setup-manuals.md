@@ -34,11 +34,11 @@ PCを入れ替えても、手順書とスクリプトで同じ環境を再現で
 
 - 手順書は dotfiles の `docs/setup/` の `win11.md`、`debian-family.md`、`fonts-setup.md`（2026-10-03 に実物で確認。2026-10-10 に `cheatsheets/env/` から `guides/howto/` へ移動し、`fonts.md` は `fonts-setup.md` に改名した。2026-10-16 に dotfiles の `docs/setup/` へ移した）。
 - 書き方のルールは dotfiles の `docs/setup/README.md`（dotfiles 固有の点）と、workbase の `resources/guides/AGENTS.md`（書式・文体。旧 `cheatsheets/CLAUDE.md`）。ルールを先に作ってから Win11、Debian系の順に書いた。ぶれを防ぐため。
-- 旧メモ3つ（`win_setup` / `linux_setup` / `setup_alma`）は削除した（古く、PC1由来の情報が多い。履歴から復元できる）。
+- 旧メモ3つ（`win_setup` / `linux_setup` / `setup_alma`）は削除した（古く、PC1 由来の情報が多い。履歴から復元できる）。
 
 ## Principles
 
-- 個人情報（メール、社員番号、アカウント名、勤務先名・VPN）は手順書に残さない。git の名前・メールは `~/.gitconfig_local` に置く。
+- 個人情報（メール、社員番号、アカウント名、組織名・VPN）は手順書に残さない。git の名前・メールは `~/.gitconfig_local` に置く。
 - バージョン依存の情報は、冒頭の**対応バージョン表**にだけ書く。ディストロ差分は各章末の**差分表**に書き、本文に `[MX]` タグを散らさない。差分が全体の3割を超えたらファイルを分ける。
 - 手順書とスクリプトで一覧を重複させない（パッケージは `manifests/` に外出し）。
 
@@ -142,7 +142,7 @@ Windows の git で、SSL バックエンドを schannel に切り替えるか�
 
 **Decisions**
 
-- **git の SSL は schannel のままにし、`GIT_SSL_CAINFO` は設定しない**（2026-10-10）。根拠: ユーザーの決定。勤務先 CA だけのバンドルでは、完全性も、プロキシが全通信を再署名するかも保証できない。schannel は Windows の証明書ストア（ブラウザと同じ）を見る。却下案: `GIT_SSL_CAINFO` に勤務先 CA だけのバンドルを指す（既定の CA 一覧を置き換え、外れると全通信が失敗）。git 同梱の `ca-bundle.crt` に勤務先 CA を足した結合ファイル（git の更新のたびに作り直しが要るため採用されなかった）。
+- **git の SSL は schannel のままにし、`GIT_SSL_CAINFO` は設定しない**（2026-10-10）。根拠: ユーザーの決定。検査用 CA だけのバンドルでは、完全性も、プロキシが全通信を再署名するかも保証できない。schannel は Windows の証明書ストア（ブラウザと同じ）を見る。却下案: `GIT_SSL_CAINFO` に検査用 CA だけのバンドルを指す（既定の CA 一覧を置き換え、外れると全通信が失敗）。git 同梱の `ca-bundle.crt` に検査用 CA を足した結合ファイル（git の更新のたびに作り直しが要るため採用されなかった）。
 
 **Facts**
 

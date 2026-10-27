@@ -893,9 +893,9 @@ CONVERT_TOOLS_INSTALL = (
     "cat > /etc/fonts/local.conf <<'EOF'\n" + FONT_PREFER_JA + "EOF\n"
     "fc-cache -f\n"
 )
-NPM_CAFILE = "npm config set cafile /etc/ssl/certs/ca-certificates.crt\n"  # npm は証明書ストアを見ない。システムのバンドル（入れた勤務先の証明書を含む）を指す
+NPM_CAFILE = "npm config set cafile /etc/ssl/certs/ca-certificates.crt\n"  # npm は証明書ストアを見ない。システムのバンドル（入れた検査用の証明書を含む）を指す
 
-CA_MAX_CERTS = 5  # need to know: 勤務先のルート証明書など、少数だけ。OS の証明書ストア丸ごとは入れない
+CA_MAX_CERTS = 5  # need to know: TLS 検査用のルート証明書など、少数だけ。OS の証明書ストア丸ごとは入れない
 CA_DEST = "/usr/local/share/ca-certificates/room-extra-ca.crt"
 
 
@@ -911,7 +911,7 @@ def load_ca_cert(path):
     if not blocks:
         raise RoomError("--ca-cert に PEM 形式の証明書が無い（.cer が DER 形式なら、PEM に変換する）")
     if len(blocks) > CA_MAX_CERTS:
-        raise RoomError(f"--ca-cert の証明書が {len(blocks)} 枚ある（上限 {CA_MAX_CERTS}）。必要な勤務先のルート証明書だけのファイルにする")
+        raise RoomError(f"--ca-cert の証明書が {len(blocks)} 枚ある（上限 {CA_MAX_CERTS}）。必要な検査用のルート証明書だけのファイルにする")
     prints = [hashlib.sha256(ssl.PEM_cert_to_DER_cert(b)).hexdigest() for b in blocks]
     return "\n".join(blocks) + "\n", prints
 
@@ -2578,7 +2578,7 @@ def build_parser():
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
     i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")
     i.add_argument("--only", help="既存の部屋に、指定した段だけを入れ直す（--resume を含む。カンマ区切り: " + ", ".join(INIT_STEPS) + "）")
-    i.add_argument("--ca-cert", help="部屋に入れる勤務先のルート証明書（PEM、最大5枚）。TLS 検査のあるネットワークで curl が証明書エラー（60）になるときに指定する。既定は入れない")
+    i.add_argument("--ca-cert", help="部屋に入れる TLS 検査用のルート証明書（PEM、最大5枚）。TLS 検査のあるネットワークで curl が証明書エラー（60）になるときに指定する。既定は入れない")
     i.add_argument("--boundary", help="Area が無い（または boundary: が無い）ときに付ける印（例: internal、顧客を表す名前。既定値は無い）")
     i.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="Area の作成をコミットしない（既定はコミットする）")
     ak = sub.add_parser("aws-key", help="部屋の ~/.aws/credentials に、Bedrock 用のキーを入れる（入力は画面に出ない）")

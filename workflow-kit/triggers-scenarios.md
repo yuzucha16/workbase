@@ -56,7 +56,7 @@ S13〜S26 は、`triggers:` を付ける前の言葉で、依頼文に自然に�
 | B12 | bashrc の起動が遅いので速くしたい | `exmem/lessons/dotfiles-shell-tuning.md` | 2/2 |
 | B13 | 組込みCのコードがMISRAの制約を守っているか確認したい | `exmem/lessons/embedded-c-constraint-checks.md` | 1/1 |
 | B14 | 新しい案件のフォルダを Projects と Areas のどちらに作るか | `exmem/lessons/para-operations.md` | 1/2 |
-| B15 | 勤務先のプロキシで証明書エラーが出て pip や npm が通らない | `guides/explain/ssl-inspection.md` | 1/3 |
+| B15 | TLS 検査のあるプロキシで証明書エラーが出て pip や npm が通らない | `guides/explain/ssl-inspection.md` | 1/3 |
 | B16 | 長いセッションだとコストが増えるのはなぜか | `guides/explain/claude-code-cost-session-size.md` | 1/2 |
 | B17 | 部屋で Word を PDF に変換したい | `guides/explain/ai-room-convert-tools.md` | 2/2 |
 | B18 | 調べ物のやり方を決めて、ネットで調査して比較表を作って | `exmem/lessons/research-method.md` | 3/3 |
