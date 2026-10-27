@@ -65,6 +65,12 @@ class Wsl:
         r = subprocess.run(cmd, input=text.replace("\r\n", "\n").encode("utf-8"), capture_output=True, env=wsl_env())
         return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
+    def tar_history(self, distro, hist):
+        """部屋の ~/.claude/projects/<hist> を tar にして返す。無ければ None（automount を切った部屋でも使えるよう、標準出力で受ける）。"""
+        script = f'cd "$HOME/.claude/projects" 2>/dev/null && test -d "{hist}" && tar -cf - -- "{hist}"\n'
+        r = subprocess.run(["wsl.exe", "-d", distro, "--", "sh", "-s"], input=script.encode("utf-8"), capture_output=True, env=wsl_env())
+        return r.stdout if r.returncode == 0 and r.stdout else None
+
     def push(self, distro, data, script):
         """data（バイト列）を標準入力で渡して、script を一般ユーザーで実行する（共有知の写しを送る）。
         wsl.exe は sh -c の引数を外側のシェルでもう一度解釈し、スクリプト内で代入した変数を空に展開するので、代入を含むスクリプトは渡せない。"""
@@ -108,8 +114,9 @@ def git(vault, *args, check=True):
 
 class Ctx:
     def __init__(self, vault, wsl=None, today=None, now=None, say=print, reap_days=REAP_DAYS_DEFAULT, settle=3,
-                 ask=input, ask_secret=getpass.getpass):
+                 ask=input, ask_secret=getpass.getpass, history_backup=None):
         self.vault = Path(vault)
+        self.history_backup = Path(history_backup) if history_backup else None  # reap が消す前に会話履歴を写す先（リポジトリの外）
         self.wsl = wsl or Wsl()
         self._today = today
         self._now = now
@@ -2024,6 +2031,25 @@ def find_reapable(ctx, today=None):
     return found
 
 
+def backup_history(ctx, distro, hist):
+    """消す前に、会話履歴を ctx.history_backup/<部屋>/ へ写す（トークン集計 `cap_meter.py --root` で読める形）。写せなければ RoomError で止め、消さない。
+    置き場はリポジトリの外（会話には作業内容が入る。公開リポジトリに入れない）。"""
+    if ctx.history_backup is None:
+        return
+    data = ctx.wsl.tar_history(distro, hist)
+    if data is None:
+        ctx.say(f"  {hist}: 部屋に会話履歴が無い。退避は省く")
+        return
+    dest = ctx.history_backup / distro
+    dest.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(fileobj=io.BytesIO(data)) as tf:
+        for m in tf.getmembers():
+            if not (m.isfile() or m.isdir()) or m.name.startswith(("/", "..")) or ".." in Path(m.name).parts:
+                raise RoomError(f"{hist}: 退避の tar に不正な項目がある（{m.name}）。消さずに止める")
+        tf.extractall(dest, **({"filter": "data"} if hasattr(tarfile, "data_filter") else {}))
+    ctx.say(f"  会話履歴を退避した: {dest / hist}（集計は cap_meter.py --root {ctx.history_backup}）")
+
+
 def reap_project(ctx, name, area):
     """部屋の中の、その Project の会話履歴と ~/tmp/<名> を消し、archives の README に reaped を付ける。消した、または対象が無ければ True。"""
     readme = ctx.vault / "archives" / name / "README.md"
@@ -2036,6 +2062,7 @@ def reap_project(ctx, name, area):
         ctx.say(f"  {name}: 部屋 {distro} が無い。消すものは無いとして、reaped を付ける")
     else:
         hist, tmp = f"-mnt-room-{name}", name
+        backup_history(ctx, distro, hist)
         # Zed などで /home/ai を開くと、履歴は Project に紐づかない -home-ai に残る。どの Project のものか分からないので消さず、知らせる
         _rc, left, _err = ctx.wsl.script(distro, f'test -d "$HOME/.claude/projects/{HOME_HISTORY}" && echo remain || true\n')
         if left.strip():
@@ -2490,7 +2517,7 @@ def cmd_mksub(ctx, a):
     if a.rev:
         git(res, "checkout", "-q", a.rev)
     sub_ctx = Ctx(sub, wsl=ctx.wsl, today=ctx._today, now=ctx._now, say=ctx.say, reap_days=ctx.reap_days, settle=ctx.settle,
-                  ask=ctx.ask, ask_secret=ctx.ask_secret)
+                  ask=ctx.ask, ask_secret=ctx.ask_secret, history_backup=ctx.history_backup)
     mkworks_create(sub_ctx, argparse.Namespace(update=False, role=a.role, remote="none", base=None, yes=True, commit=a.commit))
     ctx.say(f"作った: {sub}（resources/ は {resources_rev(sub_ctx)}）")
     ctx.say(f"使い方: room --vault {sub} <コマンド>、または WORKS_DIR / ROOM_VAULT を {sub} にする")
@@ -2572,7 +2599,7 @@ def build_parser():
 def main(argv=None):
     a = build_parser().parse_args(argv)
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
-    ctx = Ctx(a.vault, reap_days=a.reap_days)
+    ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
         {"mkworks": cmd_mkworks, "mksub": cmd_mksub, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
          "mask": cmd_mask, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)

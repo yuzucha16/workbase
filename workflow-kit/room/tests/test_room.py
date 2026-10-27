@@ -575,6 +575,35 @@ class ReapTest(unittest.TestCase):
             self.assertIn("reaped: 2026-10-12", (v / "archives/old/README.md").read_text(encoding="utf-8"))
             self.assertEqual(room.find_reapable(c), [])
 
+    def test_reap_backs_up_history_before_deleting_and_stops_on_bad_tar(self):
+        import io, tarfile
+
+        def tar_of(name):
+            buf = io.BytesIO()
+            with tarfile.open(fileobj=buf, mode="w") as tf:
+                data = b'{"type":"assistant"}\n'
+                ti = tarfile.TarInfo(name)
+                ti.size = len(data)
+                tf.addfile(ti, io.BytesIO(data))
+            return buf.getvalue()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v = make_vault(tmp)
+            self.archived(v, "old", "2026-10-01")
+            c = ctx_for(v, wsl)
+            c.history_backup = Path(tmp) / "bk"
+            wsl.tar_history = lambda distro, hist: tar_of(f"{hist}/s.jsonl")
+            self.assertEqual(room.offer_reap(c, yes=True), 1)
+            self.assertTrue((Path(tmp) / "bk/room-area-x/-mnt-room-old/s.jsonl").exists())
+            # 不正な tar なら、消さずに止まる
+            self.archived(v, "bad", "2026-10-01")
+            wsl.scripts.clear()
+            wsl.tar_history = lambda distro, hist: tar_of("../evil.jsonl")
+            with self.assertRaises(room.RoomError):
+                room.reap_project(c, "bad", "area-x")
+            self.assertFalse(any("rm -rf" in s[1] for s in wsl.scripts))
+
     def test_reap_warns_about_home_history_without_deleting_it(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
