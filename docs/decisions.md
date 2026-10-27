@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】md-link-graph の道具を kit に移す。`mktriggers.py` は `mdreach.py` に統合、`graph.html` は都度生成（2026-10-27）
+- 決めたこと（ユーザー、`review 消化`）: ① `mdgraph.py` `mdreach.py` `mdrank.py` を `workflow-kit/tools/`、場面の一覧を `workflow-kit/triggers-scenarios.md` に移す。移す時期は今で、トピックは 11-08 の引き当て率の初回まで残す。② `mktriggers.py` を `mdreach.py --table` に統合する（表はメモリ上。`triggers-prototype.md` は廃止）。③ `graph.html` はコミットをやめ、一時フォルダに都度生成する。同じ回に、振り返りの定例（10-20）を正式化、v7 を採用、v5 を取り下げ、token-cap の NA を畳む。
+- 根拠: ユーザーの発言: 「①よい。②統合する。③やめる。都度生成にします。」、「decisions.md:327 正式化します」「decisions.md:72を採用します。decisions.md:379 は古い版なのでomitします。」
+- 反映先: `workflow-kit/review-triggers-check.md`、トピック `md-link-graph` の窓口と `log.md`。再測定は届かない場面 1/26、1 位 30/43、上位 5 件 40/43（移設前と同じ）。
+
 ### 【汎用】「<名前> の続き」の参照文に、`docs-rules.md` の節だけを `offset`・`limit` で読む指定を足す（2026-10-27）
 - 決めたこと（ユーザー）: `AGENTS.md` と `topics/AGENTS.md` の参照文を直す。節を探す Grep と全文読みをしない。案A（参照文の明記）を採り、専用ファイルへの切り出し（案B）はしなかった。
 - 根拠: ユーザーの発言: 「承認します、変更してください。」実測（10-26 の「続き」11セッションの transcript）: 規則の節を探す Grep が 5〜7KB（約 2.4〜3.3k）。「続き」の増分の中央値は約 7.3k で、そのうち 3〜4 割。
