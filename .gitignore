@@ -4,3 +4,7 @@
 ### Windows
 Thumbs.db
 [Dd]esktop.ini
+
+# cleankit の報告（実データの抜粋が載る）
+*.check-report.md
+*.clean-report.md

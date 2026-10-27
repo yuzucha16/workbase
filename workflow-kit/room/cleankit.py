@@ -733,6 +733,23 @@ def summary(fs):
     return ", ".join(f"{k} {v}" for k, v in c.items()) or "なし"
 
 
+def repo_root(path):
+    """path に最も近い、.git のある祖先（無ければ None）。"""
+    p = Path(path).resolve()
+    for d in (p, *p.parents):
+        if (d / ".git").exists():
+            return d
+    return None
+
+
+def guard_outputs(*paths):
+    """出力と報告を、この kit を含むリポジトリ（公開）の中に書かない。報告は実データを含む。"""
+    mine = repo_root(__file__)
+    for p in paths:
+        if mine is not None and repo_root(Path(p).parent if not Path(p).is_dir() else p) == mine:
+            raise CleanError(f"出力先がこのリポジトリ（公開）の中: {p}。_noai/ など、リポジトリの外か追跡しない場所を指定する")
+
+
 def read_input(path):
     p = Path(path)
     ext = p.suffix.lower()
@@ -761,6 +778,7 @@ def main(argv=None):
         if a.cmd == "check":
             fs = check(Pkg(data), ext)
             rep = Path(a.report) if a.report else src.with_name(src.name + ".check-report.md")
+            guard_outputs(rep)
             rep.write_text(report_md(src, fs), encoding="utf-8")
             print(f"点検: {src.name}: {len(fs)} 件（{summary(fs)}）")
             print(f"報告: {rep}（実データの抜粋が載る。AI に見せない）")
@@ -776,6 +794,8 @@ def main(argv=None):
             raise CleanError("出力が元のファイルと同じ（元のファイルは変えない）")
         if out.exists() and not a.force:
             raise CleanError(f"出力が既にある: {out}（--force で上書き）")
+        rep = Path(a.report) if a.report else out.with_name(out.name + ".clean-report.md")
+        guard_outputs(out, rep)
         actions = [x for x in CLEAN_ACTIONS if x not in keep]
         before = check(Pkg(data), ext)
         cleaned, log = clean(data, ext, actions)
@@ -783,7 +803,6 @@ def main(argv=None):
         after = check(Pkg(cleaned), ext)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_bytes(cleaned)
-        rep = Path(a.report) if a.report else out.with_name(out.name + ".clean-report.md")
         rep.write_text(report_md(src, before, log, after, probs, out), encoding="utf-8")
         print(f"掃除: {src.name} → {out}（{len(log)} 項目）")
         print(f"残り: {len(after)} 件（{summary(after)}）")

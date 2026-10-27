@@ -240,6 +240,17 @@ class XlsxTest(unittest.TestCase):
             self.assertEqual(ck.main(["check", str(Path(d) / "a.docx")]), 2)
 
 
+class GuardTest(unittest.TestCase):
+    def test_refuses_inside_own_repo(self):
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "dummy.xlsx"
+            src.write_bytes(build_xlsx())
+            here = Path(ck.__file__).resolve().parent
+            self.assertEqual(ck.main(["clean", str(src), str(here / "tmp_out")]), 2)
+            self.assertEqual(ck.main(["check", str(src), "--report", str(here / "tmp.md")]), 2)
+            self.assertFalse((here / "tmp_out").exists() or (here / "tmp.md").exists())
+
+
 class PptxTest(unittest.TestCase):
     def setUp(self):
         self.data = build_pptx()
