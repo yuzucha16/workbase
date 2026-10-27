@@ -66,6 +66,7 @@ updated: 2026-10-21
 | やりたいこと・場面 | 見る文書 | 種類 |
 |---|---|---|
 | 会話を続けるか切るかの目安（約10万トークン）が、なぜ費用に効くかを、自分で説明できるようにする。間があいた後の最初の応答が高い、などの症状から原因を切り分ける | [[claude-code-cost-session-size]] | 理解ガイド |
+| 月次のトークン上限を、1 台の実測でどう数えるか（会話の大きさ、土台、切る大きさ別の平均）を、自分で説明できるようにする。表示は小さいのに月の合計が上限を超えた、などの症状から原因を切り分ける | [[token-cap-meter-reading]] | 理解ガイド |
 | Claude Code のトークン使用量・概算費用($)を、週次・月次で集計して、上位セッションや 1 件当たりの平均/最大/最小を見る | [[claude-usage-report]] | 手順書 |
 | 使用量の集計を HTML のレポートにする。単価表を足す・更新する。ccusage と突き合わせる | [[claude-usage-report]] | 手順書 |
 
@@ -93,7 +94,7 @@ updated: 2026-10-21
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
 | 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[bedrock-first-hello]]、[[claude-usage-report]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools]]、[[ai-room-data-layout]]、[[ai-room-concurrent-start]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools]]、[[ai-room-data-layout]]、[[ai-room-concurrent-start]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新
