@@ -17,7 +17,7 @@ works の Area（非公開）に溜める知識を、別の Project の AI 作�
 
 - 前提: works は PARA 構成（`areas/` `projects/` `archives/`）で、リポジトリの外にある。AI 作業部屋（[[ai-room-why]]）は、作業中の Project の `ai/` だけを見せる WSL の部屋。共有知の正本は workbase の `exmem/`（AI 向け）と `guides/`（人向け）
 - 確認状況: 規則と手順書を読んだ範囲での整理。取り出し・マスク・統合・戻しは、2026-10-21 に実機の通し試験で問題なし（ダミーの Area）。Obsidian の Bases での一覧は未確認
-- 組織名、顧客名、実際の Project 名などの固有情報は、この文書に書かない
+- 勤務先名、顧客名、実際の Project 名などの固有情報は、この文書に書かない
 
 ## 1. 状況と解決（ダイジェスト）
 

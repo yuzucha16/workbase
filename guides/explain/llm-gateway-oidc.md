@@ -15,9 +15,9 @@ triggers: [LLMゲートウェイ, OIDC, サインイン, 認証, トークン, �
 
 管理側から「ゲートウェイのベース URL」と「発行者 URL」を渡されたとき、Claude Code（CLI）と Zed の ACP エージェントがどう認証してつながるのかを、自分で説明できるようにするためのガイド。つながらないときに、症状から原因を切り分けられることも目的にする。
 
-- 前提: Windows 11。組織が LLM ゲートウェイを運用し、IdP は Microsoft Entra ID（発行者 URL が `login.microsoftonline.com/…/v2.0` の形）。Claude Desktop の「Configure Third-Party Inference」で、すでに同じゲートウェイにつないでいる
+- 前提: Windows 11。勤務先が LLM ゲートウェイを運用し、IdP は Microsoft Entra ID（発行者 URL が `login.microsoftonline.com/…/v2.0` の形）。Claude Desktop の「Configure Third-Party Inference」で、すでに同じゲートウェイにつないでいる
 - 確認状況: CLI（`claude-gateway`）と Zed の両方で、接続できることを実機で確認した（2026-10-20）。**サインインの約1時間後に、トークンが自動で更新されるかは未確認**（6 に書く）
-- 組織名・URL・クライアント ID・テナント ID などの固有情報は、このガイドに書かない。実装の手順は dotfiles の `windows/claude/README.md` の第4章が正
+- 勤務先名・URL・クライアント ID・テナント ID などの固有情報は、このガイドに書かない。実装の手順は dotfiles の `windows/claude/README.md` の第4章が正
 
 ## 1. 当時の状況と解決（ダイジェスト）
 
@@ -42,7 +42,7 @@ triggers: [LLMゲートウェイ, OIDC, サインイン, 認証, トークン, �
 ### 登場人物
 
 ```
- あなたの PC                         組織の IdP (Entra ID)
+ あなたの PC                         勤務先の IdP (Entra ID)
  ┌──────────────────┐   ① ブラウザでサインイン    ┌──────────────┐
  │ Claude Code / Zed │ ───────────────────────▶ │ 発行者 (issuer) │
  │  apiKeyHelper     │ ◀─────────────────────── │              │
@@ -50,7 +50,7 @@ triggers: [LLMゲートウェイ, OIDC, サインイン, 認証, トークン, �
           │ ③ Authorization: Bearer <ID トークン>
           ▼
  ┌──────────────────┐   ④ トークンを検証し、       ┌──────────────┐
- │ LLM ゲートウェイ   │      組織の資格情報で呼ぶ ▶ │ Bedrock など   │
+ │ LLM ゲートウェイ   │      勤務先の資格情報で呼ぶ ▶ │ Bedrock など   │
  └──────────────────┘                          └──────────────┘
 ```
 
@@ -61,8 +61,8 @@ triggers: [LLMゲートウェイ, OIDC, サインイン, 認証, トークン, �
 
 | 用語 | 意味 |
 |---|---|
-| ゲートウェイ（ベース URL） | Claude Code と Bedrock などの間に置く、組織のプロキシ。Anthropic の Messages API の形で受ける。`ANTHROPIC_BASE_URL` と同じ値 |
-| IdP | 利用者を認証する組織の基盤（Microsoft Entra ID など） |
+| ゲートウェイ（ベース URL） | Claude Code と Bedrock などの間に置く、勤務先のプロキシ。Anthropic の Messages API の形で受ける。`ANTHROPIC_BASE_URL` と同じ値 |
+| IdP | 利用者を認証する勤務先の基盤（Microsoft Entra ID など） |
 | 発行者 URL（issuer） | IdP の「基本の URL」。`/.well-known/openid-configuration` を足すと、認可・トークンの各 URL が書かれた文書が読める（クライアントが自分で足す。設定には足さない） |
 | クライアント ID | IdP に登録された「アプリ」の ID。Entra では「アプリの登録」で発行される。サインインを求めるアプリの名札で、秘密ではないが、組織を特定できる |
 | OIDC | OAuth 2.0 の上に「誰か」を表す仕組みを足した規格。サインインの結果として **ID トークン**が得られる |
@@ -96,7 +96,7 @@ triggers: [LLMゲートウェイ, OIDC, サインイン, 認証, トークン, �
 
 ### 自分で説明するときの一言
 
-> 組織のゲートウェイは、組織の IdP で本人確認した人のトークンを受け取って、組織の AWS の資格情報で代わりに呼ぶ。Claude Code は OIDC を話せないので、トークンを取って返す小さなコマンド（`apiKeyHelper`）を挟む。トークンは約1時間で切れるので、リフレッシュトークンで自動更新する。
+> 勤務先のゲートウェイは、勤務先の IdP で本人確認した人のトークンを受け取って、勤務先の AWS の資格情報で代わりに呼ぶ。Claude Code は OIDC を話せないので、トークンを取って返す小さなコマンド（`apiKeyHelper`）を挟む。トークンは約1時間で切れるので、リフレッシュトークンで自動更新する。
 
 ## 3. チェックリスト（症状 → 原因 → 対処）
 
@@ -154,4 +154,4 @@ triggers: [LLMゲートウェイ, OIDC, サインイン, 認証, トークン, �
 - サインインの約1時間後に、`apiKeyHelper` の無音更新が働くか（CLI と Zed の両方）
 - Zed の ACP エージェントが、どの時点で `apiKeyHelper` を再実行するか
 - 共通の `~/.claude` の設定（permissions、hooks）を、ゲートウェイ用のディレクトリへ引き継ぐ方法
-- 組織として、Claude Code からの利用を許可する範囲（ゲートウェイ側で Claude Code のリクエストを許可しているか）
+- 勤務先として、Claude Code からの利用を許可する範囲（ゲートウェイ側で Claude Code のリクエストを許可しているか）
