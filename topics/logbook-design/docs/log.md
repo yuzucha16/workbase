@@ -11,17 +11,16 @@
 
 ## Next Actions
 
-1. 畳み候補（`records/2026-10-26-fold-candidates.md`）の残り: 「残」（残す）だけ。「前」は 2026-10-27 に圧縮した。「聞」は回答済みで畳んだが、判断が付かず残した項目がある（room の OQ 4 項、obsidian-vault-backup の NA 3 項、claude-code-storage の旧キーの OQ/NA、para-operations の OQ。範囲の判断は `decisions.md`）。
-2. `--check-aging` の FAIL 1 件: `logbook/user-thinking-habits.md` が budget 32KB を 40 バイト超えた（2026-10-27 にクラウドで実行。他の 4 本は合格）。畳み方（圧縮か budget の付け直し）は 2026-11-29 の月次で決める。
-4. 別セッションで、`logbook/` が上位の md から辿れるかを確かめる(引当率、`topics/md-link-graph/` の道具)。
-5. 試行: 2026-11-29 の月次の振り返りで、週次の記録(`kit-growth/records/`)を 1 回手で畳む(置き場は変えない)。
-6. `shell-command-usecases` の素材の節に `素材` の印を付け、`logbook/README.md` の表の「素材」行を更新する。
-7. 単価の 1 か所化: 案は `session-handoff` の Facts（版依存: 並存の節）に集約し、`claude-code-auth-providers` ほかは指す。承認後に実施。
+1. 畳み候補（`records/2026-10-26-fold-candidates.md`）の残り: 「残」（残す）だけ。判断が付かず残した項目: room の OQ 4 項、obsidian-vault-backup の NA 3 項、claude-code-storage の旧キーの OQ/NA、para-operations の OQ（範囲は `decisions.md`）。
+2. `--check-aging` の FAIL 1 件: `logbook/user-thinking-habits.md` が budget 32KB を 40 バイト超過（他の 4 本は合格）。圧縮か budget の付け直しは 2026-11-29 の月次で決める。
+3. 別セッションで、`logbook/` が上位の md から辿れるかを確かめる(引当率、`topics/md-link-graph/` の道具)。
+4. 試行: 2026-11-29 の月次の振り返りで、週次の記録(`kit-growth/records/`)を 1 回手で畳む(置き場は変えない)。
+5. 追記の型 (b)（OQ・NA を本体に 1 つ）の実施: 次の lessons 追記から。既存ファイルの直しは `review 消化` で。
 
 ## Open Questions
 
 - `logbook/` を `find_knowledge.py --triggers` の対象にするか、上位の md から辿れるか。別セッションで引当率を測って決める(Next Actions 4)。
 
-### 待ち行列(判断は、置いたセッションの次の `review 消化` 以降)
+### 待ち行列
 
-- 【案を提示 2026-10-27】単価の 1 か所化。まとめ先の案は、ユーザーの承認待ち（下の Next Actions 7）。
+空（2026-10-27 に保留 3 件を決定。追記の型 (b)、素材 (a)、単価は `session-handoff` の Facts に集約。`decisions.md`）。

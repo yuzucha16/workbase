@@ -4,6 +4,10 @@
 
 ### 2026-10-28（wrap の新しい規則で log.md を掃除）
 - `wrap` の新しい規則で、済んだ項目を移した。NA3: `shell-script-testing-wsl` の Gotchas に一方向の印を付けた（`01ae113`。Facts の Ubuntu 24.04 は作業時の環境の記録なので付けない）。OQ「素材の節の扱い」と待ち行列の決定 2 件（追記の型は案 (b)、素材は案 (a)。`decisions.md`、`a1f70b4`）は決まったので外した。印の付与は Next Actions 6 に残る。
+
+### 2026-10-27（単価の集約と素材の印）
+- 単価を `session-handoff` の Facts に集約（auth-providers・storage・Decisions の根拠は指す）。`shell-command-usecases` の 2 節に素材の印、README の表を更新。
+
 ### 2026-10-27（保留 3 件への回答）
 - 追記の型は (b)、素材は (a) と決まった（`decisions.md`）。単価の 1 か所化は進めてよいとの指示で、まとめ先を調べて案を出した（`session-handoff` の Facts に集約）。
 
