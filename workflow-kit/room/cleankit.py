@@ -42,8 +42,14 @@ CLEAN_ACTIONS = {
     "calcchain": "計算順の一覧（calcChain）を外す（Excel が作り直す）",
     "revisions": "変更履歴（revisions）を外す",
     "ref-names": "参照先が無い（#REF!）定義名を消す",
+    "external-links": "外部ブックへのリンクを切る（数式は値に、リンクの部品・外部パス・値の写し・外部を参照する定義名を消す）",
     "shared-strings": "どのセルも使っていない共有文字列を消す",
     "orphans": "関係からたどれない部品を消す",
+}
+
+# 既定では行わず、--also で指定したときだけ行う動作（表の中身を変えるため）
+OPTIONAL_ACTIONS = {
+    "hidden-rows": "非表示の行のセルの値と数式を空にする（行は残る。共有数式は残す）",
 }
 
 R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -539,6 +545,27 @@ def clean_xlsx(pkg, actions, log):
                 actions = set(actions) | {"calcchain"}
                 log.append("数式を値にしたので、calcChain も外した")
             sheets = keep
+    if "external-links" in actions:
+        ext_ids = [(rid, tgt) for rid, _ty, tgt in pkg.internal(wb, {"externalLink"})]
+        if ext_ids:
+            pats = [re.compile(r"\[\d+\]")]
+            nf = 0
+            for s in sheets:
+                x, c = drop_formulas(pkg.text(s["path"]) or "", pats)
+                if c:
+                    pkg.put(s["path"], x)
+                    nf += c
+            before = len(re.findall(r"<definedName\b", t))
+            t = re.sub(r"<definedName\b[^>]*>[^<]*\[\d+\][^<]*</definedName>", "", t)
+            t = re.sub(r"<definedNames>\s*</definedNames>", "", t)
+            t = re.sub(r"<externalReferences>.*?</externalReferences>", "", t, flags=re.S)
+            for rid, tgt in ext_ids:
+                pkg.drop_rel(wb, rid)
+                pkg.remove(tgt)
+            after_n = len(re.findall(r"<definedName\b", t))
+            log.append(f"外部ブックへのリンクを切った: {len(ext_ids)} 件（数式 {nf} 個を値にし、定義名 {before - after_n} 件を外した）")
+            if nf:
+                actions = set(actions) | {"calcchain"}
     if "ref-names" in actions:
         t2 = re.sub(r"<definedName\b[^>]*>[^<]*#REF![^<]*</definedName>", "", t)
         t2 = re.sub(r"<definedNames>\s*</definedNames>", "", t2)
@@ -569,6 +596,10 @@ def clean_xlsx(pkg, actions, log):
                     st = re.sub(rf'<legacyDrawing\b[^>]*r:id="{re.escape(rid)}"[^>]*/>', "", st)
             if d:
                 log.append(f"「{s['name']}」のコメントを外した")
+        if "hidden-rows" in actions:
+            st, nh = blank_hidden_rows(st)
+            if nh:
+                log.append(f"「{s['name']}」の非表示の行 {nh} 行の中身を空にした")
         if "printer" in actions:
             for rid, _tgt in pkg.drop_rels_of(p, {"printerSettings"}):
                 st = re.sub(rf'\s+r:id="{re.escape(rid)}"', "", st)
@@ -578,6 +609,27 @@ def clean_xlsx(pkg, actions, log):
         log.append("コメントの作成者（persons）を外した")
     if "shared-strings" in actions:
         shrink_sst(pkg, wb, [s["path"] for s in sheets], log)
+
+
+def blank_hidden_rows(xml):
+    """非表示の行のセルから、値・文字・数式（共有数式は除く）を外す。書式とセルは残す。"""
+    n = 0
+
+    def row(m):
+        nonlocal n
+        if attrs(m.group(1)).get("hidden") not in ("1", "true"):
+            return m.group(0)
+        n += 1
+
+        def cell(c):
+            a, body = c.group(1), c.group(2) or ""
+            body = re.sub(r"<v>.*?</v>|<is>.*?</is>", "", body, flags=re.S)
+            body = re.sub(r'<f\b(?![^>]*t="shared")[^>]*?(?:/>|>.*?</f>)', "", body, flags=re.S)
+            a = re.sub(r'\s+t="[^"]*"', "", a)
+            return f"<c{a}>{body}</c>" if body else f"<c{a}/>"
+        return "<row" + m.group(1) + ">" + re.sub(r"<c\b([^>]*?)(?:/>|>(.*?)</c>)", cell, m.group(2), flags=re.S) + "</row>"
+    xml = re.sub(r"<row\b([^>]*?)>(.*?)</row>", row, xml, flags=re.S)
+    return xml, n
 
 
 def shrink_sst(pkg, wb, paths, log):
@@ -770,6 +822,7 @@ def main(argv=None):
     k.add_argument("file")
     k.add_argument("out", help="出力のファイル、またはディレクトリ")
     k.add_argument("--keep", default="", help="外さない動作（カンマ区切り）: " + ", ".join(CLEAN_ACTIONS))
+    k.add_argument("--also", default="", help="既定では行わない動作を足す（カンマ区切り）: " + ", ".join(OPTIONAL_ACTIONS))
     k.add_argument("--report", help="報告の md（既定: 出力の隣の <名前>.clean-report.md）")
     k.add_argument("--force", action="store_true", help="出力が既にあれば上書きする")
     a = ap.parse_args(argv)
@@ -796,7 +849,10 @@ def main(argv=None):
             raise CleanError(f"出力が既にある: {out}（--force で上書き）")
         rep = Path(a.report) if a.report else out.with_name(out.name + ".clean-report.md")
         guard_outputs(out, rep)
-        actions = [x for x in CLEAN_ACTIONS if x not in keep]
+        also = {x.strip() for x in a.also.split(",") if x.strip()}
+        if also - set(OPTIONAL_ACTIONS):
+            raise CleanError(f"知らない動作: {', '.join(sorted(also - set(OPTIONAL_ACTIONS)))}")
+        actions = [x for x in CLEAN_ACTIONS if x not in keep] + sorted(also)
         before = check(Pkg(data), ext)
         cleaned, log = clean(data, ext, actions)
         probs = integrity(cleaned)

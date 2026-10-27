@@ -62,17 +62,18 @@ def build_xlsx():
           '<sheet name="公開" sheetId="1" r:id="rId1"/>'
           '<sheet name="社外秘" sheetId="2" state="hidden" r:id="rId2"/>'
           '<sheet name="極秘" sheetId="3" state="veryHidden" r:id="rId3"/>'
-          '</sheets><definedNames>'
+          '</sheets><externalReferences><externalReference r:id="rId6"/></externalReferences><definedNames>'
           "<definedName name=\"担当一覧\">'社外秘'!$A$1:$A$2</definedName>"
           '<definedName name="_xlnm.Print_Area" localSheetId="2">極秘!$A$1</definedName>'
           "<definedName name=\"公開範囲\">'公開'!$A$1:$B$1</definedName>"
           '<definedName name="消えた範囲">#REF!$A$1</definedName>'
+          '<definedName name="外部名">[1]Sheet1!$A$1</definedName>'
           '</definedNames></workbook>')
     s1 = (HDR + f'<worksheet {M} {R}><sheetData>'
           '<row r="1"><c r="A1" t="s"><v>0</v></c><c r="B1"><f>SUM(\'社外秘\'!B1:B2)</f><v>300</v></c>'
           '<c r="C1"><f t="shared" ref="C1:D1" si="0">社外秘!B1</f><v>100</v></c><c r="D1"><f t="shared" si="0"/><v>200</v></c>'
-          '<c r="E1"><f>B1*2</f><v>600</v></c></row>'
-          '<row r="2" hidden="1"><c r="A2" t="s"><v>4</v></c></row>'
+          '<c r="E1"><f>B1*2</f><v>600</v></c><c r="F1"><f>[1]Sheet1!A1+1</f><v>77</v></c></row>'
+          '<row r="2" hidden="1"><c r="A2" t="s"><v>4</v></c><c r="B2"><f>E1+1</f><v>601</v></c></row>'
           '</sheetData><pageSetup r:id="rId9"/><legacyDrawing r:id="rId8"/></worksheet>')
     s2 = (HDR + f'<worksheet {M}><sheetData><row r="1"><c r="A1" t="s"><v>1</v></c><c r="B1"><v>100</v></c></row>'
           '</sheetData></worksheet>')
@@ -98,14 +99,15 @@ def build_xlsx():
                                    ("docProps/core.xml", "application/vnd.openxmlformats-package.core-properties+xml"),
                                    ("docProps/app.xml", "application/vnd.openxmlformats-officedocument.extended-properties+xml"),
                                    ("docProps/custom.xml", "application/vnd.openxmlformats-officedocument.custom-properties+xml"),
-                                   ("xl/leftover.xml", "application/xml")]),
+                                   ("xl/leftover.xml", "application/xml"),
+                                   ("xl/externalLinks/externalLink1.xml", S + "externalLink+xml")]),
         "_rels/.rels": rels(("rId1", "officeDocument", "xl/workbook.xml"),
                             ("rId2", "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties", "docProps/core.xml"),
                             ("rId3", "extended-properties", "docProps/app.xml"), ("rId4", "custom-properties", "docProps/custom.xml")),
         "xl/workbook.xml": wb,
         "xl/_rels/workbook.xml.rels": rels(("rId1", "worksheet", "worksheets/sheet1.xml"), ("rId2", "worksheet", "worksheets/sheet2.xml"),
                                            ("rId3", "worksheet", "worksheets/sheet3.xml"), ("rId4", "sharedStrings", "sharedStrings.xml"),
-                                           ("rId5", "calcChain", "calcChain.xml")),
+                                           ("rId5", "calcChain", "calcChain.xml"), ("rId6", "externalLink", "externalLinks/externalLink1.xml")),
         "xl/worksheets/sheet1.xml": s1, "xl/worksheets/sheet2.xml": s2, "xl/worksheets/sheet3.xml": s3,
         "xl/worksheets/_rels/sheet1.xml.rels": rels(("rId7", "drawing", "../drawings/drawing1.xml"), ("rId6", "comments", "../comments1.xml"),
                                                     ("rId8", "vmlDrawing", "../drawings/vmlDrawing1.vml"),
@@ -119,6 +121,9 @@ def build_xlsx():
         "xl/sharedStrings.xml": sst,
         "xl/calcChain.xml": HDR + f'<calcChain {M}><c r="B1" i="1"/></calcChain>',
         "xl/leftover.xml": HDR + "<old>ダミーの古い部品</old>",
+        "xl/externalLinks/externalLink1.xml": HDR + f'<externalLink {M}><externalBook {R} r:id="rId1"><sheetNames><sheetName val="ダミー外部シート"/></sheetNames>'
+                                                 '<sheetDataSet><sheetData sheetId="0"><row r="1"><cell r="A1"><v>12345</v></cell></row></sheetData></sheetDataSet></externalBook></externalLink>',
+        "xl/externalLinks/_rels/externalLink1.xml.rels": rels(("rId1", "externalLinkPath", "file:///C:/Users/dummyuser/ext.xlsx", "External")),
         "docProps/core.xml": CORE, "docProps/app.xml": APP, "docProps/custom.xml": CUSTOM,
     })
 
@@ -207,6 +212,12 @@ class XlsxTest(unittest.TestCase):
         self.assertIn("<c r=\"B1\"><v>300</v></c>", s1)  # 数式は外し、値は残す
         self.assertIn("<c r=\"D1\"><v>200</v></c>", s1)  # 共有の数式の子も外す
         self.assertIn("<f>B1*2</f>", s1)  # 関係ない数式は残す
+        self.assertIn('<c r="F1"><v>77</v></c>', s1)  # 外部リンクの数式は値にする
+        self.assertNotIn("externalLink", "".join(t))
+        self.assertNotIn("外部名", wb)
+        self.assertNotIn("ダミー外部シート", allt)
+        self.assertNotIn("12345", allt)
+        self.assertIn("<f>E1+1</f>", s1)  # 非表示の行の数式は、--also hidden-rows のときだけ外す
         self.assertNotIn("legacyDrawing", s1)
         self.assertNotIn('r:id="rId9"', s1)
         # 共有文字列を詰めても、セルが指す文字は変わらない
@@ -217,6 +228,14 @@ class XlsxTest(unittest.TestCase):
         after = ck.check(ck.Pkg(out), ".xlsx")
         self.assertIn("chart-cache", codes(after))  # グラフの写しは消さない（報告に残る）
         self.assertNotIn("hidden-sheet", codes(after))
+
+    def test_also_hidden_rows(self):
+        out, log = ck.clean(self.data, ".xlsx", list(ck.CLEAN_ACTIONS) + ["hidden-rows"])
+        self.assertEqual(ck.integrity(out), [])
+        s1 = texts(out)["xl/worksheets/sheet1.xml"]
+        self.assertIn('<row r="2" hidden="1"><c r="A2"/><c r="B2"/></row>', s1)
+        self.assertNotIn("公開の値", texts(out)["xl/sharedStrings.xml"])  # 共有文字列も詰まる
+        self.assertTrue(any("非表示の行" in x for x in log))
 
     def test_keep(self):
         out, _log = ck.clean(self.data, ".xlsx", [a for a in ck.CLEAN_ACTIONS if a not in ("hidden-sheets", "props")])
