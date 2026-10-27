@@ -88,15 +88,12 @@ sources:
 ### Open Questions
 
 - バックアップ対象: （2026-10-03 時点の記述。2026-10-05 にトップは実ディレクトリ `C:\vault\works`（旧 `notes`）になり、ジャンクションではなくなった。2026-10-06 にさらに `$HOME\works` へ移った。見直しが必要）ジャンクションは `C:\vault\notes` の1つになった。`/XJ` は実体を辿らないので、実体側（`repos\...\notes`）を対象にするか決める。`_local/` はGitに載らないので、バックアップが唯一の保険。
-- 旧 `notes` のローカルのリポジトリとバックアップを、いつまで残すか（2026-10-05 時点で未決）。あわせて、旧 GitHub リポジトリを削除する時期（残し続けるか）、`git bundle` の保存先（Vault のディスクの外）と世代管理、旧 clone を消すときに Claude の履歴キー4つを残すか、バックアップを定期実行する仕組みを入れるか（2026-10-06 に追加）。
-- 既存の WSL の `~/vault`（旧 `GHQ_ROOT`。`ghq` の clone を含む）の中身を、`~/works` へ移すか。WSL の dotfiles のリンク（旧 `/mnt/c/vault/repos/…` を指す）を張り直すか。`C:\vault` を消す前に決める。
 - 新しい業務用 PC で、dotfiles の `50_repos` から `room mkworks`（旧「workflowを導入して」）までの順で、この構造を再現して確認する。
 - 仮説（未検証）: Obsidian Sync は `_local/` も含めて Vault 全体を同期する。
 - 仮説（未検証）: `.claude/settings.local.json` は、Claude Code を起動したディレクトリの `.claude/` から読まれる。
 - dotfiles の `notepadpp\config.xml` に、古い `areas_shared\exmem\inbox` のパスが残っている（ユーザーの未コミット変更）。
 - 使っているPCがPC1か（C直下の制約やバックアップポリシーに影響）。
 - robocopyで足りるか、世代管理が必要になってresticへ移行するか。
-- 本文幅 58em は、1週間の試用で十分か（2026-10-04 に試用開始）。
 - Obsidian Sync を使うか（モバイルから inbox に送る運用をするか。未検証）。
 - Linter など、書式を整えるプラグインを入れるか。AI が整形する仕組みと競合しうる。
 - 設定を記述するナレッジを、実物とずれないように保つ手段（設定ファイルから自動で確認するか）。
@@ -107,9 +104,7 @@ sources:
 - 別フォルダへ復元し、Obsidianで開けるか確認する。
 - `10_env.bat` を再実行し、新しいターミナルと WSL の新しいセッションで、`CERTS_DIR`（`%USERPROFILE%\.certs`）と `WSLENV` が期待どおりになることを確認する。2026-10-06 時点のこの PC は未移行で、`CERTS_DIR` は旧置き場を指し、`WSLENV` は空、`~\.certs` は無い（確認: 2026-10-06、根拠: 環境変数の取得と `Test-Path`）。
 - WSL の dotfiles を新パスで張り直す（2026-10-06 時点）。`WORKS_DIR` は 2026-10-18 に渡るようになった。同日のログインシェルで `GHQ_ROOT` は空だった（未調査）。他の PC では、`10_env.bat` を再実行して `WSLENV` の `;` を `:` に直す。
-- 旧 clone で `git bundle create <名前>.bundle --all` を作り、`git bundle verify` で検証して、Vault のディスクの外にも置く（2026-10-06 時点）。
-- 旧 clone の未追跡のメモを、統合先のノートと突き合わせる。統合済みなら捨てる。
-- 他の PC に旧リポジトリの clone が無いことを確認する（2026-10-06 時点のユーザーの発言では、他の PC にはまだ環境を作っていない）。
+- （旧 `C:\vault` と旧 clone の後始末は、ユーザーが `C:\vault` を削除して閉じた。2026-10-27）
 
 ## Related
 

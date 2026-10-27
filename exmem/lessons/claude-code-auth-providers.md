@@ -17,7 +17,7 @@ aliases:
   - OAuth と API キーの切り替え
 triggers: [Bedrock, 認証, モデル指定, AWS]
 created: 2026-10-11
-updated: 2026-10-20
+updated: 2026-10-27
 sources:
   - Claude Code conversation "Zed と Claude Code の Bedrock SSO・ゲートウェイ接続" (2026-10-20)
   - Claude Code conversation "Zed の Agent と Bedrock の認証（部屋）" (2026-10-19)
@@ -155,11 +155,6 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 
 ## Open Questions
 
-- 提案: `apiKeyHelper` とベース URL を、共通の設定ではなく `CLAUDE_CONFIG_DIR` で分けた設定に置く構成を、ゲートウェイ接続の標準にする（AI の提案。未承認。動作は確認済み）。Decisions の案B（却下）はキー認証の場合の判断で、食い違いに見える。分けると共通の permissions や hooks が効かないので、引き継ぎ方が未決。
-- 提案: `.cmd` の `pause` は、対話専用の入口だけに入れ、ヘルパーと Zed の起動用には入れない（AI の提案。ユーザーは全ての `.bat` に `pause` を求めたが、ヘルパーでは壊れるため範囲を絞った。未承認）。
-- サインインから約1時間後（ID トークンの期限後）に、`apiKeyHelper` の無音更新が CLI と Zed の両方で働くか。
-- 提案: 長期キーを部屋に置かず、一時キーだけを入れる運用にする（AI の提案。未承認）。
-- 提案（AI の提案。実機では動いたが、明示の承認は未確認）: キーの保管は DPAPI で暗号化したファイルにする。SecretManagement と 1Password CLI との比較表は、dotfiles の手順書にある。
 - Opus と Haiku のピン留めをどのモデルにするか。現在の `settings-api.json` は `claude-opus-5-5` と `claude-haiku-4-5`（暫定と同じ）。一覧には、より安い `claude-haiku-5-5` もあるが、思考を切れない点を含めて未判断。
 - 解決（2026-10-15、一部）: Bedrock の Sonnet 5.5 は、Global で Anthropic 直接と同額（入力 $2・出力 $10 / 100万トークン）。地域固定は約10%増と公式ページにあるが、Sonnet 5.5 が対象かは AWS の料金ページで未確認（根拠: platform.claude.com の pricing ページ）。
 - 「API キーが優先される」と感じた場面は、ターミナルの `claude` 単独か、`claude-api` を使っているときか。前者なら、その端末の環境変数（`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_USE_BEDROCK`）を調べる。2026-10-11 のこの PC では、ユーザー環境変数にいずれも無い。
@@ -168,7 +163,7 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 
 ## Next Actions
 
-- OIDC ゲートウェイ接続で、サインインの約1時間後に、更新が働くかを確認する（2026-10-20 時点）。
+- なし（2026-10-27 に、残っていた項目を閉じた）。
 
 ## Related
 

@@ -14,7 +14,7 @@ aliases:
   - ThinkPad X13のLinux移行
 triggers: [Linux, ディストロ, MX Linux, ThinkPad, 自宅PC, 選定, Debian, 移行, OS選び]
 created: 2026-10-02
-updated: 2026-10-02
+updated: 2026-10-27
 sources:
   - Claude conversation "自宅PC(ThinkPad X13 Gen1)のLinuxディストリ選定" (2026-10-02)
   - Claude conversation "Linuxディストロ選定(パッケージ鮮度比較)" (2026-10-02)
@@ -92,17 +92,11 @@ sources:
 
 ## Open Questions
 
-- MX Linux 25（trixie）でのZed導入方法: 公式インストールスクリプトか、debian.griffo.ioのtrixie対応か。
-- Neovimを標準apt版（0.10.4系）のまま使うか、公式リリース版に切り替えるか（必要になったとき判断する）。
-- Mozc（日本語入力）とUSBデバイス（udev）周りを、勉強用に手動構築したい要望への対応（選択肢の提示のみで未着手）。
-- Windowsとのデュアルブートにするか、まるごとLinuxにするか。256GB SSDにLinuxを入れた記録（[[linux-multiboot-setup]]）はあるが、それがThinkPad X13のSSDかは未確認。
+- なし（MX Linux 導入済みのため、2026-10-27 に閉じた）。
 
 ## Next Actions
 
-- Zedは公式インストールスクリプトまたはFlatpakで導入する（debian.griffo.ioのtrixie対応を事前に確認）。
-- Neovimは当面apt標準版で運用し、不足を感じたら公式リリース版を検討する。
-- Mozcセットアップ（fcitx5 + fcitx5-mozcなど）とUSBデバイス周り（`lsusb` / udevルール作成）の学習用お題を決める。
-- 慣れたらLinux Mint 22への移行を検討する。必要ならMXを仮想環境やUSBブートで並行して試す。
+- なし。
 
 ## Related
 

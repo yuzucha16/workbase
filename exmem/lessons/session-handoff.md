@@ -12,7 +12,7 @@ aliases:
   - 別スレッドで進める
 triggers: [セッション, スレッド, 引継ぎ, 引き継ぎ, 切り替え, 新しい会話, handover, キャッシュ, TTL, resume]
 created: 2026-10-10
-updated: 2026-10-19
+updated: 2026-10-27
 sources:
   - Claude Code conversation "AI 作業部屋の取り組みの振り返りとナレッジ化" (2026-10-19)
   - Claude Code conversation "exmem の使い方の整理" (2026-10-09)
@@ -116,13 +116,12 @@ sources:
 
 ## Open Questions
 
-- 提案: 数値の目安（約10万トークン、約2万トークン）が実測に合うか。AI はキャッシュの命中率を測れないので、`review` の入力 5（重い会話）で確かめる。
-- サブスクの利用枠で、キャッシュの書き込みと読み出しがどう数えられるか。
-- ローカルの Claude Code で、サブスクの既定の TTL が1時間か（クラウドでは1時間の書き込みを確認）。
+- なし（2026-10-27 に閉じた。ローカルの TTL は下の Next Actions へ）。
 
 ## Next Actions
 
-- なし。2026-10-17〜18 時点の項目（重い会話の事例、実機の再実験、`/usage` の確認、`effort` の比較）は、置き換わった（ユーザーの判断、2026-10-26）。履歴は Git。
+- ローカルの Claude Code で、サブスクの既定のキャッシュの TTL を確かめる。`claude -p "hello" --output-format json` の `usage.cache_creation` で分かる。`topics/token-cap/` は勤務先のゲートウェイの TTL だけを扱っていて、ローカルのサブスクは扱っていない（2026-10-27 に確認）。
+- 2026-10-17〜18 時点の項目（重い会話の事例、実機の再実験、`/usage` の確認、`effort` の比較）は、置き換わった（ユーザーの判断、2026-10-26）。履歴は Git。
 
 ## Related
 

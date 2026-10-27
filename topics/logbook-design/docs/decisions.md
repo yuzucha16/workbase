@@ -2,6 +2,12 @@
 
 ## Decisions
 
+### 【この件】畳み候補の「聞」への回答と閉鎖（2026-10-27）
+- 決めたこと（ユーザー）: ① Stop フック（Zed・WSL2）は確認済みで、関連の OQ/NA を閉じる。② 旧 `C:\vault` は削除済みで、後始末の OQ/NA を閉じる。58em は使用継続で確定。③ auth-providers の AI の提案 4 項と OIDC の項は捨てる。④ room: 16 KiB 警告（a）は承認、Ubuntu 26.04（e）は決定にする、b〜d は捨てる、実機確認 9 項は完了で閉じる。⑤ linux-distro-selection と shell-script-testing-wsl の残りは消す。⑥ session-handoff の OQ 1・2 は閉じ、3（ローカルの TTL）は扱われていなければ Next Actions に移して閉じる。⑦ 旧名の更新（Next Actions 3）は畳みで吸収として閉じる。
+- 根拠: ユーザーの発言: 「できていました。close」「vaultは消しました close」「使用を続けています。close」「auth-providersはすべて捨てます」「eは対応したので決定にしてください。aは承認。b-dはomitします」「1-9すべて完了してます。問題なし。close」「linux:消します」「shell-script:消します」「あなたの理解でOK」「良いです。閉じてください」。
+- 範囲の判断（AI）: ① session-handoff の 3 は `token-cap` が勤務先のゲートウェイの TTL しか扱っていないため、Next Actions に移した。② room の OQ のうち実機確認の NA と重なる 4 項（マウントの可視性、プリンタ設定、マスクから復元までの通し、pptx）、obsidian-vault-backup の NA 3 項（`10_env.bat`、WSL の張り直し、`vault-backup.bat`）、claude-code-storage の旧キーの OQ/NA は、回答が指すか不明のため残した。
+- 見直しの条件: 削除したものが要ると分かったら git から戻す。
+
 ### 【この件】畳み候補の「済」の削除、旧名の更新の閉鎖、`user-manual` の Facts の処理（2026-10-27）
 - 決めたこと（ユーザー）: ① 畳み候補（`records/2026-10-26-fold-candidates.md`）の「済」を削除する。② 旧名の更新（Next Actions 2）は閉じる。③ `user-thinking-habits` をファイルごと `logbook/` へ移す。④ `user-manual` の Facts のうち Principles に昇格していない 3 項は捨てる。
 - 根拠: ユーザーの発言: 「畳み候補の「済」:承認します。ここで畳んでください」「user-thinking-habits の移し：進めてください」「旧名の更新(Next Actions 2)：閉じてください」「未昇格の3項:捨てます」。

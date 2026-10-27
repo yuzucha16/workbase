@@ -26,7 +26,7 @@
 1. 【起票 10-25】整合の基準のギャップ 8: works と dotfiles の履歴にユーザー名入りのパス（`docs/alignment-baseline.md`）。
 2. 【起票 10-25】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（同上）。未決は `release` の束ね先。
 4. 【起票 10-20、10-26 に 11-08 まで延長】ルールが見つかりにくい構造（`topics/md-link-graph/`。完了条件は満たした。道具は 10-27 に `workflow-kit/tools/` へ移した。引き当て率の初回 11-08 の後に、閉じるかを聞く。`triggers:` の上限は 10-27 に 30 語へ。誤爆が増えていないかも 11-08 に見る）。
-5. 【起票 10-25】期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`）: 型は入れた。lessons から 4 件を移し（10-26）、`user-thinking-habits` と `user-manual` の Facts も移した（10-27）。残りは畳み候補の「聞」への回答と引当率の確認。
+5. 【起票 10-25】期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`）: 型は入れた。lessons から 4 件を移し（10-26）、`user-thinking-habits` と `user-manual` の Facts も移した（10-27）。畳み候補の「聞」も回答を反映して 9 ファイルを畳んだ（10-27）。残りは「前」の行と引当率の確認。
 6. 【起票 10-26】xlsx・pptx の点検・掃除（`room/cleankit.py`）: PC1 の実ファイルで掃除（`--also hidden-rows,hidden-cols` 付き）の残りが 0 件になった（2026-10-27）。次: 出力が Excel で警告なしに開き、見た目と数式が崩れていないかを人が確認。その後、`mask` への組み込み（掃除 → マスク）と pptx の実ファイル確認を決める。
 7. 【起票 10-26】【最優先】トークン削減の見直し（`topics/token-cap/`。月次上限 2億トークン）。規則側の削減（`commit-push-rules.md` の切り出し、`AGENTS.md` の読み込み規則、`exmem-index.md` の読み方）は完了（10-26）。実測はトピックの `records/` と `decisions.md` にある。`integrate` の読む量の上限も入れた（10-27、仮 〜11-29）。`room reap` が消す前に会話履歴を `~/.claude/room-history/` へ退避するようにした（10-27、`f6da784`）。残り: 大きい lessons の分割（token-cap の NA 2a、残り 2 本）、room の 107k の確認。効果は 10-28 以降の `cap_meter.py` で確かめる。`exmem/` の 2 か所と `templates/workspace/AGENTS.md` の参照文は未変更。
 8. 【起票 10-27】公開リポジトリの文言の整理（`topics/wording-neutralize/`）: 環境を特定する語を性質で書く表現にする。影響分析と方針は決定済み。次: 段階 1（コマンド例など約 12 か所）の差分案。履歴の書き換えは最後に 1 回（急がない）。

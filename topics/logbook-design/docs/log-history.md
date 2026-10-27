@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-27（畳み候補の「聞」への回答）
+- ユーザーが「聞」に回答し、AI が 9 ファイルを編集した（auth-providers、linux-distro-selection、shell-script-testing-wsl、ai-isolated-work-room、session-handoff、claude-code-storage、obsidian-vault-backup、obsidian-vault、obsidian-vault-home-works）。room は決定 2 件を足した。session-handoff の TTL は Next Actions へ。範囲の判断は `decisions.md`。
+- 旧名の更新（Next Actions 3）は「畳みで吸収」として閉じた。
+
 ### 2026-10-27
 - 畳み候補の「済」をユーザーが承認し、8 ファイル 39 行を削除した（claude-code-storage、claude-code-auth-providers、linux-distro-selection、obsidian-vault-backup、obsidian-vault、workflow-kit、workflow-kit-closing、para-operations）。「たぶん」「一部」「大半」の付いた行と「聞」「前」「残」は残した。
 - 旧名の更新（Next Actions 2）は、畳みで吸収したとして閉じた。
