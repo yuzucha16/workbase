@@ -15,7 +15,7 @@
 
 ## Next Actions
 
-1. 骨子の残り（任意）: PC2 と room で要因別の分解を同じ方法で行う。room の 107k（10-27 03:22）の確認は後日（会話のある room で。この PC の room-myenv は 10-25 22:27 まで）。172k の型は `records/2026-10-27-pc2-one-request-172k.md`。
+1. 骨子の残り（任意）: PC2 と room で要因別の分解を同じ方法で行う。room の 107k（10-27 03:22）の確認は後日: 道具 `decompose_session.py` を置いた（10-27、ダミーでのみ確認）。PC1 の room で `python3 -I topics/token-cap/decompose_session.py --at 2026-10-27T03:22 /home/ai/.claude/projects`（先に pull）。172k の型は `records/2026-10-27-pc2-one-request-172k.md`。
 2. `integrate` の読む量の上限（`integrate-hook.md`、仮 〜11-29）と lessons の分割（全 6 本）は済み。効果は 10-27 以降の日ごとの値で測る。`--check-triggers` の FAIL 1 件は `claude-code-cost-session-size.md` の 16 語（別件）。
 3. （低優先）マクロ側の常駐文書に、全文読みを避ける指示を入れる案。マクロの現況は閉じた（ee の決定 10-27）。
 4. `room reap` の退避は済み。残り: `-home-ai`（Project に紐づかない履歴）は退避も削除もしない。部屋を直接消す場合は手で退避する。

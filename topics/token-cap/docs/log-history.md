@@ -2,6 +2,7 @@
 
 ## Log
 
+- 2026-10-27（107k の確認の道具）: 「workbase の続き」で PC1 でやることを列挙し、ee が room の 107k の確認方法を token-cap 配下から探させた（方法は `records/2026-10-27-pc2-one-request-172k.md`）。ee の依頼で分解を道具化。最初に `workflow-kit/tools/` へ置いたが、ee の指示で `topics/token-cap/decompose_session.py` に移した。読み取り専用で、道具名・ファイル名・文字数のみ。応答と tool_use を id で重複除去。ダミーの jsonl で確認、実機の room では未実行。wrap。
 - 2026-10-27（傾向分析の骨子を埋める）: 「token-cap の続き 傾向分析の骨子」。room の 107k は、この PC の room-myenv に 10-25 22:27 までの記録しか無く確認できず、ee が後日に回した。伸びの要因別の分解を PC1 Windows（10-01 以降、115 会話、2,916 応答）で実行（`%TEMP%` の一時スクリプト、道具名と文字数のみ、増加分を文字数で按分）: Read 45%、書き込み本文 23%、Grep 10%、AI 本文 9%、PowerShell 9%、ユーザー発言 1.6%。効く順は区切る → 大きな読み込みを避ける → 土台。ee から土台の比率が区切りまでの余裕を食い、依頼数が減るとの指摘（「6万」は「10万」の誤り）。AI の意見: 上限への効きは中、作業性では効く。ee は前倒ししないが漏らさないと決定し、decisions と Next Actions 5 に記録。`log.md` は 5.7KB→4KB 内に圧縮。wrap。
 
 - 2026-10-27（integrate の読む量の上限）: Next Actions 2 を実行。xmem/inbox/ は今は空で、172k の型（下書き 14 本の全文読み）は再発しない。次に効くのは大きい lessons（workflow-kit.md 60KB、i-isolated-work-room.md 58KB、obsidian-vault.md 56KB、shell-script-testing-wsl.md 41KB）。ee が承認（数値は「3、20KB」）し、integrate-hook.md に「読む量の上限【仮 〜11-29】」を追加（下書き 3 本、20KB 超は節読み、重複読みなし、100k で区切る）。大きい lessons の分割は Next Actions に積んだ。room の 107k の確認は room 側データ待ち。wrap。
