@@ -10,14 +10,14 @@
 
 Project は、問題解決の単位で、1 つの部屋で行う。問題解決の活動は、大きく**調べる側**（調べる、整理する）と**作る側**（計画する、作る、確かめる）に分かれる。type は、この 2 つのどちらを成果物にする Project かを表す。
 
-- `inv`（調査。investigation）: 成果物が「結論と出典」で、出したら保守しない。調べ方は `brief 調査`（`brief-hook.md`）。
+- `inv`（調査。investigation）: 成果物が「結論と出典」で、出したら保守しない。調べ方は、依頼の言葉で引く出力の型（`research-explain-output`）。
 - `dev`（開発。development）: 成果物が「作って保守するもの」で、基準文書と検証がある。手順書・仕様・設計・チェックリストなどの文書だけの成果物、環境構築、テストも含む。
 
 **線は、活動ではなく成果物で引く。** 活動は反復し、1 つの Project に混ざる（調べながら作り、作りながら調べる）。活動で type を決めると、決められない。成果物なら、1 つに決まる。
 
 - 曖昧なときは、成果物の名前で決める（設計書にまとめるなら `dev`、結論の報告なら `inv`）。
 - 調べてから作る流れは、Project を分ける。`inv` の `report.md` を次の Project の `ai/in/` に置き、`room start --adopt` で入力として記録する。1 Project の中で type を変えない。
-- type の違いは、作業の構造の違いで、**成果物のサブディレクトリの組み合わせ**に現れる（`inv` は `report.md`。`dev` は `docs/` `src/` `env/` `tests/` `tools/` から必要なもの）。`room` は type で動きを変えない（README の frontmatter に書くだけ）。違いを持つのは、この文書と `dev-deliverable-guide.md`、`brief-work-types.md`、`brief-hook.md` の `brief 調査`。
+- type の違いは、作業の構造の違いで、**成果物のサブディレクトリの組み合わせ**に現れる（`inv` は `report.md`。`dev` は `docs/` `src/` `env/` `tests/` `tools/` から必要なもの）。`room` は type で動きを変えない（README の frontmatter に書くだけ）。違いを持つのは、この文書と `dev-deliverable-guide.md`、`brief-work-types.md`、`brief-hook.md`、調査の出力の型（`research-explain-output`）。
 - 活動と置き場の対応は、下の表の「主な活動」の列に目安として載せる。拘束ではない。
 
 固定の核（全 type 共通）。「主な活動」は、活動と置き場の**目安**の対応（拘束ではない。活動は反復し、混ざる）。活動の語は、調べる・整理する・計画する・作る・確かめる:

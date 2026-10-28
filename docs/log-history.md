@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-28（workflow-kit: brief の引数を廃止し、出力の型を依頼の語で引く）
+- `brief` の引数と `brief-modes.md` を廃止（ee の決定。`topics/token-cap/` の NA6）。`methods.md` を選ぶ基準だけに、`brief-hook.md` の「引数つきモード」を「出力の型とやり方は依頼の言葉で引く」に置き換えた。`hooks.md`、`README.md` ほかの参照を直した。型は `exmem/lessons/*-output.md`、文例は `guides/quickref/ai-work-prompts.md`。
+
 ### 2026-10-28（NA1: 履歴のユーザー名の調査、author の匿名化の準備）
 - works（`worksample`）と dotfiles の全履歴を調べた。パスのユーザー名の位置は、`ck` `ee` `yy` `u` `you` と各種プレースホルダーだけで、実際のユーザー名はなかった。ギャップ 8 を閉じた（`docs/alignment-baseline.md`、7a7dea6）。
 - noreply メールには `yuzucha16` が入っているので、ユーザー名を隠したことにならない。workbase は全コミットが `agent <agent@agent.local>`。works と dotfiles を同じにする手順と mailmap を用意し、複製で試した（works 208、dotfiles 240 コミットが全部 agent、本文の `yuzucha16` も 0 件）。force push は未実施（`topics/wording-neutralize/records/2026-10-28-author-rewrite-steps.md`）。

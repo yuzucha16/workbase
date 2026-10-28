@@ -4,7 +4,7 @@
 
 | 合言葉 | 別名（日本語） | 読むファイル | 寿命・時機 | 要点 |
 |---|---|---|---|---|
-| `brief` | 「作業を始めて」<br>`brief 解決`＝「解決で始めて」<br>`brief 改善`＝「改善で始めて」<br>`brief 変更`＝「変更で始めて」<br>`brief 調査`＝「調査で始めて」<br>`brief 計画`＝「計画で始めて」 | `brief-hook.md` | セッションの開始 | 開始インタビュー。`brief 解決` / `brief 改善` / `brief 変更` / `brief 調査` / `brief 計画` で、進め方を選んで始める |
+| `brief` | 「作業を始めて」 | `brief-hook.md` | セッションの開始 | 開始インタビュー。引数は持たない（2026-10-28）。出力の型は依頼の言葉で引く |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push（許可リストにあれば）を、AI が順序を固定して行う。部屋では、部屋の git へのコミットまで（push はしない） |
 | `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。部屋では下書きまで（`ai/out/stock/`）で、人が `room stock` で運ぶ。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
