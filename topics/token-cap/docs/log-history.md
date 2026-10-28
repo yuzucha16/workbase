@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-28（「振り返って」試験の 2 回目と `--session`）: 「token-cap の続き na6」。ee が 2 回の `cap_meter --latest` と `decompose_session.py --at` の結果を共有。1 回目の分解は、開始時刻が 10 秒差の別の会話（`0111e2e1`、応答 32）を選んでおり、「振り返って」の評価に使えない。2 回目（`80c99fea`、応答 4、土台 26.4k、積算 130k）が正。積算の 8 割が土台。応答 4 回の内訳は、`-2-output` の Read、`-output` の Read、`git log`、回答。`-2-output` の `triggers: 振り返` が「振り返って」で当たって余分に読んだのが原因（`triggers` から外した）。`decompose_session.py` に `--session <id>` を追加（取り違え防止）。大きさのずれ（cap_meter の方が 0.3〜2k 大きい）は、cap_meter が出力トークンを含むため（ee は (a) 説明を足す案を選択、docstring に追記）。コミットは `[token-cap]` の 1 件。wrap。
+
 - 2026-10-28（「振り返って」試験の 1 回目と原因の切り分け）: 「token-cap の続き na6」。ee の `cap_meter --latest`（土台 26,010、応答 7、最大 55,530）と `decompose_session.py --at` の結果から、切り出した `-output` が使われず、元の `retrospective-method.md`（11KB）と `hooks.md`（5KB）を全文読んだと判明（Grep 4 回は 2.3k 文字で全文検索ではない）。土台が小さいのは開始時の `brief` 読み込みが走らなかったためで、切り出しの効果ではない（最初の読みを取り消した）。原因は、元の手順書の `aliases:` と本文の「振り返って」が、フックの部分一致より先に当たったこと。`aliases:` と本文を `-output` 側へ移した（`retrospective-method` と `-2`）。「振り返って」を `hooks.md` に載せる案は見送り（ee の決定）。`records/2026-10-28-retrospective-trial-result.md`。wrap。
 
 - 2026-10-28（`--at` の時刻の確認）: ee が 107k を調べる前に、decompose の `--at` に渡す時刻を質問。時刻は会話記録の timestamp と同じ UTC で、`heavy_sessions.py` の日時はそのまま使える（`cap_meter.py` と Zed の表示は現地時刻なので、日本時間は 9 時間引くか `+09:00` をつける）と回答。時差つきの指定を UTC に直す修正と先頭の説明の追記を push（`8c66f7b`）。ee は PC1 でログを取得済み、結果の判定は PC での続き。

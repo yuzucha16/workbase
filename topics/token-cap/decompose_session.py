@@ -3,7 +3,8 @@
 
 `heavy_sessions.py` で見つけた重い会話が、全文読みの連発（`integrate` の型）かを確かめる。
 応答は message.id、道具の呼び出しは tool_use の id で重複を除く（jsonl は内容ブロックごとに行が増える）。
-大きさは文字数（トークンではない）。サブエージェントの記録（isSidechain）は数えない。
+大きさは文字数（トークンではない）。ただしトークンの値（土台・最大）は入力側だけで、出力を含まない。
+cap_meter.py の「いまの大きさ」「土台」は出力を含むので、数百〜2k 程度大きく出る（差は出力分。2026-10-28 確認）。サブエージェントの記録（isSidechain）は数えない。
 
 使い方:
   python -I decompose_session.py <会話記録.jsonl>
@@ -13,6 +14,9 @@
       cap_meter.py と Zed の表示は端末の現地時刻なので、そのまま渡さない（日本時間なら 9 時間引く。
       または +09:00 を付けて渡すと UTC に直す。例 --at 2026-10-27T12:22+09:00）。
       形式は ISO 8601（2026-10-27T03:22、秒・Z・時差つきも可）。開始と最大の時刻がずれる会話は、候補の差（秒）で確かめる。
+  python -I decompose_session.py --session 7897c2af [ディレクトリ...]
+    --session: 会話の ID（cap_meter.py --latest の [ ] 内。先頭の数文字でよい）で選ぶ。時刻で取り違える
+      並行会話があっても確実。1 件に決まらないときは候補を出して止まる。
     既定のディレクトリ = ~/.claude/projects/ の下のすべて。
 """
 import argparse
@@ -79,6 +83,15 @@ def find_by_time(at, roots):
     for gap, p, n, ts in cands[:3]:
         print(f"候補: 最大 {n:,} トークン {ts[:16]}（差 {int(gap)} 秒） {p}")
     return cands[0][1]
+
+
+def find_by_session(sid, roots):
+    found = sorted(p for r in roots for p in r.rglob("*.jsonl") if p.stem.startswith(sid))
+    if len(found) != 1:
+        for p in found:
+            print(f"候補: {p}")
+        raise SystemExit(f"--session {sid} に合う会話記録が {len(found)} 件（1 件に決まらない）")
+    return found[0]
 
 
 def where(file_path):
@@ -161,15 +174,18 @@ def decompose(path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--at", default="")
-    ap.add_argument("target", nargs="*", help="jsonl のパス、または --at と使うディレクトリ")
+    ap.add_argument("--session", default="", help="会話の ID（先頭の数文字でよい）")
+    ap.add_argument("target", nargs="*", help="jsonl のパス、または --at / --session と使うディレクトリ")
     a = ap.parse_args()
-    if a.at:
-        roots = [Path(x) for x in a.target] or [Path.home() / ".claude" / "projects"]
+    roots = [Path(x) for x in a.target] or [Path.home() / ".claude" / "projects"]
+    if a.session:
+        path = find_by_session(a.session, roots)
+    elif a.at:
         path = find_by_time(a.at, roots)
     elif len(a.target) == 1 and a.target[0].endswith(".jsonl"):
         path = Path(a.target[0])
     else:
-        ap.error("jsonl のパスを 1 つ、または --at を指定する")
+        ap.error("jsonl のパスを 1 つ、または --at / --session を指定する")
     decompose(path)
 
 
