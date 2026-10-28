@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: 振り返りのやり方1: 済んだ進め方・成果物を、評価軸を先に決めて、良い点と悪い点の両面で評価する
-status: active
+status: superseded
 tags:
   - workflow
   - knowledge-management
@@ -17,6 +17,8 @@ sources:
 ---
 
 # 振り返りのやり方1: 済んだ進め方・成果物を、評価軸を先に決めて、良い点と悪い点の両面で評価する
+
+> **superseded（2026-10-28）**: 応答の形は [[retrospective-method-output]] が受け、依頼の文例は `guides/quickref/ai-work-prompts.md` に移した（`brief` の引数の廃止。`topics/token-cap/`）。このノートは背景・理由・実例の記録として残す。新しい依頼では読まない。
 
 ## Purpose
 

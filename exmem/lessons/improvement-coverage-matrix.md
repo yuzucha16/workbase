@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: 改善のやり方3: 観点を絞り込み、星取り表から修正・削除・追加の案を出して実施項目を決める
-status: active
+status: superseded
 tags:
   - workflow
   - agent-design
@@ -10,14 +10,16 @@ aliases:
   - 改善のやり方3
   - 星取り表
   - 修正・削除・追加
-triggers: [改善, 星取り表, 観点, 修正, 削除, 追加, 実施項目, 絞り込み, 改善のやり方3]
+triggers: [改善のやり方3, 観点, 絞り込み]
 created: 2026-10-15
-updated: 2026-10-17
+updated: 2026-10-28
 sources:
   - Claude Code conversation "トークン消費量を抑えるプロセス・考え方" (2026-10-08〜15)
 ---
 
 # 改善のやり方3: 観点を絞り込み、星取り表から修正・削除・追加の案を出して実施項目を決める
+
+> **superseded（2026-10-28）**: 応答の形は [[improvement-coverage-matrix-output]] が受け、依頼の文例は `guides/quickref/ai-work-prompts.md` に移した（`brief` の引数の廃止。`topics/token-cap/`）。このノートは背景・理由・実例の記録として残す。新しい依頼では読まない。
 
 ## Purpose
 

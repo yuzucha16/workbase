@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: 調査のやり方2: 手順を調べ、前提と骨格を固定して、実行できる手順書にまとめる
-status: active
+status: superseded
 tags:
   - workflow
   - knowledge-management
@@ -10,14 +10,16 @@ aliases:
   - 調査のやり方2
   - 手順を調べる
   - brief 調査
-triggers: [調査, 手順を調べる, 手順書, 前提, 骨格, brief 調査, 実行できる手順, 調べ方, やり方を調べる]
+triggers: [調査のやり方2, 骨格, 調べ方, やり方を調べる]
 created: 2026-10-17
-updated: 2026-10-17
+updated: 2026-10-28
 sources:
   - Claude Code conversation "SSH 鍵の手順書" (2026-10-17)
 ---
 
 # 調査のやり方2: 手順を調べ、前提と骨格を固定して、実行できる手順書にまとめる
+
+> **superseded（2026-10-28）**: 応答の形は [[research-procedure-output]] が受け、依頼の文例は `guides/quickref/ai-work-prompts.md` に移した（`brief` の引数の廃止。`topics/token-cap/`）。このノートは背景・理由・実例の記録として残す。新しい依頼では読まない。
 
 ## Purpose
 

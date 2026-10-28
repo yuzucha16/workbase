@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: 改善のやり方1: 現状を数値にして、改善幅ごとの選択肢を比べてから動く
-status: active
+status: superseded
 tags:
   - workflow
   - knowledge-management
@@ -9,14 +9,16 @@ tags:
 aliases:
   - 改善のやり方1
   - 10・20・30% の選択肢
-triggers: [改善, 数値, 現状, 選択肢, 10%, 20%, 30%, 比較, 改善幅, 改善のやり方1]
+triggers: [改善のやり方1, 選択肢, 比較]
 created: 2026-10-13
-updated: 2026-10-17
+updated: 2026-10-28
 sources:
   - Claude Code conversation "改善のやり方1" (2026-10-13)
 ---
 
 # 改善のやり方1: 現状を数値にして、改善幅ごとの選択肢を比べてから動く
+
+> **superseded（2026-10-28）**: 応答の形は [[improvement-quantified-options-output]] が受け、依頼の文例は `guides/quickref/ai-work-prompts.md` に移した（`brief` の引数の廃止。`topics/token-cap/`）。このノートは背景・理由・実例の記録として残す。新しい依頼では読まない。
 
 ## Purpose
 

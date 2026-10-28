@@ -12,9 +12,9 @@ aliases:
   - プロジェクト憲章
   - 成果物 WBS
   - brief 計画
-triggers: [計画, 6R, 憲章, WBS, マイルストーン, 成果物, ゴール, 要求, brief 計画, スケジュール, 目的]
+triggers: [計画のやり方, 成果物, ゴール, 要求, スケジュール, 目的]
 created: 2026-10-20
-updated: 2026-10-25
+updated: 2026-10-28
 sources:
   - Claude Code conversation "計画のやり方の試行のフィードバックと反映" (2026-10-21)
   - 芝本秀徳『誰も教えてくれない計画スキル』の型（ユーザーが図表と本文の一部をキャプチャで共有。本全体は未読）
@@ -25,7 +25,7 @@ sources:
 
 ## Purpose
 
-ユーザーと AI が、作業の前に目的とゴールを共有する型。手段の目的化を防ぐ（憲章の役目）。`methods.md` の「計画」の区分（計画1）の背景と注意点。手順と欄の定義は `workflow-kit/brief-plan.md`、呼び出しは `brief 計画`。作り方は [[method-creation]] に従った。試験運用で、**Must だけ守る**。
+ユーザーと AI が、作業の前に目的とゴールを共有する型。手段の目的化を防ぐ（憲章の役目）。`methods.md` の「計画」の区分（計画1）の背景と注意点。手順と欄の定義は `workflow-kit/brief-plan.md`、応答の形は [[planning-method-output]] が、依頼の言葉（「計画」など）で受ける（`brief` の引数は 2026-10-28 に廃止）。作り方は [[method-creation]] に従った。試験運用で、**Must だけ守る**。
 
 ## Principles
 

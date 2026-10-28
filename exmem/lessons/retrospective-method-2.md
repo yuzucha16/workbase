@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: 振り返りのやり方2（突発）: 起きた失敗・トラブルを、事実の時系列から、なぜなぜで仕組みの欠けまで掘る
-status: active
+status: superseded
 tags:
   - workflow
   - knowledge-management
@@ -20,9 +20,11 @@ sources:
 
 # 振り返りのやり方2（突発）: 起きた失敗・トラブルを、事実の時系列から、なぜなぜで仕組みの欠けまで掘る
 
+> **superseded（2026-10-28）**: 応答の形は [[retrospective-incident-output]] が受け、依頼の文例は `guides/quickref/ai-work-prompts.md` に移した（`brief` の引数の廃止。`topics/token-cap/`）。このノートは背景・理由・実例の記録として残す。新しい依頼では読まない。
+
 ## Purpose
 
-突発の失敗・トラブル1件を、原因の分析と再発防止の施策にするときの型。呼び出しは `brief 改善`（`methods.md` の「改善」の改善5）。呼び名は「なぜなぜ分析」（「なぜなぜで振り返って」の依頼は [[retrospective-method-2-output]] が受ける）。定期の振り返り（[[retrospective-method]]、改善4）とは別物で、あちらは期間を区切って軸ごとに両面を見る。こちらは**事象1件を掘る**。出力は基準文書として扱う（ユーザーの指示、2026-10-17）。
+突発の失敗・トラブル1件を、原因の分析と再発防止の施策にするときの型。呼び出しは `brief 改善`（`methods.md` の「改善」の改善5）。呼び名は「なぜなぜ分析」（「なぜなぜで振り返って」の依頼は [[retrospective-incident-output]] が受ける）。定期の振り返り（[[retrospective-method]]、改善4）とは別物で、あちらは期間を区切って軸ごとに両面を見る。こちらは**事象1件を掘る**。出力は基準文書として扱う（ユーザーの指示、2026-10-17）。
 
 出どころは、2026-10-17 に振り返り1を失敗の件（cwd 前提の取り消し）に当てはめた試行。軸を先に決める型が合わず、核の「分担」が軸の外から出た。そのため、軸の先決めをやめ、**事実の時系列から原因の枝を出す**型にした。**1事例の試行からの仮説で、叩き台。品質チェック未実施**。使いながら Must を増減する。作り方は [[method-creation]]。
 
@@ -69,7 +71,7 @@ sources:
 
 ## 出力の章立てのひな形
 
-[[retrospective-method-2-output]] に切り出した（2026-10-28）。
+[[retrospective-incident-output]] に切り出した（2026-10-28）。
 
 ## Gotchas
 

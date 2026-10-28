@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: 改善のやり方2: 想定と実際のズレを仮説にして修正する
-status: active
+status: superseded
 tags:
   - workflow
   - agent-design
@@ -9,14 +9,16 @@ tags:
 aliases:
   - 改善のやり方2
   - 期待と実際のギャップ
-triggers: [改善, 想定と実際, ズレ, ギャップ, 仮説, 期待, 修正, 改善のやり方2]
+triggers: [改善のやり方2, ズレ, 仮説, 期待]
 created: 2026-10-13
-updated: 2026-10-17
+updated: 2026-10-28
 sources:
   - Claude Code conversation "改善のやり方1" (2026-10-13)
 ---
 
 # 改善のやり方2: 想定と実際のズレを仮説にして修正する
+
+> **superseded（2026-10-28）**: 応答の形は [[improvement-expectation-gap-output]] が受け、依頼の文例は `guides/quickref/ai-work-prompts.md` に移した（`brief` の引数の廃止。`topics/token-cap/`）。このノートは背景・理由・実例の記録として残す。新しい依頼では読まない。
 
 ## Purpose
 

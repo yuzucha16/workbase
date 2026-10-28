@@ -20,7 +20,7 @@ sources:
 
 [[retrospective-method]]（改善4）の、応答の形だけを切り出したノート。依頼の言葉（「振り返って」「daily」など）で、このノートだけを読み、この形で返す。やり方の全体（評価軸を先に決める、事実を一次記録から数える、など）は元のノートにあり、`brief 改善` で読む（2026-10-28 に切り出した。開始時の読み込みを 約 24k から 約 3k に下げる試験。`topics/token-cap/records/2026-10-28-brief-mode-load.md`）。
 
-突発の失敗・トラブル1件を掘るときは、[[retrospective-method-2-output]] の形にする。
+突発の失敗・トラブル1件を掘るときは、[[retrospective-incident-output]] の形にする。
 
 ## 作り方の Must（3つ）
 

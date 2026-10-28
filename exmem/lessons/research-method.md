@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: 調査のやり方1: 問いを構造化し、読者を決めて、一次情報から事実と所感を分けてまとめる
-status: active
+status: superseded
 tags:
   - workflow
   - knowledge-management
@@ -10,14 +10,16 @@ aliases:
   - 調査のやり方1
   - 調査モード
   - brief 調査
-triggers: [調査, 問い, 構造化, 読者, 一次情報, 事実と所感, brief 調査, 調査モード, リサーチ, まとめ方]
+triggers: [調査のやり方1, 問いの構造化, 想定読者, 一次情報, 事実と所感]
 created: 2026-10-16
-updated: 2026-10-17
+updated: 2026-10-28
 sources:
   - Claude Code conversation "Claude スキルの調査" (2026-10-16)
 ---
 
 # 調査のやり方1: 問いを構造化し、読者を決めて、一次情報から事実と所感を分けてまとめる
+
+> **superseded（2026-10-28）**: 応答の形は [[research-explain-output]] が受け、依頼の文例は `guides/quickref/ai-work-prompts.md` に移した（`brief` の引数の廃止。`topics/token-cap/`）。このノートは背景・理由・実例の記録として残す。新しい依頼では読まない。
 
 ## Purpose
 
