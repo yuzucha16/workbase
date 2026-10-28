@@ -246,6 +246,29 @@ class XlsxTest(unittest.TestCase):
         self.assertNotIn("公開の値", texts(out)["xl/sharedStrings.xml"])  # 共有文字列も詰まる
         self.assertTrue(any("非表示の行" in x for x in log))
 
+    def test_unseen_text(self):
+        # 見えている文字（見えているセルの値・数式・シート名）と固定語に当たらない文字を出す（2026-10-28）
+        fs = [f for f in ck.check(ck.Pkg(self.data), ".xlsx") if f.code == "unseen-text"]
+        got = {s for f in fs for s in f.samples}
+        for word in ("ダミー極秘メモ", "使っていない旧担当", "公開の値", "ダミー作成者", "ダミーの古い部品", "極秘"):
+            self.assertIn(word, got, word)  # 非表示シート・未使用・非表示の行・コメント・孤立した部品・非表示のシート名
+        for word in ("見出し", "公開", "社外秘"):  # 見えているセル・シート名・見えている数式の中のシート名
+            self.assertNotIn(word, got, word)
+        out, _log = ck.clean(self.data, ".xlsx", list(ck.CLEAN_ACTIONS))
+        after = {f.part: f.samples for f in ck.check(ck.Pkg(out), ".xlsx") if f.code == "unseen-text"}
+        self.assertEqual(after["xl/sharedStrings.xml"], ["公開の値"])  # 非表示の行に残る値
+        self.assertIn("ダミー太郎", after["xl/charts/chart1.xml"])  # グラフの写しに残る非表示シートの値
+
+    def test_unseen_text_split_runs(self):
+        # 書式で割れた文字（<r> ごと）も、つないで調べる。数・番地・自動の名前・ふりがなは出さない
+        xml = ('<sst><si><r><t>3</t></r><r><t>月</t></r></si><si><t>表示</t><rPh sb="0" eb="2"><t>ヒョウジ</t></rPh></si></sst>'
+               '<x><xdr:cNvPr id="2" name="グラフ 1"/><c r="A1"><v>12.5</v></c><dimension ref="A1:B3"/></x>')
+        got = [ck._norm(x) for x in ck.text_candidates("p.xml", xml)]
+        self.assertIn("3月", got)
+        self.assertNotIn("ヒョウジ", got)
+        self.assertTrue(ck._AUTO_NAME_RE.match("グラフ 1") and ck._AUTO_NAME_RE.match("PlaceHolder 3"))
+        self.assertTrue(ck._STRUCT_TEXT_RE.match("12.5") and ck._STRUCT_TEXT_RE.match("A1:B3"))
+
     def test_self_closing_cell_and_row(self):
         # 空のセル <c .../> と中身のない行 <row .../> の次を巻き込まない（2026-10-28 の修正。以前は次のセルの共有文字列を
         # 使っていないとみなして消し、番号が範囲の外になって Excel が修復していた。非表示の空の行の次の行も空にしていた）
@@ -314,8 +337,15 @@ class PptxTest(unittest.TestCase):
         self.assertNotIn("docProps/thumbnail.jpeg", t)
         self.assertEqual(re.findall(r'<p:sldId id="(\d+)"', t["ppt/presentation.xml"]), ["256"])
         self.assertIn("公開のスライド", t["ppt/slides/slide1.xml"])
-        after = codes(ck.check(ck.Pkg(out), ".pptx"))
-        self.assertLessEqual({"alt-text", "off-slide"}, after)  # 報告だけのもの
+        after = ck.check(ck.Pkg(out), ".pptx")
+        self.assertLessEqual({"alt-text", "off-slide"}, codes(after))  # 報告だけのもの
+        unseen = {s for f in after if f.code == "unseen-text" for s in f.samples}
+        self.assertEqual(unseen, {"ダミーの代替テキスト"})  # 見えているスライドの文字は出ない
+
+    def test_unseen_text(self):
+        got = {s for f in ck.check(ck.Pkg(self.data), ".pptx") if f.code == "unseen-text" for s in f.samples}
+        self.assertLessEqual({"ダミーの非表示メモ", "ダミーの話す内容", "ダミーのコメント", "ダミー作成者"}, got)
+        self.assertNotIn("公開のスライド", got)
 
 
 if __name__ == "__main__":

@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-28（実機なしで進められる項目: cleankit の文字の検査、閉じたトピックの後始末の下準備、NA の統合）
+- ユーザーの依頼「workbaseの続き 実機なしでできるもの」。期日の表に 3 日以内の項目は無かった。実機・ユーザーの判断が要る NA 1・2・7・8 と、期日待ちの NA 4・5 は触れなかった。
+- NA 6（一部済）: 許可方式のうち、ユーザーが選んだ「`check` に文字の検査だけ足す」を行った（`cleankit.py` の `unseen-text`、単体テスト 13 件。詳細は `topics/ooxml-clean/docs/log-history.md`）。掃除の側と、許可方式の掃除の本体は他セッションのまま。
+- NA 10（一部済）: (a) 切れたリンク 2 か所を、`git show 11a4954^:<パス>` で読める形に直した（このファイルの `private-knowledge-checks.md` の行と、`topics/kit-growth/records/planning-method-record.md`）。`[[ ]]` で消えたノートを指す箇所は 0 件。(b) サルベージは、`git log --diff-filter=D` で消えた 71 件を `close-procedure.md` の表で振り分け、候補 3 件を一覧にした（Claude Projects の共有フォルダ `notes/topic-close/2026-10-28-salvage-list.md`）。道具は `md-link-graph` の 4 本だけで移し済み、logbook に移す測定値は無し。採否はユーザー。
+- ユーザーの依頼で、NA 4（md-link-graph を閉じるか）と NA 5（logbook-design の残り）を 1 項にまとめた。どちらも 11-08 の引き当て率の初回を待つため。
+
 ### 2026-10-28（cleankit の Excel 警告の原因を直し、次を汎用の許可方式にした）
 - ユーザーが、掃除の出力で Excel の警告が出ると報告した。原因は共有文字列を詰める処理が、空のセル `<c .../>` の次を読み落とし、使っている文字列を消していたこと（`5f7b78d`。空の非表示行の次を `--also hidden-rows` が空にする不具合も同時に直した）。修正版で残り 0、警告なしをユーザーが確認した（10-28）。
 - 「残り 0」は既知の残り方が無いだけで、見えない断片が全部無い保証ではない。ユーザーの期待は後者。次は、見えないものをすべて落とす汎用のスクリプト（許可方式）にすると決めた。他セッションに引き継ぐ。
@@ -343,7 +349,7 @@
 ### 2026-10-21（`start 計画`: 会議録のナレッジ化を始め、題材ごとのトピックと `records/` の仕訳を仮決めにした）
 - ユーザーの要求: 顧客を含む打合せ内容を知識化したい（AI 向け = lessons、私向け = explain と同じ扱い・方針・ルール）。すり合わせ4回で、置き場（規則だけ workbase、中身は works 側の Area。Project を跨げるため）、入力（自動の文字起こしと自分の議事録）、「同じ」の範囲（型・タグ・索引・昇格の流れまで）、2系統の扱い（手段だった。1ファイル2層 + Bases の一覧）、顧客名（Area 内は書く、AI に渡すときはマスク）を決めた。6R・憲章・WBS・マイルストーンは作成済みで、ユーザーの反対なし。
 - 置き場は、ユーザーの記憶の曖昧さで2回動いた（`kit-growth/plans/` → `planning-method/records/` → 各トピックの `records/`）。結果として `topics/private-knowledge/` を作り、`usage-viz/` と `stock-modes/` を `planning-method` から切り出した。仕訳は2か所（測ったことは `kit-growth/records/`、各トピックの出力はそのトピックの `records/`）。仮決め 〜2026-10-28（`decisions.md` の同日の項）。`start-plan.md` の置き場の表は、正式化のときに直す（kit の変更で承認が要る）。
-- 裏づけ5件の確認（`topics/private-knowledge/records/private-knowledge-checks.md`）: works の `stock` / `integrate` は広げにくく、既存の `data: mask` の型（議事録の要約・抽出）と Area の `ai/docs/inbox.md` に載せる案が有力。Bases は1行が1ファイルのため、ToDo を1件ずつ並べる一覧は別の形が要る（仮説）。最大の未決は、Area の知識をマスクして部屋の AI に見せる経路。
+- 裏づけ5件の確認（`topics/private-knowledge/records/private-knowledge-checks.md`。2026-10-21 にトピックを閉じて削除。全文は `git show 11a4954^:topics/private-knowledge/records/private-knowledge-checks.md`）: works の `stock` / `integrate` は広げにくく、既存の `data: mask` の型（議事録の要約・抽出）と Area の `ai/docs/inbox.md` に載せる案が有力。Bases は1行が1ファイルのため、ToDo を1件ずつ並べる一覧は別の形が要る（仮説）。最大の未決は、Area の知識をマスクして部屋の AI に見せる経路。
 - 遠回り: トピックの置き場を、記憶に頼って最初の指示どおり `kit-growth/` の下に作った。既存の決定（`planning-method` の 10-20、案④は保留）を先に突き合わせれば、移動を2回避けられた。
 - 変更した kit 外のファイル: `exmem/lessons/planning-method.md` と `guides/howto/claude-usage-report.md` のパスだけ。`workflow-kit/` は書き換えていない。
 

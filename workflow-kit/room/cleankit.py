@@ -11,10 +11,11 @@
   python cleankit.py check <ファイル> [--report <md>]
   python cleankit.py clean <ファイル> <出力> [--keep <動作,...>] [--report <md>] [--force]
 
-check: 残っている情報を一覧にする。clean: 既定の動作（CLEAN_ACTIONS）で取り除いた別ファイルを書き、出力をもう一度点検する。
+check: 残っている情報を一覧にする（既知の残り方に加え、見えている文字と固定語に当たらない文字を unseen-text として出す）。clean: 既定の動作（CLEAN_ACTIONS）で取り除いた別ファイルを書き、出力をもう一度点検する。
 画面には件数だけを出す（抜粋は報告のファイルだけに書く）。終了コード: 0 = 要確認なし、1 = 要確認あり、2 = 実行できない。
 """
 import argparse
+import html
 import io
 import posixpath
 import re
@@ -459,6 +460,167 @@ def check_pptx(pkg, fs):
     return slides
 
 
+# ---------- 点検: 見えている文字に当たらない文字（許可方式の第一歩） ----------
+# 既知の残り方を列挙する点検の外に、取りこぼしの網を張る。ファイルの中の文字を全部集め、
+# 「開いたときに見える文字（見えているセルの値と数式・シート名・見えているスライドの文字）」と固定語に当たらないものを出す。
+# 消しはしない（報告だけ）。数えないもの: 書式・テーマ・型・関係の部品、数・日付・番地・GUID などの形だけの文字、ふりがな（rPh）、
+# 文書プロパティの件数の欄（HeadingPairs）。非表示の図形・スライドの外の図形の文字は見える側に数える（hidden-shape・off-slide で出る）。
+
+_STRUCT_PART_RE = re.compile(r"(^\[Content_Types\]\.xml$|\.rels$|(^|/)theme/|(^|/)styles\.xml$|"
+                             r"(^|/)(presProps|viewProps|tableStyles|fontTable)\.xml$)")
+_STRUCT_TEXT_RE = re.compile(r"^(?:[-+\d\s.,:;%/()TZE]*|true|false|\{[0-9A-Fa-f-]{36}\}|[0-9A-Fa-f]{8,}|"
+                             r"\$?[A-Z]{1,3}\$?\d+(?::\$?[A-Z]{1,3}\$?\d+)?|#(?:REF!|N/A|NAME\?|VALUE!|DIV/0!|NUM!|NULL!))$", re.I)
+# 製品が自動で付ける名前（図形・表・ピボット・既定のスタイル・Excel 内部の定義名）
+_AUTO_NAME_RE = re.compile(r"^(?:(?:Title|Subtitle|Content|Text|Picture|Rectangle|TextBox|Text Box|Chart|Table|Group|Oval|"
+                           r"Straight Connector|Straight Arrow Connector|Slide Number|Date|Footer|Diagram|Graphic|"
+                           r"Vertical Title|Vertical Text|Slide Image|[\w ]*Place[Hh]older|"
+                           r"PivotTable|Drop Down|Check Box|Button|"
+                           r"タイトル|サブタイトル|テキスト ボックス|正方形/長方形|図|グラフ|表|グループ化|楕円|直線コネクタ|"
+                           r"直線矢印コネクタ|コンテンツ プレースホルダー|テキスト プレースホルダー|タイトル プレースホルダー|"
+                           r"[^\s\d]* ?プレースホルダー|"
+                           r"ピボットテーブル|テーブル|ドロップ ダウン|チェック ボックス|ボタン) ?\d*|"
+                           r"_xl.*|TableStyle\w+|PivotStyle\w+|SlicerStyle\w+)$")
+# 固定語: 製品・テンプレートが書く文字（文書プロパティの一覧、既定のフォント）
+FIXED_WORDS = {
+    "Microsoft Excel", "Microsoft Office Excel", "Microsoft Office PowerPoint", "Microsoft PowerPoint",
+    "Microsoft Macintosh Excel", "Microsoft Macintosh PowerPoint",
+    "Worksheets", "ワークシート", "Named Ranges", "名前付き一覧", "Charts", "Theme", "テーマ", "Fonts Used",
+    "使用されているフォント", "Slide Titles", "スライド タイトル", "Office Theme", "Office テーマ",
+    "Calibri", "Calibri Light", "Arial", "Aptos", "Aptos Display", "Aptos Narrow", "Century", "Meiryo UI", "メイリオ",
+    "游ゴシック", "游ゴシック Light", "Yu Gothic", "Yu Gothic Light", "ＭＳ Ｐゴシック", "ＭＳ ゴシック", "ＭＳ 明朝",
+    "MS PGothic", "MS Gothic", "MS Mincho", "Liberation Sans", "Liberation Serif", "DejaVu Sans",
+    "General", "標準", "PresentationFormat", "On-screen Show (4:3)", "On-screen Show (16:9)", "Widescreen", "ワイド画面",
+    "画面に合わせる (4:3)", "画面に合わせる (16:9)",
+}
+# 中身を文字として調べない要素（製品名・版・件数・時刻など）
+_STRUCT_ELEMS = {"Application", "AppVersion", "DocSecurity", "ScaleCrop", "LinksUpToDate", "SharedDoc", "HyperlinksChanged",
+                 "TotalTime", "Template", "PresentationFormat", "Words", "Characters", "CharactersWithSpaces", "Lines",
+                 "Paragraphs", "Pages", "Slides", "Notes", "HiddenSlides", "MMClips", "cp:revision", "dcterms:created",
+                 "dcterms:modified", "dc:language", "c:formatCode", "formatCode", "x:Anchor", "x:AutoFill", "x:Row", "x:Column", "x:SizeWithCells", "x:MoveWithCells"}
+# 中身が参照式の要素: 文字列の定数（"..."）とシート名（'...'! / 名前!）だけを調べる
+_FORMULA_ELEMS = {"f", "definedName", "formula", "formula1", "formula2", "xm:f", "c:f", "sqref", "xm:sqref"}
+# 自由な文字を持つ属性（要素の名前つき。None はどの要素でも）
+_FREE_ATTRS = {("name", None), ("descr", None), ("title", None), ("displayName", None), ("userName", None),
+               ("initials", None), ("v", "s"), ("val", "sheetName"), ("url", "x15ac:absPath")}
+_LEAF_RE = re.compile(r"<([\w:.-]+)\b[^>]*>([^<]+)</\1>")
+_OPEN_RE = re.compile(r"<([\w:.-]+)\b([^>]*)>")
+
+
+def _norm(s):
+    return re.sub(r"\s+", " ", html.unescape(s)).strip()
+
+
+def _runs(xml):
+    """<t>・<a:t> の文字をつないだもの（書式の切れ目で語を割らない）。ふりがなは除く。"""
+    xml = re.sub(r"<rPh\b.*?</rPh>", "", xml, flags=re.S)
+    return "".join(html.unescape(x) for x in re.findall(r"<(?:a:)?t\b[^>]*>(.*?)</(?:a:)?t>", xml, re.S))
+
+
+def _formula_bits(f):
+    f = html.unescape(f)
+    out = re.findall(r'"((?:[^"]|"")*)"', f)
+    out += [a or b for a, b in re.findall(r"'((?:[^']|'')+)'!|([^\s'!,()=+\-*/&<>:\"\[\]]+)!", f)]
+    return [x.replace('""', '"').replace("''", "'") for x in out]
+
+
+def visible_text_xlsx(pkg):
+    wb = main_part(pkg)
+    sheets = wb_sheets(pkg, wb)
+    vis = [s for s in sheets if s["state"] == "visible"]
+    sst = [tgt for _rid, _ty, tgt in pkg.internal(wb, {"sharedStrings"})]
+    items = [_runs(x) for x in re.findall(r"<si\b[^>]*?(?:/>|>.*?</si>)", pkg.text(sst[0]) or "", re.S)] if sst and pkg.has(sst[0]) else []
+    out = [s["name"] for s in vis]
+    for s in vis:
+        xml = pkg.text(s["path"]) or ""
+        hc = hidden_cols(xml)
+        for r in re.finditer(_ROW_PAT, xml, re.S):
+            hr = attrs(r.group(1)).get("hidden") in ("1", "true")
+            for c in _CELL_RE.finditer(r.group(2) or ""):
+                a, body = attrs(c.group(1)), c.group(2) or ""
+                if hr or col_num(a.get("r", "A1")) in hc:
+                    continue
+                v = re.search(r"<v>(.*?)</v>", body, re.S)
+                if a.get("t") == "s" and v and v.group(1).isdigit() and int(v.group(1)) < len(items):
+                    out.append(items[int(v.group(1))])
+                elif a.get("t") == "inlineStr":
+                    out.append(_runs(body))
+                elif v:
+                    out.append(html.unescape(v.group(1)))
+                out += [html.unescape(x) for x in re.findall(r"<f\b[^>]*>(.*?)</f>", body, re.S)]
+        hf = re.search(r"<headerFooter\b.*?</headerFooter>", xml, re.S)
+        if hf:
+            out.append(plain(hf.group(0)))  # 印刷すると見える
+        # 見えているシートの図形・グラフの文字（タイトル・軸・テキストボックス）
+        for _r, ty, d in pkg.internal(s["path"], {"drawing"}):
+            parts = [d] + [t for _r2, _t2, t in pkg.internal(d, {"chart", "diagramData"})]
+            out += [_runs(pkg.text(p) or "") for p in parts]
+            out += [_norm(x) for p in parts for x in re.findall(r"<a:t>(.*?)</a:t>", pkg.text(p) or "", re.S)]
+    return [x for x in out if x]
+
+
+def visible_text_pptx(pkg):
+    pres = main_part(pkg)
+    out, seen = [], set()
+    for s in pres_slides(pkg, pres):
+        if s["hidden"]:
+            continue
+        parts = [s["path"]]
+        for _r, ty, t in pkg.internal(s["path"]):
+            if ty in ("chart", "diagramData", "slideLayout"):
+                parts.append(t)
+                if ty == "slideLayout":
+                    parts += [m for _r2, t2, m in pkg.internal(t, {"slideMaster"})]
+        for p in parts:
+            if p in seen:
+                continue
+            seen.add(p)
+            xml = pkg.text(p) or ""
+            out += [_norm(x) for x in re.findall(r"<a:t>(.*?)</a:t>", xml, re.S)]
+            out += [_runs(m) for m in re.findall(r"<a:p>.*?</a:p>", xml, re.S)]  # 段落ごとにつないだ文字
+    return [x for x in out if x]
+
+
+def text_candidates(name, xml):
+    """部品の中の文字の候補（自由な文字の属性と、葉の要素の中身）。"""
+    xml = re.sub(r"<rPh\b.*?</rPh>|<HeadingPairs\b.*?</HeadingPairs>", "", xml, flags=re.S)
+    out = []
+    for m in _OPEN_RE.finditer(xml):
+        tag = m.group(1)
+        for k, v in _ATTR_RE.findall(m.group(2)):
+            if (k, None) in _FREE_ATTRS or (k, tag.split(":")[-1]) in _FREE_ATTRS or (k, tag) in _FREE_ATTRS:
+                if k == "name" and tag in ("p:cSld", "cSld"):
+                    continue  # レイアウトの名前（テンプレートの既定）
+                out.append(_norm(v))
+    for m in _LEAF_RE.finditer(xml):
+        tag, body = m.group(1), m.group(2)
+        if tag in _STRUCT_ELEMS:
+            continue
+        if tag in _FORMULA_ELEMS:
+            out += [_norm(x) for x in _formula_bits(body)]
+        else:
+            out.append(_norm(body))
+    # 書式で割れた文字（<r> ごとの <t>）は、文字列・段落の単位でつないでも調べる
+    out += [_norm(_runs(m)) for m in re.findall(r"<si\b.*?</si>|<is\b.*?</is>|<a:p>.*?</a:p>", xml, re.S)]
+    return out
+
+
+def check_text(pkg, ext, fs):
+    vis = visible_text_xlsx(pkg) if ext in (".xlsx", ".xlsm") else visible_text_pptx(pkg)
+    joined = "\x00".join(_norm(x) for x in vis)
+    for n in pkg.order:
+        if n not in pkg.parts or not n.lower().endswith(XML_EXT) or _STRUCT_PART_RE.search(n):
+            continue
+        miss = []
+        for s in text_candidates(n, pkg.text(n) or ""):
+            if (not s or s in FIXED_WORDS or _STRUCT_TEXT_RE.match(s) or _AUTO_NAME_RE.match(s)
+                    or s in joined or s in miss):
+                continue
+            miss.append(s)
+        if miss:
+            fs.append(Finding("unseen-text", n, f"見えている文字に当たらない文字（{len(miss)} 種類。ここに出ないものは、"
+                              "見えている文字か固定語に当たった）", miss))
+
+
 def check(pkg, ext):
     fs = []
     check_common(pkg, fs)
@@ -466,6 +628,7 @@ def check(pkg, ext):
         check_xlsx(pkg, fs)
     else:
         check_pptx(pkg, fs)
+    check_text(pkg, ext, fs)
     return fs
 
 
