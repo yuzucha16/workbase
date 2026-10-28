@@ -86,3 +86,15 @@
 - 決めたこと（ユーザー）: 出力の型の切り出し（`records/2026-10-28-brief-mode-load.md`）は、改善4・改善5（振り返り）だけで試す。`brief 改善` の引数は残し、開始時の大きさで比べてから他のモードに広げる。
 - 根拠: ユーザーの選択（決定カード「振り返りだけで試す」）。推奨の理由: 使用が多く、ノートも最大（25KB）で、戻すのが簡単。
 - 実装: `exmem/lessons/retrospective-method-output.md`・`retrospective-method-2-output.md` を作り、元のノートの章立てと規模の表を移した。依頼の語（`振り返` など）は型のノートに移し、元のノートの `triggers:` から外した。
+
+### 【この件】brief の引数をやめ、出力の型を依頼の言葉で引く（2026-10-28）
+- 決めたこと（ユーザー）: 振り返りの試験が 2 回続けて良好だったので、調査1・調査2・計画・改善1〜3 にも出力の型のノート（`exmem/lessons/*-output.md`）を作り、`brief` の引数と `brief-modes.md` の聞き取りをやめる。解決・変更の引数も同時に廃止（使用 0 回。やり方は `methods.md` の該当行を読む）。
+- 根拠: ユーザーの発言: 「1にします。進めてください。」（選択肢 1 = 調査・計画・改善 1〜3 に広げ、引数と聞き取りをやめる）。試験の結果は `records/2026-10-28-retrospective-trial-result.md`（3 回目: 応答 3、土台 26.1k、読みは型 1 本のみ）。
+- 見直す条件: 広げた型の試験（NP6）で、型の品質が下がる、または誤爆で読み込みが増える場合。
+
+### 【この件】入力側（調査1・2、改善1〜3）を畳み、型の名前から `-2` をやめる（2026-10-28）
+- 決めたこと（ユーザー）: 元の 5 ノートを `status: superseded`（同じ場所に残す。logbook へは降格しない）にし、依頼の文例は `guides/quickref/ai-work-prompts.md` の 1 本にまとめる。型の名前は内容で付け直す: `research-method-output` → `research-explain-output`、`research-method-2-output` → `research-procedure-output`、`retrospective-method-2-output` → `retrospective-incident-output`。`methods.md` の改善1〜3・調査1〜2 の骨子は型のノートへ移した。
+- 根拠: ユーザーの発言: 「superseded にします」「よいです」「含めます。承認します。進めてください。」(入力は自分がプロンプト例で持てばよい。出力の型が重要。`-2` の衝突を解消したい)
+- 見直す条件: 型だけでは品質が足りず、元のノートを読み直す場面が続く場合。
+
+- 追記（2026-10-28、ユーザー）: 改善4・5（`retrospective-method`、`retrospective-method-2`）も同じく `superseded` にする。根拠: 「してください」（確認 2 への回答）。
