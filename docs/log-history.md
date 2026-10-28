@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-28（NA1: 履歴のユーザー名の調査、author の匿名化の準備）
+- works（`worksample`）と dotfiles の全履歴を調べた。パスのユーザー名の位置は、`ck` `ee` `yy` `u` `you` と各種プレースホルダーだけで、実際のユーザー名はなかった。ギャップ 8 を閉じた（`docs/alignment-baseline.md`、7a7dea6）。
+- noreply メールには `yuzucha16` が入っているので、ユーザー名を隠したことにならない。workbase は全コミットが `agent <agent@agent.local>`。works と dotfiles を同じにする手順と mailmap を用意し、複製で試した（works 208、dotfiles 240 コミットが全部 agent、本文の `yuzucha16` も 0 件）。force push は未実施（`topics/wording-neutralize/records/2026-10-28-author-rewrite-steps.md`）。
+
 ### 2026-10-28（相談の型の5回目の判断、NA 9・10 の起票）
 - 「oq を消化します」の相談で、相談の型を 5 回目として使った。結論は「残す」（トリガー方式、PC の実測の後に置き場を決める）。Open Questions の該当行を消し、NA 9 に移した。あわせて、フックの合言葉を `triggers:` 索引に統一するかの検討を NA 10 に起票した（ユーザーの依頼）。根拠は `decisions.md` の 2026-10-21 の項の追記。
 
