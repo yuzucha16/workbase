@@ -28,8 +28,8 @@
 2. 【起票 10-25】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（同上）。未決は `release` の束ね先。
 4. 【起票 10-20・10-25】索引（triggers）の引き当て率の初回（11-08、期日の表の行）の後に決める 2 件: (a) ルールが見つかりにくい構造（`topics/md-link-graph/`。完了条件は満たした。道具は `workflow-kit/tools/` へ移した）を閉じるか。`triggers:` の上限 30 語（10-27）で誤爆が増えていないかも見る。(b) 期限のあるナレッジの置き場 `logbook/`（`topics/logbook-design/`）の残り: 同じ引き当て率の確認と、トピックの Next Actions。
 6. 【起票 10-26】xlsx・pptx の点検・掃除（`room/cleankit.py`、`topics/ooxml-clean/`）: 次は、見えないものをすべて落とす許可方式の掃除（他セッションに引き継ぎ。許可した部品の種類だけ残す）。`check` の文字の検査（`unseen-text`、10-28）は、ユーザーが後日 PC1 の実ファイルで出る量（雑音）と取りこぼしを見る。今の `cleankit.py` で残るのは、見た目・数式が崩れていないかの人の確認、`mask` への組み込み、pptx の実ファイル確認。
+7. 【起票 10-26】【最優先】トークン削減の見直し（`topics/token-cap/`。月次上限 2億トークン）。残り: room の 107k の確認（トピックの NA 1）。規則側の削減と lessons の分割の効果を、10-28 以降の `cap_meter.py` で確かめる。`exmem/` の 2 か所と `templates/workspace/AGENTS.md` の参照文は未変更。
 8. 【起票 10-27】公開リポジトリの文言の整理（`topics/wording-neutralize/`）: 残りは段階 4（履歴の書き換え。ユーザーが後日、急がない）。
-9. 【起票 10-28】`wrap` の済／一部済／未の分け方（`workflow-kit/wrap-hook.md` の手順 2）の確認: 次の数回の `wrap` で、済んだ項目が移されるか、誤って閉じていないか、報告に閉じた数と聞く項目が出るかを見る。ずれたら `review` の入力に足す。
 
 ## Open Questions
 

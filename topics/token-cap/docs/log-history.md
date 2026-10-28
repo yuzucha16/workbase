@@ -2,7 +2,6 @@
 
 ## Log
 
-- 2026-10-28（107k の確認を閉じた）: ee が 10-28 に PC1 の room で `decompose_session.py` の確認を行い、問題なしと報告した（個別の数字は聞いていない）。NA1（骨子の残り: PC2 と room で要因別の分解を同じ方法で）をこれで閉じた。道具は `decompose_session.py`、172k の型は `records/2026-10-27-pc1-room-ranking.md` ほか。root の Next Actions 7（最優先）は、ee の指示で閉じた。残りの NA2・5・6 はこのトピックの `log.md` が持つ。
 - 2026-10-28（wrap の新しい規則で log.md を掃除）: 済んだ部分を移した。NA2: `integrate` の読む量の上限と lessons の分割（`1d545aa`、`29bb5e0`）は済み。`--check-triggers` の FAIL 1 件は、上限が 30 語になって解消した（`06b3583`。10-28 の実行で fail=0）。NA4: `room reap` の退避は済み（残りの方針は「状態」へ移した）。OQ: 差の約 16M の出どころは取らない（ee の決定 10-27）。
 - 2026-10-27（107k の確認の道具）: 「workbase の続き」で PC1 でやることを列挙し、ee が room の 107k の確認方法を token-cap 配下から探させた（方法は `records/2026-10-27-pc2-one-request-172k.md`）。ee の依頼で分解を道具化。最初に `workflow-kit/tools/` へ置いたが、ee の指示で `topics/token-cap/decompose_session.py` に移した。読み取り専用で、道具名・ファイル名・文字数のみ。応答と tool_use を id で重複除去。ダミーの jsonl で確認、実機の room では未実行。wrap。
 - 2026-10-27（傾向分析の骨子を埋める）: 「token-cap の続き 傾向分析の骨子」。room の 107k は、この PC の room-myenv に 10-25 22:27 までの記録しか無く確認できず、ee が後日に回した。伸びの要因別の分解を PC1 Windows（10-01 以降、115 会話、2,916 応答）で実行（`%TEMP%` の一時スクリプト、道具名と文字数のみ、増加分を文字数で按分）: Read 45%、書き込み本文 23%、Grep 10%、AI 本文 9%、PowerShell 9%、ユーザー発言 1.6%。効く順は区切る → 大きな読み込みを避ける → 土台。ee から土台の比率が区切りまでの余裕を食い、依頼数が減るとの指摘（「6万」は「10万」の誤り）。AI の意見: 上限への効きは中、作業性では効く。ee は前倒ししないが漏らさないと決定し、decisions と Next Actions 5 に記録。`log.md` は 5.7KB→4KB 内に圧縮。wrap。
