@@ -51,7 +51,7 @@ uv run room.py rename-area <旧Area> <新Area> [--no-commit]
 | `rename-area` | `rename-area <旧> <新>`: `areas/<旧>/` を `areas/<新>/` に移し（追跡外のファイルも）、その Area の Project（`projects/` と `archives/`）の README の `area:` と `[[areas/<旧>/…]]` のリンク、`ai/records/manifest.json` の来歴の `area` を書き換える。新しい名前は英数字・`_`・`-` だけ（`room-<新>` になるため）。新しい名前がすでにある、旧 Area が無い、旧の部屋にマウントが残っている、のいずれかなら何も変えずに止まる。**部屋は触らない**: `room-<旧>` は不要なら手で消し（`wsl --unregister`）、`room init <新>` で作り直す。`room-log.md` の過去の行は書き換えない。既定でコミットする（`--no-commit` で省く） |
 | `umount` | 部屋に残った `/mnt/room/*` のマウントを外す |
 
-`start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。待つ間、部屋が止まってマウントが消えないよう、部屋で `sleep infinity` を動かす（実機で確認済み: 2026-10-18。待つ間マウントは残り、Enter で戻る。`wsl.exe` はコンソールから切り離して起こす）。
+`start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。開くフォルダは `/mnt/room/<Project>`（`/mnt/room` を開かない。記録・git・会話履歴が壊れる）。待つ間、部屋が止まってマウントが消えないよう、部屋で `sleep infinity` を動かす（実機で確認済み: 2026-10-18。待つ間マウントは残り、Enter で戻る。`wsl.exe` はコンソールから切り離して起こす）。
 
 ## マスクと復元は状態で決まる
 

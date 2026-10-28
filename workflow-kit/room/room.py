@@ -1409,7 +1409,7 @@ def cmd_start(ctx, a):
         ctx.say(f"マウントした: {p.mount_point}")
         setup_room_git(ctx, p)
         if a.no_launch:
-            ctx.say("--no-launch: ここで AI を起動しない。Zed などで WSL リモート接続し、終わったら Enter")
+            ctx.say("--no-launch: ここで AI を起動しない。Zed などで WSL リモート接続し、" f"{p.mount_point} を開く（/mnt/room は開かない）。終わったら Enter")
             keep = ctx.wsl.keepalive(p.distro)  # セッションが無くなって部屋が止まると、マウントも消える（仮説。実機で確認する）
             try:
                 input()
