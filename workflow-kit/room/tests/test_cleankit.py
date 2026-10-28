@@ -246,6 +246,22 @@ class XlsxTest(unittest.TestCase):
         self.assertNotIn("公開の値", texts(out)["xl/sharedStrings.xml"])  # 共有文字列も詰まる
         self.assertTrue(any("非表示の行" in x for x in log))
 
+    def test_self_closing_cell_and_row(self):
+        # 空のセル <c .../> と中身のない行 <row .../> の次を巻き込まない（2026-10-28 の修正。以前は次のセルの共有文字列を
+        # 使っていないとみなして消し、番号が範囲の外になって Excel が修復していた。非表示の空の行の次の行も空にしていた）
+        xml = ('<sheetData><row r="1"><c r="A1" s="1"/><c r="B1" t="s"><v>2</v></c></row>'
+               '<row r="2" hidden="1"/><row r="3"><c r="A3"><v>9</v></c></row></sheetData>')
+        pkg = ck.Pkg(zipit({"s.xml": xml}))
+        self.assertEqual(ck.used_sst(pkg, ["s.xml"]), {2})
+        self.assertEqual(ck.blank_hidden(xml, True, False), (xml, 0))
+        self.assertEqual(ck.hidden_content(xml), (0, 0))
+
+    def test_integrity_finds_bad_string_index(self):
+        out, _log = ck.clean(self.data, ".xlsx", list(ck.CLEAN_ACTIONS))
+        pkg = ck.Pkg(out)
+        pkg.put("xl/worksheets/sheet1.xml", re.sub(r'(<c r="A1" t="s"><v>)\d+', r"\g<1>99", pkg.text("xl/worksheets/sheet1.xml")))
+        self.assertTrue(any("範囲の外" in p for p in ck.integrity(pkg.tobytes())))
+
     def test_keep(self):
         out, _log = ck.clean(self.data, ".xlsx", [a for a in ck.CLEAN_ACTIONS if a not in ("hidden-sheets", "props")])
         t = texts(out)

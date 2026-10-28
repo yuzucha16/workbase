@@ -386,9 +386,9 @@ def check_xlsx(pkg, fs):
 def used_sst(pkg, paths):
     used = set()
     for p in paths:
-        for m in re.finditer(r"<c\b([^>]*)>(.*?)</c>", pkg.text(p) or "", re.S):
+        for m in _CELL_RE.finditer(pkg.text(p) or ""):  # 空のセル <c .../> を飛ばす（次のセルを巻き込まない）
             if attrs(m.group(1)).get("t") == "s":
-                v = re.search(r"<v>(\d+)</v>", m.group(2))
+                v = re.search(r"<v>(\d+)</v>", m.group(2) or "")
                 if v:
                     used.add(int(v.group(1)))
     return used
@@ -644,9 +644,9 @@ def _has_content(body):
 def hidden_content(xml):
     """非表示の行・列にある、中身の入ったセルの数（行, 列）。"""
     hc, rows, cols = hidden_cols(xml), 0, 0
-    for r in re.finditer(r"<row\b([^>]*?)>(.*?)</row>", xml, re.S):
+    for r in re.finditer(_ROW_PAT, xml, re.S):
         hr = attrs(r.group(1)).get("hidden") in ("1", "true")
-        for c in re.finditer(r"<c\b([^>]*?)(?:/>|>(.*?)</c>)", r.group(2), re.S):
+        for c in re.finditer(r"<c\b([^>]*?)(?:/>|>(.*?)</c>)", r.group(2) or "", re.S):
             if not _has_content(c.group(2)):
                 continue
             if hr:
@@ -656,6 +656,7 @@ def hidden_content(xml):
     return rows, cols
 
 
+_ROW_PAT = r"<row\b([^>]*?)(?:/>|>(.*?)</row>)"  # 空の行 <row .../> を次の行と一緒に読まない
 _F_RE = re.compile(r"<f\b([^>]*?)(?:/>|>.*?</f>)", re.S)
 _CELL_RE = re.compile(r"<c\b([^>]*?)(?:/>|>(.*?)</c>)", re.S)
 
@@ -664,13 +665,13 @@ def blank_hidden(xml, do_rows, do_cols):
     """非表示の行・列のセルから、値・文字・数式を外す。書式とセルは残す。
     共有数式の親（ref を持つ f）は、空にならないセルがまだ使っているときだけ残す（残すと子が壊れるため）。"""
     hc = hidden_cols(xml) if do_cols else set()
-    rows = [(m, do_rows and attrs(m.group(1)).get("hidden") in ("1", "true")) for m in re.finditer(r"<row\b([^>]*?)>(.*?)</row>", xml, re.S)]
+    rows = [(m, do_rows and attrs(m.group(1)).get("hidden") in ("1", "true")) for m in re.finditer(_ROW_PAT, xml, re.S)]
 
     def target(hr, c):
         return (hr or col_num(attrs(c.group(1)).get("r", "A1")) in hc) and _has_content(c.group(2))
     used = set()
     for m, hr in rows:
-        for c in _CELL_RE.finditer(m.group(2)):
+        for c in _CELL_RE.finditer(m.group(2) or ""):
             if not target(hr, c):
                 for f in _F_RE.finditer(c.group(2) or ""):
                     fa = attrs(f.group(1))
@@ -696,8 +697,10 @@ def blank_hidden(xml, do_rows, do_cols):
             body = _F_RE.sub(f, body)
             a = re.sub(r'\s+t="[^"]*"', "", a)
             return f"<c{a}>{body}</c>" if body else f"<c{a}/>"
+        if m.group(2) is None:
+            return m.group(0)
         return "<row" + m.group(1) + ">" + _CELL_RE.sub(cell, m.group(2)) + "</row>"
-    xml = re.sub(r"<row\b([^>]*?)>(.*?)</row>", row, xml, flags=re.S)
+    xml = re.sub(_ROW_PAT, row, xml, flags=re.S)
     return xml, n
 
 
@@ -708,6 +711,9 @@ def shrink_sst(pkg, wb, paths, log):
     t = pkg.text(sst[0]) or ""
     items = list(re.finditer(r"<si\b[^>]*?(?:/>|>.*?</si>)", t, re.S))
     used = used_sst(pkg, paths)
+    if any(i >= len(items) for i in used):
+        log.append("共有文字列は詰めなかった（範囲の外の番号を指すセルがある。元のファイルが壊れている）")
+        return
     if len(used) == len(items):
         return
     remap = {old: new for new, old in enumerate(sorted(i for i in used if i < len(items)))}
@@ -722,7 +728,7 @@ def shrink_sst(pkg, wb, paths, log):
             return m.group(0)
         return re.sub(r"<v>(\d+)</v>", lambda v: f"<v>{remap[int(v.group(1))]}</v>", m.group(0))
     for p in paths:
-        pkg.put(p, re.sub(r"<c\b([^>]*)>(.*?)</c>", cell, pkg.text(p) or "", flags=re.S))
+        pkg.put(p, _CELL_RE.sub(cell, pkg.text(p) or ""))
     log.append(f"使っていない共有文字列を消した: {len(items) - len(remap)} 件")
 
 
@@ -824,6 +830,15 @@ def integrity(data):
     for o in overrides:
         if o not in pkg.parts:
             probs.append(f"[Content_Types].xml: 無い部品の型（{o}）")
+    # 共有文字列の番号が範囲の中か（外れると Excel が「読み取れない内容」として修復する）
+    sst = [n for n in pkg.order if re.match(r"xl/sharedStrings[^/]*\.xml$", n) and n in pkg.parts]
+    if sst:
+        size = len(re.findall(r"<si\b", pkg.text(sst[0]) or ""))
+        for n in pkg.order:
+            if n in pkg.parts and re.match(r"xl/worksheets/[^/]+\.xml$", n):
+                bad = used_sst(pkg, [n]) - set(range(size))
+                if bad:
+                    probs.append(f"{n}: 共有文字列の番号が範囲の外（{len(bad)} 個。文字列は {size} 件）")
     return probs
 
 
@@ -903,8 +918,11 @@ def main(argv=None):
             guard_outputs(rep)
             rep.write_text(report_md(src, fs), encoding="utf-8")
             print(f"点検: {src.name}: {len(fs)} 件（{summary(fs)}）")
+            probs = integrity(data)
+            if probs:
+                print(f"整合の問題: {len(probs)} 件（{'; '.join(p.split(':')[0] for p in probs[:3])}。Excel が修復を求めることがある）")
             print(f"報告: {rep}（実データの抜粋が載る。AI に見せない）")
-            return 1 if fs else 0
+            return 1 if (fs or probs) else 0
         keep = {x.strip() for x in a.keep.split(",") if x.strip()}
         bad = keep - set(CLEAN_ACTIONS)
         if bad:
