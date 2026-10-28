@@ -30,7 +30,6 @@
 6. 【起票 10-26】xlsx・pptx の点検・掃除（`room/cleankit.py`、`topics/ooxml-clean/`）: 次は、見えないものをすべて落とす許可方式の掃除（他セッションに引き継ぎ。許可した部品の種類だけ残す）。`check` の文字の検査（`unseen-text`、10-28）は、ユーザーが後日 PC1 の実ファイルで出る量（雑音）と取りこぼしを見る。今の `cleankit.py` で残るのは、見た目・数式が崩れていないかの人の確認、`mask` への組み込み、pptx の実ファイル確認。
 8. 【起票 10-27】公開リポジトリの文言の整理（`topics/wording-neutralize/`）: 残りは段階 4（履歴の書き換え。ユーザーが後日、急がない）。
 9. 【起票 10-28】`wrap` の済／一部済／未の分け方（`workflow-kit/wrap-hook.md` の手順 2）の確認: 次の数回の `wrap` で、済んだ項目が移されるか、誤って閉じていないか、報告に閉じた数と聞く項目が出るかを見る。ずれたら `review` の入力に足す。
-10. 【起票 10-28】トピックを閉じる手順（`topics/close-procedure.md`）の残り: サルベージの会議メモの見本（`meeting-note-example.md`）の扱いだけ。置き場が `_noai/knowledge/` に変わり型が未承認のままなので、`workflow-kit/examples/` へ移すか、捨てるかを決める（git の `11a4954^` で読める）。新しい手順を最初に当てはめる対象は `topics/token-cap/`。
 
 ## Open Questions
 

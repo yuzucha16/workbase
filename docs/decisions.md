@@ -327,7 +327,7 @@
 - 決めたこと（ユーザー、2026-10-21。実機で試して閉じることに賛成）: ①規則（型・タグ・索引・昇格の流れ）だけ workbase に置き、中身（顧客・案件）は works 側の Area に置く。参照用は Project を跨げる Area 配下。②共有の単位は Area（自社・顧客ごとの抽出は want で `org:`）。③AI 向け・私向けは1ファイル2層（冒頭の数行＝人向け、本文＝AI 向け）。決定事項・ToDo は既存の3ラベルに載せる。④顧客名は Area 内では書いてよく、AI（room）に渡すところはマスク。⑤渡し方は、必要な分を Area から取り出してマスクした写しを部屋に置く。選び方は「絞って人が確認」（**仮案**。負担が出たら見直す）。写しは渡すときに作る。⑥統合は部屋の作業にする（works の AI は実名を読まない。deny は `Read`/`Edit` の安全網でシェルは止まらない）。知識は3層（事実 = Area、部屋用の写し、一般化した教訓 = workbase）で、固有の事実は仮名でも workbase に切り出さない。⑦`room pull`（`--where <項目>=<値>`、`status: active` のみ）と `restore` の Area 書き出し（`ai/out/knowledge/` → Area）を実装した。人が変えた既存ファイルがあれば `restore` が止まり、`--force` で上書き（直前の版を退避）。manifest に Area のファイル名を書かない（部屋の AI から見え、顧客名を含みうる）。⑧会議録の型: `YYYY-MM-DD-<slug>.md`（統合ノートは `kind: integrated`）、`type: area-note`、見出しは 冒頭（10行以内〔仮〕）/ 決定 / ToDo（表）/ 背景・経緯 / 事実・数値 / 未決・要確認。ToDo の正は表。
 - 根拠: ユーザーの回答と承認（2026-10-21）。実機の通し試験（ダミーの Area）は「すべて問題なし」、続けて実際に使って「完了」と報告（個別の数字は未記録）。案と比較は `guides/explain/cross-area-shared-knowledge.md`、一般化した教訓は `exmem/lessons/` と `guides/explain/ai-room-data-layout.md` に反映済み。
 - 却下案: 非公開リポジトリの新設、マスクして workbase に上げる、2ファイル、Project 内だけの置き場、AI が Area を直接読む案、常にマスク済みの写しを持つ案。
-- その後の変更: Area の知識置き場は `areas/<Area>/_noai/knowledge/` に移り、`data:` は廃止された（上の同日の【汎用】の項）。型（⑧）の見本 `records/meeting-note-example.md` は、閉じるときに削除した（履歴は git）。
+- その後の変更: Area の知識置き場は `areas/<Area>/_noai/knowledge/` に移り、`data:` は廃止された（上の同日の【汎用】の項）。型（⑧）の見本 `records/meeting-note-example.md` は、閉じるときに削除した（履歴は git）。2026-10-28 に、ユーザーが `workflow-kit/examples/meeting-note-example.md` へ移すと決めた（置き場を今の形に直した）。
 - 閉じ方: `records/` の計画・見本・確認メモは移さず削除した。残件は `docs/log.md` の Next Actions 12。
 
 ### 【汎用】部屋に変換の道具を入れる（v1）。Windows が要る実行は `room run` の案（v2・v3）にする（2026-10-20）
