@@ -32,6 +32,7 @@
 9. 【起票 10-28】相談の型（`decisions.md` の 2026-10-21）: 5回目の判断は「残す」（ユーザー、10-28。トリガー方式、仮のまま）。PC で `cap_meter.py --latest` を、「相談したい」から結論までの前後で測ってから、次を決める: 型の本文を `exmem/lessons/` の 1 ノートに移して `triggers:` を付ける（`decisions.md` には採否と経緯だけ残す）、記録の頻度（締めで 1 回にまとめる案）、論点 3 つ以下は軽い型を既定にする案、格上げ（`methods.md` と `review 消化` の 3 段）。
 10. 【起票 10-28】フックの合言葉を `triggers:` 索引に統一するか、フックに合わせて個別最適にするか（ユーザー、10-28 の検討依頼）。材料: `hooks.md` の表（合言葉と日本語の別名）、`find_knowledge.py --triggers` の引き当て率（11-08 の初回、NA 4）、部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）。相談の型の札づけ（NA 9）は、この検討の最初の実例になる。
 11. 【起票 10-28】works（`worksample`）と dotfiles の author を `agent <agent@agent.local>` にそろえる（workbase と同じ。noreply では `yuzucha16` が見える）。手順は `topics/wording-neutralize/records/2026-10-28-author-rewrite-steps.md`（複製で試験済み）。残りは、ユーザーが deny を切って force push し、他の clone を `reset --hard` で合わせること。段階 4 と一緒にやってもよい。
+12. 【起票 10-28】【PC1 で確認】room の記録が `ai/ai/records/` に出る件（調査: `notes/room-records-path/2026-10-28-investigation.md`、最有力は部屋に残った 10-25 修正前の Stop フック）。ユーザーが PC1 で次の 2 点を取る: ① `ai/ai/records/sessions.jsonl` の各行の `cwd`。② 部屋の `~/.claude/hooks/room-stop-record.py` に `"/ai/records"` が残っているか（あれば `room init <Area> --only stophook` で入れ直す）。結果が出たら、複数マウント（cwd が `/mnt/room`）の扱いを決める。ユーザーの要件は「一度早く切り替われば良い。窓の見比べはしない」。切り替え 3〜5 分の内訳は未測定。
 
 ## Open Questions
 
