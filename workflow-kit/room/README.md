@@ -69,6 +69,8 @@ uv run room.py rename-area <旧Area> <新Area> [--no-commit]
 
 ## テスト
 
+実機の通し試験（`pull` → `mask` → `start` → `restore` → Area の知識置き場）の手順は `pull-e2e-test.md`。
+
 ```powershell
 uv run python -m unittest discover -s tests
 ```

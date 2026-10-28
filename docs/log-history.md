@@ -6,6 +6,8 @@
 - ユーザーの依頼「workbaseの続き 実機なしでできるもの」。期日の表に 3 日以内の項目は無かった。実機・ユーザーの判断が要る NA 1・2・7・8 と、期日待ちの NA 4・5 は触れなかった。
 - NA 6（一部済）: 許可方式のうち、ユーザーが選んだ「`check` に文字の検査だけ足す」を行った（`cleankit.py` の `unseen-text`、単体テスト 13 件。詳細は `topics/ooxml-clean/docs/log-history.md`）。掃除の側と、許可方式の掃除の本体は他セッションのまま。
 - NA 10（一部済）: (a) 切れたリンク 2 か所を、`git show 11a4954^:<パス>` で読める形に直した（このファイルの `private-knowledge-checks.md` の行と、`topics/kit-growth/records/planning-method-record.md`）。`[[ ]]` で消えたノートを指す箇所は 0 件。(b) サルベージは、`git log --diff-filter=D` で消えた 71 件を `close-procedure.md` の表で振り分け、候補 3 件を一覧にした（Claude Projects の共有フォルダ `notes/topic-close/2026-10-28-salvage-list.md`）。道具は `md-link-graph` の 4 本だけで移し済み、logbook に移す測定値は無し。採否はユーザー。
+- ユーザーの採否（同日の返信）: サルベージの候補のうち、通し試験の手順と、6R・憲章・WBS・マイルストーンの見本を採用した。`workflow-kit/room/pull-e2e-test.md`（今の `type` と知識置き場に直した。直した形では未実施）、`workflow-kit/examples/plan-example-6r.md`、`plan-example-charter-wbs-milestone.md`（`private-knowledge` の 2 本。他ノートへのリンクを外した）。会議メモの見本は採否を保留（NA 10 に残す）。`cleankit` の `unseen-text` を PC1 の実ファイルで見るのは、ユーザーが後日行う（NA 6）。
+- NA 7（トークン削減の見直し。最優先）: ユーザーが 10-28 に room の 107k の確認を行い、問題なしと報告したので、ユーザーの指示で root の項を閉じた。残りの確認（規則側の削減と lessons の分割の効果、土台の再判断、`brief` の引数を絞る案）は `topics/token-cap/docs/log.md` が持つ。トピックは閉じていない。
 - ユーザーの依頼で、NA 4（md-link-graph を閉じるか）と NA 5（logbook-design の残り）を 1 項にまとめた。どちらも 11-08 の引き当て率の初回を待つため。
 
 ### 2026-10-28（cleankit の Excel 警告の原因を直し、次を汎用の許可方式にした）
