@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-28（「振り返って」試験の 1 回目と原因の切り分け）: 「token-cap の続き na6」。ee の `cap_meter --latest`（土台 26,010、応答 7、最大 55,530）と `decompose_session.py --at` の結果から、切り出した `-output` が使われず、元の `retrospective-method.md`（11KB）と `hooks.md`（5KB）を全文読んだと判明（Grep 4 回は 2.3k 文字で全文検索ではない）。土台が小さいのは開始時の `brief` 読み込みが走らなかったためで、切り出しの効果ではない（最初の読みを取り消した）。原因は、元の手順書の `aliases:` と本文の「振り返って」が、フックの部分一致より先に当たったこと。`aliases:` と本文を `-output` 側へ移した（`retrospective-method` と `-2`）。「振り返って」を `hooks.md` に載せる案は見送り（ee の決定）。`records/2026-10-28-retrospective-trial-result.md`。wrap。
+
 - 2026-10-28（`--at` の時刻の確認）: ee が 107k を調べる前に、decompose の `--at` に渡す時刻を質問。時刻は会話記録の timestamp と同じ UTC で、`heavy_sessions.py` の日時はそのまま使える（`cap_meter.py` と Zed の表示は現地時刻なので、日本時間は 9 時間引くか `+09:00` をつける）と回答。時差つきの指定を UTC に直す修正と先頭の説明の追記を push（`8c66f7b`）。ee は PC1 でログを取得済み、結果の判定は PC での続き。
 - 2026-10-28（wrap の新しい規則で log.md を掃除）: 済んだ部分を移した。NA2: `integrate` の読む量の上限と lessons の分割（`1d545aa`、`29bb5e0`）は済み。`--check-triggers` の FAIL 1 件は、上限が 30 語になって解消した（`06b3583`。10-28 の実行で fail=0）。NA4: `room reap` の退避は済み（残りの方針は「状態」へ移した）。OQ: 差の約 16M の出どころは取らない（ee の決定 10-27）。
 - 2026-10-27（107k の確認の道具）: 「workbase の続き」で PC1 でやることを列挙し、ee が room の 107k の確認方法を token-cap 配下から探させた（方法は `records/2026-10-27-pc2-one-request-172k.md`）。ee の依頼で分解を道具化。最初に `workflow-kit/tools/` へ置いたが、ee の指示で `topics/token-cap/decompose_session.py` に移した。読み取り専用で、道具名・ファイル名・文字数のみ。応答と tool_use を id で重複除去。ダミーの jsonl で確認、実機の room では未実行。wrap。

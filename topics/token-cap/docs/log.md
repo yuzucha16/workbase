@@ -19,7 +19,7 @@
 2. `integrate` の読む量の上限（仮 〜11-29）と lessons の分割の効果を、10-27 以降の日ごとの値で測る。
 3. （低優先）マクロ側の常駐文書に、全文読みを避ける指示を入れる案。マクロの現況は閉じた（ee の決定 10-27）。
 5. 土台の整理（`AGENTS.md` など）は、100k 運用の結果を見てから再判断する（`records/2026-10-26-base-trim.md`。前倒しはしない。ee の決定 10-27）。**漏らさない**: 土台は区切りまでの余裕を食い、1 会話の依頼数を減らす（作業性）。再判断のときは、動かせる土台の内訳を先に測る。
-6. 【10-28 試験中】`brief` の引数を絞る案。引数つきの開始時の読み込みは 17〜24k（測定は `records/2026-10-28-brief-mode-load.md`）。出力の型だけなら 1 型 0.5〜2k。**振り返りだけ切り出して試験中**（ee の決定 10-28、`a9a6c5c`）: `retrospective-method-output`（6.7KB）と `-2-output`（2.8KB）。「振り返って」で 2 本 約 4.5k が出る。**1 回目の結果（10-28）**: 土台 26.0k（中央値 27.9k より小さい）、出力は意図どおり。AI が別名を探した方法は未確認（`records/2026-10-28-retrospective-trial-result.md`）。次: あと 1〜2 回（weekly など）で土台と出力の形が保てたかを見る。良ければ調査・計画・改善1〜3 に広げ、`brief` の引数と `brief-modes.md` の聞き取りをやめる（`methods.md` は全文を読まない）。残す条件は、出力の型の価値（ee）。案の概要は `records/2026-10-28-brief-input-output-split.md`。
+6. 【10-28 試験中】`brief` の引数を絞る案。引数つきの開始時の読み込みは 17〜24k（測定は `records/2026-10-28-brief-mode-load.md`）。出力の型だけなら 1 型 0.5〜2k。**振り返りだけ切り出して試験中**（ee の決定 10-28、`a9a6c5c`）: `retrospective-method-output`（6.7KB）と `-2-output`（2.8KB）。「振り返って」で 2 本 約 4.5k が出る。**1 回目の結果（10-28）**: 出力は意図どおりだが、切り出した型は使われず、元の `retrospective-method.md` を全文読んだ（Read 18k 文字）。試験として成立していない（`records/2026-10-28-retrospective-trial-result.md`）。原因は元の手順書の別名・本文の「振り返って」が先に当たったこと。別名を `-output` 側へ移した（10-28）。次: ee が「振り返って」を頼み、`cap_meter.py --latest` と `decompose_session.py --at` の結果を別セッションで共有する。型だけが呼ばれたかを見て判定する。良ければ調査・計画・改善1〜3 に広げ、`brief` の引数と `brief-modes.md` の聞き取りをやめる（`methods.md` は全文を読まない）。残す条件は、出力の型の価値（ee）。案の概要は `records/2026-10-28-brief-input-output-split.md`。
 
 ## Open Questions
 
