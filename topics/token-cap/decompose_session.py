@@ -8,13 +8,17 @@
 使い方:
   python -I decompose_session.py <会話記録.jsonl>
   python -I decompose_session.py --at 2026-10-27T03:22 [ディレクトリ...]
-    --at: その時刻に最も近い所で最大の入力に達した会話を選ぶ（時刻は heavy_sessions.py の表示と同じ記録上の値）。
+    --at: その時刻に最も近い所で最大の入力に達した会話を選ぶ。近い順に 3 件を「候補」として出し、1 件目を分解する。
+      時刻は会話記録（jsonl）の timestamp と同じ UTC。heavy_sessions.py の日時（会話の開始。UTC）をそのまま渡す。
+      cap_meter.py と Zed の表示は端末の現地時刻なので、そのまま渡さない（日本時間なら 9 時間引く。
+      または +09:00 を付けて渡すと UTC に直す。例 --at 2026-10-27T12:22+09:00）。
+      形式は ISO 8601（2026-10-27T03:22、秒・Z・時差つきも可）。開始と最大の時刻がずれる会話は、候補の差（秒）で確かめる。
     既定のディレクトリ = ~/.claude/projects/ の下のすべて。
 """
 import argparse
 import json
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 USAGE_KEYS = ("input_tokens", "cache_read_input_tokens", "cache_creation_input_tokens")
@@ -22,9 +26,12 @@ USAGE_KEYS = ("input_tokens", "cache_read_input_tokens", "cache_creation_input_t
 
 def parse_ts(s):
     try:
-        return datetime.fromisoformat(s.replace("Z", "+00:00")).replace(tzinfo=None)
+        t = datetime.fromisoformat(s.replace("Z", "+00:00"))
     except ValueError:
         return None
+    if t.tzinfo:
+        t = t.astimezone(timezone.utc)
+    return t.replace(tzinfo=None)
 
 
 def records(path):
