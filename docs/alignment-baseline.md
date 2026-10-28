@@ -55,7 +55,7 @@ works が無い環境（workbase だけを clone したとき）は、workbase �
 | 5 | 期日の節が works にしかない | 解消（2026-10-16） | 低 | 低 |
 | 6 | `.claude/` の扱いの違い、works に deny がない | 解消 | 中 | 中 |
 | 7 | works の `AGENTS.md` と雛形のずれ | 解消 | 低 | 低 |
-| 8 | 公開リポジトリの git 履歴にユーザー名を含むパスが残っている | workbase は解消（2026-10-25。git-filter-repo で ユーザー名を `<user>` に置換し、ユーザーの許可で force push）。works に 26 コミット、dotfiles に 5 コミットが残る（未着手。書き換えは同じ手順で、force push が要る） | 中 | 高 |
+| 8 | 公開リポジトリの git 履歴にユーザー名を含むパスが残っている | workbase は解消（2026-10-25。git-filter-repo で ユーザー名を `<user>` に置換し、ユーザーの許可で force push）。works と dotfiles の残りは、調べたら全部プレースホルダー（`ck` `ee` `yy`、テストの `u`、取り込んだプラグインの例の `you`）で、実際のユーザー名はなかった（2026-10-28）。書き換えない | なし | なし |
 | 9 | workbase の `docs/log.md` が 18KB で、4KB 目安の約 4.5 倍 | 解消（2026-10-25 の `wrap` で 18KB から 5.0KB、同日に 4.1KB に縮めた。2026-10-26 に 5.0KB に戻り、4.0KB に縮めた） | 中 | 低 |
 | 10 | dotfiles の `docs/log.md` から期日の節が無くなった | 解消（2026-10-25。節を戻した） | 低 | 低 |
 | 11 | works の `docs/metrics/README.md` が、削除済みの `init-hook.md` を名指ししている | 解消（2026-10-25。廃止と注記した） | 低 | 低 |
