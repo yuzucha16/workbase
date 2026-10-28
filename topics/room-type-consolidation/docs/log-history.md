@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-28（`dev` の成果物が `ai/work/` に出る件を、再現待ちで閉じた）
+- ユーザーの判断で、10-26 起票の Next Actions（`dev` の成果物が `ai/work/` に出る件の原因の特定）を `log.md` から外した。理由: その後、部屋の AI が急に `ai/out/` に出すようになり、当時のセッションの情報を探すのが手間なため。原因は未特定のまま（候補は 10-26 の項の 3 つ）。
+- 再現したら再開する。そのとき確かめること: ① 部屋の `~/shared/ROOM.md` の基準コミット（cfd3b81 より前か）。② その Project の README の成果物の行。③ 部屋の AI に「`ai/work/` に置いた理由と、そのとき読んだ手順書」を聞く。(1) 写しが修正前か (3) `script-guide.md` の `ai/work/` の記述が原因なら、`ROOM.md`（`room.py`）と `brief-work-types.md` に「コードやスクリプトも成果物は `ai/out/<成果物名>/`。`ai/work/` は捨ててよい下書きだけ」を明記する。
 ### 2026-10-28（wrap の新しい規則で log.md を掃除）
 - `wrap` の新しい規則で、決まった Open Questions を移した。置き場の取り違え 5 回の原因は特定し（`ROOM.md` と `room-context.md` の `ai/out/deliverable/` の記述が `dev-deliverable-guide.md` と食い違う。`decisions.md`）、手順書は 10-25 に直した（再発の確認は Next Actions に残る）。`sample_devenv` への不具合の返却はしない（ユーザーの判断、10-25）。
 ### 2026-10-27（済みの Next Actions を log.md から移した）
