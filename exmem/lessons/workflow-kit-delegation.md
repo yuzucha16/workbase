@@ -20,7 +20,7 @@ sources:
 
 設計の背景は [[workflow-kit]]（2026-10-27 に、追記の節を切り出した）。
 
-ユーザーの承認を前提にしていた手続き（フックの改善案の承認、push、転記マークの確定）を、エージェントへ移すときの考え方。転記の台帳・本文ハッシュは 2026-10-08 に、改善案の自動採用は 2026-10-15 に畳んだ（[[accretion-without-pruning]]、[[layered-third-party-review]]）。push の許可リストは有効で、正本は kit の `docs-rules.md` の「push」。2026-10-15 に、この節の Decisions・Facts・Open Questions・Next Actions を畳んだ（kit の正本と重なるか、置き換わった記録のため。全文は畳む前のコミット `33e9fe3` の、このファイルにある）。
+ユーザーの承認を前提にしていた手続き（フックの改善案の承認、push、転記マークの確定）を、エージェントへ移すときの考え方。転記の台帳・本文ハッシュは 2026-10-08 に、改善案の自動採用は 2026-10-15 に畳んだ（[[accretion-without-pruning]]、[[layered-third-party-review]]）。push の許可リストは有効で、正本は kit の `push-rules.md`。2026-10-15 に、この節の Decisions・Facts・Open Questions・Next Actions を畳んだ（kit の正本と重なるか、置き換わった記録のため。全文は畳む前のコミット `33e9fe3` の、このファイルにある）。
 
 ### Principles（権限移譲）
 
