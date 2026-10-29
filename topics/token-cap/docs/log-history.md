@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-29（測定スクリプトの移動）: ee の依頼（`topics/` は room にコピーされず、スクリプトのコピーが面倒）。`topics/token-cap/` の Python 3 本を `workflow-kit/tools/` に `git mv`（room 向けの部品ではなく会話記録の分析なので `tools/`。標準ライブラリのみ・参照は素のファイル名で、影響なし）。窓口に「スクリプト」節を追加。過去の記録の素のファイル名は読み替える。移動後に `requests_by_kind.py --help` が動くことを確認（他の 2 本は未実行）。
+
 - 2026-10-29（相談の型の費用の測定）: 「workbase の続き na9」。root の NA 9（相談の型を `cap_meter.py --latest` の前後で測る）として、同じ内容の相談を型あり（18 応答、積算 931,030）と型なし（12 応答、477,830）で測った。12 応答の時点で型ありが +16.9%（79,158）。事実集めの量は同じで、差は `decisions.md` を探す読み（Grep 4,010 文字を含む）と、記録・push の規則書、`log.md` の読み。出力と Edit の引数は差の原因ではなかった。`decompose_session.py` に `--steps --upto N` を足し、`records/2026-10-29-consultation-pattern-cost.md` に記録した。ee の決定: 型を続ける、本文を `exmem/lessons/consultation-pattern.md` に移して `triggers:` を付ける。ee の依頼で、規則書の読みを遅らせる案を NA 9 に積んだ。コミット `c5cc311`。wrap。
 
 - 2026-10-29（NA 1b: 3 回目の A/B の結果と打ち切り）: 「token-cap の続き 1b」。ee が作業型の題材（3 ファイルの重複を探して削る案）で A→B 交互に逐次 6 回（`check_validation_goal3.csv`）。応答は A・B とも全件 2、tools は A が 3・4・3、B が 3・3・3、tokens は A 59.6〜60.7k、B 59.7k で差なし（3 ファイル計 14KB が 1 応答で読めるため下限に張り付いた）。答えの質（ee）: 両方正しい。B は少ない量で正確、A は補足が多く、出力のブレが少ないのは B。A・B とも「これ以上読みませんでした」と出しており、既存の仕組みが読む範囲を抑えている可能性がある。ee の決定: 打ち切って NA 1b を閉じる。`records/2026-10-29-na1b-ab-prompts.md` に結果 3 回目を追記。wrap。

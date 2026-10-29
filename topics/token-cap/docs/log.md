@@ -12,6 +12,7 @@
 - Zed の Context 表示は直近の応答 1 回の入力の大きさ（10-29 確定）。費用の内訳（Sonnet 5.5 の定価で計算、この会話 13 応答）は、キャッシュ書き込みが 64%、読みが 23%、出力が 14%。大きなファイル・スキルを 1 回読む書き込みが 1 応答で会話の費用の約 4 割になった。Zed の Cost とは 20% 以内で合う（`records/2026-10-29-zed-cost-check.md`）。勤務先の上限がキャッシュ読みを数えるかは未確認のまま（ee の決定 10-27）。
 - 全文読みの縮小（NA 5 の (d)）: 上位 3 本、`docs-rules.md`、`stock-hook.md` は縮小・分割済み（10-29。大きさは `records/2026-10-29-repeat-reads-2.md`）。効果の再測定は 11-05 で、`docs/due.md` に移した（ee の決定 10-29）。次に多い全文読み（`token-cap-start-here.md` 22 回、各トピックの `docs/log.md`）は小さく、優先度は低い。
 - 相談の型の費用（10-29 測定）: 型の有無で事実集めの量は同じ。同じ 12 応答で型ありが +16.9%（差の大半は `decisions.md` を探す読みと、記録・push の規則書。`records/2026-10-29-consultation-pattern-cost.md`）。本文は `exmem/lessons/consultation-pattern.md` に移した。応答ごとの表は `decompose_session.py --steps --upto N`。
+- 測定スクリプト 3 本（`requests_by_kind.py`、`repeat_reads.py`、`decompose_session.py`）は `workflow-kit/tools/` に移した（ee の決定 10-29。`topics/` は room にコピーされないため）。今後の token-cap のスクリプトも `workflow-kit/tools/` に作る。
 - 解説は `guides/explain/claude-code-cost-session-size.md`。
 
 ## Next Actions
