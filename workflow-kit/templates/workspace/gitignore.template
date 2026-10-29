@@ -34,3 +34,9 @@
 !**/docs/
 !**/docs/**
 !.gitkeep
+
+# 戻した場所（docs/ や ai/docs/）の中でも追跡しない。最後に置く（上の ! より後でないと効かない）
+# Office のオーナーファイル（Windows のユーザー名が入る）と、エクスプローラーが作るファイル
+~$*
+Thumbs.db
+[Dd]esktop.ini

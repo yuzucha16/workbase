@@ -1071,7 +1071,8 @@ class AllowlistGitignoreTest(unittest.TestCase):
                "projects/p/README.md", "projects/p/ai/docs/log.md", "areas/a/ai/docs/inbox.md", ".gitattributes")
     IGNORED = ("projects/p/ai/out/x/report.xlsx", "projects/p/ai/records/replies/2026-10-29.md", "projects/p/ai/in/a.md",
                "projects/p/ai/work/t.py", "projects/p/_noai/raw/x.xlsx", "projects/p/ai/ctx/README.md", "archives/old/src/pool.c",
-               "resources/x/README.md", "repos/r/README.md", ".claude/settings.local.json", "~$a.xlsx")
+               "resources/x/README.md", "repos/r/README.md", ".claude/settings.local.json", "~$a.xlsx",
+               "docs/~$a.xlsx", "projects/p/ai/docs/~$b.docx", "docs/Thumbs.db", "areas/a/docs/desktop.ini")
 
     def test_template_tracks_only_the_allowlist(self):
         tpl = (KIT_TEMPLATES / "workspace" / "gitignore.template").read_text(encoding="utf-8")

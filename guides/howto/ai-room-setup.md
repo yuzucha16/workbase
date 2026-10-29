@@ -76,7 +76,7 @@ works の `.gitignore` は許可リスト方式（2026-10-29）。雛形は `wor
 
 - **追跡する**: dotfile（`.gitignore` `.ignore` `.gitattributes` `.claude/settings.json`）、`AGENTS.md` `CLAUDE.md`、README（深さを問わず）、`docs/`（深さを問わず）、Project と Area の `ai/docs/`、ディレクトリ固定の `.gitkeep`
 - **追跡しない**: `ai/` の `in` `work` `out` `records`、`_noai/`、`resources/` `resources_p/` `repos/`、成果物のバイナリ。`room` が必須とする行は `**/_noai/` だけ
-- **既存の works**（旧方式: `**/_noai/` と `!**/ai/out/` などの行）: `room mkworks --update` で雛形の変更を3者マージで当てるか、雛形を手で写す。`init` は既存の `.gitignore` を上書きしない
+- **既存の works**（旧方式: `**/_noai/` と `!**/ai/out/` などの行）: `room mkworks --update` で雛形の変更を3者マージで当てるか、雛形を手で写す。順番・確認・戻し方つきの手順は [[works-gitignore-allowlist-migration]]。`init` は既存の `.gitignore` を上書きしない
 - **すでに追跡に入っているファイル**: `.gitignore` を変えても追跡は外れない。履歴は書き換えず残し、今後の追跡だけ外す（`git rm -r --cached -q -- <パス>`。ファイルは消えない。対象は `git ls-files | grep '/ai/'` で確かめ、`ai/docs/` は残す）
 - 改行は LF にする（`.gitattributes` で統一している場合、CRLF が混ざると警告が出る）
 - 目安: `git check-ignore -v projects/<Project>/ai/out/x.xlsx` が `*` の行で無視される。`projects/<Project>/ai/docs/log.md` と README は無視されない

@@ -20,7 +20,7 @@
 
 14. 【起票 10-29】Python の版: `room init` に、正本の版を uv で入れて `python3` で呼べる形にする段を足す（WSL で別名を作る方法は実機で確認。`decisions.md` 2026-10-29）。あわせて、勤務先のネットワークで `uv python install` が通るか。
 
-15. 【起票 10-29】works の許可リスト方式の反映: 各 PC の works に雛形の `.gitignore` を当て（`room mkworks --update` か手で）、追跡済みの `ai/` を `git rm -r --cached` で外す（`ai/docs/` は残す。`ai-room-setup.md` の 2.1）。先に各 PC で `git remote -v` と追跡の内訳（`git ls-files | grep -c /ai/`）を確かめる（ユーザー）。実機で `room start` の報告を確かめる。
+15. 【起票 10-29】works の許可リスト方式の反映（Python の版の変更とまとめて）: 手順書 `guides/howto/works-gitignore-allowlist-migration.md` を、PC2（リハーサル → 本物）→ PC1 の順に上から実行する（ユーザー）。Windows の git・PowerShell では未確認なので、PC2 のリハーサルで外れた点は手順書に戻す。
 16. 【起票 10-29】見本 works（worksample）の `docs/drafts/` `docs/metrics/` は、サンプルと動作確認の結果なので、workbase へ移管して works から消す（別のタイミングで見直す、ユーザー）。
 
 11. 【起票 10-29】期日の移し替えの動作確認: 次の `review 消化` で `due.py` が動き、期日が来た行（最初は 11-01 の weekly）が Next Actions に上がるか。上がらない・遅れるなら、手順（`review-hook.md` の消化モード）を直す。

@@ -918,3 +918,4 @@
 - 実装: `gitignore.template` を許可リストに。`room.py` の `GITIGNORE_REQUIRED` は `**/_noai/` だけ（`!**/ai/out/` は不要。旧方式の works も通る）。`start` は、許可リスト方式なら無視ファイルの警告をやめ、`ai/out` のファイル数を添える（`is_allowlist_vault`）。単体テストを足した（実際の git で、追跡する・しないを確認）。実機は未確認。
 - 未決（別のタイミングで見直す、ユーザー）: `docs/drafts/` と `docs/metrics/` は、サンプルと動作確認の結果なので、workbase へ移管して works から消す。
 - 範囲外: 各 PC の works の `.gitignore` への反映と、追跡済みの `ai/` の取り外し（PC ごとに `mkworks --update` か手で）。works の remote の有無は、ユーザーが各 PC で確認する。
+- 【汎用】許可リスト方式の雛形（`48e6fc3`）は、`!**/docs/**` などで戻した場所の中の `~$*`（Office のオーナーファイル。Windows のユーザー名が入る）・`Thumbs.db`・`desktop.ini` を無視しなかった（旧雛形は無視していた）。`docs/~$a.xlsx` が `??` で出ることを模擬の works で確認（2026-10-29）。雛形の末尾（`!` の行より後）に 3 行を足し、単体テストに 4 例を足した。既存の works への取り込みの手順は `guides/howto/works-gitignore-allowlist-migration.md`（外す対象は手で書かず `git ls-files -ci --exclude-standard` に出させる。`projects/*/ai` のような手書きのパスは、`*` が `/` をまたぎ `ai/docs/` まで外すため）。
