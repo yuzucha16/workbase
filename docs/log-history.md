@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-29（期日の表を `docs/due.md` に移し、`review 消化` で拾うようにした）
+
+`log.md` の「期日」の節を `docs/due.md` に移した（`log.md` は 2,109 → 1,458 文字）。開始時の通知（今日以前・3日以内）をやめ、`review 消化` の最初の手順で `workflow-kit/tools/due.py` を実行する形にした。期日が今日以前の単発は Next Actions に上げて表から消し、定例は次回の期日に書き換える。`due.py` は日付の判定を 4 つの日付で確かめた（期日前は「なし」、超過日数の表示）。`check_hook_outline.py` の FAIL 2 件（`review-hook.md`、`wrap-hook.md`）は変更前から同じ内容で出ていた。決定は `decisions.md` の同日の項。
+
 ### 2026-10-29（NA 13: `room` コマンドの削除を完了とした）
 
 NA 13「`room` コマンドを削除し、`uv run room.py` に統一する」を閉じた。`room` は実行ファイルでなく、dotfiles の `windows/powershell/profile.ps1` の `function room { Set-Location …\workflow-kit\room }`（引数を無視して `cd` するだけ）だった。PC1 の `room init …` が無出力だった原因はこれ。ユーザーの決定で、この1行を削除した（dotfiles 側）。文書の `room <サブコマンド>` の略記は変えない（ユーザーが読み替える）。「コマンドにした理由」を示す決定の記録は見つからなかった（`room` は文書上の呼び名で、実体は最初から `uv run room.py`）。古い `ai/records/` を `records/` へ統合するかの判断は、ユーザーの指示で NA ごと閉じた。

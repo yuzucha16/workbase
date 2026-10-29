@@ -16,7 +16,7 @@ works は PARA の作業場、workbase は共有ナレッジ、dotfiles は設�
 | 直下の `docs/log.md` | あり。4KB 目安（`docs-rules.md`） | 2.8KB | 4.0KB（2026-10-26 に縮めた。ギャップ 9） | 1.0KB |
 | 読む順番 | 3段（README、log、検索のみ） | ○ | ○ | ○ |
 | 「〜の続き」の扱い | `docs-rules.md` を参照する1行 | ○ | ○ | ○ |
-| 期日の節 | `docs/log.md` に置く（項目が無ければ「なし」） | ○ | ○ | ○ |
+| 期日の表 | `docs/due.md` に置く（項目が無ければ作らない。2026-10-29 に `log.md` の節から移した。移していない既存の節は有効） | ○ | ○ | ○ |
 | `settings.local.json` を追跡しない | 3つとも | ○ | ○ | ○ |
 | 公開範囲 | 公開（PUBLIC）。変えるときはユーザーの決定 | PUBLIC | PUBLIC | PUBLIC |
 | push の許可リスト | `main` を許可 | ○ | ○ | ○ |
