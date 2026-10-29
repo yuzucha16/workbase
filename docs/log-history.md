@@ -2,11 +2,13 @@
 
 ## Log
 
-### 2026-10-29（NA12: room の記録が ai/ai/records/ に出る件の原因を絞った）
+### 2026-10-29（NA12: room の記録が ai/ai/records/ に出る件を解決。原因は PC1 の `room` コマンド）
 - 「topics/* の続き pc1でやること」。ee が PC1 の room で確認した結果（画面を共有）: 部屋の `~/.claude/hooks/room-stop-record.py` は古い版（62 行目 `m.group(1) + "/ai/records"`、説明も `<Project>/ai/records`）。`room init <Area> --only stophook` を実行しても直らなかった。`cwd` は `/mnt/room/task7_commcost`、マウントは `works/projects/task7_commcost/ai`。
 - 記録は 2 か所: `/mnt/room/task7_commcost/ai/records/`（`replies`、`sessions.jsonl`。古いフック。Windows 側で `ai/ai/records`）と、`/mnt/room/task7_commcost/records/`（`manifest.json`、`replies`、`room-log.md`、`sessions.jsonl`。新しい出力先）。
 - リポジトリの `workflow-kit/room/room.py:831` は `/records`（修正済み）。`STOP_HOOK_INSTALL` は毎回上書きする作り（882-888 行）。別のフックが書く説は外れ（フックは 1 本だけ）。
 - 入れ直しが効かない理由の切り分けは、別セッションに引き継ぐ（ee）。
+- 続きのセッション（NA12）: git log で、`--only` は 10-21 15:17（e21327d）、`stophook` の段は 10-21 21:53（313f13a）、`record_dir` の修正は 10-25 08:47（959a00d）と分かった。PC2 の `room-myenv` は修正後のフックで、同じ処理は正常（PC2 では `room` コマンドは未定義）。PC1 は `room.py` が最新、ディストの取り違えなし。
+- PC1 で `room init <Area> --only stophook` は何も出力せず、フックは 10-22 のまま。`uv run room.py init <Area> --only stophook` なら正しく `task7_commcost/ai/records` に書いた。`room` コマンドはこのリポジトリに定義が無い。`workflow-kit/room` を指すと ee が確認したが、出力が無かった理由は未特定。ee が古い `ai/records/` を `records/` へ手動で統合した。`room` は削除し、`uv run room.py` に統一する（NA 13）。
 
 ### 2026-10-29（NA11: works・dotfiles・workbase の作者を agent にそろえた）
 - 手順（`topics/wording-neutralize/records/2026-10-28-author-rewrite-steps.md`）で、works（208）と dotfiles（240）を mirror clone → `git filter-repo --mailmap --replace-message` → `push --force --mirror`（ユーザーが deny を切った）。dotfiles は `user@example.com` の作者も `agent` にした。本文の URL は `github.com/owner/` に置換。
