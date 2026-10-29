@@ -9,7 +9,7 @@
 
 ## 共通ルール
 
-共通ルールの置き場は `workflow-kit/`（`$HOME\works\resources\workflow-kit`）。ユーザーが合言葉（手順書を呼ぶ短い言葉。日本語の別名つき）を言ったら、そこの `hooks.md` の表に従って手順書を読み、実行する（言われたときだけ）。`docs-rules.md` は `docs/` を更新するときに、`commit-push-rules.md` はコミット・push の前に読む。読めない場合は、記憶で代用せず、ユーザーに伝えて止まる。
+共通ルールの置き場は `workflow-kit/`（`$HOME\works\resources\workflow-kit`）。ユーザーが合言葉（手順書を呼ぶ短い言葉。日本語の別名つき）を言ったら、そこの `hooks.md` の表に従って手順書を読み、実行する（言われたときだけ）。`docs-rules.md` は `docs/` を更新するときに、`commit-push-rules.md` はコミットの前に、`push-rules.md` は push の前に読む。読めない場合は、記憶で代用せず、ユーザーに伝えて止まる。
 
 ## 知識を引く（作業の前）
 
@@ -59,5 +59,5 @@
 
 - 改行コードは LF（`.gitattributes` で統一）。
 - コミットメッセージは `[領域] 変更内容` の形式（例: `[exmem] ...`、`[workflow-kit] ...`、`[guides] ...`）。
-- `git add` はパスを指定する（パスなしの `git add -A` と `git add .` は使わない）。コミット・push の前に、`workflow-kit/commit-push-rules.md` を、そのセッションで読んでいなければ読む（身元・トレーラー・機密の検索もそこに従う）。
-- push は、このリポジトリ（`yuzucha16/workbase`。公開）の `main` を、エージェントが行ってよい（2026-10-16 ユーザーの決定。公開のまま）。条件は `workflow-kit/commit-push-rules.md` の「push」（公開のため、機密の検索を広げる）。禁止のコマンド（`--force` など）は、`workflow-kit/commit-push-rules.md` の「しないこと」に従う（`settings.json` の deny が機械的に止める）。
+- `git add` はパスを指定する（パスなしの `git add -A` と `git add .` は使わない）。コミット・push の前に、`workflow-kit/commit-push-rules.md` を、そのセッションで読んでいなければ読む（身元・トレーラーもそこに従う）。push の前は `workflow-kit/push-rules.md`（機密の検索もそこに従う）も読む。
+- push は、このリポジトリ（`yuzucha16/workbase`。公開）の `main` を、エージェントが行ってよい（2026-10-16 ユーザーの決定。公開のまま）。条件は `workflow-kit/push-rules.md`（公開のため、機密の検索を広げる）。禁止のコマンド（`--force` など）は、`workflow-kit/commit-push-rules.md` の「しないこと」に従う（`settings.json` の deny が機械的に止める）。

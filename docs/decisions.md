@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】`commit-push-rules.md` を 3 本に分けた: 核・`push-rules.md`・`commit-special.md`（2026-10-29）
+- 決めたこと（ユーザー）: コミットだけの会話が push とまれな場面の規則まで毎回読んでいた（全文読みの md の 31%）ので分ける。push は別ファイル、「しないこと」は核に残す。
+- 根拠: ユーザーの発言「pushは別ファイル、しないこと は核に残してください。」「このセッションで案の実装までやりましょう。」案と測定は `topics/token-cap/records/2026-10-29-commit-push-split-plan.md`、`2026-10-29-repeat-reads.md`。
+- 反映先: `workflow-kit/commit-push-rules.md`（核。3,100 文字）、`push-rules.md`（1,752）、`commit-special.md`（2,483）。参照は `AGENTS.md`、`workflow-kit/{AGENTS,README,hooks,hook-common,docs-rules}.md`。効果は `repeat_reads.py` で 1 回あたりの文字数を翌週に確かめる。
+
 ### 【汎用】フックの報告の順を、上から コミット → 次にやること → 固有の項目 → ユーザーに求めること にした（2026-10-28）
 - 決めたこと（ユーザー）: 報告を下からスクロールして読むので、ユーザーに求めることを一番下に置く。中身は変えない。2026-10-17 の「ユーザーに求めることを先頭」を置き換える。
 - 根拠: ユーザーの発言「下から、ユーザーに求めること、フックごとの項目、次にやること、コミットの順に並べ替えてください」。

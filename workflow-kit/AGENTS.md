@@ -8,4 +8,4 @@
 - **各ディレクトリの薄い `AGENTS.md`（`templates/AGENTS.md`）の項目は、増やさない・変えない。** 変えると、既存の全ディレクトリに影響する。変えるときは `docs/decisions.md` に理由を残す。
 - 変更の理由は、コミットメッセージに書く（版番号と README の変更履歴は廃止。`git log -- workflow-kit/`）。改善提案から直した場合は、`docs/decisions.md` に1行足す（`improvements.md` は 2026-10-15 に凍結。追記しない）。
 - ファイル形式の正本はここにある。`exmem/inbox/README.md` など他所に同じ形式を写さず、ここを指す。
-- コミットメッセージは `[workflow-kit] 内容`。コミットは `commit-push-rules.md` に従う（kit の変更は、承認を得た後）。push は `commit-push-rules.md` の「push」に従う（許可リストのリポジトリだけエージェントが行う）。
+- コミットメッセージは `[workflow-kit] 内容`。コミットは `commit-push-rules.md` に従う（kit の変更は、承認を得た後）。push は `push-rules.md` に従う（許可リストのリポジトリだけエージェントが行う）。

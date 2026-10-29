@@ -93,7 +93,7 @@
 
 ## コミットと push
 
-コミットと push の規則は `commit-push-rules.md` に切り出した（2026-10-26）。コミット・push の前に、そちらを読む（このファイルの全文は読まなくてよい）。
+コミットと push の規則は `commit-push-rules.md` に切り出した（2026-10-26）。コミットの前に `commit-push-rules.md`、push の前に `push-rules.md` を読む（このファイルの全文は読まなくてよい）。
 
 ## 書き方の共通ルール
 
