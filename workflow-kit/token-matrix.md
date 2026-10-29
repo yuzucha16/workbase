@@ -24,7 +24,7 @@ kit と exmem のルール・仕組みが、トークン消費を抑える4つ�
 | # | ルール・仕組み（場所） | 効き方 | 切る | 絞る | 予算 | 外部化 |
 |---|---|---|---|---|---|---|
 | 1 | 読む順番は窓口 → `docs/log.md` まで。`decisions.md` と `log-history.md` は開始時に読まない（`docs-rules.md`「読む順番」） | 常駐 | | ○ | ◎ | ○ |
-| 2 | `log.md` は 4KB 目安で上書き更新、超えたら `log-history.md` へ移す（`docs-rules.md`「ファイル」「log.md の書式」） | 常駐 | | | ◎ | ◎ |
+| 2 | `log.md` は 4KB 目安で上書き更新、超えたら `log-history.md` へ移す（`docs-rules.md`「ファイル」、`docs-format.md`「log.md の書式」） | 常駐 | | | ◎ | ◎ |
 | 3 | トピックの窓口 2KB・`log.md` 4KB、状態は `log.md` だけ（`topics/AGENTS.md`「書くとき」） | 常駐 | | | ◎ | ◎ |
 | 4 | 雛形の予算（窓口・README 2KB）と読む順。開始時に `decisions.md` を読まない（`templates/AGENTS.md`、`templates/workspace/AGENTS.md`、`templates/topic/`、`templates/project/`） | 常駐 | | ○ | ◎ | ○ |
 | 5 | 合言葉は言われたときだけ手順書を読む。手順書の中身を `AGENTS.md` に写さない（`hooks.md`、`hook-common.md`「冒頭の定型」） | 常駐 | | | ◎ | |

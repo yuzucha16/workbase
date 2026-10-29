@@ -24,7 +24,7 @@
 
 8. 【ee 10-29】`wrap-hook.md` の見直しの効果の確認（反映は済。`records/2026-10-29-wrap-decompose.md`）。再測定は 11-05（期日は `docs/due.md`）。測定は `requests_by_kind.py --since 2026-10-30`（Windows 側）で、wrap の応答平均（8.3）と 1 件平均のトークンが下がったかを見る。書き漏れ・誤りが出ていないかも、`review` で見る。
 
-9. 【起票 10-29】`workflow-kit/docs-rules.md`（11.3k/回、27 回）の分割を実施する（別セッション。ee の決定 10-29）。案: 1〜33 行と末尾の共通ルールを `docs-rules.md` に残す（1〜27 行は動かさない。各 `AGENTS.md` が `offset` 24 で読むため）。35〜75 行を `docs-format.md`（log.md / decisions.md の書式）、77〜91 行を `docs-carry.md`（知識にしたとき）に分ける。元の場所に 1 行の案内を残す。参照元は `files_with_matches` で洗い出して張り替える。`workflow-kit` の変更なので、実施前に ee の承認を得る。分割後の効果は 11-05 の再測定に含める。
+9. 【10-29 実施済み】`docs-rules.md` を分割した（11.3k → 5.7k。`docs-format.md` 5.4k、`docs-carry.md` 3.1k）。効果は 11-05 の再測定（NA 1）に含める。wrap は `docs-format.md` も読むため、wrap の応答で読み増しが出ていないかも見る。
 
 ## Open Questions
 

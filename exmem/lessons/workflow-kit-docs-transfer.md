@@ -18,7 +18,7 @@ updated: 2026-10-27
 
 設計の背景は [[workflow-kit]]（2026-10-27 に、追記の節を切り出した）。
 
-`docs/`（共有しない作業ログ）に溜まる、再利用できる知識とルールを、共有側（exmem と workflow-kit）へ取りこぼさず届ける仕組みの、設計の考え方。当時の6状態の仕組み（`行き先:` の状態、`check-docs.ps1`）は 2026-10-08 に畳まれ、「→ 知識名」のリンクの有無だけになった（[[accretion-without-pruning]]）。今の規則の正本は kit の `docs-rules.md` の「decisions.md の項目を知識にしたとき」。2026-10-15 に、この節の Decisions・Facts・Open Questions・Next Actions を畳んだ（kit の正本と重なるか、置き換わった記録のため。全文は畳む前のコミット `33e9fe3` の、このファイルにある）。
+`docs/`（共有しない作業ログ）に溜まる、再利用できる知識とルールを、共有側（exmem と workflow-kit）へ取りこぼさず届ける仕組みの、設計の考え方。当時の6状態の仕組み（`行き先:` の状態、`check-docs.ps1`）は 2026-10-08 に畳まれ、「→ 知識名」のリンクの有無だけになった（[[accretion-without-pruning]]）。今の規則の正本は kit の `docs-carry.md`。2026-10-15 に、この節の Decisions・Facts・Open Questions・Next Actions を畳んだ（kit の正本と重なるか、置き換わった記録のため。全文は畳む前のコミット `33e9fe3` の、このファイルにある）。
 
 ### Principles（行き先）
 

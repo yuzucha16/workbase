@@ -51,6 +51,8 @@
 | ファイル | 役割 |
 |---|---|
 | `docs-rules.md` | `docs/` の運用規則 |
+| `docs-format.md` | `docs/` の書式（log.md、log-history.md、due.md、decisions.md。書くときだけ読む） |
+| `docs-carry.md` | `decisions.md` の項目を知識にしたときの規則（`→` の付け方、運び方） |
 | `commit-push-rules.md` | コミットの規則（範囲、確認、身元・トレーラー、しないこと） |
 | `push-rules.md` | push の条件（許可リスト、公開範囲、機密の検索）。push の前に読む |
 | `commit-special.md` | コミットのまれな場面（分割コミット、未追跡の削除、`rebase`、クラウド、`room mkworks`）。該当するときだけ読む |
