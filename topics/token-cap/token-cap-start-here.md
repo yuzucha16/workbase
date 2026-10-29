@@ -13,7 +13,7 @@ PC1 の 10-21 以降は room（WSL）側にあり、合算 約 170.7M（85%）�
 
 ## 次の一手
 
-翌週に `repeat_reads.py` を再実行して縮小の効果を見る（`docs/log.md` の Next Actions 1）。ee は、依頼に完了条件を 1 行足す・足さないで応答数を比べる（NA 1b）。結果を受けて「token-cap の続き」。
+翌週に `repeat_reads.py` を再実行して縮小の効果を見る（`docs/log.md` の Next Actions 1）。NA 1b（完了条件の A/B）は、調べる題材では差が出ず、優先度を下げて保留（作業型の題材で再開）。結果を受けて「token-cap の続き」。
 
 ## 読む順
 
