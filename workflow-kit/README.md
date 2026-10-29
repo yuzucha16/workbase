@@ -62,6 +62,7 @@
 | `stock-hook.md` | 「ナレッジ化して」（`stock ナレッジ`）の手順・書き方・形式。モードの選び方（合言葉だけなら1問） |
 | `stock-explain.md` | `stock 理解`（別名「理解ガイドにして」）の違う点: 判定の問い、`kind: explain` の6見出し、統合先。見本は `examples/inbox-example-explain.md` |
 | `wrap-hook.md` | 「終了処理して」の手順（対象の特定、現在状態の更新、昇格の案、コミットと push）・報告の型 |
+| `wrap-targets.md` | wrap の対象が既定で決まらないときの分岐（`docs/` が無い、リポジトリの外だけ、exmem だけ） |
 | `integrate-hook.md` | 「inboxを整理して」の手順（統合、照合の報告、コミット）・報告の型 |
 | `review-hook.md` | `review`（別名「見直して」）の手順: 遠回りの事例を見て、1つ直すか1つ畳む。`reviews` の指標 |
 | `project-structure.md` | Project の構造: type（`dev` `inv`）の考え方、固定の核（`ai/` と `_noai/`）、type ごとの置き場、基準文書の置き場。`room open` の type の決定と、置き場に迷ったときに読む |
