@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-29（works の git 追跡を許可リスト方式にした）
+- ユーザーの方向（works は git 関連とディレクトリ固定のために git 管理にしただけで、`ai/` が入ったのは積極的な理由が無い）を受けて、現状（`mkworks` の初回コミット、`open` `init` `close` のコミット、`start --commit`、雛形の `!**/ai/out/`）を調べ、許可リスト案を出した。公開の見本 worksample（198 ファイル）で実測し、69 ファイルになることを確かめた（初案の `!docs/**` がトップにしか効かない誤りを、`!**/docs/**` に直した）。`ai/docs/` は追跡する（ユーザー）。
+- 反映（`48e6fc3`）: `gitignore.template`、AGENTS.md 雛形、`room.py`（`GITIGNORE_REQUIRED` は `**/_noai/` だけ、`is_allowlist_vault`、`start` の報告）、ガイド 4 本、`room/README.md`、単体テスト 2 本（167 件 OK）。判断は `docs/decisions.md` の同日。
+- 残り: 各 PC への反映と `drafts` `metrics` の移管は `log.md` の Next Actions 15・16。
+
 ### 2026-10-29（ファイル名の規則を作った）
 - `workflow-kit/naming-rules.md` を新設（kebab のまま、Python だけ snake。種別の語の表、日付は records だけ、版は名前に入れない）。`AGENTS.md` に 1 行、`guides/AGENTS.md` `logbook/README.md` `workflow-kit/README.md` を更新。`ai-room-*` の 3 組は `guides/explain/` 側を `-explain` 付きに改名。決定は `decisions.md` の同日の項。
 
