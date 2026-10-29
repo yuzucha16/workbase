@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-29（直下 `log.md` からトピック固有の NA を外した）
+
+NA 4・6・7・8（トピック固有）を削除し、トピック側に無かった内容を移した（`topics/token-cap/docs/log-history.md` の同日）。NA 9 の候補は `decisions.md` へ。`wrap-hook.md` を縮め `wrap-targets.md` を新設。
+
 ### 2026-10-29（NA7: PC1 room の効果の仮決めと `--detail`）
 
 PC1 room の日ごとが 10-27 以降 約 7 割減（仮決め 〜11-29）。`requests_by_kind.py` に `--detail` を追加。詳細は `topics/token-cap/docs/log-history.md` の同日。

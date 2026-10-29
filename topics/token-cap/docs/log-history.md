@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-29（`docs/log.md` と `wrap-hook.md` の縮小）: 「token-cap の続き」。`repeat_reads.py --detail` を再実行（全文読みは Read の 72%、その 96% が md。`records/2026-10-29-repeat-reads-2.md`）。ee の指摘で、直下の `docs/log.md` のトピック固有の NA（4・6・7・8）は、各トピックの `docs/log.md` が持つので二重管理と判明。トピック側にあるかを確認し、無かった 2 点を移して削除、直下 3,973 → 2,449 文字。規則を `topics/AGENTS.md`・`wrap-hook.md` に反映（決定は `docs/decisions.md`）。ee が `wrap-hook.md` の縮小を承認し、2,963 → 2,637 文字、まれな分岐を `wrap-targets.md` に分けた。NA 1 の「log.md と wrap-hook.md を絞る」は済として移した。コミットは `[docs]` と `[workflow-kit]`。wrap。
+
 - 2026-10-29（(d) の測定と `commit-push-rules.md` の分割）: 「token-cap の続き」。ee が、完了条件の仮説（(f)）の検証を後日にして (d) に進むと決めた（NA 1b に積んだ）。`repeat_reads.py` を作り、Windows 側（10-27 以降、52 会話・Read 448 回）を測った: 重複読み 5%、md の全文読み 74%、上位 3 本が全文読みの md の 61%（`records/2026-10-29-repeat-reads.md`）。ee が `--detail`（md の名前の表示）を承認。`commit-push-rules.md`（6,387 文字）を、核・`push-rules.md`・`commit-special.md` の 3 本に分ける案を作り（`records/2026-10-29-commit-push-split-plan.md`）、ee が承認、このセッションで実装した（push は別ファイル、「しないこと」は核に残す。核 3,100 文字）。ee の気づき: 規則が長いのは、`lessons/` に置くべき個別の事情を同じファイルに足してきたため。参照 8 ファイルを直し、決定をルートの `docs/decisions.md` に記録。コミットは `[token-cap]` と `[workflow-kit]`。wrap。
 
 - 2026-10-29（other の仕分け `--detail` と (f) の試験）: 「token-cap の続き」。ee が PC1 room の `requests_by_kind --detail` の画面を共有。other の 101 文字以上（74 件・41.3M）は、101-300 文字が 54 件・37%、1001 文字以上は 3%、コードブロックなしが 44%。仮説（マクロの仕様入力で長い）は当たらない。continue 26 件は全件が最初の依頼でトークンの 13%。全依頼ではトークンの 76% が会話の途中の依頼（最初は応答 2 倍だが 24%）。ee が数件を自分で見て、「場所は伝えている、ゴールは無い、指示型」と回答。AI の仮説は「完了条件が無いと終わりを AI が決めて読みが増える」（未検証）。ee が (f) を完了条件の足す・足さない比較で試すと決めた。`records/2026-10-29-pc1-room-other-detail.md`。NA1（仕分け）は済として移し、試験に置き換えた。wrap。
