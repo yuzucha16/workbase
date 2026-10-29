@@ -254,6 +254,107 @@ class AwsKeyTest(unittest.TestCase):
                 self.assertEqual(wsl.scripts, [])
 
 
+TOKEN1 = "a" * 30 + ".b" * 10
+TOKEN2 = "c" * 30 + ".d" * 10
+
+
+class GatewayTest(unittest.TestCase):
+    def args(self, **kw):
+        d = dict(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=False, gateway=True)
+        d.update(kw)
+        return argparse.Namespace(**d)
+
+    def setup_gw(self, tmp, c, tokens):
+        g = Path(tmp) / "gw"
+        g.mkdir()
+        (g / "settings.json").write_text(json.dumps({
+            "apiKeyHelper": "claude-gateway-token.cmd", "model": "sonnet", "env": {"ANTHROPIC_BASE_URL": "https://gw.example"},
+            "hooks": {"x": "C:\\win.cmd"}, "permissions": {"allow": []}}), encoding="utf-8")
+        c.gateway_dir = g
+        c.gateway_token = lambda: tokens.pop(0) if len(tokens) > 1 else tokens[0]
+        return g
+
+    def test_start_pushes_settings_and_token_then_removes_token(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            self.setup_gw(tmp, c, [TOKEN1])
+            room.cmd_start(c, self.args())
+            gw = [s[1] for s in wsl.scripts if ".claude-gateway" in s[1]]
+            self.assertEqual(len(gw), 2)
+            push, rm = gw
+            self.assertIn("<<'ROOM_GW_EOF'", push)
+            self.assertIn('"apiKeyHelper": "cat \\"$HOME/.claude-gateway/token\\""', push)
+            self.assertIn("https://gw.example", push)
+            self.assertNotIn("hooks", push)  # Windows のコマンドは部屋へ写さない
+            self.assertNotIn("permissions", push)
+            self.assertIn("chmod 600", push)
+            self.assertIn("mv \"$d/token.new\" \"$d/token\"", push)  # 横で完成させてから置き換える
+            self.assertIn(TOKEN1, push)
+            self.assertTrue(rm.startswith("rm -f") and "token" in rm and TOKEN1 not in rm)
+            self.assertFalse(any(TOKEN1 in m for m in c.msgs))
+            cmd = wsl.interactive_calls[0][1]
+            self.assertIn('CLAUDE_CONFIG_DIR="$HOME/.claude-gateway"', cmd)
+            self.assertIn("-u CLAUDE_CODE_USE_BEDROCK", cmd)
+            self.assertTrue(cmd.endswith(" claude"))
+            self.assertLess(wsl.scripts.index(next(s for s in wsl.scripts if s[1] == push)), wsl.scripts.index(next(s for s in wsl.scripts if s[1] == rm)))
+
+    def test_token_is_refreshed_while_the_session_runs(self):
+        import time
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            self.setup_gw(tmp, c, [TOKEN1, TOKEN2])
+            c.gateway_interval = 0.05
+            wsl.on_interactive = lambda: time.sleep(0.4)
+            room.cmd_start(c, self.args())
+            pushes = [s[1] for s in wsl.scripts if "token.new" in s[1] and "printf" in s[1]]
+            self.assertIn(TOKEN1, pushes[0])
+            self.assertGreaterEqual(len(pushes), 2)
+            self.assertIn(TOKEN2, pushes[1])
+            self.assertNotIn("settings.json.new", pushes[1])  # 更新は token だけ
+
+    def test_refresh_failure_is_reported_after_the_session(self):
+        import time
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            calls = []
+
+            def tok():
+                calls.append(1)
+                if len(calls) > 1:
+                    raise room.RoomError("expired")
+                return TOKEN1
+            self.setup_gw(tmp, c, [TOKEN1])
+            c.gateway_token = tok
+            c.gateway_interval = 0.05
+            wsl.on_interactive = lambda: (time.sleep(0.3), self.assertFalse(any("失敗" in m for m in c.msgs)))
+            room.cmd_start(c, self.args())
+            self.assertTrue(any("更新に" in m and "失敗" in m for m in c.msgs))
+
+    def test_missing_settings_or_bad_token_stops_before_mounting(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            c.gateway_dir = Path(tmp) / "none"
+            with self.assertRaises(room.RoomError):
+                room.cmd_start(c, self.args())
+            self.setup_gw(tmp, c, ["bad token"])
+            with self.assertRaises(room.RoomError):
+                room.cmd_start(c, self.args())
+            self.assertFalse(wsl.mounted)
+            self.assertEqual(wsl.interactive_calls, [])
+
+    def test_without_the_flag_nothing_is_pushed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            room.cmd_start(c, self.args(gateway=False))
+            self.assertFalse(any(".claude-gateway" in s[1] for s in wsl.scripts))
+            self.assertEqual(wsl.interactive_calls[0][1], "cd /mnt/room/proj-a && claude")
+
+
 class ShellTest(unittest.TestCase):
     def test_shell_enters_the_room_and_refuses_a_missing_room(self):
         with tempfile.TemporaryDirectory() as tmp:

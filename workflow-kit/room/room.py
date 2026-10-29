@@ -20,6 +20,7 @@ import stat
 import subprocess
 import sys
 import tarfile
+import threading
 import time
 from pathlib import Path
 
@@ -114,8 +115,12 @@ def git(vault, *args, check=True):
 
 class Ctx:
     def __init__(self, vault, wsl=None, today=None, now=None, say=print, reap_days=REAP_DAYS_DEFAULT, settle=3,
-                 ask=input, ask_secret=getpass.getpass, history_backup=None):
+                 ask=input, ask_secret=getpass.getpass, history_backup=None, gateway_dir=None, gateway_token=None,
+                 gateway_interval=None):
         self.vault = Path(vault)
+        self.gateway_dir = Path(gateway_dir) if gateway_dir else Path.home() / ".claude-gateway"  # Windows 側の設定（dotfiles の claude-gateway-setup が作る）
+        self.gateway_token = gateway_token or fetch_gateway_token  # 有効な ID トークンを返す（期限が近ければ Windows 側が無音で更新する）
+        self.gateway_interval = gateway_interval or GATEWAY_REFRESH_SEC
         self.history_backup = Path(history_backup) if history_backup else None  # reap が消す前に会話履歴を写す先（リポジトリの外）
         self.wsl = wsl or Wsl()
         self._today = today
@@ -1385,6 +1390,8 @@ def push_shared(ctx, p):
 
 def cmd_start(ctx, a):
     p = Project.load(ctx, a.name)
+    gateway = getattr(a, "gateway", False)
+    first = gateway_check(ctx) if gateway else None  # 設定とトークンを、マウントの前に確かめる（取れなければここで止める）
     boundary = preflight(ctx, p)
     masked = mask_project(ctx, p, yes=a.yes)
     if a.adopt:
@@ -1408,8 +1415,12 @@ def cmd_start(ctx, a):
         mount(ctx, p)
         ctx.say(f"マウントした: {p.mount_point}")
         setup_room_git(ctx, p)
+        refresher = gateway_start(ctx, p.distro, *first) if gateway else None
+        cmd = GATEWAY_CMD_PREFIX + a.cmd if gateway else a.cmd
         if a.no_launch:
             ctx.say("--no-launch: ここで AI を起動しない。Zed などで WSL リモート接続し、" f"{p.mount_point} を開く（/mnt/room は開かない）。終わったら Enter")
+            if gateway:
+                ctx.say("ゲートウェイ: 部屋の CLAUDE_CONFIG_DIR を $HOME/.claude-gateway にして起動する（Zed の env など）")
             keep = ctx.wsl.keepalive(p.distro)  # セッションが無くなって部屋が止まると、マウントも消える（仮説。実機で確認する）
             try:
                 input()
@@ -1417,10 +1428,12 @@ def cmd_start(ctx, a):
                 keep.terminate()
             rc = 0
         else:
-            ctx.say(f"起動: {a.cmd}")
-            rc = ctx.wsl.interactive(p.distro, f"cd {shlex.quote(p.mount_point)} && {a.cmd}")
+            ctx.say(f"起動: {cmd}")
+            rc = ctx.wsl.interactive(p.distro, f"cd {shlex.quote(p.mount_point)} && {cmd}")
         result = f"終了コード {rc}"
     finally:
+        if gateway and refresher:
+            gateway_stop(ctx, p.distro, refresher)
         ok = unmount(ctx, p)
         discard_room_git(ctx, p)
         rmtree_force(p.ai / "ctx")
@@ -2143,6 +2156,107 @@ def aws_credentials_script(profile, body):
             f"mv \"$f.new\" \"$f\"; rm -f \"$t\"; chmod 600 \"$f\"")
 
 
+# ---------- gateway（start --gateway: 部屋の ~/.claude-gateway に、組織の LLM ゲートウェイ用の設定と ID トークンを置く） ----------
+# リフレッシュトークンは Windows 側（DPAPI）に置いたまま。部屋に渡すのは約1時間で切れる ID トークンだけで、start の間、約50分ごとに置き換える。
+# 部屋の apiKeyHelper は、そのファイルを cat するだけ（部屋は interop を切っているので、Windows を呼べない）。
+
+GATEWAY_REFRESH_SEC = 50 * 60
+GATEWAY_ROOM_DIR = '$HOME/.claude-gateway'
+GATEWAY_CMD_PREFIX = 'env -u CLAUDE_CODE_USE_BEDROCK -u ANTHROPIC_API_KEY CLAUDE_CONFIG_DIR="$HOME/.claude-gateway" '
+GATEWAY_TOKEN_RE = re.compile(r"^[A-Za-z0-9._~+/=-]{20,}$")
+GATEWAY_SETTINGS_KEYS = ("env", "model", "theme")  # Windows 側の hooks や permissions は Windows のコマンドを含みうるので、部屋へは写さない
+
+
+def fetch_gateway_token():
+    """Windows 側の claude-gateway-token（dotfiles）を呼び、ID トークンを返す。期限が近ければ、保管したリフレッシュトークンで無音で更新される。"""
+    exe = shutil.which("claude-gateway-token.cmd") or shutil.which("claude-gateway-token")
+    if not exe:
+        raise RoomError("claude-gateway-token が PATH に無い（dotfiles の 30_link.bat を実行する）")
+    r = subprocess.run([exe], capture_output=True, timeout=120)
+    if r.returncode != 0:
+        raise RoomError("claude-gateway-token が失敗した（claude-gateway-token.cmd -Login が要るかもしれない）: "
+                        + r.stderr.decode("utf-8", "replace").strip()[-300:])
+    return r.stdout.decode("utf-8", "replace").strip()
+
+
+def gateway_room_settings(ctx):
+    """Windows 側の settings.json から、部屋に渡す分を作る（apiKeyHelper は cat に置き換える）。"""
+    f = ctx.gateway_dir / "settings.json"
+    if not f.exists():
+        raise RoomError(f"ゲートウェイの設定が無い: {f}（dotfiles の claude-gateway-setup.cmd と claude-gateway-token.cmd -Login）")
+    src = json.loads(f.read_text(encoding="utf-8"))
+    out = {"apiKeyHelper": 'cat "$HOME/.claude-gateway/token"'}
+    out.update({k: src[k] for k in GATEWAY_SETTINGS_KEYS if k in src})
+    return json.dumps(out, ensure_ascii=False, indent=2) + "\n"
+
+
+def gateway_check(ctx):
+    """start の前に、設定とトークンを確かめる。(部屋の settings.json の本文, ID トークン) を返す。"""
+    settings = gateway_room_settings(ctx)
+    token = ctx.gateway_token()
+    if not GATEWAY_TOKEN_RE.match(token):
+        raise RoomError("claude-gateway-token の出力がトークンの形ではない（空白なし、20 字以上）")
+    return settings, token
+
+
+def gateway_push_script(token, settings=None):
+    """部屋の ~/.claude-gateway/token（権限 600）を置き換える。settings があれば settings.json も書く。標準入力（sh -s）で渡し、横で完成させてから mv する。"""
+    if not GATEWAY_TOKEN_RE.match(token):
+        raise RoomError("トークンの形が違う")
+    s = f"umask 077; d=\"{GATEWAY_ROOM_DIR}\"; mkdir -p \"$d\"\n"
+    if settings is not None:
+        s += f"cat > \"$d/settings.json.new\" <<'ROOM_GW_EOF'\n{settings}ROOM_GW_EOF\nmv \"$d/settings.json.new\" \"$d/settings.json\"\n"
+    s += f"printf '%s' '{token}' > \"$d/token.new\" && chmod 600 \"$d/token.new\" && mv \"$d/token.new\" \"$d/token\"\n"
+    return s
+
+
+class GatewayRefresher:
+    """start の間、interval 秒ごとに ID トークンを取り直して部屋に置く。失敗は端末を乱さないよう溜めて、終わりに知らせる。"""
+
+    def __init__(self, ctx, distro):
+        self.ctx, self.distro = ctx, distro
+        self.failures = []
+        self._stop = threading.Event()
+        self._thread = threading.Thread(target=self._run, daemon=True)
+
+    def _run(self):
+        while not self._stop.wait(self.ctx.gateway_interval):
+            try:
+                token = self.ctx.gateway_token()
+                rc, _out, err = self.ctx.wsl.script(self.distro, gateway_push_script(token))
+                if rc != 0:
+                    raise RoomError(f"終了コード {rc}: {err.strip()[-200:]}")
+            except Exception as e:  # noqa: BLE001 スレッドを落とさない。次の周期でやり直す
+                self.failures.append(f"{self.ctx.now()} {e}")
+
+    def start(self):
+        self._thread.start()
+
+    def stop(self):
+        self._stop.set()
+        if self._thread.is_alive():
+            self._thread.join(timeout=150)
+
+
+def gateway_start(ctx, distro, settings, token):
+    rc, _out, err = ctx.wsl.script(distro, gateway_push_script(token, settings))
+    if rc != 0:
+        raise RoomError(f"部屋の ~/.claude-gateway に書けなかった（終了コード {rc}）: {err.strip()[-300:]}")
+    ctx.say(f"ゲートウェイ: {distro} の ~/.claude-gateway に設定と ID トークンを置いた。約 {ctx.gateway_interval // 60} 分ごとに置き換える（終了時に消す）")
+    r = GatewayRefresher(ctx, distro)
+    r.start()
+    return r
+
+
+def gateway_stop(ctx, distro, refresher):
+    """更新を止め、部屋のトークンを消す（settings.json は秘密を含まないので残す）。"""
+    refresher.stop()
+    ctx.wsl.script(distro, f"rm -f \"{GATEWAY_ROOM_DIR}/token\" \"{GATEWAY_ROOM_DIR}/token.new\"\n")
+    if refresher.failures:
+        ctx.say(f"注意: ゲートウェイのトークンの更新に {len(refresher.failures)} 回失敗した（最後: {refresher.failures[-1]}）。"
+                "claude-gateway-token.cmd を直接実行して確かめる（期限切れなら -Login）")
+
+
 def cmd_aws_key(ctx, a):
     """部屋の ~/.aws/credentials に、プロファイルのキーを入れる。秘密は画面に出さず、標準入力で部屋へ渡す（コマンドラインにも履歴にも残さない）。"""
     distro = f"room-{a.area}"
@@ -2556,6 +2670,7 @@ def build_parser():
     s.add_argument("name")
     s.add_argument("--cmd", default="claude", help="部屋で実行するコマンド（既定: claude）")
     s.add_argument("--no-launch", action="store_true", help="起動せず、マウントしたまま待つ（Zed などで使う）")
+    s.add_argument("--gateway", action="store_true", help="組織の LLM ゲートウェイで起動する（Windows 側でサインイン済みの ID トークンを、start の間だけ部屋に置いて更新する）")
     s.add_argument("--adopt", action="store_true", help="ai/in の現在のファイルを、この Project の入力として記録する")
     s.add_argument("--yes", action="store_true", help="mask.toml が変わったときの作り直しを確認しない")
     s.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
