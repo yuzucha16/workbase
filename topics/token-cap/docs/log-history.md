@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-29（NA 1b: 完了条件の A/B 比較の設計）: 「token-cap の続き 1b」。ee の依頼で、仮説（完了条件を 1 行足すと応答数が減る）を検証する最小のプロンプトを設計した。題材は `decisions.md` から「応答数を減らす」の決定を調べる読むだけの依頼で、A（足さない）と B（足す）の差は末尾 1 行と先頭の印だけ。ee の決定: B の「それ以外のファイルは読まない」は入れたまま、題材はこの案、毎回新しい会話で A・B を交互に各 3 回、6 回後にまとめて `requests_by_kind.py` を実行。スクリプト名は `request_by_read.py` ではなく `requests_by_kind.py`（訂正済み）。文面と手順は `records/2026-10-29-na1b-ab-prompts.md`。結果は ee が別セッションで伝える。wrap。
+
 - 2026-10-29（NA 7: Zed の ACP の表示）: 「token-cap の続き na7」。Zed の Context 表示「47K / 1M」が `cap_meter --latest` の直近の応答の入力 47,147 と一致し、累計でないと確定した（`records/2026-10-29-zed-display-check.md`）。ガイド（`claude-code-cost-session-size.md`）に反映済み。続けて ee の質問で、会話記録（jsonl）の内訳に公式単価（Sonnet 5.5: 入力 $2、出力 $10、キャッシュ読み $0.20、1 時間書き込み $4 / 100 万）を掛けて Zed の Cost 0.16 USD と照合した。応答 5〜7 回で 0.166〜0.193、書き込み 1.25 倍なら約 0.148 で、20% 以内で合うが確定しない。入力側は読み 88%・書き込み 12%、費用は書き込み 64%・読み 23%・出力 14%（`records/2026-10-29-zed-cost-check.md`）。コミット `3731539`、push 済み。wrap。
 
 - 2026-10-29（NA 9: `docs-rules.md` の分割）: 「token-cap の続き」。ee が NA 9 の実施を承認。`docs-rules.md`（11.3k）から 35〜75 行を `docs-format.md`（5.4k）、77〜91 行を `docs-carry.md`（3.1k）へ移し、`docs-rules.md` は 5.7k に（1〜27 行は動かさず、「続き」の節は `offset` 24 のまま）。参照元 8 か所（`wrap-hook.md`、`stock-hook.md`、`templates/decisions.md`、`token-matrix.md`、`README.md`、`exmem/lessons` 2 件）を張り替えた。push 済み（`1de15d2`、`[workflow-kit]`）。効果は 11-05 の再測定（NA 1）に含める。`hook-matrix.md` の字数の記録と `hooks.md` の表は未更新。wrap。
