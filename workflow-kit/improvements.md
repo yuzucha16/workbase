@@ -2,7 +2,7 @@
 
 workflow-kit の改善提案と、その結果。小さく始める。1提案1行。新しいものを上に足す。
 
-**2026-10-15 に凍結した。追記しない。** 新しい改善は `docs/decisions.md` に書く（経緯: `topics/kit-growth/kit-growth-handover.md`）。以下は履歴。
+**2026-10-15 に凍結した。追記しない。** 新しい改善は `docs/decisions.md` に書く（経緯: `docs/decisions.md` の 2026-10-15 の項）。以下は履歴。
 
 状態: 提案 / 採用 / 却下（却下は理由を添える）
 

@@ -4,7 +4,8 @@
 
 ## Decisions
 
-### 【汎用】【仮】フックの合言葉と `triggers:` 索引は統一しない。分ける基準は「呼ぶタイミングを人が決めたいか」（2026-10-29）
+### 【汎用】フックの合言葉と `triggers:` 索引は統一しない。分ける基準は「呼ぶタイミングを人が決めたいか」（2026-10-29）
+- 正式化（ユーザー、2026-10-29、`review 消化`）: スクリーニング（食い違う過去の決定なし、型の該当なし、覆す可能性は低）を経て「正式化します」。
 - 決めたこと（ユーザー、仮決め）: 呼ぶタイミングを人が決めたい手順は合言葉（`workflow-kit/hooks.md` の表）。話題が出たら効いてほしい知識・型は `triggers:`（ノート自身が正本）。合言葉を依頼文から自動で当てることはしない。相談の型は後者に置く（現状どおり）。
 - 根拠: ユーザーの発言（2026-10-29）「望まないです。明示的に意図したタイミングで打ちたいため。」「判断基準から作ることが必要だった」「トークン効率をあげるためのもの。どちらかというと、lessons/などナレッジ系」「（判断基準の言い方は）良いです。私の感覚に近いです。」「（誤爆の論点の切り出しに）はい、同意します。」
 - 事実（確認済み）: 合言葉の正本は `hooks.md` の表 1 か所、札の正本は各ノートの `triggers:` で、どちらも 1 か所。統一しても管理の場所は減らない。照合は小文字化した部分一致（`find_knowledge.py:145`、長さ 2 以上の札）。
@@ -13,18 +14,20 @@
 - 追記（ユーザー、同日）: 相談の型を合言葉に戻すかを聞かれ、「今のままにします。」（`triggers:` 起動のまま）。
 - 範囲: 仕組みの変更なし（記録のみ）。誤爆（「ログイン」が札「ログ」に当たる）と引き当て率（初回 11-08）は NA 13 に切り出した。`brief` の言い忘れによる抜けは別の論点（NA 10 に混ぜない）。
 
-### 【汎用】【仮】`topics/kit-growth/` の Area 型の看板を下ろし、窓口と handover を削除する。`inbox.md` と `records/` は残す（2026-10-29）
+### 【汎用】`topics/kit-growth/` の Area 型の看板を下ろし、窓口と handover を削除する。`inbox.md` と `records/` は残す（2026-10-29）
+- 正式化（ユーザー、2026-10-29、`review 消化`）: スクリーニング（型 B が弱く該当。覆す可能性は低〜中）の後、「3点を表に足したうえで正式化します」。3点は、`records/` 2か所の参照の扱い、壊れる wikilink の扱い、`close-procedure.md` と `review-hook.md` の Grep。実装は同日に済んだ。
 - 決めたこと（ユーザー、仮決め）: kit-growth は、責任領域としては動いておらず、実体は「測ったこと（`records/`）」と「改善の印象の受け皿（`inbox.md`）」の置き場になっている。看板（Area 型）を下ろし、`kit-growth-start-here.md` と `kit-growth-handover.md` を削除する。`inbox.md` は残す（PC1 が push できない前提が続くため）。`records/` は据え置き（振り返りは続ける）。2026-10-21 の「型を使った回」として数える（相談の型。5回目の判断は 10-28 に済み、トリガー方式の仮のまま）。
 - 根拠: ユーザーの発言（2026-10-29）「続いています。」（PC1 が push できない前提）「振り返りはやります。ただ置き場としてしか機能していません。」「良いです」（看板を下ろし、窓口と handover を削除する案）。
 - 事実（確認済み）: 窓口と `inbox.md` の最終更新は 10-25、inbox の最後の追加は 10-19。`docs/` は 10-18 に直下へ統合済み。`records/` は 10-29 も更新（約 145KB）。
-- 変更範囲（実装は `review 消化` の後。それまで着手しない）:
+- 変更範囲（実装済み、2026-10-29）:
   | 場所 | 内容 | 変えないもの |
   |---|---|---|
-  | `topics/kit-growth/kit-growth-start-here.md`、`kit-growth-handover.md` | 削除。`[[kit-growth-start-here]]` `[[kit-growth-handover]]` と `kit-growth-handover.md` のパス参照（`workflow-kit/improvements.md:5` ほか）を、`decisions.md` の 2026-10-15 の項へ直す | `inbox.md`、`records/` |
+  | `topics/kit-growth/kit-growth-start-here.md`、`kit-growth-handover.md` | 削除。`[[kit-growth-start-here]]` `[[kit-growth-handover]]` と `kit-growth-handover.md` のパス参照（`workflow-kit/improvements.md:5`）を、`decisions.md` の 2026-10-15 の項へ直す。`decisions.md` の 2026-10-15 の項の `[[kit-growth-handover]]`（壊れる wikilink）は、削除済みの旨の文に直す（経緯は git 履歴） | `inbox.md`、`records/` |
+  | `topics/kit-growth/records/retrospective-daily-record.md`、`retrospective-weekly-record.md` | 文中の `kit-growth-start-here.md`（目標の出どころとして書かれた当時の記録）は、直さない。リンクではなく、壊れない | 記録の本文 |
   | `topics/AGENTS.md` | 例外の記述（Area 型は `docs/` を持たない）を「`kit-growth/` は `records/` と `inbox.md` の置き場」に書き換え。「Area 型のトピックは消さない」は、他に Area 型が無くなれば該当しない | 「題材ごとのトピックと `records/` の仕訳」 |
   | `topics/topics-index.md` | kit-growth の行を置き場の説明に直す | 他のトピックの行 |
   | `docs/decisions.md` | 2026-10-15 の「Area 型のトピックにする」を取り消し線で残し、この項へ誘導 | 他の過去の項 |
-  - 未確認: 削除する 2 ファイルへのリンクの全数（実装時に Grep で数える）。`topics/close-procedure.md` と `review-hook.md` に、窓口の存在を前提にした記述があるか。
+  - 確認済み（2026-10-29、Grep）: 削除する 2 ファイルへの参照は、上の表のとおりで全数。`review-hook.md` に窓口・handover の記述は無い。`topics/close-procedure.md` の `kit-growth` は `records/` の話（29 行）で、窓口を前提にしない。
 - 却下案: 全体を畳む（`records/` が生きていて参照が多い）。`records/` を移す（参照の直しが増え、新しいディレクトリを直下に増やさない決定とぶつかる）。窓口を残す（「いま」が `docs/log.md` と重複）。
 - 見直しの条件: `inbox.md` の未選別が増えないまま `review 消化` を数回通ったら、inbox を畳む候補にする。
 
@@ -768,10 +771,10 @@
 - 【汎用】`workflow-kit/AGENTS.md` の「push はユーザーが行う」を、「`docs-rules.md` の「push」に従う（許可リストのリポジトリだけエージェントが行う）」に直した（ユーザーの承認、2026-10-16）。理由: 同日に公開リポジトリも許可リストに載せる決定をしたため、記述が食い違っていた。
 - 【汎用】一律に kit を正とはしない。kit が遅れているときは、明らかにずれている箇所を事前に確認して、kit 側を直す（ユーザー、2026-10-16）。
 
-### 2026-10-15（ユーザーの合意。経緯は [[kit-growth-handover]]）
+### 2026-10-15（ユーザーの合意。経緯の文書 `kit-growth-handover.md` は 2026-10-29 に削除。git 履歴で読める）
 
 - 【汎用】改善の受け皿は workbase の `topics/` に置く。理由: モバイルと PC2 の両方から届く。PC2 の works には置かない。
-- 【汎用】workbase の改善を Area 型のトピック（`topics/kit-growth/`）にし、壁打ちで出た印象は inbox に入れる。育った話は Project 型の子トピックに切り出し、PC2 で直して close する。
+- 【汎用】~~workbase の改善を Area 型のトピック（`topics/kit-growth/`）にし~~（2026-10-29 に看板を下ろした。上の同日の項）、壁打ちで出た印象は inbox に入れる。育った話は Project 型の子トピックに切り出し、PC2 で直して close する。
 - 【汎用】今の仕組み（トピックの docs 型、open / close、review）を流用して改善の経路をつなぐ。足すより畳む。
 - 【汎用】`improvements.md` は追記をやめて凍結する。`hook-common.md` の「改善」の「1行足す」は、「`topics/kit-growth/docs/decisions.md` に書く」に変えた（2026-10-15 実施。ユーザーの依頼「取り込みたい」による）。
 - 【汎用】`review` の入力に、トピックの置き場の点検（30日動かないトピック、終わったのに残るトピック、inbox の未選別）を足した（2026-10-15 実施）。
