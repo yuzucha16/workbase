@@ -13,7 +13,7 @@
 
 ## Next Actions
 
-1. 【最優先・10-29 決定】NA 5 の (d)（全文読みを止める）の残り。上位 3 本の全文読み（`commit-push-rules.md`、`docs/log.md`、`wrap-hook.md`）は、すべて縮小・分割した（10-29。大きさは `records/2026-10-29-repeat-reads-2.md`）。残り: (1) 翌週に Windows 側で `repeat_reads.py --since 2026-10-27 --detail` を再実行し、3 本の 1 回あたり（6.4k、2.6k、2.8k）が下がったかを見る。(2) room と PC1 でも実行する。(3) 分割で参照文が未変更の所: `exmem/` の 2 か所と `templates/workspace/AGENTS.md`。(4) 次に多い全文読み（`token-cap-start-here.md` 22 回、各トピックの `docs/log.md`）は、小さいので優先度は低い。
+1. 【最優先・10-29 決定】NA 5 の (d)（全文読みを止める）の残り。上位 3 本の全文読み（`commit-push-rules.md`、`docs/log.md`、`wrap-hook.md`）は、すべて縮小・分割した（10-29。大きさは `records/2026-10-29-repeat-reads-2.md`）。残り: (1) 翌週に Windows 側で `repeat_reads.py --since 2026-10-27 --detail` を再実行し、3 本の 1 回あたり（6.4k、2.6k、2.8k）が下がったかを見る（10-29 夕に実行: commit-push-rules 6,107、log 2,461、wrap-hook 2,703 で、いずれも下がった。ただし 10-27 以降の混合で、分割後だけの母数は少ない。翌週に再確認）。(2) room と PC1 でも実行する。(3) は 10-29 に済み（`exmem/lessons/` の 2 か所と `templates/workspace/AGENTS.md` を、`push-rules.md` などへ直した）。(4) 次に多い全文読み（`token-cap-start-here.md` 22 回、各トピックの `docs/log.md`）は、小さいので優先度は低い。
 1b. 【仮説・検証は後日（ee、10-29）】「依頼の末尾に完了条件を 1 行足す（例「○○が△△になったら止める。それ以外は読まない」）と応答数が減る」（NA 5 の (f)）。足す依頼と足さない依頼を数件ずつ比べる（ee が実施。印は先頭に `[完了条件あり]`）。根拠: `--detail`（`records/2026-10-29-pc1-room-other-detail.md`）で重いのは 101-300 文字の途中の依頼（37%）。ee の確認: 場所は伝えている、ゴールは無い、依頼は指示型（「完了条件が無いと終わりを AI が決める」は仮説）。
 2. `integrate` の読む量の上限（仮 〜11-29）の個別の効果を、10-27 以降の日ごとの値で測る。PC1 room の全体の減少は仮決め済み。
 3. （低優先）マクロ側の常駐文書に、全文読みを避ける指示を入れる案。
