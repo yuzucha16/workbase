@@ -325,7 +325,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 | works 側の許可設定 | works の `.claude/settings.json` で、`projects/` `areas/` `archives/` を `Read` と `Edit` の deny にする。works 側の AI が、うっかり読むのを防ぐ安全網。境界の保証は部屋が担う（`grep -r` やスクリプトは止まらない） | **未導入**。Windows ネイティブで、絶対パスの deny が効くかは要確認 |
 | ネットワークの絞り込み | 部屋から出られる先を、必要なサイトだけにする | 未検証 |
 | Codex・Copilot | 部屋の中に導入すれば、同じ境界が効く。規約は `AGENTS.md` を正本に、`CLAUDE.md` は `@AGENTS.md` の1行にする | 未検証。エディタ内蔵の Copilot は部屋の外で動くので、機密を扱う Project では使わない |
-| Python のバージョン固定 | 部屋の Python も、`uv python install <バージョン>` で入れて固定する | 未導入 |
+| Python のバージョン固定 | 部屋の Python も、`room/.python-version` の版を `uv python install <バージョン>` で入れて固定する（`python3` で呼べる形にする方法は実機で確認する。`decisions.md` 2026-10-29） | 案あり（`room init` の段は未実装） |
 
 ## 9. 戻し方・片付け
 

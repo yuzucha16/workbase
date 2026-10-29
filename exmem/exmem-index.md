@@ -86,6 +86,7 @@ updated: 2026-10-16
 - [[terminal-cursor-blink]]: ターミナルのカーソル点滅を止める（DECSCUSR）
 - [[user-manual]]: ユーザー（ee）の取扱説明書: 口癖から読む思考・行動パターン
 - [[vscode-workspace]]: VS Codeの拡張機能とWorkspace運用
+- [[python-version-uv-canonical]]: Python の版は uv 管理を正本にして揃える（呼び方と落ち方）
 - [[windows-8dot3-relative-to]]: Windows の 8.3 短縮名で relative_to が失敗するのを避ける
 - [[windows-bat-testing]]: Windows の .bat の試験（dry-run・偽コマンド）
 - [[windows-bat-pitfalls]]: Windows の .bat の落とし穴と入力を伴う試験（ASCII・cp932・set /p）

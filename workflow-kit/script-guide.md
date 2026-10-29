@@ -11,7 +11,7 @@
 
 **言語の選び方（2026-10-21 のユーザーの依頼。AI は「Python でよいか」「ps1 がよいか」とユーザーに聞かず、この順で自分で決める）**: Windows 依存を減らすため、優先順位は **Python → ps1 → bat**。
 
-1. **Python**（既定。2026-10-21 のユーザーの決定で、Windows 依存の薄い層も Python にした）。部屋で実行できる処理に加え、Windows 依存の操作（Excel の COM は `pywin32`、レジストリは `winreg`、アプリの起動は `subprocess`）も Python で書く。実行は `uv run --script`（Windows の実行先に Python と uv があることは確認済み）。
+1. **Python**（既定。2026-10-21 のユーザーの決定で、Windows 依存の薄い層も Python にした）。部屋で実行できる処理に加え、Windows 依存の操作（Excel の COM は `pywin32`、レジストリは `winreg`、アプリの起動は `subprocess`）も Python で書く。実行は `uv run --script`（Windows の実行先に Python と uv があることは確認済み）。Python の版と呼び方は、下の「Python の版と呼び方」に従う。
 2. **ps1**。実行先に Python（uv）が無いと分かっているとき、または PowerShell の cmdlet でしか操作できない Windows 依存の操作のときだけ。薄い層にする。
 3. **bat**。`uv run`（または ps1）を起動するだけの 3 行（下の「Windows で実行するスクリプト」）。ロジックは書かない。
 
@@ -21,7 +21,7 @@
 
 | 道具 | 版 | 注意 |
 |---|---|---|
-| Python | 3.14.4（システムの `python3`） | `pip` は無い。依存が要るときは `uv`（`uv run --script`、`uv add`）で版を固定する。外部の取得はネットワークと証明書に依存する（未確認）。テストは標準ライブラリの `unittest` |
+| Python | 正本の版（`workflow-kit/room/.python-version`。今は 3.13.14）を uv で入れ、`python3` で呼ぶ（案。`room init` の段は未実装）。システムの 3.14.4 は apt の道具が使うので上書きしない | `pip` は無い。依存が要るときは `uv`（`uv run --script`、`uv add`）で版を固定する。外部の取得はネットワークと証明書に依存する（未確認）。テストは標準ライブラリの `unittest` |
 | uv | 0.13.4 | Python の版・依存・仮想環境の管理 |
 | git | 2.53.0 | 部屋のローカルの git（`room-context.md`） |
 | PowerShell 7 | 7.6.7（Linux 版）+ PSScriptAnalyzer 1.25.0 + Pester 5.9.1 | 下の節の点検とテスト用。Windows 固有の動作は再現しない |
@@ -42,6 +42,20 @@
 
 ### Python の薄い層（既定）
 
+**Python の版と呼び方**（2026-10-29 のユーザーの決定。`docs/decisions.md`）: Python は版に敏感なので、uv 管理の版を正本にして、トラブル時の切り分けを減らす。
+
+| 場所 | 呼び方 | 版 |
+|---|---|---|
+| Windows・依存つき | `uv run --script` | 正本（`room/.python-version`） |
+| Windows・room | `uv run room.py` | 正本 |
+| Windows・uv が止まったとき | `python`（標準ライブラリだけの .py） | 保証しない |
+| WSL（部屋） | `python3` | 正本（`room init` が uv で入れる。案） |
+| PC2・クラウドの AI | `python -I` | 対象外 |
+
+- 各 `.py` の `requires-python` は `==3.13.*`（正本の系列）にそろえる。下限指定（`>=`）だと、uv が新しい版を選んで正本とずれる。
+- 古い版が要るモジュールを使うスクリプトだけ、`requires-python` に別の版を書き、理由を 1 行添える（スクリプトごとに選ばれるので、全体は巻き込まない）。
+- 標準ライブラリだけの .py に、版の厳密さは求めない。
+
 - **個別の処理は `<名前>.py`（snake_case）、それらを順に呼ぶ束ねる役を 1 本（動作確認なら `verify.py`。名前は下の「人が叩くスクリプトの名前」）にする。** 失敗したら止まる、最後に結果を出す、ログを 1 か所に出す、を束ねる側に持たせる。人は `uv run --script verify.py` を 1 回打つだけにする。判定・変換・検証は薄い層に置かない（上の「切り分けの手順」の 4）。
 - **依存は、各 `.py` の先頭の `# /// script`（PEP 723）に書く**（`requires-python`、`dependencies`。Excel の COM なら `pywin32`）。実行は `uv run --script`。束ねる役が個別の処理を呼ぶときも `uv run --script` で呼ぶ（自分の Python には、呼び先の依存が無い）。
 - **bat は、起動用の 3 行だけ許す**。ロジックは書かない。型は固定（`%*` は引数を渡したいときだけ。全体 ASCII、CRLF、BOM なし、`pause` を最後に必ず置く）:
@@ -55,7 +69,7 @@
 
   ```python
   # /// script
-  # requires-python = ">=3.12"
+  # requires-python = "==3.13.*"
   # dependencies = []
   # ///
   """動作確認の束ねる役。前提を確かめ、工程を順に実行し、目視の項目を聞き、結果を ai/work/verify-result.json に毎回出す。--log のときだけ全文ログも出す。"""
@@ -240,7 +254,7 @@ Project の成果物は、`ai/out/`（マスクした Project は復元後の `_
 
   ```python
   # /// script
-  # requires-python = ">=3.12"
+  # requires-python = "==3.13.*"
   # dependencies = []
   # ///
   """リリース。verify の結果が全部 OK で、成果物が verify したときと同じでなければ止まる。版 YYYY-MM-DD.N を振り、release.json に記録する。"""
@@ -300,7 +314,7 @@ Project の成果物は、`ai/out/`（マスクした Project は復元後の `_
 
   ```python
   # /// script
-  # requires-python = ">=3.12"
+  # requires-python = "==3.13.*"
   # dependencies = []
   # ///
   """本番実行の束ねる役。実データに対して工程を順に実行し、結果（業務の値は入れない）を ai/work/run-result.json に毎回出す。--log のときだけ全文ログを _noai/user/ に出す。"""

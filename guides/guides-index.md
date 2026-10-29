@@ -50,6 +50,7 @@ updated: 2026-10-28
 | 実際の名前（`pilot2` `pilot2-1`）で、`room.py` を1手ずつ通して、部屋の作成から `close` まで行う | [[ai-room-setup-script]] | 手順書 |
 | 実際の名前（`pilot` `pilot-1`）で、`room.py` を使わずに、マウント・アンマウントを含めて手作業で通す | [[ai-room-setup-manual]] | 手順書 |
 | 顧客情報を含む資料（議事録、事業戦略など）を、マスクだけして AI に要約させる（実名には戻さない） | [[ai-room-mask-summary]] | 手順書 |
+| ファイルが「ある場所では動くが別の場所では動かない」。Python の版を uv 管理にそろえる理由と、uv が止まったときの考え方を思い出す | [[python-version-uv]] | 理解ガイド |
 | シートや個人名を消した xlsx・pptx を AI に見せたら、消したはずのものが見えていた。なぜ残るかと、渡す前の点検・掃除（`cleankit.py`）を思い出す | [[ooxml-residue]] | 理解ガイド |
 | xlsx・pptx を AI に渡す前に、`cleankit.py` で点検・掃除する（強さのプロファイルと、外す部品の種類の選び方） | [[ooxml-clean]] | 手順書 |
 | 部屋で作業した Project を閉じて、`archives/` に移す | [[ai-room-setup#7. Project を閉じる]] | 手順書 |
@@ -97,7 +98,7 @@ updated: 2026-10-28
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
 | 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[bedrock-first-hello]]、[[claude-usage-report]]、[[ooxml-clean]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools]]、[[ai-room-data-layout]]、[[ai-room-concurrent-start]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools]]、[[ai-room-data-layout]]、[[ai-room-concurrent-start]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新

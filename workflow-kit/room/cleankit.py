@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.10"
+# requires-python = "==3.13.*"
 # dependencies = []
 # ///
 """cleankit: xlsx・pptx の残存情報の点検と掃除（標準ライブラリだけ）。

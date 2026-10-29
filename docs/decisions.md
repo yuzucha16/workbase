@@ -4,6 +4,15 @@
 
 ## Decisions
 
+### 【汎用】Python の版は uv 管理を正本にし、WSL の `python3` も同じ版に揃える。OS 管理の Python への落ち方は緊急時だけ（2026-10-29）
+- 根拠: ユーザーの決定（2026-10-29）。Python は版に敏感で、トラブルでの workbase のダウンタイムを短くしたい。実態は OS 管理（WSL の `python3` 3.14.4、Windows の素の `python`）と uv 管理（room.py の 3.13.14）が混在していた。数と場所は `topics/` ではなく project files の `notes/python-invocation/`（このリポジトリの外）に整理した。
+- 正本: `workflow-kit/room/.python-version`（今は 3.13.14）。
+- 呼び方: Windows は依存つき `uv run --script`、room は `uv run room.py`。uv が止まったときだけ OS の `python`（標準ライブラリだけの .py。版は保証しない）。WSL は `python3`（`room init` が正本の版を uv で入れる）。`python -I`（PC2・クラウドの AI）は対象外。
+- 揃える範囲: 差が出やすいもの（依存つき、文字コード、room 本体）だけ。厳密にはしない。各 `.py` の `requires-python` は `==3.13.*`。古い版が要るスクリプトは、先頭で個別に指定する。
+- 却下: 全 .py の版を一律に固定する（古い版が要るモジュールで詰まる）。WSL でも人は `uv run` に統一する（`python3` 一律のほうが、Stop フックと shebang と整合する）。`requires-python` の下限指定のまま（uv が新しい版を選び、正本とずれる）。
+- 見直しの条件: uv の取得が勤務先のネットワークで失敗したとき、WSL で `python3` として呼ぶ方法が実機で通らなかったとき、`.python-version` を上げるとき。
+- 未確認: WSL で uv の Python を `python3` として呼ぶ方法（`uv python install --default` か、`~/.local/bin` への PATH か）。`room init` の段（`room.py`）は未実装。
+
 ### 【汎用】【案件】の行き先は 2 段（部屋では郵便受け → Area で消化して `docs/decisions.md`）。会議録は PC ごとのローカルに置き、同期しない（2026-10-29）
 - 根拠: ユーザーの発言（2026-10-29）。【案件】: 2026-10-07 の「Area の `docs/decisions.md` に直接書く」（`para-operations.md`、試行の前提つき）と、2026-10-12 の部屋の決定 #5（`room start` の回収で Area の `ai/docs/inbox.md` へ追記）の食い違いは、時期の違い。部屋の中では郵便受け、Area 側で消化したものを `docs/decisions.md` に正式に書く 2 段を現行とする。
 - 会議録: Area 側は PC ごとのローカルに置き、同期しない。他の PC で要る分は、Area の `docs/` に要点だけ書く。理由: 顧客・機密度の境界を Area で切る方針（部屋の決定 #1 補）と、機密を共有側に流さない原則に合う。
