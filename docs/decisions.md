@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】トピック固有の Next Actions は、トピックの `docs/log.md` だけに置く。直下の `docs/log.md` には置かない（2026-10-29）
+- 決めたこと（ユーザー）: トピックは自分の `docs/log.md` を持つので、直下に同じ項目を置くと二重管理になる。直下の Next Actions は、トピックを持たない項目（横断の作業）だけにする。期日の表は直下に残す（開始時の通知のため）。
+- 根拠: ユーザーの発言「`topics/`配下のアイテムはそれぞれ`docs/log.md`を持っています。そのため、`workbase/docs/log.md`にトピック固有のnaは不要です。」目的は全文読みの縮小（`topics/token-cap/records/2026-10-29-repeat-reads.md`）。
+- 反映先: 直下 `docs/log.md`（NA 4・6・7・8 を削除し、トピック側に無かった内容を各トピックの `docs/log.md` へ移した）、`topics/AGENTS.md`。`workflow-kit/wrap-hook.md` 手順 2 の「上の階層の項目を直す」は承認後に直す。
+
 ### 【汎用】`commit-push-rules.md` を 3 本に分けた: 核・`push-rules.md`・`commit-special.md`（2026-10-29）
 - 決めたこと（ユーザー）: コミットだけの会話が push とまれな場面の規則まで毎回読んでいた（全文読みの md の 31%）ので分ける。push は別ファイル、「しないこと」は核に残す。
 - 根拠: ユーザーの発言「pushは別ファイル、しないこと は核に残してください。」「このセッションで案の実装までやりましょう。」案と測定は `topics/token-cap/records/2026-10-29-commit-push-split-plan.md`、`2026-10-29-repeat-reads.md`。

@@ -4,7 +4,7 @@
 
 ## 状態
 
-- 本実装は済み（2026-10-25）。索引の正本は各ノートの `triggers:`（15 語まで）。表はコミットせず、`workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` が毎回 frontmatter を読む（`--check-triggers` `--list-triggers` もある）。対象は `exmem/lessons/`、`guides/explain/`、未統合の `exmem/inbox/`。
+- 本実装は済み（2026-10-25）。索引の正本は各ノートの `triggers:`（30 語まで。10-27 に 15 から変更）。表はコミットせず、`workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` が毎回 frontmatter を読む（`--check-triggers` `--list-triggers` もある）。対象は `exmem/lessons/`、`guides/explain/`、未統合の `exmem/inbox/`。
 - 付く時点: 既存は付与済み（lessons 67、explain 9、inbox 3）。`stock` はメモに必須（`check_inbox` が点検）、`integrate` は統合先に合わせて 15 語に収める。入口は root `AGENTS.md` の 1 節と `exmem/AGENTS.md`。
 - 押し出し: dotfiles の `UserPromptSubmit` フックが `workflow-kit/tools/triggers_hook.py` を呼ぶ（dotfiles `42c7c6a`、未 push。push はユーザーが dotfiles 側の AI に頼む。2026-10-25 にプロンプトを渡した）。発火は確認済み。
 - 定期チェック: `review` の入力 9（引当率 = `triggers_stats.py`、コールグラフ = `mdgraph.py` `mdreach.py`〔いずれも `workflow-kit/tools/`〕、依頼の文での順位 = `mdrank.py`。`graph.html` の作り直しと場面の追加も含む。2026-10-25 にトピックと同じ測り方にした）。
@@ -14,7 +14,7 @@
 
 ## Next Actions
 
-1. 実作業での引き当て率: 初回は 2026-11-08（root `docs/log.md` の期日）。`python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。以後は `review` の入力 9。取りこぼしは `triggers:` の語を足す案にする。初日は 1 依頼だけで、判断できない。
+1. 実作業での引き当て率: 初回は 2026-11-08（root `docs/log.md` の期日）。`python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。以後は `review` の入力 9。取りこぼしは `triggers:` の語を足す案にする。上限 30 語で誤爆が増えていないかも見る。初日は 1 依頼だけで、判断できない。
 2. S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は、入口 1 節とフックで届くので付けない方針。実測で届かなければ見直す。
 3. 完了の判断: 完了条件（構造の問題点を数字で示し、直す案をユーザーが決める）は満たした。引き当て率の初回（11-08）の後に、閉じるかをユーザーに聞く。
 
