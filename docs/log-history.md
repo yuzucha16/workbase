@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-29（NA12: room の記録が ai/ai/records/ に出る件の原因を絞った）
+- 「topics/* の続き pc1でやること」。ee が PC1 の room で確認した結果（画面を共有）: 部屋の `~/.claude/hooks/room-stop-record.py` は古い版（62 行目 `m.group(1) + "/ai/records"`、説明も `<Project>/ai/records`）。`room init <Area> --only stophook` を実行しても直らなかった。`cwd` は `/mnt/room/task7_commcost`、マウントは `works/projects/task7_commcost/ai`。
+- 記録は 2 か所: `/mnt/room/task7_commcost/ai/records/`（`replies`、`sessions.jsonl`。古いフック。Windows 側で `ai/ai/records`）と、`/mnt/room/task7_commcost/records/`（`manifest.json`、`replies`、`room-log.md`、`sessions.jsonl`。新しい出力先）。
+- リポジトリの `workflow-kit/room/room.py:831` は `/records`（修正済み）。`STOP_HOOK_INSTALL` は毎回上書きする作り（882-888 行）。別のフックが書く説は外れ（フックは 1 本だけ）。
+- 入れ直しが効かない理由の切り分けは、別セッションに引き継ぐ（ee）。
+
 ### 2026-10-29（NA11: works・dotfiles・workbase の作者を agent にそろえた）
 - 手順（`topics/wording-neutralize/records/2026-10-28-author-rewrite-steps.md`）で、works（208）と dotfiles（240）を mirror clone → `git filter-repo --mailmap --replace-message` → `push --force --mirror`（ユーザーが deny を切った）。dotfiles は `user@example.com` の作者も `agent` にした。本文の URL は `github.com/owner/` に置換。
 - workbase も作者が `yuzucha16` のコミットを 189 件残していた（10-28 の「全コミットが agent」は誤りだった。直近 15 件だけを見て判断した）。同じ手順で 1351 コミットを書き換え、43 ブランチを force push した。確認は `git log --all --format='%aN <%aE>' | sort -u`（stash と古い remote ref が残っていると偽陽性になる）。

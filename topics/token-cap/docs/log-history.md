@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-29（room の 107k の判定）: 「topics/* の続き pc1でやること」。ee が PC1 の room で `decompose_session.py --session e3edb1ce` を実行し、画面を共有。結果: 依頼 1 件、34 応答、土台 18,437、最大 106,979、1 回の増加は最大 11,653（8k 超は 2 回）、Bash 28 回で 85,951 文字、Read 10 回はすべて png（0 文字、重複 2 ファイル）。判定: 172k の型（全文読みの連発）ではなく、応答数の多さ（Bash の出力と画像読みの積み上げ）。ee は、PC2 の分析にも同じ傾向があったと確認（`records/2026-10-29-room-107k-judgment.md`）。NA 1 から該当部分を消した。画像のトークンは未測定。同じセッションで、ルートの NA 12（room の記録先）も調べた（ルートの `docs/log-history.md` の同日）。wrap。
+
 - 2026-10-28（応答数を減らす手段の洗い出しと、依頼別の応答数の測定）: 「token-cap の続き」。ee が、分析の結果「消費量は 1 依頼の中の応答数が第一」とわかったと述べ、減らすために必要なことのリストアップを依頼。AI が調査結果（172k の 1 依頼は 27 応答、Read 58 回・Edit 44 回。「振り返って」の型で 4→3 応答）から 10 個を挙げた。ee が 1（依頼別の応答数の測定）を依頼し、残りは wrap で記録、8（別エージェントへの委譲）も実測すると決めた。`requests_by_kind.py` を作り、Windows 側（10-01 以降、543 依頼）を実行した。結果: 平均 6.3 応答（概算の約 10 より小さい）、wrap は 88 件・8.3 応答・トークンの 24%、11 応答以上の依頼が 16% でトークンの 44%（`records/2026-10-28-requests-by-kind.md`）。ee は wrap の伸びが高い感覚に合うと確認し、room も同じ分析をすると決めた。コミットは `[token-cap]` の 1 件。wrap。
 
 - 2026-10-28（NA6 の拡大と入力側の畳み）: 「token-cap の続き np6,7」。ee が 3 回目の「振り返って」の結果を共有（応答 3、土台 26.1k、読みは型 1 本。応答 4 → 3 回で、`triggers` の修正が効いた）。NA7 の ①〜③ は説明して済み（`cap_meter` の表の見方、`--session` の実行例。② の Zed の ACP 表示は、ガイドの記述を根拠に「直近の応答の大きさ」と答えたが、ee が後で NA7 を「確定する」に書き直した＝根拠は未確認）。ee の決定で、(1) 調査1・2、計画、改善1〜3 の出力の型 6 本を作り、`brief` の引数と `brief-modes.md` を廃止、(2) 入力側を畳み、元の調査1・2、改善1〜3（のちに改善4・5 も）を `superseded`、依頼の文例を `guides/quickref/ai-work-prompts.md` に集約、(3) 型の名前から `-2` をやめた（`research-explain-output`、`research-procedure-output`、`retrospective-incident-output`）。`methods.md` は選ぶ基準だけに。コミットは `[exmem]` `[guides]` `[workflow-kit]` `[token-cap]`。wrap。
