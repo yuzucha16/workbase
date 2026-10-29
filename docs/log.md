@@ -8,12 +8,12 @@
 - やり方は `methods.md`。`brief 計画` は試験運用中。
 - room: type は `dev` と `inv`。`mkworks` などの新機能は単体テストまで（`room/README.md`）。
 - 人が叩くスクリプトは `run` / `verify` / `release`（`script-guide.md`）。Windows は未確認。
-- 索引（triggers）: dotfiles のフックが依頼ごとに出す（`topics/md-link-graph/`）。
+- 索引（triggers）: dotfiles のフックが依頼ごとに出す（`topics/md-link-graph/`）。相談の型の本文は `exmem/lessons/consultation-pattern.md`（「相談」で引ける。10-29）。
 
 ## Next Actions
 
 2. 【起票 10-25】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
-10. 【起票 10-28】フックの合言葉を `triggers:` 索引に統一するか、フックに合わせて個別最適にするか。材料は、`hooks.md` の表、引き当て率の初回（11-08）、部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）。相談の型の札づけ（10-29 済。`exmem/lessons/consultation-pattern.md`。測定は `topics/token-cap/records/2026-10-29-consultation-pattern-cost.md`）が最初の実例。相談は 10-29 の会話で始める（ユーザーの決定）。
+10. 【起票 10-28】フックの合言葉を `triggers:` 索引に統一するか、フックに合わせて個別最適にするか。材料は、`hooks.md` の表、引き当て率の初回（11-08）、部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）。相談の型の札づけ（10-29 済。`exmem/lessons/consultation-pattern.md`。測定は `topics/token-cap/records/2026-10-29-consultation-pattern-cost.md`）が最初の実例。相談は未実施（10-29 の会話で始める予定だったが、wrap で閉じた。次の会話で、型の①から）。
 
 11. 【起票 10-29】期日の移し替えの動作確認: 次の `review 消化` で `due.py` が動き、期日が来た行（最初は 11-01 の weekly）が Next Actions に上がるか。上がらない・遅れるなら、手順（`review-hook.md` の消化モード）を直す。
 12. 【起票 10-29】kit-growth の看板を下ろす（窓口と handover の削除、`topics/AGENTS.md` と `topics-index.md` の書き換え）: 仮決め済み（`decisions.md` の 2026-10-29）。`review 消化` で承認されたら実装する。

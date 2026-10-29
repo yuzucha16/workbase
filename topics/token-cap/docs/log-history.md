@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-29（相談の型の費用の測定）: 「workbase の続き na9」。root の NA 9（相談の型を `cap_meter.py --latest` の前後で測る）として、同じ内容の相談を型あり（18 応答、積算 931,030）と型なし（12 応答、477,830）で測った。12 応答の時点で型ありが +16.9%（79,158）。事実集めの量は同じで、差は `decisions.md` を探す読み（Grep 4,010 文字を含む）と、記録・push の規則書、`log.md` の読み。出力と Edit の引数は差の原因ではなかった。`decompose_session.py` に `--steps --upto N` を足し、`records/2026-10-29-consultation-pattern-cost.md` に記録した。ee の決定: 型を続ける、本文を `exmem/lessons/consultation-pattern.md` に移して `triggers:` を付ける。ee の依頼で、規則書の読みを遅らせる案を NA 9 に積んだ。コミット `c5cc311`。wrap。
+
 - 2026-10-29（NA 1b: 3 回目の A/B の結果と打ち切り）: 「token-cap の続き 1b」。ee が作業型の題材（3 ファイルの重複を探して削る案）で A→B 交互に逐次 6 回（`check_validation_goal3.csv`）。応答は A・B とも全件 2、tools は A が 3・4・3、B が 3・3・3、tokens は A 59.6〜60.7k、B 59.7k で差なし（3 ファイル計 14KB が 1 応答で読めるため下限に張り付いた）。答えの質（ee）: 両方正しい。B は少ない量で正確、A は補足が多く、出力のブレが少ないのは B。A・B とも「これ以上読みませんでした」と出しており、既存の仕組みが読む範囲を抑えている可能性がある。ee の決定: 打ち切って NA 1b を閉じる。`records/2026-10-29-na1b-ab-prompts.md` に結果 3 回目を追記。wrap。
 
 - 2026-10-29（continue で切る効果の差引と、NA 1b 3 回目の題材）: 「token-cap の続き」。Open Question「continue を多用すると応答数は増えるがトークンは減るのか」を、Windows 側 10-01 以降 675 件の `requests_by_kind.py --csv` で算出した。会話の途中の依頼は 1 件 557k（応答 1 回 90k）、最初の依頼は 273k（46k）、continue の最初は 213k（39k）。ピーク帯別では 〜60k が 1 件 169k、60〜100k が 537k、100〜150k が 805k、150k〜が 1650k。60k 以上は件数の 54%、トークンの 84%。切るほうが得で、境は 60k 付近と見られる（同じ作業の比較ではなく帯別の平均）。`records/2026-10-29-continue-split-effect.md`。続けて ee の依頼で NA 1b の 3 回目の題材（作業型: 3 ファイルの重複を探して削る案を出す。編集しない）の A・B の文面を作った（`records/2026-10-29-na1b-work-prompts.md`）。ee が次に 6 回施行する。wrap。

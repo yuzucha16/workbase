@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-29（NA 9: 相談の型の費用を測り、本文を lessons へ移した）
+- NA 9「相談の型の次の判断: `cap_meter.py --latest` を前後で測る」を済とした。型あり（積算 931,030、18 応答）と型なし（477,830、12 応答）を測り、12 応答の時点で型ありが +16.9%。差は `decisions.md` を探す読みと、記録・push の規則書。ユーザー「トークン的に差がないのであれば今後も使いたいです。型を使わない相談は議論が結構ブレました」。型の本文を `exmem/lessons/consultation-pattern.md`（`triggers:` 付き）に移し、`decisions.md` には採否と経緯だけ残した。測定は `topics/token-cap/records/2026-10-29-consultation-pattern-cost.md`（コミット `c5cc311`）。規則書の読みを遅らせる案は token-cap の NA 9 に積んだ。NA 10 の相談（合言葉を triggers に統一するか）は、この会話で始める予定だったが、会話が 109k に達したので wrap で閉じた。次の会話で型の①から行う。
+
 ### 2026-10-29（kit-growth の看板を下ろす相談。相談の型を使った）
 - ユーザーの依頼「kit-growth を、この先どう使うか、畳むか」を、相談の型（`decisions.md` の 2026-10-21）で進めた。事実: 窓口と `inbox.md` は 10-25 以降動かず、`records/` は 10-29 も更新（約 145KB）。ユーザーの回答: PC1 の push 不可は続く、振り返りは続ける、窓口と handover の削除は良い。仮決めは `decisions.md` の同日の項（コミット `d3c9eaf`）。実装は `review 消化` の後（NA 12）。`cap_meter.py --latest` の前後測定（NA 9）は、この回では行っていない。
 
