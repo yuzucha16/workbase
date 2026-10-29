@@ -7,7 +7,9 @@
 トークンは入力側（input + cache_read + cache_creation）の合計で、出力を含まない。
 
 使い方:
-  python -I requests_by_kind.py [--since 2026-10-01] [--csv out.csv] [ディレクトリ...]
+  python -I requests_by_kind.py [--since 2026-10-01] [--detail] [--csv out.csv] [ディレクトリ...]
+    --detail: other の 101 文字以上を、置き場（cwd）・長さ・最初か途中か・コードブロックの有無で仕分け、
+              continue と全体を「会話の最初の依頼か」で分ける（依頼文は出さない）。
     既定のディレクトリ = ~/.claude/projects/ の下のすべて。
 """
 import argparse
@@ -62,6 +64,7 @@ def kind_of(t):
 
 def requests(path):
     cur = None
+    first = True
     seen = set()
     for line in path.open(encoding="utf-8", errors="replace"):
         try:
@@ -72,8 +75,11 @@ def requests(path):
         if t is not None:
             if cur:
                 yield cur
+            cwd = (d.get("cwd") or "").replace("\\", "/").rstrip("/").rsplit("/", 1)[-1] or "?"
             cur = {"kind": kind_of(t), "chars": len(t), "ts": d.get("timestamp", ""),
-                   "responses": 0, "tokens": 0, "peak": 0, "tools": 0}
+                   "responses": 0, "tokens": 0, "peak": 0, "tools": 0,
+                   "cwd": cwd, "first": first, "code": "```" in t}
+            first = False
             continue
         if cur is None or d.get("isSidechain") or d.get("type") != "assistant":
             continue
@@ -102,9 +108,41 @@ def pct(xs, p):
     return xs[min(len(xs) - 1, int(len(xs) * p))]
 
 
+def group_table(title, qs, key, tot_r, tot_t):
+    """qs を key の値で分け、件数・応答・トークンを表にする（トークンの多い順）。"""
+    print(title)
+    print("区分 | 件数 | 応答 平均 | ツール平均 | 応答の割合 | トークンの割合 | トークンの合計")
+    g = defaultdict(list)
+    for q in qs:
+        g[key(q)].append(q)
+    for k, xs in sorted(g.items(), key=lambda kv: -sum(q["tokens"] for q in kv[1])):
+        st = sum(q["tokens"] for q in xs)
+        sr = sum(q["responses"] for q in xs)
+        print(f"{k} | {len(xs)} | {statistics.mean(q['responses'] for q in xs):.1f} | "
+              f"{statistics.mean(q['tools'] for q in xs):.1f} | {sr/tot_r:.0%} | {st/tot_t:.0%} | {st/1e6:.1f}M")
+    print()
+
+
+def detail(rows, tot_r, tot_t):
+    """other の長い依頼（101 文字以上）の仕分けと、continue の位置。依頼文は出さない。"""
+    long_other = [q for q in rows if q["kind"] == "other" and q["chars"] >= 101]
+    print()
+    print(f"== --detail: other の 101 文字以上 {len(long_other)} 件（依頼文は出さない。区分名は cwd の末尾の名前）")
+    band = lambda q: next(f"{lo}-{hi}" for lo, hi in ((101, 300), (301, 1000), (1001, 10**9)) if lo <= q["chars"] <= hi)
+    group_table("① 置き場（cwd）別", long_other, lambda q: q["cwd"], tot_r, tot_t)
+    group_table("② 長さの帯別（文字）", long_other, band, tot_r, tot_t)
+    group_table("③ 会話の最初の依頼か", long_other, lambda q: "最初" if q["first"] else "途中", tot_r, tot_t)
+    group_table("④ コードブロックの有無", long_other, lambda q: "あり" if q["code"] else "なし", tot_r, tot_t)
+    cont = [q for q in rows if q["kind"] == "continue"]
+    print(f"== --detail: continue {len(cont)} 件")
+    group_table("⑤ 会話の最初の依頼か（最初なら「続き」の起動の読みが入る）", cont, lambda q: "最初" if q["first"] else "途中", tot_r, tot_t)
+    group_table("⑥ 全体: 会話の最初の依頼か（種類別でなく全依頼）", rows, lambda q: "最初" if q["first"] else "途中", tot_r, tot_t)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("roots", nargs="*")
+    ap.add_argument("--detail", action="store_true", help="other の長い依頼と continue の仕分けを足す")
     ap.add_argument("--since", default="")
     ap.add_argument("--csv", default="")
     a = ap.parse_args()
@@ -149,6 +187,8 @@ def main():
         if qs:
             print(f"{lo}-{hi} | {len(qs)} | {statistics.mean(q['responses'] for q in qs):.1f} | "
                   f"{statistics.mean(q['tools'] for q in qs):.1f} | {sum(q['tokens'] for q in qs)/1e6:.1f}M")
+    if a.detail:
+        detail(rows, tot_r, tot_t)
     if a.csv:
         with open(a.csv, "w", newline="\n", encoding="utf-8") as f:
             w = csv.writer(f, lineterminator="\n")

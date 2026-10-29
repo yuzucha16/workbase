@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-29（NA7: PC1 room の効果の仮決めと `--detail`）
+
+PC1 room の日ごとが 10-27 以降 約 7 割減（仮決め 〜11-29）。`requests_by_kind.py` に `--detail` を追加。詳細は `topics/token-cap/docs/log-history.md` の同日。
+
 ### 2026-10-29（NA12: room の記録が ai/ai/records/ に出る件を解決。原因は PC1 の `room` コマンド）
 - 「topics/* の続き pc1でやること」。ee が PC1 の room で確認した結果（画面を共有）: 部屋の `~/.claude/hooks/room-stop-record.py` は古い版（62 行目 `m.group(1) + "/ai/records"`、説明も `<Project>/ai/records`）。`room init <Area> --only stophook` を実行しても直らなかった。`cwd` は `/mnt/room/task7_commcost`、マウントは `works/projects/task7_commcost/ai`。
 - 記録は 2 か所: `/mnt/room/task7_commcost/ai/records/`（`replies`、`sessions.jsonl`。古いフック。Windows 側で `ai/ai/records`）と、`/mnt/room/task7_commcost/records/`（`manifest.json`、`replies`、`room-log.md`、`sessions.jsonl`。新しい出力先）。

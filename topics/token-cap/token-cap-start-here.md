@@ -13,7 +13,7 @@ PC1 の 10-21 以降は room（WSL）側にあり、合算 約 170.7M（85%）�
 
 ## 次の一手
 
-「token-cap の続き」。止める基準の案（`integrate` の読む量を減らす。`docs/log.md` の Next Actions 2）、room の 107k の確認。lessons の分割は全 6 本が済んだ（10-27）。room の会話記録の退避は済み（`room reap`、10-27）。どこでも可。
+「token-cap の続き」。PC1 の room で `requests_by_kind.py --detail` を実行し、other の 101 文字以上を仕分ける（`docs/log.md` の Next Actions 1）。
 
 ## 読む順
 
