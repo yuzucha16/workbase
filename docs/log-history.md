@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-29（ファイル名の規則を作った）
+- `workflow-kit/naming-rules.md` を新設（kebab のまま、Python だけ snake。種別の語の表、日付は records だけ、版は名前に入れない）。`AGENTS.md` に 1 行、`guides/AGENTS.md` `logbook/README.md` `workflow-kit/README.md` を更新。`ai-room-*` の 3 組は `guides/explain/` 側を `-explain` 付きに改名。決定は `decisions.md` の同日の項。
+
 ### 2026-10-29（Python の版と呼び方を uv 管理の正本に揃える）
 - 現状の集計: .py を実行する行のうち、python を直接呼ぶのは 73、uv 経由は 61。人が Windows で叩く側は uv、AI は `python -I`、部屋は `python3` に分かれ、find_knowledge.py は 3 通りで呼ばれていた。OS 管理（WSL の `python3` 3.14.4）と uv 管理（room.py の 3.13.14）の版が混在していた。
 - 決定（ユーザー承認）: uv 管理を正本（`room/.python-version`）、呼び方の表、`requires-python` は `==3.13.*`、uv が止まったときだけ OS の `python`、古い版が要るスクリプトは個別指定。`decisions.md` の同日の項、`script-guide.md` の「Python の版と呼び方」、lesson `python-version-uv-canonical`、理解ガイド `python-version-uv`（コミット 39571f7）。
@@ -171,7 +174,7 @@ PC1 room の日ごとが 10-27 以降 約 7 割減（仮決め 〜11-29）。`re
 - 仕組みの決定は `review 消化` の3段で承認する（`approval-screening.md`）。仮決めは `【仮 〜日付】`。
 - やり方は `methods.md`（変更・調査1・調査2・振り返り1）。作り方は `exmem/lessons/method-creation.md`、改善の記録は `topics/kit-growth/records/`。
 - room（`workflow-kit/room/`）: 実機の通しは済み（2026-10-18）。Ubuntu 26.04 の部屋（`init`）、マスク・復元（10-21 に設定を廃止し、状態で決める形にした。単体テストのみ）、`room shell` と Node の流れは、実機で確認済み（ユーザー、2026-10-19）。`room init` の `wsl --install` の早戻りは、次に再現するまで保留（`log-history.md` の同日の項）。`room aws-key` は、10-20 に原因（`sh -c` の引数経路で代入した変数が空になる）を直し、PC1 で動作を確認した（`08202a7`）。
-- room の変換の道具（2026-10-20）: `init` が LibreOffice・日本語フォント・pandoc・Chromium・mermaid-cli を root で入れる（v1。PC2 で確認、PC1 は未確認）。`room run`（v2・v3）は案のみ。経緯と使い方は `guides/explain/ai-room-convert-tools.md`、決定は `decisions.md` の同日の項。
+- room の変換の道具（2026-10-20）: `init` が LibreOffice・日本語フォント・pandoc・Chromium・mermaid-cli を root で入れる（v1。PC2 で確認、PC1 は未確認）。`room run`（v2・v3）は案のみ。経緯と使い方は `guides/explain/ai-room-convert-tools-explain.md`、決定は `decisions.md` の同日の項。
 - room の pwsh 7 と ps1 の静的チェッカー（2026-10-21）: 束ねる役も ps1、bat は起動用の 3 行だけ（`dev-deliverable-guide.md`、`room-context.md`）。`init` が pwsh 7.6.7・PSScriptAnalyzer・Pester 5 を root で入れ、`workflow-kit/tools/check-ps1.ps1` が点検する。方針「部屋で完結できるなら部屋で実行する。Windows 依存部は小さな層にする」も `dev-deliverable-guide.md`（節「実行の方針」）と `ROOM.md` に書いた。部屋（26.04）に入っていることは確認済み。決定は `decisions.md` の同日の項。同日、薄い層は Python を既定にし、ps1 は例外にした（`check_py.py`、`uv run --script`。決定は同日の別の項。部屋の実機と `pywin32` の取得は未確認）。
 - room の Area を跨ぐ共有知（2026-10-21）: `room pull`（Area の `knowledge/` から条件で絞り、`_noai/raw/area/` へ）と、`restore` の Area 書き出し（`ai/out/knowledge/` → `areas/<Area>/knowledge/`。人が変えた既存ファイルがあれば止まる、`--force` で上書き）を実装し、実機の通しで問題なし。統合は部屋の作業（works の AI は実名を読まない）。手順は `guides/howto/ai-room-setup-script.md` の 4.1・6.1、理解は `guides/explain/cross-area-shared-knowledge.md`、決定は `topics/private-knowledge/docs/decisions.md`。
 - room の `start` の自動コミットと部屋の git（2026-10-21、`df4ff0d`）: `start` は回収の後に既定でコミットする（`--no-commit`）。部屋に、ローカルの git（`/home/ai/gitdirs/<Project>`、回収で捨てる）と `git` のラッパーを用意する。単体テストのみ。実機は未確認。決定は `decisions.md` の同日。
@@ -391,7 +394,7 @@ PC1 room の日ごとが 10-27 以降 約 7 割減（仮決め 〜11-29）。`re
 - 検討で分かったこと: 「窓口が2つ」に見えたのは、`areas/<Area>/knowledge/`（Project から循環した成果物）と `_noai/raw/`（作業の原本）の2つが入力元だったため。マスクの窓口は `_noai/raw` の一つ。知識と原本・成果物は別物なので置き場を分ける方針。置き場の設計は Next Actions 14。
 
 ### 2026-10-21（`stock ナレッジ`: 部屋の変換の道具と room run の設計）
-- `exmem/inbox/` に 2 件のメモを作った（クラウドのセッションなので、コミットして push した）: `2026-10-21-room-convert-tools-gotchas`（統合先: `ai-isolated-work-room.md`。道具の入れ方、Chromium・フォントの実機の落とし穴）、`2026-10-21-ai-run-record-design`（同。依頼と実行の記録の分離、気づく場所、スコープ、実データ実行の条件、最小の版から上げる進め方。進め方の 1 例は型にするには早い）。`stock 理解` は 10-20 に `guides/explain/ai-room-convert-tools.md` で済み。点検スクリプトは FAIL 0 / WARN 0。`decisions.md` の 2 項に `→` を足した。
+- `exmem/inbox/` に 2 件のメモを作った（クラウドのセッションなので、コミットして push した）: `2026-10-21-room-convert-tools-gotchas`（統合先: `ai-isolated-work-room.md`。道具の入れ方、Chromium・フォントの実機の落とし穴）、`2026-10-21-ai-run-record-design`（同。依頼と実行の記録の分離、気づく場所、スコープ、実データ実行の条件、最小の版から上げる進め方。進め方の 1 例は型にするには早い）。`stock 理解` は 10-20 に `guides/explain/ai-room-convert-tools-explain.md` で済み。点検スクリプトは FAIL 0 / WARN 0。`decisions.md` の 2 項に `→` を足した。
 
 ### 2026-10-21（`usage-viz` を閉じた）
 - ユーザーが選び、削除に賛成した（条件: stock と wrap が済んでいること）。stock は `guides/howto/claude-usage-report.md` に反映済み（落とし穴2件を含む）、経緯は 10-20 の項にある。決定の【この件】2件を root の `decisions.md` に移し、`topics/usage-viz/` を削除、索引と窓口の行を消した。`records/` を閉じるときの扱い（移す・消す）は規則が無かったので、移さず削除にした。10-28 の仕訳の正式化と一緒に、規則にするかを決める。
@@ -432,7 +435,7 @@ PC1 room の日ごとが 10-27 以降 約 7 割減（仮決め 〜11-29）。`re
 - 実装: `room.py` の `init` に、変換の道具（LibreOffice の calc・writer・impress、`fonts-noto-cjk`、pandoc、unzip）、日本語優先の `local.conf`、Chromium（Playwright 1.64.1、`/opt/ms-playwright`）と mermaid-cli 12.0.0、`room-mmdc` と `room-chrome` を足した（`73d8089`、`be1808e`、`1b4ef86`、`89f66ba`、`f15d513`）。PlemolJP は実装したが、試験が安定するまで外した。単体テスト 81 件が通る。
 - 実機（PC2 の使い捨ての部屋）: v1 の試験 1〜4 と、`init` の通しが通った。Chromium は、apt が snap のため Playwright 版にした。PC1 は未確認。
 - 遠回り: 叩き台の `room run` のスクリプトの置き場を `ai/out/win/` にしていたが、ユーザーの指摘で `ai/work/` の使い捨てのスクリプトの置き場に直した。Chromium の試験で、`data:` URL の文字コードの指定漏れを失敗と読みかけた（原因は試験の書き方）。
-- 記録: `guides/explain/ai-room-convert-tools.md`（理解ガイド。索引に 3 行）。クラウド側の控えは Project の共有フォルダ `notes/room-tools/`（PC 環境からは見えない）。
+- 記録: `guides/explain/ai-room-convert-tools-explain.md`（理解ガイド。索引に 3 行）。クラウド側の控えは Project の共有フォルダ `notes/room-tools/`（PC 環境からは見えない）。
 
 ### 2026-10-20（`review 消化`: Next Actions 3「room の実機の確認の残り」を、確認せずに閉じた）
 - ユーザーが各機能の役割と確認工数を尋ね、AI が実装を読んで答えた（工数は見積もりで、実測ではない）: ① 実データで `mask` の警告量（約15〜30分）、③ `base_stale`（約15分）、⑤ `restore` が `mapping.json` の欠け・食い違いで止まるか（約20〜30分。対応表のバックアップが先）、⑧ 部屋の AI が `stock` の下書きを書けるか（約30分〜1時間）。合計は約1.5〜2.5時間。ユーザーは「実際に使うときになったら聞く」として、項目を閉じた。**4件とも実機では未確認のまま**（③ は単体テストのみ、① は合成データのみ）。

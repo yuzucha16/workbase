@@ -58,7 +58,7 @@ S13〜S26 は、`triggers:` を付ける前の言葉で、依頼文に自然に�
 | B14 | 新しい案件のフォルダを Projects と Areas のどちらに作るか | `exmem/lessons/para-operations.md` | 1/2 |
 | B15 | TLS 検査のあるプロキシで証明書エラーが出て pip や npm が通らない | `guides/explain/ssl-inspection.md` | 1/3 |
 | B16 | 長いセッションだとコストが増えるのはなぜか | `guides/explain/claude-code-cost-session-size.md` | 1/2 |
-| B17 | 部屋で Word を PDF に変換したい | `guides/explain/ai-room-convert-tools.md` | 2/2 |
+| B17 | 部屋で Word を PDF に変換したい | `guides/explain/ai-room-convert-tools-explain.md` | 2/2 |
 | B18 | 調べ物のやり方を決めて、ネットで調査して比較表を作って | `exmem/lessons/research-method.md` | 3/3 |
 
 結果: 上位 5 件に入った 17/18、1 位 12/18。取りこぼしは B07（「両方入れて起動を選べる」。ノートの語は `デュアルブート` `マルチブート` など名詞だけ）。1 位でないのは B09・B11（`Claude Code` の 1 語が当たる他のノートと同点で、パス順で後ろ）、B12、B17、B18。並べ方は、当たった語の数 → 当たった語の最長の長さ → パス（`find_knowledge.py` の `lookup_triggers` を読んで確かめた）。

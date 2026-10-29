@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】ファイル名の規則を `workflow-kit/naming-rules.md` に置く。文字種は kebab のまま、Python だけ snake（2026-10-29）
+- 根拠: ユーザーの決定（2026-10-29）。読み手は主に AI なので、検索性と重複除外の観点で規則を作る。実測（328 本）: 明文の規則は「ファイル名は一意」だけで、kebab は慣習。`ai-room-*` の 3 組が `exmem/lessons/` と `guides/explain/` に重複し、リンク 15 本の行き先が決まらなかった。
+- 決めたこと: ①文字種は kebab（`.md`・ps1・ディレクトリ）、Python だけ snake。snake に揃える案は、`[[...]]` 953 本（140 ファイル）、本文中のパス 198 ファイル、md 268 本・ディレクトリ 27 個の改名に見合わないため退けた（snake の利点は Python の import 制約だけ。ユーザーが選択）。②これから作るファイルに適用し、既存は触るついでに直す（一括改名はしない。段階的に）。③種別の語は表で管理する。日付は `records/` だけ。版は名前に入れない。
+- 実施: `guides/explain/ai-room-{data-layout,convert-tools,concurrent-start}.md` を `-explain` 付きに改名し、リンクを付け替えた（壊れたリンクの検査済み）。
+- 却下案: 全ファイルを snake に揃える（上記）。`*-output` の改名（8 本とも意味が揃い、Glob でちょうど当たる）。
+
 ### 【汎用】Python の版は uv 管理を正本にし、WSL の `python3` も同じ版に揃える。OS 管理の Python への落ち方は緊急時だけ（2026-10-29）
 - 根拠: ユーザーの決定（2026-10-29）。Python は版に敏感で、トラブルでの workbase のダウンタイムを短くしたい。実態は OS 管理（WSL の `python3` 3.14.4、Windows の素の `python`）と uv 管理（room.py の 3.13.14）が混在していた。数と場所は `topics/` ではなく project files の `notes/python-invocation/`（このリポジトリの外）に整理した。
 - 正本: `workflow-kit/room/.python-version`（今は 3.13.14）。
@@ -391,7 +397,7 @@
 
 ### 【この件】会議録のナレッジ化（`topics/private-knowledge/`）を閉じる。実装の決定をここに移す（2026-10-21）
 - 決めたこと（ユーザー、2026-10-21。実機で試して閉じることに賛成）: ①規則（型・タグ・索引・昇格の流れ）だけ workbase に置き、中身（顧客・案件）は works 側の Area に置く。参照用は Project を跨げる Area 配下。②共有の単位は Area（自社・顧客ごとの抽出は want で `org:`）。③AI 向け・私向けは1ファイル2層（冒頭の数行＝人向け、本文＝AI 向け）。決定事項・ToDo は既存の3ラベルに載せる。④顧客名は Area 内では書いてよく、AI（room）に渡すところはマスク。⑤渡し方は、必要な分を Area から取り出してマスクした写しを部屋に置く。選び方は「絞って人が確認」（**仮案**。負担が出たら見直す）。写しは渡すときに作る。⑥統合は部屋の作業にする（works の AI は実名を読まない。deny は `Read`/`Edit` の安全網でシェルは止まらない）。知識は3層（事実 = Area、部屋用の写し、一般化した教訓 = workbase）で、固有の事実は仮名でも workbase に切り出さない。⑦`room pull`（`--where <項目>=<値>`、`status: active` のみ）と `restore` の Area 書き出し（`ai/out/knowledge/` → Area）を実装した。人が変えた既存ファイルがあれば `restore` が止まり、`--force` で上書き（直前の版を退避）。manifest に Area のファイル名を書かない（部屋の AI から見え、顧客名を含みうる）。⑧会議録の型: `YYYY-MM-DD-<slug>.md`（統合ノートは `kind: integrated`）、`type: area-note`、見出しは 冒頭（10行以内〔仮〕）/ 決定 / ToDo（表）/ 背景・経緯 / 事実・数値 / 未決・要確認。ToDo の正は表。
-- 根拠: ユーザーの回答と承認（2026-10-21）。実機の通し試験（ダミーの Area）は「すべて問題なし」、続けて実際に使って「完了」と報告（個別の数字は未記録）。案と比較は `guides/explain/cross-area-shared-knowledge.md`、一般化した教訓は `exmem/lessons/` と `guides/explain/ai-room-data-layout.md` に反映済み。
+- 根拠: ユーザーの回答と承認（2026-10-21）。実機の通し試験（ダミーの Area）は「すべて問題なし」、続けて実際に使って「完了」と報告（個別の数字は未記録）。案と比較は `guides/explain/cross-area-shared-knowledge.md`、一般化した教訓は `exmem/lessons/` と `guides/explain/ai-room-data-layout-explain.md` に反映済み。
 - 却下案: 非公開リポジトリの新設、マスクして workbase に上げる、2ファイル、Project 内だけの置き場、AI が Area を直接読む案、常にマスク済みの写しを持つ案。
 - その後の変更: Area の知識置き場は `areas/<Area>/_noai/knowledge/` に移り、`data:` は廃止された（上の同日の【汎用】の項）。型（⑧）の見本 `records/meeting-note-example.md` は、閉じるときに削除した（履歴は git）。2026-10-28 に、ユーザーが `workflow-kit/examples/meeting-note-example.md` へ移すと決めた（置き場を今の形に直した）。
 - 閉じ方: `records/` の計画・見本・確認メモは移さず削除した。残件は `docs/log.md` の Next Actions 12。
@@ -402,7 +408,7 @@
 - 却下案: AI がホームに道具を入れる（取得元と版を AI が選ぶ）、道具を入れない（HTML 化は Python、`.ps1` は人が毎回操作を覚える）、`interop` を有効にする（境界が破れる）、`room run` の全体実行・Area 単位の実行（成果物が変わりうる）、実行の記録を AI も書ける形（偽れる）。
 - 確認済み（PC2 の使い捨ての部屋、2026-10-20）: LibreOffice 26.2.6.3 の xlsx の PDF 変換と再計算、pandoc 3.7.0.2 の日本語、Chromium の起動と PDF（NotoSansCJKjp）、mermaid の PNG（日本語ラベル。ユーザーが目で確認）、`init` を通して `mmdc --version` が出ること。**PC1（TLS 検査）は未確認。** `room run` と PlemolJP の `init` での実機確認は未了。
 - 見直しの条件: PC1 で取得できなければ取得の手順を直し、直せなければ v2 に上げる。v2 は v1 の価値の判定の後。
-- → [[ai-room-convert-tools]]（理解ガイド）、inbox/2026-10-21-room-convert-tools-gotchas、inbox/2026-10-21-ai-run-record-design
+- → [[ai-room-convert-tools-explain]]（理解ガイド）、inbox/2026-10-21-room-convert-tools-gotchas、inbox/2026-10-21-ai-run-record-design
 
 ### 【汎用】計画のやり方を、試験運用で `workflow-kit/` に取り込んだ（2026-10-20）
 - 決めたこと: 3層で正式化済み（`topics/planning-method/docs/decisions.md` の 2026-10-20）の実装。新ファイルは `workflow-kit/start-plan.md`（手順と欄の定義）と `exmem/lessons/planning-method.md`（背景・Facts・Open Questions）。`methods.md` に区分「計画」（計画1）、`start-hook.md` に `start 計画`（引数つきモードの1節。本体は `start-plan.md` に置いたので +20% の枠を最小に抑えた）、`hooks.md`（別名「計画で始めて」）、`hook-matrix.md` の review の点検 7、`exmem-index.md`、`method-creation.md` の事例の表、`workflow-kit/README.md` の表を更新した。
@@ -894,7 +900,7 @@
 
 ## Gotchas
 
-- 【汎用】部屋（Ubuntu 26.04）で Chromium を使うとき: apt の `chromium` に候補が無く、`chromium-browser` は snap への移行パッケージで部屋では使えない。Playwright の Chromium は、不足するライブラリ `libasound2t64` を足せば動く。`--dump-dom` の日本語が化けるのは、`data:` URL に `;charset=utf-8` が無いため（Chromium の不具合ではない）。dbus の警告は無害。`fonts-noto-cjk` は既定で簡体字（sc）が選ばれるので、`/etc/fonts/local.conf` で JP を優先する（実機: 2026-10-20）。 → [[ai-room-convert-tools]]、inbox/2026-10-21-room-convert-tools-gotchas
+- 【汎用】部屋（Ubuntu 26.04）で Chromium を使うとき: apt の `chromium` に候補が無く、`chromium-browser` は snap への移行パッケージで部屋では使えない。Playwright の Chromium は、不足するライブラリ `libasound2t64` を足せば動く。`--dump-dom` の日本語が化けるのは、`data:` URL に `;charset=utf-8` が無いため（Chromium の不具合ではない）。dbus の警告は無害。`fonts-noto-cjk` は既定で簡体字（sc）が選ばれるので、`/etc/fonts/local.conf` で JP を優先する（実機: 2026-10-20）。 → [[ai-room-convert-tools-explain]]、inbox/2026-10-21-room-convert-tools-gotchas
 - 【汎用】automount を切った WSL の部屋で、Windows の `WSLENV` に `/p` 付きのパス（証明書など）があると、変換できず、入るたびに「failed to translate」が出る。しかも `SSL_CERT_FILE` などが壊れたまま部屋に残り、curl が証明書エラー（終了コード 60）になる。`wsl.exe` に渡す環境から `WSLENV` を外す（実機: 2026-10-19、PC1）。部屋の `curl` の発行元を `openssl s_client … | openssl x509 -noout -issuer` で見ると、TLS 検査のプロキシかどうかが分かる。 → [[ai-isolated-work-room]]
 - 【汎用】TLS 検査のあるネットワークの部屋では、curl だけでなく、Node（`NODE_EXTRA_CA_CERTS`）、npm（`npm config set cafile`）、AWS CLI（`AWS_CA_BUNDLE`）も、システムの証明書ストアを見ない。ツールごとに、システムのバンドル（`/etc/ssl/certs/ca-certificates.crt`）を指す（実機: curl は `--ca-cert` の後に通った、2026-10-19。npm、Node、AWS の変数は、設定したが単独の効果は未分離）。 → [[ai-isolated-work-room]]
 - 【汎用】Ubuntu 24.04 の apt の Node は 18。Zed の Agent（`@agentclientprotocol/claude-agent-acp`、`npx` で起動）は 22 以上を要る。部屋に Node が無いと「npx を知らない」になる（実機: 2026-10-19）。 → [[ai-isolated-work-room]]

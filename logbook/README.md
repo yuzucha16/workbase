@@ -20,7 +20,7 @@
 
 - lesson からファイルごと移すものは、名前を保つ（例: `user-thinking-habits.md`）。
 - lesson の一部（節）を移すものは `<lesson の名前>-log.md`（例: `ai-work-metrics-log.md`）。lesson と同名にすると「ファイル名は Vault 内で一意」に反し、`[[リンク]]` の行き先が決まらない。
-- 新規は、lesson と重ならない名前にする。
+- 新規は、lesson と重ならない名前にする。 名前の規則の全体は `workflow-kit/naming-rules.md`。
 
 ### frontmatter
 

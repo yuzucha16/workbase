@@ -51,6 +51,7 @@
 | ファイル | 役割 |
 |---|---|
 | `docs-rules.md` | `docs/` の運用規則 |
+| `naming-rules.md` | ファイル名の規則（作る・改名する前に読む） |
 | `docs-format.md` | `docs/` の書式（log.md、log-history.md、due.md、decisions.md。書くときだけ読む） |
 | `docs-carry.md` | `decisions.md` の項目を知識にしたときの規則（`→` の付け方、運び方） |
 | `commit-push-rules.md` | コミットの規則（範囲、確認、身元・トレーラー、しないこと） |

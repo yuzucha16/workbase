@@ -43,8 +43,8 @@ updated: 2026-10-28
 | なぜ「AI 作業部屋」を入れたのか、選択肢から選ぶまでの経緯と、試して確かめたことを、自分で説明できるようにする | [[ai-room-why]] | 理解ガイド |
 | Area の知識（実名入り）を、別の Project の部屋の AI に使わせる設計と、workbase の共有知との違いを、自分で説明できるようにする | [[cross-area-shared-knowledge]] | 理解ガイド |
 | AI に見せたくないファイルを、設定で隠す方式（禁止リスト）でなく、渡したものだけ見せる方式（許可リスト）にする理由を思い出す | [[ai-room-why#2. 理解のための基礎知識]] | 理解ガイド |
-| 実名入りの原本・成果物・知識が Area と Project のどこに置かれ、どの順に流れるか（`_noai/source` `deliverable` `knowledge`、`pull` → `mask` → `restore`）を、自分で説明できるようにする | [[ai-room-data-layout]] | 理解ガイド |
-| 同じ Area の Project を、同じ部屋で並行して `room start` したとき、何が共有され、どこで衝突するかを思い出す。後から start が止まる、`index.lock` で失敗する | [[ai-room-concurrent-start]] | 理解ガイド |
+| 実名入りの原本・成果物・知識が Area と Project のどこに置かれ、どの順に流れるか（`_noai/source` `deliverable` `knowledge`、`pull` → `mask` → `restore`）を、自分で説明できるようにする | [[ai-room-data-layout-explain]] | 理解ガイド |
+| 同じ Area の Project を、同じ部屋で並行して `room start` したとき、何が共有され、どこで衝突するかを思い出す。後から start が止まる、`index.lock` で失敗する | [[ai-room-concurrent-start-explain]] | 理解ガイド |
 | 部屋で AI を使っていて、`Permission denied`、成果物がコミットに入らない、マウントが残る、などで困った | [[ai-room-why#3. チェックリスト（症状・疑問 → 原因 → 対処）]]、[[ai-room-setup#10. うまくいかないとき]] | 理解ガイド・手順書 |
 | WSL に AI 作業部屋を作り、Project の `ai/` だけを渡して Claude Code で作業する | [[ai-room-setup]] | 手順書 |
 | 実際の名前（`pilot2` `pilot2-1`）で、`room.py` を1手ずつ通して、部屋の作成から `close` まで行う | [[ai-room-setup-script]] | 手順書 |
@@ -54,9 +54,9 @@ updated: 2026-10-28
 | シートや個人名を消した xlsx・pptx を AI に見せたら、消したはずのものが見えていた。なぜ残るかと、渡す前の点検・掃除（`cleankit.py`）を思い出す | [[ooxml-residue]] | 理解ガイド |
 | xlsx・pptx を AI に渡す前に、`cleankit.py` で点検・掃除する（強さのプロファイルと、外す部品の種類の選び方） | [[ooxml-clean]] | 手順書 |
 | 部屋で作業した Project を閉じて、`archives/` に移す | [[ai-room-setup#7. Project を閉じる]] | 手順書 |
-| 部屋の中で、Markdown の HTML 化、mermaid の画像出力、xlsx の変換と再計算をしたい。入っている道具と、使い方（`room-mmdc` など）を思い出す | [[ai-room-convert-tools#3. v1 で入れたもの]] | 理解ガイド |
-| Windows が要る実行（pwsh、Excel 固有の機能）を、AI がスクリプトを作り人が 1 件ずつ実行する形にする案（`room run`）と、その境界への影響を思い出す | [[ai-room-convert-tools#7. room run の案（未実装）]] | 理解ガイド |
-| 部屋の Chromium が起動しない、PDF の漢字の字形が中国式になる、日本語が化ける、などで困った | [[ai-room-convert-tools#5. 実機で分かったこと（PC2、2026-10-20）]] | 理解ガイド |
+| 部屋の中で、Markdown の HTML 化、mermaid の画像出力、xlsx の変換と再計算をしたい。入っている道具と、使い方（`room-mmdc` など）を思い出す | [[ai-room-convert-tools-explain#3. v1 で入れたもの]] | 理解ガイド |
+| Windows が要る実行（pwsh、Excel 固有の機能）を、AI がスクリプトを作り人が 1 件ずつ実行する形にする案（`room run`）と、その境界への影響を思い出す | [[ai-room-convert-tools-explain#7. room run の案（未実装）]] | 理解ガイド |
+| 部屋の Chromium が起動しない、PDF の漢字の字形が中国式になる、日本語が化ける、などで困った | [[ai-room-convert-tools-explain#5. 実機で分かったこと（PC2、2026-10-20）]] | 理解ガイド |
 
 ### 仕組みを見直す
 
@@ -98,7 +98,7 @@ updated: 2026-10-28
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
 | 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[bedrock-first-hello]]、[[claude-usage-report]]、[[ooxml-clean]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools]]、[[ai-room-data-layout]]、[[ai-room-concurrent-start]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools-explain]]、[[ai-room-data-layout-explain]]、[[ai-room-concurrent-start-explain]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新
