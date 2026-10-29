@@ -8,6 +8,7 @@
 - やり方は `methods.md`。`brief 計画` は試験運用中。
 - room: type は `dev` と `inv`。`mkworks` などの新機能は単体テストまで（`room/README.md`）。
 - Python の版: uv 管理を正本（`workflow-kit/room/.python-version`）。呼び方は `script-guide.md` の「Python の版と呼び方」（10-29 決定）。
+- ファイル名: `workflow-kit/naming-rules.md`（kebab、Python だけ snake。10-29 決定）。既存の名前は触るついでに直し、一括改名はしない。
 - 人が叩くスクリプトは `run` / `verify` / `release`（`script-guide.md`）。Windows は未確認。
 - 索引（triggers）: dotfiles のフックが依頼ごとに出す（`topics/md-link-graph/`）。相談の型の本文は `exmem/lessons/consultation-pattern.md`（「相談」で引ける。10-29）。
 
