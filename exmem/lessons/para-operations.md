@@ -70,7 +70,7 @@ PARA の `projects/` と `areas/` の役割・判断基準・構造・フック�
 - タスクの状態の正本は、Project 側（Project の `README.md` の frontmatter）に置く。Area は、Bases の一覧で集約して読むだけで、書き戻さない。
 - 未着手のタスク候補（まだ Project にしていないもの）は、Area の `README.md` に置く。
 - Area に `docs/decisions.md` を持たせ、案件全体の決定を置く。
-- 判断の項目のラベルを3つにする（変更がある前提で試す）: 【この件】= Project に残す、【案件】= 見つけた時点で Area の `docs/decisions.md` に直接書く（例: タスクで判明した、仕様変更などの案件全体への影響）、【汎用】= workbase へ（今の `exmem/inbox/` の流れ）。close のときに Project から Area へ戻す処理は要らなくなる。
+- 判断の項目のラベルを3つにする（変更がある前提で試す）: 【この件】= Project に残す、【案件】= 見つけた時点で Area の `docs/decisions.md` に直接書く（例: タスクで判明した、仕様変更などの案件全体への影響）、【汎用】= workbase へ（今の `exmem/inbox/` の流れ）。close のときに Project から Area へ戻す処理は要らなくなる。（2026-10-29 補足: 部屋の中では、`room start` の回収で Area の `ai/docs/inbox.md`（郵便受け）へ入り、Area 側で消化したものを `docs/decisions.md` に書く 2 段。部屋の決定 #5 が優先。）
 - open のフックは、「作業を始めて」とは別にする。
 
 ## Open Questions
