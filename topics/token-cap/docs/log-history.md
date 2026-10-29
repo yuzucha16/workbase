@@ -89,3 +89,5 @@
 - 2026-10-27（lessons の分割の続き）: ee の依頼で、obsidian-vault-structure（25KB）を 3 本（本体 12KB、obsidian-vault-rename、obsidian-vault-home-works）、windows-bat-testing（23KB）を 3 本（本体 7KB、windows-bat-pitfalls、windows-bat-eol-and-log）に分けた。索引・triggers 点検（fail=0）・リンクは確認済み。これで大きい lessons 6 本の分割が済んだ。
 
 - 2026-10-28（brief の引数を絞るか）: Next Actions 6 の机上の部分を進めた。引数つき `brief` の開始時の読み込みは 約 7k でなく 17〜24k（`methods.md` 全文とやり方のノートまで読むため）と測り、出力の型だけなら 1 型 0.5〜2k と分かった（`691c5a4`、`records/2026-10-28-brief-mode-load.md`）。ee は「振り返りだけで試す」を選び、`retrospective-method-output` と `-2-output` に切り出して、依頼の語を型のノートへ移した（`a9a6c5c`。`decisions.md` に記録）。索引の部分一致は「振り返って」に当たらないため、語は語幹（`振り返`）にした。
+
+- 2026-10-29（全文読みの縮小・応答数の規則）: ee の承認で、`stock-hook.md` から例外の扱いを `stock-exceptions.md` に分けた（19.2KB → 17.8KB。小さめ）。NA 1 の再測定を `docs/due.md` の 11-05 に移し、NA 3（マクロ側の常駐文書）は月変わりでリセットされるため省いた。NA 5 の (b) は、重い other がマクロ作業の途中の細かい依頼（入力・出力・目的を明示）で、探索の読みも効いていると ee が回答。型にするのは token-cap の方向が出てから（手戻り防止）。(c)(e) を `AGENTS.md` に 2 行で入れた。後回しの項目に「優先度低」を付けた。wrap。
