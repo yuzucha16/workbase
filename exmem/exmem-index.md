@@ -43,6 +43,7 @@ updated: 2026-10-16
 - [[gh-release-download]]: gh release download は未ログインでも使える
 - [[git-line-endings]]: Git の改行コードを .gitattributes で決める
 - [[git-rebase-chronology]]: rebase の前にコミットの時系列を確認する
+- [[git-history-rewrite]]: 公開リポジトリの履歴を git filter-repo で書き換える（語の置換と作者の匿名化）
 - [[git-subdirectory-split]]: 履歴を保ってサブディレクトリを別リポジトリに切り出す（git filter-repo）
 - [[human-ai-decision-loop]]: 人間とAIの意思決定ループ（Decision Loop）
 - [[improvement-coverage-matrix]]: 改善のやり方3: 観点を絞り込み、星取り表から修正・削除・追加の案を出して実施項目を決める
@@ -65,6 +66,7 @@ updated: 2026-10-16
 - [[power-automate-office-automation]]: Power Automate / Office Scriptsによる業務自動化
 - [[problem-solving-analogy]]: 問題解決のやり方1: 一般化して、類似問題の解き方を借りる
 - [[problem-solving-iterative-revision]]: 問題解決のやり方2: 前提を書き戻して、決定に差し戻す反復
+- [[public-repo-wording]]: 公開リポジトリの語は、新しい固有名に置き換えず、性質で書く
 - [[research-method]]: 調査のやり方1: 問いを構造化し、読者を決めて、一次情報から事実と所感を分けてまとめる（Must / Want）
 - [[research-method-2]]: 調査のやり方2: 手順を調べ、前提と骨格を固定して、実行できる手順書にまとめる（Must / Want）
 - [[retrospective-method]]: 振り返りのやり方1（改善4。定期）: 済んだ進め方・成果物を、評価軸を先に決めて、良い点と悪い点の両面で評価する（Must / Want）

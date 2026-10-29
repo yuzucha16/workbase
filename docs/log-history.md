@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-29（wording-neutralize を閉じた）
+- `topics/close-procedure.md` で閉じた。トピックの `log.md` と root の経緯は一致し、段階 4 と作者の匿名化（NA 11）は済み、root に移す残件はなかった。経験則 2 件を `exmem/lessons/public-repo-wording.md` と `git-history-rewrite.md` に移し（ユーザーの採否）、【この件】の決定は `decisions.md` の同日の項にまとめた。`records/` の影響分析は削除、手順は `git-history-rewrite.md` に吸収し、指していた `push-rules.md` と本ファイルのリンクを書き換えた。共有フォルダの下書き（`notes/wording-neutralize/`、`notes/na1-usernames/`）は、ユーザーが消す。
+
 ### 2026-10-29（期日の表を `docs/due.md` に移し、`review 消化` で拾うようにした）
 
 `log.md` の「期日」の節を `docs/due.md` に移した（`log.md` は 2,109 → 1,458 文字）。開始時の通知（今日以前・3日以内）をやめ、`review 消化` の最初の手順で `workflow-kit/tools/due.py` を実行する形にした。期日が今日以前の単発は Next Actions に上げて表から消し、定例は次回の期日に書き換える。`due.py` は日付の判定を 4 つの日付で確かめた（期日前は「なし」、超過日数の表示）。`check_hook_outline.py` の FAIL 2 件（`review-hook.md`、`wrap-hook.md`）は変更前から同じ内容で出ていた。決定は `decisions.md` の同日の項。
@@ -27,7 +30,7 @@ PC1 room の日ごとが 10-27 以降 約 7 割減（仮決め 〜11-29）。`re
 - PC1 で `room init <Area> --only stophook` は何も出力せず、フックは 10-22 のまま。`uv run room.py init <Area> --only stophook` なら正しく `task7_commcost/ai/records` に書いた。`room` コマンドはこのリポジトリに定義が無い。`workflow-kit/room` を指すと ee が確認したが、出力が無かった理由は未特定。ee が古い `ai/records/` を `records/` へ手動で統合した。`room` は削除し、`uv run room.py` に統一する（NA 13）。
 
 ### 2026-10-29（NA11: works・dotfiles・workbase の作者を agent にそろえた）
-- 手順（`topics/wording-neutralize/records/2026-10-28-author-rewrite-steps.md`）で、works（208）と dotfiles（240）を mirror clone → `git filter-repo --mailmap --replace-message` → `push --force --mirror`（ユーザーが deny を切った）。dotfiles は `user@example.com` の作者も `agent` にした。本文の URL は `github.com/owner/` に置換。
+- 手順（`exmem/lessons/git-history-rewrite.md` に移した）で、works（208）と dotfiles（240）を mirror clone → `git filter-repo --mailmap --replace-message` → `push --force --mirror`（ユーザーが deny を切った）。dotfiles は `user@example.com` の作者も `agent` にした。本文の URL は `github.com/owner/` に置換。
 - workbase も作者が `yuzucha16` のコミットを 189 件残していた（10-28 の「全コミットが agent」は誤りだった。直近 15 件だけを見て判断した）。同じ手順で 1351 コミットを書き換え、43 ブランチを force push した。確認は `git log --all --format='%aN <%aE>' | sort -u`（stash と古い remote ref が残っていると偽陽性になる）。
 - 他の Windows PC と手元の clone は `reset --hard` で合わせ済み。残りは room（WSL）の clone。ユーザーは各 clone の local の `user.name/email` を `agent` / `agent@agent.local` にした（global は変えない）。
 
@@ -36,7 +39,7 @@ PC1 room の日ごとが 10-27 以降 約 7 割減（仮決め 〜11-29）。`re
 
 ### 2026-10-28（NA1: 履歴のユーザー名の調査、author の匿名化の準備）
 - works（`worksample`）と dotfiles の全履歴を調べた。パスのユーザー名の位置は、`ck` `ee` `yy` `u` `you` と各種プレースホルダーだけで、実際のユーザー名はなかった。ギャップ 8 を閉じた（`docs/alignment-baseline.md`、7a7dea6）。
-- noreply メールには `yuzucha16` が入っているので、ユーザー名を隠したことにならない。workbase は全コミットが `agent <agent@agent.local>`。works と dotfiles を同じにする手順と mailmap を用意し、複製で試した（works 208、dotfiles 240 コミットが全部 agent、本文の `yuzucha16` も 0 件）。force push は未実施（`topics/wording-neutralize/records/2026-10-28-author-rewrite-steps.md`）。
+- noreply メールには `yuzucha16` が入っているので、ユーザー名を隠したことにならない。workbase は全コミットが `agent <agent@agent.local>`。works と dotfiles を同じにする手順と mailmap を用意し、複製で試した（works 208、dotfiles 240 コミットが全部 agent、本文の `yuzucha16` も 0 件）。force push は未実施（手順は `exmem/lessons/git-history-rewrite.md` に移した）。
 
 ### 2026-10-28（相談の型の5回目の判断、NA 9・10 の起票）
 - 「oq を消化します」の相談で、相談の型を 5 回目として使った。結論は「残す」（トリガー方式、PC の実測の後に置き場を決める）。Open Questions の該当行を消し、NA 9 に移した。あわせて、フックの合言葉を `triggers:` 索引に統一するかの検討を NA 10 に起票した（ユーザーの依頼）。根拠は `decisions.md` の 2026-10-21 の項の追記。
