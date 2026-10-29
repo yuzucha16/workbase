@@ -35,6 +35,7 @@ updated: 2026-10-16
 - [[claude-code-project-settings]]: プロジェクトの .claude/ の管理方針
 - [[claude-code-storage]]: Claude Codeのチャット履歴とメモリの保存場所
 - [[claude-code-vs-cowork]]: Claude CodeとCoworkの使い分け（Windows）とExcelスキル
+- [[consultation-pattern]]: 相談の型（論点の一覧 → 叩き台 → 質問 → 仮決めの締め）と、読み込みの費用
 - [[dotfiles-shell-tuning]]: dotfiles の起動時間・WSL の見た目・追跡方針
 - [[embedded-c-constraint-checks]]: 組込み C の制約を機械で検査する
 - [[excel-vba-ai-development]]: Excel VBA マクロを AI で作るときの規約と落とし穴

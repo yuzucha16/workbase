@@ -18,6 +18,11 @@ cap_meter.py の「いまの大きさ」「土台」は出力を含むので、�
     --session: 会話の ID（cap_meter.py --latest の [ ] 内。先頭の数文字でよい）で選ぶ。時刻で取り違える
       並行会話があっても確実。1 件に決まらないときは候補を出して止まる。
     既定のディレクトリ = ~/.claude/projects/ の下のすべて。
+  python -I decompose_session.py --session 7897c2af --steps [--upto 12]
+    --steps: 分解の代わりに、応答ごとの入力の大きさ・増加・積算と、その応答が呼んだ道具（結果の文字数）を表にする。
+      道具の結果は次の応答の入力に乗る。--upto N を付けると、N 応答目までの積算と、大きな結果（1,000 文字以上）が
+      N 応答目までに何回読み直されたか（文字数 × 回数。文字数 ≒ トークンと仮定した概算）を上位 8 件出す。
+      2 つの会話を同じ応答数で比べる（型の有無など）ときに使う（2026-10-29）。
 """
 import argparse
 import json
@@ -171,8 +176,60 @@ def decompose(path):
         print(f"  {n:>8,} 文字  {Path(fp.replace(chr(92), '/')).name}  ×{per_file[fp]}")
 
 
+def steps(path, upto):
+    idx = {}  # (message.id, requestId) -> 応答の番号（1 始まり）
+    inputs = []
+    calls = {}  # tool_use id -> (応答の番号, 道具名, 表示名)
+    result_len = {}
+    for d in records(path):
+        m = d.get("message") or {}
+        c = m.get("content")
+        if d.get("type") == "user" and isinstance(c, list):
+            for b in c:
+                if isinstance(b, dict) and b.get("type") == "tool_result":
+                    result_len[b.get("tool_use_id")] = text_len(b.get("content"))
+        if d.get("type") != "assistant":
+            continue
+        key = (m.get("id"), d.get("requestId"))
+        if key not in idx:
+            idx[key] = len(inputs) + 1
+            u = m.get("usage") or {}
+            inputs.append(sum(u.get(k, 0) or 0 for k in USAGE_KEYS))
+        for b in c if isinstance(c, list) else []:
+            if isinstance(b, dict) and b.get("type") == "tool_use" and b["id"] not in calls:
+                i = b.get("input") or {}
+                fp = i.get("file_path") or i.get("path") or ""
+                label = Path(fp.replace("\\", "/")).name if fp else str(i.get("command") or i.get("pattern") or "")[:40].replace("\n", " ")
+                calls[b["id"]] = (idx[key], b["name"], label)
+
+    print(f"会話: {path}")
+    by_resp = {}
+    for tid, (n, name, label) in calls.items():
+        by_resp.setdefault(n, []).append(f"{name} {label} {result_len.get(tid, 0):,}")
+    total = 0
+    print("応答    入力   増加      積算  道具（結果の文字数）")
+    for n, size in enumerate(inputs, 1):
+        total += size
+        step = size - inputs[n - 2] if n > 1 else 0
+        print(f"{n:>4}{size:>9,}{step:>7,}{total:>10,}  " + "; ".join(by_resp.get(n, [])))
+    if not upto:
+        return
+    upto = min(upto, len(inputs))
+    print(f"\n{upto} 応答目までの積算 {sum(inputs[:upto]):,}、{upto} 応答目の大きさ {inputs[upto - 1]:,}")
+    carry = sorted(
+        ((result_len.get(tid, 0) * (upto - n), n, name, label, result_len.get(tid, 0))
+         for tid, (n, name, label) in calls.items() if n < upto and result_len.get(tid, 0) >= 1000),
+        reverse=True,
+    )
+    print("大きな結果の持ち越し（文字数 × 読み直された回数）")
+    for cost, n, name, label, chars in carry[:8]:
+        print(f"  {cost:>8,}  応答{n} {name} {label} {chars:,} 文字 × {upto - n} 回")
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--steps", action="store_true", help="応答ごとの表を出す（分解の代わり）")
+    ap.add_argument("--upto", type=int, default=0, help="--steps と使う。N 応答目までの積算と持ち越しを出す")
     ap.add_argument("--at", default="")
     ap.add_argument("--session", default="", help="会話の ID（先頭の数文字でよい）")
     ap.add_argument("target", nargs="*", help="jsonl のパス、または --at / --session と使うディレクトリ")
@@ -186,7 +243,7 @@ def main():
         path = Path(a.target[0])
     else:
         ap.error("jsonl のパスを 1 つ、または --at / --session を指定する")
-    decompose(path)
+    steps(path, a.upto) if a.steps else decompose(path)
 
 
 if __name__ == "__main__":
