@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-10-29（プロファイル方式の掃除）
+- ユーザーの決定: 許可方式の掃除を「プロファイル方式」で進める（`--profile standard|strict`、部品の種類は `--allow` で残す）。手順書を `guides/` に作る（見本 dotfiles `windows/claude/readme.md`）。動作確認は別セッションで行う。
+- 実装（`workflow-kit/room/cleankit.py`）: `STRIP_KINDS`（charts / images / embeddings / pivots / connections）と `PROFILES`、`strip_refs`（参照元の図形・要素ごと外す）、`strip_kinds`、サブコマンド `profiles`。外した部品の本体は `orphans` で消す。マクロは外さず報告のみ。
+- 確かめたこと: 単体テスト（追加 5 件を含む全件）が通る。ダミーの xlsx（グラフ・画像のアンカー）と pptx（`p:pic`・`p:graphicFrame`）で、参照ごと外れ、整合の問題が出ない。Excel・PowerPoint で開く確認は未。
+- 手順書 `guides/howto/ooxml-clean.md`、索引 `guides-index.md`、`room/README.md` を更新した。
+
 ### 2026-10-28（`check` に文字の検査を足した）
 - ユーザーの選択（スレッドの決定カード）: 許可方式のうち「`check` に文字の検査だけ足す」を、このスレッドで行う。掃除の側は変えない。
 - `unseen-text`: ファイルの中の文字（葉の要素の中身、自由な文字の属性 `name` `descr` `title` など、書式で割れた文字をつないだもの）を集め、見えている文字（見えているシートの見えている行・列のセルの値と数式、シート名、ヘッダー・フッター、見えているシートの図形・グラフの文字。pptx は見えているスライドと、その図・レイアウト・マスターの文字）と固定語に当たらないものを、部品ごとに出す。数・日付・番地・GUID・自動の名前（`グラフ 1`、`PlaceHolder 3` など）・ふりがな・書式とテーマの部品は数えない。数式の中は文字列の定数とシート名だけを見る。

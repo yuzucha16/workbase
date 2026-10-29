@@ -348,5 +348,93 @@ class PptxTest(unittest.TestCase):
         self.assertNotIn("公開のスライド", got)
 
 
+XDR = 'xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"'
+
+
+def with_parts(data, changes):
+    parts = texts(data)
+    parts.update(changes)
+    return zipit({n: s for n, s in parts.items() if s is not None})
+
+
+class StripProfileTest(unittest.TestCase):
+    def xlsx(self):
+        anchor = lambda body: f"<xdr:twoCellAnchor><xdr:from/><xdr:to/>{body}</xdr:twoCellAnchor>"
+        drawing = (HDR + f"<xdr:wsDr {XDR} {R}>"
+                   + anchor('<xdr:graphicFrame><a:graphic><c:chart xmlns:c="c" r:id="rId1"/></a:graphic></xdr:graphicFrame>')
+                   + anchor('<xdr:pic><xdr:blipFill><a:blip r:embed="rId2"/></xdr:blipFill></xdr:pic>')
+                   + anchor("<xdr:sp><xdr:txBody>ダミーの図形</xdr:txBody></xdr:sp>") + "</xdr:wsDr>")
+        data = with_parts(build_xlsx(), {
+            "xl/drawings/drawing1.xml": drawing,
+            "xl/drawings/_rels/drawing1.xml.rels": rels(("rId1", "chart", "../charts/chart1.xml"), ("rId2", "image", "../media/image1.png")),
+            "xl/media/image1.png": "ダミー画像",
+            "[Content_Types].xml": texts(build_xlsx())["[Content_Types].xml"].replace("<Override", '<Default Extension="png" ContentType="image/png"/><Override', 1),
+        })
+        return data
+
+    def test_strict_strips_kinds(self):
+        out, log = ck.clean(self.xlsx(), ".xlsx", list(ck.CLEAN_ACTIONS) + list(ck.PROFILES["strict"][1]))
+        self.assertEqual(ck.integrity(out), [])
+        t = texts(out)
+        self.assertNotIn("xl/charts/chart1.xml", t)
+        self.assertNotIn("xl/media/image1.png", t)
+        d = t["xl/drawings/drawing1.xml"]
+        self.assertNotIn("graphicFrame", d)
+        self.assertNotIn("r:embed", d)
+        self.assertIn("ダミーの図形", d)
+        self.assertNotIn("rId", t["xl/drawings/_rels/drawing1.xml.rels"])
+
+    def test_standard_keeps_kinds(self):
+        out, _log = ck.clean(self.xlsx(), ".xlsx", list(ck.CLEAN_ACTIONS))
+        self.assertIn("xl/charts/chart1.xml", texts(out))
+        self.assertIn("xl/media/image1.png", texts(out))
+
+    def test_allow_images(self):
+        actions = list(ck.CLEAN_ACTIONS) + [a for a in ck.PROFILES["strict"][1] if a != "images"]
+        out, _log = ck.clean(self.xlsx(), ".xlsx", actions)
+        self.assertEqual(ck.integrity(out), [])
+        t = texts(out)
+        self.assertNotIn("xl/charts/chart1.xml", t)
+        self.assertIn("xl/media/image1.png", t)
+
+    def test_pptx_pic_and_frame(self):
+        P = 'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+        slide = (HDR + f'<p:sld {P} {R}><p:cSld><p:spTree><p:pic><p:blipFill><a:blip xmlns:a="a" r:embed="rId5"/></p:blipFill></p:pic>'
+                 '<p:graphicFrame><a:graphic xmlns:a="a"><c:chart xmlns:c="c" r:id="rId6"/></a:graphic></p:graphicFrame>'
+                 '<p:sp>残す文字</p:sp></p:spTree></p:cSld></p:sld>')
+        base = build_pptx()
+        old = texts(base)
+        data = with_parts(base, {
+            "ppt/slides/slide1.xml": slide,
+            "ppt/slides/_rels/slide1.xml.rels": rels(("rId5", "image", "../media/a.jpeg"), ("rId6", "chart", "../charts/c.xml")),
+            "ppt/media/a.jpeg": "x", "ppt/charts/c.xml": "<c/>",
+            "[Content_Types].xml": old["[Content_Types].xml"].replace("<Override", '<Override PartName="/ppt/charts/c.xml" ContentType="application/xml"/><Override', 1),
+        })
+        out, _log = ck.clean(data, ".pptx", list(ck.CLEAN_ACTIONS) + list(ck.PROFILES["strict"][1]))
+        self.assertEqual(ck.integrity(out), [])
+        t = texts(out)
+        self.assertNotIn("ppt/media/a.jpeg", t)
+        self.assertNotIn("ppt/charts/c.xml", t)
+        s = t["ppt/slides/slide1.xml"]
+        self.assertNotIn("p:pic", s)
+        self.assertNotIn("graphicFrame", s)
+        self.assertIn("残す文字", s)
+
+    def test_cli_profile(self):
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "in"
+            src.mkdir()
+            f = src / "a.xlsx"
+            f.write_bytes(self.xlsx())
+            out = Path(d) / "out" / "a.xlsx"
+            rc = ck.main(["clean", str(f), str(out), "--profile", "strict", "--allow", "images", "--report", str(Path(d) / "r.md")])
+            self.assertIn(rc, (0, 1))
+            t = texts(out.read_bytes())
+            self.assertNotIn("xl/charts/chart1.xml", t)
+            self.assertIn("xl/media/image1.png", t)
+            self.assertEqual(ck.main(["clean", str(f), str(out), "--allow", "nothing", "--force"]), 2)
+        self.assertEqual(ck.main(["profiles"]), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

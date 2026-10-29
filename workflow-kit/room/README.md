@@ -115,6 +115,7 @@ uv run --script cleankit.py clean <ファイル> <出力先> --keep notes,commen
 - 終了コード: 0 = 要確認なし、1 = 要確認あり（報告を見る）、2 = 実行できない。
 - 掃除の既定（`--keep` で外せる）: `hidden-sheets`（非表示シートを消し、参照する数式は値に、定義名は削除）、`hidden-slides`、`notes`、`comments`、`props`、`abspath`、`printer`、`thumbnail`、`calcchain`、`revisions`、`ref-names`（`#REF!` の定義名）、`shared-strings`（使っていない共有文字列）、`orphans`（関係からたどれない部品）、`hidden-names`（非表示の定義名。AccessDatabase など。`_xl` で始まる内部の名前は残す）、`external-links`（外部ブックへのリンクを切る。数式は値に、外部パス・値の写し・外部を参照する定義名を消す）。
 - 既定では行わず `--also` で足す動作（カンマ区切り）: `hidden-rows`（非表示の行のセルの値・数式を空にする。行は残る）、`hidden-cols`（非表示の列）。空にした後は、行・列が隠れたままでも点検の報告には出ない。
+- プロファイル（2026-10-29）: `--profile standard`（既定）と `strict`。`strict` は `standard` に加え、部品の種類（`charts` `images` `embeddings` `pivots` `connections`。参照元の図形・要素ごと外す）と非表示の行・列の値の消去を行う。`--allow images` のように、外す種類から残すものを選ぶ。`cleankit.py profiles` で一覧を出す。ダミーの単体テストまで。Excel・PowerPoint で開く確認は未。手順は `guides/howto/ooxml-clean.md`。
 - 取りこぼしの網（2026-10-28）: 点検のたびに、ファイルの中の文字を、見えている文字（見えているセルの値と数式、シート名、ヘッダー・フッター、見えているシートの図形・グラフ。pptx は見えているスライドとそのレイアウト・マスター）と固定語に突き合わせ、当たらないものを `unseen-text` として部品ごとに出す。数・日付・番地・GUID・自動の名前・ふりがな・書式とテーマの部品は数えない。掃除の後に `unseen-text` が残れば、既知の残り方の外に文字が残っている。
 - 消さずに報告だけするもの: グラフ・ピボットのキャッシュ（語は `mask.toml` のマスクで消す）、接続・データモデル、埋め込み・画像、マクロ、非表示の列、スライドの外や非表示の図形、代替テキスト、使っていないレイアウト。
 - 掃除の後に、出力を点検し直し、整合（XML が読める、関係の先がある、型がある）を確かめる。整合の問題があれば、出力を AI に渡さない。

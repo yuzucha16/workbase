@@ -9,7 +9,8 @@
 考え方と残り方の一覧は mask-spec.md の「クリーン化」。
 
   python cleankit.py check <ファイル> [--report <md>]
-  python cleankit.py clean <ファイル> <出力> [--keep <動作,...>] [--report <md>] [--force]
+  python cleankit.py clean <ファイル> <出力> [--profile standard|strict] [--allow <種類,...>] [--keep <動作,...>] [--also <動作,...>] [--report <md>] [--force]
+  python cleankit.py profiles
 
 check: 残っている情報を一覧にする（既知の残り方に加え、見えている文字と固定語に当たらない文字を unseen-text として出す）。clean: 既定の動作（CLEAN_ACTIONS）で取り除いた別ファイルを書き、出力をもう一度点検する。
 画面には件数だけを出す（抜粋は報告のファイルだけに書く）。終了コード: 0 = 要確認なし、1 = 要確認あり、2 = 実行できない。
@@ -53,6 +54,21 @@ CLEAN_ACTIONS = {
 OPTIONAL_ACTIONS = {
     "hidden-rows": "非表示の行のセルの値と数式を空にする（行は残る。共有数式は残す）",
     "hidden-cols": "非表示の列のセルの値と数式を空にする（列は残る。共有数式は残す）",
+}
+
+# 部品の種類ごとの除去（プロファイル strict が使う）。種類 → (説明, 関係の種類)。参照元の要素も外す
+STRIP_KINDS = {
+    "charts": ("グラフ（図形ごと外す。元データのセルは残る）", {"chart", "chartEx", "chartUserShapes"}),
+    "images": ("画像（図形・背景・シートの背景。縮小画像は thumbnail が別に外す）", {"image"}),
+    "embeddings": ("埋め込みオブジェクト（OLE、埋め込みブック）", {"oleObject", "package"}),
+    "pivots": ("ピボットの部品（キャッシュ全件を含む。ピボットの表は値として残る）", {"pivotCacheDefinition", "pivotCacheRecords", "pivotTable"}),
+    "connections": ("接続・クエリ・データモデル・customXml", {"connections", "queryTable", "customXml", "powerPivotData"}),
+}
+
+# プロファイル: 名前 → (説明, 足す動作)。standard は既定の掃除だけ。--allow で strict から種類を許可に戻せる
+PROFILES = {
+    "standard": ("既定の掃除だけ（グラフ・画像・ピボットなどは残して報告）", ()),
+    "strict": ("standard に加え、部品の種類（STRIP_KINDS）をすべて外し、非表示の行・列の値を空にする", tuple(STRIP_KINDS) + ("hidden-rows", "hidden-cols")),
 }
 
 R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -948,16 +964,51 @@ def clean_common(pkg, actions, log):
         log.append("縮小画像を外した")
 
 
+def strip_refs(xml, rid):
+    """参照元の XML から、関係 rid を使う要素を外す（関係だけ消すと参照が宙に浮く）。"""
+    ref = rf'(?:r:(?:id|embed|link|pict)|o:relid)="{re.escape(rid)}"'
+    flags = re.S
+    xml = re.sub(rf'<xdr:(\w*Anchor)\b(?:(?!</xdr:\1>).)*?{ref}.*?</xdr:\1>', "", xml, flags=flags)
+    xml = re.sub(rf'<p:(graphicFrame|pic)\b(?:(?!</p:\1>).)*?{ref}.*?</p:\1>', "", xml, flags=flags)
+    xml = re.sub(rf'<mc:AlternateContent\b(?:(?!</mc:AlternateContent>).)*?<oleObject\b[^>]*{ref}.*?</mc:AlternateContent>', "", xml, flags=flags)
+    xml = re.sub(rf'<oleObject\b[^>]*{ref}[^>]*(?:/>|>.*?</oleObject>)', "", xml, flags=flags)
+    xml = re.sub(rf'<(picture|pivotCache)\b[^>]*{ref}[^>]*/>', "", xml)
+    xml = re.sub(r"<(oleObjects|pivotCaches)>\s*</\1>", "", xml)
+    return re.sub(rf'\s+(?:r:(?:id|embed|link|pict)|o:relid)="{re.escape(rid)}"', "", xml)
+
+
+def strip_kinds(pkg, kinds, log):
+    types = {t: k for k in kinds for t in STRIP_KINDS[k][1]}
+    counts = {}
+    for n in list(pkg.order):
+        if n not in pkg.parts or not n.endswith(".rels"):
+            continue
+        src = "" if n == "_rels/.rels" else re.sub(r"(^|/)_rels/([^/]+)\.rels$", r"\1\2", n)
+        for rid, ty, _tgt in pkg.internal(src, set(types)):
+            xml = pkg.text(src) if src else None
+            if xml is not None and src.lower().endswith(XML_EXT):
+                pkg.put(src, strip_refs(xml, rid))
+            pkg.drop_rel(src, rid)
+            counts[types[ty]] = counts.get(types[ty], 0) + 1
+    for k, c in counts.items():
+        log.append(f"{STRIP_KINDS[k][0].split('（')[0]}を外した: 関係 {c} 件")
+
+
 def clean(data, ext, actions):
     pkg = Pkg(data)
     if pkg.dups:
         raise CleanError("同じ名前のエントリーが複数ある zip は掃除しない（どちらが読まれるかがアプリで違う）")
     log = []
+    kinds = [k for k in STRIP_KINDS if k in actions]
+    if kinds:
+        actions = set(actions) | {"orphans"}  # 外した部品の本体を消すのに要る
     if ext in (".xlsx", ".xlsm"):
         clean_xlsx(pkg, set(actions), log)
     else:
         clean_pptx(pkg, set(actions), log)
     clean_common(pkg, set(actions), log)
+    if kinds:
+        strip_kinds(pkg, kinds, log)
     if "orphans" in actions:
         orph = pkg.orphans()
         for n in orph:
@@ -1070,9 +1121,26 @@ def main(argv=None):
     k.add_argument("out", help="出力のファイル、またはディレクトリ")
     k.add_argument("--keep", default="", help="外さない動作（カンマ区切り）: " + ", ".join(CLEAN_ACTIONS))
     k.add_argument("--also", default="", help="既定では行わない動作を足す（カンマ区切り）: " + ", ".join(OPTIONAL_ACTIONS))
+    k.add_argument("--profile", default="standard", choices=list(PROFILES), help="掃除の強さ: " + "; ".join(f"{n} = {d}" for n, (d, _x) in PROFILES.items()))
+    k.add_argument("--allow", default="", help="プロファイルが外す部品の種類のうち、残すもの（カンマ区切り）: " + ", ".join(STRIP_KINDS))
     k.add_argument("--report", help="報告の md（既定: 出力の隣の <名前>.clean-report.md）")
     k.add_argument("--force", action="store_true", help="出力が既にあれば上書きする")
+    sub.add_parser("profiles", help="プロファイルと、部品の種類・動作の一覧を出す")
     a = ap.parse_args(argv)
+    if a.cmd == "profiles":
+        print("プロファイル（clean --profile <名前>）")
+        for n, (d, extra) in PROFILES.items():
+            print(f"  {n}: {d}\n    足す動作: {', '.join(extra) or 'なし'}")
+        print("\n部品の種類（プロファイルが外す。--allow で残す）")
+        for n, (d, _t) in STRIP_KINDS.items():
+            print(f"  {n}: {d}")
+        print("\n既定の掃除（--keep で外す）")
+        for n, d in CLEAN_ACTIONS.items():
+            print(f"  {n}: {d}")
+        print("\n任意の動作（--also で足す）")
+        for n, d in OPTIONAL_ACTIONS.items():
+            print(f"  {n}: {d}")
+        return 0
     try:
         src, ext, data = read_input(a.file)
         if a.cmd == "check":
@@ -1102,6 +1170,10 @@ def main(argv=None):
         also = {x.strip() for x in a.also.split(",") if x.strip()}
         if also - set(OPTIONAL_ACTIONS):
             raise CleanError(f"知らない動作: {', '.join(sorted(also - set(OPTIONAL_ACTIONS)))}")
+        allow = {x.strip() for x in a.allow.split(",") if x.strip()}
+        if allow - set(STRIP_KINDS):
+            raise CleanError(f"知らない部品の種類: {', '.join(sorted(allow - set(STRIP_KINDS)))}")
+        also |= set(PROFILES[a.profile][1]) - allow
         actions = [x for x in CLEAN_ACTIONS if x not in keep] + sorted(also)
         before = check(Pkg(data), ext)
         cleaned, log = clean(data, ext, actions)
