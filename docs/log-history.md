@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-29（Python の版と呼び方を uv 管理の正本に揃える）
+- 現状の集計: .py を実行する行のうち、python を直接呼ぶのは 73、uv 経由は 61。人が Windows で叩く側は uv、AI は `python -I`、部屋は `python3` に分かれ、find_knowledge.py は 3 通りで呼ばれていた。OS 管理（WSL の `python3` 3.14.4）と uv 管理（room.py の 3.13.14）の版が混在していた。
+- 決定（ユーザー承認）: uv 管理を正本（`room/.python-version`）、呼び方の表、`requires-python` は `==3.13.*`、uv が止まったときだけ OS の `python`、古い版が要るスクリプトは個別指定。`decisions.md` の同日の項、`script-guide.md` の「Python の版と呼び方」、lesson `python-version-uv-canonical`、理解ガイド `python-version-uv`（コミット 39571f7）。
+- 未実装: `room init` の uv で Python を入れる段、WSL で `python3` として呼ぶ方法の実機確認、勤務先のネットワークでの `uv python install`（Next Actions 14）。動作確認と改良は別セッションへ引き継ぐ。
+
 ### 2026-10-29（Open Questions の消化: 【案件】の行き先、会議録の保管、`brief 計画`）
 - 【案件】の行き先: 2026-10-07 の直接書き込みと 2026-10-12 の部屋の決定 #5 の食い違いを、時期の違いと整理し、2 段（部屋では郵便受け → Area で消化して `docs/decisions.md`）で閉じた（ユーザー承認）。`para-operations.md` に補足を 1 行足した。
 - 会議録の Area 側の保管: PC ごとのローカルに置き、同期しない（ユーザー承認）。決定は `decisions.md` の同日の項。
