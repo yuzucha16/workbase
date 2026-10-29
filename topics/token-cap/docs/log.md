@@ -13,7 +13,7 @@
 
 ## Next Actions
 
-1. 【最優先・10-29 決定】NA 5 の (d)（全文読みを止める）の残り。上位 3 本の全文読み（`commit-push-rules.md`、`docs/log.md`、`wrap-hook.md`）は、すべて縮小・分割した（10-29。大きさは `records/2026-10-29-repeat-reads-2.md`）。残り（再測定は 11-05、期日は `docs/due.md`。ee の決定 10-29）: (1) Windows 側で `repeat_reads.py --since 2026-10-30 --detail`（分割後だけ）を実行し、3 本の 1 回あたり（commit-push-rules 6.1k、log 2.5k、wrap-hook 2.7k）が下がったかを見る。(2) 基準値は PC2 の Windows と WSL で取得済み（`records/2026-10-29-repeat-reads-baseline-pc2.md`。room は 2 本で基準にならない）。PC1 では未実行。縮小の次の候補: `docs-rules.md`（NA 9）、`stock-hook.md`（8.5k/回）。(4) 次に多い全文読み（`token-cap-start-here.md` 22 回、各トピックの `docs/log.md`）は、小さいので優先度は低い。
+1. 【最優先・10-29 決定】NA 5 の (d)（全文読みを止める）の残り。上位 3 本の全文読み（`commit-push-rules.md`、`docs/log.md`、`wrap-hook.md`）は、すべて縮小・分割した（10-29。大きさは `records/2026-10-29-repeat-reads-2.md`）。残り（再測定は 11-05、期日は `docs/due.md`。ee の決定 10-29）: (1) Windows 側で `repeat_reads.py --since 2026-10-30 --detail`（分割後だけ）を実行し、3 本の 1 回あたり（commit-push-rules 6.1k、log 2.5k、wrap-hook 2.7k）が下がったかを見る。(2) 基準値は PC2 の Windows と WSL で取得済み（`records/2026-10-29-repeat-reads-baseline-pc2.md`。room は 2 本で基準にならない）。PC1 では未実行。`docs-rules.md` は 10-29 に分割済み（11.3k → 5.7k、`docs-format.md` 5.4k、`docs-carry.md` 3.1k）。11-05 に、`docs-rules.md` の 1 回あたりが下がったかと、wrap が `docs-format.md` を読んで増えていないかも見る。縮小の次の候補: `stock-hook.md`（8.5k/回）。(4) 次に多い全文読み（`token-cap-start-here.md` 22 回、各トピックの `docs/log.md`）は、小さいので優先度は低い。
 1b. 【仮説・検証は後日（ee、10-29）】「依頼の末尾に完了条件を 1 行足す（例「○○が△△になったら止める。それ以外は読まない」）と応答数が減る」（NA 5 の (f)）。足す依頼と足さない依頼を数件ずつ比べる（ee が実施。印は先頭に `[完了条件あり]`）。根拠: `--detail`（`records/2026-10-29-pc1-room-other-detail.md`）で重いのは 101-300 文字の途中の依頼（37%）。ee の確認: 場所は伝えている、ゴールは無い、依頼は指示型（「完了条件が無いと終わりを AI が決める」は仮説）。
 2. 【10-29 測定済み・判定保留】`integrate` の上限（仮 〜11-29）の個別の効果。Windows 側（`requests_by_kind.py --csv`、10-01 以降）の integrate は 16 件。10-27 より前 13 件は応答 9.4・1 件 809k・ピーク平均 92k。10-27 以降は 3 件で応答 11.0・708k・ピーク 85k。うち 10-29 の 1 件は 7 応答でピーク 134k と 100k 超。件数が少なく、効果の有無は言えない。room 側（PC1）の件数は未確認。再測定は 1 週間あけて 11-05（期日は `docs/due.md`、ee の決定 10-29）。
 3. （低優先）マクロ側の常駐文書に、全文読みを避ける指示を入れる案。
@@ -24,7 +24,6 @@
 
 8. 【ee 10-29】`wrap-hook.md` の見直しの効果の確認（反映は済。`records/2026-10-29-wrap-decompose.md`）。再測定は 11-05（期日は `docs/due.md`）。測定は `requests_by_kind.py --since 2026-10-30`（Windows 側）で、wrap の応答平均（8.3）と 1 件平均のトークンが下がったかを見る。書き漏れ・誤りが出ていないかも、`review` で見る。
 
-9. 【10-29 実施済み】`docs-rules.md` を分割した（11.3k → 5.7k。`docs-format.md` 5.4k、`docs-carry.md` 3.1k）。効果は 11-05 の再測定（NA 1）に含める。wrap は `docs-format.md` も読むため、wrap の応答で読み増しが出ていないかも見る。
 
 ## Open Questions
 

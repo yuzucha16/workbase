@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-29（NA 9: `docs-rules.md` の分割）: 「token-cap の続き」。ee が NA 9 の実施を承認。`docs-rules.md`（11.3k）から 35〜75 行を `docs-format.md`（5.4k）、77〜91 行を `docs-carry.md`（3.1k）へ移し、`docs-rules.md` は 5.7k に（1〜27 行は動かさず、「続き」の節は `offset` 24 のまま）。参照元 8 か所（`wrap-hook.md`、`stock-hook.md`、`templates/decisions.md`、`token-matrix.md`、`README.md`、`exmem/lessons` 2 件）を張り替えた。push 済み（`1de15d2`、`[workflow-kit]`）。効果は 11-05 の再測定（NA 1）に含める。`hook-matrix.md` の字数の記録と `hooks.md` の表は未更新。wrap。
+
 - 2026-10-29（NA 2 の測定、再測定の期日化、PC2 の基準値、`docs-rules.md` の分割案）: 「token-cap の続き」。NA 2（`integrate` の上限の個別の効果）を Windows 側の `requests_by_kind.py --csv` で測った。integrate は 10-01 以降 16 件、10-27 より前 13 件は応答 9.4・809k・ピーク 92k、以降 3 件は応答 11.0・708k・ピーク 85k（10-29 の 1 件はピーク 134k）。件数が少なく判定不能。ee が「再測定は 1 週間あける」と決め、NA 2・NA 1・NA 8 の再測定を `docs/due.md` に 11-05 の単発として移した。ee が PC2 で `repeat_reads.py --since 2026-10-01 --detail 15` を実行（Windows: 会話 150 本、全文読み 56%・70% の文字数。log 3,831/回、docs-rules 11,289/回で 3 位。WSL は会話 2 本で基準にならない）。`records/2026-10-29-repeat-reads-baseline-pc2.md`。縮小の次の候補は `docs-rules.md` と `stock-hook.md`。`docs-rules.md` の 3 分割案を出し、ee が実施を別セッションにすると決めた（NA 9）。コミットは `[token-cap]`。wrap。
 
 - 2026-10-29（NA 8: wrap の分解と `wrap-hook.md` の見直し）: 「token-cap の続き na8」。ee が wrap の会話（e1ea4789: 応答 4、最大 33.7k）の `decompose_session.py` を共有。軽い例だったので、重い例 d02fe8e6（作業 5 件のあとの wrap、13 応答・1.45M）も分解し、10-27 以降の wrap 45 件を会話の大きさ別に集計: 100k 以上の 5 件（1 件平均 1.3M）が wrap 計 26.3M の 25%、50〜100k の 35 件が 71%。wrap の費用は手順の読み（約 6k 字）でなく、膨らんだ文脈を 8〜13 回運ぶこと（`records/2026-10-29-wrap-decompose.md`）。ee が「100k 前に言う」と「応答のまとめ方」（読み・書き・コミットを各 1 応答、目標 4〜6）の両方を承認し、`wrap-hook.md` に反映（`cf6c606`）。ee の指摘: 応答数を半分にすればトークンもほぼ半分になる（AI が「手順の文章の短縮」と「応答数の削減」を混ぜて小さく見積もっていた。訂正済み）。NA 8 は、効果の確認だけ残して一部済に。コミットは `[workflow-kit]`。wrap（新しい手順で実施）。
