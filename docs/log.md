@@ -27,7 +27,6 @@
 2. 【起票 10-25】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
 9. 【起票 10-28】相談の型の次の判断: PC で `cap_meter.py --latest` を「相談したい」から結論までの前後で測ってから決める（候補と経緯は `decisions.md` の 2026-10-21）。
 10. 【起票 10-28】フックの合言葉を `triggers:` 索引に統一するか、フックに合わせて個別最適にするか。材料は、`hooks.md` の表、引き当て率の初回（11-08）、部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）。相談の型の札づけ（NA 9）が最初の実例になる。
-13. 【起票 10-29】`room` コマンドを削除し、`uv run room.py` に統一する（PC1。`room init …` が無出力で、フックを入れ直せなかった。原因は未特定）。`Get-Command room -All` で実体を見て消し、`room <サブコマンド>` の書き方が残る文書（`guides/`、`workflow-kit/room/README.md`）を直す。その後、古い `ai/records/` を `records/` へ統合するかを決める。切り替え 3〜5 分の主因は PC1 の監視ソフトで、コマンド数を減らす案は効きにくい（ユーザー、10-28）。
 
 ## Open Questions
 

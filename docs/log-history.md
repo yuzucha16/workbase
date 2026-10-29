@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-29（NA 13: `room` コマンドの削除を完了とした）
+
+NA 13「`room` コマンドを削除し、`uv run room.py` に統一する」を閉じた。`room` は実行ファイルでなく、dotfiles の `windows/powershell/profile.ps1` の `function room { Set-Location …\workflow-kit\room }`（引数を無視して `cd` するだけ）だった。PC1 の `room init …` が無出力だった原因はこれ。ユーザーの決定で、この1行を削除した（dotfiles 側）。文書の `room <サブコマンド>` の略記は変えない（ユーザーが読み替える）。「コマンドにした理由」を示す決定の記録は見つからなかった（`room` は文書上の呼び名で、実体は最初から `uv run room.py`）。古い `ai/records/` を `records/` へ統合するかの判断は、ユーザーの指示で NA ごと閉じた。
+
 ### 2026-10-29（直下 `log.md` からトピック固有の NA を外した）
 
 NA 4・6・7・8（トピック固有）を削除し、トピック側に無かった内容を移した（`topics/token-cap/docs/log-history.md` の同日）。NA 9 の候補は `decisions.md` へ。`wrap-hook.md` を縮め `wrap-targets.md` を新設。
