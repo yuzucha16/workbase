@@ -22,7 +22,7 @@
 6. 【10-28 試験中】出力の型（`exmem/lessons/*-output.md` の 8 本）を実際の依頼で試す。見るもの: 誤爆、型の品質、開始時の大きさ（`cap_meter --latest`）。`methods.md` と `brief-hook.md` の構成変更に合わせ、`review` を勧める。
 7. Zed の ACP が何を表示しているかを確定する（ee の決定 10-28。別セッション）。仮説は「直近の応答 1 回の入力の大きさ」。1 依頼の前後で表示の値を控え、`cap_meter --latest` と突き合わせ、ガイドの「基礎知識」に反映する。
 
-8. 【ee 10-29】`wrap-hook.md` の見直し。分解は済（`records/2026-10-29-wrap-decompose.md`）: wrap のコストは手順の読み（短い会話の wrap は応答 4・33k）でなく、膨らんだ文脈を 8〜13 回運ぶこと（100k 以上の 5 件が 25%）。手順の文章を絞る効果は小さいが、応答数を減らす効果は大きい。ee の決定 10-29 で `wrap-hook.md` に反映した（(1) 100k 前に言う、(2)「応答のまとめ方」: 読み・書き・コミットを各 1 応答、目標 4〜6 応答）。残り: 翌週に `requests_by_kind.py --since 2026-10-30` で wrap の応答平均（8.3）と 1 件平均が下がったかを見る。
+8. 【ee 10-29】`wrap-hook.md` の見直しの効果の確認（反映は済。`records/2026-10-29-wrap-decompose.md`）。翌週に `requests_by_kind.py --since 2026-10-30`（Windows 側）で、wrap の応答平均（8.3）と 1 件平均のトークンが下がったかを見る。書き漏れ・誤りが出ていないかも、`review` で見る。
 
 ## Open Questions
 
