@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-29（「残」の整理と、辿れるかの確認）
+- 畳み候補の「残」を実物で確かめた。旧 `C--vault*` のキーは `~/.claude/projects` に無く、`10_env.bat` の結果（`CERTS_DIR`、`WSLENV`、`~\.certs`）もこの PC で正しい。claude-code-storage の OQ/NA 3 項と obsidian-vault-backup の NA 1 項を閉じた（`exmem/lessons/`。根拠: ユーザーの承認）。`vault-backup.bat` は無く、`schtasks` の登録も無い（未了のまま）。
+- 辿れるか（旧 NA 3）: `README.md:12` と、5 本すべてで親の lessons からの wikilink を確認した。`triggers:` は無い。実際にエージェントに辿らせる測定はしていない。`--triggers` の対象にするかは 11-08 の測定の後に判断する（Next Actions 3）。
+
 ### 2026-10-28（wrap の新しい規則で log.md を掃除）
 - `wrap` の新しい規則で、済んだ項目を移した。NA3: `shell-script-testing-wsl` の Gotchas に一方向の印を付けた（`01ae113`。Facts の Ubuntu 24.04 は作業時の環境の記録なので付けない）。OQ「素材の節の扱い」と待ち行列の決定 2 件（追記の型は案 (b)、素材は案 (a)。`decisions.md`、`a1f70b4`）は決まったので外した。印の付与は Next Actions 6 に残る。
 

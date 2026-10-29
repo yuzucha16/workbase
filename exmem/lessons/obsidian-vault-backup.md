@@ -90,7 +90,7 @@ sources:
 
 - `vault-backup.bat` を作り、ジャンクションの扱いを決めて `schtasks` に登録する（取りこぼし防止設定をオン）。
 - 別フォルダへ復元し、Obsidianで開けるか確認する。
-- `10_env.bat` を再実行し、新しいターミナルと WSL の新しいセッションで、`CERTS_DIR`（`%USERPROFILE%\.certs`）と `WSLENV` が期待どおりになることを確認する。2026-10-06 時点のこの PC は未移行で、`CERTS_DIR` は旧置き場を指し、`WSLENV` は空、`~\.certs` は無い（確認: 2026-10-06、根拠: 環境変数の取得と `Test-Path`）。
+- （`10_env.bat` の再実行は、この PC で `CERTS_DIR=%USERPROFILE%\.certs`、`WSLENV=CERTS_DIR/p:WORKS_DIR/p`、`~\.certs` ありを確認して閉じた。2026-10-29。他の PC は未確認）
 - WSL の dotfiles を新パスで張り直す（2026-10-06 時点）。`WORKS_DIR` は 2026-10-18 に渡るようになった。同日のログインシェルで `GHQ_ROOT` は空だった（未調査）。他の PC では、`10_env.bat` を再実行して `WSLENV` の `;` を `:` に直す。
 - （旧 `C:\vault` と旧 clone の後始末は、ユーザーが `C:\vault` を削除して閉じた。2026-10-27）
 
