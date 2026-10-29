@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-29（WSL の room の reset を対象外にした）
+- ユーザーの問い「room は start 時に Windows 側のコミットを取り込むので reset は要るか」に、`room.py`（`cmd_start` `setup_room_git` `discard_room_git`）で答えた。room はマウントと使い捨ての `.git` で、workbase の clone を持たない。ユーザーが対象外（omit）に承認した。根拠は `decisions.md`。「room の clone の reset」の待ち項目はこれで閉じた。
+
 ### 2026-10-29（段階 4: 履歴の書き換えと force push）
 - ユーザーが git-filter-repo の導入と force の deny の解除をして、「いま実行」と決めた。使い捨ての mirror clone で `--replace-text` と `--replace-message` を試し、結果を確かめて `git push --force --mirror` した（43 ブランチ、`main` は `bf46c96` → `074c126`。1350 コミットのまま）。規則は 3 つ（PC の語は PC1 に、CA の語は「勤務先CA」に、その他の対象語は「勤務先」に）。除外: 法人格の語、Office のプロパティ、対象語そのものを引用した箇所、テスト値。最初の試験では `commit-push-rules.md` の検索規則と決定メモの引用まで書き換わったので、lookbehind で除外して直した。履歴を通して数えて、残る語は除外の分だけだった。ツールと作業ディレクトリは消した。
 
