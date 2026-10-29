@@ -1,6 +1,6 @@
 # `logbook/` の最小の型（叩き台、2026-10-26）
 
-`docs/log.md` の Next Actions 1 の叩き台。**実装はしていない**。仕組みの決定なので、`approval-screening.md` に従って待ち行列に置き、次の `review 消化` で 1 点ずつ判断する。前の案は `2026-10-26-proposal.md` の 3 と `2026-10-26-recommendation-v2.md` の 2。そこから変えた点は、1（名前の衝突）と 3 の frontmatter の追加。
+`docs/log.md` の Next Actions 1 の叩き台。**実装はしていない**。仕組みの決定なので、`approval-screening.md` に従って待ち行列に置き、次の `review 消化` で 1 点ずつ判断する。前の案は `2026-10-26-logbook-proposal.md` の 3 と `2026-10-26-recommendation-v2.md` の 2。そこから変えた点は、1（名前の衝突）と 3 の frontmatter の追加。
 
 前提（決定済み）: 置き場は workbase 直下の `logbook/`【仮 〜2026-11-29】。入るのは ① 時系列の観測・測定、③ 試行の途中（② は lessons に残して印）。降格は 3 段チェック。`logbook/` から上位の md へ辿れるか、`--triggers` の対象にするかは、別セッション（Next Actions 6）。
 

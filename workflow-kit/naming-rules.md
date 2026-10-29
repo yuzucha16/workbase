@@ -8,9 +8,9 @@
 
 ## 規則
 
-1. **文字種**: 英小文字・数字・`-`（kebab-case）。`.md`、ps1、ディレクトリに適用する。例外は 3 つ。①固定名（`README.md` `AGENTS.md` `CLAUDE.md`、`.gitignore` など）。②Python は snake_case（`-` は import できないため）。対の ps1 は kebab（`find_knowledge.py` ↔ `find-knowledge.ps1`）。③外部ツールが決める名前（`pyproject.toml` `uv.lock`）。
+1. **文字種**: 英小文字・数字・`-`（kebab-case）。`.md`、ps1、ディレクトリに適用する。例外は 3 つ。①固定名（`README.md` `AGENTS.md` `CLAUDE.md`、`.gitignore` など）と、雛形の `<名前>.template.md`。②Python は snake_case（`-` は import できないため）。対の ps1 は kebab（`find_knowledge.py` ↔ `find-knowledge.ps1`）。③外部ツールが決める名前（`pyproject.toml` `uv.lock`）。
 2. **一意**: ファイル名（拡張子を除く）はリポジトリ内で一意にする（wikilink が最短パスで解決されるため）。作る前に `git ls-files | grep '/<名前>\.md$'` が空であることを確かめる。重ねてよいのは、役割で決まる名前（`README` `AGENTS` `CLAUDE` `log` `decisions` `log-history` `due`）だけで、これらは `[[log]]` のように裸で指さず、パスで書く。衝突したら、あとから作る側に置き場や種別の語を足す（例: `ai-room-data-layout` と `ai-room-data-layout-explain`）。
-3. **語の並び**: 主題を先、種別を後（`<主題>-<中身>-<種別語>`）。前方一致の Glob（`ai-room-*`）で同じ主題がまとまるため。名前だけで主題が分かること。ディレクトリ名を当てにした 1 語（`proposal` `draft` `run1`）にしない。目安は 2〜5 語。
+3. **語の並び**: 主題を先、種別を後（`<主題>-<中身>-<種別語>`）。前方一致の Glob（`ai-room-*`）で同じ主題がまとまるため。名前だけで主題が分かること。ディレクトリ名を当てにした 1 語（`proposal` `draft` `run1`）にしない。ただし、語そのものが主題で、一意なら 1 語でよい（ツール名・区分名: `git` `ssh` `methods`）。目安は 2〜5 語。
 4. **種別の語**: 末尾の種別の語は下の表から選ぶ。表に無い語が要るときは、表に足してから使う（タグの `tags.md` と同じ運用）。
 
    | 語 | 意味 | 置き場 |
@@ -24,5 +24,5 @@
    | `-rules` | 手順書が従う規則 | `workflow-kit/` |
    | `-hook` | 合言葉の手順書 | `workflow-kit/` |
 
-5. **日付**: `YYYY-MM-DD-` の接頭辞は、時点の記録（`records/`）だけに付ける。知識（`exmem/lessons/` `guides/`）と規則には付けない。日付の後に主題の語を 1 つ以上置き、日付を除いても名前として成り立たせる（`2026-10-26-logbook-proposal`。`2026-10-26-proposal` は不可）。
+5. **日付**: `YYYY-MM-DD-` の接頭辞は、時点の記録（`records/` の中の、その日の調査・測定・案）だけに付ける。`records/` の索引・まとめ・型（`*-index` `*-record`）には付けない。知識（`exmem/lessons/` `guides/`）と規則には付けない。日付の後に主題の語を 1 つ以上置き、日付を除いても名前として成り立たせる（`2026-10-26-logbook-proposal` は可、`2026-10-26-proposal` は不可）。
 6. **版**: 名前に入れず、上書きして履歴は git に任せる。旧版と新版を並べる必要があるときだけ `-v2` を付ける。名前の一部になっている `-2`（`research-method-2`）は残す。
