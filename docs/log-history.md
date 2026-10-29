@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-29（kit-growth の看板を下ろす相談。相談の型を使った）
+- ユーザーの依頼「kit-growth を、この先どう使うか、畳むか」を、相談の型（`decisions.md` の 2026-10-21）で進めた。事実: 窓口と `inbox.md` は 10-25 以降動かず、`records/` は 10-29 も更新（約 145KB）。ユーザーの回答: PC1 の push 不可は続く、振り返りは続ける、窓口と handover の削除は良い。仮決めは `decisions.md` の同日の項（コミット `d3c9eaf`）。実装は `review 消化` の後（NA 12）。`cap_meter.py --latest` の前後測定（NA 9）は、この回では行っていない。
+
 ### 2026-10-29（wording-neutralize を閉じた）
 - `topics/close-procedure.md` で閉じた。トピックの `log.md` と root の経緯は一致し、段階 4 と作者の匿名化（NA 11）は済み、root に移す残件はなかった。経験則 2 件を `exmem/lessons/public-repo-wording.md` と `git-history-rewrite.md` に移し（ユーザーの採否）、【この件】の決定は `decisions.md` の同日の項にまとめた。`records/` の影響分析は削除、手順は `git-history-rewrite.md` に吸収し、指していた `push-rules.md` と本ファイルのリンクを書き換えた。共有フォルダの下書き（`notes/wording-neutralize/`、`notes/na1-usernames/`）は、ユーザーが消す。
 
