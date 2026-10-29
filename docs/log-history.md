@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-29（NA11: works・dotfiles・workbase の作者を agent にそろえた）
+- 手順（`topics/wording-neutralize/records/2026-10-28-author-rewrite-steps.md`）で、works（208）と dotfiles（240）を mirror clone → `git filter-repo --mailmap --replace-message` → `push --force --mirror`（ユーザーが deny を切った）。dotfiles は `user@example.com` の作者も `agent` にした。本文の URL は `github.com/owner/` に置換。
+- workbase も作者が `yuzucha16` のコミットを 189 件残していた（10-28 の「全コミットが agent」は誤りだった。直近 15 件だけを見て判断した）。同じ手順で 1351 コミットを書き換え、43 ブランチを force push した。確認は `git log --all --format='%aN <%aE>' | sort -u`（stash と古い remote ref が残っていると偽陽性になる）。
+- 他の Windows PC と手元の clone は `reset --hard` で合わせ済み。残りは room（WSL）の clone。ユーザーは各 clone の local の `user.name/email` を `agent` / `agent@agent.local` にした（global は変えない）。
+
 ### 2026-10-28（workflow-kit: brief の引数を廃止し、出力の型を依頼の語で引く）
 - `brief` の引数と `brief-modes.md` を廃止（ee の決定。`topics/token-cap/` の NA6）。`methods.md` を選ぶ基準だけに、`brief-hook.md` の「引数つきモード」を「出力の型とやり方は依頼の言葉で引く」に置き換えた。`hooks.md`、`README.md` ほかの参照を直した。型は `exmem/lessons/*-output.md`、文例は `guides/quickref/ai-work-prompts.md`。
 
