@@ -13,7 +13,7 @@ PC1 の 10-21 以降は room（WSL）側にあり、合算 約 170.7M（85%）�
 
 ## 次の一手
 
-「token-cap の続き」。PC1 の room で `requests_by_kind.py --detail` を実行し、other の 101 文字以上を仕分ける（`docs/log.md` の Next Actions 1）。
+ee が、依頼に完了条件を 1 行足す・足さないで応答数を比べる（`docs/log.md` の Next Actions 1）。結果を受けて「token-cap の続き」。
 
 ## 読む順
 
