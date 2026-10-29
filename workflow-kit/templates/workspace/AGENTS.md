@@ -28,7 +28,7 @@ works（Obsidian の Vault）のトップ。この PC だけのローカルな�
 - `.claude/` は、プロジェクト固有の規則が要るリポジトリだけ `settings.json` を置いて追跡する。`settings.local.json` は、どのリポジトリでも追跡しない。
 - `room`（`resources/workflow-kit/room/`）は人が端末で実行する。AI は実行しない。
 - 部屋の使い方と読み替えは `resources/workflow-kit/room/README.md` と `resources/workflow-kit/room-context.md`。
-- `.gitignore` に `**/_noai/`（AI に見せない領域。追跡しない）と `!**/ai/out/` を入れる（雛形: `gitignore.template`）。
+- `.gitignore` は許可リスト方式（雛形: `gitignore.template`）。追跡するのは、dotfile、README、`docs/`、Project の `ai/docs/`、`.gitkeep` だけ。`ai/` の `in` `work` `out` `records` と `_noai/`（AI に見せない領域）は追跡しない。必須の行は `**/_noai/`。
 
 ## この works 固有のルール
 

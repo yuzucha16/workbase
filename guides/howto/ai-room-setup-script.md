@@ -45,7 +45,7 @@ tags:
    Select-String -Path $HOME\works\.gitignore -Pattern '_noai|~\$|!\*\*/ai/out|ai/ctx'
    ```
 
-   - 無ければ足す: `**/_noai/`、`~$*`、`!**/ai/out/`、`**/ai/ctx/`（理由は [[ai-room-setup]] の 2.1）
+   - 許可リスト方式か（先頭の有効な行が `*`）と、`**/_noai/` があるか確かめる。無ければ雛形 `gitignore.template` を写す（理由は [[ai-room-setup]] の 2.1）
 4. `room.py` の置き場で、以降のコマンドを実行する
 
    ```powershell

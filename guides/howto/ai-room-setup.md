@@ -70,24 +70,16 @@ tags:
 
 works（ローカルの git）に、1回だけ行う。
 
-### 2.1 `.gitignore` に足す
+### 2.1 `.gitignore` を許可リスト方式にする
 
-works の `.gitignore` に、次の行を足す。
+works の `.gitignore` は許可リスト方式（2026-10-29）。雛形は `workflow-kit/templates/workspace/gitignore.template`（`room mkworks` が置く）。最初に `*` で全部除外し、追跡するものだけ `!` で戻す。
 
-```
-# 原本・対応表・実データ入りの成果物は追跡しない
-**/_noai/
-# Excel のオーナーファイル（Windows のユーザー名が入る）
-~$*
-# 個人のグローバル ignore（out/ など）が ai/out/（成果物）を無視しないように打ち消す
-!**/ai/out/
-# 部屋の起動のたびに写す派生物（README の写し）
-**/ai/ctx/
-```
-
-- **よく忘れる点**: `!**/ai/out/` が無いと、個人のグローバル ignore の `out/` が成果物を無視し、回収のコミットから成果物が黙って漏れる（すでに追跡されているファイルは `git mv` が通るので、気づきにくい）
+- **追跡する**: dotfile（`.gitignore` `.ignore` `.gitattributes` `.claude/settings.json`）、`AGENTS.md` `CLAUDE.md`、README（深さを問わず）、`docs/`（深さを問わず）、Project と Area の `ai/docs/`、ディレクトリ固定の `.gitkeep`
+- **追跡しない**: `ai/` の `in` `work` `out` `records`、`_noai/`、`resources/` `resources_p/` `repos/`、成果物のバイナリ。`room` が必須とする行は `**/_noai/` だけ
+- **既存の works**（旧方式: `**/_noai/` と `!**/ai/out/` などの行）: `room mkworks --update` で雛形の変更を3者マージで当てるか、雛形を手で写す。`init` は既存の `.gitignore` を上書きしない
+- **すでに追跡に入っているファイル**: `.gitignore` を変えても追跡は外れない。履歴は書き換えず残し、今後の追跡だけ外す（`git rm -r --cached -q -- <パス>`。ファイルは消えない。対象は `git ls-files | grep '/ai/'` で確かめ、`ai/docs/` は残す）
 - 改行は LF にする（`.gitattributes` で統一している場合、CRLF が混ざると警告が出る）
-- 目安: `git check-ignore -v projects/<Project>/ai/out/x.xlsx` が、無視されない（出力なし）。`_noai/` の下は無視される
+- 目安: `git check-ignore -v projects/<Project>/ai/out/x.xlsx` が `*` の行で無視される。`projects/<Project>/ai/docs/log.md` と README は無視されない
 
 ### 2.2 Area に境界の印を付ける
 
@@ -264,7 +256,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
    git -C $HOME\works status --short
    ```
 
-   - `ai/out/` の新しいファイルが、`??` で出る（出なければ 2.1 の `!**/ai/out/` を確認）
+   - `ai/out/` の新しいファイルは、`git status` に出ない（許可リスト方式。回収の報告に `ai/out` のファイル数が出る）
    - `~$*`（Excel のオーナーファイル）は、`ai/` に出ても、git に出ない
 6. 後片付け（**マウントを必ず外し、マウント点のディレクトリも消す**）
 
@@ -344,7 +336,7 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 | 部屋に C: が見える | root で実行していないか。既定ユーザーが `ai` か |
 | `mount` が「オプションを解釈できない」で失敗する | `-o` が、デバイス名の前にあるか |
 | `umount` が「マウント点が指定されていない」で失敗し、マウントが積み重なる | 標準入力で渡して、改行が CRLF になっていないか。`for i in 1 2 3; do umount <マウント点>; done` で片付ける |
-| 成果物がコミットに入らない | `git check-ignore -v <ファイル>`。グローバル ignore の `out/` が原因なら、2.1 の `!**/ai/out/` |
+| 成果物がコミットに入らない | 許可リスト方式なので、`ai/` の `in` `work` `out` `records` は追跡しない仕様（2.1）。残したい文書は `ai/docs/` か `docs/` に置く |
 | `ai/in/` に書けない | 仕様（読み取り専用）。変更は `work/` か `out/` に書く |
 | Zed で、works 全体が見える | ローカルのフォルダとして開いていないか。WSL リモートで開く |
 | Excel で開いているファイルを上書きできない | Excel の共有ロック。Excel を閉じてから行う |

@@ -1064,6 +1064,32 @@ class StartTest(unittest.TestCase):
             self.assertIn("対象外", str(cm.exception))
 
 
+class AllowlistGitignoreTest(unittest.TestCase):
+    """works の .gitignore の雛形は許可リスト方式（2026-10-29）。追跡する・しないを、実際の git で確かめる。"""
+
+    TRACKED = ("README.md", "AGENTS.md", "docs/log.md", "areas/.gitkeep", "areas/a/README.md", "archives/old/docs/design.md",
+               "projects/p/README.md", "projects/p/ai/docs/log.md", "areas/a/ai/docs/inbox.md", ".gitattributes")
+    IGNORED = ("projects/p/ai/out/x/report.xlsx", "projects/p/ai/records/replies/2026-10-29.md", "projects/p/ai/in/a.md",
+               "projects/p/ai/work/t.py", "projects/p/_noai/raw/x.xlsx", "projects/p/ai/ctx/README.md", "archives/old/src/pool.c",
+               "resources/x/README.md", "repos/r/README.md", ".claude/settings.local.json", "~$a.xlsx")
+
+    def test_template_tracks_only_the_allowlist(self):
+        tpl = (KIT_TEMPLATES / "workspace" / "gitignore.template").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp, gitignore=tpl)
+            for rel in self.TRACKED + self.IGNORED:
+                (v / rel).parent.mkdir(parents=True, exist_ok=True)
+                (v / rel).write_text("x", encoding="utf-8")
+            ignored = lambda rel: subprocess.run(["git", "-C", str(v), "check-ignore", "-q", rel]).returncode == 0
+            self.assertEqual([r for r in self.TRACKED if ignored(r)], [])
+            self.assertEqual([r for r in self.IGNORED if not ignored(r)], [])
+            self.assertTrue(room.is_allowlist_vault(ctx_for(v)))
+
+    def test_old_style_vault_is_not_allowlist(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertFalse(room.is_allowlist_vault(ctx_for(make_vault(tmp))))
+
+
 class MaskIntegrationTest(unittest.TestCase):
     MASK = '[terms.CUST]\nacme = ["アクメ商事株式会社", "アクメ商事"]\n'
 

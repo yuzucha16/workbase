@@ -30,7 +30,7 @@ import maskkit  # noqa: E402
 MOUNT_ROOT = "/mnt/room"
 ROOM_UID = 1000
 REAP_DAYS_DEFAULT = 14
-GITIGNORE_REQUIRED = ("**/_noai/", "!**/ai/out/")
+GITIGNORE_REQUIRED = ("**/_noai/",)  # 2026-10-29: 許可リスト方式にしたので `!**/ai/out/` は必須でない（旧方式の works にあっても通る）
 AI_DIRS = ("ai/docs", "ai/in", "ai/work", "ai/out", "ai/records")
 # マスクと復元は、状態で決まる（設定は無い）。_noai/raw に原本があればマスクし、_noai/map/mapping.json があれば復元する。
 # user/ は、人だけが使う仮置き（予約名。room は触らない）。
@@ -423,8 +423,19 @@ def clean_stale_mountpoints(ctx, distro):
 
 # ---------- git ----------
 
+def is_allowlist_vault(ctx):
+    """works の .gitignore が許可リスト方式（先頭の有効な行が `*`）か。"""
+    path = ctx.vault / ".gitignore"
+    if not path.exists():
+        return False
+    lines = [l.strip() for l in path.read_text(encoding="utf-8").splitlines()]
+    return next((l for l in lines if l and not l.startswith("#")), "") == "*"
+
+
 def unexpected_ignored(ctx, p):
-    """追跡されずに、無視されているファイル（成果物が黙って漏れていないかの点検）。"""
+    """追跡されずに、無視されているファイル（成果物が黙って漏れていないかの点検）。許可リスト方式では、ai/ は無視が既定なので空。"""
+    if is_allowlist_vault(ctx):
+        return []
     out = git(ctx.vault, "ls-files", "-o", "-i", "--exclude-standard", "-z", "--", f"projects/{p.name}/ai")
     res = []
     for f in out.split("\0"):
@@ -1449,6 +1460,9 @@ def cmd_start(ctx, a):
     ctx.say(f"回収: 変更 {len(status)} 件")
     for l in status:
         ctx.say("  " + l)
+    if is_allowlist_vault(ctx):  # ai/ の in・work・out・records は git に出ないので、ファイル数で示す
+        n_out = len([f for f in (p.ai / "out").rglob("*") if f.is_file()]) if (p.ai / "out").exists() else 0
+        ctx.say(f"  （許可リスト方式: ai/ は docs/ 以外を追跡しない。ai/out は {n_out} ファイル。ai/ 全体の変更は git status に出ない）")
     if ignored:
         ctx.say("警告: 追跡されずに無視されているファイル（成果物が漏れている可能性）:")
         for f in ignored:

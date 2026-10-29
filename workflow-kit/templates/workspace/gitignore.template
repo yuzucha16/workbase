@@ -1,30 +1,36 @@
 # works の .gitignore の雛形。導入時に、works のルートへ `.gitignore` として置く。
+# 許可リスト方式（2026-10-29）: 最初にすべて除外し、追跡するものだけ ! で戻す。
+# 追跡するのは、dotfile、README、docs/（深さを問わず）、Project の ai/docs/、ディレクトリ固定の .gitkeep だけ。
+# ai/ の in・work・out・records と _noai/、成果物のバイナリは追跡しない。
 
-# 共有ナレッジは別リポジトリ（workbase）の clone。このリポジトリでは追跡しない
+*
+# ディレクトリをたどれるようにする（これが無いと、下の README などに届かない）
+!*/
+
+# 追跡しない領域（ディレクトリごと。入れ子のリポジトリが git status に出ないよう明記する）
+# 共有ナレッジは別リポジトリ（workbase）の clone
 /resources/
-
-# PC ローカルの resources。この PC だけの情報を置く（追跡しない）
+# PC ローカルの resources。この PC だけの情報を置く
 /resources_p/
-
 # ghq の root（clone したリポジトリ。それぞれが別の git リポジトリ）
 /repos/
-
 # Obsidian の設定は dotfiles からのジャンクション（実体は dotfiles が持つ）
 /.obsidian
-
-# Claude Code のローカル専用の許可設定（端末ごと・個人用）
-**/.claude/settings.local.json
-
-# AI 作業部屋（workflow-kit/room/）
-# AI に見せない領域（原本・対応表・復元済みの成果物）は追跡しない
+# AI に見せない領域（原本・対応表・復元済みの成果物）
 **/_noai/
-# 部屋に渡す README の写し（一時）
-**/ai/ctx/
-# Office の一時ファイル
-~$*
-# 個人のグローバル ignore（out/ など）が、成果物 ai/out/ を無視しないように打ち消す
-!**/ai/out/
+# AI 作業部屋の ai/: docs/ 以外は追跡しない（in・work・out・records・ctx）
+**/ai/*
+!**/ai/docs/
+!**/ai/docs/**
 
-### Windows
-Thumbs.db
-[Dd]esktop.ini
+# 追跡するもの
+!/.gitignore
+!/.ignore
+!/.gitattributes
+!/.claude/settings.json
+!/AGENTS.md
+!/CLAUDE.md
+!README.md
+!**/docs/
+!**/docs/**
+!.gitkeep

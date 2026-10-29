@@ -48,20 +48,13 @@ wsl -l -v          # VERSION が 2
 
 ## 2. works 側の準備
 
-**2.1 `.gitignore`**: `$HOME\works\.gitignore` に、次の4行があるか確かめ、無ければ足す。
-
-```
-**/_noai/
-~$*
-!**/ai/out/
-**/ai/ctx/
-```
+**2.1 `.gitignore`**: 許可リスト方式（2026-10-29）。`$HOME\works\.gitignore` の先頭の有効な行が `*` で、`**/_noai/` があるか確かめる。無ければ、`resources\workflow-kit\templates\workspace\gitignore.template` を写す（手順と意味は [[ai-room-setup]] の 2.1）。
 
 ```powershell
-Select-String -Path $HOME\works\.gitignore -Pattern '_noai|~\$|!\*\*/ai/out|ai/ctx'
+Select-String -Path $HOME\works\.gitignore -Pattern '^\*$|_noai|ai/docs'
 ```
 
-- `!**/ai/out/` が無いと、個人のグローバル ignore の `out/` が成果物を無視し、成果物がコミットから黙って漏れる
+- `ai/` の `in` `work` `out` `records` は git に出ない。`ai/docs/` と README と `docs/` は追跡する
 
 **2.2 Area と境界の印**: `boundary:` は必須。顧客・機密度が同じ Project は、同じ Area にする。
 
@@ -172,7 +165,7 @@ wsl -d room-pilot -- bash -ic "cd /mnt/room/pilot-1 && claude"
 git -C $HOME\works status --short
 ```
 
-- 目安: `projects/pilot-1/ai/out/hello.md` が `??` で出る。出なければ 2.1 の `!**/ai/out/` を確認する。`~$*`（Excel のオーナーファイル）は、出ても git には出ない
+- 目安: `projects/pilot-1/ai/out/hello.md` は `git status` に出ない（許可リスト方式。回収の報告に `ai/out` のファイル数が出る）
 
 ## 6. アンマウントする
 
@@ -300,5 +293,5 @@ Remove-Item "$HOME\works\projects\pilot-1\ai\ctx" -Recurse -Force
 | 部屋の AI から、Windows 形式のパスと PowerShell が見える | Zed の Agent が Windows 側で動いている（Windows のフォルダをローカルで開いた） | 7 章の「やってはいけないこと」。`WSL: room-pilot` と、`/mnt/room/pilot-1` を確かめる |
 | `ls /mnt/c` が空でない | `wsl.conf` が効いていない | `wsl --terminate room-pilot` のあと、3 章の確認を再実行する |
 | マウントで `Permission denied`、または失敗 | `-o` の位置、`uid`、CRLF | 5.2 の注意。1行ずつ `-c` で渡す |
-| 成果物が `git status` に出ない | `.gitignore` の `!**/ai/out/` が無い | 2.1 |
+| 成果物が `git status` に出ない | 仕様（許可リスト方式。`ai/` の `in` `work` `out` `records` は追跡しない） | 2.1 |
 | `git mv` が失敗する | 入力が読み取り専用、アンマウント前 | 8.2 の注意 |
