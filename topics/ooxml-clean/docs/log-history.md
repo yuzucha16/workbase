@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-30（PC1 の実 xlsx で動作確認、`unseen-text` の雑音を 1 つ除いた）
+- ユーザーが PC1 の実 xlsx で `check` と `clean`（standard / strict）を通した（NA 1）。基本動作は問題なし。`unseen-text` に出た文字を元ファイルで見える状態に戻すと、掃除で正しくすべて消えた。`unseen-text` は報告のみで、消えるのは掃除の動作による（途中で「戻しても消えない」との疑問があったが、状態を覚える仕組みはない。`sheet1.xml` の図形・コメント類の unseen は、シート内のコントロール・図形の名前や代替テキストが見えている文字に数えられないためと推測。未再現）。
+- `xl/workbook.xml` の unseen の `microsoft.com:RD` `Single` `FV` `LET_WF` などは、Excel が書く `xcalcf:calcFeatures`（計算機能の一覧）の `name` で、ユーザーの文字ではなかった。`text_candidates` で調べない対象に追加（コミット bfd21f5、単体テスト 1 件追加、全 19 件通過）。ユーザーの承認で main に push。
+- 手順書 `guides/howto/ooxml-clean.md` への「`unseen-text` は報告のみ」の追記は、ユーザーが保留（10-30）。
+
 ### 2026-10-29（プロファイル方式の掃除）
 - ユーザーの決定: 許可方式の掃除を「プロファイル方式」で進める（`--profile standard|strict`、部品の種類は `--allow` で残す）。手順書を `guides/` に作る（見本 dotfiles `windows/claude/readme.md`）。動作確認は別セッションで行う。
 - 実装（`workflow-kit/room/cleankit.py`）: `STRIP_KINDS`（charts / images / embeddings / pivots / connections）と `PROFILES`、`strip_refs`（参照元の図形・要素ごと外す）、`strip_kinds`、サブコマンド `profiles`。外した部品の本体は `orphans` で消す。マクロは外さず報告のみ。
