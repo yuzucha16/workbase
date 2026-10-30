@@ -14,7 +14,7 @@ aliases:
   - history seed
 triggers: [コマンド履歴, ヒストリ, history, 利用傾向, シェル履歴, ターミナル, よく使うコマンド, エイリアス案, ヒストリの種]
 created: 2026-10-04
-updated: 2026-10-11
+updated: 2026-10-30
 sources:
   - PSReadLine の履歴 2か所の分析（このPC 629行、他PC 5,436行。2026-10-04）
 ---
@@ -51,6 +51,7 @@ PC を移行するたびに、定型処理のコマンドを調べ直す時間�
 ```powershell
 aws bedrock list-inference-profiles --region ap-northeast-1
 aws configure
+aws configure --profile <プロファイル名>
 aws configure list-profiles
 aws sts get-caller-identity
 ```
@@ -121,14 +122,19 @@ git config --list
 git config --show-origin --list
 git config --show-origin --get-all credential.helper
 git credential-manager version
+git check-ignore -v <パス>
+git diff --cached
 git fetch
+git fetch --prune
 git gc --prune=now
 git log --oneline --graph
+git ls-files
 git merge <ブランチ名>
 git merge --squash <ブランチ名>
 git merge --abort
 git pull
 git pull origin main
+git pull --rebase
 git push origin main
 git push origin <ブランチ名>
 git push --tag
@@ -140,8 +146,12 @@ git rebase <ブランチ名>
 git rebase --continue
 git rebase --abort
 git rebase -i main
+git remote -v
 git reset --hard <リモート名>/<ブランチ名>
 git status
+git status --short
+git -C <リポジトリのパス> status --short
+git -C <リポジトリのパス> log --oneline -10
 git submodule sync
 git submodule update --init --recursive
 git switch main
@@ -232,7 +242,7 @@ uv python pin <バージョン>
 uv python pin 3.13
 uv remove pandas
 uv run python --version
-uv run <スクリプト名>.py
+uv run --script <スクリプトのパス>.py
 uv sync
 uv tool install <ツール名>
 uv tool update-shell
@@ -284,9 +294,64 @@ winget search <名前>
 winget uninstall --id <ID>
 ```
 
+### workflow-kit
+
+```powershell
+uv run --script $env:WFKIT_DIR\room\room.py --help
+uv run --script $env:WFKIT_DIR\room\room.py aws-key <Area名> --profile <プロファイル名>
+uv run --script $env:WFKIT_DIR\room\room.py close <Project名>
+uv run --script $env:WFKIT_DIR\room\room.py init <Area名> --boundary internal
+uv run --script $env:WFKIT_DIR\room\room.py init <Area名> --boundary internal --only <段名>
+uv run --script $env:WFKIT_DIR\room\room.py init <Area名> --boundary internal --resume
+uv run --script $env:WFKIT_DIR\room\room.py init <Area名> --boundary internal --ca-cert <証明書のパス>
+uv run --script $env:WFKIT_DIR\room\room.py mask <Project名>
+uv run --script $env:WFKIT_DIR\room\room.py mkworks --update
+uv run --script $env:WFKIT_DIR\room\room.py mkworks --sub
+uv run --script $env:WFKIT_DIR\room\room.py open <Project名> --area <Area名> --type dev
+uv run --script $env:WFKIT_DIR\room\room.py open <Project名> --area <Area名> --type inv
+uv run --script $env:WFKIT_DIR\room\room.py open <Project名> --area <Area名> --type doc --data mask
+uv run --script $env:WFKIT_DIR\room\room.py pull <Project名> --where <項目>=<値>
+uv run --script $env:WFKIT_DIR\room\room.py readme <Project名>
+uv run --script $env:WFKIT_DIR\room\room.py reap <Project名> --force
+uv run --script $env:WFKIT_DIR\room\room.py rename-area <旧Area名> <新Area名>
+uv run --script $env:WFKIT_DIR\room\room.py restore <Project名>
+uv run --script $env:WFKIT_DIR\room\room.py shell <Area名>
+uv run --script $env:WFKIT_DIR\room\room.py start <Project名>
+uv run --script $env:WFKIT_DIR\room\room.py start <Project名> --no-launch
+uv run --script $env:WFKIT_DIR\room\room.py start <Project名> --no-launch --adopt
+uv run --script $env:WFKIT_DIR\room\room.py start <Project名> --gateway
+uv run --script $env:WFKIT_DIR\room\room.py stock <Project名>
+uv run --script $env:WFKIT_DIR\room\room.py umount --area <Area名>
+uv run --script $env:WFKIT_DIR\tools\cap_meter.py
+uv run --script $env:WFKIT_DIR\tools\cap_meter.py --latest
+uv run --script $env:WFKIT_DIR\tools\check_inbox.py --show-pass
+uv run --script $env:WFKIT_DIR\tools\check_py.py <パス> --run-tests
+uv run --script $env:WFKIT_DIR\tools\decompose_session.py --session <会話ID>
+uv run --script $env:WFKIT_DIR\tools\decompose_session.py --session <会話ID> --steps
+uv run --script $env:WFKIT_DIR\tools\due.py --days 3
+uv run --script $env:WFKIT_DIR\tools\find_knowledge.py <キーワード>
+uv run --script $env:WFKIT_DIR\tools\find_knowledge.py --triggers <依頼文>
+uv run --script $env:WFKIT_DIR\tools\find_knowledge.py --check-index
+uv run --script $env:WFKIT_DIR\tools\find_knowledge.py --check-triggers
+uv run --script $env:WFKIT_DIR\tools\heavy_sessions.py --since <YYYY-MM-DD> --top 5
+uv run --script $env:WFKIT_DIR\tools\repeat_reads.py --detail
+uv run --script $env:WFKIT_DIR\tools\requests_by_kind.py --detail
+uv run --script $env:WFKIT_DIR\tools\triggers_stats.py --detail
+uv run --script $env:WFKIT_DIR\tools\usage_report.py
+uv run --script $env:WFKIT_DIR\tools\usage_report.py --by month --last 3 --top 10 --prices $env:WFKIT_DIR\tools\usage_prices.json
+uv run --script $env:WFKIT_DIR\tools\usage_report.py --sort cost --prices $env:WFKIT_DIR\tools\usage_prices.json
+uv run --script $env:WFKIT_DIR\tools\usage_report_html.py --by month --last 6
+```
+
+- 2026-10-30 に、Python の実行を `uv run --script <パス>.py` に統一し、`$env:WFKIT_DIR`（`10_env.bat` が `<works>\resources\workflow-kit` に設定）を使う形にした。作業ディレクトリに依存せず、`<…名>` を書き換えるだけで実行できる。`$env:WFKIT_DIR` は Tab 補完で実パスに変わらない（`profile.ps1` の Tab ハンドラ）。
+- 自作スクリプトだけを載せる。`room.py` の引数は `room.py <サブコマンド> --help` が正本。`init`・`open` の `--boundary internal` と `--type dev` は、よく使う値を入れてある（適宜書き換える）。`reap --force` は期限前でも消すので、`<Project名>` を必ず確かめる。
+- Linux（zsh/bash）側の種には載せない。`WFKIT_DIR` は Windows の `10_env.bat` だけが設定する。
+
 ### wsl
 
 ```powershell
+wsl -d <ディストロ名>
+wsl -d <ディストロ名> -e printenv <変数名>
 wsl --install -d <ディストロ名>
 wsl --list --online
 wsl --list --verbose
@@ -372,6 +437,7 @@ git status
 git fetch
 git pull
 git pull origin main
+git pull --rebase
 git branch
 git branch -a
 git branch -r
