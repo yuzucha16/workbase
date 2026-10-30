@@ -10,7 +10,7 @@ aliases:
   - python-version-uv-canonical
 triggers: [Python の版, python3, uv run, uv python, requires-python, .python-version, 版の固定, uv が使えない, python が使えない, 呼び方]
 created: 2026-10-29
-updated: 2026-10-29
+updated: 2026-10-30
 sources:
   - Claude Code conversation "Count python and uv run calls in workbase" (2026-10-29)
 ---
@@ -25,13 +25,13 @@ sources:
 
 ## Decisions
 
-- 呼び方（`docs/decisions.md` 2026-10-29）: Windows は依存つき `uv run --script`、room は `uv run room.py`。uv が止まったときだけ OS の `python`（標準ライブラリだけの .py。版は保証しない）。WSL は `python3`（正本と同じ版を uv で入れる。`room init` の段は未実装）。PC2・クラウドの AI は `python -I`（対象外）。
+- 呼び方（`docs/decisions.md` 2026-10-29）: Windows は依存つき `uv run --script`、room は `uv run room.py`。uv が止まったときだけ OS の `python`（標準ライブラリだけの .py。版は保証しない）。WSL は `python3`（正本と同じ版を `room init` の段 `python` が uv で入れる。2026-10-30 実装、部屋の実機は未確認）。PC2・クラウドの AI は `python -I`（対象外）。
 - 各 `.py` の `requires-python` は `==3.13.*`。下限指定（`>=`）だと、uv が新しい版を選んで正本とずれる。
 - 古い版が要るモジュールを使うスクリプトだけ、`requires-python` に別の版を書く（スクリプトごとに選ばれる）。
 
 ## Gotchas
 
-- 【汎用】`uv python install` は uv の置き場に入れるだけで、`python3` の名前では呼べない。呼ぶには別名（`--default`）か PATH が要る（実機で未確認）。Ubuntu のシステムの `python3` は apt の道具が使うので上書きしない。
+- 【汎用】`uv python install <版>` だけでは `python3` の名前では呼べない。`--default` を付けると `~/.local/bin` に `python` `python3` の別名が置かれ、そこが PATH の先頭なら呼べる（uv 0.11.32 の Linux で確認、2026-10-30。`--preview` は不要）。Ubuntu のシステムの `python3` は apt の道具が使うので上書きしない。
 - 【汎用】`python -I` は PYTHONIOENCODING を無視するので、Windows で人が叩く手順には付けない。
 - 【汎用】`uv run`（プロジェクト内）は近くの `pyproject.toml` の環境を使い、`uv run --script` は .py の先頭の依存情報だけを使う。
 - 【汎用】Windows の `python3` はストアの代替実行（スタブ）に当たることがある。Windows の手順は `python` にする。
@@ -39,5 +39,4 @@ sources:
 
 ## Open Questions
 
-- WSL で uv の Python を `python3` として呼ぶ方法（`--default` か `~/.local/bin`）。
 - 勤務先のネットワークで `uv python install` が通るか。

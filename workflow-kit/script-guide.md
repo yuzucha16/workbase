@@ -21,7 +21,7 @@
 
 | 道具 | 版 | 注意 |
 |---|---|---|
-| Python | 正本の版（`workflow-kit/room/.python-version`。今は 3.13.14）を uv で入れ、`python3` で呼ぶ（案。`room init` の段は未実装）。システムの 3.14.4 は apt の道具が使うので上書きしない | `pip` は無い。依存が要るときは `uv`（`uv run --script`、`uv add`）で版を固定する。外部の取得はネットワークと証明書に依存する（未確認）。テストは標準ライブラリの `unittest` |
+| Python | 正本の版（`workflow-kit/room/.python-version`。今は 3.13.14）を uv で入れ、`python3` で呼ぶ（`room init` の段 `python`。2026-10-30 実装、部屋の実機は未確認）。システムの 3.14.4 は apt の道具が使うので上書きしない | `pip` は無い。依存が要るときは `uv`（`uv run --script`、`uv add`）で版を固定する。外部の取得はネットワークと証明書に依存する（未確認）。テストは標準ライブラリの `unittest` |
 | uv | 0.13.4 | Python の版・依存・仮想環境の管理 |
 | git | 2.53.0 | 部屋のローカルの git（`room-context.md`） |
 | PowerShell 7 | 7.6.7（Linux 版）+ PSScriptAnalyzer 1.25.0 + Pester 5.9.1 | 下の節の点検とテスト用。Windows 固有の動作は再現しない |
@@ -49,7 +49,7 @@
 | Windows・依存つき | `uv run --script` | 正本（`room/.python-version`） |
 | Windows・room | `uv run room.py` | 正本 |
 | Windows・uv が止まったとき | `python`（標準ライブラリだけの .py） | 保証しない |
-| WSL（部屋） | `python3` | 正本（`room init` が uv で入れる。案） |
+| WSL（部屋） | `python3` | 正本（`room init` が uv で入れる） |
 | PC2・クラウドの AI | `python -I` | 対象外 |
 
 - 各 `.py` の `requires-python` は `==3.13.*`（正本の系列）にそろえる。下限指定（`>=`）だと、uv が新しい版を選んで正本とずれる。

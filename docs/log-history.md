@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-10-30（works の許可リスト方式の反映を閉じ、room init に Python の段を足した）
+- 旧 Next Actions 15（works の許可リスト方式の反映）: ユーザーが手順書 `guides/howto/works-gitignore-allowlist-migration.md` で各 PC の works を移し、問題なく完了した（ユーザーの報告）。閉じた。
+- 旧 Next Actions 14 の一部: `room init` に段 `python` を足した（`uv` の次。`uv python install <.python-version の版> --default` で ai の `~/.local/bin` に `python3` の別名を置く。`SSL_CERT_FILE` でシステムのバンドルを指す）。道具の確認に `python3 --version`。単体テスト 2 本を足し、169 件 OK。`--default` の動きは Linux の uv 0.11.32 で確かめた（`--preview` 不要）。判断は `decisions.md` 2026-10-29 の項に追記。残りは実機の部屋での確認（`log.md` の Next Actions 14）。
+
 ### 2026-10-29（works の git 追跡を許可リスト方式にした）
 - ユーザーの方向（works は git 関連とディレクトリ固定のために git 管理にしただけで、`ai/` が入ったのは積極的な理由が無い）を受けて、現状（`mkworks` の初回コミット、`open` `init` `close` のコミット、`start --commit`、雛形の `!**/ai/out/`）を調べ、許可リスト案を出した。公開の見本 worksample（198 ファイル）で実測し、69 ファイルになることを確かめた（初案の `!docs/**` がトップにしか効かない誤りを、`!**/docs/**` に直した）。`ai/docs/` は追跡する（ユーザー）。
 - 反映（`48e6fc3`）: `gitignore.template`、AGENTS.md 雛形、`room.py`（`GITIGNORE_REQUIRED` は `**/_noai/` だけ、`is_allowlist_vault`、`start` の報告）、ガイド 4 本、`room/README.md`、単体テスト 2 本（167 件 OK）。判断は `docs/decisions.md` の同日。

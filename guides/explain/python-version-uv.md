@@ -22,7 +22,7 @@ OS 管理の Python は、入れた覚えのない版が使われる。uv 管理
 
 ## 正本は 1 か所
 
-`workflow-kit/room/.python-version`（今は 3.13.14）が正本。WSL の `python3` も、`room init` で同じ版を uv で入れて合わせる（案。未実装）。各 .py の `requires-python` は `==3.13.*` にする。
+`workflow-kit/room/.python-version`（今は 3.13.14）が正本。WSL の `python3` も、`room init`（段 `python`）で同じ版を uv で入れて合わせる。各 .py の `requires-python` は `==3.13.*` にする。
 
 ## 落ちたとき
 

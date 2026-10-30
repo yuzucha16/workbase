@@ -968,7 +968,25 @@ def scaffold_area(ctx, area):
 
 
 # init の段（--only で選ぶ名前）。base は一般ユーザー・wsl.conf・分離の確認（部屋を terminate する）
-INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "pwsh", "npm", "uv", "claude", "stophook", "path")
+INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
+
+# Python の版の正本（uv 管理。docs/decisions.md 2026-10-29）。部屋の python3 もこの版にそろえる
+PYTHON_VERSION_FILE = Path(__file__).resolve().parent / ".python-version"
+
+
+def python_version():
+    v = PYTHON_VERSION_FILE.read_text(encoding="utf-8").strip() if PYTHON_VERSION_FILE.exists() else ""
+    if not re.fullmatch(r"\d+\.\d+(\.\d+)?", v):
+        raise RoomError(f"Python の版の正本が読めない: {PYTHON_VERSION_FILE}（中身: {v!r}）")
+    return v
+
+
+# 正本の版を uv で入れ、--default で ~/.local/bin に python・python3 の別名を置く（PATH の行で /usr/bin/python3 より先に当たる。システムの python3 は apt の道具が使うので上書きしない）。
+# uv は既定でシステムの証明書を見ないので、SSL_CERT_FILE でバンドル（cacert で入れた検査用の証明書を含む）を指す
+def python_install(version):
+    return ("set -e\nexport SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt\n"
+            f"\"$HOME/.local/bin/uv\" python install {version} --default\n"
+            "\"$HOME/.local/bin/python3\" --version\n")
 
 
 def parse_only(value):
@@ -1029,7 +1047,7 @@ def cmd_init(ctx, a):
         got = dict(l.strip().split("=", 1) for l in out.splitlines() if "=" in l)
         if got != {"user": "ai", "c": "0", "cmd": "no", "sudo": "no"}:
             raise RoomError(f"分離の確認が目安と違う（{got}）。user=ai, c=0, cmd=no, sudo=no が目安。道具は入れていない")
-    ctx.say("道具を入れる（curl、rg、git、Node.js、LibreOffice、pandoc、PowerShell 7、uv、Claude Code。uv と Claude Code は配布元のスクリプトをそのまま実行する）")
+    ctx.say("道具を入れる（curl、rg、git、Node.js、LibreOffice、pandoc、PowerShell 7、uv、Python、Claude Code。uv と Claude Code は配布元のスクリプトをそのまま実行する）")
     if want("apt"):
         step_script(ctx, distro, "apt（curl, ca-certificates, ripgrep, git）",
                     "apt-get update -qq && apt-get install -y -qq curl ca-certificates ripgrep git\n", root=True)
@@ -1053,6 +1071,9 @@ def cmd_init(ctx, a):
         step_script(ctx, distro, "npm の証明書", NPM_CAFILE)
     if want("uv"):
         step_script(ctx, distro, "uv", "curl -LsSf https://astral.sh/uv/install.sh | sh\n")
+    if want("python"):
+        pyver = python_version()
+        step_script(ctx, distro, f"Python {pyver}（uv で入れ、python3 で呼べるようにする。正本は workflow-kit/room/.python-version）", python_install(pyver))
     if want("claude"):
         step_script(ctx, distro, "Claude Code", "curl -fsSL https://claude.ai/install.sh | bash\n")
     if want("stophook"):
@@ -1061,7 +1082,7 @@ def cmd_init(ctx, a):
         step_script(ctx, distro, "PATH",
                     f"grep -qxF '{ROOM_PATH_LINE}' \"$HOME/.bashrc\" 2>/dev/null || echo '{ROOM_PATH_LINE}' >> \"$HOME/.bashrc\"\n")
     ver = step_script(ctx, distro, "道具の確認",
-                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\nmmdc --version\npwsh --version\npwsh -NoProfile -Command \'Get-Module -ListAvailable PSScriptAnalyzer,Pester | ForEach-Object { "$($_.Name) $($_.Version)" }\'\n')
+                      'export PATH="$HOME/.local/bin:$PATH"\nclaude --version\nuv --version\npython3 --version\nnode --version\nrg --version | head -1\nsoffice --version | head -1\npandoc --version | head -1\nmmdc --version\npwsh --version\npwsh -NoProfile -Command \'Get-Module -ListAvailable PSScriptAnalyzer,Pester | ForEach-Object { "$($_.Name) $($_.Version)" }\'\n')
     ctx.say(ver.rstrip())
     ctx.say(f"部屋ができた: {distro}。残りは人の操作（ログイン）:\n"
             f"  room shell {a.area}  →  claude  →  表示された URL をブラウザで開いてログイン  →  /exit\n"

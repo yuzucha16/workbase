@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -530,6 +531,29 @@ class InitTest(unittest.TestCase):
             self.assertNotIn("astral.sh", texts)
             self.assertFalse(hasattr(wsl, "terminated"))
             self.assertFalse(hasattr(wsl, "installed"))
+
+    def test_init_python_step_installs_canonical_version_as_python3(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            wsl = FakeWsl()
+            room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-x", resume=False, only="python"))
+            self.assertEqual(len(wsl.scripts), 2)  # Python の段と、道具の確認だけ
+            _, text, root = wsl.scripts[0]
+            self.assertFalse(root)  # 部屋の一般ユーザー（ai）の ~/.local に入れる
+            pyver = (Path(room.__file__).parent / ".python-version").read_text(encoding="utf-8").strip()
+            self.assertIn(f"uv\" python install {pyver} --default", text)
+            self.assertIn("SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt", text)
+            self.assertIn("python3 --version", wsl.scripts[1][1])
+
+    def test_python_version_rejects_unreadable_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Path(tmp) / ".python-version"
+            f.write_text("3.13.14\n", encoding="utf-8")
+            with mock.patch.object(room, "PYTHON_VERSION_FILE", f):
+                self.assertEqual(room.python_version(), "3.13.14")
+                f.write_text("latest\n", encoding="utf-8")
+                with self.assertRaises(room.RoomError):
+                    room.python_version()
 
     def load_stop_hook(self, tmp):
         import importlib.util
