@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-30（NA 5b の仕訳判断、NA 9 の採用、切る目安の据え置き）: 「token-cap の続き」。(1) office-output-types の `records/2026-10-30-master-book-baseline-template.md` の分担（人・AI・コード）と固定部 R1〜R6 を読み、NA 5(b) の仕訳にあたると判断した。弱い点（PC1 の実物で未実行、案件が Excel 集約 1 件）は同トピックの Open Questions に積んだ（ee の依頼）。(2) NA 9: 分割は 10-29 に済み、`AGENTS.md` などは元から直前に読む書き方。残っていたのは相談の型のケア 8 の文言。早読みの見込みは約 19k 文字分の読み直し（概算）、デメリットは小さいと整理し、ee が採用。`consultation-pattern.md` を直した。(3) 切る目安は 100k のまま（ee）。wrap。
+
 - 2026-10-29（測定スクリプトの移動）: ee の依頼（`topics/` は room にコピーされず、スクリプトのコピーが面倒）。`topics/token-cap/` の Python 3 本を `workflow-kit/tools/` に `git mv`（room 向けの部品ではなく会話記録の分析なので `tools/`。標準ライブラリのみ・参照は素のファイル名で、影響なし）。窓口に「スクリプト」節を追加。過去の記録の素のファイル名は読み替える。移動後に `requests_by_kind.py --help` が動くことを確認（他の 2 本は未実行）。
 
 - 2026-10-29（相談の型の費用の測定）: 「workbase の続き na9」。root の NA 9（相談の型を `cap_meter.py --latest` の前後で測る）として、同じ内容の相談を型あり（18 応答、積算 931,030）と型なし（12 応答、477,830）で測った。12 応答の時点で型ありが +16.9%（79,158）。事実集めの量は同じで、差は `decisions.md` を探す読み（Grep 4,010 文字を含む）と、記録・push の規則書、`log.md` の読み。出力と Edit の引数は差の原因ではなかった。`decompose_session.py` に `--steps --upto N` を足し、`records/2026-10-29-consultation-pattern-cost.md` に記録した。ee の決定: 型を続ける、本文を `exmem/lessons/consultation-pattern.md` に移して `triggers:` を付ける。ee の依頼で、規則書の読みを遅らせる案を NA 9 に積んだ。コミット `c5cc311`。wrap。
