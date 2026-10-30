@@ -60,5 +60,7 @@ updated: 2026-10-19
 | 解決1・解決2、改善1〜3 | （なし） | | 未実施（この型の前にできた） |
 | `start`（インタビュー）、`review`、`init 更新` ほか | （なし） | | 未実施 |
 | 全フックの横並びの改善表（定期的に見直す。同じ表を更新し、増やさない） | [[2026-10-18-hook-improvement-matrix]]（表1〜3） / [[2026-10-18-hook-improvement-candidates]]（候補） | 2026-10-19 | 実施済み。見送り: 2-11/3-3、1-8。足さない: 1-7、1-9、N9 |
+| kit の設計の第三者レビュー（別モデル。2026-10-08。今の構成の土台。決定は workbase の `docs/decisions.md`） | L0 目的: [[2026-10-08-review-l0-purpose-prompt]] / [[2026-10-08-review-l0-purpose-result]]。L1 構造: [[2026-10-08-review-l1-structure-prompt]] / [[2026-10-08-review-l1-structure-result]]。L3・L5 プロセス: [[2026-10-08-review-l3-l5-process-prompt]] / [[2026-10-08-review-l3-l5-process-result]]。台帳: [[2026-10-08-review-ledger-prompt]] / [[2026-10-08-review-ledger-answer]] | 2026-10-08 | 完了（works の `docs/drafts/` から 10-30 に移した。依頼文と結果の対） |
+| 手順書の下書き（`start` `open` `close` の正本化前。実測の経緯） | [[2026-10-08-session-start-interview-draft]] / [[2026-10-08-project-open-hook-draft]] / [[2026-10-08-project-close-hook-draft]] | 2026-10-08 | 正本は kit に移済み。経緯の記録のみ |
 
 記録を足したら、この表も同じコミットで直す。

@@ -18,8 +18,6 @@
 2. 【起票 10-25、期日 11-03】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
 13. 【起票 10-29】`triggers:` の誤爆と引き当て率: 部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）への備え（短い札の禁止、完全一致の書き方、現状維持）を、引き当て率の初回（11-08）を見て決める。
 
-16. 【起票 10-29】見本 works（worksample）の `docs/drafts/` `docs/metrics/` は、サンプルと動作確認の結果なので、workbase へ移管して works から消す（別のタイミングで見直す、ユーザー）。
-
 11. 【起票 10-29】期日の移し替えの動作確認: 次の `review 消化` で `due.py` が動き、期日が来た行（最初は 11-01 の weekly）が Next Actions に上がるか。上がらない・遅れるなら、手順（`review-hook.md` の消化モード）を直す。
 
 ## Open Questions

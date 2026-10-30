@@ -5,6 +5,7 @@
 ### 2026-10-30（review 消化: 旧 Next Actions 17 を閉じ、2 に期日を付けた）
 - 旧 Next Actions 17: ユーザーが実機で `mkworks --sub` を実行し、問題なく `works_sub<N>` ができた（ユーザーの報告）。閉じた。
 - Next Actions 2 に期日 11-03 を付けた（`due.md` に行を足した。ユーザーの指示）。
+- 旧 Next Actions 16（works の `docs/drafts/` `docs/metrics/` の移管）を閉じた。`docs/explain/`（agent-safety-rules）と `docs/metrics/`（開始インタビューの指標。`init-hook` などが廃止済みで、`events.csv` は 10-11 から止まり、会話の指標は `workflow-kit/tools/` の `usage_report.py` ほかが引き継いでいる）は、ユーザーの指示で works から削除した。`docs/drafts/` 11 件は、第三者レビュー 8 件（今の構成の土台）と手順書の下書き 3 件で、結論の出た記録なので、logbook（観測・試行の途中を畳む置き場。8KB の予算）でなく `topics/kit-growth/records/` に日付つきの名前で移した（索引は `kit-records-index.md`）。works 側は `docs/decisions.md` のパス 5 件と `AGENTS.md` の記録の行を直した。
 - `exmem/lessons/workflow-kit-digest.md` の古い Next Action（別リポジトリでの 2 分割の確認）を、賞味期限切れとして削除した（ユーザーの指示）。
 
 ### 2026-10-30（room の mksub を mkworks --sub に移した）
