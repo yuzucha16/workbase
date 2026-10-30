@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】works の `docs/drafts/` は `topics/kit-growth/records/` へ移し、`docs/metrics/` と `docs/explain/` は削除した（2026-10-30）
+- 根拠: ユーザーの決定（2026-10-30）。`metrics/` の判断は AI に任せられ、流用の価値なしと報告して承認された（測る対象の開始インタビュー・`init-hook` が廃止済みで、会話の指標は `workflow-kit/tools/` が引き継いでいる）。`drafts/` の置き場は、ユーザーの直感が logbook、AI の判断が `records/`。logbook は観測・試行の途中を畳む置き場（予算 8KB）で、`drafts/` は約 130KB の結論の出た記録（設計の第三者レビュー 8 件と手順書の下書き 3 件）のため、ユーザーが「サイズがだいぶ大きい」として `records/` に決めた。
+- 決めたこと: 日付つきの名前（`2026-10-08-…`）で `kit-growth/records/` に置き、`kit-records-index.md` に索引を足す。種別の語 `-draft` を `naming-rules.md` の表に足す。
+- 却下案: logbook（上の理由）。
+
 ### 【汎用】`room mksub` を `room mkworks --sub` に移し、`mksub` を廃止した（2026-10-30）
 - 根拠: ユーザーの決定（2026-10-30）。別コマンドの `mksub` は存在を忘れる。作るものはどちらも works なので、`mkworks` のオプションにする。
 - 決めたこと: オプション名は `--sub`（作られるフォルダ `works_sub<N>` と旧名 `mksub` と同じ語で、忘れにくく短い）。`--rev` は `--sub` のときだけ。`--role` の既定は、`--sub` なら個人用、それ以外は業務用（従来どおり）。`--sub` は `--update` `--base` `--remote` と一緒に使えない（検証用は remote なし）。`mksub` は別名として残さずに消した（呼ぶと argparse がコマンドの一覧を出す）。

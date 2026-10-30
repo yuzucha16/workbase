@@ -11,12 +11,12 @@
 - Python の版: uv 管理を正本（`workflow-kit/room/.python-version`）。呼び方は `script-guide.md` の「Python の版と呼び方」（10-29 決定）。部屋の `python3` は `room init` の段 `python` が入れる（10-30 実装、実機の部屋で 3.13.14 が入ることを確認）。
 - ファイル名: `workflow-kit/naming-rules.md`（kebab、Python だけ snake。10-29 決定）。既存の名前は触るついでに直し、一括改名はしない。
 - 人が叩くスクリプトは `run` / `verify` / `release`（`script-guide.md`）。Windows は未確認。
-- 索引（triggers）: dotfiles のフックが依頼ごとに出す（`topics/md-link-graph/`）。相談の型の本文は `exmem/lessons/consultation-pattern.md`（「相談」で引ける。10-29）。
+- 索引（triggers）: dotfiles のフックが依頼ごとに出す（`topics/md-link-graph/`）。単体テストは `workflow-kit/tools/tests/`（`python -I -m unittest discover -s workflow-kit/tools/tests`。10-30）。`exmem-index.md` は 1 ノート 1 行で書く（`--check-index` は行頭の先頭の `[[]]` だけ数える）。相談の型の本文は `exmem/lessons/consultation-pattern.md`（「相談」で引ける。10-29）。
 
 ## Next Actions
 
 2. 【起票 10-25、期日 11-03】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
-13. 【起票 10-29】`triggers:` の誤爆と引き当て率: 部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）への備え（短い札の禁止、完全一致の書き方、現状維持）を、引き当て率の初回（11-08）を見て決める。
+13. 【起票 10-29】`triggers:` の誤爆と引き当て率: 部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）への備え（短い札の禁止、完全一致の書き方、現状維持）を、引き当て率の初回（11-08）を見て決める。現状（部分一致で誤爆する）は単体テスト `test_substring_match_false_positive_is_current_behavior` で固定してある。方針を変えるときはこのテストも直す。
 
 11. 【起票 10-29】期日の移し替えの動作確認: 次の `review 消化` で `due.py` が動き、期日が来た行（最初は 11-01 の weekly）が Next Actions に上がるか。上がらない・遅れるなら、手順（`review-hook.md` の消化モード）を直す。
 

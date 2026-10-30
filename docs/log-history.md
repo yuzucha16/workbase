@@ -7,6 +7,8 @@
 - Next Actions 2 に期日 11-03 を付けた（`due.md` に行を足した。ユーザーの指示）。
 - 旧 Next Actions 16（works の `docs/drafts/` `docs/metrics/` の移管）を閉じた。`docs/explain/`（agent-safety-rules）と `docs/metrics/`（開始インタビューの指標。`init-hook` などが廃止済みで、`events.csv` は 10-11 から止まり、会話の指標は `workflow-kit/tools/` の `usage_report.py` ほかが引き継いでいる）は、ユーザーの指示で works から削除した。`docs/drafts/` 11 件は、第三者レビュー 8 件（今の構成の土台）と手順書の下書き 3 件で、結論の出た記録なので、logbook（観測・試行の途中を畳む置き場。8KB の予算）でなく `topics/kit-growth/records/` に日付つきの名前で移した（索引は `kit-records-index.md`）。works 側は `docs/decisions.md` のパス 5 件と `AGENTS.md` の記録の行を直した。
 - `exmem/lessons/workflow-kit-digest.md` の古い Next Action（別リポジトリでの 2 分割の確認）を、賞味期限切れとして削除した（ユーザーの指示）。
+- `naming-rules.md` の種別の語に `-draft` を足した（`a92f4ab`）。`kit-growth/records` への移管（`cebed80`）とあわせて push 済み。works 側は `1795bbd`（wrap で push した）。
+- `--check-index` の FAIL 5 件の原因は、`exmem-index.md` の 1 行に 6 ノートをまとめて書いていたこと（点検は行頭の先頭のリンクだけ数える）。1 ノート 1 行に分けて fail=0。あわせて `workflow-kit/tools/tests/test_triggers.py`（22 件。`find_knowledge` の triggers・index の点検、`triggers_hook`、`triggers_stats`）を足し、`triggers_stats.py` の閉じ忘れを直した（`514c6b3`）。ユーザーが見た「単体テストの失敗」は、この点検の FAIL だったと推定（同じ環境。ログは未確認）。
 
 ### 2026-10-30（room の mksub を mkworks --sub に移した）
 - ユーザーの依頼「mksub を忘れるので mkworks の引数にしたい」。名前は `--sub`（推奨をユーザーが選択。却下: `--trial` `--clone`）。`mksub` は廃止、`--rev` は `--sub` のときだけ、`--role` の既定は `--sub` なら個人用。単体テスト 138 件成功、push 済み（7c24532）。実機（PC1/WSL）では未確認。決定は `decisions.md` の同日。
