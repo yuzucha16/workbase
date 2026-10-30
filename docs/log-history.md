@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-30（room の mksub を mkworks --sub に移した）
+- ユーザーの依頼「mksub を忘れるので mkworks の引数にしたい」。名前は `--sub`（推奨をユーザーが選択。却下: `--trial` `--clone`）。`mksub` は廃止、`--rev` は `--sub` のときだけ、`--role` の既定は `--sub` なら個人用。単体テスト 138 件成功、push 済み（7c24532）。実機（PC1/WSL）では未確認。決定は `decisions.md` の同日。
+
 ### 2026-10-30（room init の Python の段を実機で確認した）
 - 旧 Next Actions 14 を閉じた: ユーザーが実機の部屋で `room init --only python` を実行し、3.13.14 が入った（ユーザーの報告）。勤務先ネットワークでの取得を別に切り分けた報告はない（問題が出たら再起票）。
 
