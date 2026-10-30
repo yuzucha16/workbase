@@ -7,6 +7,7 @@
 | 2026-11-01 | 定例 | weekly の振り返り（7日周期、日曜。材料は `topics/kit-growth/records/`）。仮決めの期限切れを数える | ユーザー |
 | 2026-11-29 | 単発 | `brief 計画` は実務で3回使うまで試験運用（`decisions.md` の 2026-10-25）。使った回数: 0（10-29 時点）。3回に達していれば試験運用を閉じる判断、未達なら続ける（monthly で確認） | ユーザー |
 | 2026-11-29 | 定例 | monthly の振り返り（28日周期、日曜）。R-2026-10-25-02 の検証もここで | ユーザー |
+| 2026-11-03 | 単発 | log の Next Actions 2: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`） | ユーザー |
 | 2026-11-04 | 単発 | 返答の並び（求めること・確認を最下段、結論をその直前。`AGENTS.md`）の 1 週間の試行を続けるか判断 | ユーザー |
 | 2026-11-05 | 単発 | Open Questions の保留 2 件（`repos/` の受け渡し、`restore` の上書き保護） | ユーザー |
 | 2026-11-05 | 単発 | token-cap の NA 2: `integrate` の上限の効果を再測定（`requests_by_kind.py --csv` で integrate の 10-27 以降の件数を見る。Windows 側と room 側）。手順と 10-29 の値は `topics/token-cap/docs/log.md` | AI（ユーザーの依頼で） |

@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-30（review 消化: 旧 Next Actions 17 を閉じ、2 に期日を付けた）
+- 旧 Next Actions 17: ユーザーが実機で `mkworks --sub` を実行し、問題なく `works_sub<N>` ができた（ユーザーの報告）。閉じた。
+- Next Actions 2 に期日 11-03 を付けた（`due.md` に行を足した。ユーザーの指示）。
+- `exmem/lessons/workflow-kit-digest.md` の古い Next Action（別リポジトリでの 2 分割の確認）を、賞味期限切れとして削除した（ユーザーの指示）。
+
 ### 2026-10-30（room の mksub を mkworks --sub に移した）
 - ユーザーの依頼「mksub を忘れるので mkworks の引数にしたい」。名前は `--sub`（推奨をユーザーが選択。却下: `--trial` `--clone`）。`mksub` は廃止、`--rev` は `--sub` のときだけ、`--role` の既定は `--sub` なら個人用。単体テスト 138 件成功、push 済み（7c24532）。実機（PC1/WSL）では未確認。決定は `decisions.md` の同日。
 
