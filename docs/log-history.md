@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-30（Next Actions 13 を due.md に移した）
+- 旧 Next Actions 13（`triggers:` の誤爆と引き当て率）は、11-08 の引き当て率の初回を見て決める日付起点の項目なので、ユーザーの指示で `docs/due.md` の 11-08 の行に統合し、`log.md` から消した（内容は欠けなし）。
+
 ### 2026-10-30（review 消化: 旧 Next Actions 17 を閉じ、2 に期日を付けた）
 - 旧 Next Actions 17: ユーザーが実機で `mkworks --sub` を実行し、問題なく `works_sub<N>` ができた（ユーザーの報告）。閉じた。
 - Next Actions 2 に期日 11-03 を付けた（`due.md` に行を足した。ユーザーの指示）。
