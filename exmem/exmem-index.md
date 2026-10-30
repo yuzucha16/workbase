@@ -72,7 +72,12 @@ updated: 2026-10-16
 - [[research-method-2]]: 調査のやり方2: 手順を調べ、前提と骨格を固定して、実行できる手順書にまとめる（Must / Want）
 - [[retrospective-method]]: 振り返りのやり方1（改善4。定期）: 済んだ進め方・成果物を、評価軸を先に決めて、良い点と悪い点の両面で評価する（Must / Want）
 - [[retrospective-method-output]]: 振り返りの出力の型1（改善4。定期）: daily / weekly / monthly の規模と章立て。依頼の言葉で型だけを引く（2026-10-28、試験）
-- [[research-explain-output]] / [[research-procedure-output]] / [[planning-method-output]] / [[improvement-quantified-options-output]] / [[improvement-expectation-gap-output]] / [[improvement-coverage-matrix-output]]: 調査1・調査2・計画・改善1〜3 の出力の型。依頼の言葉で型だけを引く（2026-10-28、試験。`brief` の引数は廃止）
+- [[research-explain-output]]: 調査の出力の型1（説明）: 主題を調べてまとめるときの章立てと作り方の Must。依頼の言葉で型だけを引く（2026-10-28、試験。`brief` の引数は廃止）
+- [[research-procedure-output]]: 調査の出力の型2（手順書）: 実行できる手順書の章立てと作り方の Must。同上
+- [[planning-method-output]]: 計画の出力の型: 6R・憲章・成果物 WBS・マイルストーンの形と作り方の Must。同上
+- [[improvement-quantified-options-output]]: 改善の出力の型1（数値）: 現状の数値と 10・20・30% の選択肢表。同上
+- [[improvement-expectation-gap-output]]: 改善の出力の型2（ズレ）: 想定と実際の横並び表と原因の照合。同上
+- [[improvement-coverage-matrix-output]]: 改善の出力の型3（星取り表）: 観点の絞り込み・星取り表・修正/削除/追加の案。同上
 - [[planning-method]]: 計画のやり方: 6R で要求を整理し、憲章・成果物 WBS・マイルストーンで目的とゴールを共有する（Must / Want。試験運用）
 - [[retrospective-method-2]]: 振り返りのやり方2（改善5。突発）: 失敗・トラブル1件を、時系列の事実から、なぜなぜで仕組みの欠けまで掘る（叩き台。品質チェック未実施）
 - [[retrospective-incident-output]]: 振り返りの出力の型2（改善5。突発）: なぜなぜの章立て。依頼の言葉で型だけを引く（2026-10-28、試験）

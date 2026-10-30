@@ -35,7 +35,9 @@ def tool_text(block):
 def analyze(path, since):
     turns = []  # {"prompt", "hits", "text"}
     cur = None
-    for line in path.open(encoding="utf-8", errors="replace"):
+    with path.open(encoding="utf-8", errors="replace") as fh:
+        lines = fh.readlines()
+    for line in lines:
         try:
             d = json.loads(line)
         except ValueError:
