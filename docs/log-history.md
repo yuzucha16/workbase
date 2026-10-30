@@ -4,7 +4,7 @@
 
 ### 2026-10-30（トピック logbook-design を閉じた）
 - ユーザーの指示で閉じた。期日のなかった Next Actions を `due.md` に移した（11-15 の 2 件、11-29 の 1 件。11-08 は既存の行）。`due.md` の末尾にあった壊れた重複行（11-08 の `stock` の行の複製）4 行を削除した。`records/` 8 本は検討の過程として削除し、`docs/decisions.md`・`logbook/README.md`・`logbook/user-thinking-habits.md`・`topics-index.md` の言及を直した。決定は `decisions.md` に 1 項。トピックの経緯は git に残る。
-- 経験則の候補の一覧（close-procedure の手順 1）は、まだユーザーに見せていない。
+- close-procedure の手順 1: 新しく移す経験則の候補は無く、決定は `decisions.md` の 1 項にまとめるだけでよいと、ユーザーが承認した（「1項目にまとめてよいです」）。
 ### 2026-10-30（トピック md-link-graph と hook-room-alignment を閉じた）
 - ユーザーの指示で、2 つのトピックを閉じた。`md-link-graph`: `mdgraph.py` を HTML なしの文字出力（循環・階層・複雑度）に縮め、`mdreach.py` を削除し、`review-triggers-check.md` を 3 コマンドの定期点検に書き直した。設計案 `design-triggers.md` は `triggers-knowledge-index.md` と重複するため移さず削除（S11 の方針だけ足した）。積み残し（11-08 の引き当て率の初回、S11、`logbook/` の対象の判断）は `due.md` の 11-08 の行へ。`hook-room-alignment`: 積み残しの PC2 `verify`（11-03）と `stock` の `scope: area` の実機確認（11-08）を `due.md` へ。議論の記録 28KB は削除。両トピックの決定は `decisions.md` に 1 項ずつ。トピックの `docs/log-history.md` の経緯は git に残る。
 - `mdrank.py` の今回の値は 1 位 25/40、上位 5 件 35/40（10-25 は 30/43、40/43）。場面とノートの `triggers:` が変わった後の値で、原因は未調査（次の `review` の入力 9 で前回と比べる）。
