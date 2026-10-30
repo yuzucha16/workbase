@@ -13,7 +13,7 @@
 
 ## 知識を引く（作業の前）
 
-作業を始める前に、依頼の言葉で `python -I workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` を実行し、出たノートを読む（`exmem/lessons/`、`guides/explain/`、未統合の `exmem/inbox/` の `triggers:` と照合する。2026-10-25 ユーザーの決定。設計は `topics/md-link-graph/records/design-triggers.md`）。
+作業を始める前に、依頼の言葉で `python -I workflow-kit/tools/find_knowledge.py --triggers "<依頼文>"` を実行し、出たノートを読む（`exmem/lessons/`、`guides/explain/`、未統合の `exmem/inbox/` の `triggers:` と照合する。2026-10-25 ユーザーの決定。設計は `guides/explain/triggers-knowledge-index.md`）。
 
 ## 読み込みの量を抑える
 

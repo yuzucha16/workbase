@@ -11,7 +11,7 @@
 - Python の版: uv 管理を正本（`workflow-kit/room/.python-version`）。呼び方は `script-guide.md` の「Python の版と呼び方」（10-29 決定）。部屋の `python3` は `room init` の段 `python` が入れる（10-30 実装、実機の部屋で 3.13.14 が入ることを確認）。
 - ファイル名: `workflow-kit/naming-rules.md`（kebab、Python だけ snake。10-29 決定）。既存の名前は触るついでに直し、一括改名はしない。
 - 人が叩くスクリプトは `run` / `verify` / `release`（`script-guide.md`）。Windows は未確認。
-- 索引（triggers）: dotfiles のフックが依頼ごとに出す（`topics/md-link-graph/`）。単体テストは `workflow-kit/tools/tests/`（`python -I -m unittest discover -s workflow-kit/tools/tests`。10-30）。`exmem-index.md` は 1 ノート 1 行で書く（`--check-index` は行頭の先頭の `[[]]` だけ数える）。相談の型の本文は `exmem/lessons/consultation-pattern.md`（「相談」で引ける。10-29）。
+- 索引（triggers）: dotfiles のフックが依頼ごとに出す（`guides/explain/triggers-knowledge-index.md`。参照構造の点検は `review` の入力 9）。単体テストは `workflow-kit/tools/tests/`（`python -I -m unittest discover -s workflow-kit/tools/tests`。10-30）。`exmem-index.md` は 1 ノート 1 行で書く（`--check-index` は行頭の先頭の `[[]]` だけ数える）。相談の型の本文は `exmem/lessons/consultation-pattern.md`（「相談」で引ける。10-29）。
 
 ## Next Actions
 

@@ -44,7 +44,8 @@ triggers: [triggers, 作業の言葉, 索引, 知識の引き当て, find_knowle
 ## 補足
 - 手書きの `exmem/exmem-index.md` は、人が読む索引として残す。`triggers:` から生成する案は未決。
 - 作業中に自動で出す仕組み（依頼文の送信時にスクリプトを呼ぶフック）は dotfiles 側で別に作る。このリポジトリはスクリプトと点検だけを持つ。
-- 設計と計測の経緯は、`topics/md-link-graph/records/design-triggers.md`（トピックを閉じたら git の履歴）。
+- 設計と計測の経緯は git の履歴（トピック `md-link-graph` は 2026-10-30 に閉じた）。参照構造の定期点検は `workflow-kit/review-triggers-check.md`。
+- `AGENTS.md` や kit の規則（S11）には `triggers:` を付けない方針。入口の 1 行とフックで届くため。実際の作業で届かなければ見直す（`docs/due.md` の 2026-11-08）。
 
 ## 要確認事項
 - 実際の作業での引き当て率（試作の測定は、語も場面も同じ AI が書いたので盲検でない）。

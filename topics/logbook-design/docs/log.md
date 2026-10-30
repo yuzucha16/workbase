@@ -14,7 +14,7 @@
 
 1. 畳み候補の残り: room の OQ 4 項（マウントの可視性、プリンタ設定、マスクから復元までの通し、pptx。2026-10-27 の「9 項完了」に含まれないと、ユーザーが 2026-10-29 に回答）。obsidian-vault-backup の NA 2 項（WSL の張り直し〔`GHQ_ROOT` は WSL の中で確認〕、`vault-backup.bat` 〔未了のまま残す〕）。実機でしか確かめられない。
 2. `--check-aging` の FAIL 1 件: `logbook/user-thinking-habits.md` が budget 32KB を 40 バイト超過（他の 4 本は合格）。圧縮か budget の付け直しは 2026-11-29 の月次で決める。
-3. `logbook/` を `--triggers` の対象にするかは、2026-11-08 の引当率の測定（`topics/md-link-graph/` NA 1）の後に判断する。入れるなら、出力に「版・時点依存」「確認日」を付ける案がある（`--check-aging` の仕組み）。
+3. `logbook/` を `--triggers` の対象にするかは、2026-11-08 の引当率の測定（`docs/due.md` の 2026-11-08 の行）の後に判断する。入れるなら、出力に「版・時点依存」「確認日」を付ける案がある（`--check-aging` の仕組み）。
 4. 試行: 2026-11-29 の月次の振り返りで、週次の記録(`kit-growth/records/`)を 1 回手で畳む(置き場は変えない)。
 5. 追記の型 (b)（OQ・NA を本体に 1 つ）の実施: 次の lessons 追記から。既存ファイルの直しは `review 消化` で。
 

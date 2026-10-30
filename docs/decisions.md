@@ -4,6 +4,19 @@
 
 ## Decisions
 
+### 【汎用】トピック `md-link-graph` を閉じた。HTML の可視化と `mdreach.py` をやめ、参照構造は文字の点検（`mdgraph.py`）で定期的に見る（2026-10-30）
+- 根拠: ユーザーの決定（2026-10-30）。「当初は html 化して可視化できるようにしたけど、あまり運用がなされていない。`token-cap` のようにスクリプトで調査できるものは残す、不要なら捨てる」「表の案で良いです」「`token-cap` のスクリプトと同じように、グラフも定期的にチェックして循環・階層・複雑度をレビューするようにしたい」。
+- 決めたこと: ① `mdgraph.py` は HTML をやめ、循環・階層・複雑度を文字で出す（現在: 294 ファイル、辺 2163、最大の循環 91%、最大の深さ 5、1 ファイルあたりの辺 7.4、未到達 0、入次数 0 が 0）。② `mdreach.py`（語の列で測る）は `mdrank.py`（依頼の文で測る）と役目が重なるので削除。`reviews.csv` の `unreachable` 列は以後 `n/a`。③ `triggers_stats.py`、`find_knowledge.py`、`mdrank.py` は残す。④ 点検は `review` の入力 9（`review-triggers-check.md`）で、前回と比べて循環・階層・複雑度をレビューする。⑤ 設計案 `design-triggers.md` は `guides/explain/triggers-knowledge-index.md` と重複するので、移さず削除（読み比べて判断。固有だった S11 の方針だけ explain に足した）。`c-and-index-proposal.md` は検討の過程なので削除。
+- 積み残し: 11-08 の引き当て率の初回、語の上限と誤爆の確認、S11 の見直し、`logbook/` を `--triggers` の対象にするかは、`docs/due.md` の 11-08 の行。
+- 経緯の元: トピックの決定 6 件（2026-10-25。押し出し型フックと入力 9、`triggers:` の直接引き、届きやすさを場面ごとの静的な到達で測る、バッククォート内パスも辺に数える、Project 型で立てる）。いずれも実装済みで、上の `decisions.md` の 2026-10-25〜27 の項に反映されている。
+
+### 【汎用】トピック `hook-room-alignment` を閉じた。診断ログと原因の台帳は確定、積み残しは `due.md`（2026-10-30）
+- 根拠: ユーザーの決定（2026-10-30。「hook-room-alignment は私からは特にないです」「上の案で良いです」）と、2026-10-24 の決定（「方向性はOK」「この2つなら許容できる。仮決めで3段に乗せましょう」）、2026-10-27 の確定（「診断ログと台帳の承認待ちは実施済みなので close。問題なし」）。
+- 決めたこと: ① 境界（`interop`、マウント、sudo 不可）は変えない。② 束ねる役の型は毎回 `<名前>-result.json` を出す（全文ログは `--log` のときだけ）。③ 原因の台帳は `ai/out/knowledge/windows-run-causes.md`（`scope: area`、`kind: lesson`）。一般の原因は `scope: public` の下書きにも書き、同じ原因が 3 回出たら `check_py.py` の規則に昇格する。④ works 共通の置き場は作らない（PC1 の知見が他の Area に届くのが遅いことは許容）。⑤ 旧名（`init` `open` `start`）の履歴は、新しい仕様が回りだしたら読み替えごと消す。
+- 却下案: `interop` の有効化、`room debug`、別ユーザー・Sandbox、works 直下の置き場、`--log` で再実行と表示するだけ。
+- 見直しの条件: 診断ログを入れても環境の違いのラリーが減らないとき。同じ原因が複数の Area で再発したとき（works 層を再検討）。
+- 積み残し: PC2 の `verify`（11-03）と `stock` の `scope: area` の実機確認（11-08）は `docs/due.md`。議論の記録（第 1〜3 版。`init` `open` の廃止、`room mkworks`、`brief` 改名の論点と変更範囲）は、決定が root の `decisions.md` の 2026-10-24 の 3 項にあるので削除（履歴は git）。
+
 ### 【汎用】works の `docs/drafts/` は `topics/kit-growth/records/` へ移し、`docs/metrics/` と `docs/explain/` は削除した（2026-10-30）
 - 根拠: ユーザーの決定（2026-10-30）。`metrics/` の判断は AI に任せられ、流用の価値なしと報告して承認された（測る対象の開始インタビュー・`init-hook` が廃止済みで、会話の指標は `workflow-kit/tools/` が引き継いでいる）。`drafts/` の置き場は、ユーザーの直感が logbook、AI の判断が `records/`。logbook は観測・試行の途中を畳む置き場（予算 8KB）で、`drafts/` は約 130KB の結論の出た記録（設計の第三者レビュー 8 件と手順書の下書き 3 件）のため、ユーザーが「サイズがだいぶ大きい」として `records/` に決めた。
 - 決めたこと: 日付つきの名前（`2026-10-08-…`）で `kit-growth/records/` に置き、`kit-records-index.md` に索引を足す。種別の語 `-draft` を `naming-rules.md` の表に足す。
