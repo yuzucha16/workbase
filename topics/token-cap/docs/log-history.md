@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-10-30（優先度の再付け、期日の移管、other の長い依頼の内訳）: 「token-cap の続き」。(1) ee が「優先度低」の印を外して付け直し、案を承認: 高 = 5 の (c)(d)(e)・9・wrap-hook の効果、中 = 6・integrate の効果、低 = 4・5 の (g)(h)。(2) 期日つきの NA 2（integrate）と NA 8（wrap-hook）を `docs/due.md` に移し、due.md の token-cap の行の NA 番号参照を内容の言葉に替えた。5 の (c)(d)(e) は反映済みで、効果は due.md の 11-05。(3) 5(b) の対象を調べた（Windows 側 10-01 以降）: other の長い依頼 172 件はマクロでなく kit 保守。蓄積は 1 応答の入力を増やすが応答数は増やさない。応答 10 以上の 25 件（32.0M）の 15 件は承認・close・omit の複数項目をまとめた返答。項目あたりのトークンはまとめるほど下がる（4 項目以上は 1 項目の約半分）。ee の見込み（まとめた方が安い）は合っていた。5(b) は ee が「低」に下げた。`records/2026-10-30-other-long-requests-breakdown.md`。wrap。
+
 - 2026-10-30（NA 5b の仕訳判断、NA 9 の採用、切る目安の据え置き）: 「token-cap の続き」。(1) office-output-types の `records/2026-10-30-master-book-baseline-template.md` の分担（人・AI・コード）と固定部 R1〜R6 を読み、NA 5(b) の仕訳にあたると判断した。弱い点（PC1 の実物で未実行、案件が Excel 集約 1 件）は同トピックの Open Questions に積んだ（ee の依頼）。(2) NA 9: 分割は 10-29 に済み、`AGENTS.md` などは元から直前に読む書き方。残っていたのは相談の型のケア 8 の文言。早読みの見込みは約 19k 文字分の読み直し（概算）、デメリットは小さいと整理し、ee が採用。`consultation-pattern.md` を直した。(3) 切る目安は 100k のまま（ee）。wrap。
 
 - 2026-10-29（測定スクリプトの移動）: ee の依頼（`topics/` は room にコピーされず、スクリプトのコピーが面倒）。`topics/token-cap/` の Python 3 本を `workflow-kit/tools/` に `git mv`（room 向けの部品ではなく会話記録の分析なので `tools/`。標準ライブラリのみ・参照は素のファイル名で、影響なし）。窓口に「スクリプト」節を追加。過去の記録の素のファイル名は読み替える。移動後に `requests_by_kind.py --help` が動くことを確認（他の 2 本は未実行）。
