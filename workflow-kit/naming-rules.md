@@ -19,6 +19,7 @@
    | `-index` | 区分の索引 | 各区分の直下 |
    | `-output` | <やり方> の出力の型 | `exmem/lessons/` |
    | `-record` | 品質チェック・振り返りの記録 | `topics/kit-growth/records/` |
+   | `-draft` | 正本が別の場所へ移った手順書の下書き（経緯の記録） | `topics/kit-growth/records/` |
    | `-log` | lesson の節を移した記録（`<lesson 名>-log`） | `logbook/` |
    | `-explain` | 理解ガイドが `exmem/lessons/` の同名のノートと重なるときの区別 | `guides/explain/` |
    | `-rules` | 手順書が従う規則 | `workflow-kit/` |
