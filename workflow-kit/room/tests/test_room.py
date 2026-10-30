@@ -2009,12 +2009,12 @@ class MkworksTest(unittest.TestCase):
             self.assertIn("Room-Op: mkworks-update", msg)
             self.assertIn("Room-Rev: " + room.resources_rev(c), msg)
 
-    def test_mksub_numbers_from_one_next_to_works(self):
+    def test_sub_numbers_from_one_next_to_works(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_works(tmp)
             for n in (1, 2):
                 c = ctx_for(v)
-                room.cmd_mksub(c, argparse.Namespace(role="個人用", rev=None, commit=True))
+                room.cmd_mkworks(c, mkw_args(sub=True, role=None))
                 sub = Path(tmp) / f"works_sub{n}"
                 self.assertTrue((sub / "AGENTS.md").exists(), sub)
                 self.assertTrue((sub / ".git" / "hooks" / "pre-push").exists())
@@ -2025,17 +2025,31 @@ class MkworksTest(unittest.TestCase):
             self.assertFalse((v / "AGENTS.md").exists())  # 本物の works には触らない
             self.assertFalse((Path(tmp) / "works_sub3").exists())
 
-    def test_mksub_rev_then_update(self):
+    def test_sub_rev_then_update(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_works(tmp)
             old = room.resources_rev(ctx_for(v))
             kit_commit(v, "gitignore.template", (KIT_TEMPLATES / "workspace" / "gitignore.template").read_text(encoding="utf-8") + "\n*.bak\n")
-            room.cmd_mksub(ctx_for(v), argparse.Namespace(role="業務用", rev=old, commit=True))
+            room.cmd_mkworks(ctx_for(v), mkw_args(sub=True, rev=old))
             sub = Path(tmp) / "works_sub1"
             self.assertNotIn("*.bak", (sub / ".gitignore").read_text(encoding="utf-8"))
             sh(sub / "resources", "checkout", "-q", "main")
             room.cmd_mkworks(ctx_for(sub), mkw_args(update=True))
             self.assertIn("*.bak", (sub / ".gitignore").read_text(encoding="utf-8"))
+
+    def test_sub_rejects_update_and_rev_needs_sub(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_works(tmp)
+            for kw in (dict(sub=True, update=True), dict(sub=True, remote="git@example:x.git"), dict(rev="HEAD")):
+                with self.assertRaises(room.RoomError, msg=kw):
+                    room.cmd_mkworks(ctx_for(v), mkw_args(**kw))
+            self.assertFalse((Path(tmp) / "works_sub1").exists())
+
+    def test_sub_parses_from_command_line(self):
+        a = room.build_parser().parse_args(["mkworks", "--sub", "--rev", "abc"])
+        self.assertTrue(a.sub)
+        self.assertEqual(a.rev, "abc")
+        self.assertIsNone(a.role)  # 既定は cmd_mkworks で決める（--sub は個人用）
 
     def test_update_nothing_to_do(self):
         with tempfile.TemporaryDirectory() as tmp:

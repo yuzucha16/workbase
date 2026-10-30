@@ -2637,14 +2637,24 @@ def mkworks_update(ctx, a):
 
 
 def cmd_mkworks(ctx, a):
-    """works のトップを作る。--update で、雛形の変更を既存の works に反映する。"""
-    if a.update:
+    """works のトップを作る。--update で、雛形の変更を既存の works に反映する。--sub で、works の隣に検証用の works_sub<N> を作る。"""
+    sub = getattr(a, "sub", False)
+    rev = getattr(a, "rev", None)
+    if sub and (a.update or a.base or a.remote not in (None, "none")):
+        raise RoomError("--sub は --update / --base / --remote と一緒に使えない（検証用の works は remote なしで作る）")
+    if rev and not sub:
+        raise RoomError("--rev は --sub と一緒に使う")
+    if a.role is None:
+        a.role = "個人用" if sub else "業務用"
+    if sub:
+        mkworks_sub(ctx, a)
+    elif a.update:
         mkworks_update(ctx, a)
     else:
         mkworks_create(ctx, a)
 
 
-# ---------- mksub（検証用の works_sub<N> を、works の隣に作る） ----------
+# ---------- mkworks --sub（検証用の works_sub<N> を、works の隣に作る。2026-10-30 に mksub から移した） ----------
 
 def next_sub_dir(parent):
     """parent の下で、まだ無い最小の works_sub<N>（N は 1 から）。"""
@@ -2654,7 +2664,7 @@ def next_sub_dir(parent):
     return parent / f"works_sub{n}"
 
 
-def cmd_mksub(ctx, a):
+def mkworks_sub(ctx, a):
     """works の隣に、検証用の works_sub<N> を作る。resources/ は今の resources/ の複製（コミット済みの分だけ）。
     作った後に mkworks まで行うので、--vault（または ROOM_VAULT / WORKS_DIR）を差し替えれば、そのまま試せる。"""
     check_resources(ctx)
@@ -2665,14 +2675,14 @@ def cmd_mksub(ctx, a):
     res = sub / "resources"
     git(sub, "clone", "-q", "--no-local", str(src), str(res))
     git(res, "remote", "set-url", "origin", url)  # check_resources が workbase の clone と見るため、複製元ではなく本来の URL にする
-    if a.rev:
+    if getattr(a, "rev", None):
         git(res, "checkout", "-q", a.rev)
     sub_ctx = Ctx(sub, wsl=ctx.wsl, today=ctx._today, now=ctx._now, say=ctx.say, reap_days=ctx.reap_days, settle=ctx.settle,
                   ask=ctx.ask, ask_secret=ctx.ask_secret, history_backup=ctx.history_backup)
     mkworks_create(sub_ctx, argparse.Namespace(update=False, role=a.role, remote="none", base=None, yes=True, commit=a.commit))
     ctx.say(f"作った: {sub}（resources/ は {resources_rev(sub_ctx)}）")
     ctx.say(f"使い方: room --vault {sub} <コマンド>、または WORKS_DIR / ROOM_VAULT を {sub} にする")
-    if a.rev:
+    if getattr(a, "rev", None):
         ctx.say(f"mkworks --update を試すとき: git -C {res} checkout main の後に room --vault {sub} mkworks --update")
     ctx.say("WSL の部屋（init / open / start）は本物の works と共有するので、Area と Project の名前を重ねない")
 
@@ -2686,17 +2696,15 @@ def build_parser():
     ap.add_argument("--reap-days", type=int, default=int(os.environ.get("ROOM_REAP_DAYS") or REAP_DAYS_DEFAULT),
                     help="close から reap までの日数（既定 14）")
     sub = ap.add_subparsers(dest="command", required=True)
-    mk = sub.add_parser("mkworks", help="works のトップを作る（--update で、雛形の変更を既存の works に反映する）")
+    mk = sub.add_parser("mkworks", help="works のトップを作る（--update で、雛形の変更を既存の works に反映する。--sub で、検証用の works_sub<N> を作る）")
     mk.add_argument("--update", action="store_true", help="作らずに、雛形の変更を反映する（3者マージ。衝突は書かずに止まる）")
-    mk.add_argument("--role", default="業務用", choices=sorted(MKWORKS_ROLES), help="PC の役割（既定: 業務用）")
+    mk.add_argument("--sub", action="store_true", help="works の隣に検証用の works_sub<N>（N は 1 から）を作り、mkworks まで行う（本物の works には触らない）")
+    mk.add_argument("--rev", help="--sub の resources/ をこのコミットにして作る（mkworks --update の試験用。後で main に戻す）")
+    mk.add_argument("--role", default=None, choices=sorted(MKWORKS_ROLES), help="PC の役割（既定: 業務用。--sub では個人用）")
     mk.add_argument("--remote", default="none", help="none（既定。pre-push で push を止める）か、非公開リポジトリの URL")
     mk.add_argument("--base", help="--update の基点（resources のハッシュ）。トレーラーから分からないときに指定する")
     mk.add_argument("--yes", action="store_true", help="--update の確認を省く")
     mk.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="コミットしない（既定はコミットする）")
-    ms = sub.add_parser("mksub", help="works の隣に検証用の works_sub<N>（N は 1 から）を作り、mkworks まで行う")
-    ms.add_argument("--role", default="個人用", choices=sorted(MKWORKS_ROLES), help="PC の役割（既定: 個人用）")
-    ms.add_argument("--rev", help="resources/ をこのコミットにして作る（mkworks --update の試験用。後で main に戻す）")
-    ms.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="コミットしない（既定はコミットする）")
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
     o.add_argument("--type", default="dev", choices=["dev", "inv"])
@@ -2753,7 +2761,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
-        {"mkworks": cmd_mkworks, "mksub": cmd_mksub, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
+        {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
          "mask": cmd_mask, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
