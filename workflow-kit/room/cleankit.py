@@ -598,7 +598,7 @@ def visible_text_pptx(pkg):
 
 def text_candidates(name, xml):
     """部品の中の文字の候補（自由な文字の属性と、葉の要素の中身）。"""
-    xml = re.sub(r"<rPh\b.*?</rPh>|<HeadingPairs\b.*?</HeadingPairs>", "", xml, flags=re.S)
+    xml = re.sub(r"<rPh\b.*?</rPh>|<HeadingPairs\b.*?</HeadingPairs>|<xcalcf:calcFeatures\b.*?</xcalcf:calcFeatures>", "", xml, flags=re.S)  # calcFeatures: Excel が書く計算機能の一覧（microsoft.com:RD など）
     out = []
     for m in _OPEN_RE.finditer(xml):
         tag = m.group(1)

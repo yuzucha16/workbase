@@ -269,6 +269,15 @@ class XlsxTest(unittest.TestCase):
         self.assertTrue(ck._AUTO_NAME_RE.match("グラフ 1") and ck._AUTO_NAME_RE.match("PlaceHolder 3"))
         self.assertTrue(ck._STRUCT_TEXT_RE.match("12.5") and ck._STRUCT_TEXT_RE.match("A1:B3"))
 
+    def test_unseen_text_skips_calc_features(self):
+        # Excel が workbook.xml の末尾に書く計算機能の一覧（microsoft.com:RD など）は、文字として調べない（2026-10-30）
+        xml = ('<extLst><ext><xcalcf:calcFeatures><xcalcf:feature name="microsoft.com:RD"/>'
+               '<xcalcf:feature name="microsoft.com:LET_WF"/></xcalcf:calcFeatures></ext></extLst>'
+               '<definedName name="ダミー名">1</definedName>')
+        got = [ck._norm(x) for x in ck.text_candidates("xl/workbook.xml", xml)]
+        self.assertIn("ダミー名", got)
+        self.assertFalse([x for x in got if "microsoft.com" in x])
+
     def test_self_closing_cell_and_row(self):
         # 空のセル <c .../> と中身のない行 <row .../> の次を巻き込まない（2026-10-28 の修正。以前は次のセルの共有文字列を
         # 使っていないとみなして消し、番号が範囲の外になって Excel が修復していた。非表示の空の行の次の行も空にしていた）
