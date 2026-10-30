@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-30（room init の Python の段を実機で確認した）
+- 旧 Next Actions 14 を閉じた: ユーザーが実機の部屋で `room init --only python` を実行し、3.13.14 が入った（ユーザーの報告）。勤務先ネットワークでの取得を別に切り分けた報告はない（問題が出たら再起票）。
+
 ### 2026-10-30（works の許可リスト方式の反映を閉じ、room init に Python の段を足した）
 - 旧 Next Actions 15（works の許可リスト方式の反映）: ユーザーが手順書 `guides/howto/works-gitignore-allowlist-migration.md` で各 PC の works を移し、問題なく完了した（ユーザーの報告）。閉じた。
 - 旧 Next Actions 14 の一部: `room init` に段 `python` を足した（`uv` の次。`uv python install <.python-version の版> --default` で ai の `~/.local/bin` に `python3` の別名を置く。`SSL_CERT_FILE` でシステムのバンドルを指す）。道具の確認に `python3 --version`。単体テスト 2 本を足し、169 件 OK。`--default` の動きは Linux の uv 0.11.32 で確かめた（`--preview` 不要）。判断は `decisions.md` 2026-10-29 の項に追記。残りは実機の部屋での確認（`log.md` の Next Actions 14）。

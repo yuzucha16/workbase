@@ -18,8 +18,7 @@
 - 揃える範囲: 差が出やすいもの（依存つき、文字コード、room 本体）だけ。厳密にはしない。各 `.py` の `requires-python` は `==3.13.*`。古い版が要るスクリプトは、先頭で個別に指定する。
 - 却下: 全 .py の版を一律に固定する（古い版が要るモジュールで詰まる）。WSL でも人は `uv run` に統一する（`python3` 一律のほうが、Stop フックと shebang と整合する）。`requires-python` の下限指定のまま（uv が新しい版を選び、正本とずれる）。
 - 見直しの条件: uv の取得が勤務先のネットワークで失敗したとき、WSL で `python3` として呼ぶ方法が実機で通らなかったとき、`.python-version` を上げるとき。
-- 未確認: 勤務先のネットワークで `uv python install` が通るか。
-- 実装（2026-10-30、単体テストと Linux の uv 0.11.32 での試験のみ。部屋の実機は未確認）: `room init` の段 `python`（`uv` の次）が、`.python-version` の版を `uv python install <版> --default` で ai ユーザーに入れる。`--default` で `~/.local/bin` に `python` `python3` `python3.13` の別名が置かれ（uv 0.11 は `--preview` 不要）、`PATH` の行で `/usr/bin/python3` より先に当たる。システムの `python3` は上書きしない。uv は既定でシステムの証明書を見ないので、`SSL_CERT_FILE` で `cacert` の入ったバンドルを指す。既存の部屋は `init <Area> --only python`。
+- 実装（2026-10-30。単体テストと Linux の uv 0.11.32 での試験に加え、ユーザーが実機の部屋で 3.13.14 が入ることを確認）: `room init` の段 `python`（`uv` の次）が、`.python-version` の版を `uv python install <版> --default` で ai ユーザーに入れる。`--default` で `~/.local/bin` に `python` `python3` `python3.13` の別名が置かれ（uv 0.11 は `--preview` 不要）、`PATH` の行で `/usr/bin/python3` より先に当たる。システムの `python3` は上書きしない。uv は既定でシステムの証明書を見ないので、`SSL_CERT_FILE` で `cacert` の入ったバンドルを指す。既存の部屋は `init <Area> --only python`。
 
 ### 【汎用】【案件】の行き先は 2 段（部屋では郵便受け → Area で消化して `docs/decisions.md`）。会議録は PC ごとのローカルに置き、同期しない（2026-10-29）
 - 根拠: ユーザーの発言（2026-10-29）。【案件】: 2026-10-07 の「Area の `docs/decisions.md` に直接書く」（`para-operations.md`、試行の前提つき）と、2026-10-12 の部屋の決定 #5（`room start` の回収で Area の `ai/docs/inbox.md` へ追記）の食い違いは、時期の違い。部屋の中では郵便受け、Area 側で消化したものを `docs/decisions.md` に正式に書く 2 段を現行とする。

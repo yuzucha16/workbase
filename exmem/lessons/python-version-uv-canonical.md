@@ -25,7 +25,7 @@ sources:
 
 ## Decisions
 
-- 呼び方（`docs/decisions.md` 2026-10-29）: Windows は依存つき `uv run --script`、room は `uv run room.py`。uv が止まったときだけ OS の `python`（標準ライブラリだけの .py。版は保証しない）。WSL は `python3`（正本と同じ版を `room init` の段 `python` が uv で入れる。2026-10-30 実装、部屋の実機は未確認）。PC2・クラウドの AI は `python -I`（対象外）。
+- 呼び方（`docs/decisions.md` 2026-10-29）: Windows は依存つき `uv run --script`、room は `uv run room.py`。uv が止まったときだけ OS の `python`（標準ライブラリだけの .py。版は保証しない）。WSL は `python3`（正本と同じ版を `room init` の段 `python` が uv で入れる。2026-10-30 実装、実機の部屋で 3.13.14 が入ることを確認）。PC2・クラウドの AI は `python -I`（対象外）。
 - 各 `.py` の `requires-python` は `==3.13.*`。下限指定（`>=`）だと、uv が新しい版を選んで正本とずれる。
 - 古い版が要るモジュールを使うスクリプトだけ、`requires-python` に別の版を書く（スクリプトごとに選ばれる）。
 
