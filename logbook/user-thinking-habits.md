@@ -300,7 +300,7 @@ budget: 32KB
 
 ## 明細: user-manual から移した観察（2026-10-27）
 
-元: [[user-manual]] の Facts。Principles に昇格済みの 6 項を原文のまま移した（対応は topics/logbook-design/records/2026-10-27-user-manual-facts-map.md）。
+元: [[user-manual]] の Facts。Principles に昇格済みの 6 項を原文のまま移した（対応表は閉じたトピック `logbook-design` の記録にあった。履歴は git）。
 
 - ユーザー自身が挙げた、悪い面（確認: 2026-10-13、根拠: ユーザーの発言）:
   - 後出しパターンがある（決定の後に前提が出てくる）。

@@ -18,7 +18,6 @@
 | 2026-11-08 | 単発 | `stock` の `scope: area` の実機確認（旧 `hook-room-alignment` NA 1）: 部屋の AI が `ai/out/knowledge/` に `kind: lesson` で書く → `restore` で Area に実名で置く → 次の Project の `room pull --where kind=lesson` で受け取れるか。`room pull --where` の仕様変更の予告があれば、`room-context.md` の `stock` の節と合わせて見直す（単体テストのみ。2026-10-24）。実機の機会がなければ延期か取り下げを決める | ユーザー |
 | 2026-11-09 | 単発 | 振り返りの仮決め2件（字数の数え方、v6）をまとめて判断。規模をもっと縮められるかも決める | ユーザー |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断 | ユーザー |
-estore で Area に実名で置く → 次の Project の 
-oom pull --where kind=lesson で受け取れるか。
-oom pull --where の仕様変更の予告があれば、
-oom-context.md の stock の節と合わせて見直す（単体テストのみ。2026-10-24）。実機の機会がなければ monthly で延期か取り下げを決める | ユーザー |
+| 2026-11-15 | 単発 | 旧 `logbook-design` NA 1: 実機でしか確かめられない畳み候補。room の OQ 4 項（マウントの可視性、プリンタ設定、マスクから復元までの通し、pptx）と、obsidian-vault-backup の NA 2 項（WSL の張り直し〔`GHQ_ROOT` は WSL の中で確認〕、`vault-backup.bat`）。実機の機会がなければ、項ごとに「畳む（OQ/NA を閉じる）」か「延期」かを決める | ユーザー |
+| 2026-11-15 | 単発 | 旧 `logbook-design` NA 5: 追記の型 (b)（OQ・NA を本体に 1 つ）が、その後の lessons 追記で守られているか確かめる。既存ファイルの直しは `review 消化` で。守られていれば取り下げ | AI（`review 消化` で） |
+| 2026-11-29 | 単発 | 旧 `logbook-design` NA 2・4: (a) `--check-aging` の FAIL 1 件（`logbook/user-thinking-habits.md` が budget 32KB を 40 バイト超過）を圧縮か budget の付け直しで決める。(b) 週次の記録（`kit-growth/records/`）を 1 回手で畳む試行（置き場は変えない）。月次の振り返りと同時 | ユーザー |

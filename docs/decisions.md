@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【この件】トピック `logbook-design` を閉じた。`logbook/` の型・運用は決まり、残りは期日つきで `due.md` に移した（2026-10-30）
+- 根拠: ユーザーの決定（2026-10-30）。「期日のないものに期限を設けて、`workbase/docs/due.md` に移行させます。log.md がクリアになりそうなら、そのまま topic close に進みたい」「1. 良いです」「2. 良いです」「3. 進めてください」。
+- 決めたこと（トピックの決定 14 件の要約。型と置き場は `logbook/README.md` が正本）: ① 置き場は workbase 直下の `logbook/`（【仮 〜2026-11-29】）。入る型は 時系列の観測・測定、版・時点に縛られる事実、試行の途中。個人の好み・1 回きりの構成記録は含めず、ユーザーが直接削除する。② 版・時点依存の事実は lessons に残し、節に印を付ける。降格するのは観測と試行だけ。降格は 3 段チェックで決め、確認の単位はファイル、降格と印の単位は節。③ 型は 7 点（ファイル名、節、frontmatter、既定値 `review_by` 60 日・`budget` 8KB、点検 `find_knowledge.py --check-aging`、窓口 `logbook/README.md`、降格の書き方）。④ 追記の型は (b)（OQ・NA を本体に 1 つ）、素材は lesson に残して印を付ける。単価は `session-handoff` の Facts が正本。⑤ 畳み候補の削除・圧縮・閉鎖、`user-thinking-habits` の移動、`user-manual` の未昇格 3 項の廃棄、`ai-work-metrics` ほかの Next Actions の畳みは実施済み（個別の根拠は git の履歴）。⑥ `logbook/` を `--triggers` の対象にするかは 11-08 の引き当て率の測定の後に判断（品質ブレが心配なため。入れるなら確認日・版依存を出力に付ける案）。
+- 積み残し（`docs/due.md`）: 11-08（⑥）、11-15（実機でしか確かめられない畳み候補、追記の型 (b) の確認）、11-29（`user-thinking-habits` の budget 超過 40 バイト、週次の記録を手で畳む試行）。
+- 経緯の元: トピックの `docs/decisions.md`（git に残る）。`records/` 8 本は検討の過程として削除し、外から指されていた 3 件のリンクは直した。
 ### 【汎用】トピック `md-link-graph` を閉じた。HTML の可視化と `mdreach.py` をやめ、参照構造は文字の点検（`mdgraph.py`）で定期的に見る（2026-10-30）
 - 根拠: ユーザーの決定（2026-10-30）。「当初は html 化して可視化できるようにしたけど、あまり運用がなされていない。`token-cap` のようにスクリプトで調査できるものは残す、不要なら捨てる」「表の案で良いです」「`token-cap` のスクリプトと同じように、グラフも定期的にチェックして循環・階層・複雑度をレビューするようにしたい」。
 - 決めたこと: ① `mdgraph.py` は HTML をやめ、循環・階層・複雑度を文字で出す（現在: 294 ファイル、辺 2163、最大の循環 91%、最大の深さ 5、1 ファイルあたりの辺 7.4、未到達 0、入次数 0 が 0）。② `mdreach.py`（語の列で測る）は `mdrank.py`（依頼の文で測る）と役目が重なるので削除。`reviews.csv` の `unreachable` 列は以後 `n/a`。③ `triggers_stats.py`、`find_knowledge.py`、`mdrank.py` は残す。④ 点検は `review` の入力 9（`review-triggers-check.md`）で、前回と比べて循環・階層・複雑度をレビューする。⑤ 設計案 `design-triggers.md` は `guides/explain/triggers-knowledge-index.md` と重複するので、移さず削除（読み比べて判断。固有だった S11 の方針だけ explain に足した）。`c-and-index-proposal.md` は検討の過程なので削除。
@@ -152,8 +157,8 @@
 
 ### 【汎用】`review 消化` の「すでに close していそうなもの」に、lessons の古い試行の途中と 1 回きりの記録を挙げる。挙げるだけで、削除はユーザー（2026-10-26）
 - 決めたこと（ユーザー、待ち行列 7 の判断で「(a)列挙だけ、(b)保留」を選んだ）: (a) 消化モードの 1 で、そのセッションで読んだ・書いた `exmem/lessons/` のノートの、置き換わった Open Questions・Next Actions と 1 回きりの構成記録を挙げる。AI は挙げるだけで、削除はユーザーが行う。(b) 追記の型を変えて OQ・NA を本体の 1 つにまとめる案は、保留（待ち行列に残す）。
-- 根拠: 2026-10-26 の決定「1 回きりの構成記録はユーザーが直接削除する」と両立させ、見落としだけを防ぐ。(b) は 10-19 の R-02（NA の追記は 3 回まで）の却下と同じ理由で覆りやすい（スクリーニングの結果、`topics/logbook-design/records/2026-10-26-queue-screening.md`）。
-- 反映先: `workflow-kit/review-hook.md`（消化モード）、`topics/logbook-design/docs/log.md`（待ち行列）。
+- 根拠: 2026-10-26 の決定「1 回きりの構成記録はユーザーが直接削除する」と両立させ、見落としだけを防ぐ。(b) は 10-19 の R-02（NA の追記は 3 回まで）の却下と同じ理由で覆りやすい（待ち行列のスクリーニングの結果。記録は閉じたトピックとともに削除、履歴は git）。
+- 反映先: `workflow-kit/review-hook.md`（消化モード）、`logbook-design` の待ち行列（トピックは 2026-10-30 に閉じた）。
 
 ### 【この件】参照構造の測り方から雛形と `@` だけの CLAUDE.md を除き、索引は生成せず点検を足す（2026-10-25）
 - 決めたこと（ユーザー、「3. 採用」「4. 推奨案を採用」「2. 見送ります」）: ① `mdgraph.py` は `templates/` 配下と、`@x.md` だけの `CLAUDE.md` を数えない。root `README.md` に `topics/README.md` と `guides/README.md` を書く（未到達 6→0）。② `exmem-index.md` は自動生成せず、`find_knowledge.py --check-index`（抜け・存在しない行・重複）を `integrate` の最後と `review` の入力 9 に足す。③ 取りこぼし 2 件（B07、S16）の語は足さない（対象のノートがそんなに重要ではない）。

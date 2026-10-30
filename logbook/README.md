@@ -1,6 +1,6 @@
 # logbook
 
-期限のあるナレッジの置き場。`exmem/lessons/`（長く効く判断・原則・落とし穴）と分けて、時間が経つと古くなる記録をここに置き、定期的に畳む。置き場は【仮 〜2026-11-29】（月次の振り返りで確かめる）。決定の経緯は `topics/logbook-design/docs/decisions.md`。
+期限のあるナレッジの置き場。`exmem/lessons/`（長く効く判断・原則・落とし穴）と分けて、時間が経つと古くなる記録をここに置き、定期的に畳む。置き場は【仮 〜2026-11-29】（月次の振り返りで確かめる）。決定の経緯は、閉じたトピック `logbook-design` の決定として `docs/decisions.md` に統合した（2026-10-30）。
 
 このリポジトリは公開なので、世界に読まれる前提で書く。機密、勤務先に固有の情報、PC ごとのデータ、個人を特定する内容を入れない（ルートの `AGENTS.md` の「共有の範囲」）。
 
@@ -37,7 +37,7 @@ budget: 8KB                      # 大きさの上限（暫定）
 ```
 
 - 必須は `type`（`logbook`）、`title`、`created`、`updated`、`review_by`、`budget`。`source` は降格したときだけ。
-- `tags` `aliases` `triggers` は付けない（`triggers` の扱いは `topics/logbook-design/` の Next Actions で決める）。
+- `tags` `aliases` `triggers` は付けない（`triggers` の扱いは `docs/due.md` の 2026-11-08 で決める）。
 - 既定の `review_by` 60 日と `budget` 8KB は根拠の無い目安。2026-11-29 の月次の試行の後に、実測で直す。
 
 ### 節
