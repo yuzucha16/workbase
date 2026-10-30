@@ -2196,6 +2196,7 @@ def aws_credentials_script(profile, body):
 # 部屋の apiKeyHelper は、そのファイルを cat するだけ（部屋は interop を切っているので、Windows を呼べない）。
 
 GATEWAY_REFRESH_SEC = 50 * 60
+GATEWAY_MIN_VALID_SEC = GATEWAY_REFRESH_SEC + 5 * 60  # 押すトークンは、次の置き換えまで余裕をもって有効なこと（足りなければ Windows 側が更新する）
 GATEWAY_ROOM_DIR = '$HOME/.claude-gateway'
 GATEWAY_CMD_PREFIX = 'env -u CLAUDE_CODE_USE_BEDROCK -u ANTHROPIC_API_KEY CLAUDE_CONFIG_DIR="$HOME/.claude-gateway" '
 GATEWAY_TOKEN_RE = re.compile(r"^[A-Za-z0-9._~+/=-]{20,}$")
@@ -2203,11 +2204,12 @@ GATEWAY_SETTINGS_KEYS = ("env", "model", "theme")  # Windows 側の hooks や pe
 
 
 def fetch_gateway_token():
-    """Windows 側の claude-gateway-token（dotfiles）を呼び、ID トークンを返す。期限が近ければ、保管したリフレッシュトークンで無音で更新される。"""
+    """Windows 側の claude-gateway-token（dotfiles）を呼び、ID トークンを返す。残りが GATEWAY_MIN_VALID_SEC より短ければ、保管したリフレッシュトークンで無音で更新される。
+    -MinValidSec を渡さないと、残り2分まで同じトークンが返り、50分後の置き換えで約10分後に切れるトークンを押してしまう（2026-10-30）。"""
     exe = shutil.which("claude-gateway-token.cmd") or shutil.which("claude-gateway-token")
     if not exe:
         raise RoomError("claude-gateway-token が PATH に無い（dotfiles の 30_link.bat を実行する）")
-    r = subprocess.run([exe], capture_output=True, timeout=120)
+    r = subprocess.run([exe, "-MinValidSec", str(GATEWAY_MIN_VALID_SEC)], capture_output=True, timeout=120)
     if r.returncode != 0:
         raise RoomError("claude-gateway-token が失敗した（claude-gateway-token.cmd -Login が要るかもしれない）: "
                         + r.stderr.decode("utf-8", "replace").strip()[-300:])

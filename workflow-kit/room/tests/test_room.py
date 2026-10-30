@@ -347,6 +347,16 @@ class GatewayTest(unittest.TestCase):
             self.assertFalse(wsl.mounted)
             self.assertEqual(wsl.interactive_calls, [])
 
+    def test_fetch_asks_for_a_token_valid_past_the_next_push(self):
+        # 残り2分まで同じトークンを返す既定のままだと、50分後に約10分で切れるトークンを押してしまう
+        done = subprocess.CompletedProcess([], 0, stdout=TOKEN1.encode(), stderr=b"")
+        with mock.patch.object(room.shutil, "which", return_value="claude-gateway-token.cmd"), \
+                mock.patch.object(room.subprocess, "run", return_value=done) as run:
+            self.assertEqual(room.fetch_gateway_token(), TOKEN1)
+        argv = run.call_args[0][0]
+        self.assertEqual(argv[1], "-MinValidSec")
+        self.assertGreater(int(argv[2]), room.GATEWAY_REFRESH_SEC)
+
     def test_without_the_flag_nothing_is_pushed(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
