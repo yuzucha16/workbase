@@ -4,7 +4,7 @@
 使い方: python -I workflow-kit/tools/mdrank.py [リポジトリのルート] [--scenarios 場面.md] [--top 5]
 場面は workflow-kit/triggers-scenarios.md の S 行（2列目の「場面」の文）と B 行（2列目の依頼文）。期待ノートは、S 行は4列目、B 行は3列目のバッククォートのパス。
 期待ノートが索引の対象（lessons・guides/explain・inbox）に無い場面は「対象外」として数えない。
-出力は件数と、1 位でない場面だけ（読むだけ。ノートは直さない）。mdreach.py が語の列で測るのに対し、こちらは依頼の文で測る。
+出力は件数と、1 位でない場面だけ（読むだけ。ノートは直さない）。語の列でなく依頼の文で測る。
 """
 import argparse, contextlib, importlib.util, io, re, sys
 from pathlib import Path

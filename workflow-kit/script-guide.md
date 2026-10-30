@@ -409,7 +409,7 @@ Project の成果物は、`ai/out/`（マスクした Project は復元後の `_
 
 ### 原因の台帳（Windows で実行したときの失敗）
 
-環境の違い（文字コード、パス、権限、uv の取得など）で同じ失敗を繰り返さないための置き場（2026-10-25 ユーザーの承認。仮決めは `topics/hook-room-alignment/docs/decisions.md` の 2026-10-24）。works 共通の置き場は作らない。Area ごとに持ち、一般の原因だけ workbase に上げる。
+環境の違い（文字コード、パス、権限、uv の取得など）で同じ失敗を繰り返さないための置き場（2026-10-25 ユーザーの承認。決定は `docs/decisions.md` の 2026-10-30（旧 `hook-room-alignment`））。works 共通の置き場は作らない。Area ごとに持ち、一般の原因だけ workbase に上げる。
 
 1. **人が失敗を伝えたら**（「verify が失敗した」など）、部屋の AI はまず `ai/work/<名前>-result.json`（`verify-result.json` か `run-result.json`）を読む。`env` と `failure`（型と `ファイル名:行`）から当たりを付ける。それで足りないときだけ、`--log`（ps1 は `-Log`）での再実行を頼む。
 2. **直す前に台帳を引く**: Area の台帳は、人が `room pull --where kind=lesson` で渡すと `ai/in/area/` に入る（ファイル名はハッシュに変わるので、`title: Windows 実行の原因の台帳` の行で探す）。あれば読む。一般の原因は `python3 ~/shared/workflow-kit/tools/find_knowledge.py <失敗の型や語>` で `exmem/lessons/` を探す。

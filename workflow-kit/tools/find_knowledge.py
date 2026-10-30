@@ -10,7 +10,7 @@ exmem/lessons/ のファイル名、見出し（^#）、frontmatter の tags / a
   --body  本文の行も検索する。見出しに無い語（コマンド名、エラー文言、変数名）で探すとき
 読み取り専用。lessons/ は編集しない。
 
-作業の言葉の索引（2026-10-25。設計は topics/md-link-graph/records/design-triggers.md）:
+作業の言葉の索引（2026-10-25。設計は guides/explain/triggers-knowledge-index.md）:
   python find_knowledge.py --triggers "<依頼文>" [--top N]   依頼文に triggers: の語を含むノートを示す（表は持たず、毎回 frontmatter を読む）
   python find_knowledge.py --list-triggers                   全ノートの「語 → ノート」の表（人が見る用）
   python find_knowledge.py --check-triggers                  lessons と guides/explain の全ノートに triggers:（1〜30 語）があるか
