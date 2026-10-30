@@ -81,7 +81,7 @@ sources:
 
 ## 統合と書き込み
 
-- 新しい知識ファイルを作ったら、`exmem-index.md` に1行足す。
+- 新しい知識ファイルを作ったら、`exmem-index.md` に1行足す。1ノート1行で書く（`[[a]] / [[b]]` と並べない。`find_knowledge.py --check-index` は行頭の先頭の `[[]]` だけ数える）。
 - `inbox/` の統合は、ユーザーが「inboxを整理して」と言ったときに、kit の `integrate-hook.md`（統合の手順の正本）に従う。
 - 作業ディレクトリは exmem を基本は読み取り専用で参照する。書き込みの例外は、ユーザーが「ナレッジ化して」（人用の理解ガイドは「理解ガイドにして」。frontmatter の `kind: explain`）と指示したときの `inbox/` への新規メモ1つだけ（正本は kit の `stock-hook.md`。`inbox/README.md` のプロンプトはその写し）。
 - exmem に、作業ディレクトリの作業ログを置かない（経緯・決定・次にやることは、各ディレクトリの `docs/` が持つ）。`contexts/`（作業の引継ぎ用）は 2026-10-10 に廃止した（[[ai-development-workflow]] D10）。未完の項目は、該当する `lessons/` のノートの `Open Questions` / `Next Actions` に書く。
