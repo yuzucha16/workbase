@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-30（掃除の room 組み込みの方針を決めた。pptx の確認は 11-03）
+- 組み込みの影響とメリットを整理し、ユーザーが承認（`decisions.md` の同日の項）。`raw` → 掃除 → マスク → `ai/in`、既定 `standard`、掃除の設定のハッシュを差分判定へ、報告は `_noai/` 内の専用ディレクトリ（直下は不可）。
+- pptx は `cleankit.py` が点検（`check_pptx`）と掃除（`clean_pptx`）に対応済み。ダミーでの単体テストまでで、PC1 の実 pptx と PowerPoint で開く確認は未。11-03 に PC1 で行う（`due.md`）。組み込みはその後。
 ### 2026-10-30（PC1 の実 xlsx で動作確認、`unseen-text` の雑音を 1 つ除いた）
 - ユーザーが PC1 の実 xlsx で `check` と `clean`（standard / strict）を通した（NA 1）。基本動作は問題なし。`unseen-text` に出た文字を元ファイルで見える状態に戻すと、掃除で正しくすべて消えた。`unseen-text` は報告のみで、消えるのは掃除の動作による（途中で「戻しても消えない」との疑問があったが、状態を覚える仕組みはない。`sheet1.xml` の図形・コメント類の unseen は、シート内のコントロール・図形の名前や代替テキストが見えている文字に数えられないためと推測。未再現）。
 - `xl/workbook.xml` の unseen の `microsoft.com:RD` `Single` `FV` `LET_WF` などは、Excel が書く `xcalcf:calcFeatures`（計算機能の一覧）の `name` で、ユーザーの文字ではなかった。`text_candidates` で調べない対象に追加（コミット bfd21f5、単体テスト 1 件追加、全 19 件通過）。ユーザーの承認で main に push。
