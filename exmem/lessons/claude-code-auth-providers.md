@@ -10,15 +10,17 @@ tags:
   - testing
   - oidc
   - llm-gateway
+  - ai-room
 aliases:
   - Claude Code の認証
   - Bedrock 設定
   - apiKeyHelper
   - OAuth と API キーの切り替え
-triggers: [Bedrock, 認証, モデル指定, AWS]
+triggers: [Bedrock, 認証, モデル指定, AWS, gateway, ゲートウェイ, room start, --gateway, apiKeyHelper, ID トークン, トークン更新, リフレッシュトークン, OIDC, 部屋 認証, interop, CLAUDE_CONFIG_DIR, 50分, 寿命, aws-key, DPAPI]
 created: 2026-10-11
-updated: 2026-10-27
+updated: 2026-10-30
 sources:
+  - Claude Code conversation "部屋からゲートウェイで Claude を使う" (2026-10-29)
   - Claude Code conversation "Zed と Claude Code の Bedrock SSO・ゲートウェイ接続" (2026-10-20)
   - Claude Code conversation "Zed の Agent と Bedrock の認証（部屋）" (2026-10-19)
   - Claude Code conversation "Claude Code の認証経路とモデル指定" (2026-10-08)
@@ -52,10 +54,21 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - 期限のあるトークンは、起動時の環境変数に固定せず、`apiKeyHelper` が呼ばれるたびに期限を見て更新する。理由: ID トークンは約1時間で切れ、環境変数に固定するとセッションの途中で失効する。
 - `apiKeyHelper` の標準出力には秘密の値だけを出し、メッセージは標準エラーに出す。理由: 余計な出力が混ざると失敗する。
 - 組織を特定できる値（ゲートウェイの URL、クライアント ID）は、公開リポジトリに置かず、プロンプトで入力してこの PC のファイルにだけ書く。理由: 公開すると組織が特定でき、PC ごとに値が違う場合もある。
+- 寿命の違う認証情報は、コマンドの形を揃えない。寿命を持つ処理（セッションの間、生きているプロセス）が受ける。理由: 静的な長期キーは1回置けば済むが、約1時間で切れるトークンは、置き続ける主体が要る。
+- 隔離環境（部屋）には、更新できる秘密（リフレッシュトークン）を渡さず、短命のトークンだけを外から押す。理由: 隔離環境の中の秘密は AI から読める。流出しても約1時間で失効する形にしておく。
+- 隔離環境から外を呼べない（interop を切っている）ときは、外から押す（push）。中から取りに行く（pull）設計にしない。理由: 中から外のプロセスやファイルが使えない。
+- 非常用の経路のために、定期実行の仕組み（タスク スケジューラなど）を足さない。理由: 使う間だけ更新すれば足り、常駐の仕組みは管理する対象が増える。
+- 対話的な画面（TUI）の裏で動く更新の失敗は、その場で端末に出さず、溜めて終了後に報告する。理由: 画面に直接書くと、起動中の対話の表示を壊す。
+- 他者が読む共有ファイルは、横で完成させてから `mv` で置き換える。理由: 読む側が、途中の状態を見ない。
 
 ## Decisions
 
 すべて 2026-10-08（日付の付いたものを除く）。
+
+- **単独の `gw-token` コマンドを作らず、`room start --gateway` が受ける**（2026-10-29）。根拠: `aws-key` は静的キーで寿命が無期限、ID トークンは約50分で切れる。寿命が違うので、コマンドを対称にしても意味がない（ユーザーの発言）。却下案: `room gw-token` の単独コマンド（手動の更新が1時間ごとになり、面倒）。
+- **更新は `start` の間だけ、start を実行している Windows 側のプロセスが約50分ごとに行う**（2026-10-29）。根拠: ゲートウェイは常用でなくバックアップなので、定期実行は行きすぎ（ユーザーの発言）。`start` は起動中ずっと待っているので、そこにスレッドを載せられる。却下案: タスク スケジューラによる定期実行（常用でない）。部屋に Linux の `pwsh` を入れ、部屋でサインインする（DPAPI が使えず、リフレッシュトークンが部屋に残る）。
+- **部屋の `apiKeyHelper` は、ファイルを `cat` するだけにする**（2026-10-29）。根拠: 部屋は interop を切っていて Windows を呼べない。ユーザーが承認した。却下案: 部屋から `pwsh.exe` を呼ぶ（呼べない）。
+- **起動は `--cmd` に組み込み、`CLAUDE_CONFIG_DIR` の切り替えと、Bedrock や API キーの環境変数を外す処理を付ける**（2026-10-29）。根拠: 環境に `CLAUDE_CODE_USE_BEDROCK` などが残ると、そちらが優先されて、ゲートウェイを使えない。ユーザーが組み込みを選んだ。却下案: 利用者が手で環境変数を打つ（打ち間違いと、設定の混在を招く）。
 
 - **組織固有の URL とクライアント ID を dotfiles に置かず、セットアップのプロンプトで入力する**（2026-10-20）。根拠: ユーザーが「載せない。これまで同じようにプロンプトで入力する形が良い」と決めた。公開リポジトリで、組織を特定できる値のため。却下案: プレースホルダー値をリポジトリに置き、手で書き換える（実値が混ざる事故が起きやすい）。
 
@@ -136,6 +149,17 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - Entra ID の公開クライアントは、リダイレクト URI を `http://127.0.0.1/callback` の形（パスまで必要）で登録すれば、loopback のポートは実行時に自由に選べる。パスを省くと `AADSTS50011` になる（根拠: 公式ドキュメントの IdP 設定の注意）。
 - OIDC の公開クライアントのサインインは、PowerShell だけでも書ける。`TcpListener` で `127.0.0.1` を1回待ち受けて認可コードを受け取り、PKCE（S256）と `state`・`nonce` を検査し、トークンは DPAPI（`ConvertFrom-SecureString`）で暗号化して保管できる（根拠: 偽の IdP を使った試験29項目と、実機での接続）。
 
+### 部屋へのゲートウェイのトークンの押し込み（確認: 2026-10-29、根拠: 特記以外は下の各項に記載）
+<!-- 版依存: 一方向 / 確認: 2026-10-29 -->
+
+- 部屋は `[interop] enabled=false` と `[automount] enabled=false` で作られていて、部屋から Windows のコマンドやファイルは使えない（根拠: `room.py` の `WSL_CONF` を読んだ）。
+- Windows 側のトークン保管は DPAPI（Windows 専用）なので、Linux の `pwsh` には持ち込めない（仮説。公式のドキュメントで確認していない）。
+- `start` の中の待機（AI の起動、または `--no-launch` の `input()`）は、`room start` を実行した Windows 側のプロセスが行う。だから、そのプロセスにスレッドを足せば、start の間だけ動く更新になる（根拠: `cmd_start` を読んだ）。
+- 更新は Windows 側で `claude-gateway-token` を呼ぶだけで、期限が近ければ、保管したリフレッシュトークンで無音に更新される。部屋の側では何も更新されない（根拠: `claude-gateway-token.ps1` と README を読んだ）。
+- 部屋の `settings.json` に写すのは `env` `model` `theme` に絞り、`hooks` と `permissions` は写さない。Windows 側のコマンドが入りうるため（根拠: 実装とそのテストを書いた）。
+- 単体テスト（WSL を差し替え）は、全160件が失敗0で、`GatewayTest` 5件を含む（根拠: `python -m unittest discover` の実行）。
+- 実機の部屋での接続、約50分後の置き換え、リフレッシュトークンが失効する頻度は未確認（仮説）。
+
 ### この PC の実物（確認: 2026-10-11、根拠: ファイルと環境変数の取得。値は出していない）
 
 - 起動関数（`claude-api`、`claude-bedrock`、`claude-oauth`、`claude-pick`）と設定ファイルの実体は、dotfiles の `windows/claude/README.md` が正。共通の `~/.claude/settings.json` は `theme` と `permissions` だけで、`env`・`apiKeyHelper`・認証用のユーザー環境変数は無い。Bedrock の設定は `~/.claude/settings-bedrock.json`（この PC 専用。リポジトリには置かない）に生成される。
@@ -158,10 +182,12 @@ OAuth（サブスク）に加えて API キー認証や Amazon Bedrock を足す
 - 「API キーが優先される」と感じた場面は、ターミナルの `claude` 単独か、`claude-api` を使っているときか。前者なら、その端末の環境変数（`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_USE_BEDROCK`）を調べる。2026-10-11 のこの PC では、ユーザー環境変数にいずれも無い。
 - 同じセッションの中で、API キー認証から OAuth へ切り替える手段はあるか（未確認）。
 - Bedrock の実際の AWS 環境で、一覧の取得、設定の生成、`claude-bedrock` の起動が通るか。
+- リフレッシュトークンが失効するのは、どれくらいの周期か。失効したとき、start の画面でどう気づかせるか。
+- 提案: ゲートウェイ起動でも、部屋の共通設定（permissions など）を引き継ぐか（AI の提案。未承認）。
 
 ## Next Actions
 
-- なし（2026-10-27 に、残っていた項目を閉じた）。
+- 実機の部屋で `room start --gateway` を実行し、`/status` の接続先、約50分後の接続、終了後のトークン削除を確かめる（2026-10-29 時点）。
 
 ## Related
 
