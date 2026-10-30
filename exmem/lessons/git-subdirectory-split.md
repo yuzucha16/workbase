@@ -85,6 +85,7 @@ sources:
 
 ## Next Actions
 
+- 承認待ち: マージコミット本文の置換先 `owner` でよいか（AI の提案。別の語ならやり直し）。
 - 他の端末の clone は合わせ済み。WSL の room は対象外（workbase の clone を持たず、部屋の `.git` は回収後に捨てる使い捨て。確認: 2026-10-29、根拠: `room.py` を読んだ。WSL の中は未確認）。
 
 ## Related
