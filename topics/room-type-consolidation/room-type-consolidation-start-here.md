@@ -5,15 +5,15 @@
 
 ## いま
 
-type の集約は反映済み（2026-10-24）。10-31 に論点が広がった: works を PC ローカルの台帳と再定義し、開発用リポジトリを room の ext4 に置く（works と 1:N）。Zed からは読み書きできると確認済み。次は GitHub の認証方式。詳細は `docs/log.md`。
+type の集約は反映済み（2026-10-24）。10-31 に、room の GitHub 認証（読み取り専用 deploy key）を実機で確認した。works の再定義（PC ローカルの台帳、開発リポジトリを room の ext4 に置く 1:N）と `repos:` は、別トピックで扱う。詳細は `docs/log.md`。
 
 ## あなた待ち
 
-なし
+GitHub の `yuzucha16/room-auth-check` の削除（`gh` に権限が無い）。deploy key の作成の再実施。
 
 ## 次の一手
 
-room の中の GitHub 認証（SSH 鍵か `gh auth` か）のベストプラクティスを聞く。その後、works の再定義をどこで決めるかを決める。
+別トピックを立て、Open Questions 1〜6 を移す。
 
 ## 読む順
 

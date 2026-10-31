@@ -2,6 +2,16 @@
 
 ## Log
 
+### 2026-10-31（room の非公開リポジトリの認証を実機で通した）
+- 手順: ホストの `gh` で空の非公開リポジトリ `yuzucha16/room-auth-check` を作成。`room-myenv` の中で ed25519 の鍵を生成（`~/.ssh/id_room_authcheck`、パスフレーズなし、権限 600）。`~/.ssh/config` に別名 `github-authcheck`（`IdentitiesOnly yes`）を置き、known_hosts は `ssh-keyscan` の結果の指紋が GitHub 公開の値（`SHA256:+DiY3wvv…`）と一致することを見て採用。公開鍵を `gh api` で deploy key（read_only）として登録。
+- 結果: room の中で `git clone git@github-authcheck:…` が通り、`push` は「The key you are authenticating with has been marked as read only」で拒否された（期待どおり）。
+- 罠: PowerShell の here-string は CRLF。`wsl.exe … -- sh -s` に渡す前に `\r\n` を `\n` にする。
+- `room close` は GitHub に触れない（`cmd_close` は remote を使わない）ため、認証の有無で結果は変わらない。「room 内の clone が全部 push 済み」の検査は未実装（Open Questions 3）。
+- 部屋の内部 git（`~/gitdirs/<Project>`、`ROOM_GIT_WRAPPER`）との関係: ラッパーは `/mnt/room/<Project>` の下だけ `GIT_DIR` を差し替える。`~/src/<repo>` の clone と remote は影響を受けない。`room close` の `--commit` は works の git へのコミットで、部屋の内部 git ではない。3 者（works の git、部屋の内部 git、clone と remote）は無関係。
+- ユーザーの決定: 確認用リポジトリは消す（作成は自分でもう一度やる）。C 案の却下理由の更新は了承。push は room に許さない（個人開発は許す・チーム開発は許さないの 2 パターンがあるので許さない方に倒す）。close の検査は足す。works の再定義と `repos:` は別トピックにする。
+- 片付け: room 側の鍵、`~/.ssh`、clone は削除。GitHub 側の `room-auth-check` は `delete_repo` の権限が無く未削除（ユーザー作業）。
+- 反映: `exmem/lessons/ai-isolated-work-room.md` の Decisions に 10-31 の決定を追記、10-13 の C 案の項に更新を指す注を付けた。
+
 ### 2026-10-31（works の再定義の相談と、Zed から room の ext4 を扱えることの確認）
 - ユーザーの問題提起: `open --type` の整理が発端。works が GitHub に公開・非公開どちらにもなり（pc1 は非公開、pc2 は公開）、リポジトリが works の 1 つに固定される。`inv`（Windows Office）と `dev`（Windows/Linux/WSL）の成果物があり、リポジトリ情報が Windows 側で、room のある WSL からファイルシステムを跨ぐ。複数のリポジトリを触る要望が pc1 で実際にあった。案は、works を remote なしの PC ローカルにし、開発用リポジトリを room 側で clone して 1:N にする。
 - AI の初回の提案: 台帳（works、remote なし）／コード（room の `~/src/<repo>`、リポジトリごとの remote）／`inv` の成果物（works、公開するなら別リポジトリ）の 3 層。認証は room に読み取りだけ置き push は人、の案を推した（未決）。
