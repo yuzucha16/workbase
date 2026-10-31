@@ -2,6 +2,12 @@
 
 ## Decisions
 
+### 【この件】`target:` の書式と `ai/in/target/` に置くものを決める（2026-11-01）
+
+- 根拠: ユーザー「良いです。私のイメージ通り」（`review 消化` で素案を示した後）。前提はユーザーの「ssh で room（WSL）に繋ぐか、物理的に別環境の PC（Linux）に繋ぐかの差でしかない」。
+- 内容: README の frontmatter に `target:`（`name`、`via: ssh|wsl`、`os`、`note`）。`ai/in/target/` は `env.md`、`run-YYYY-MM-DD.md`、秘匿値抜きの設定サンプル。秘密鍵・パスワード・トークン・機密のホスト名は置かない。処理する側は作らない。
+- 反映先: `workflow-kit/project-structure.md` の「開発リポジトリ」の節。10-31 の「room から開発サーバーへ SSH しない」は変更なし。
+
 ### 【この件】【保留 〜2026-11-08】Obsidian の Vault を 2 つに分ける（2026-11-01）
 
 - **2026-11-01 `review 消化`: ユーザーが 3 論点とも【保留】と判断した**（期日は 11-08）。スクリーニング（型 D: 論点 1 Vault の分割、論点 2 `.obsidian` の実体と正本、論点 3 一方向の自動反映）の指摘: ① 10-17 前後の「works ＝ Vault」の一語化と、「Vault 側の AI／deny」の指す先が、分割後も works でよいか未確認。② 論点 2 は 10-05 の延長だが、ジャンクション 2 本でリンク前に Obsidian を開くと `30_link.bat` が止まる経路が倍になる。③ 論点 3 の仕組みの詳細は dotfiles 側に置く（`app-config-placement.md` の Principles、依存は dotfiles → workbase の一方向）。方針の 1 行だけ workbase に残す。④ 実機確認の順序は ③ → ④ → 論点 2・3 の実装。加えて pc1 のリンク調査、「Vault ＝ works」の文面の直し方の一覧、Obsidian を先に開いた場合の確認。

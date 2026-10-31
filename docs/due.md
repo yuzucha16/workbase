@@ -8,7 +8,6 @@
 | 2026-11-02 | 単発 | token-cap NA 9: 規則書を直前に読む件の効果。相談の型の会話で `decompose_session.py --steps --upto N` を使って確かめる | AI（ユーザーの依頼で） |
 | 2026-11-03 | 単発 | ooxml-clean の NA 2: PC1 の実 pptx を `cleankit.py` で `check` → `clean`（standard）し、PowerPoint で警告なしに開くか確かめる。結果で NA 1（room の `mask` への組み込み）に進む。手順は `guides/howto/ooxml-clean.md` | ユーザー（PC1） |
 | 2026-11-03 | 単発 | token-cap NA 4: 土台の整理を 100k 運用の結果で再判断（動かせる土台の内訳を先に測る） | ユーザー |
-| 2026-11-04 | 単発 | 返答の並び（求めること・確認を最下段、結論をその直前。`AGENTS.md`）の 1 週間の試行を続けるか判断 | ユーザー |
 | 2026-11-04 | 単発 | Open Questions の保留 2 件（`repos/` の受け渡し、`restore` の上書き保護。実機で保護を試す。11-05 から前倒し） | ユーザー（実機） |
 | 2026-11-05 | 単発 | room-type-consolidation の実機確認（起票 10-25。追加の作業が入ったため 11-05 に設定、11-01 ユーザー）: 1 Project で `env/` と `tests/` と `docs/` に加えて `src/`（コード開発）を通す実測（題材は同じ WSL の Python 環境。`repos:` を書いた `dev` の Project）。観察点: 構成要素の選び方、置き場の取り違えの再発、検証が自己向けになって弱くならないか（ユーザー、10-25）。案 A の実装（`a9d03cc` `721f3f9`。単体テストのみ）の実機確認: ① `room start` で `~/src/<repo>` が `--add-dir` で渡り、その `CLAUDE.md` が読まれる ② AI が `git -C ~/src/<repo>` で commit でき、`ai/` に化けない ③ 修正した `ROOM.md` が届いて置き場の取り違えが再発しない ④ `room close` が未 push の clone で止まる ⑤ 対話での `cd` 後の cwd の持続（未測） | ユーザー（実機） |
 | 2026-11-05 | 単発 | token-cap NA 6: 出力の型（8 本）の試用の結果を見る（誤爆、型の品質、開始時の大きさ） | ユーザー |
