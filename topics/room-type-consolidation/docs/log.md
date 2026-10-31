@@ -4,7 +4,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。手順書の実測�
 
 ## Next Actions
 
-- 【次のセッション、実装 10-31】案 A の残りを `room.py` に入れる。① `room start` が、起動する claude に `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` を渡す（無いと、追加ディレクトリのリポジトリの `CLAUDE.md` が読まれない）。② README の `repos:`（`where: wsl`）の clone を、`~/src/<repo>` の `--add-dir` で渡す。AI には `git -C ~/src/<repo>` を使わせる（`cd` 後の git は承認待ちになる）。対話での `cd` 後の cwd の持続は未測。
+- 【実装済み 10-31、実機は未確認】`room.py` の `cmd_start` が、`claude` のとき `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` と、README の `repos:`（`where: wsl`、既定）の `~/src/<repo>` への `--add-dir` を渡す（`read_repos` `claude_extra_args`。部屋に clone が無ければ注意を出して渡さない。単体テスト済み）。残り: 実機で `room start` し、追加ディレクトリの `CLAUDE.md` が読まれるか確かめる。AI には `git -C ~/src/<repo>` を使わせる指示が `ROOM.md` に要る。対話での `cd` 後の cwd の持続は未測。`repos:` の書式は `project-structure.md` に書く（下の文書更新と一緒に）。
 - 【影響する文書の更新】10-31 の決定を、`obsidian-vault-structure.md`、`ai-isolated-work-room.md` の Decisions、`room.py` の `open`、`project-structure.md`（`repos:` と `target:` の項目）に反映する。案 A の実測は済んだので、上の実装と一緒に行える。
 - 【起票 10-31】`room close` に、未 push の clone を検出する検査を足す（`decisions.md` の 10-31 の項）。`repos:` と置き場は決まったので、実装できる。room は Area ごとで `~/src` は Project をまたいで共有されるため、README の `repos:` で Project と clone を対応づけて検査する。push は room に許さないので、未 push は人が room の外から push する。
 - 【ユーザー作業、手すきで】deploy key の作成を自分でもう一度やる（手順は `log-history.md` の 10-31）。手順書にするかは、やってみてから決める。

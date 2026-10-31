@@ -366,6 +366,31 @@ class GatewayTest(unittest.TestCase):
             self.assertEqual(wsl.interactive_calls[0][1], "cd /mnt/room/proj-a && claude")
 
 
+class ReposTest(unittest.TestCase):
+    README = ("---\nstatus: active\nrepos:\n  - url: git@github.com:o/alpha.git\n    branch: main\n"
+              "  - url: https://example.com/o/beta\n    where: win\n---\n本文\n")
+
+    def test_read_repos_defaults_where_to_wsl(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Path(tmp) / "README.md"
+            f.write_text(self.README, encoding="utf-8")
+            r = room.read_repos(f)
+            self.assertEqual([x["where"] for x in r], ["wsl", "win"])
+            self.assertEqual(r[0]["branch"], "main")
+            self.assertEqual(room.repo_dir_name(r[0]["url"]), "alpha")
+
+    def test_extra_args_only_for_wsl_repos_and_claude(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            p = room.Project.load(c, "proj-a")
+            p.readme.write_text(self.README, encoding="utf-8")
+            env, extra = room.claude_extra_args(c, p, "claude")
+            self.assertEqual(env, "CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 ")
+            self.assertEqual(extra, ' --add-dir "$HOME/src/alpha"')
+            self.assertEqual(room.claude_extra_args(c, p, "bash"), ("", ""))
+
+
 class ShellTest(unittest.TestCase):
     def test_shell_enters_the_room_and_refuses_a_missing_room(self):
         with tempfile.TemporaryDirectory() as tmp:

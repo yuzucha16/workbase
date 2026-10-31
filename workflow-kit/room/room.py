@@ -160,6 +160,61 @@ def read_frontmatter(path):
     return data
 
 
+def read_repos(path):
+    """README の frontmatter の repos:（url、where、branch の並び）を返す。where の既定は wsl。
+    書式: `repos:` の下に `  - url: ...` と、続く行に `    where: ...` `    branch: ...`。"""
+    fm, _ = split_frontmatter(Path(path).read_text(encoding="utf-8"))
+    repos, cur, in_block = [], None, False
+    for line in (fm or "").split("\n"):
+        if re.match(r"^repos:\s*(#.*)?$", line):
+            in_block = True
+            continue
+        if not in_block:
+            continue
+        if line and not line[0].isspace():
+            break
+        m = re.match(r"^\s+(-\s+)?([A-Za-z0-9_]+):\s*(.*?)\s*$", line)
+        if not m:
+            continue
+        if m.group(1):
+            cur = {}
+            repos.append(cur)
+        if cur is not None:
+            cur[m.group(2)] = re.sub(r"\s+#.*$", "", m.group(3)).strip("\"'")
+    for r in repos:
+        r.setdefault("where", "wsl")
+    return repos
+
+
+def repo_dir_name(url):
+    """clone の置き場の名前（~/src/<name>）。url の末尾の名前から .git を除く。安全な文字だけを許す。"""
+    name = re.sub(r"\.git$", "", url.rstrip("/").rsplit("/", 1)[-1].rsplit(":", 1)[-1])
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", name) or name.startswith("."):
+        raise RoomError(f"repos: の url から clone の名前を決められない: {url}")
+    return name
+
+
+def claude_extra_args(ctx, p, cmd):
+    """案 A: cwd は /mnt/room/<Project> のまま、README の repos:（where: wsl）の ~/src/<repo> を --add-dir で渡す。
+    追加ディレクトリの CLAUDE.md を読ませる環境変数も付ける。cmd が claude で始まるときだけ。戻りは (環境変数の接頭辞, 追加の引数)。"""
+    if cmd.split()[:1] != ["claude"]:
+        return "", ""
+    dirs = []
+    for r in read_repos(p.readme):
+        if r["where"] != "wsl" or not r.get("url"):
+            continue
+        name = repo_dir_name(r["url"])
+        rc, _o, _e = ctx.wsl.script(p.distro, f'test -d "$HOME/src/{name}/.git"\n')
+        if rc != 0:
+            ctx.say(f"注意: ~/src/{name} が部屋に無い（repos: の {r['url']}）。clone してから使う。--add-dir には渡さない")
+            continue
+        dirs.append(f'--add-dir "$HOME/src/{name}"')
+    if not dirs:
+        return "", ""
+    ctx.say(f"追加ディレクトリ: {len(dirs)} 件（git は `git -C ~/src/<repo>` を使う）")
+    return "CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 ", " " + " ".join(dirs)
+
+
 def update_frontmatter(text, updates, remove=()):
     fm, body = split_frontmatter(text)
     if fm is None:
@@ -1468,7 +1523,8 @@ def cmd_start(ctx, a):
         ctx.say(f"マウントした: {p.mount_point}")
         setup_room_git(ctx, p)
         refresher = gateway_start(ctx, p.distro, *first) if gateway else None
-        cmd = GATEWAY_CMD_PREFIX + a.cmd if gateway else a.cmd
+        env_prefix, extra = claude_extra_args(ctx, p, a.cmd)
+        cmd = env_prefix + (GATEWAY_CMD_PREFIX + a.cmd if gateway else a.cmd) + extra
         if a.no_launch:
             ctx.say("--no-launch: ここで AI を起動しない。Zed などで WSL リモート接続し、" f"{p.mount_point} を開く（/mnt/room は開かない）。終わったら Enter")
             if gateway:
