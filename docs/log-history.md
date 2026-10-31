@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-01（review 消化を topics 配下へ広げた。Vault 2 分割を保留にし、期日を規則で振り直した）
+- 4 トピックの `docs/log.md` に `review 消化` を適用した。期日の既定（起票から 1 週間）を `topics/AGENTS.md` と `decisions.md` に記録した。
+- Vault 2 分割は、スクリーニング（型 D の 3 論点）の結果、ユーザーが保留とした（`topics/room-type-consolidation/docs/decisions.md`。前提の確認は 11-06）。`obsidian-vault-structure.md` に works の再定義を反映した。
+- 期日のない項目に期日を付け、`due.md` を規則（1 日 2 つ、実機は 1 日 1 つ、PC1 は 2 日に 1 つ、類似は 3 つまで、古いトピックを優先）で 11-02〜11-17 に振り直した。規則は `decisions.md` の同日の項。11-05 の 6 件と 11-08 の過密は解消した。
+
 ### 2026-11-01（review 消化。期日の移し替えの動作確認を閉じ、weekly の仮決めの期限切れを数えた）
 - 11-01 の `review 消化` で `due.py` が動き、期日が来た weekly の行が Next Actions に上がった。ユーザーが Next Actions 11（期日の移し替えの動作確認）を完了として閉じた。`due.md` の weekly は 11-08 に書き換えた。
 - weekly の期限切れの数え方（ユーザーの指示でその場で実施。週次の記録は書いていない）。`【仮】` の状態は次のとおり。
