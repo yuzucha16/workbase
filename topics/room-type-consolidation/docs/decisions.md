@@ -2,7 +2,9 @@
 
 ## Decisions
 
-### 【この件】【仮】Obsidian の Vault を 2 つに分ける（2026-11-01）
+### 【この件】【保留 〜2026-11-08】Obsidian の Vault を 2 つに分ける（2026-11-01）
+
+- **2026-11-01 `review 消化`: ユーザーが 3 論点とも【保留】と判断した**（期日は 11-08）。スクリーニング（型 D: 論点 1 Vault の分割、論点 2 `.obsidian` の実体と正本、論点 3 一方向の自動反映）の指摘: ① 10-17 前後の「works ＝ Vault」の一語化と、「Vault 側の AI／deny」の指す先が、分割後も works でよいか未確認。② 論点 2 は 10-05 の延長だが、ジャンクション 2 本でリンク前に Obsidian を開くと `30_link.bat` が止まる経路が倍になる。③ 論点 3 の仕組みの詳細は dotfiles 側に置く（`app-config-placement.md` の Principles、依存は dotfiles → workbase の一方向）。方針の 1 行だけ workbase に残す。④ 実機確認の順序は ③ → ④ → 論点 2・3 の実装。加えて pc1 のリンク調査、「Vault ＝ works」の文面の直し方の一覧、Obsidian を先に開いた場合の確認。
 
 - 決めたこと（仮。ユーザー「確認はすべてOKです」）: Vault を `resources/`（workbase。md のみ）と `works/`（projects・areas・`resources_p/`。html や excel など `inv` の成果物も見る）の 2 つにする。`works/.obsidian` は残し、除外（`app.json` の `userIgnoreFilters`）に `resources/` `archives/` `repos/` を加える。`resources_p/` は works の Vault に含める（ユーザー「ファイラー 兼 viewer になればラッキー」）。`archives/` はほぼ見ない（同）。pc1 は `resources/` の Vault も参照用に開く（特に `guides/`）。
 - 根拠（ユーザーの発言）: pc2 は resources（workbase）の改良が主、pc1 は areas・projects の作業が主で、works 配下で両方を見る利点が無い。事実: プラグインは 3 つだけ（`colored-tags` `html-viewer` `xlsx-viewer`）で、md のみの `resources/` で 2 つのビューアは効かないだけ。差は小さい。Vault を分ける利点は、検索・ブックマーク・クイックスイッチャーの範囲と `workspace.json` が閉じること。`workspace.json` は dotfiles で追跡対象外（`.gitignore`）で、Obsidian が自動生成する。最小構成のコピーは置かない。pc2 の調査（2026-11-01）: works の `resources/` の外の md 92 ファイルに `[[リンク]]` 47 件。`resources/` を指すものは 0 件（残りは `areas/…` `projects/…` のパス形式で、works の Vault 内で完結）。pc1 は未調査（ユーザー「使っていない」）。

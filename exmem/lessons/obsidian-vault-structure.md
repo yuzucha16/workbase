@@ -10,7 +10,7 @@ aliases:
   - obsidian-vault-structure
 triggers: [Vault の構造, works, PARA, resources, areas, projects, archives, 共有とローカル, 入れ子, clone, ジャンクション, .obsidian, 検索, ripgrep]
 created: 2026-10-05
-updated: 2026-10-27
+updated: 2026-11-01
 sources:
   - Claude Code conversation "Vault の構造変更（共有とローカルのリポジトリ分離）と workflow の拡張" (2026-10-05)
 ---
@@ -28,6 +28,10 @@ sources:
 
 **現在の状態（確認: 2026-10-06、根拠: ユーザーの確認、起動したセッション、dotfiles の試験）**: 環境変数は `WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` は `%USERPROFILE%\.certs`（`VAULT_HOME` は廃止。`NOTES_DIR` は未設定）。Obsidian と Claude Code は、新しい場所で動いた。`.obsidian` は dotfiles へのジャンクション。WSL へは `WSLENV` の `WORKS_DIR/p` で渡す設計だが、実機の WSL では渡っていなかった（確認: 2026-10-06、[[obsidian-vault-home-works]]の Facts）。dotfiles の Linux の試験は 51/51 合格（再実行で再確認: 2026-10-06）。未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。旧 `C:\vault`（旧 clone とバックアップ）は、この `--resume` の試験のために、削除せずに残している（ユーザーの指示）。rename の判断・原則・遭遇したことは、[[obsidian-vault-rename]]にまとめた。
 2026-10-05 に、2026-10-02 に決めた目標の構造から変更した。経緯は、下の「過去の構造」と、Decisions の「撤回済み」の注記に残す。
+
+**works の再定義（2026-10-31、ユーザーの承認。根拠は `topics/room-type-consolidation/docs/decisions.md` の同日の項）**: works（Vault）と workbase は 1:1 で、workbase は works の中の `resources/`。works と projects は 1:N の PC ローカルの台帳（remote なし）。`dev` の Project の git リポジトリ（N 個）は、開発環境のある OS に置く（今は WSL の `~/src/<repo>`）。上の図の `projects/` `areas/` `archives/` の構成は変わらない。
+
+**Vault の 2 分割（2026-11-01 仮決め、同日の `review 消化` で【保留 〜11-08】）**: `resources/`（md のみ）と `works/`（projects・areas・`resources_p/`）を別の Vault にする案。実装は未着手で、正式化の前に、入れ子の Vault で除外フィルタが効くかの実機確認、`.obsidian` の移し先、pc1 のリンク調査が要る。この節の図と記述は、1 Vault のまま。
 
 ```text
 $HOME\works\           # PC ごとのローカルなリポジトリ（実ディレクトリ。ジャンクションではない）

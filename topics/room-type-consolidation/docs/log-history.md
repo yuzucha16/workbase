@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-01（`review 消化`: Vault 2 分割を【保留】にし、works の再定義を `obsidian-vault-structure.md` に反映した）
+- スクリーニング（サブエージェント 1 回）の結果、ユーザーが 3 論点とも保留（期日 11-08）。内容は `decisions.md` の同日の項の先頭。
+- `exmem/lessons/obsidian-vault-structure.md` に、works の再定義（10-31）と、2 分割が保留であることを足した。図は 1 Vault のまま。
+- Next Actions の `src/` 実測と案 A の実機確認は、ユーザーの指定で期日 11-05 になり、`docs/due.md` に移した。log 先頭の段落は縮めた（経緯はこの履歴にある）。
+
 ### 2026-11-01（Obsidian の Vault を 2 つに分ける案を仮決めした。記録のみで、実装は未着手）
 - ユーザーの相談: pc2 は resources（workbase）の改良が主、pc1 は areas・projects が主なので、`works/.obsidian` を `resources/.obsidian` と `projects/.obsidian` に分けたい。事実の確認: `.obsidian` は dotfiles へのジャンクション、プラグインは 3 つ（`colored-tags` `html-viewer` `xlsx-viewer`、約 240KB）、`workspace.json` は dotfiles で追跡対象外。pc2 で `resources/` の外の md 92 ファイルの `[[リンク]]` 47 件を数え、`resources/` を指すものは 0 件。
 - 仮決め: Vault は `resources/`（md のみ）と `works/`（projects・areas・`resources_p/`。`resources/` `archives/` `repos/` を除外）の 2 つ。`areas/` が works 直下で `projects/` と並ぶため、`projects/` だけの Vault にはしなかった。実体は両方 dotfiles に置き、ジャンクションで張る（ユーザーの補足で、私が「workbase が追跡するか」と読み違えた点を直した）。resources 用が正本で、works 用の共通ファイルは派生物として生成し、追跡しない。works だけ違う項目は `app.override.json`。リンク適用時に自動、手動でも可、`--check` で点検（ユーザー「この形はいいですね」）。根拠は `decisions.md` の同日の項。
