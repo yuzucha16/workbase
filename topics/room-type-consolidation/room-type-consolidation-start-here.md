@@ -5,15 +5,15 @@
 
 ## いま
 
-type の集約は反映済み（2026-10-24）。10-31 に、room の GitHub 認証（読み取り専用 deploy key）を実機で確認した。works の再定義などの論点（Open Questions 1〜7）は、このトピックで続ける。詳細は `docs/log.md`。
+type の集約は反映済み（2026-10-24）。10-31 に、room の GitHub 認証（読み取り専用 deploy key）を実機で確認し、works の再定義と開発リポジトリの置き場を決めた（`docs/decisions.md`）。詳細は `docs/log.md`。
 
 ## あなた待ち
 
-deploy key の作成の再実施（ユーザーの学習のため）。
+deploy key の作成の再実施（ユーザーの学習のため。手すきで。手順書にするかは、やってみてから）。
 
 ## 次の一手
 
-works の再定義（`docs/log.md` の Open Questions 1）を議論して決める。
+cwd の案 A（`/mnt/room/<Project>` のまま `~/src/<repo>` を追加ディレクトリで渡す）の実測。
 
 ## 読む順
 

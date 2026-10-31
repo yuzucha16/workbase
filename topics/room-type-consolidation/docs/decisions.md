@@ -15,6 +15,17 @@
 - 正本は `ai-isolated-work-room.md` の同日の決定（C 案の却下理由の更新を含む）。
 - `room close` に「部屋の中の clone が全部 push 済み」の検査を足す（ユーザー、10-31）。実装は `repos:`（Open Questions 2）と置き場（5）の後。
 
+### 【この件】works の再定義と開発リポジトリの置き場（2026-10-31）
+
+- 根拠: ユーザーが「よいです」「想定は前者です。あなたの推奨でOK」と承認した。
+- works（Vault）と workbase は 1:1 で、workbase は works の中の `resources/`。works と projects は 1:N の PC ローカルの台帳（remote なし）。pc2 の works は非公開にして、その後削除する。渡せるものは workbase に移す（Open Questions 4 は閉じた）。
+- 成果物: `inv` は Office ファイルと markdown。`dev` は git リポジトリ（N 個）で、置き場は開発環境（IDE）のある OS（win / wsl / linux）。今の対象は WSL だけ。
+- `repos:`（`url`、`where: wsl|win|linux`、`branch`）を Project の README に持たせる。`dev` の既定は `where: wsl`、`inv` は repo なし。処理するのは `wsl` だけ。
+- clone の置き場: `~/src/<repo>`。git で管理するものは `~/src/<repo>`、しない試作や一時のコードは `ai/out/<成果物名>/src/`。
+- `ai/` のマウントは続ける（人と AI の受け渡しの唯一の経路）。claude の cwd は `/mnt/room/<Project>` のまま、`~/src/<repo>` は追加ディレクトリで渡す（案 A）。実測してから確定する。
+- room から開発サーバーへ SSH しない（分離と読み取り専用の認証の方針に反する）。サーバー上の作業は人が SSH して行い、窓口は `ai/in/target/`（環境メモ、実行ログ）と README の `target:`。AI は手順を `ai/out/` か `ai/docs/` に書き、人が実行して結果を戻す。秘密鍵、パスワード、トークン、機密のホスト名は置かない（ホストは別名）。
+- サーバー側で AI を動かす形は、room の外のモードなので別設計（今は対象外）。
+
 ### 【この件】Open Questions を見送る（2026-10-31）
 
 - 根拠: ユーザー「oq を omit してください」。works の再定義、`repos:`、clone の置き場、pc2 の remote、影響する文書、聞き返しの未測の 7 件を、ここでは追わない。

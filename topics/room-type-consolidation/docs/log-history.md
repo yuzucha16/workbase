@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-10-31（WSL からの認証の確認を受けて、works の再定義と置き場を決めた）
+- 確認: ユーザーが、WSL から認証が要る clone を通せることを確認した。WSL にリポジトリを置く前提の仕様の確認。
+- 決定（`decisions.md` の「works の再定義と開発リポジトリの置き場」）: works（Vault）と workbase は 1:1。works と projects は 1:N の PC ローカルの台帳。`dev` のリポジトリは、開発環境（IDE）のある OS に置く（今は WSL だけ）。`repos:` に `where: wsl|win|linux` を持たせる。clone は `~/src/<repo>`、git で管理しないコードは `ai/out/<成果物名>/src/`。`ai/` のマウントは続け、cwd は `/mnt/room/<Project>` のまま `~/src/<repo>` を追加ディレクトリで渡す（案 A、実測前）。room から開発サーバーへ SSH しない。人が SSH して、窓口は `ai/in/target/` と README の `target:`。サーバー側で AI を動かす形は対象外。
+- 閉じた論点: 旧 Open Questions 1〜6（3 は 10-31 に決定済み、4 は pc2 を非公開にして削除するので閉じた）。`ai/src` と呼んでいた置き場は `ai/out/<成果物名>/src/` で合っている（`project-structure.md` の `dev` の構成）。
+- 補足: Obsidian の Vault は works 全体なので、`inv` の markdown を Obsidian で開くのは矛盾しない。「Obsidian が見るのは `resources/`」とは書かず、「works の中に workbase が `resources/` として入る」と書く。
+- ユーザーの指示: deploy key の再実施は優先度を下げる（手すきで）。手順書にするかは置いておく。次は案 A の実測を別セッションで行う。
+
 ### 2026-10-31（room の非公開リポジトリの認証を実機で通した）
 - 手順: ホストの `gh` で空の非公開リポジトリ `yuzucha16/room-auth-check` を作成。`room-myenv` の中で ed25519 の鍵を生成（`~/.ssh/id_room_authcheck`、パスフレーズなし、権限 600）。`~/.ssh/config` に別名 `github-authcheck`（`IdentitiesOnly yes`）を置き、known_hosts は `ssh-keyscan` の結果の指紋が GitHub 公開の値（`SHA256:+DiY3wvv…`）と一致することを見て採用。公開鍵を `gh api` で deploy key（read_only）として登録。
 - 結果: room の中で `git clone git@github-authcheck:…` が通り、`push` は「The key you are authenticating with has been marked as read only」で拒否された（期待どおり）。
