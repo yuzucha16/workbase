@@ -11,6 +11,7 @@
 - ユーザーの決定: 確認用リポジトリは消す（作成は自分でもう一度やる）。C 案の却下理由の更新は了承。push は room に許さない（個人開発は許す・チーム開発は許さないの 2 パターンがあるので許さない方に倒す）。close の検査は足す。works の再定義と `repos:` は別トピックにする。
 - 片付け: room 側の鍵、`~/.ssh`、clone は削除。GitHub 側の `room-auth-check` は `delete_repo` の権限が無く未削除（ユーザー作業）。
 - 反映: `exmem/lessons/ai-isolated-work-room.md` の Decisions に 10-31 の決定を追記、10-13 の C 案の項に更新を指す注を付けた。
+- 後続（ユーザー、同日）: 「別トピック」は「別セッションで続ける」の言い間違いで、トピックはここで続ける。Open Questions は見送る。GitHub の `room-auth-check` は削除済み。見送った論点（元の文）: ① works の再定義（works と workbase は 1:1、works と projects は 1:N の PC ローカルの台帳、成果物は `inv` が Office・`dev` が WSL 内の git リポジトリ N 個）。② Project の README に `repos:`（`url` `where` `branch`）を持たせるか。③ 閉じる条件に「room 内の clone が全部 push 済み」（決定済み、実装は ②⑤ の後だった）。④ pc2 の works の公開 remote を外すとき、公開済み成果物の切り出し先。⑤ clone の置き場（`~/src/<repo>`、`ai/src` との関係）。⑥ 影響する文書（`obsidian-vault-structure.md`、`room.py` の `open`、`project-structure.md`）。⑦ 置き場と対象環境を依頼に書かないとき AI が聞き返すかは未測。
 
 ### 2026-10-31（works の再定義の相談と、Zed から room の ext4 を扱えることの確認）
 - ユーザーの問題提起: `open --type` の整理が発端。works が GitHub に公開・非公開どちらにもなり（pc1 は非公開、pc2 は公開）、リポジトリが works の 1 つに固定される。`inv`（Windows Office）と `dev`（Windows/Linux/WSL）の成果物があり、リポジトリ情報が Windows 側で、room のある WSL からファイルシステムを跨ぐ。複数のリポジトリを触る要望が pc1 で実際にあった。案は、works を remote なしの PC ローカルにし、開発用リポジトリを room 側で clone して 1:N にする。

@@ -5,15 +5,15 @@
 
 ## いま
 
-type の集約は反映済み（2026-10-24）。10-31 に、room の GitHub 認証（読み取り専用 deploy key）を実機で確認した。works の再定義（PC ローカルの台帳、開発リポジトリを room の ext4 に置く 1:N）と `repos:` は、別トピックで扱う。詳細は `docs/log.md`。
+type の集約は反映済み（2026-10-24）。10-31 に、room の GitHub 認証（読み取り専用 deploy key）を実機で確認した。works の再定義などの論点（Open Questions）は見送った。詳細は `docs/log.md`。
 
 ## あなた待ち
 
-GitHub の `yuzucha16/room-auth-check` の削除（`gh` に権限が無い）。deploy key の作成の再実施。
+deploy key の作成の再実施（ユーザーの学習のため）。
 
 ## 次の一手
 
-別トピックを立て、Open Questions 1〜6 を移す。
+1 Project で `env/` `tests/` `docs/` を通す実測（`docs/log.md`）。
 
 ## 読む順
 
