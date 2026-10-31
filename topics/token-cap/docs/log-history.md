@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-11-01（NA 9 を閉じた）: `review 消化` の会話（`17f259ac`）で測った。`commit-push-rules.md` を読んだのは応答 13 の 1 回だけで、`git add`（14）と `git commit`（15）の直前。読み直しの上位 8 件に入らない。標本は 1 件で対照が無く、見込みの大きさは確かめていない。ee が閉じた。`records/2026-11-01-na9-commit-position.md`。wrap。
+
 - 2026-10-30（優先度の再付け、期日の移管、other の長い依頼の内訳）: 「token-cap の続き」。(1) ee が「優先度低」の印を外して付け直し、案を承認: 高 = 5 の (c)(d)(e)・9・wrap-hook の効果、中 = 6・integrate の効果、低 = 4・5 の (g)(h)。(2) 期日つきの NA 2（integrate）と NA 8（wrap-hook）を `docs/due.md` に移し、due.md の token-cap の行の NA 番号参照を内容の言葉に替えた。5 の (c)(d)(e) は反映済みで、効果は due.md の 11-05。(3) 5(b) の対象を調べた（Windows 側 10-01 以降）: other の長い依頼 172 件はマクロでなく kit 保守。蓄積は 1 応答の入力を増やすが応答数は増やさない。応答 10 以上の 25 件（32.0M）の 15 件は承認・close・omit の複数項目をまとめた返答。項目あたりのトークンはまとめるほど下がる（4 項目以上は 1 項目の約半分）。ee の見込み（まとめた方が安い）は合っていた。5(b) は ee が「低」に下げた。`records/2026-10-30-other-long-requests-breakdown.md`。wrap。
 
 - 2026-10-30（NA 5b の仕訳判断、NA 9 の採用、切る目安の据え置き）: 「token-cap の続き」。(1) office-output-types の `records/2026-10-30-master-book-baseline-template.md` の分担（人・AI・コード）と固定部 R1〜R6 を読み、NA 5(b) の仕訳にあたると判断した。弱い点（PC1 の実物で未実行、案件が Excel 集約 1 件）は同トピックの Open Questions に積んだ（ee の依頼）。(2) NA 9: 分割は 10-29 に済み、`AGENTS.md` などは元から直前に読む書き方。残っていたのは相談の型のケア 8 の文言。早読みの見込みは約 19k 文字分の読み直し（概算）、デメリットは小さいと整理し、ee が採用。`consultation-pattern.md` を直した。(3) 切る目安は 100k のまま（ee）。wrap。

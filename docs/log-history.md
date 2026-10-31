@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-01（review 消化の続き: 返答の並びを確定、`target:` を決定、token-cap NA 9 を閉じた）
+- `review 消化` の時点で、期日が今日以前の行は無かった。ユーザーが、期日 11-02 の 2 件と 11-04 の 1 件をこの会話で片付けた。
+- 返答の並び（求めることを最下段）を確定した（11-04 の試行判断を前倒し。スクロール回数が減ったため）。`AGENTS.md` と `decisions.md` に反映し、`due.md` の行を消した。
+- room-type-consolidation の `target:` の書式を決めた（`topics/room-type-consolidation/docs/decisions.md`）。token-cap NA 9 は、この会話のコミット（`8ce141f`）で測って閉じた（`topics/token-cap/records/2026-11-01-na9-commit-position.md`）。`due.md` の 11-02 の 2 行を消した。
+
 ### 2026-11-01（review 消化を topics 配下へ広げた。Vault 2 分割を保留にし、期日を規則で振り直した）
 - 4 トピックの `docs/log.md` に `review 消化` を適用した。期日の既定（起票から 1 週間）を `topics/AGENTS.md` と `decisions.md` に記録した。
 - Vault 2 分割は、スクリーニング（型 D の 3 論点）の結果、ユーザーが保留とした（`topics/room-type-consolidation/docs/decisions.md`。前提の確認は 11-06）。`obsidian-vault-structure.md` に works の再定義を反映した。

@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-01（`target:` の書式と `ai/in/target/` の一覧を決めた）
+- ユーザーの前提: 接続先が room の WSL でも別の Linux 機でも、ssh で繋ぐかどうかの差でしかない。素案（`name`、`via: ssh|wsl`、`os`、`note`。`ai/in/target/` は `env.md`、`run-YYYY-MM-DD.md`、秘匿値抜きの設定サンプル）をユーザーが承認した（「私のイメージ通り」）。
+- `workflow-kit/project-structure.md` の「開発リポジトリ」の節に反映した。根拠は `decisions.md` の同日の項。処理する側（`room.py`）は作っていない。Open Questions の該当の行は消した。コミット `8ce141f`。
+
 ### 2026-11-01（`review 消化`: Vault 2 分割を【保留】にし、works の再定義を `obsidian-vault-structure.md` に反映した）
 - スクリーニング（サブエージェント 1 回）の結果、ユーザーが 3 論点とも保留（期日 11-08）。内容は `decisions.md` の同日の項の先頭。
 - `exmem/lessons/obsidian-vault-structure.md` に、works の再定義（10-31）と、2 分割が保留であることを足した。図は 1 Vault のまま。

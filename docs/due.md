@@ -4,8 +4,6 @@
 
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
-| 2026-11-02 | 単発 | room-type-consolidation OQ: `target:` の書式と `ai/in/target/` に置くものの一覧を決める（判断） | ユーザー |
-| 2026-11-02 | 単発 | token-cap NA 9: 規則書を直前に読む件の効果。相談の型の会話で `decompose_session.py --steps --upto N` を使って確かめる | AI（ユーザーの依頼で） |
 | 2026-11-03 | 単発 | ooxml-clean の NA 2: PC1 の実 pptx を `cleankit.py` で `check` → `clean`（standard）し、PowerPoint で警告なしに開くか確かめる。結果で NA 1（room の `mask` への組み込み）に進む。手順は `guides/howto/ooxml-clean.md` | ユーザー（PC1） |
 | 2026-11-03 | 単発 | token-cap NA 4: 土台の整理を 100k 運用の結果で再判断（動かせる土台の内訳を先に測る） | ユーザー |
 | 2026-11-04 | 単発 | Open Questions の保留 2 件（`repos/` の受け渡し、`restore` の上書き保護。実機で保護を試す。11-05 から前倒し） | ユーザー（実機） |
