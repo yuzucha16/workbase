@@ -390,6 +390,19 @@ class ReposTest(unittest.TestCase):
             self.assertEqual(extra, ' --add-dir "$HOME/src/alpha"')
             self.assertEqual(room.claude_extra_args(c, p, "bash"), ("", ""))
 
+    def test_unpushed_repos_reports_dirty_or_ahead_only(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            p = room.Project.load(c, "proj-a")
+            p.readme.write_text(self.README, encoding="utf-8")
+            wsl.script = lambda distro, text, root=False: (0, "dirty=0\nahead=0\n", "")
+            self.assertEqual(room.unpushed_repos(c, p), [])
+            wsl.script = lambda distro, text, root=False: (0, "dirty=2\nahead=1\n", "")
+            self.assertEqual(room.unpushed_repos(c, p), ["~/src/alpha: 未コミットの変更 2 件、remote に無いコミット 1 件"])
+            wsl.script = lambda distro, text, root=False: (0, "", "")  # clone が無い
+            self.assertEqual(room.unpushed_repos(c, p), [])
+
 
 class ShellTest(unittest.TestCase):
     def test_shell_enters_the_room_and_refuses_a_missing_room(self):

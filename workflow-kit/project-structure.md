@@ -63,6 +63,22 @@ Project は、問題解決の単位で、1 つの部屋で行う。問題解決�
 - `ai/in/` は部屋では読み取り専用なので、AI が集めた資料は `ai/work/` に置く。
 - `inv` と、`dev` の構成要素（特に `env/` と `tests/` だけの成果物）は、実測が無い叩き台。
 
+## 開発リポジトリ（`repos:`。2026-10-31 ユーザーの決定）
+
+`dev` で git のリポジトリを扱うときは、README の frontmatter に `repos:` を書く（`inv` は書かない）。
+
+```yaml
+repos:
+  - url: git@github.com:<owner>/<repo>.git
+    where: wsl      # wsl | win | linux。省略時は wsl。room が処理するのは wsl だけ
+    branch: main
+```
+
+- clone の置き場は、部屋の `~/src/<repo>`（`<repo>` は url の末尾の名前から `.git` を除いたもの）。git で管理しない試作や一時のコードは `ai/out/<成果物名>/src/`。
+- `room start` は、`claude` を起動するとき `~/src/<repo>` を `--add-dir` で渡し、`CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` で追加ディレクトリの `CLAUDE.md` を読ませる。cwd は `/mnt/room/<Project>` のまま（案 A）。部屋に clone が無ければ注意を出して渡さない。
+- AI は `cd` せず `git -C ~/src/<repo>` を使う。push は room に許さない（読み取り専用の deploy key）。人が部屋の外から行う。
+- サーバーを使う Project の `target:`（実行環境の記述）の書式は未決。サーバーへ room から SSH しない。サーバー上の作業は人が行い、環境メモと実行ログを `ai/in/target/` に置く。
+
 ## Project を立てる前の判断基準
 
 `room open` を打つ前に、人が確かめる。
@@ -83,4 +99,4 @@ README 本文（目的、完了条件、成果物、範囲外、Open Questions�
 - Area が無い題材のときの、Area の作り方（基準: 終わりのない責任領域か）。
 - 上限（Project 3件、Area 5件）の見直し。
 - Project の構造（type は2種 `dev` `inv`、`ai/work/` の下書きの分離）の実測。`inv` と、`dev` の構成要素（`env/`、`tests/` だけ）は叩き台で、実測が無い。
-- リポジトリが正の `src` と、テスト対象がリポジトリの clone のときの置き場（`docs/log.md` の Open Questions の `repos/` の受け渡し）。
+- `target:` の書式と、`ai/in/target/` に置くものの一覧(`room-type-consolidation` の `docs/log.md` の Open Questions)。

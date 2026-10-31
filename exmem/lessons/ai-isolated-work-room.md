@@ -118,6 +118,10 @@ sources:
   - 根拠: ユーザーの決定（実物は 26.04 に変更済みで、`room init` の通しも済んでいた。決定の記録だけが無かった）。
 - **Area の README が 16 KiB を超えたら `start` が警告する**（2026-10-27）
   - 根拠: ユーザーが承認した（AI の提案で実装済みだった）。
+- **開発リポジトリは、部屋の `~/src/<repo>` に clone し、cwd は `/mnt/room/<Project>` のまま `--add-dir` で渡す（案 A）。push は room に許さない**（2026-10-31）
+  - 根拠: ユーザーの決定（「個人開発は許す、チーム開発は許さないの 2 パターンが出るので、許さない方に倒す」）。認証は読み取り専用の deploy key。`ai/` のマウントは、人と AI の受け渡しの唯一の経路として続ける。
+  - 実装: `room start` が `repos:`（`where: wsl`）の clone を `--add-dir` で渡し、`CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` で追加ディレクトリの `CLAUDE.md` を読ませる。AI は `git -C ~/src/<repo>` を使う（`cd` 後の git は承認待ちになる）。書式は `workflow-kit/project-structure.md`。
+  - 却下案: ホストの `gh` のトークンを room に渡す（AI から全リポジトリに書ける）。room から開発サーバーへ SSH する（分離の方針に反する）。
 
 ## Facts
 

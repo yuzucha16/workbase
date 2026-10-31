@@ -597,6 +597,8 @@ updated: {today}
 
 計画: `ai/in/plan/`（承認版。`brief 計画` の出力。無ければ未作成）
 
+開発リポジトリ（`dev` で git のコードを扱うとき）: 上の frontmatter に `repos:`（url、where、branch。書式は `workflow-kit/project-structure.md`）を足す。無ければこの行を消す。
+
 ## 完了条件
 
 <1文。ユーザーが承認してから書く（承認の前に「ユーザー承認: 日付」を書かない）>
@@ -1316,6 +1318,8 @@ Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
 - Area に実名で戻したい最終版（Area の成果物置き場に置くもの）だけ: `ai/out/deliverable/` の下に置く。Project の成果物は `ai/out/<成果物名>/`（置き場と構成は `workflow-kit/project-structure.md`）。
 
 部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git add` `git commit` `git log`）。リポジトリは `room start` が用意済みなので、許可を取らずに使ってよい。自分で `git init` や `git config` をしない（`.git` を作ると works に回収される。`git status` が失敗したときは、作らずに人に伝える）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。人に言われなくても、作業の区切りと wrap のたびにコミットする（push はしない）。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
+
+開発リポジトリ（`dev` の Project）: git で管理するコードは、部屋の `~/src/<repo>` にある clone で扱う（`room start` が追加ディレクトリとして渡す。`CLAUDE.md` も読まれる）。cwd は `/mnt/room/<名>` のまま。git は `cd` せず `git -C ~/src/<repo> ...` で使う（`cd` 後の git は承認待ちになる）。push はできない（読み取り専用の deploy key）。コミットまでにとどめ、push は人が部屋の外から行う。git で管理しない試作や一時のコードは `ai/out/<成果物名>/src/` に置く。
 
 `ai/out/` の文書に、`⟦` と `⟧` を、マスクの記号以外の用途で書かない。説明文でプレースホルダーの形を示すときは、「CUST_001 の形」のように括弧なしで書く（`⟦CUST_nnn⟧` のような書き方は、復元が壊れた記号として止まる）。
 """
@@ -2071,6 +2075,28 @@ def readme_placeholders(text):
     return [line.strip() for line in text.splitlines() if any(m in line for m in README_PLACEHOLDERS)]
 
 
+def unpushed_repos(ctx, p):
+    """README の repos:（where: wsl）の clone のうち、未コミットの変更か、remote に無いコミットがあるもの。[説明]。
+    部屋は Area ごとで ~/src は Project をまたいで共有されるので、repos: に書かれた clone だけを調べる。clone が無ければ対象外。"""
+    out = []
+    for r in read_repos(p.readme):
+        if r["where"] != "wsl" or not r.get("url"):
+            continue
+        name = repo_dir_name(r["url"])
+        d = f'"$HOME/src/{name}"'
+        script = (f'test -d {d}/.git || exit 0\n'
+                  f'echo "dirty=$(git -C {d} status --porcelain | wc -l)"\n'
+                  f'echo "ahead=$(git -C {d} log --branches --not --remotes --oneline | wc -l)"\n')
+        rc, o, err = ctx.wsl.script(p.distro, script)
+        if rc != 0:
+            raise RoomError(f"~/src/{name} の状態を確かめられなかった: {err.strip() or o.strip()}")
+        vals = dict(l.split("=", 1) for l in o.split() if "=" in l)
+        dirty, ahead = int(vals.get("dirty", 0)), int(vals.get("ahead", 0))
+        if dirty or ahead:
+            out.append(f"~/src/{name}: 未コミットの変更 {dirty} 件、remote に無いコミット {ahead} 件")
+    return out
+
+
 def cmd_close(ctx, a):
     p = Project.load(ctx, a.name)
     if p.fm.get("status") != "active":
@@ -2084,6 +2110,10 @@ def cmd_close(ctx, a):
     mounts, _others = split_mounts(room_mounts(ctx, p.distro), p)
     if mounts:
         raise RoomError("マウントが残っている。先に外す（`room umount --area " + p.area + "`）:\n  " + "\n  ".join(mounts))
+    pending = unpushed_repos(ctx, p)
+    if pending:
+        raise RoomError("部屋の clone に、push していないものがある。room は push できないので、人が部屋の外から push してから close する:\n  "
+                        + "\n  ".join(pending))
     close_md = p.ai / "out" / "close.md"
     if not close_md.exists():
         raise RoomError("ai/out/close.md が無い。部屋の AI に close の判断を行わせて、書かせる")
