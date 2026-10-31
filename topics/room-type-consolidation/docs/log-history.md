@@ -2,6 +2,15 @@
 
 ## Log
 
+### 2026-10-31（works の再定義の相談と、Zed から room の ext4 を扱えることの確認）
+- ユーザーの問題提起: `open --type` の整理が発端。works が GitHub に公開・非公開どちらにもなり（pc1 は非公開、pc2 は公開）、リポジトリが works の 1 つに固定される。`inv`（Windows Office）と `dev`（Windows/Linux/WSL）の成果物があり、リポジトリ情報が Windows 側で、room のある WSL からファイルシステムを跨ぐ。複数のリポジトリを触る要望が pc1 で実際にあった。案は、works を remote なしの PC ローカルにし、開発用リポジトリを room 側で clone して 1:N にする。
+- AI の初回の提案: 台帳（works、remote なし）／コード（room の `~/src/<repo>`、リポジトリごとの remote）／`inv` の成果物（works、公開するなら別リポジトリ）の 3 層。認証は room に読み取りだけ置き push は人、の案を推した（未決）。
+- ユーザーの補足: works は Vault の写しとして始まった（`resources/` を参照するため）。今は Vault として要るのは `resources/` で、works 配下の markdown は主でない。works と workbase は 1:1、works と projects は 1:N の PC ローカルの台帳、という表現は正しい。今のルールに適合させるのでなく、この考えに既存のルールを合わせに行く。
+- Zed の WSL 対応（公式 docs: `projects: open wsl`）。リモートの分担（UI はローカル、LSP・タスク・ターミナルはサーバー側）が WSL にも当てはまるとは docs に無かった。
+- 実機の確認（ユーザー、10-31）: Windows の Zed から `room-myenv` に接続し、`ai` の `~` で `git clone` した `~/dotfiles`（公開リポジトリ）を読めた。`df -T` で ext4（`/dev/sdd`、マウント `/`）。続けて編集、LSP のハイライト、git の表示、Agent も動いた。「ext4 に置いたコードが Zed から見えない」懸念は解消。
+- 未確認は、認証が要る（非公開の）リポジトリの clone / push。ユーザーが次回、SSH か `gh` かのベストプラクティスを聞くところから始める。
+- 決定は書いていない（works の再定義は方針の整理の段階）。
+
 ### 2026-10-28（`dev` の成果物が `ai/work/` に出る件を、再現待ちで閉じた）
 - ユーザーの判断で、10-26 起票の Next Actions（`dev` の成果物が `ai/work/` に出る件の原因の特定）を `log.md` から外した。理由: その後、部屋の AI が急に `ai/out/` に出すようになり、当時のセッションの情報を探すのが手間なため。原因は未特定のまま（候補は 10-26 の項の 3 つ）。
 - 再現したら再開する。そのとき確かめること: ① 部屋の `~/shared/ROOM.md` の基準コミット（cfd3b81 より前か）。② その Project の README の成果物の行。③ 部屋の AI に「`ai/work/` に置いた理由と、そのとき読んだ手順書」を聞く。(1) 写しが修正前か (3) `script-guide.md` の `ai/work/` の記述が原因なら、`ROOM.md`（`room.py`）と `brief-work-types.md` に「コードやスクリプトも成果物は `ai/out/<成果物名>/`。`ai/work/` は捨ててよい下書きだけ」を明記する。

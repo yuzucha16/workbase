@@ -5,7 +5,7 @@
 
 ## いま
 
-type の集約と、`dev-deliverable-guide.md` の不整合の修正は反映済み（2026-10-24）。type の考え方も `project-structure.md` に記載済み。残りは実測待ち。詳細は `docs/log.md`。
+type の集約は反映済み（2026-10-24）。10-31 に論点が広がった: works を PC ローカルの台帳と再定義し、開発用リポジトリを room の ext4 に置く（works と 1:N）。Zed からは読み書きできると確認済み。次は GitHub の認証方式。詳細は `docs/log.md`。
 
 ## あなた待ち
 
@@ -13,7 +13,7 @@ type の集約と、`dev-deliverable-guide.md` の不整合の修正は反映済
 
 ## 次の一手
 
-なし（`dev` と `inv` を最初に使った後に、Open Questions を見直す）。
+room の中の GitHub 認証（SSH 鍵か `gh auth` か）のベストプラクティスを聞く。その後、works の再定義をどこで決めるかを決める。
 
 ## 読む順
 
