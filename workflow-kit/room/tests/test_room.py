@@ -1854,6 +1854,67 @@ class CloseTest(unittest.TestCase):
             self.assertEqual(text, again)
 
 
+class RoomGitWrapperTest(unittest.TestCase):
+    """/usr/local/bin/git のラッパーを、/mnt/room と /usr/bin/git を一時ディレクトリの偽物に差し替えて sh で動かす。"""
+
+    def setUp(self):
+        self.sh = shutil.which("sh")
+        if not self.sh:
+            self.skipTest("sh が無い")
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        base = self.posix(tmp.name)
+        self.root, self.src, self.home = f"{base}/room", f"{base}/src/repo", f"{base}/home"
+        for d in ("room/proj-a/sub", "room/proj-b", "src/repo", "home", "bin"):
+            os.makedirs(os.path.join(tmp.name, d))
+        fake = os.path.join(tmp.name, "bin", "fakegit")
+        Path(fake).write_text('#!/bin/sh\necho "GIT_DIR=${GIT_DIR-unset} GIT_WORK_TREE=${GIT_WORK_TREE-unset}"\n', encoding="utf-8", newline="\n")
+        os.chmod(fake, 0o755)
+        self.wrapper = os.path.join(tmp.name, "bin", "git")
+        text = room.ROOM_GIT_WRAPPER.replace("/mnt/room", self.root).replace("/usr/bin/git", f"{base}/bin/fakegit")
+        Path(self.wrapper).write_text(text, encoding="utf-8", newline="\n")
+
+    def posix(self, path):
+        return subprocess.run([self.sh, "-c", 'cd "$1" && pwd', "_", path], capture_output=True, text=True, check=True).stdout.strip()
+
+    def run_git(self, cwd, *args, env=None):
+        e = {k: v for k, v in os.environ.items() if k not in ("GIT_DIR", "GIT_WORK_TREE")}
+        e.update(HOME=self.home, **(env or {}))
+        r = subprocess.run([self.sh, "-c", 'cd "$1" && shift && exec sh "$@"', "_", cwd, self.wrapper, *args], env=e, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        return r.stdout.strip()
+
+    def room_of(self, name):
+        return f"GIT_DIR={self.home}/gitdirs/{name} GIT_WORK_TREE={self.root}/{name}"
+
+    def test_room_git_follows_the_git_target(self):
+        unset = "GIT_DIR=unset GIT_WORK_TREE=unset"
+        a = f"{self.root}/proj-a"
+        cases = [
+            (a, ["status"], self.room_of("proj-a")),
+            (f"{a}/sub", ["log"], self.room_of("proj-a")),
+            (a, ["-c", "a=b", "status"], self.room_of("proj-a")),
+            (a, ["-C", "sub", "status"], self.room_of("proj-a")),
+            (a, ["-C", "../proj-b", "status"], self.room_of("proj-b")),
+            (self.src, ["-C", a, "status"], self.room_of("proj-a")),
+            (a, ["-C", self.src, "log"], unset),
+            (a, ["-C", self.src, "-C", a, "log"], self.room_of("proj-a")),
+            (a, ["-C", f"{a}/nothing", "log"], unset),
+            (a, ["-C"], self.room_of("proj-a")),
+            (a, ["clone", "url", "x"], unset),
+            (a, ["--git-dir=x", "status"], unset),
+            (a, ["--work-tree", "x", "status"], unset),
+            (self.root, ["status"], unset),
+            (self.src, ["status"], unset),
+        ]
+        for cwd, args, want in cases:
+            with self.subTest(cwd=cwd.replace(self.root, "ROOM").replace(self.src, "SRC"), args=args):
+                self.assertEqual(self.run_git(cwd, *args), want)
+
+    def test_preset_git_dir_is_kept(self):
+        self.assertEqual(self.run_git(f"{self.root}/proj-a", "status", env={"GIT_DIR": "/x"}), "GIT_DIR=/x GIT_WORK_TREE=unset")
+
+
 class WslQuotingTest(unittest.TestCase):
     def test_script_text_keeps_backslashes_and_lf(self):
         wsl = FakeWsl()

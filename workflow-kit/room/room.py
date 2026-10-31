@@ -352,10 +352,30 @@ def mount(ctx, p):
 
 
 ROOM_GIT_WRAPPER = """#!/bin/sh
-# room: /mnt/room/<Project> の下では、部屋のローカルの git（~/gitdirs/<Project>）を使う（works の .git はマウントの外で見えない）
-case "$PWD/" in
-/mnt/room/*) p=${PWD#/mnt/room/}; p=${p%%/*}; export GIT_DIR="$HOME/gitdirs/$p" GIT_WORK_TREE="/mnt/room/$p" ;;
-esac
+# room: git の対象が /mnt/room/<Project> の下なら、部屋のローカルの git（~/gitdirs/<Project>）を使う（works の .git はマウントの外で見えない）
+# 対象は cwd に -C を順に当てて決める。cwd が /mnt/room でも、git -C ~/src/<repo> は ~/src/<repo> の git を使う
+# --git-dir / --work-tree / --bare の指定、GIT_DIR の設定済み、clone は、手を加えず素通しする。読み取れない引数も素通し（安全側）
+d=$PWD
+scan() {
+  while [ $# -gt 0 ]; do
+    case "$1" in
+    -C) [ $# -ge 2 ] || return
+        if [ -n "$2" ]; then d=$(CDPATH= cd "$d" 2>/dev/null && CDPATH= cd "$2" 2>/dev/null && pwd) || d=; fi
+        shift 2 ;;
+    -c|--namespace|--super-prefix|--config-env|--exec-path|--attr-source) shift 2 ;;
+    --git-dir|--git-dir=*|--work-tree|--work-tree=*|--bare) d=; return ;;
+    clone) d=; return ;;
+    -*) shift ;;
+    *) return ;;
+    esac
+  done
+}
+if [ -z "${GIT_DIR+x}" ]; then
+  scan "$@"
+  case "$d/" in
+  /mnt/room/?*/) p=${d#/mnt/room/}; p=${p%%/*}; export GIT_DIR="$HOME/gitdirs/$p" GIT_WORK_TREE="/mnt/room/$p" ;;
+  esac
+fi
 exec /usr/bin/git "$@"
 """
 
