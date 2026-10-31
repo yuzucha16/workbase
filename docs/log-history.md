@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-11-01（review 消化。期日の移し替えの動作確認を閉じ、weekly の仮決めの期限切れを数えた）
+- 11-01 の `review 消化` で `due.py` が動き、期日が来た weekly の行が Next Actions に上がった。ユーザーが Next Actions 11（期日の移し替えの動作確認）を完了として閉じた。`due.md` の weekly は 11-08 に書き換えた。
+- weekly の期限切れの数え方（ユーザーの指示でその場で実施。週次の記録は書いていない）。`【仮】` の状態は次のとおり。
+  - 今日が期限（11-01）: v7（`exmem/lessons/retrospective-method.md`）。検証は「次の weekly と monthly で、文中の丸かっこが 0 件で、箇条書きが上限内か」。v7 の形の週次の記録がまだ無く、検証できていない。正式化・却下・延長の判断が要る。
+  - 期限切れ（10-26）で、正式化も却下も見当たらない: v5（同ファイル）。v6 に置き換わっている。
+  - 先の期限: v6（11-09）、`integrate` の上限（11-29）。字数の数え方は 10-27 に正式化済み。
+- Next Actions 12（weekly）を閉じた。
+
 ### 2026-10-31（room の git ラッパーを cwd 判定から git の対象の判定に直した）
 - `workflow-kit/room/room.py` の `ROOM_GIT_WRAPPER` を、`$PWD` だけの判定から、cwd に `-C` を順に当てた対象の判定に変更（`83ecc18`）。cwd が `/mnt/room/<Project>` のままでも `git -C ~/src/<repo>` が clone の git を使う。`RoomGitWrapperTest` を追加（全 140 件 OK）、`room/README.md` の記述を直した。経緯と根拠は `topics/room-type-consolidation/docs/`。
 

@@ -18,8 +18,6 @@
 
 2. 【起票 10-25、期日 11-03】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
 
-11. 【起票 10-29】期日の移し替えの動作確認: 次の `review 消化` で `due.py` が動き、期日が来た行（最初は 11-01 の weekly）が Next Actions に上がるか。上がらない・遅れるなら、手順（`review-hook.md` の消化モード）を直す。
-
 ## Open Questions
 
 - `mdrank.py` の値が下がった理由: 10-30 は 1 位 25/40、上位 5 件 35/40。10-25 の記録は 30/43、40/43（場面の数も違う）。場面の一覧か `triggers:` の変更の影響と見ているが、未調査。次の `review` の入力 9 で前回と比べて確かめる。
