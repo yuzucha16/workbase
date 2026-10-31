@@ -16,7 +16,7 @@
 
 ## Next Actions
 
-2. 【起票 10-25、期日 11-03】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
+2. 【起票 10-25、期日 11-09（11-03 から延期。room-type-consolidation などで成果物の周辺を整えてから。11-01 ユーザー）】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
 
 ## Open Questions
 
