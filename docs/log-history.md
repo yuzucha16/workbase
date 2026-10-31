@@ -9,6 +9,8 @@
   - 期限切れ（10-26）で、正式化も却下も見当たらない: v5（同ファイル）。v6 に置き換わっている。
   - 先の期限: v6（11-09）、`integrate` の上限（11-29）。字数の数え方は 10-27 に正式化済み。
 - Next Actions 12（weekly）を閉じた。
+- 続けてユーザーが、振り返りの形を v7 に一本化した（日次・週次・月次の違いは章の数と字数だけ。v5・v6 は破棄）。`exmem/lessons/retrospective-method.md` の v5・v6 の項と言及を削除し、規模の数値は同ノートに残した。`retrospective-method-output.md` の v5・v6 のラベルも外した。11-09 の「振り返りの仮決め 2 件」の行を `due.md` から削除した。決定は `decisions.md` の 2026-11-01 の項。コミット `f104398`、`820e555`。
+- Next Actions 2（PC2 の `verify`）の期日を 11-03 から 11-09 に延期した（room-type-consolidation などで成果物の周辺を整えてから。ユーザー）。`log.md` と `due.md` を揃えた。
 
 ### 2026-10-31（room の git ラッパーを cwd 判定から git の対象の判定に直した）
 - `workflow-kit/room/room.py` の `ROOM_GIT_WRAPPER` を、`$PWD` だけの判定から、cwd に `-C` を順に当てた対象の判定に変更（`83ecc18`）。cwd が `/mnt/room/<Project>` のままでも `git -C ~/src/<repo>` が clone の git を使う。`RoomGitWrapperTest` を追加（全 140 件 OK）、`room/README.md` の記述を直した。経緯と根拠は `topics/room-type-consolidation/docs/`。
