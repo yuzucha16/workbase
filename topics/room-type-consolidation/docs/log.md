@@ -4,12 +4,9 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。手順書の実測�
 
 ## Next Actions
 
-- 【実装済み 10-31、実機は未確認】`room.py` の `cmd_start` が、`claude` のとき `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` と、README の `repos:`（`where: wsl`、既定）の `~/src/<repo>` への `--add-dir` を渡す（`read_repos` `claude_extra_args`。部屋に clone が無ければ注意を出して渡さない。単体テスト済み）。残り: 実機で `room start` し、追加ディレクトリの `CLAUDE.md` が読まれるか確かめる。対話での `cd` 後の cwd の持続は未測。
-- 【反映済み 10-31】`ROOM.md`（`ROOM_GUIDE`）に `git -C ~/src/<repo>` と push 不可を追記。`project-structure.md` に `repos:` の節、`ai-isolated-work-room.md` の Decisions に案 A、`room open` の README 雛形に `repos:` の案内。`obsidian-vault-structure.md`（works の再定義）は未反映。
-- 【実装済み 10-31、実機は未確認】`room close` が、README の `repos:` の clone に未コミット・未 push があれば止める（`unpushed_repos`。単体テスト済み）。
+- 【実施待ち、案 A の実機確認もここでまとめる】1 Project で `env/` と `tests/` と `docs/` に加えて `src/`（コード開発）を通す実測（題材は同じ WSL の Python 環境。`repos:` を書いた `dev` の Project）。観察点: 構成要素の選び方、置き場の取り違えの再発、検証が自己向けになって弱くならないか（ユーザー、10-25）。案 A の実装（`a9d03cc` `721f3f9`。単体テストのみ）の実機確認: ① `room start` で `~/src/<repo>` が `--add-dir` で渡り、その `CLAUDE.md` が読まれる ② AI が `git -C ~/src/<repo>` で commit でき、`ai/` に化けない ③ 修正した `ROOM.md` が届いて置き場の取り違えが再発しない ④ `room close` が未 push の clone で止まる ⑤ 対話での `cd` 後の cwd の持続（未測）。
+- 【未反映】`obsidian-vault-structure.md` に works の再定義（works と workbase は 1:1、projects は 1:N の PC ローカルの台帳）を反映する。
 - 【ユーザー作業、手すきで】deploy key の作成を自分でもう一度やる（手順は `log-history.md` の 10-31）。手順書にするかは、やってみてから決める。
-- 【実施待ち】1 Project で `env/` と `tests/` と `docs/` を通す実測(題材は同じ WSL の Python 環境)。観察点: 構成要素の選び方、置き場の取り違えの再発、検証が自己向けになって弱くならないか(ユーザー、10-25)。
-- 【確認待ち】直した `ROOM.md` が部屋に届いたあと、次の `dev` の実測で置き場の取り違えが再発しないか。
 
 ## Open Questions
 

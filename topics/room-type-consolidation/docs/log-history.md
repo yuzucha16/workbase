@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-10-31（案 A の実装。実機の確認は 1 Project の実測にまとめる）
+- `a9d03cc`: `room start` が `claude` のとき `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` と、README の `repos:`（`where: wsl`）の `~/src/<repo>` への `--add-dir` を渡す（`read_repos` `claude_extra_args`。clone が無ければ注意して渡さない）。
+- `721f3f9`: `ROOM_GUIDE` に `git -C ~/src/<repo>` と push 不可、`project-structure.md` に `repos:` の節、`ai-isolated-work-room.md` の Decisions に案 A、`room open` の README 雛形に `repos:` の案内。`room close` が `repos:` の clone の未コミット・未 push で止まる（`unpushed_repos`）。単体テストは 143 件 OK（3 件スキップ）。
+- 動作確認は単体テストまで。実機の確認は、ユーザーが「1 Project で `env/` `tests/` `docs/` を通す実測」の Next Action に `src/`（コード開発）を含めてまとめて行う（「上の na には src/ に関する実測が無かったので、今回のコード開発も含めてやってみます」）。
+
 ### 2026-10-31（案 A の実測。git ラッパーを直し、cwd 固定の案 A に決定）
 - 実測（`room-myenv`、`claude -p`、cwd=`/mnt/room/sample_dev`、使い捨ての `~/src/probe-repo`）: `--add-dir` あり→読み書きできる、なし→拒否。`records` は cwd が `/mnt/room/` のままなので `ai/records` に出る。追加ディレクトリの `CLAUDE.md` は既定では読まれず、`CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` で読まれる。
 - 見つけた問題: `ROOM_GIT_WRAPPER` が `$PWD` だけで判定し、cwd が `/mnt/room/` のとき `git -C ~/src/<repo>` が部屋用 git（`~/gitdirs/<Project>`）に化けた（AI の commit が `ai/` に入る）。`cd ~/src/<repo> && git` は正しいが、承認待ちで止まる（非対話）。
