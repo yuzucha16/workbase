@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-01（Obsidian の Vault を 2 つに分ける案を仮決めした。記録のみで、実装は未着手）
+- ユーザーの相談: pc2 は resources（workbase）の改良が主、pc1 は areas・projects が主なので、`works/.obsidian` を `resources/.obsidian` と `projects/.obsidian` に分けたい。事実の確認: `.obsidian` は dotfiles へのジャンクション、プラグインは 3 つ（`colored-tags` `html-viewer` `xlsx-viewer`、約 240KB）、`workspace.json` は dotfiles で追跡対象外。pc2 で `resources/` の外の md 92 ファイルの `[[リンク]]` 47 件を数え、`resources/` を指すものは 0 件。
+- 仮決め: Vault は `resources/`（md のみ）と `works/`（projects・areas・`resources_p/`。`resources/` `archives/` `repos/` を除外）の 2 つ。`areas/` が works 直下で `projects/` と並ぶため、`projects/` だけの Vault にはしなかった。実体は両方 dotfiles に置き、ジャンクションで張る（ユーザーの補足で、私が「workbase が追跡するか」と読み違えた点を直した）。resources 用が正本で、works 用の共通ファイルは派生物として生成し、追跡しない。works だけ違う項目は `app.override.json`。リンク適用時に自動、手動でも可、`--check` で点検（ユーザー「この形はいいですね」）。根拠は `decisions.md` の同日の項。
+- 未着手: 入れ子の Vault の実機確認、今の `.obsidian` の移し先の決定、dotfiles の実装（別コミット）。
+
 ### 2026-11-01（deploy key の手順書を作り、ユーザーが手で通して確認した。Next Action「deploy key の再実施」を閉じた）
 - 作成: `guides/howto/room-github-deploy-key-setup.md`（`howto` の型。構成案をユーザーが了承。リポジトリ名などは `<owner>` `<repo>` のプレースホルダー）。`guides/guides-index.md` に 2 か所追記。
 - ユーザーの確認で直した点: 指紋の照合は、`/tmp/gh_hostkey`（公開鍵そのもの）でなく、`ssh-keygen -lf` が出した `SHA256:…` を、`gh api meta` の ED25519 の値と比べる（HTTPS 経由で SSH と独立）。read only の確認は `gh repo deploy-key list` でなく `gh api repos/<owner>/<repo>/keys --jq '.[] | {title, read_only}'`（`true`）。

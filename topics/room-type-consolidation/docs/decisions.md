@@ -2,6 +2,22 @@
 
 ## Decisions
 
+### 【この件】【仮】Obsidian の Vault を 2 つに分ける（2026-11-01）
+
+- 決めたこと（仮。ユーザー「確認はすべてOKです」）: Vault を `resources/`（workbase。md のみ）と `works/`（projects・areas・`resources_p/`。html や excel など `inv` の成果物も見る）の 2 つにする。`works/.obsidian` は残し、除外（`app.json` の `userIgnoreFilters`）に `resources/` `archives/` `repos/` を加える。`resources_p/` は works の Vault に含める（ユーザー「ファイラー 兼 viewer になればラッキー」）。`archives/` はほぼ見ない（同）。pc1 は `resources/` の Vault も参照用に開く（特に `guides/`）。
+- 根拠（ユーザーの発言）: pc2 は resources（workbase）の改良が主、pc1 は areas・projects の作業が主で、works 配下で両方を見る利点が無い。事実: プラグインは 3 つだけ（`colored-tags` `html-viewer` `xlsx-viewer`）で、md のみの `resources/` で 2 つのビューアは効かないだけ。差は小さい。Vault を分ける利点は、検索・ブックマーク・クイックスイッチャーの範囲と `workspace.json` が閉じること。`workspace.json` は dotfiles で追跡対象外（`.gitignore`）で、Obsidian が自動生成する。最小構成のコピーは置かない。pc2 の調査（2026-11-01）: works の `resources/` の外の md 92 ファイルに `[[リンク]]` 47 件。`resources/` を指すものは 0 件（残りは `areas/…` `projects/…` のパス形式で、works の Vault 内で完結）。pc1 は未調査（ユーザー「使っていない」）。
+- 設定の持ち方（ユーザー、同日）: 2 つの `.obsidian` の実体は、どちらも dotfiles に置き、`resources/.obsidian` と `works/.obsidian` へジャンクションで張る（ユーザー「それぞれを workbase へジャンクションする。dotfiles 側の正本の話」）。dotfiles の中では **resources 用が正本**。プラグイン以外の設定（外観・CSS スニペット・テーマ・コア設定）は正本だけを直し、works 用へ自動で反映する（一方向）。見た目は両方でそろえる。プラグインは Vault ごとに別で、ユーザーがコミットする（反映の対象外）。workbase は dotfiles を知らず、`.obsidian` を追跡しない（`.gitignore` に足す）。2026-10-05 の「実体は dotfiles」と依存の向きは変わらない。
+- 却下案: 設定を dotfiles に 2 系統持ち、直すたびに対象を指定する（ユーザー「面倒なので避けたい」）。同じ実体を 2 つの Vault に張る（`workspace.json` が衝突する）。
+- 反映の仕組み（仮決め。ユーザー「この形はいいですね。派生物として作るわけか。良いです」「リンク適用時がトラブルに気づけて良い。手動でもあると便利」。意図は、意図的な二重管理でも resources 用と works 用の設定がずれないようにすること）:
+  - dotfiles に Vault ごとの置き場を 2 つ持つ。resources 用（正本）: `app.json` `appearance.json` `core-plugins.json` `types.json` `snippets/` `themes/` とプラグイン（`colored-tags` のみ）。works 用の固有分: `community-plugins.json` `plugins/`（3 つ）と `app.override.json`（works だけ違う項目。今は `userIgnoreFilters` だけ）。いずれも git で追跡する。
+  - works 用の派生分（正本からコピーした共通ファイルと、正本に `app.override.json` を重ねた `app.json`）は、git で**追跡せず**、反映のたびに生成する（`.gitignore`）。git に二重のファイルが残らず、works 側を直しても次の反映で正本に戻る。
+  - 反映はリンク適用時に自動で走り、手動でも同じコマンドで走らせる（何度走らせても同じ結果）。上書きの前に、works 側が前回の反映から変わっていないかを比べ、変わっていたら表示して上書きする（works の画面で設定を変えたことに気づける）。`--check` は書き換えずに差分だけを出し、dotfiles の試験が「派生分が正本と一致するか」の点検に使う。
+  - 限界: resources の画面で変えた外観は、次の反映まで works に届かない（`--check` が未反映を出す）。
+  - 却下案: works 側の共通ファイルを読み取り専用にする（Obsidian の保存が失敗しうる）。`snippets/` `themes/` をリンクで共有する（Windows の git のシンボリックリンクに特権が要る）。
+  - dotfiles の README に、正本はどれか、反映の方向、直してよい場所は resources 用だけであること、固有分と派生分の区別、反映のコマンドを書く（実装と同時）。
+- 〔未決。実装の前に決める〕③ 入れ子の Vault で除外フィルタが検索・リンク補完に効くかの実機確認。④ 今の `windows\obsidian\.obsidian` をどちらへ移すか（プラグイン 3 つがあるので works 用が自然）。
+- 影響範囲（変えるのは `review 消化` の後）: `exmem/lessons/obsidian-vault-structure.md` の図と works の再定義、`app-config-placement.md` の `.obsidian` の節、dotfiles の `links.map`・反映スクリプト・試験（別リポジトリ・別コミット）、`resources/.gitignore`（`/.obsidian`）。
+
 ### 【この件】type を `dev` と `inv` に集約した（2026-10-24）
 
 - 正本は workbase 直下の `docs/decisions.md` の同日の項（決めたこと、根拠、却下案）。ここには重ねて書かない。
