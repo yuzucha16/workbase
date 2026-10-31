@@ -49,6 +49,7 @@ updated: 2026-10-28
 | WSL に AI 作業部屋を作り、Project の `ai/` だけを渡して Claude Code で作業する | [[ai-room-setup]] | 手順書 |
 | 実際の名前（`pilot2` `pilot2-1`）で、`room.py` を1手ずつ通して、部屋の作成から `close` まで行う | [[ai-room-setup-script]] | 手順書 |
 | 実際の名前（`pilot` `pilot-1`）で、`room.py` を使わずに、マウント・アンマウントを含めて手作業で通す | [[ai-room-setup-manual]] | 手順書 |
+| room の中から GitHub の非公開リポジトリを clone する（読み取り専用の deploy key。push は拒否される） | [[room-github-deploy-key-setup]] | 手順書 |
 | 顧客情報を含む資料（議事録、事業戦略など）を、マスクだけして AI に要約させる（実名には戻さない） | [[ai-room-mask-summary]] | 手順書 |
 | ファイルが「ある場所では動くが別の場所では動かない」。Python の版を uv 管理にそろえる理由と、uv が止まったときの考え方を思い出す | [[python-version-uv]] | 理解ガイド |
 | シートや個人名を消した xlsx・pptx を AI に見せたら、消したはずのものが見えていた。なぜ残るかと、渡す前の点検・掃除（`cleankit.py`）を思い出す | [[ooxml-residue]] | 理解ガイド |
@@ -98,7 +99,7 @@ updated: 2026-10-28
 
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
-| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[bedrock-first-hello]]、[[claude-usage-report]]、[[ooxml-clean]]、[[works-gitignore-allowlist-migration]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
+| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[room-github-deploy-key-setup]]、[[bedrock-first-hello]]、[[claude-usage-report]]、[[ooxml-clean]]、[[works-gitignore-allowlist-migration]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
 | 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools-explain]]、[[ai-room-data-layout-explain]]、[[ai-room-concurrent-start-explain]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 

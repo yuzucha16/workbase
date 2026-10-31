@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-01（deploy key の手順書を作り、ユーザーが手で通して確認した。Next Action「deploy key の再実施」を閉じた）
+- 作成: `guides/howto/room-github-deploy-key-setup.md`（`howto` の型。構成案をユーザーが了承。リポジトリ名などは `<owner>` `<repo>` のプレースホルダー）。`guides/guides-index.md` に 2 か所追記。
+- ユーザーの確認で直した点: 指紋の照合は、`/tmp/gh_hostkey`（公開鍵そのもの）でなく、`ssh-keygen -lf` が出した `SHA256:…` を、`gh api meta` の ED25519 の値と比べる（HTTPS 経由で SSH と独立）。read only の確認は `gh repo deploy-key list` でなく `gh api repos/<owner>/<repo>/keys --jq '.[] | {title, read_only}'`（`true`）。
+- 閉じた根拠: ユーザーが章 4〜7（指紋、`read_only`、clone と push の拒否、片付け）を実機で通し、「na3 は close」と指示。`deploy-key add` の read only 登録と、公開鍵の受け渡しも通った。
+
 ### 2026-10-31（案 A の実装。実機の確認は 1 Project の実測にまとめる）
 - `a9d03cc`: `room start` が `claude` のとき `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` と、README の `repos:`（`where: wsl`）の `~/src/<repo>` への `--add-dir` を渡す（`read_repos` `claude_extra_args`。clone が無ければ注意して渡さない）。
 - `721f3f9`: `ROOM_GUIDE` に `git -C ~/src/<repo>` と push 不可、`project-structure.md` に `repos:` の節、`ai-isolated-work-room.md` の Decisions に案 A、`room open` の README 雛形に `repos:` の案内。`room close` が `repos:` の clone の未コミット・未 push で止まる（`unpushed_repos`）。単体テストは 143 件 OK（3 件スキップ）。
