@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-10-31（room の git ラッパーを cwd 判定から git の対象の判定に直した）
+- `workflow-kit/room/room.py` の `ROOM_GIT_WRAPPER` を、`$PWD` だけの判定から、cwd に `-C` を順に当てた対象の判定に変更（`83ecc18`）。cwd が `/mnt/room/<Project>` のままでも `git -C ~/src/<repo>` が clone の git を使う。`RoomGitWrapperTest` を追加（全 140 件 OK）、`room/README.md` の記述を直した。経緯と根拠は `topics/room-type-consolidation/docs/`。
+
 ### 2026-10-30（トピック logbook-design を閉じた）
 - ユーザーの指示で閉じた。期日のなかった Next Actions を `due.md` に移した（11-15 の 2 件、11-29 の 1 件。11-08 は既存の行）。`due.md` の末尾にあった壊れた重複行（11-08 の `stock` の行の複製）4 行を削除した。`records/` 8 本は検討の過程として削除し、`docs/decisions.md`・`logbook/README.md`・`logbook/user-thinking-habits.md`・`topics-index.md` の言及を直した。決定は `decisions.md` に 1 項。トピックの経緯は git に残る。
 - close-procedure の手順 1: 新しく移す経験則の候補は無く、決定は `decisions.md` の 1 項にまとめるだけでよいと、ユーザーが承認した（「1項目にまとめてよいです」）。

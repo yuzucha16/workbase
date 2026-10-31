@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-10-31（案 A の実測。git ラッパーを直し、cwd 固定の案 A に決定）
+- 実測（`room-myenv`、`claude -p`、cwd=`/mnt/room/sample_dev`、使い捨ての `~/src/probe-repo`）: `--add-dir` あり→読み書きできる、なし→拒否。`records` は cwd が `/mnt/room/` のままなので `ai/records` に出る。追加ディレクトリの `CLAUDE.md` は既定では読まれず、`CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` で読まれる。
+- 見つけた問題: `ROOM_GIT_WRAPPER` が `$PWD` だけで判定し、cwd が `/mnt/room/` のとき `git -C ~/src/<repo>` が部屋用 git（`~/gitdirs/<Project>`）に化けた（AI の commit が `ai/` に入る）。`cd ~/src/<repo> && git` は正しいが、承認待ちで止まる（非対話）。
+- 議論: 私は案 B（コード作業は cwd=`~/src/<repo>`）を推したが、ユーザーが「`ai/<成果物>/env` のように `~/src` より前の工程では cwd が変わるのは違和感」「`records` を一か所に纏めたい」と指摘。ジレンマ（コード開発なら B、ソフト開発全般と room の設計思想なら A）を整理し、A の影響範囲（変更は `ROOM_GIT_WRAPPER` の 1 か所、Area 共有の `/usr/local/bin/git` なので不具合は全 Project に出る）とリスクを示して、ユーザーが A を選択（「a にしましょう。すすめて」）。
+- 実施（`83ecc18`）: ラッパーの判定を git の対象（cwd に `-C` を順に当てる）に変更。`--git-dir` `--work-tree` `--bare`、`GIT_DIR` 設定済み、`clone`、読み取れない引数は素通し。`RoomGitWrapperTest` を新設（偽 git で 15 ケース）、全 140 件 OK。実機で `git -C` の add/commit、ローカル clone、AI の commit が clone 側にだけ入ることを確認。実機の `/usr/local/bin/git` は新版に差し替え済み。計測用の clone・退避・一時ファイルは削除。
+- 罠: PowerShell から `wsl` へ渡す文字列は CRLF になり、`/usr/local/bin/git` が壊れた（`/bin/sh^M`）。base64 で渡して直した。`claude -p` は標準入力を読むので、`bash -s` でスクリプトを渡すと食われる（`</dev/null` を付ける）。非対話では、`cd` 後の git と `--allowedTools` の書式（`"Bash(git:*)"` を 1 つずつ引用）で止まる。
+- 区切り: 残りの実装（`room start` の環境変数、`repos:` の `--add-dir`）は別セッションで行う（ユーザー）。
+
 ### 2026-10-31（WSL からの認証の確認を受けて、works の再定義と置き場を決めた）
 - 確認: ユーザーが、WSL から認証が要る clone を通せることを確認した。WSL にリポジトリを置く前提の仕様の確認。
 - 決定（`decisions.md` の「works の再定義と開発リポジトリの置き場」）: works（Vault）と workbase は 1:1。works と projects は 1:N の PC ローカルの台帳。`dev` のリポジトリは、開発環境（IDE）のある OS に置く（今は WSL だけ）。`repos:` に `where: wsl|win|linux` を持たせる。clone は `~/src/<repo>`、git で管理しないコードは `ai/out/<成果物名>/src/`。`ai/` のマウントは続け、cwd は `/mnt/room/<Project>` のまま `~/src/<repo>` を追加ディレクトリで渡す（案 A、実測前）。room から開発サーバーへ SSH しない。人が SSH して、窓口は `ai/in/target/` と README の `target:`。サーバー側で AI を動かす形は対象外。
