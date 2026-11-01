@@ -13,7 +13,7 @@ works は PARA の作業場、workbase は共有ナレッジ、dotfiles は設�
 | `CLAUDE.md` が `@AGENTS.md` の1行 | 3つとも | ○ | ○ | ○ |
 | 共通ルールのポインタ | `workflow-kit` を指す | ○ | ○ | ○ |
 | 窓口 `README.md` | あり | ○ | ○ | ○（16KB 目安） |
-| 直下の `docs/log.md` | あり。4KB 目安（`docs-rules.md`） | 2.7KB | 4.8KB（4KB 目安を超過。2026-11-01 の測定。ギャップ 9） | 2.2KB |
+| 直下の `docs/log.md` | あり。4KB 目安（`docs-rules.md`） | 2.7KB | 3.0KB（2026-11-01。ギャップ 9 は解消） | 2.2KB |
 | 読む順番 | 3段（README、log、検索のみ） | ○ | ○ | ○ |
 | 「〜の続き」の扱い | `docs-rules.md` を参照する1行 | ○ | ○ | ○ |
 | 期日の表 | `docs/due.md` に置く（項目が無ければ作らない。2026-10-29 に `log.md` の節から移した。移していない既存の節は有効） | ○ | ○ | ○ |
@@ -56,7 +56,7 @@ works が無い環境（workbase だけを clone したとき）は、workbase �
 | 6 | `.claude/` の扱いの違い、works に deny がない | 解消 | 中 | 中 |
 | 7 | works の `AGENTS.md` と雛形のずれ | 解消 | 低 | 低 |
 | 8 | 公開リポジトリの git 履歴にユーザー名を含むパスが残っている | workbase は解消（2026-10-25。git-filter-repo で ユーザー名を `<user>` に置換し、ユーザーの許可で force push）。works と dotfiles の残りは、調べたら全部プレースホルダー（`ck` `ee` `yy`、テストの `u`、取り込んだプラグインの例の `you`）で、実際のユーザー名はなかった（2026-10-28）。書き換えない | なし | なし |
-| 9 | workbase の `docs/log.md` が 18KB で、4KB 目安の約 4.5 倍 | 再発（2026-10-25 に 18KB から 4.1KB、2026-10-26 に 4.0KB に縮めたが、2026-11-01 に 4.8KB。目安の約 1.2 倍。次の `wrap` で縮める） | 低 | 低 |
+| 9 | workbase の `docs/log.md` が 18KB で、4KB 目安の約 4.5 倍 | 解消（2026-11-01 に 3.0KB。再発したら状態を `log-history.md` へ移す。入力 8 が毎回測る） | 低 | 低 |
 | 10 | dotfiles の `docs/log.md` から期日の節が無くなった | 解消（2026-10-25。節を戻した） | 低 | 低 |
 | 11 | works の `docs/metrics/README.md` が、削除済みの `init-hook.md` を名指ししている | 解消（2026-10-25。廃止と注記した） | 低 | 低 |
 | 12 | 基準が works にあり、workbase の `review` が単独で入力 8 を行えない | 解消（2026-10-25。この文書へ移した。ユーザーの決定） | 高 | 低 |
