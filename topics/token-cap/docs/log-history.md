@@ -2,6 +2,7 @@
 
 ## Log
 
+- 2026-11-01（NA 7 を閉じた）: 「token-cap の続き na7」。最初の応答の入力（26,519 = 読み 16,027 + 書き 10,490）を会話記録の添付の種類ごとに数えた。`/context` との差 約 6.3k は、遅延ツール名・エージェント一覧・session_context・環境・フックなど、ハーネスが付ける注記が主因（約 16k 文字 ≒ 5〜7k トークン）。動かせる量は増えず、上限は約 2.4〜3.0k のまま。ee が NA 7 を閉じ、26k の土台は遅延ツールなどの仕組みによると確定。NA 4 の再判断は 100k 運用の効果を見てからにする（期日 11-08。`decisions.md`）。`records/2026-11-01-first-response-breakdown.md`。wrap。
 - 2026-11-01（NA 4 の内訳測定、切る目安の確定、NA 7 の起票）: 「token-cap の続き」。(1) NA 4 の再判断の材料として、`cap_meter` の月別の土台と `/context`（ee が Zed で取得）を突き合わせた。土台 26.9k（10-26 から −1.0k）、動かせる上限は約 2.4〜3.0k（10 月の量で 3〜4%）、`AGENTS.md` は `resources` 側の約 2KB だけが効く（`works/AGENTS.md` は土台に乗らない）。`cap_meter` 26.9k と `/context` 20.2k の差 約 6.7k は未解明で、NA 7 に積んだ（期日 11-08）。NA 4 は開いたまま、NA 7 の結果で ee が再判断する（ee 承認）。(2) OQ「切る目安」は 100k 維持を採用し、再判断は NA・OQ の全件クローズ後（ee の決定、`decisions.md`）。期日 11-07 は外した。`records/2026-11-01-base-breakdown.md`。wrap。
 - 2026-11-01（NA 9 を閉じた）: `review 消化` の会話（`17f259ac`）で測った。`commit-push-rules.md` を読んだのは応答 13 の 1 回だけで、`git add`（14）と `git commit`（15）の直前。読み直しの上位 8 件に入らない。標本は 1 件で対照が無く、見込みの大きさは確かめていない。ee が閉じた。`records/2026-11-01-na9-commit-position.md`。wrap。
 
