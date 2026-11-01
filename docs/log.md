@@ -19,8 +19,7 @@
 1. 【起票 10-25、期日 11-09】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
 2. 【起票 11-01、期日 11-08】`review` の入力 2（開始時の読み込み字数）を測れるようにする仕込みを足す（ユーザーが行う。呼び出し元に計測が無く、`reviews.csv` の `load_chars` が `n/a` のまま）。
 3. 【起票 11-01、期日 11-08】`wrap-hook.md` に、点検スクリプト（`check_hook_outline`）の FAIL が 2 項目残っている。固有の章「応答のまとめ方」が共通部の途中にあることと、「目的と契機」の項目の並びが規定と違うこと。出力が文字化けしたので、直す前に `-X utf8` などで内容を確かめる。
-4. 【起票 11-01、別セッションで行う】基準表のギャップ 13: works と dotfiles の `AGENTS.md` で、コミット・push の前の読み先を `docs-rules.md` の「コミットと push」から、`commit-push-rules.md` と `push-rules.md` の直接指定に揃える（workbase に揃える。直したらギャップ 13 を解消にし、works の未 push の 1 件も確認する）。
-5. 【11-01】`log.md` を 4KB 以内に保つ（ギャップ 9。11-01 の `wrap` で縮めた。超えたら状態を `log-history.md` へ）。
+4. 【11-01】`log.md` を 4KB 以内に保つ（ギャップ 9。11-01 の `wrap` で縮めた。超えたら状態を `log-history.md` へ）。
 
 ## Open Questions
 

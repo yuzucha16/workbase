@@ -60,4 +60,4 @@ works が無い環境（workbase だけを clone したとき）は、workbase �
 | 10 | dotfiles の `docs/log.md` から期日の節が無くなった | 解消（2026-10-25。節を戻した） | 低 | 低 |
 | 11 | works の `docs/metrics/README.md` が、削除済みの `init-hook.md` を名指ししている | 解消（2026-10-25。廃止と注記した） | 低 | 低 |
 | 12 | 基準が works にあり、workbase の `review` が単独で入力 8 を行えない | 解消（2026-10-25。この文書へ移した。ユーザーの決定） | 高 | 低 |
-| 13 | works と dotfiles の `AGENTS.md` が、コミット・push の前に読む先を `docs-rules.md` の「コミットと push」としている。workbase は `commit-push-rules.md` と `push-rules.md` を直接指す（2026-10-26 に切り出した）。`docs-rules.md` の節が新しい 2 つへ案内するので、読めはするが 1 段多い | 未着手（kit が先に進んでいる。works と dotfiles を workbase に揃える案。ユーザーに確認してから直す） | 低 | 低 |
+| 13 | works と dotfiles の `AGENTS.md` が、コミット・push の前に読む先を `docs-rules.md` の「コミットと push」としている。workbase は `commit-push-rules.md` と `push-rules.md` を直接指す（2026-10-26 に切り出した）。`docs-rules.md` の節が新しい 2 つへ案内するので、読めはするが 1 段多い | 解消（2026-11-01。works と dotfiles の `AGENTS.md` を workbase に揃えた。`review 消化` NA4） | 低 | 低 |
