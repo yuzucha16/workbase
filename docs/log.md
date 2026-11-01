@@ -17,9 +17,8 @@
 ## Next Actions
 
 1. 【起票 10-25、期日 11-09】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
-2. 【起票 11-01、期日 11-08】`review` 入力 2 の測定: 11-01 の `review` では測れず、`reviews.csv` の 2026-11-01 行の `load_chars` が `n/a`。NA2 の反映（コミット 224c527）後の、このセッションの追加分の会話を対象に、`python -I workflow-kit/tools/cap_meter.py` の「土台」の中央値を独立して測り、その行の `load_chars` に書く（`review-hook.md` の入力 2。今日分の会話が少ないときは、件数をメモに添える）。
-3. 【起票 11-01、期日 11-08】`review-hook.md` を畳む（5,973 字で目安 5,000 字を超え、`check_hook_outline` が NOTE を出す）。畳む案を先に出し、承認後に直す。
-4. 【11-01】`log.md` を 4KB 以内に保つ（ギャップ 9。11-01 の `wrap` で縮めた。超えたら状態を `log-history.md` へ）。
+2. 【起票 11-01、期日 11-08】`review-hook.md` を畳む（5,973 字で目安 5,000 字を超え、`check_hook_outline` が NOTE を出す）。畳む案を先に出し、承認後に直す。
+3. 【11-01】`log.md` を 4KB 以内に保つ（ギャップ 9。11-01 の `wrap` で縮めた。超えたら状態を `log-history.md` へ）。
 
 ## Open Questions
 
