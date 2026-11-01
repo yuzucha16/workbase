@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-01（daily 振り返り: 施策 S1・S2 を承認、Next Actions に積んだ）
+- `振り返って daily` を実施し、施策 2 件をユーザーが承認した。S1 は注記追加時に土台への加算量を点検する（`review-hook.md`）、S2 は daily の材料取得をコミット日付で絞る（`retrospective-method-output.md`）。どちらも kit または exmem の変更で wrap の書き込み範囲外なので、実装せず `log.md` の NA 1・2 に積んだ。根拠: 同日の token-cap の測定で土台 26k の主因が注記と分かった（`e93c9e2`）。
+
 ### 2026-11-01（review 消化の続き: `review-hook.md` を畳まない例外、OQ 1 を due へ）
 - `review-hook.md` を畳む件（旧 NA 2。5,973 字で目安 5,000 字超、`check_hook_outline` が NOTE を出す）は、畳まないと決めた（ユーザー）。理由: `review` は週 1 回の低頻度の定期開催で、字数を削って精度が下がるリスクより、安全に実施できる品質を取る。`check_hook_outline` の NOTE は例外として残る。案（入力 8・消化モードの期日・末尾の `wrap` の説明・入力 6・reviews の値を各 100〜300 字削る）は採らなかった。見直す条件: 手順の読み落としが事例に出ず、字数がさらに増えたとき。
 - OQ 1（`mdrank.py` の値が下がった理由）は期日 11-16 があるので `due.md` の 11-16 の行に詳細ごと移し、log から消した。

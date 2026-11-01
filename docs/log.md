@@ -16,7 +16,10 @@
 
 ## Next Actions
 
-なし（期日のある項目は `due.md`）。
+1. **S1（承認済み 11-01）**: 注記を足すときに土台への加算量を見る点検を、`review-hook.md` に入れる。`review-hook.md` は目安超え（5,973 字。畳まない例外）なので、足す分は同じ字数だけ削る。kit の変更なので `hook-common.md` の「改善」の流れで直し、`docs/decisions.md` に 1 行足す。
+2. **S2（承認済み 11-01）**: daily の材料取得を、コミットの日付で絞る手順にする（`git log --since` が空になる例があったため `--after`／日付範囲を確かめる）。反映先は `exmem/lessons/retrospective-method-output.md`（`integrate-hook.md` の手順）。
+
+期日のある項目は `due.md`。
 
 ## Open Questions
 
