@@ -2,6 +2,7 @@
 
 ## Log
 
+- 2026-11-01（NA 4 の内訳測定、切る目安の確定、NA 7 の起票）: 「token-cap の続き」。(1) NA 4 の再判断の材料として、`cap_meter` の月別の土台と `/context`（ee が Zed で取得）を突き合わせた。土台 26.9k（10-26 から −1.0k）、動かせる上限は約 2.4〜3.0k（10 月の量で 3〜4%）、`AGENTS.md` は `resources` 側の約 2KB だけが効く（`works/AGENTS.md` は土台に乗らない）。`cap_meter` 26.9k と `/context` 20.2k の差 約 6.7k は未解明で、NA 7 に積んだ（期日 11-08）。NA 4 は開いたまま、NA 7 の結果で ee が再判断する（ee 承認）。(2) OQ「切る目安」は 100k 維持を採用し、再判断は NA・OQ の全件クローズ後（ee の決定、`decisions.md`）。期日 11-07 は外した。`records/2026-11-01-base-breakdown.md`。wrap。
 - 2026-11-01（NA 9 を閉じた）: `review 消化` の会話（`17f259ac`）で測った。`commit-push-rules.md` を読んだのは応答 13 の 1 回だけで、`git add`（14）と `git commit`（15）の直前。読み直しの上位 8 件に入らない。標本は 1 件で対照が無く、見込みの大きさは確かめていない。ee が閉じた。`records/2026-11-01-na9-commit-position.md`。wrap。
 
 - 2026-10-30（優先度の再付け、期日の移管、other の長い依頼の内訳）: 「token-cap の続き」。(1) ee が「優先度低」の印を外して付け直し、案を承認: 高 = 5 の (c)(d)(e)・9・wrap-hook の効果、中 = 6・integrate の効果、低 = 4・5 の (g)(h)。(2) 期日つきの NA 2（integrate）と NA 8（wrap-hook）を `docs/due.md` に移し、due.md の token-cap の行の NA 番号参照を内容の言葉に替えた。5 の (c)(d)(e) は反映済みで、効果は due.md の 11-05。(3) 5(b) の対象を調べた（Windows 側 10-01 以降）: other の長い依頼 172 件はマクロでなく kit 保守。蓄積は 1 応答の入力を増やすが応答数は増やさない。応答 10 以上の 25 件（32.0M）の 15 件は承認・close・omit の複数項目をまとめた返答。項目あたりのトークンはまとめるほど下がる（4 項目以上は 1 項目の約半分）。ee の見込み（まとめた方が安い）は合っていた。5(b) は ee が「低」に下げた。`records/2026-10-30-other-long-requests-breakdown.md`。wrap。
