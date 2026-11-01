@@ -75,6 +75,7 @@ updated: 2026-10-16
 - [[research-explain-output]]: 調査の出力の型1（説明）: 主題を調べてまとめるときの章立てと作り方の Must。依頼の言葉で型だけを引く（2026-10-28、試験。`brief` の引数は廃止）
 - [[research-procedure-output]]: 調査の出力の型2（手順書）: 実行できる手順書の章立てと作り方の Must。同上
 - [[planning-method-output]]: 計画の出力の型: 6R・憲章・成果物 WBS・マイルストーンの形と作り方の Must。同上
+- [[issue-extraction-output]]: 論点出しの出力の型: 作業の前に論点だけを洗い出し、判断（決・任・後・確・聞）を付けて決定メモにする。貼り付け用プロンプトとフィードバックの手順つき（2026-11-02、試用中）
 - [[improvement-quantified-options-output]]: 改善の出力の型1（数値）: 現状の数値と 10・20・30% の選択肢表。同上
 - [[improvement-expectation-gap-output]]: 改善の出力の型2（ズレ）: 想定と実際の横並び表と原因の照合。同上
 - [[improvement-coverage-matrix-output]]: 改善の出力の型3（星取り表）: 観点の絞り込み・星取り表・修正/削除/追加の案。同上

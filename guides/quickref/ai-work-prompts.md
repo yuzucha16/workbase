@@ -34,6 +34,12 @@ tags:
 |---|---|---|---|
 | 取り組みの目的とゴールを共有する | 「<〜したい>。計画を立てて。条件: <期限など>」 | 計画、6R、憲章、WBS、マイルストーン | 「〜したい」を 1 文で。先に要約（ゴール・期日・読みの分かれ目・置き場）が返る。承認すると 6R → 憲章 → WBS → マイルストーンに進む |
 
+## 論点出し（作業の前）
+
+| やりたいこと | 文例 | 合図の語 | 先に書くこと・注意 |
+|---|---|---|---|
+| 作業の前に、決める点・抜けやすい前提・後で困る点だけを洗い出す | 貼り付け用プロンプト（`exmem/lessons/issue-extraction-output.md` のコードブロック）を貼り、【】を埋める | 論点出し、論点抽出、課題設定 | 欄は 6 つで、すべて空でもよい。返った論点に「決・任・後・確・聞」を付けて返し、決定メモを作業セッションの最初に貼る。「フィードバック」と言えば改善の 1 行が出る |
+
 ## 振り返り
 
 | やりたいこと | 文例 | 合図の語 | 先に書くこと・注意 |
@@ -50,5 +56,5 @@ tags:
 
 ## 関連
 
-- 型の正本: `exmem/lessons/` の `*-output.md`（`research-explain-output`、`research-procedure-output`、`planning-method-output`、`improvement-*-output`、`retrospective-method-output`、`retrospective-incident-output`）
+- 型の正本: `exmem/lessons/` の `*-output.md`（`research-explain-output`、`research-procedure-output`、`planning-method-output`、`improvement-*-output`、`retrospective-method-output`、`retrospective-incident-output`、`issue-extraction-output`）
 - 選ぶ基準の表: `workflow-kit/methods.md`
