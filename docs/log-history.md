@@ -4,7 +4,7 @@
 
 ### 2026-11-01（review 消化 NA 4: ギャップ 13 を解消した）
 - works の `AGENTS.md` と dotfiles の `AGENTS.md` で、コミット・push の前の読み先を `docs-rules.md` の「コミットと push」から、`commit-push-rules.md`（コミット前）と `push-rules.md`（push 前）の直接指定に変えた。workbase に揃えた。基準表のギャップ 13 を解消にした。
-- works の未 push 1 件は `32b1877 [room] sample_dev: start 2026-10-31 23:36`（room の開始コミット。今回の変更とは無関係）。
+- works の未 push 1 件は `32b1877 [room] sample_dev: start 2026-10-31 23:36`（room の開始コミット。今回の変更とは無関係）。ユーザーの判断: 残す。3 リポジトリ（workbase `e6beb54`、works `6ac9514`、dotfiles `3f5f8e7`）の push はユーザーが行う。
 
 ### 2026-11-01（review 消化 NA 3: 入力 7 の自己採点と入力 8 の整合の比較を行った）
 - 入力 7: 前回の採点コミット `fd96cba` は rebase で消えていたため `f376bcb` から比べた（111 コミット・138 ファイル）。星取り表の 25 行の参照先はすべて残っていた。#26（`AGENTS.md`「読み込みの量を抑える」）を足し、107 点から 110 点。下がった列なし。`review-hook.md` 5,807 字と `stock-hook.md` 8,075 字がフック本体の 5,000 字目安を超えている。
