@@ -11,7 +11,7 @@
 | 2026-11-05 | 単発 | token-cap NA 6: 出力の型（8 本）の試用の結果を見る（誤爆、型の品質、開始時の大きさ） | ユーザー |
 | 2026-11-06 | 単発 | Vault 2 分割の【保留 〜11-08】の前提（ユーザー指定、11-01。11-08 から前倒し）: ③ 入れ子の Vault で除外フィルタが検索・リンク補完に効くかの実機確認、④ `windows\obsidian\.obsidian` の移し先、pc1 のリンク調査、「Vault ＝ works」の文面の直し方の一覧、Obsidian を先に開いた場合に `30_link.bat` が止まる経路の確認。済んだら正式化・却下を聞く（`topics/room-type-consolidation/docs/decisions.md`） | ユーザー（実機、PC1） |
 | 2026-11-06 | 単発 | token-cap NA 5: 応答数を減らす手段（(b)(f)〜(i)）の優先と残す・畳むを決める | ユーザー |
-| 2026-11-07 | 単発 | token-cap OQ: 切る目安を 100k から 60k に下げるか（100k のまま。データがそろったかを見る） | ユーザー |
+| 2026-11-08 | 単発 | token-cap NA 7: 土台の未解明の差（`cap_meter` 26.9k と `/context` 20.2k、約 6.7k）の中身を最初の応答の分解で出す。結果で NA 4 を再判断 | AI（ユーザーの依頼で） |
 | 2026-11-08 | 定例 | weekly の振り返り（7日周期、日曜。材料は `topics/kit-growth/records/`）。仮決めの期限切れを数える | ユーザー |
 | 2026-11-08 | 単発 | 索引（triggers）の引き当て率の初回: `python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。語の足し方か出し方を決める。あわせて部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）への備え（短い札の禁止、完全一致の書き方、現状維持）を決める。現状（誤爆する）は単体テスト `test_substring_match_false_positive_is_current_behavior` で固定してあり、方針を変えるときはこのテストも直す。あわせて、旧 `md-link-graph` の積み残し 2 件: ① 上限 30 語で誤爆が増えていないか、取りこぼしは `triggers:` に語を足す案にする、② S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は付けない方針のまま届かなければ見直す。`logbook/` を `--triggers` の対象にするかの判断もこの結果の後（旧 `logbook-design` NA 3）。構造の点検（循環・階層・複雑度）は `review` の入力 9 | ユーザー（AI が実行） |
 | 2026-11-09 | 単発 | log の Next Actions 2（11-03 から延期。room-type-consolidation などで成果物の周辺を整えてから。11-01 ユーザー）: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`。未決は `release` の束ね先。起票 10-25）。旧 `hook-room-alignment` の同じ項目はここに統合。見るもの: uv の取得、文字コード、y/n と日本語のひとこと。最初の失敗が原因の台帳（`script-guide.md`）の初めての使用になる | ユーザー（実機） |
