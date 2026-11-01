@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-01（review 消化 NA 3: `wrap-hook.md` の点検 FAIL 2 項目を解消した）
+- `-X utf8` で確かめた FAIL は、固有の章「応答のまとめ方」が共通部の途中にあることと、「目的と契機」が「目的 → 契機」の項目でないことの 2 つ。`wrap-hook.md` を、目的・契機の 2 項目にし、費用の測定と 2 つの守ること（100k 前に言う、応答数を絞る）を `手順` の冒頭へ移し、「応答のまとめ方」を `このフックの改善` の後ろへ移した。内容は移しただけで、字数はほぼ同じ（token-cap の観点で問題なし）。`check_hook_outline.py` は wrap-hook.md が OK。
+- ユーザーが案を承認した。NA 3 は完了として `log.md` から消した（旧 NA 4 は NA 3 に繰り上げ）。
+
 ### 2026-11-01（review 消化 NA 4: ギャップ 13 を解消した）
 - works の `AGENTS.md` と dotfiles の `AGENTS.md` で、コミット・push の前の読み先を `docs-rules.md` の「コミットと push」から、`commit-push-rules.md`（コミット前）と `push-rules.md`（push 前）の直接指定に変えた。workbase に揃えた。基準表のギャップ 13 を解消にした。
 - works の未 push 1 件は `32b1877 [room] sample_dev: start 2026-10-31 23:36`（room の開始コミット。今回の変更とは無関係）。ユーザーの判断: 残す。3 リポジトリ（workbase `e6beb54`、works `6ac9514`、dotfiles `3f5f8e7`）の push はユーザーが行う。
