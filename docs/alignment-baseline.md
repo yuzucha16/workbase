@@ -4,7 +4,7 @@ workbase（`resources/`）、works、dotfiles の運用を揃えるための基�
 
 works は PARA の作業場、workbase は共有ナレッジ、dotfiles は設定で、目的が違う。同じ項目でも、ゴールの違いから差が出てよい行がある。それは「違ってよい行」に分け、ギャップに数えない。
 
-基準日: 2026-10-25（works の `docs/alignment-baseline.md` から移した。移す前の基準日は 2026-10-16）
+基準日: 2026-11-01（2026-10-25 に works の `docs/alignment-baseline.md` から移した。移す前の基準日は 2026-10-16）
 
 ## 共通の項目（揃える）
 
@@ -13,14 +13,14 @@ works は PARA の作業場、workbase は共有ナレッジ、dotfiles は設�
 | `CLAUDE.md` が `@AGENTS.md` の1行 | 3つとも | ○ | ○ | ○ |
 | 共通ルールのポインタ | `workflow-kit` を指す | ○ | ○ | ○ |
 | 窓口 `README.md` | あり | ○ | ○ | ○（16KB 目安） |
-| 直下の `docs/log.md` | あり。4KB 目安（`docs-rules.md`） | 2.8KB | 4.0KB（2026-10-26 に縮めた。ギャップ 9） | 1.0KB |
+| 直下の `docs/log.md` | あり。4KB 目安（`docs-rules.md`） | 2.7KB | 4.8KB（4KB 目安を超過。2026-11-01 の測定。ギャップ 9） | 2.2KB |
 | 読む順番 | 3段（README、log、検索のみ） | ○ | ○ | ○ |
 | 「〜の続き」の扱い | `docs-rules.md` を参照する1行 | ○ | ○ | ○ |
 | 期日の表 | `docs/due.md` に置く（項目が無ければ作らない。2026-10-29 に `log.md` の節から移した。移していない既存の節は有効） | ○ | ○ | ○ |
 | `settings.local.json` を追跡しない | 3つとも | ○ | ○ | ○ |
 | 公開範囲 | 公開（PUBLIC）。変えるときはユーザーの決定 | PUBLIC | PUBLIC | PUBLIC |
 | push の許可リスト | `main` を許可 | ○ | ○ | ○ |
-| `main` と `origin/main` | 同じ（作業中の未 push は除く） | 同じ | 2 先 | 3 先 |
+| `main` と `origin/main` | 同じ（作業中の未 push は除く） | 1 先（room の記録 1 件、未 push） | 同じ | 同じ |
 
 ## 違ってよい行（ゴールの違い。ギャップに数えない）
 
@@ -56,7 +56,8 @@ works が無い環境（workbase だけを clone したとき）は、workbase �
 | 6 | `.claude/` の扱いの違い、works に deny がない | 解消 | 中 | 中 |
 | 7 | works の `AGENTS.md` と雛形のずれ | 解消 | 低 | 低 |
 | 8 | 公開リポジトリの git 履歴にユーザー名を含むパスが残っている | workbase は解消（2026-10-25。git-filter-repo で ユーザー名を `<user>` に置換し、ユーザーの許可で force push）。works と dotfiles の残りは、調べたら全部プレースホルダー（`ck` `ee` `yy`、テストの `u`、取り込んだプラグインの例の `you`）で、実際のユーザー名はなかった（2026-10-28）。書き換えない | なし | なし |
-| 9 | workbase の `docs/log.md` が 18KB で、4KB 目安の約 4.5 倍 | 解消（2026-10-25 の `wrap` で 18KB から 5.0KB、同日に 4.1KB に縮めた。2026-10-26 に 5.0KB に戻り、4.0KB に縮めた） | 中 | 低 |
+| 9 | workbase の `docs/log.md` が 18KB で、4KB 目安の約 4.5 倍 | 再発（2026-10-25 に 18KB から 4.1KB、2026-10-26 に 4.0KB に縮めたが、2026-11-01 に 4.8KB。目安の約 1.2 倍。次の `wrap` で縮める） | 低 | 低 |
 | 10 | dotfiles の `docs/log.md` から期日の節が無くなった | 解消（2026-10-25。節を戻した） | 低 | 低 |
 | 11 | works の `docs/metrics/README.md` が、削除済みの `init-hook.md` を名指ししている | 解消（2026-10-25。廃止と注記した） | 低 | 低 |
 | 12 | 基準が works にあり、workbase の `review` が単独で入力 8 を行えない | 解消（2026-10-25。この文書へ移した。ユーザーの決定） | 高 | 低 |
+| 13 | works と dotfiles の `AGENTS.md` が、コミット・push の前に読む先を `docs-rules.md` の「コミットと push」としている。workbase は `commit-push-rules.md` と `push-rules.md` を直接指す（2026-10-26 に切り出した）。`docs-rules.md` の節が新しい 2 つへ案内するので、読めはするが 1 段多い | 未着手（kit が先に進んでいる。works と dotfiles を workbase に揃える案。ユーザーに確認してから直す） | 低 | 低 |
