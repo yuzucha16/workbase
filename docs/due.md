@@ -29,7 +29,7 @@
 | 2026-11-14 | 単発 | token-cap OQ: Zed の System tools が 9.0k → 9.9k に増えた原因（実機の Zed） | ユーザー（実機） |
 | 2026-11-15 | 単発 | 旧 `logbook-design` NA 1: 実機でしか確かめられない畳み候補。room の OQ 4 項（マウントの可視性、プリンタ設定、マスクから復元までの通し、pptx）と、obsidian-vault-backup の NA 2 項（WSL の張り直し〔`GHQ_ROOT` は WSL の中で確認〕、`vault-backup.bat`）。実機の機会がなければ、項ごとに「畳む（OQ/NA を閉じる）」か「延期」かを決める | ユーザー |
 | 2026-11-15 | 単発 | 旧 `logbook-design` NA 5: 追記の型 (b)（OQ・NA を本体に 1 つ）が、その後の lessons 追記で守られているか確かめる。既存ファイルの直しは `review 消化` で。守られていれば取り下げ | AI（`review 消化` で） |
-| 2026-11-16 | 単発 | 直下 log の OQ: `mdrank.py` の値が下がった理由。次の `review` の入力 9 で前回と比べる | AI（`review` で） |
+| 2026-11-16 | 単発 | `mdrank.py` の値が下がった理由（元は直下 log の OQ。11-01 は 1 位 24/40、上位 5 件 35/40。10-30 は 25/40、35/40。場面の一覧か `triggers:` の変更の影響と見ているが未調査。引当率は母数が 42 件から 1383 件に変わり、単純には比べられない）。次の `review` の入力 9 で前回と比べる | AI（`review` で） |
 | 2026-11-16 | 単発 | `stock` の `scope: area` の実機確認（旧 `hook-room-alignment` NA 1）: 部屋の AI が `ai/out/knowledge/` に `kind: lesson` で書く → `restore` で Area に実名で置く → 次の Project の `room pull --where kind=lesson` で受け取れるか。`room pull --where` の仕様変更の予告があれば、`room-context.md` の `stock` の節と合わせて見直す（単体テストのみ。2026-10-24）。実機の機会がなければ延期か取り下げを決める（11-08 から延期） | ユーザー（実機） |
 | 2026-11-17 | 単発 | office-output-types OQ: 型を足す順とテキストを共通の受け渡しにする案の当否、取得層の切り出し | ユーザー |
 | 2026-11-29 | 単発 | `brief 計画` は実務で3回使うまで試験運用（`decisions.md` の 2026-10-25）。使った回数: 0（10-29 時点）。3回に達していれば試験運用を閉じる判断、未達なら続ける（monthly で確認） | ユーザー |
