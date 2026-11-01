@@ -17,8 +17,7 @@
 ## Next Actions
 
 1. 【起票 10-25、期日 11-09】人が叩くスクリプト: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`）。未決は `release` の束ね先。
-2. 【起票 11-01、期日 11-08】`review` の入力 2（開始時の読み込み字数）を測れるようにする仕込みを足す（ユーザーが行う。呼び出し元に計測が無く、`reviews.csv` の `load_chars` が `n/a` のまま）。
-3. 【起票 11-01、期日 11-08】`review-hook.md` を畳む（5,807 字で目安 5,000 字を超え、`check_hook_outline` が NOTE を出す）。畳む案を先に出し、承認後に直す。
+3. 【起票 11-01、期日 11-08】`review-hook.md` を畳む（5,973 字で目安 5,000 字を超え、`check_hook_outline` が NOTE を出す）。畳む案を先に出し、承認後に直す。
 4. 【11-01】`log.md` を 4KB 以内に保つ（ギャップ 9。11-01 の `wrap` で縮めた。超えたら状態を `log-history.md` へ）。
 
 ## Open Questions
