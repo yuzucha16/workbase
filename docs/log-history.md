@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-01（wrap: review 入力 2 の測定を Next Actions に積んだ）
+- 同日の `review` で入力 2 だけ測れなかった（`reviews.csv` の `load_chars` が `n/a`）。ユーザーの依頼で、NA2 の反映後の会話を独立して測る項目を `log.md` の NA2 に積んだ（期日 11-08）。他の項目の閉じ・縮めは無し。
+
 ### 2026-11-01（review 消化 NA 2: 入力 2 の計測を `cap_meter.py` の土台にした）
 - 松竹梅の 3 案から竹（既存の道具を使う）を承認。`review-hook.md` の入力 2 を、土台の中央値を `load_chars` に書く形に直した。初回の参考値は中央値 26,907。`review-hook.md` は 5,973 字（NOTE は NA3 で畳む）。
 
