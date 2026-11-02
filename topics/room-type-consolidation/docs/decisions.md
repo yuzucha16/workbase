@@ -8,10 +8,11 @@
 - 内容: README の frontmatter に `target:`（`name`、`via: ssh|wsl`、`os`、`note`）。`ai/in/target/` は `env.md`、`run-YYYY-MM-DD.md`、秘匿値抜きの設定サンプル。秘密鍵・パスワード・トークン・機密のホスト名は置かない。処理する側は作らない。
 - 反映先: `workflow-kit/project-structure.md` の「開発リポジトリ」の節。10-31 の「room から開発サーバーへ SSH しない」は変更なし。
 
-### 【この件】【保留 〜2026-11-08】Obsidian の Vault を 2 つに分ける（2026-11-01）
+### 【この件】Obsidian の Vault を 2 つに分ける（2026-11-01 仮決め、2026-11-02 正式化）
 
 - **2026-11-01 `review 消化`: ユーザーが 3 論点とも【保留】と判断した**（期日は 11-08）。スクリーニング（型 D: 論点 1 Vault の分割、論点 2 `.obsidian` の実体と正本、論点 3 一方向の自動反映）の指摘: ① 10-17 前後の「works ＝ Vault」の一語化と、「Vault 側の AI／deny」の指す先が、分割後も works でよいか未確認。② 論点 2 は 10-05 の延長だが、ジャンクション 2 本でリンク前に Obsidian を開くと `30_link.bat` が止まる経路が倍になる。③ 論点 3 の仕組みの詳細は dotfiles 側に置く（`app-config-placement.md` の Principles、依存は dotfiles → workbase の一方向）。方針の 1 行だけ workbase に残す。④ 実機確認の順序は ③ → ④ → 論点 2・3 の実装。加えて pc1 のリンク調査、「Vault ＝ works」の文面の直し方の一覧、Obsidian を先に開いた場合の確認。
 
+- **2026-11-02 正式化（ユーザー「正式化して実装に進めますが、文面直しはnaに積んでおいてください」）**: 下の仮決めを決定にする。実装前の前提（③④、pc1 のリンク調査、文面の一覧、`30_link.bat` が止まる条件）は済んだ。実装は dotfiles（別リポジトリ・別コミット）と、workbase の `/.obsidian` の `.gitignore`（済み）。文面直しは実装とは分け、NA に積んで後で行う。
 - 決めたこと（仮。ユーザー「確認はすべてOKです」）: Vault を `resources/`（workbase。md のみ）と `works/`（projects・areas・`resources_p/`。html や excel など `inv` の成果物も見る）の 2 つにする。`works/.obsidian` は残し、除外（`app.json` の `userIgnoreFilters`）に `resources/` `archives/` `repos/` を加える。`resources_p/` は works の Vault に含める（ユーザー「ファイラー 兼 viewer になればラッキー」）。`archives/` はほぼ見ない（同）。pc1 は `resources/` の Vault も参照用に開く（特に `guides/`）。
 - 根拠（ユーザーの発言）: pc2 は resources（workbase）の改良が主、pc1 は areas・projects の作業が主で、works 配下で両方を見る利点が無い。事実: プラグインは 3 つだけ（`colored-tags` `html-viewer` `xlsx-viewer`）で、md のみの `resources/` で 2 つのビューアは効かないだけ。差は小さい。Vault を分ける利点は、検索・ブックマーク・クイックスイッチャーの範囲と `workspace.json` が閉じること。`workspace.json` は dotfiles で追跡対象外（`.gitignore`）で、Obsidian が自動生成する。最小構成のコピーは置かない。pc2 の調査（2026-11-01）: works の `resources/` の外の md 92 ファイルに `[[リンク]]` 47 件。`resources/` を指すものは 0 件（残りは `areas/…` `projects/…` のパス形式で、works の Vault 内で完結）。pc1 は 11-02 に調査（下の実機確認の項）。
 - 設定の持ち方（ユーザー、同日）: 2 つの `.obsidian` の実体は、どちらも dotfiles に置き、`resources/.obsidian` と `works/.obsidian` へジャンクションで張る（ユーザー「それぞれを workbase へジャンクションする。dotfiles 側の正本の話」）。dotfiles の中では **resources 用が正本**。プラグイン以外の設定（外観・CSS スニペット・テーマ・コア設定）は正本だけを直し、works 用へ自動で反映する（一方向）。見た目は両方でそろえる。プラグインは Vault ごとに別で、ユーザーがコミットする（反映の対象外）。workbase は dotfiles を知らず、`.obsidian` を追跡しない（`.gitignore` に足す）。2026-10-05 の「実体は dotfiles」と依存の向きは変わらない。
