@@ -1366,16 +1366,26 @@ AREA_AI_SKIP = {"docs/inbox.md"}  # Area の inbox は close の受け皿（案�
 AREA_AI_MAX_BYTES = 1024 * 1024
 
 
-def snapshot_area_ai(ctx, p):
-    """external の Area の `ai/{knowledge,docs}/**.md` を、`ai/ctx/area/` に読み取り専用で写す（過去の決定・経緯を今の判断の資料にする）。
-    cleankit の検出に当たるファイルと、合計が上限を超える分は写さない（start は止めない）。写した件数を返す。"""
-    dst_root = p.ai / "ctx" / "area"
-    rmtree_force(dst_root)
-    if normalize_boundary(read_frontmatter(p.area_dir / "README.md").get("boundary", "")) != "external":
-        return 0
-    src_root = p.area_dir / "ai"
+def area_gate_terms(p):
+    """Area の ai/ に出入りする文の点検に使う語（mask.toml の語）を返す。internal は、人が通した業務データが部屋にあるので、語が空なら None（関門を通せない）。"""
     terms_path = p.dir / "_noai" / "mask.toml"
     terms = cleankit.load_terms(terms_path) if terms_path.exists() else []
+    if not terms and normalize_boundary(read_frontmatter(p.area_dir / "README.md").get("boundary", "")) == "internal":
+        return None
+    return terms
+
+
+def snapshot_area_ai(ctx, p):
+    """Area の `ai/{knowledge,docs}/**.md` を、`ai/ctx/area/` に読み取り専用で写す（過去の決定・経緯を今の判断の資料にする）。external と internal で同じ。
+    cleankit の検出に当たるファイルと、合計が上限を超える分は写さない（start は止めない）。internal は mask.toml の語が空なら写さない。写した件数を返す。"""
+    dst_root = p.ai / "ctx" / "area"
+    rmtree_force(dst_root)
+    src_root = p.area_dir / "ai"
+    terms = area_gate_terms(p)
+    if terms is None:
+        if src_root.is_dir():
+            ctx.say("  注意: internal の Area は mask.toml の語（顧客名など）が空なので、Area の ai/ を写さない")
+        return 0
     n, total = 0, 0
     for d in AREA_AI_COPY_DIRS:
         for f in sorted((src_root / d).rglob("*.md")) if (src_root / d).is_dir() else []:
@@ -1438,7 +1448,7 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 - `public`（公開の共有知）: 直接書かず、`ai/out/stock/` に下書きを書く。下書きの frontmatter に次を足す。人が確認して `exmem/inbox/` へ運ぶ。
   - `base_commit: {commit}`
   - `observed: 書いた日（YYYY-MM-DD）`
-- `area`（この Area の業務に固有。非公開）: `ai/out/knowledge/YYYY-MM-DD-<topic>.md` に、stock の7見出しの型で書く。frontmatter は `kind: lesson` か `explain`、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない。マスクのまま書き、人が `restore` で実名に戻して Area に置く。
+- `area`（この Area の業務に固有。非公開）: これも `ai/out/stock/` に下書きを書く（`public` と同じ置き場）。frontmatter に `scope: area` と、運び先 `dest: knowledge`（既定。過去の決定・経緯なら `docs`）を足す。stock の7見出しの型で、`kind: lesson` か `explain`、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない。実名・金額・連絡先は書かない（人が `room stock --dst area` で点検を通して Area の `ai/` へ運ぶ。点検に当たると止まる）。
 
 Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
 
@@ -2091,19 +2101,21 @@ def cmd_stock(ctx, a):
     dst = getattr(a, "dst", None)
     if dst not in STOCK_DSTS:
         raise RoomError("--dst が要る: kit（公開の共有知。ai/out/stock/ → exmem/inbox/）か "
-                        "area（この Area の知識・経緯。ai/out/stock/ の scope: area → areas/<Area>/ai/。external の Area だけ）")
+                        "area（この Area の知識・経緯。ai/out/stock/ の scope: area → areas/<Area>/ai/）")
     if dst == "area":
         return stock_to_area(ctx, a)
     return stock_to_kit(ctx, a)
 
 
 def stock_to_area(ctx, a):
-    """ai/out/stock/*.md のうち `scope: area` の下書きを、areas/<Area>/ai/<dest>/ へ運ぶ（dest: は knowledge か docs。既定は knowledge）。external の Area だけ。
+    """ai/out/stock/*.md のうち `scope: area` の下書きを、areas/<Area>/ai/<dest>/ へ運ぶ（dest: は knowledge か docs。既定は knowledge）。external・internal 共通（internal は mask.toml の語が要る）。
     運ぶ前に cleankit の検出（金額・メール・電話などの形、mask.toml の語）を対象の全ファイルに通し、1 つでも当たれば何も運ばず止まる。"""
     p = Project.load(ctx, a.name)
-    if check_area(p) != "external":
-        raise RoomError(f"--dst area は boundary: external の Area だけ（{p.area} は internal。実名つきの知識は `ai/out/knowledge/` に置き、"
-                        "`room restore` で `_noai/knowledge/` に戻す）")
+    check_area(p)
+    terms = area_gate_terms(p)
+    if terms is None:
+        raise RoomError(f"{p.area} は internal なので、運ぶ前の点検に mask.toml の語（顧客名など）が要る。"
+                        "`_noai/mask.toml` の [terms.*] に語を足してから、もう一度実行する。何も運んでいない")
     src = p.ai / "out" / "stock"
     drafts = sorted(src.glob("*.md")) if src.is_dir() else []
     files, skipped = [], []
@@ -2124,8 +2136,6 @@ def stock_to_area(ctx, a):
     if not p.area_dir.is_dir():
         raise RoomError(f"Area が無い: {p.area_dir}")
     dest_root = p.area_dir / "ai"
-    terms_path = p.dir / "_noai" / "mask.toml"
-    terms = cleankit.load_terms(terms_path) if terms_path.exists() else []
     problems = []
     for f, _d in files:
         for label, hits in cleankit.sensitive_hits(f.read_text(encoding="utf-8"), terms):
@@ -2191,7 +2201,7 @@ def stock_to_kit(ctx, a):
             continue
         meta = read_frontmatter(f)
         if meta.get("scope", "") == "area":
-            ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。external の Area は同じ下書きを `room stock --dst area` で運ぶ。internal は ai/out/knowledge/ に置いて restore で Area に戻す）: {f.name}")
+            ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。同じ下書きを `room stock --dst area` で運ぶ）: {f.name}")
             continue
         base, observed = meta.get("base_commit", ""), meta.get("observed", "")
         if not base or not observed:

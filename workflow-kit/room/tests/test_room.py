@@ -1790,10 +1790,24 @@ class StockAreaTest(unittest.TestCase):
             with self.assertRaises(room.RoomError):
                 room.cmd_stock(c, self.ns())
 
-    def test_internal_area_is_refused(self):
+    def test_internal_area_needs_terms(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.setup(tmp, boundary="internal")
             self.put(p, "a.md", "x\n")
+            with self.assertRaises(room.RoomError) as e:
+                room.cmd_stock(c, self.ns())
+            self.assertIn("mask.toml", str(e.exception))
+            self.assertFalse((v / "areas/area-x/ai").exists())
+
+    def test_internal_area_delivers_with_terms_and_term_hit_stops(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp, boundary="internal")
+            (p / "_noai").mkdir(exist_ok=True)
+            (p / "_noai/mask.toml").write_text('[terms.CUST]\nnames = ["株式会社テスト"]\n', encoding="utf-8")
+            self.put(p, "ok.md", "# 決定\n")
+            room.cmd_stock(c, self.ns())
+            self.assertTrue((v / "areas/area-x/ai/knowledge/ok.md").exists())
+            self.put(p, "ng.md", "株式会社テストの件\n")
             with self.assertRaises(room.RoomError):
                 room.cmd_stock(c, self.ns())
 
@@ -1852,7 +1866,7 @@ class AreaAiSnapshotTest(unittest.TestCase):
             self.assertFalse((out / "docs/leak.md").exists())
             self.assertFalse(os.access(out / "knowledge/k.md", os.W_OK) and os.geteuid() != 0)
 
-    def test_internal_area_copies_nothing_and_clears_old_copy(self):
+    def test_internal_area_without_terms_copies_nothing_and_clears_old_copy(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, base = self.setup(tmp, boundary="internal")
             (base / "knowledge/k.md").write_text("知識\n", encoding="utf-8")
@@ -1860,6 +1874,15 @@ class AreaAiSnapshotTest(unittest.TestCase):
             (p.ai / "ctx/area/old.md").write_text("古い\n", encoding="utf-8")
             self.assertEqual(room.snapshot_area_ai(c, p), 0)
             self.assertFalse((p.ai / "ctx/area").exists())
+
+    def test_internal_area_with_terms_copies_and_skips_term_hits(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, base = self.setup(tmp, boundary="internal")
+            (p.dir / "_noai").mkdir(exist_ok=True)
+            (p.dir / "_noai/mask.toml").write_text('[terms.CUST]\nnames = ["株式会社テスト"]\n', encoding="utf-8")
+            (base / "knowledge/k.md").write_text("知識\n", encoding="utf-8")
+            (base / "knowledge/leak.md").write_text("株式会社テストの件\n", encoding="utf-8")
+            self.assertEqual(room.snapshot_area_ai(c, p), 1)
 
     def test_size_cap(self):
         with tempfile.TemporaryDirectory() as tmp:
