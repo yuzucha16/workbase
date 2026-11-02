@@ -22,7 +22,6 @@
 | 2026-11-12 | 単発 | ooxml-clean OQ: 本文の個人名は `mask.toml` の運用に任せるか、候補の検出を足すか（判断） | ユーザー |
 | 2026-11-16 | 単発 | ooxml-clean NA 3: 外向け Area の共有（`room stock --dst area` と `ctx/area/` の写し）の PC1 での動作確認（別セッション。期日は仮） | ユーザー |
 | 2026-11-16 | 単発 | ooxml-clean NA 4: internal の Area への適用を決める（ee が na に積んだ。期日は仮） | ユーザー |
-| 2026-11-13 | 単発 | office-output-types NA 1: pptx → テキストの試行（公開 pptx 4 つ。PC1 不要） | ユーザー・AI |
 | 2026-11-13 | 単発 | office-output-types NA 2: PC1 で入力 2〜3 種類の見出し・列名だけで定義表の行を書く（実機） | ユーザー（PC1） |
 | 2026-11-14 | 単発 | office-output-types NA 3: 雛形を `exmem/lessons/` に昇格するか（11-13 の実機の後） | ユーザー |
 | 2026-11-14 | 単発 | token-cap OQ: Zed の System tools が 9.0k → 9.9k に増えた原因（実機の Zed） | ユーザー（実機） |
