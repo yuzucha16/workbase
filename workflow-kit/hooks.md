@@ -28,7 +28,7 @@
 | `room stock` | 部屋の AI の `stock` の下書き（`ai/out/stock/`）を、人が確認して `exmem/inbox/` に運ぶ |
 | `room readme` | AI の下書き（`ai/out/readme-draft.md`）を README に反映する |
 
-上のほかのコマンド（`init` `pull` `mask` `restore` `umount` `aws-key` `shell` `reap` `rename-area`）は、フックと対にならない。`room/README.md` を見る（この表に写さない）。
+上のほかのコマンド（`init` `pull` `mask` `restore` `umount` `aws-key` `shell` `reap` `mv`）は、フックと対にならない。`room/README.md` を見る（この表に写さない）。
 
 ## 領域とフックの権限（r/w 表）
 

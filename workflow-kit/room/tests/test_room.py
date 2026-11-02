@@ -59,6 +59,8 @@ class FakeWsl:
             self.mounted = False
             if "/proc/mounts | cut" in text:  # cmd_umount は部屋の全マウントを外す
                 self.others = []
+        if text == "id -un\n":
+            return 0, getattr(self, "default_user", "ai") + "\n", ""
         if text.startswith("echo user="):
             return 0, getattr(self, "isolation", "user=ai\nc=0\ncmd=no\nsudo=no\n"), ""
         if text.startswith("export PATH") and "claude --version" in text:
@@ -75,6 +77,22 @@ class FakeWsl:
 
     def terminate(self, distro):
         self.terminated = getattr(self, "terminated", []) + [distro]
+
+    def export(self, distro, tar):
+        self.exports = getattr(self, "exports", []) + [distro]
+        return getattr(self, "export_rc", 0)
+
+    def import_(self, distro, dest, tar):
+        self.imports = getattr(self, "imports", []) + [(distro, str(dest))]
+        if getattr(self, "import_rc", 0) == 0:
+            self._distros.append(distro)
+        return getattr(self, "import_rc", 0)
+
+    def unregister(self, distro):
+        self.unregistered = getattr(self, "unregistered", []) + [distro]
+        if distro in self._distros:
+            self._distros.remove(distro)
+        return 0
 
     def keepalive(self, distro):
         self.keepalives.append(distro)
@@ -672,48 +690,87 @@ class InitTest(unittest.TestCase):
                 room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-x", resume=False, only="apt"))
 
 
-class RenameAreaTest(unittest.TestCase):
+class MvTest(unittest.TestCase):
     def git_out(self, v, *args):
         return subprocess.run(["git", "-C", str(v), *args], check=True, capture_output=True, text=True, encoding="utf-8").stdout
 
     def args(self, old="area-x", new="area-z", commit=True):
         return argparse.Namespace(old=old, new=new, commit=commit)
 
-    def test_rename_moves_area_rewrites_projects_and_manifest_and_commits(self):
+    def test_mv_renames_area_room_links_and_manifest(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c = opened(tmp)
-            (v / "areas" / "area-x" / "memo.md").write_text("追跡外\n", encoding="utf-8")
+            (v / ".gitignore").write_text((Path(room.__file__).parent.parent / "templates" / "workspace" / "gitignore.template").read_text(encoding="utf-8"), encoding="utf-8")
+            a = v / "areas" / "area-x"
+            (a / "memo.md").write_text("追跡外\n", encoding="utf-8")
+            (a / "docs").mkdir(exist_ok=True)
+            (a / "docs" / "log.md").write_text("[[areas/area-x/memo]] と [[areas/area-x/README|area-x]]\n", encoding="utf-8")
+            (a / "_noai").mkdir(exist_ok=True)
+            (a / "_noai" / "src.md").write_text("[[areas/area-x/x]]\n", encoding="utf-8")
             p = room.Project.load(c, "proj-a")
             (p.ai / "in" / "a.txt").write_text("x", encoding="utf-8")
             room.adopt_in(c, p)
+            (v / "projects" / "proj-a" / "docs").mkdir(exist_ok=True)
+            (v / "projects" / "proj-a" / "docs" / "n.md").write_text("[[areas/area-x/README|area-x]]\n", encoding="utf-8")
             sh(v, "add", "-A")
             sh(v, "commit", "-qm", "setup")
-            room.cmd_rename_area(c, self.args())
+            wsl = c.wsl
+            room.cmd_mv(c, self.args())
             self.assertFalse((v / "areas" / "area-x").exists())
             self.assertTrue((v / "areas" / "area-z" / "memo.md").exists())
+            self.assertEqual(wsl.exports, ["room-area-x"])
+            self.assertEqual(wsl.imports[0][0], "room-area-z")
+            self.assertEqual(wsl.unregistered, ["room-area-x"])
+            self.assertEqual(wsl.distros(), ["room-area-z"])
             readme = (v / "projects" / "proj-a" / "README.md").read_text(encoding="utf-8")
             self.assertIn("area: area-z", readme)
-            self.assertIn("[[areas/area-z/README|area-z]]", readme)
             self.assertNotIn("area-x", readme)
-            self.assertIn("[[projects/proj-a/README", (v / "areas" / "area-z" / "README.md").read_text(encoding="utf-8"))
+            self.assertNotIn("area-x", (v / "projects" / "proj-a" / "docs" / "n.md").read_text(encoding="utf-8"))
+            self.assertNotIn("area-x", (v / "areas" / "area-z" / "docs" / "log.md").read_text(encoding="utf-8"))
+            self.assertIn("area-x", (v / "areas" / "area-z" / "_noai" / "src.md").read_text(encoding="utf-8"))
             self.assertEqual(room.Project.load(c, "proj-a").area, "area-z")
             self.assertEqual(room.check_provenance(room.Project.load(c, "proj-a")), [])
             self.assertEqual(self.git_out(v, "status", "--porcelain", "--", "areas", "projects").strip().splitlines(), [])
+            self.assertIn("Room-Op: mv", self.git_out(v, "log", "-1", "--format=%B"))
 
-    def test_rename_refuses_bad_missing_existing_and_mounted(self):
+    def test_mv_without_room_only_renames_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
+            wsl = FakeWsl(distros=())
+            room.cmd_mv(ctx_for(v, wsl), self.args())
+            self.assertTrue((v / "areas" / "area-z").exists())
+            self.assertFalse(hasattr(wsl, "exports"))
+
+    def test_mv_refuses_bad_missing_existing_and_mounted(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             (v / "areas" / "area-y").mkdir()
             c = ctx_for(v)
             for old, new in (("area-x", "日本語"), ("area-x", "area-x"), ("nothing", "area-z"), ("area-x", "area-y")):
                 with self.assertRaises(room.RoomError):
-                    room.cmd_rename_area(c, self.args(old, new))
+                    room.cmd_mv(c, self.args(old, new))
             self.assertTrue((v / "areas" / "area-x").exists())
             wsl = FakeWsl()
             wsl.mounted = True
             with self.assertRaises(room.RoomError):
-                room.cmd_rename_area(ctx_for(v, wsl), self.args())
+                room.cmd_mv(ctx_for(v, wsl), self.args())
             self.assertTrue((v / "areas" / "area-x").exists())
+            wsl = FakeWsl(distros=("room-area-x", "room-area-z"))
+            with self.assertRaises(room.RoomError):
+                room.cmd_mv(ctx_for(v, wsl), self.args())
+
+    def test_mv_stops_before_touching_files_when_room_rename_fails(self):
+        for failure in ("export_rc", "import_rc", "default_user"):
+            with tempfile.TemporaryDirectory() as tmp:
+                v = make_vault(tmp)
+                wsl = FakeWsl()
+                setattr(wsl, failure, "root" if failure == "default_user" else 1)
+                with self.assertRaises(room.RoomError):
+                    room.cmd_mv(ctx_for(v, wsl), self.args())
+                self.assertTrue((v / "areas" / "area-x").exists(), failure)
+                self.assertFalse((v / "areas" / "area-z").exists(), failure)
+                self.assertIn("room-area-x", wsl.distros(), failure)
+                self.assertNotIn("room-area-z", wsl.distros(), failure)
 
 
 class ReapTest(unittest.TestCase):

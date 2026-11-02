@@ -313,7 +313,7 @@ uv run --script $env:WFKIT_DIR\room\room.py open <Project名> --area <Area名> -
 uv run --script $env:WFKIT_DIR\room\room.py pull <Project名> --where <項目>=<値>
 uv run --script $env:WFKIT_DIR\room\room.py readme <Project名>
 uv run --script $env:WFKIT_DIR\room\room.py reap <Project名> --force
-uv run --script $env:WFKIT_DIR\room\room.py rename-area <旧Area名> <新Area名>
+uv run --script $env:WFKIT_DIR\room\room.py mv <旧Area名> <新Area名>
 uv run --script $env:WFKIT_DIR\room\room.py restore <Project名>
 uv run --script $env:WFKIT_DIR\room\room.py shell <Area名>
 uv run --script $env:WFKIT_DIR\room\room.py start <Project名>

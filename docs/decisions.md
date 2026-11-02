@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【room】`rename-area` を `mv` に作り直す（部屋も改名する・履歴は追わない）（2026-11-02）
+- 根拠: ユーザー「やりたいことは命名規則の統一程度。コミット履歴は不要（git はほぼスナップショット）、wsl はディストロの rename だけで十分」「room mv として作り直す。wsl は公式（export → import）に従う」。works の許可リスト化（48e6fc3）で追跡が README・docs・ai/docs だけになり、旧実装の「部屋は触らない」「リンクは README だけ」が目立ったため。
+- 決めたこと: `room mv <旧> <新>`。部屋は `wsl --export`/`--import`/`--unregister` で改名（中身ごと写る）、失敗時は旧をそのまま残して止まる。リンクは `areas/` `projects/` `archives/` の `.md` 全体で直す（`_noai/` と `ai/` の docs 以外は除く）。manifest は `area` と `masked_from` を直す。コミットは 1 つ。
+- 実機未確認: export/import の所要時間と `%LOCALAPPDATA%\room-wsl` への置き場、import 後の既定ユーザー（`/etc/wsl.conf` の `[user] default=ai`）。
+
 ### 【汎用】`review-hook.md` は 5,000 字の目安を超えたまま畳まない（2026-11-01）
 - 根拠: ユーザー「review は週 1 回の低頻度の定期開催なので例外として見送る。削って精度が下がるリスクよりも、安全に実施できる品質をとる」（`review 消化`）。
 - 注意: `check_hook_outline` の NOTE は残る。字数がさらに増えたら見直す。

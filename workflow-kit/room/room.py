@@ -20,6 +20,7 @@ import stat
 import subprocess
 import sys
 import tarfile
+import tempfile
 import threading
 import time
 from pathlib import Path
@@ -87,6 +88,15 @@ class Wsl:
 
     def terminate(self, distro):
         return subprocess.run(["wsl.exe", "--terminate", distro], capture_output=True, env=wsl_env()).returncode
+
+    def export(self, distro, tar):
+        return subprocess.run(["wsl.exe", "--export", distro, str(tar)], env=wsl_env()).returncode
+
+    def import_(self, distro, dest, tar):
+        return subprocess.run(["wsl.exe", "--import", distro, str(dest), str(tar), "--version", "2"], env=wsl_env()).returncode
+
+    def unregister(self, distro):
+        return subprocess.run(["wsl.exe", "--unregister", distro], capture_output=True, env=wsl_env()).returncode
 
     def shell(self, distro):
         """部屋に入る（対話）。WSLENV を外すので、起動のたびの「failed to translate」が出ない。"""
@@ -1171,14 +1181,51 @@ def cmd_init(ctx, a):
                      trailers=room_trailers("init", a.area))
 
 
-# ---------- rename-area（Area の名前を変える。部屋は触らない） ----------
+# ---------- mv（Area の名前を変える。部屋も改名する） ----------
 
 AREA_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")  # 部屋の名前（room-<Area>）になるので、ASCII に限る
 
 
-def cmd_rename_area(ctx, a):
-    """areas/<旧> を <新> に改名し、その Area の Project（projects/・archives/）の area: と来歴（manifest）、wikilink を書き換える。
-    部屋（WSL のディストリビューション）は触らない。人が room-<新> を作り直す。"""
+def room_install_dir(distro):
+    """wsl --import で作る部屋の置き場（ext4.vhdx が入る）。"""
+    base = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
+    return Path(base) / "room-wsl" / distro
+
+
+def rename_distro(ctx, old, new):
+    """部屋の改名。WSL に改名は無いので、公式の手順（export → import → 確認 → unregister）で行う。中身（ログイン、~/.aws、会話履歴）は写る。"""
+    old_d, new_d = f"room-{old}", f"room-{new}"
+    have = ctx.wsl.distros()
+    if old_d not in have:
+        ctx.say(f"部屋 {old_d} が無いので、部屋の改名は省く（room init {new} で作る）")
+        return
+    if new_d in have:
+        raise RoomError(f"同名の部屋がすでにある: {new_d}")
+    dest = room_install_dir(new_d)
+    tmp = Path(tempfile.mkdtemp(prefix="room-mv-"))
+    tar = tmp / f"{old_d}.tar"
+    try:
+        ctx.say(f"部屋を改名する: {old_d} → {new_d}（export → import。ext4 の大きさ分の時間とディスクを使う）")
+        ctx.wsl.terminate(old_d)
+        if ctx.wsl.export(old_d, tar) != 0:
+            raise RoomError(f"wsl --export が失敗した。何も変えていない（{old_d} はそのまま）")
+        dest.mkdir(parents=True, exist_ok=True)
+        if ctx.wsl.import_(new_d, dest, tar) != 0 or new_d not in ctx.wsl.distros():
+            ctx.wsl.unregister(new_d) if new_d in ctx.wsl.distros() else None
+            raise RoomError(f"wsl --import が失敗した。{old_d} はそのまま残している")
+        rc, out, _ = ctx.wsl.script(new_d, "id -un\n")
+        if rc != 0 or out.strip() != "ai":
+            ctx.wsl.unregister(new_d)
+            raise RoomError(f"{new_d} の既定ユーザーが ai でない（{out.strip() or rc}）。{old_d} はそのまま残している")
+        if ctx.wsl.unregister(old_d) != 0:
+            ctx.say(f"注意: {old_d} を消せなかった。手で `wsl --unregister {old_d}`")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def cmd_mv(ctx, a):
+    """areas/<旧> を <新> に改名し、部屋（room-<旧> → room-<新>）も改名する。履歴は追わない（スナップショットとして 1 コミット）。
+    書き換え: Project（projects/・archives/）の area:、areas/・projects/・archives/ の .md の [[areas/<旧>/…]]、来歴（manifest）の area と masked_from。"""
     old, new = a.old, a.new
     if not AREA_NAME_RE.match(new):
         raise RoomError(f"新しい Area 名が不正: {new}（英数字・_・- だけ。部屋の名前 room-<Area> になる）")
@@ -1189,8 +1236,11 @@ def cmd_rename_area(ctx, a):
         raise RoomError(f"Area が無い: {old_dir}")
     if new_dir.exists():
         raise RoomError(f"同名がすでにある: {new_dir}")
-    old_distro = f"room-{old}"
-    if old_distro in ctx.wsl.distros():
+    old_distro, new_distro = f"room-{old}", f"room-{new}"
+    have = ctx.wsl.distros()
+    if new_distro in have:
+        raise RoomError(f"同名の部屋がすでにある: {new_distro}")
+    if old_distro in have:
         mounts = room_mounts(ctx, old_distro)
         if mounts:
             raise RoomError(f"部屋 {old_distro} にマウントが残っている。先に外す（`room umount --area {old}`）:\n  " + "\n  ".join(mounts))
@@ -1199,6 +1249,7 @@ def cmd_rename_area(ctx, a):
         for readme in sorted((ctx.vault / top).glob("*/README.md")):
             if read_frontmatter(readme).get("area") == old:
                 targets.append((top, readme.parent.name))
+    rename_distro(ctx, old, new)  # 失敗したら、ここで止まる（ファイルはまだ触っていない）
     shutil.move(str(old_dir), str(new_dir))
     link_old, link_new = f"[[areas/{old}/", f"[[areas/{new}/"
     alias_old, alias_new = f"|{old}]]", f"|{new}]]"
@@ -1206,29 +1257,46 @@ def cmd_rename_area(ctx, a):
     def relink(text):
         return text.replace(link_old, link_new).replace(alias_old, alias_new)
 
-    area_readme = new_dir / "README.md"
-    if area_readme.exists():
-        area_readme.write_text(relink(area_readme.read_text(encoding="utf-8")), encoding="utf-8", newline="\n")
+    def rewritable(root, md):
+        rel = md.relative_to(root).parts
+        if "_noai" in rel:
+            return False  # AI に見せない領域（原本の写し）は触らない
+        if "ai" in rel:
+            i = rel.index("ai")
+            return len(rel) > i + 1 and rel[i + 1] == "docs"  # ai/in・out は来歴の sha256 があるので触らない
+        return True
+
+    changed = 0
+    for top in ("areas", "projects", "archives"):
+        root = ctx.vault / top
+        for md in sorted(root.rglob("*.md")):
+            if not rewritable(root, md):
+                continue
+            text = md.read_text(encoding="utf-8")
+            out = relink(text)
+            if out != text:
+                md.write_text(out, encoding="utf-8", newline="\n")
+                changed += 1
     for top, name in targets:
         d = ctx.vault / top / name
         readme = d / "README.md"
-        text = update_frontmatter(readme.read_text(encoding="utf-8"), {"area": new})
-        readme.write_text(relink(text), encoding="utf-8", newline="\n")
+        readme.write_text(update_frontmatter(readme.read_text(encoding="utf-8"), {"area": new}), encoding="utf-8", newline="\n")
         mpath = d / "ai" / "records" / "manifest.json"
         if mpath.exists():
             man = json.loads(mpath.read_text(encoding="utf-8"))
             for e in man.get("files", {}).values():
                 if e.get("area") == old:
                     e["area"] = new
+                if isinstance(e.get("masked_from"), str):
+                    e["masked_from"] = e["masked_from"].replace(f"areas/{old}/", f"areas/{new}/")
             mpath.write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
-    ctx.say(f"改名した: areas/{old} → areas/{new}（Project {len(targets)} 件の area: と来歴を書き換えた）")
+    ctx.say(f"改名した: areas/{old} → areas/{new}、{old_distro} → {new_distro}（Project {len(targets)} 件の area: と来歴、リンク {changed} ファイルを書き換えた）")
     for top, name in targets:
         ctx.say(f"  {top}/{name}")
-    ctx.say(f"部屋は触っていない。{old_distro} は不要なら手で消し（wsl --unregister {old_distro}）、room init {new} で room-{new} を作る")
     if a.commit:
         paths = [f"areas/{old}", f"areas/{new}"] + [f"{top}/{name}" for top, name in targets]
         commit_paths(ctx, paths, f"[room] Area を改名 {old} → {new}", only=True,
-                     trailers=room_trailers("rename-area", new))
+                     trailers=room_trailers("mv", new))
 
 
 # ---------- start ----------
@@ -2854,7 +2922,7 @@ def build_parser():
     rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
     rp.add_argument("name", nargs="?"); rp.add_argument("--yes", action="store_true")
     rp.add_argument("--force", action="store_true", help="期限前でも消す（名前を指定したとき）")
-    ra = sub.add_parser("rename-area", help="Area を改名する（areas/・Project の area:・来歴・リンク。部屋は触らない）")
+    ra = sub.add_parser("mv", help="Area を改名する（areas/・Project の area:・来歴・リンク・部屋 room-<Area>。履歴は追わない）")
     ra.add_argument("old"); ra.add_argument("new")
     ra.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="改名をコミットしない（既定はコミットする）")
     u = sub.add_parser("umount", help="部屋に残ったマウントを外す")
@@ -2867,7 +2935,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
-        {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "rename-area": cmd_rename_area,
+        {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "mv": cmd_mv,
          "mask": cmd_mask, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
