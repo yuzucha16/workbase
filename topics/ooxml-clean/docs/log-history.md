@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-11-02（NA4: external と internal の出口を `room stock` の一本にした）
+- 依頼: internal の Area への `--dst area` と `ctx/area/` の適用。ユーザーの決定: 違いは入口だけ（internal は人が通した業務データを入れられる）、出口は行き先を内容だけで選ぶ一本、知識は実名なしで書くので `--dst area` で完結する。経緯: 別セッションで `stock` の経路を忘れた実績があり、2 経路は慣れると分からなくなる、との指摘。
+- 実装: `room.py`（`area_gate_terms` 新設、`stock_to_area` と `snapshot_area_ai` の external 限定を外し、internal は `mask.toml` の語が空なら止める）、部屋の AI への案内文、`room-context.md`、`room/README.md`、テスト（`StockAreaTest`、`AreaAiSnapshotTest` 通過。全件は 1 件が私のテストの誤りで失敗し、直して該当 14 件を通した。全件の再実行はしていない）。コミットはまだ。
+- 判断は root の `docs/decisions.md` の 2026-11-02「知識の出口を `room stock --dst kit|area` の一本にし」の項。
+
+### 2026-11-02（pptxtext の動作確認を閉じた）
+- ユーザーが PC1 の実 pptx で `pptxtext.py` を回し、問題なしと報告。NA 0（動作確認と要件の拡充）を閉じた。要件の拡充は、足りないところが見えたときに積む。
+
 ### 2026-11-02（外向け Area の共有を決め、`room stock --dst` と `ctx/area/` の写しを実装した）
 - 依頼: NA1「外向け Area で Area そのものを共有する是非」。棚卸し（`notes/area-share/2026-11-02-area-share-inventory.md`、project files）で、部屋が Area 単位で見るのは README の写しだけ、drvfs は配下除外ができず Area 全体のマウントは `_noai/` が見える、と確認。
 - ユーザーの決定: 共有したい中身は `knowledge/` と `docs/`（過去の決定・経緯を今の判断のデータソースにする）。Area の `ai/` は部屋へ「写し」で見せる（直接書く案は `stock` の経路の勘違いが原因で取り下げ）。知識の運び先は `room stock --dst kit|area`（省くと止まる）、`area` は cleankit の点検を必須の関門にする。書き場所は `ai/out/stock/` 一本、`scope` と `dest` で振り分け。internal への適用は未議論で na に積んだ。動作確認は別セッション。

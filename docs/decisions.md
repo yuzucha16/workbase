@@ -9,6 +9,12 @@
 - 根拠: 日付だけの `--since=2026-11-02` は現在の時刻が補われ、当日 18 件が 0 件になった（実機で確認）。
 - 却下案: `--after=YYYY-MM-DD` への置き換え（`--since` の別名で、同じ結果になる）。
 
+### 【room】知識の出口を `room stock --dst kit|area` の一本にし、internal の Area にも `--dst area` と `ctx/area/` の写しを許す（2026-11-02）
+- 決めたこと（ユーザー）: ① external と internal の違いは入口だけにする（internal は人が通した業務データを `ai/in/` に入れてよい）。出口は境界に関係させず、行き先を内容だけで選ぶ（`--dst kit` は一般則、`--dst area` はこの Area 固有）。② 知識は実名を含めずに書くので、`--dst area` で完結する。internal の `ai/out/knowledge/` → `restore` → `pull` の道は、知識用には使わない。③ internal は人が通した業務データが部屋にあるので、`--dst area` の点検と `ctx/area/` の写しに `mask.toml` の語を必須にする（語が空なら止まる・写さない）。
+- 実装: `room.py`（`area_gate_terms`、`stock_to_area`、`snapshot_area_ai`、部屋の AI への案内文）、テスト、`room/README.md`、`room-context.md`。
+- 決めたこと（続き、ユーザー）: `restore`・`pull` の知識用の経路は、internal での動作確認の後にコードから外す（成果物の戻し `ai/out/deliverable/` は残す）。
+- 上の項の④（internal は `--dst area` を使えない）を置き換える。
+
 ### 【room】`room stock` に `--dst kit|area` を足し、external の Area の知識・経緯は exmem を通さず `areas/<Area>/ai/` へ運ぶ（2026-11-02）
 - 決めたこと（ユーザー）: ① 知見の運び先は `room stock --dst kit|area` の 1 コマンドで分ける（コマンドを増やさない）。`--dst` を省くと止まる。② `--dst area` は運ぶ前に `cleankit` の検出（金額・メール・電話などの形、`mask.toml` の語）を必須の関門にし、当たれば何も運ばず止まる。③ 運び先は `areas/<Area>/ai/`（`knowledge/` と `docs/`）。過去の決定・経緯を今の判断のデータソースにするため。部屋の AI の書き場所は `ai/out/stock/` 一本で、`scope: public|area` と `dest: knowledge|docs`（既定 knowledge）で振り分ける（`ai/out/area/` の 2 分割は、数が少ないのでやめた）。Area の `ai/` は、部屋へ「写し」で見せる（`start` が `ai/ctx/area/` に読み取り専用で置く。直接書く案は、`stock` の経路の勘違いが原因で、取り下げた）。④ internal の Area は `--dst area` を使えない（実名つきの `_noai/knowledge/` へは `restore` のまま）。`restore` 自体は、使われなければ後で外す。
 - 未決（ユーザーが議論してから）: internal の Area への適用。
