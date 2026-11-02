@@ -2,7 +2,7 @@
 
 <この works の役割を1〜2行で。`AGENTS.md` の冒頭と同じでよい。>
 
-works（Obsidian の Vault）のトップ。この PC だけのローカルなリポジトリ。規約は `AGENTS.md`、works 全体の規約は `resources/AGENTS.md`。
+works（Obsidian の Vault の 1 つ。`resources/` は別の Vault）のトップ。この PC だけのローカルなリポジトリ。規約は `AGENTS.md`、works 全体の規約は `resources/AGENTS.md`。
 
 ## 構成
 

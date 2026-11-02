@@ -2,7 +2,7 @@
 
 <この works の役割を1〜2行で。例: 業務用 PC の作業場。PARA でこの PC のローカルの作業を管理し、共有ナレッジ（`resources/`）を参照する。>
 
-works（Obsidian の Vault）のトップ。この PC だけのローカルなリポジトリ（remote: <なし / 非公開リポジトリの URL>）。共有ナレッジは `resources/`（別リポジトリ `workbase` の clone）にあり、works 全体の規約は `resources/AGENTS.md`。
+works（Obsidian の Vault の 1 つ。`resources/` は別の Vault）のトップ。この PC だけのローカルなリポジトリ（remote: <なし / 非公開リポジトリの URL>）。共有ナレッジは `resources/`（別リポジトリ `workbase` の clone）にあり、works 全体の規約は `resources/AGENTS.md`。
 
 ## 共通ルール
 

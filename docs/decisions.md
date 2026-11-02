@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【workflow-kit】`templates/workspace/` の「works（Obsidian の Vault）」を「works（Obsidian の Vault の 1 つ。`resources/` は別の Vault）」に直す（2026-11-02）
+- 決めたこと: Vault の 2 分割（正式化: 2026-11-02）に合わせ、`templates/workspace/README.md` と `AGENTS.md` の 5 行目を直した。薄い `AGENTS.md` の項目は増減していない（文面のみ）。既存の works は、次に手で直すか、そのままでもよい（意味は変わらない）。
+- 根拠: ユーザーの発言: 「良いです」「承認します。進め方よいです」（文面直しの素案への承認）。経緯は `topics/room-type-consolidation/docs/decisions.md`。
+
 ### 【workflow-kit】項目を閉じる・期日から上げる書き込みを `tools/na_apply.py`（close / due-up）に移す。判断は AI、置く場所はスクリプト（2026-11-02。token-cap NA 5 (g)）
 - 決めたこと: `wrap` の「現在状態を更新する」と `review 消化` の、済・一部済・omit の移し替えと期日の持ち上げを、`na_apply.py close` / `due-up` で 1 回にまとめてよい。仕分けと文面は AI のまま。書式が想定外なら何も書かず止まり、手で直す。呼び方と書き込み先の表は新設の `docs-write-rules.md`（`wrap-hook.md` `review-hook.md` に 1 行ずつ参照、`README.md` に 1 行）。単体テスト 11 件。
 - 根拠: ユーザーの発言: 「素案1はやりたかったものです。review 消化に限らず、wrapの一部…もスクリプトに移したい。ただ、AIのように柔軟性が落ちるのでそこは可能な限り落ちないようにしたい。」「close/due-upを承認します」。重い依頼 25 件のうち 15 件が項目をまとめた返答で、1 件あたり Edit が約 10 回（`topics/token-cap/records/2026-10-30-other-long-requests-breakdown.md`）。
