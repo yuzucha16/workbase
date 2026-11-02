@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-02（pptx を実ファイルで確認、読ませる用途は取り出しに割り切った）
+- ユーザーが PC1 の実 pptx を `cleankit.py` で通した。動作・開くのは問題なし。ただし背景・帯の社名を消すには `strict` が要り、`unseen-text` が使っていないレイアウト・マスターの文字と混ざって区別できなかった。cleankit の確認（旧 NA 2）はここで閉じた。
+- 原因の整理は `notes/ooxml-clean/2026-11-02-pptx-extract-vs-clean.md`（project files）。ユーザーの決定: 読ませるだけに割り切り（分析・示唆抽出・論点整理）、まずシンプルに作って仕様を足す（`decisions.md`）。
+- 実装: `workflow-kit/room/pptxtext.py` v0 と `tests/test_pptxtext.py`（3 件通過）、`room/README.md` に節（5b84cf7、main に push）。`docs/due.md` の 11-03 の行を削除。動作確認と要件の拡充は別セッション（NA 0）。
 ### 2026-10-30（掃除の room 組み込みの方針を決めた。pptx の確認は 11-03）
 - 組み込みの影響とメリットを整理し、ユーザーが承認（`decisions.md` の同日の項）。`raw` → 掃除 → マスク → `ai/in`、既定 `standard`、掃除の設定のハッシュを差分判定へ、報告は `_noai/` 内の専用ディレクトリ（直下は不可）。
 - pptx は `cleankit.py` が点検（`check_pptx`）と掃除（`clean_pptx`）に対応済み。ダミーでの単体テストまでで、PC1 の実 pptx と PowerPoint で開く確認は未。11-03 に PC1 で行う（`due.md`）。組み込みはその後。

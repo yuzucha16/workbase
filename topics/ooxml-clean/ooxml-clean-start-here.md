@@ -5,15 +5,15 @@
 
 ## いま
 
-PC1 の実ファイルで掃除の残りが 0 件になった（2026-10-27）。xlsx は Excel で警告なしに確認済み（2026-10-28）。room の `mask` への組み込みは決定済み（2026-10-30）。pptx を PC1 で確認（11-03）してから実装する。
+PC1 の実ファイルで掃除の残りが 0 件になった（2026-10-27）。xlsx は Excel で警告なしに確認済み（2026-10-28）。room の `mask` への組み込みは決定済み（2026-10-30）。pptx は PC1 で確認済み（2026-11-02、問題なし）。読ませる用途は掃除でなく取り出し（`workflow-kit/room/pptxtext.py` v0、5b84cf7）に割り切った。
 
 ## あなた待ち
 
-- 11-03 に PC1 の実 pptx を `check` → `clean` し、PowerPoint で開いた結果を知らせる。
+- PC1 の実 pptx で `pptxtext.py` を回し、出力の足りないところを知らせる（動作確認と要件の拡充は別セッション、`docs/log.md` の NA 0）。
 
 ## 次の一手
 
-pptx の確認の後、「ooxml-clean の続き」で組み込みの実装（`docs/log.md` の NA 1）。
+「ooxml-clean の続き」で、pptxtext の確認と要件の拡充（NA 0）、room の `mask` への組み込みの実装（`docs/log.md` の NA 1）。
 
 ## 読む順
 
