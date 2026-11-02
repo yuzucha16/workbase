@@ -24,6 +24,7 @@
   - 限界: resources の画面で変えた外観は、次の反映まで works に届かない（`--check` が未反映を出す）。
   - 却下案: works 側の共通ファイルを読み取り専用にする（Obsidian の保存が失敗しうる）。`snippets/` `themes/` をリンクで共有する（Windows の git のシンボリックリンクに特権が要る）。
   - dotfiles の README に、正本はどれか、反映の方向、直してよい場所は resources 用だけであること、固有分と派生分の区別、反映のコマンドを書く（実装と同時）。
+- 追加（2026-11-02、ユーザー）: works のエクスプローラーから `resources` `resources_p` `repos` を CSS スニペットで隠す（dotfiles 側。実機で消えた）。重さは感じないとのことで、`resources_p/` も `userIgnoreFilters` に足す（検索・リンクから外れる。`resources_p` を works の Vault の viewer として使う案は、当面見送り）。
 - 〔2026-11-02 実機確認（PC1、ユーザー）〕③ works の `app.json` の `userIgnoreFilters` に `resources/` を加えると、検索とリンク（補完）の対象から外れた。ファイルエクスプローラーには表示されたまま（除外フィルタは表示を消さない）。これは限界として受け入れる（ユーザー、11-02。分割の目的の検索・クイックスイッチャーの範囲は閉じるため。CSS スニペットで隠す案は、反映する設定が増えるので採らない）。`resources/` に `.obsidian` を作っても、上位の `works/.obsidian` に影響しなかった（入れ子の Vault は互いに独立）。pc1 のリンク調査: `resources/` を指す `[[リンク]]` は 0 本で、pc2 と同じ結論。
 - 〔2026-11-02 ユーザー〕`30_link.bat` が止まる経路は、リンク先に**実ファイル（実ディレクトリ）がすでにある**とき。ジャンクションが既にあれば上書きする。したがって、Obsidian を先に開いて実の `.obsidian` ができた場合だけ止まる（手で退避して再実行。`app-config-placement.md` の既存の記述どおり）。2 本になっても、止まる条件は変わらない（Vault ごとに同じ）。これで実装前の前提はすべて済んだ。
 - **④ 決めたこと（ユーザー、2026-11-02）: 今の dotfiles の `windows\obsidian\.obsidian` の写し先は works（works 用の置き場）。** 根拠: プラグイン 3 つ（`html-viewer` `xlsx-viewer` は works でしか効かない）がある。resources 用（正本）は、ここから共通の設定を切り出して作る。

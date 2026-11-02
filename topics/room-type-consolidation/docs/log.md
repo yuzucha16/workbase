@@ -4,7 +4,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。2026-10-31 に room 
 
 ## Next Actions
 
-- 【起票 11-02】Vault の 2 分割の動作確認（実機。別セッション）。実装は 11-02 に済んだ（dotfiles `3946432`、workbase `.gitignore`）。確認する点: `30_link.bat` で、(a) `uv` `py` `python` のどれでも `obsidian_sync.py` が走る、(b) `%WORKS_DIR%\.obsidian` と `%WORKS_DIR%\resources\.obsidian` の 2 本のジャンクションができる、(c) `resources\` が無いときは `[SKIP]` で作らない、(d) 旧 `%WORKS_DIR%\.obsidian`（旧置き場へのジャンクション）は上書きされる、(e) 両方の Vault が開き、works の検索から `resources/` が外れる。`30_link.bat` の新しい分岐は未確認（`linux` の試験は通過）。詳細は dotfiles の `docs/log.md`。
+- 【起票 11-02】Vault の 2 分割の動作確認（実機。別セッション）。実装は 11-02 に済んだ（dotfiles `3946432`、workbase `.gitignore`）。確認する点: `30_link.bat` で、(a) `uv` `py` `python` のどれでも `obsidian_sync.py` が走る、(b) `%WORKS_DIR%\.obsidian` と `%WORKS_DIR%\resources\.obsidian` の 2 本のジャンクションができる、(c) `resources\` が無いときは `[SKIP]` で作らない、(d) 旧 `%WORKS_DIR%\.obsidian`（旧置き場へのジャンクション）は上書きされる、(e) 両方の Vault が開き、works の検索から `resources/` が外れる（(e) の works 側の表示は 11-02 にユーザーが確認。エクスプローラーから `resources` `resources_p` `repos` が消えた）。`30_link.bat` の新しい分岐は未確認（`linux` の試験は通過）。詳細は dotfiles の `docs/log.md`。
 
 - 【起票 11-02、文面直し】「Vault ＝ works」の文面の直し（一覧は `decisions.md` の 11-01 の項の 11-02 の記載。実装は dotfiles で済んだ（11-02）。動作確認の後に行う）。`app-config-placement.md` の `.obsidian` の節と `obsidian-vault-structure.md` の図には、2 つの置き場と一方向の反映、実ディレクトリがあるとリンクが止まる点を足す。
 
