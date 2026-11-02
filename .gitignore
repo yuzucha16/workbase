@@ -4,6 +4,9 @@
 # Obsidian の設定（実体は別リポジトリでジャンクションとして張る。追跡しない）
 /.obsidian
 
+# Claudian: 設定は dotfiles の symlink（実体は dotfiles が持つ）。会話履歴（sessions）は端末ごとで追跡しない
+/.claudian/
+
 ### Windows
 Thumbs.db
 [Dd]esktop.ini
