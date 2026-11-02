@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-03（`exmem/knowledge.base` が Vault を替えると空になる問題）
+- Obsidian で `knowledge.base` の一覧が空になった。プラグイン削除ではなく、フィルタ `file.inFolder("resources/exmem")` が、Vault を `works` から `resources` に替えたあとのパス（`exmem`）と合わなくなったのが原因。コアの `bases` は有効のまま。
+- ユーザーの指示で `file.path.contains("exmem/")` に変更し、どちらの Vault でも一致するようにした（途中の `inFolder("exmem")` で、`resources` の Vault は復旧を確認済み。最終形の表示は未確認）。
+- 他に同種の問題を調べた。`*.base` は 1 つだけ、`.md` に Vault 相対のリンクは無し、`.obsidian/` に古いパスは無し。`works` の Vault は `userIgnoreFilters` に `resources/` を入れているため、そちらでは表が空のまま（意図した設定として変更しなかった）。
+
 ### 2026-11-02（daily 振り返りの施策 A1: 手順書の宣言に「実行者」を足す）
 - daily 振り返りで、na_apply.py の実行者が 11 分で 3 回変わった（7c2347f、33aa642、77a4018）のを手戻りとして挙げ、施策 A1（手順書の最初の宣言に「誰が実行するか」を置く）を出した。ユーザーが承認。
 - 反映先は `exmem/lessons/research-procedure-output.md` の Must 1。実行者（人 / AI / 両方）を宣言に足し、文脈から読み取れないときは聞く、とした。ユーザーの指示は「文脈から読み取れないケースもあるので」。

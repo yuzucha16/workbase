@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.inFolder("resources/exmem")
+    - file.path.contains("exmem/")
     - file.ext == "md"
 views:
   - type: table
