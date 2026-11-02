@@ -4,7 +4,6 @@
 
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
-| 2026-11-03 | 単発 | ooxml-clean の NA 2: PC1 の実 pptx を `cleankit.py` で `check` → `clean`（standard）し、PowerPoint で警告なしに開くか確かめる。結果で NA 1（room の `mask` への組み込み）に進む。手順は `guides/howto/ooxml-clean.md` | ユーザー（PC1） |
 | 2026-11-04 | 単発 | 保留 2 件（元は log の Open Questions。11-05 から前倒し）: ① `repos/` の受け渡し（`dev` の `env/` の実使用の後に決める）、② `restore_project` の `_noai/final/` の上書き（実機で保護を試してから決める） | ユーザー（実機） |
 | 2026-11-05 | 単発 | room-type-consolidation の実機確認（起票 10-25。追加の作業が入ったため 11-05 に設定、11-01 ユーザー）: 1 Project で `env/` と `tests/` と `docs/` に加えて `src/`（コード開発）を通す実測（題材は同じ WSL の Python 環境。`repos:` を書いた `dev` の Project）。観察点: 構成要素の選び方、置き場の取り違えの再発、検証が自己向けになって弱くならないか（ユーザー、10-25）。案 A の実装（`a9d03cc` `721f3f9`。単体テストのみ）の実機確認: ① `room start` で `~/src/<repo>` が `--add-dir` で渡り、その `CLAUDE.md` が読まれる ② AI が `git -C ~/src/<repo>` で commit でき、`ai/` に化けない ③ 修正した `ROOM.md` が届いて置き場の取り違えが再発しない ④ `room close` が未 push の clone で止まる ⑤ 対話での `cd` 後の cwd の持続（未測）。あわせて置き場の実測（11-01、旧 11-07 の「聞き返すか」を統合）: ケース A `src/` のみ、B `src/` `tests/` `docs/`、C `env/` `src/` `tests/` `docs/` `report.md` を、置き場を依頼に書かずに通す。規則なしで `<成果物名>` の付け方を見てから、`dev-deliverable-guide.md` に「既定は Project 名と同じ」を書いて再測。詳細は `topics/room-type-consolidation/docs/log.md` | ユーザー（実機） |
 | 2026-11-05 | 単発 | token-cap NA 6: 出力の型（8 本）の試用の結果を見る（誤爆、型の品質、開始時の大きさ） | ユーザー |
