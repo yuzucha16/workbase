@@ -654,19 +654,35 @@ def load_terms(path):
         data = tomllib.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, tomllib.TOMLDecodeError) as e:
         raise CleanError(f"語の一覧を読めない: {path}（{e}）")
-    return sorted({w for v in (data.get("terms") or {}).values() if isinstance(v, list) for w in v if isinstance(w, str) and w}, key=len, reverse=True)
+    words = set()
+    for kind in (data.get("terms") or {}).values():  # [terms.CUST] の下の <キー> = ["正式名", "表記ゆれ"…]
+        for arr in (kind.values() if isinstance(kind, dict) else [kind]):
+            if isinstance(arr, list):
+                words.update(w for w in arr if isinstance(w, str) and w)
+    return sorted(words, key=len, reverse=True)
+
+
+def sensitive_hits(text, terms=()):
+    """文字列の中の、金額・メール・電話・大きな数・割合の形と、指定した語の当たりを [(区分, [当たり…])] で返す（置換はしない）。"""
+    out = []
+    for label, rx in SENSITIVE_PATTERNS.items():
+        hits = sorted({m.group(0).strip() for m in rx.finditer(text)})
+        if hits:
+            out.append((label, hits))
+    hit_terms = [t for t in terms if t in text]
+    if hit_terms:
+        out.append(("mask.toml の語", hit_terms))
+    return out
 
 
 def check_sensitive(pkg, ext, fs, terms=()):
     vis = visible_text_xlsx(pkg) if ext in (".xlsx", ".xlsm") else visible_text_pptx(pkg)
     text = "\n".join(vis)
-    for label, rx in SENSITIVE_PATTERNS.items():
-        hits = sorted({m.group(0).strip() for m in rx.finditer(text)})
-        if hits:
+    for label, hits in sensitive_hits(text, terms):
+        if label == "mask.toml の語":
+            fs.append(Finding("sensitive-term", label, f"見えている文字に、指定した語が {len(hits)} 種類ある", hits))
+        else:
             fs.append(Finding("sensitive-pattern", label, f"見えている文字に、{label}の形が {len(hits)} 種類ある（置換はしない。通すかどうかは人が読んで決める）", hits))
-    hit_terms = [t for t in terms if t in text]
-    if hit_terms:
-        fs.append(Finding("sensitive-term", "mask.toml の語", f"見えている文字に、指定した語が {len(hit_terms)} 種類ある", hit_terms))
 
 
 def check(pkg, ext, sensitive=False, terms=()):

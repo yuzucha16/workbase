@@ -1727,6 +1727,89 @@ class ReadmeDraftTest(unittest.TestCase):
                 room.cmd_readme(c, args)
 
 
+class StockAreaTest(unittest.TestCase):
+    def setup(self, tmp, boundary="external"):
+        v, c = opened(tmp)
+        ar = v / "areas/area-x/README.md"
+        ar.write_text(ar.read_text(encoding="utf-8").replace("boundary: internal", f"boundary: {boundary}"), encoding="utf-8", newline="\n")
+        return v, c, v / "projects/proj-a"
+
+    def ns(self, **kw):
+        d = dict(name="proj-a", yes=True, dst="area")
+        d.update(kw)
+        return argparse.Namespace(**d)
+
+    def put(self, p, rel, text):
+        f = p / "ai/out/area" / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(text, encoding="utf-8", newline="\n")
+
+    def test_delivers_knowledge_and_docs_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "knowledge/a.md", "# 決定\n理由と経緯\n")
+            self.put(p, "docs/b.md", "# 経緯\n")
+            room.cmd_stock(c, self.ns())
+            self.assertEqual((v / "areas/area-x/ai/knowledge/a.md").read_text(encoding="utf-8"), "# 決定\n理由と経緯\n")
+            self.assertTrue((v / "areas/area-x/ai/docs/b.md").exists())
+            c.msgs.clear()
+            room.cmd_stock(c, self.ns())
+            self.assertIn("0 件を運んだ", c.msgs[-1])
+
+    def test_sensitive_hit_stops_everything(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "knowledge/ok.md", "# 決定\n")
+            self.put(p, "knowledge/ng.md", "予算は 1,200,000 円、連絡は a@example.com\n")
+            with self.assertRaises(room.RoomError) as e:
+                room.cmd_stock(c, self.ns())
+            self.assertIn("金額", str(e.exception))
+            self.assertFalse((v / "areas/area-x/ai").exists())
+
+    def test_mask_toml_terms_stop(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            (p / "_noai").mkdir(exist_ok=True)
+            (p / "_noai/mask.toml").write_text('[terms.CUST]\nnames = ["株式会社テスト"]\n', encoding="utf-8")
+            self.put(p, "docs/x.md", "株式会社テストとの経緯\n")
+            with self.assertRaises(room.RoomError):
+                room.cmd_stock(c, self.ns())
+
+    def test_internal_area_is_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp, boundary="internal")
+            self.put(p, "knowledge/a.md", "x\n")
+            with self.assertRaises(room.RoomError):
+                room.cmd_stock(c, self.ns())
+
+    def test_wrong_subdir_is_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "other/a.md", "x\n")
+            with self.assertRaises(room.RoomError):
+                room.cmd_stock(c, self.ns())
+
+    def test_human_edited_destination_is_not_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "knowledge/a.md", "v1\n")
+            room.cmd_stock(c, self.ns())
+            dst = v / "areas/area-x/ai/knowledge/a.md"
+            dst.write_text("人が直した\n", encoding="utf-8")
+            self.put(p, "knowledge/a.md", "v2\n")
+            room.cmd_stock(c, self.ns())
+            self.assertEqual(dst.read_text(encoding="utf-8"), "人が直した\n")
+
+    def test_updates_when_destination_is_untouched(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "knowledge/a.md", "v1\n")
+            room.cmd_stock(c, self.ns())
+            self.put(p, "knowledge/a.md", "v2\n")
+            room.cmd_stock(c, self.ns())
+            self.assertEqual((v / "areas/area-x/ai/knowledge/a.md").read_text(encoding="utf-8"), "v2\n")
+
+
 class StockTest(unittest.TestCase):
     DRAFT = ("---\ntype: inbox\ntitle: テスト知識\ntags:\n  - a\n  - b\n  - c\ncreated: 2026-10-12\nbase_commit: {base}\nobserved: 2026-10-12\n"
              "sources:\n  - Claude Code conversation \"x\"\n---\n\n# t\n\n## Goal\nx\n統合先の候補: lessons/topic-a.md（キーワード: a）\n\n## Principles\nなし\n")
@@ -1743,9 +1826,15 @@ class StockTest(unittest.TestCase):
         return v, c, r, base
 
     def ns(self, **kw):
-        d = dict(name="proj-a", yes=True)
+        d = dict(name="proj-a", yes=True, dst="kit")
         d.update(kw)
         return argparse.Namespace(**d)
+
+    def test_dst_is_required(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, r, base = self.setup(tmp)
+            with self.assertRaises(room.RoomError):
+                room.cmd_stock(c, self.ns(dst=None))
 
     def test_delivers_without_stale_mark_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as tmp:

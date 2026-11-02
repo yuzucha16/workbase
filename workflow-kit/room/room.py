@@ -26,6 +26,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cleankit  # noqa: E402
 import maskkit  # noqa: E402
 
 MOUNT_ROOT = "/mnt/room"
@@ -2044,7 +2045,80 @@ def stock_staleness(ctx, base):
     return True, [l.strip().removeprefix("exmem/") for l in out.splitlines() if l.strip()]
 
 
+STOCK_DSTS = ("kit", "area")
+AREA_STOCK_DIRS = ("knowledge", "docs")  # --dst area で運べる、ai/out/area/ の直下の区分
+
+
 def cmd_stock(ctx, a):
+    """知見の下書きを、人の確認を経て行き先へ運ぶ。--dst kit は exmem/inbox/、--dst area は Area の ai/ 配下。行き先を省くと止まる。コミットしない。"""
+    dst = getattr(a, "dst", None)
+    if dst not in STOCK_DSTS:
+        raise RoomError("--dst が要る: kit（公開の共有知。ai/out/stock/ → exmem/inbox/）か "
+                        "area（この Area の知識・経緯。ai/out/area/ → areas/<Area>/ai/。external の Area だけ）")
+    if dst == "area":
+        return stock_to_area(ctx, a)
+    return stock_to_kit(ctx, a)
+
+
+def stock_to_area(ctx, a):
+    """ai/out/area/{knowledge,docs}/**.md を、areas/<Area>/ai/ の同じ相対パスへ運ぶ。external の Area だけ。
+    運ぶ前に cleankit の検出（金額・メール・電話などの形、mask.toml の語）を全ファイルに通し、1 つでも当たれば何も運ばず止まる。"""
+    p = Project.load(ctx, a.name)
+    if check_area(p) != "external":
+        raise RoomError(f"--dst area は boundary: external の Area だけ（{p.area} は internal。実名つきの知識は `ai/out/knowledge/` に置き、"
+                        "`room restore` で `_noai/knowledge/` に戻す）")
+    src = p.ai / "out" / "area"
+    files = sorted(f for f in src.rglob("*.md") if f.is_file()) if src.is_dir() else []
+    if not files:
+        ctx.say("運ぶ下書きは無い（ai/out/area/knowledge/*.md、ai/out/area/docs/*.md）")
+        return
+    dest_root = p.area_dir / "ai"
+    if not p.area_dir.is_dir():
+        raise RoomError(f"Area が無い: {p.area_dir}")
+    bad = [f for f in files if f.relative_to(src).parts[0] not in AREA_STOCK_DIRS or len(f.relative_to(src).parts) < 2]
+    if bad:
+        raise RoomError("ai/out/area/ の直下は " + "、".join(AREA_STOCK_DIRS) + " のどちらかに置く: "
+                        + ", ".join(str(f.relative_to(src)) for f in bad) + "（何も運んでいない）")
+    terms_path = p.dir / "_noai" / "mask.toml"
+    terms = cleankit.load_terms(terms_path) if terms_path.exists() else []
+    problems = []
+    for f in files:
+        text = f.read_text(encoding="utf-8")
+        for label, hits in cleankit.sensitive_hits(text, terms):
+            problems.append(f"{f.relative_to(src)}: {label}: {', '.join(hits[:5])}" + (f" ほか {len(hits) - 5} 件" if len(hits) > 5 else ""))
+    if problems:
+        raise RoomError("運ぶ前の点検（cleankit）に当たった。何も運んでいない。部屋の AI に直させるか、人が確認して書き換える:\n  " + "\n  ".join(problems))
+    man = load_manifest(p)
+    sent = man.setdefault("area_stock", {})
+    delivered = 0
+    for f in files:
+        rel = f.relative_to(src).as_posix()
+        raw = f.read_bytes().replace(b"\r\n", b"\n")
+        digest = hashlib.sha256(raw).hexdigest()
+        dst = dest_root / rel
+        if dst.exists():
+            cur = hashlib.sha256(dst.read_bytes()).hexdigest()
+            if cur == digest:
+                ctx.say(f"  済み（同じ内容が Area にある）: {rel}")
+                continue
+            if sent.get(rel, {}).get("sha256") != cur:
+                ctx.say(f"  運ばない（Area の ai/{rel} は、前回運んだ後に人が変えた、または運んだ記録が無い。人が確認して消すか、名前を変える）")
+                continue
+        ctx.say(f"  {rel}" + ("（上書き: 前回運んだ版から更新）" if dst.exists() else "（新規）"))
+        if not a.yes and input(f"    areas/{p.area}/ai/ に運ぶか [y/N]: ").strip().lower() != "y":
+            ctx.say("    運ばなかった")
+            continue
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(raw)
+        sent[rel] = {"sha256": digest, "delivered": ctx.now()}
+        delivered += 1
+        ctx.say(f"    運んだ: areas/{p.area}/ai/{rel}（コミットしていない）")
+    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
+    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    ctx.say(f"{delivered} 件を運んだ")
+
+
+def stock_to_kit(ctx, a):
     """ai/out/stock/*.md（部屋の AI の【汎用】の下書き）を、人の確認を経て resources/exmem/inbox/ に運ぶ。コミットしない（stock-hook.md の方針）。"""
     p = Project.load(ctx, a.name)
     src = p.ai / "out" / "stock"
@@ -2073,7 +2147,7 @@ def cmd_stock(ctx, a):
             continue
         meta = read_frontmatter(f)
         if meta.get("scope", "") == "area":
-            ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。ai/out/knowledge/ に置いて restore で Area に戻す）: {f.name}")
+            ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。external の Area は ai/out/area/ に置いて `room stock --dst area`、internal は ai/out/knowledge/ に置いて restore で Area に戻す）: {f.name}")
             continue
         base, observed = meta.get("base_commit", ""), meta.get("observed", "")
         if not base or not observed:
@@ -2936,8 +3010,9 @@ def build_parser():
     pl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
-    st = sub.add_parser("stock", help="ai/out/stock/ の【汎用】の下書きを、確認を経て exmem/inbox/ に運ぶ")
-    st.add_argument("name"); st.add_argument("--yes", action="store_true", help="確認を省く（印と対応表の点検は行う）")
+    st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ運ぶ（--dst kit: ai/out/stock/ → exmem/inbox/、--dst area: ai/out/area/ → areas/<Area>/ai/）")
+    st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。external だけ。cleankit の点検に当たると止まる）")
+    st.add_argument("--yes", action="store_true", help="確認を省く（印・対応表・cleankit の点検は行う）")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")

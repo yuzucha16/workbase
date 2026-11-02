@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【room】`room stock` に `--dst kit|area` を足し、external の Area の知識・経緯は exmem を通さず `areas/<Area>/ai/` へ運ぶ（2026-11-02）
+- 決めたこと（ユーザー）: ① 知見の運び先は `room stock --dst kit|area` の 1 コマンドで分ける（コマンドを増やさない）。`--dst` を省くと止まる。② `--dst area` は運ぶ前に `cleankit` の検出（金額・メール・電話などの形、`mask.toml` の語）を必須の関門にし、当たれば何も運ばず止まる。③ 運び先は `areas/<Area>/ai/`（`knowledge/` と `docs/`）。過去の決定・経緯を今の判断のデータソースにするため。④ internal の Area は `--dst area` を使えない（実名つきの `_noai/knowledge/` へは `restore` のまま）。`restore` 自体は、使われなければ後で外す。
+- 未決（ユーザーが議論してから）: Area の `ai/` を部屋に見せる方式（写しかマウントか）、部屋の AI の書き込み経路、internal への適用。
+- 実装: `room.py`（`cmd_stock`、`stock_to_area`、`stock_to_kit`）、`cleankit.py`（`sensitive_hits`。あわせて `load_terms` が実際の `mask.toml` の形で語を返さない不具合を直した）、テスト。
+
 ### 【room】`start` から自動のマスク・復元を外し、マスクの出力は人が `--adopt` で通すまで止める。`cleankit check` に検出を足す（2026-11-02）
 - 決めたこと（ユーザー）: ① mask / restore / pull は room の `start` の流れから外す（コマンドは残す。単体スクリプトへの移動は、使わないと分かってから第2段）。② 守りは、実行（置換）から、確認・警告（人の関門、検出）へ移す。③ マスクの出力は manifest に `pending` で記録し、人が `ai/in/` を読んで `start --adopt` で通す。`--adopt` は `raw_sha256` などの既存の記録を残す。④ `cleankit check` に、見えている文字の金額・メール・電話・割合の形と、`--terms <mask.toml>` の語の警告を足す（置換はしない。`clean` の点検には足さない）。
 - 見送り: 外向けの Area で Area 共有の `ai/` を読み取り専用でマウントする案（`_noai/` を含む Area ディレクトリのマウントは不可）。実機の都合が大きいので別に検討する。

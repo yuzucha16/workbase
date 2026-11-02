@@ -457,6 +457,13 @@ class SensitiveCheckTest(unittest.TestCase):
         finally:
             ck.visible_text_xlsx = orig
 
+    def test_load_terms_reads_mask_toml_shape(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "mask.toml"
+            f.write_text('[terms.CUST]\nacme = ["ACME株式会社", "ACME"]\n[terms.PERSON]\nt = ["田中"]\n[columns]\n"a!b" = "CUST"\n', encoding="utf-8")
+            self.assertEqual(ck.load_terms(f), ["ACME株式会社", "ACME", "田中"])
+
     def test_detects_amount_mail_phone_percent_and_terms(self):
         fs = self.run_check(["売上 ¥1,200,000 / 3億円", "a.b@example.com", "03-1234-5678", "達成率 85%", "アクメ商事の件"], ["アクメ商事"])
         by = {f.part: f for f in fs}

@@ -50,11 +50,13 @@ Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入
 - `base_commit: <~/shared/ROOM.md の基準コミット>`
 - `observed: YYYY-MM-DD`（観測した日。並べる順は到着順でなく、この日付）
 
-**`area`**: `ai/out/knowledge/YYYY-MM-DD-<topic>.md` に書く。frontmatter は `kind: lesson`（`stock 理解` なら `explain`）、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない（workbase の版に紐づかない）。マスクのまま書き、人が `room restore` で実名に戻して Area の知識置き場に置く。次の Project では、人が `room pull` で受け取る。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
+**`area`（Area の boundary が `external` のとき。2026-11-02）**: 実名を含めずに書く。`ai/out/area/knowledge/YYYY-MM-DD-<topic>.md`（知識）か `ai/out/area/docs/YYYY-MM-DD-<topic>.md`（決定・経緯）。人が `room stock <名> --dst area` で、`cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）を通して `areas/<Area>/ai/` の同じ相対パスに運ぶ。点検に当たると何も運ばれないので、当たった形を書き換える（`~/shared` の `ai/out/area/` を直す）。
+
+**`area`（`internal` のとき）**: `ai/out/knowledge/YYYY-MM-DD-<topic>.md` に書く。frontmatter は `kind: lesson`（`stock 理解` なら `explain`）、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない（workbase の版に紐づかない）。マスクのまま書き、人が `room restore` で実名に戻して Area の知識置き場に置く。次の Project では、人が `room pull` で受け取る。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
 
 `stock 理解` の下書き（`kind: explain`）も同じ場所に書く。形は `stock-explain.md`（部屋の中では、マスク後の語だけで書く。対応表の語を含む下書きは、`room stock` が運ばない）。
 
-`public` は、人が `room stock <名>` で確認して `exmem/inbox/` に運ぶ。`kind` はそのまま運ばれる。`scope: area` の下書きが `ai/out/stock/` にあっても、`room stock` は運ばない。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
+`public` は、人が `room stock <名> --dst kit` で確認して `exmem/inbox/` に運ぶ。`kind` はそのまま運ばれる。`scope: area` の下書きが `ai/out/stock/` にあっても、`room stock` は運ばない。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
 
 ## 計画（部屋の中）
 
@@ -76,7 +78,8 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 | `brief` | 開始インタビュー | `room start <名>`（チェック、マスク、写しの送付、マウント、起動） | `ai/ctx/`、`ai/in/` |
 | `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（復元、works へのコミット） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
-| `stock`（`public`） | 下書きまで | `room stock <名>`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
-| `stock`（`area`） | `ai/out/knowledge/` に書く | `room restore`（`start` の終わりでも自動）で Area へ、次の Project で `room pull` | `ai/out/knowledge/` |
+| `stock`（`public`） | 下書きまで | `room stock <名> --dst kit`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
+| `stock`（`area`、external） | `ai/out/area/{knowledge,docs}/` に書く | `room stock <名> --dst area`（cleankit の点検を通して `areas/<Area>/ai/` へ） | `ai/out/area/` |
+| `stock`（`area`、internal） | `ai/out/knowledge/` に書く | `room restore`（`start` の終わりでも自動）で Area へ、次の Project で `room pull` | `ai/out/knowledge/` |
 
 `integrate` `review` は、部屋では行わない（`hooks.md` の r/w 表で －。works 側の workbase の作業）。works の作成と雛形の反映は `room mkworks`、部屋の作成は `room init`（どちらも人が打つ）。
