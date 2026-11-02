@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【room】`boundary:` を `external | internal` にし、無印は `external`（厳しい側が既定）。業務データの取り込みは `internal` の Area だけ（2026-11-02）
+- 決めたこと（ユーザー）: ① `boundary:` は `external`（外向け相当）か `internal`。無印・それ以外の値は `external` 扱い。② `external` の Area は業務データを AI に入れない（`pull`、`_noai/raw/` のマスク、`start --adopt` を止める）。AI に入れるのは、ユーザー自身が作るものだけ（論点整理、課題設定、プロジェクト管理、治具ツールなど）。③ `internal` はマスクでなく、人が通したファイルだけを入れる（ファイル単位、manifest のハッシュ）。`cleankit` と `pptxtext` は一次スクリーニングとして残す。④ 顧客属性による緩和は、必要になってから別キーで足す（`boundary:` の値は増やさない）。
+- 実装: `room.py`（`normalize_boundary`、`require_internal`、`check_area`、`init`/`open` の `--boundary`）、テスト、`room/README.md`。
+- 未実装: `internal` の通し手順の整備、`cleankit` の既定の見直し（`internal` で `strict`）。
+- 理由は非公開の記録に置いた（公開リポジトリには書かない）。
+
 ### 【room】`rename-area` を `mv` に作り直す（部屋も改名する・履歴は追わない）（2026-11-02）
 - 根拠: ユーザー「やりたいことは命名規則の統一程度。コミット履歴は不要（git はほぼスナップショット）、wsl はディストロの rename だけで十分」「room mv として作り直す。wsl は公式（export → import）に従う」。works の許可リスト化（48e6fc3）で追跡が README・docs・ai/docs だけになり、旧実装の「部屋は触らない」「リンクは README だけ」が目立ったため。
 - 決めたこと: `room mv <旧> <新>`。部屋は `wsl --export`/`--import`/`--unregister` で改名（中身ごと写る）、失敗時は旧をそのまま残して止まる。リンクは `areas/` `projects/` `archives/` の `.md` 全体で直す（`_noai/` と `ai/` の docs 以外は除く）。manifest は `area` と `masked_from` を直す。コミットは 1 つ。

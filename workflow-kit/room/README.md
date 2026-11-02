@@ -13,8 +13,8 @@ cd <このディレクトリ>
 uv run room.py mkworks [--role 業務用|個人用] [--remote none|<URL>] [--no-commit]
 uv run room.py mkworks --update [--yes] [--base <resources のハッシュ>] [--no-commit]
 uv run room.py mkworks --sub [--role 個人用|業務用] [--rev <resources のハッシュ>] [--no-commit]
-uv run room.py init <Area> [--boundary <印>] [--resume] [--only <段,…>] [--no-commit]
-uv run room.py open <Project> --area <Area> [--type dev|inv] [--boundary <印>] [--no-commit]
+uv run room.py init <Area> [--boundary external|internal] [--resume] [--only <段,…>] [--no-commit]
+uv run room.py open <Project> --area <Area> [--type dev|inv] [--boundary external|internal] [--no-commit]
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--gateway] [--adopt] [--no-commit]
 uv run room.py close <Project> [--commit]
 uv run room.py umount --area <Area>
@@ -53,6 +53,14 @@ uv run room.py mv <旧Area> <新Area> [--no-commit]
 | `umount` | 部屋に残った `/mnt/room/*` のマウントを外す |
 
 `start --adopt` は、`ai/in/` の現在のファイルを、この Project の入力として人が確認したと manifest に記録する（マスクを通さない入力用）。`start --yes` は、`mask.toml` が変わったときの `ai/in/` 作り直しの確認を省く。`--no-launch` は、起動せずにマウントしたまま待つ（Zed の WSL リモートで使うとき。Enter で、アンマウントと回収に進む）。開くフォルダは `/mnt/room/<Project>`（`/mnt/room` を開かない。記録・git・会話履歴が壊れる）。待つ間、部屋が止まってマウントが消えないよう、部屋で `sleep infinity` を動かす（実機で確認済み: 2026-10-18。待つ間マウントは残り、Enter で戻る。`wsl.exe` はコンソールから切り離して起こす）。
+
+## boundary（Area の属性。2026-11-02）
+
+Area の `README.md` の `boundary:` は `external`（外向け相当。**既定**）か `internal`。無印や、それ以外の値は `external` として扱う（厳しい側に倒す）。
+
+- `external`: 業務データを AI の入力にしない。`pull`、`_noai/raw/` の原本のマスク、`start --adopt` は止まる。AI に入れるのは、ユーザー自身が作るもの（論点整理、課題設定、プロジェクト管理、治具ツールなど）だけ。
+- `internal`: 人が通したファイルだけを入れる（ファイル単位。`ai/in/` に置き、`start --adopt` で manifest にハッシュを記録する）。`cleankit`（`strict` が向く）と `pptxtext` は、通す前の一次スクリーニング。マスクは補助で、通すかどうかは人の目で決める。
+- 顧客ごとの違いが要るときは、`boundary:` の値を増やさず、別のキーで足す。
 
 ## マスクと復元は状態で決まる
 

@@ -528,14 +528,11 @@ class InitTest(unittest.TestCase):
             self.assertTrue(any(l.startswith("Room-Rev: ") and len(l) > len("Room-Rev: ") for l in tr), tr)
             self.assertFalse(any(l.startswith("Room-Project") for l in tr))
 
-    def test_init_without_boundary_does_not_create_area(self):
+    def test_init_without_boundary_creates_external_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
-            wsl = FakeWsl(distros=())
-            with self.assertRaises(room.RoomError):
-                room.cmd_init(ctx_for(v, wsl), argparse.Namespace(area="area-y", resume=False, boundary=None, commit=True))
-            self.assertFalse((v / "areas" / "area-y").exists())
-            self.assertFalse(hasattr(wsl, "installed"))
+            room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary=None, commit=True))
+            self.assertIn("boundary: external", (v / "areas/area-y/README.md").read_text(encoding="utf-8"))
 
     def test_init_existing_area_makes_no_commit(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -950,16 +947,47 @@ class OpenTest(unittest.TestCase):
             with self.assertRaises(room.RoomError):
                 room.cmd_open(ctx_for(v), argparse.Namespace(name="p", area="area-x", type="dev", boundary=None, commit=False))
 
-    def test_open_requires_boundary(self):
+    def test_open_without_boundary_is_external_and_writes_nothing(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
-            (v / "areas/area-x/README.md").write_text("---\nstatus: active\n---\n\n# x\n", encoding="utf-8")
-            a = argparse.Namespace(name="p", area="area-x", type="dev", boundary=None, commit=False)
+            readme = v / "areas/area-x/README.md"
+            readme.write_text("---\nstatus: active\n---\n\n# x\n", encoding="utf-8")
+            room.cmd_open(ctx_for(v), argparse.Namespace(name="p", area="area-x", type="dev", boundary=None, commit=False))
+            self.assertNotIn("boundary", readme.read_text(encoding="utf-8"))
+
+    def test_open_rejects_unknown_boundary_value(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = make_vault(tmp)
             with self.assertRaises(room.RoomError):
-                room.cmd_open(ctx_for(v), a)
-            a.boundary = "internal"
-            room.cmd_open(ctx_for(v), a)
-            self.assertIn("boundary: internal", (v / "areas/area-x/README.md").read_text(encoding="utf-8"))
+                room.cmd_open(ctx_for(v), argparse.Namespace(name="p", area="area-x", type="dev", boundary="顧客A", commit=False))
+
+
+class BoundaryGuardTest(unittest.TestCase):
+    def test_normalize_defaults_to_external(self):
+        for v in ("", None, "external", "顧客A", "Internal "):
+            self.assertEqual(room.normalize_boundary(v), "external")
+        self.assertEqual(room.normalize_boundary("internal"), "internal")
+
+    def external_project(self, tmp):
+        v, c = opened(tmp)
+        readme = v / "areas/area-x/README.md"
+        readme.write_text(readme.read_text(encoding="utf-8").replace("boundary: internal", "boundary: external"), encoding="utf-8")
+        return v, c, v / "projects/proj-a"
+
+    def test_pull_is_refused_for_external_area(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.external_project(tmp)
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_pull(c, argparse.Namespace(name="proj-a", where=["org=x"], yes=True))
+            self.assertIn("internal", str(cm.exception))
+
+    def test_mask_with_raw_is_refused_for_external_area(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.external_project(tmp)
+            (p / "_noai/raw").mkdir(parents=True, exist_ok=True)
+            (p / "_noai/raw/a.md").write_text("x\n", encoding="utf-8")
+            with self.assertRaises(room.RoomError):
+                room.mask_project(c, room.Project.load(c, "proj-a"))
 
 
 class StartTest(unittest.TestCase):

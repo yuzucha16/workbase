@@ -295,13 +295,30 @@ def check_gitignore(ctx):
         raise RoomError(f".gitignore に必須の行が無い: {missing}（guides/howto/ai-room-setup.md の 2.1）")
 
 
+BOUNDARIES = ("external", "internal")
+
+
+def normalize_boundary(value):
+    """boundary: は external（外向け相当。既定）か internal。無印や、それ以外の値は external として扱う（厳しい側に倒す）。"""
+    return "internal" if str(value or "").strip() == "internal" else "external"
+
+
+def check_boundary_arg(value):
+    if value is not None and value not in BOUNDARIES:
+        raise RoomError(f"--boundary は {' か '.join(BOUNDARIES)} のどちらか: {value}")
+
+
+def require_internal(p, what):
+    """業務データを AI の入力にする経路（pull・マスク・adopt）は、boundary: internal の Area だけ。"""
+    if normalize_boundary(read_frontmatter(p.area_dir / "README.md").get("boundary", "")) != "internal":
+        raise RoomError(f"{what}は boundary: internal の Area だけ（{p.area} は external 扱い。業務データは AI に入れない。"
+                        f"社内向けなら Area の README.md に boundary: internal を付ける）")
+
+
 def check_area(p):
     if not p.area_dir.exists():
         raise RoomError(f"Area が無い: {p.area_dir}")
-    boundary = read_frontmatter(p.area_dir / "README.md").get("boundary", "")
-    if not boundary:
-        raise RoomError(f"Area の README.md に boundary: が無い（顧客・機密度の印）: {p.area_dir / 'README.md'}")
-    return boundary
+    return normalize_boundary(read_frontmatter(p.area_dir / "README.md").get("boundary", ""))
 
 
 def check_distro(ctx, p):
@@ -702,14 +719,16 @@ def cmd_open(ctx, a):
     if not area_dir.exists():
         raise RoomError(f"Area が無い: {area_dir}")
     area_readme = area_dir / "README.md"
+    check_boundary_arg(a.boundary)
     boundary = read_frontmatter(area_readme).get("boundary", "")
     if not boundary:
         if not a.boundary:
-            raise RoomError("Area に boundary: が無い。--boundary <印> で付ける（例: internal、顧客を表す名前）")
-        area_readme.write_text(
-            update_frontmatter(area_readme.read_text(encoding="utf-8"), {"boundary": a.boundary}),
-            encoding="utf-8", newline="\n")
-        ctx.say(f"Area に boundary: {a.boundary} を付けた")
+            ctx.say("Area に boundary: が無い。external（外向け相当）として扱う")
+        else:
+            area_readme.write_text(
+                update_frontmatter(area_readme.read_text(encoding="utf-8"), {"boundary": a.boundary}),
+                encoding="utf-8", newline="\n")
+            ctx.say(f"Area に boundary: {a.boundary} を付けた")
     for top in ("projects", "archives"):
         if (ctx.vault / top / a.name).exists():
             raise RoomError(f"同名がすでにある: {top}/{a.name}")
@@ -1090,20 +1109,21 @@ def parse_only(value):
 def cmd_init(ctx, a):
     """Area の部屋（専用ディストロ）を作り、道具を入れる。ログインは人が行う。"""
     boundary_arg = getattr(a, "boundary", None)
+    check_boundary_arg(boundary_arg)
     area_readme = ctx.vault / "areas" / a.area / "README.md"
     if not area_readme.exists():
-        if not boundary_arg:
-            raise RoomError(f"Area が無い: areas/{a.area}。作るなら --boundary <印> を付ける（例: internal、顧客を表す名前。既定値は無い）")
+        boundary_arg = boundary_arg or "external"  # 既定は厳しい側
         area_readme.parent.mkdir(parents=True, exist_ok=True)
         area_readme.write_text(AREA_README_TEMPLATE.format(area=a.area, boundary=boundary_arg, today=ctx.today()),
                                encoding="utf-8", newline="\n")
         ctx.say(f"Area を作った: areas/{a.area}（boundary: {boundary_arg}）")
     elif not read_frontmatter(area_readme).get("boundary"):
         if not boundary_arg:
-            raise RoomError("Area に boundary: が無い。--boundary <印> で付ける（README の frontmatter でもよい）")
-        area_readme.write_text(update_frontmatter(area_readme.read_text(encoding="utf-8"), {"boundary": boundary_arg}),
-                               encoding="utf-8", newline="\n")
-        ctx.say(f"Area に boundary: {boundary_arg} を付けた")
+            ctx.say("Area に boundary: が無い。external（外向け相当）として扱う")
+        else:
+            area_readme.write_text(update_frontmatter(area_readme.read_text(encoding="utf-8"), {"boundary": boundary_arg}),
+                                   encoding="utf-8", newline="\n")
+            ctx.say(f"Area に boundary: {boundary_arg} を付けた")
     scaffold_area(ctx, a.area)  # 部屋がすでにあって止まる場合も、足りない置き場は作る
     ca_cert = getattr(a, "ca_cert", None)
     ca_pem, ca_prints = load_ca_cert(ca_cert) if ca_cert else (None, [])  # 部屋を触る前に、検査で止める
@@ -1574,6 +1594,7 @@ def cmd_start(ctx, a):
     boundary = preflight(ctx, p)
     masked = mask_project(ctx, p, yes=a.yes)
     if a.adopt:
+        require_internal(p, "--adopt（人が通した入力の記録）")
         n = adopt_in(ctx, p)
         ctx.say(f"ai/in の {n} ファイルを、この Project の入力として manifest に記録した")
     problems = check_provenance(p)
@@ -1696,6 +1717,7 @@ def mask_project(ctx, p, yes=False):
     raw = maskkit.list_files(n / "raw")
     if not raw:
         return 0
+    require_internal(p, "原本のマスク（業務データを AI の入力にすること）")
     stray = sorted(r for r in raw if not r.startswith(PULL_PREFIX))
     if stray:
         ctx.say(f"注意: _noai/raw に、pull で取り出したものではない原本がある（{len(stray)} 件）。原本は Area の {SOURCE_DEFAULT}/ に置き、`room pull --from source` で取り出す（raw は pull の出力）")
@@ -1934,6 +1956,7 @@ def pick_source_files(src, patterns):
 def cmd_pull(ctx, a):
     """Area の知識置き場（--from knowledge）か原本置き場（--from source）から、ファイルを _noai/raw/area/ に写す。マスクは room mask（start でも自動）。実名を読むので人が実行する。"""
     p = Project.load(ctx, a.name)
+    require_internal(p, "pull（Area の知識・原本の取り出し）")
     origin = getattr(a, "origin", None) or "knowledge"
     if origin == "source":
         src = source_dir(p)
@@ -2882,7 +2905,7 @@ def build_parser():
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
     o.add_argument("--type", default="dev", choices=["dev", "inv"])
-    o.add_argument("--boundary", help="Area に boundary: が無いときに付ける印")
+    o.add_argument("--boundary", choices=BOUNDARIES, help="Area に boundary: が無いときに付ける値（external か internal。無印は external）")
     o.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
     o.add_argument("--no-commit", dest="commit", action="store_false", help="初期状態をコミットしない（既定はコミットする）")
     s = sub.add_parser("start", help="チェック → マウント → AI を起動 → アンマウント → 回収")
@@ -2913,7 +2936,7 @@ def build_parser():
     i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")
     i.add_argument("--only", help="既存の部屋に、指定した段だけを入れ直す（--resume を含む。カンマ区切り: " + ", ".join(INIT_STEPS) + "）")
     i.add_argument("--ca-cert", help="部屋に入れる TLS 検査用のルート証明書（PEM、最大5枚）。TLS 検査のあるネットワークで curl が証明書エラー（60）になるときに指定する。既定は入れない")
-    i.add_argument("--boundary", help="Area が無い（または boundary: が無い）ときに付ける印（例: internal、顧客を表す名前。既定値は無い）")
+    i.add_argument("--boundary", choices=BOUNDARIES, help="Area が無い（または boundary: が無い）ときに付ける値（external か internal。既定は external）")
     i.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="Area の作成をコミットしない（既定はコミットする）")
     ak = sub.add_parser("aws-key", help="部屋の ~/.aws/credentials に、Bedrock 用のキーを入れる（入力は画面に出ない）")
     ak.add_argument("area"); ak.add_argument("--profile", required=True, help="プロファイル名（例: n1-trial）。同名の節は置き換える")
