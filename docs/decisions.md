@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【workflow-kit】review 入力 2 に注記の加算量の点検を足し、daily の材料取得は日付と時刻を明示して絞る（2026-11-02。daily 振り返りの施策 S1・S2、11-01 承認）
+- 決めたこと: ① `review-hook.md` の入力 2 に「注記を足した週は、その加算量を土台の増減と照らす」を足し、同じ字数以上を同じ項目から削った（5,973 字 → 5,965 字。決定の日付と「トークン。」などを削った）。② `exmem/lessons/retrospective-method-output.md` に、材料のコミットを `--since='YYYY-MM-DD 00:00' --until='次の日 00:00'` で絞る注記を足した。
+- 根拠: 日付だけの `--since=2026-11-02` は現在の時刻が補われ、当日 18 件が 0 件になった（実機で確認）。
+- 却下案: `--after=YYYY-MM-DD` への置き換え（`--since` の別名で、同じ結果になる）。
+
 ### 【room】`room stock` に `--dst kit|area` を足し、external の Area の知識・経緯は exmem を通さず `areas/<Area>/ai/` へ運ぶ（2026-11-02）
 - 決めたこと（ユーザー）: ① 知見の運び先は `room stock --dst kit|area` の 1 コマンドで分ける（コマンドを増やさない）。`--dst` を省くと止まる。② `--dst area` は運ぶ前に `cleankit` の検出（金額・メール・電話などの形、`mask.toml` の語）を必須の関門にし、当たれば何も運ばず止まる。③ 運び先は `areas/<Area>/ai/`（`knowledge/` と `docs/`）。過去の決定・経緯を今の判断のデータソースにするため。部屋の AI の書き場所は `ai/out/stock/` 一本で、`scope: public|area` と `dest: knowledge|docs`（既定 knowledge）で振り分ける（`ai/out/area/` の 2 分割は、数が少ないのでやめた）。Area の `ai/` は、部屋へ「写し」で見せる（`start` が `ai/ctx/area/` に読み取り専用で置く。直接書く案は、`stock` の経路の勘違いが原因で、取り下げた）。④ internal の Area は `--dst area` を使えない（実名つきの `_noai/knowledge/` へは `restore` のまま）。`restore` 自体は、使われなければ後で外す。
 - 未決（ユーザーが議論してから）: internal の Area への適用。
