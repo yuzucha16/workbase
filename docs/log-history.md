@@ -6,6 +6,7 @@
 - S1: `review-hook.md` の入力 2 に、注記を足した週は加算量を土台の増減と照らす点検を足した。同じ項目から字数を削り、5,973 字から 5,965 字。
 - S2: `git log --since=2026-11-02` が 0 件になる原因は、日付だけだと現在の時刻が補われることだった。`retrospective-method-output.md` に時刻つきの書き方を足した。
 - `exmem/inbox/2026-10-31-zed-wsl-remote-ext4.md` は、ユーザーが保留（未追跡のまま）。
+- push: 別セッションが先に 2 コミット（room stock、ooxml-clean）を push していたため、未 push の 2 コミットを `origin/main` の上に rebase した（衝突なし）。機密の検索は該当なしで、`424c227..002ddc4` を push した。
 
 ### 2026-11-02（`rename-area` を `room mv` に作り直した）
 - 発端: 許可リスト化（48e6fc3）後の `rename-area` の動きの相談。調査では、許可リスト化で壊れたところは無く、元からの穴（リンクは README だけ直す、書きかけを巻き込む、`masked_from` が旧名、部屋に触らない）が目立つと分かった。
