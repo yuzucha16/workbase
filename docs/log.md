@@ -8,6 +8,7 @@
 - やり方は `methods.md`。`brief 計画` は試験運用中。
 - room: type は `dev` と `inv`。検証用の works は `mkworks --sub`（実機で確認済み）。
 - works の git 追跡は許可リスト方式（10-29 決定。`decisions.md`）。
+- Area の改名は `room mv <旧> <新>`（旧 `rename-area`。11-02 作り直し。部屋は `wsl --export`/`--import` で改名、履歴は追わない。ee が実機で動作確認済み）。
 - Python の版: uv 管理が正本（`script-guide.md` の「Python の版と呼び方」）。
 - `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-15・11-29。
 - ファイル名: `workflow-kit/naming-rules.md`（10-29 決定）。一括改名はしない。

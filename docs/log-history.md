@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-02（`rename-area` を `room mv` に作り直した）
+- 発端: 許可リスト化（48e6fc3）後の `rename-area` の動きの相談。調査では、許可リスト化で壊れたところは無く、元からの穴（リンクは README だけ直す、書きかけを巻き込む、`masked_from` が旧名、部屋に触らない）が目立つと分かった。
+- ユーザーの決定: 履歴は不要（git はスナップショット）、WSL は改名だけで足りる。`room mv` として作り直す。WSL は公式（export → import）。
+- 実装（294b917、`room.py` `README.md` `hooks.md` `decisions.md`、テスト 145 件通過）: 部屋を export/import/unregister で改名（失敗時は旧を残して止まる）、リンクは `areas/` `projects/` `archives/` の `.md` 全体、manifest の `area` と `masked_from`、1 コミット。
+- 実機の確認: ユーザーが PC で `mv` を実行し、問題なしと報告した（11-02）。
+- 調査メモ: project files の `notes/rename-area-allowlist/2026-11-02-behavior.md`。
+
 ### 2026-11-01（daily 振り返り: 施策 S1・S2 を承認、Next Actions に積んだ）
 - `振り返って daily` を実施し、施策 2 件をユーザーが承認した。S1 は注記追加時に土台への加算量を点検する（`review-hook.md`）、S2 は daily の材料取得をコミット日付で絞る（`retrospective-method-output.md`）。どちらも kit または exmem の変更で wrap の書き込み範囲外なので、実装せず `log.md` の NA 1・2 に積んだ。根拠: 同日の token-cap の測定で土台 26k の主因が注記と分かった（`e93c9e2`）。
 
