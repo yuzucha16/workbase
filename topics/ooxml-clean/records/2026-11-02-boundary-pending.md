@@ -12,7 +12,7 @@
 
 ## 積んだ残り
 
-- 外向け（external）の Area で、共有用の `areas/<Area>/ai/` を読み取り専用でマウントする案。`_noai/` を含む Area ディレクトリそのもののマウントは不可（配下を除外できない）。`push_shared` と `ai/ctx/` の README の写しとの関係を読み直してから決める。
+- 外向け（external）の Area で、共有用の `areas/<Area>/ai/` を部屋に見せる案: 2026-11-02 に決着。マウントでなく「写し」（`start` が `ai/ctx/area/` に読み取り専用で置く）。書き込みは `room stock --dst area`（cleankit の点検つき）。internal への適用は未決（`docs/log.md` の NA4）。動作確認は別セッション（NA3）。
 - mask / restore / pull の単体スクリプト化（第 2 段）。使わないと分かってから。分けるときの注意: マスクの状態（原本と `mask.toml` のハッシュ）は manifest に入っている、restore は Area の置き場への公開（`routes` と `plan_publish`）も持つ、`start` の自動の歯止めが無くなる。
 - `cleankit` の `internal` での既定を `strict` にするか（今は `standard` が既定。room から呼ぶ組み込みは未実装）。
 - 検出（`check_sensitive`）の拡張: 出力側の点検（AI の出力に実名や金額の形が無いか）。

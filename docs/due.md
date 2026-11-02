@@ -20,6 +20,8 @@
 | 2026-11-11 | 単発 | token-cap: `integrate` の上限（仮 〜11-29）の個別の効果を再測定（`requests_by_kind.py --csv` で integrate の 10-27 以降の件数を見る。Windows 側と room 側。11-05 から延期）。10-29 の値（Windows 側、10-01 以降 16 件）: 10-27 より前 13 件は応答 9.4・1 件 809k・ピーク平均 92k。10-27 以降 3 件は応答 11.0・708k・ピーク 85k（うち 1 件は 7 応答でピーク 134k）。件数が少なく判定保留。room 側（PC1）の件数は未確認 | AI（ユーザーの依頼で） |
 | 2026-11-12 | 単発 | ooxml-clean NA 1: room の `mask` への組み込み（pptx の確認は済。報告の置き場の OQ もここで決める） | AI（ユーザーの依頼で） |
 | 2026-11-12 | 単発 | ooxml-clean OQ: 本文の個人名は `mask.toml` の運用に任せるか、候補の検出を足すか（判断） | ユーザー |
+| 2026-11-16 | 単発 | ooxml-clean NA 3: 外向け Area の共有（`room stock --dst area` と `ctx/area/` の写し）の PC1 での動作確認（別セッション。期日は仮） | ユーザー |
+| 2026-11-16 | 単発 | ooxml-clean NA 4: internal の Area への適用を決める（ee が na に積んだ。期日は仮） | ユーザー |
 | 2026-11-13 | 単発 | office-output-types NA 1: pptx → テキストの試行（公開 pptx 4 つ。PC1 不要） | ユーザー・AI |
 | 2026-11-13 | 単発 | office-output-types NA 2: PC1 で入力 2〜3 種類の見出し・列名だけで定義表の行を書く（実機） | ユーザー（PC1） |
 | 2026-11-14 | 単発 | office-output-types NA 3: 雛形を `exmem/lessons/` に昇格するか（11-13 の実機の後） | ユーザー |

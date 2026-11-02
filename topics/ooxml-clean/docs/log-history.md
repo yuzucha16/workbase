@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-02（外向け Area の共有を決め、`room stock --dst` と `ctx/area/` の写しを実装した）
+- 依頼: NA1「外向け Area で Area そのものを共有する是非」。棚卸し（`notes/area-share/2026-11-02-area-share-inventory.md`、project files）で、部屋が Area 単位で見るのは README の写しだけ、drvfs は配下除外ができず Area 全体のマウントは `_noai/` が見える、と確認。
+- ユーザーの決定: 共有したい中身は `knowledge/` と `docs/`（過去の決定・経緯を今の判断のデータソースにする）。Area の `ai/` は部屋へ「写し」で見せる（直接書く案は `stock` の経路の勘違いが原因で取り下げ）。知識の運び先は `room stock --dst kit|area`（省くと止まる）、`area` は cleankit の点検を必須の関門にする。書き場所は `ai/out/stock/` 一本、`scope` と `dest` で振り分け。internal への適用は未議論で na に積んだ。動作確認は別セッション。
+- 実装（2bd9328、3e1e4be、main に push）: `room.py`（`cmd_stock`、`stock_to_area`、`stock_to_kit`、`snapshot_area_ai`）、`cleankit.py`（`sensitive_hits`）、テスト（206 件通過）。副産物の修正 2 件: `load_terms` が実際の `mask.toml` の形で空を返していた、メールの検出が句読点の無い長い文で極端に遅くなり止まっていた。
+- 判断は root の `docs/decisions.md` の 2026-11-02「`room stock` に `--dst kit|area` を足し」の項。
+
 ### 2026-11-02（pptx を実ファイルで確認、読ませる用途は取り出しに割り切った）
 - ユーザーが PC1 の実 pptx を `cleankit.py` で通した。動作・開くのは問題なし。ただし背景・帯の社名を消すには `strict` が要り、`unseen-text` が使っていないレイアウト・マスターの文字と混ざって区別できなかった。cleankit の確認（旧 NA 2）はここで閉じた。
 - 原因の整理は `notes/ooxml-clean/2026-11-02-pptx-extract-vs-clean.md`（project files）。ユーザーの決定: 読ませるだけに割り切り（分析・示唆抽出・論点整理）、まずシンプルに作って仕様を足す（`decisions.md`）。

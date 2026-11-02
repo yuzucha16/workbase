@@ -15,8 +15,11 @@
 
 0. `pptxtext.py` の動作確認と要件の拡充（別セッション、PC1 の実 pptx が要る）。用途は分析・示唆抽出・論点整理で、図解は図形・矢印・画像が多い。見るところ: つながっていない矢印と線、画像の中の文字、グラフの値、位置を継ぐ図形の並び。直させる用途の掃除（cleankit の pptx 手直し）は、需要が見えるまでしない。
 
-1. 【期日 11-09】境界の見直し（external / internal）の動作確認と残り: `records/2026-11-02-boundary-pending.md`（PC1 の確認 5 点と、共有 `ai/` のマウント案、単体スクリプト化、cleankit の internal 既定）。
+1. 【期日 11-09】境界の見直し（external / internal）の動作確認と残り: `records/2026-11-02-boundary-pending.md`（PC1 の確認 5 点と、単体スクリプト化、cleankit の internal 既定）。
 2. 【期日 11-12】room の `mask` への cleankit の組み込み（決定 2026-10-30）。11-02 の見直しで `start` が自動でマスクしなくなったので、組み込み先と要否を、1 の確認の後に決め直す。
+
+3. 【期日 11-16】外向け Area の共有（NA1）の動作確認（別セッション、PC1）: external のダミーの Area で、部屋の AI が `ai/out/stock/` に `scope: area`（`dest: knowledge|docs`）で書く → `room stock <名> --dst area`（cleankit の点検に当たると止まる）→ `areas/<Area>/ai/` → 次の `start` で `ai/ctx/area/` に写る → AI が読める。確認点: 点検の雑音と取りこぼし、`docs/inbox.md` 除外、1 MiB 上限、人が直した先を上書きしない。
+4. 【期日 11-16】internal の Area への適用を決める（ee が na に積んだ。未議論）: 今は internal では `--dst area` も `ctx/area/` の写しも使えない（実名つきの知識は `ai/out/knowledge/` → `restore` → `_noai/knowledge/`）。論点: internal にも `ai/` の写しを許すか（internal の `ai/` には、人が通した業務データが入りうる）、点検を `strict` 相当にするか、`restore` を外すか（使われなければ外す、と ee）。
 
 ## Open Questions
 
