@@ -250,6 +250,9 @@ def main():
             stream.reconfigure(encoding="utf-8")
     try:
         if args.cmd == "close":
+            if args.plan == "-" and sys.stdin.isatty():
+                raise Stop("--plan - は標準入力から JSON を読む。端末のままでは待ち続けるので止めた。"
+                           "plan.json のパスを渡すか、パイプで渡す（例: Get-Content plan.json -Raw | ... --plan -）")
             raw = sys.stdin.buffer.read().decode("utf-8") if args.plan == "-" else Path(args.plan).read_text(encoding="utf-8")
             plan = json.loads(raw)
             outputs = plan_close(plan)
