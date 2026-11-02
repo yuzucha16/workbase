@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【room】`start` から自動のマスク・復元を外し、マスクの出力は人が `--adopt` で通すまで止める。`cleankit check` に検出を足す（2026-11-02）
+- 決めたこと（ユーザー）: ① mask / restore / pull は room の `start` の流れから外す（コマンドは残す。単体スクリプトへの移動は、使わないと分かってから第2段）。② 守りは、実行（置換）から、確認・警告（人の関門、検出）へ移す。③ マスクの出力は manifest に `pending` で記録し、人が `ai/in/` を読んで `start --adopt` で通す。`--adopt` は `raw_sha256` などの既存の記録を残す。④ `cleankit check` に、見えている文字の金額・メール・電話・割合の形と、`--terms <mask.toml>` の語の警告を足す（置換はしない。`clean` の点検には足さない）。
+- 見送り: 外向けの Area で Area 共有の `ai/` を読み取り専用でマウントする案（`_noai/` を含む Area ディレクトリのマウントは不可）。実機の都合が大きいので別に検討する。
+- 実装: `room.py`（`cmd_start`、`check_provenance`、`adopt_in`、`mask_project`）、`cleankit.py`（`check_sensitive`、`load_terms`）、テスト。
+
 ### 【room】`boundary:` を `external | internal` にし、無印は `external`（厳しい側が既定）。業務データの取り込みは `internal` の Area だけ（2026-11-02）
 - 決めたこと（ユーザー）: ① `boundary:` は `external`（外向け相当）か `internal`。無印・それ以外の値は `external` 扱い。② `external` の Area は業務データを AI に入れない（`pull`、`_noai/raw/` のマスク、`start --adopt` を止める）。AI に入れるのは、ユーザー自身が作るものだけ（論点整理、課題設定、プロジェクト管理、治具ツールなど）。③ `internal` はマスクでなく、人が通したファイルだけを入れる（ファイル単位、manifest のハッシュ）。`cleankit` と `pptxtext` は一次スクリーニングとして残す。④ 顧客属性による緩和は、必要になってから別キーで足す（`boundary:` の値は増やさない）。
 - 実装: `room.py`（`normalize_boundary`、`require_internal`、`check_area`、`init`/`open` の `--boundary`）、テスト、`room/README.md`。

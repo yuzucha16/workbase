@@ -66,8 +66,8 @@ Area の `README.md` の `boundary:` は `external`（外向け相当。**既定
 
 設定は無い。`type` に関係なく、`_noai/` は常に `raw/` `map/` `final/` `user/` を作る。
 
-- マスク（`start` / `mask`）: `_noai/raw/` に原本があるときだけ行う。無ければ何もしない。マスクしないデータは `raw/` に置かず、`ai/in/` に直接置いて `start --adopt` する。
-- 復元（`start` の終わり / `restore`）: `_noai/map/mapping.json` があるとき（その Project でマスクしたことがあるとき）だけ行う。マスクしたことが無い Project（dev など）の `ai/out/` は、戻すものではないので触らない。
+- マスク（`mask`。2026-11-02 から `start` は自動で行わない）: `_noai/raw/` に原本があるときだけ行う。無ければ何もしない。マスクの出力は「未確認」（manifest の `pending`）で、人が `ai/in/` を読んで `start --adopt` で通すまで、`start` は止まる。マスクしないデータは `raw/` に置かず、`ai/in/` に直接置いて `start --adopt` する。
+- 復元（`restore`。2026-11-02 から `start` は自動で行わない。`ai/out/` があれば案内だけ出す）: `_noai/map/mapping.json` があるとき（その Project でマスクしたことがあるとき）だけ行う。マスクしたことが無い Project（dev など）の `ai/out/` は、戻すものではないので触らない。
 - `user/` は人だけが使う仮置き（予約名。`room` は触らない）。`_noai/` 全体が追跡外で、AI にも見せない。
 
 ## 実装の決まり
@@ -112,7 +112,7 @@ WSL は差し替えて、一時ディレクトリの git で行う（実際の�
 xlsx・xlsm・pptx・pptm の、消したつもりで残っている情報（非表示シート、グラフ・ピボットのキャッシュ、定義名、コメント、文書プロパティ、ノート、埋め込みなど）を点検し、掃除した別ファイルを書く（2026-10-26。ダミーの単体テストと、LibreOffice で開き直す確認まで。Excel・PowerPoint 本体は未確認）。仕組みは `guides/explain/ooxml-residue.md`。**人が実行する**（原本と、残っていた実データを読むため）。room への組み込みは未定（実ファイルの点検の結果を見て決める）。
 
 ```powershell
-uv run --script cleankit.py check <ファイル>              # 点検だけ。報告は <ファイル>.check-report.md
+uv run --script cleankit.py check <ファイル> [--terms <mask.toml>]  # 点検だけ。報告は <ファイル>.check-report.md。見えている文字の中の金額・メール・電話・割合の形と、--terms の語を警告する（置換はしない。2026-11-02）
 uv run --script cleankit.py clean <ファイル> <出力先>     # 掃除。報告は <出力>.clean-report.md
 uv run --script cleankit.py clean <ファイル> <出力先> --keep notes,comments   # 動作を外す
 ```

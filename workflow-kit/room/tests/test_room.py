@@ -1256,6 +1256,12 @@ class MaskIntegrationTest(unittest.TestCase):
         d.update(kw)
         return argparse.Namespace(**d)
 
+    def run_flow(self, c, **kw):
+        """2026-11-02: start は自動でマスク・復元しない。mask → （人が確認して）start --adopt → restore の順に手で行う。"""
+        room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
+        room.cmd_start(c, self.args(adopt=True, **kw))
+        room.cmd_restore(c, argparse.Namespace(name="proj-a", force=False))
+
     def setup_project(self, tmp, wsl):
         v, c = opened(tmp, wsl)
         p = v / "projects/proj-a"
@@ -1273,7 +1279,7 @@ class MaskIntegrationTest(unittest.TestCase):
                 seen["in"] = (p / "ai/in/売上.csv").read_text(encoding="utf-8-sig")
                 (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は増加\n", encoding="utf-8", newline="\n")
             wsl.on_interactive = ai
-            room.cmd_start(c, self.args())
+            self.run_flow(c)
             self.assertNotIn("アクメ", seen["in"])
             self.assertIn("⟦CUST_001⟧", seen["in"])
             self.assertIn("アクメ商事株式会社 の売上は増加", (p / "_noai/final/report.md").read_text(encoding="utf-8"))
@@ -1285,13 +1291,36 @@ class MaskIntegrationTest(unittest.TestCase):
             self.assertNotIn("アクメ", (p / "ai/records/manifest.json").read_text(encoding="utf-8"))
             self.assertIn("アクメ商事株式会社", mapping)
 
+    def test_start_refuses_unapproved_mask_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p = self.setup_project(tmp, wsl)
+            room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
+            with self.assertRaises(room.RoomError) as cm:
+                room.cmd_start(c, self.args())
+            self.assertIn("確認していない", str(cm.exception))
+            self.assertEqual(wsl.interactive_calls, [])
+            room.cmd_start(c, self.args(adopt=True))  # 人が読んで通した
+            man = json.loads((p / "ai/records/manifest.json").read_text(encoding="utf-8"))
+            e = man["files"]["in/売上.csv"]
+            self.assertTrue(e["approved"] and "pending" not in e and e["raw_sha256"])
+
+    def test_start_does_not_mask_or_restore_by_itself(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c, p = self.setup_project(tmp, wsl)
+            wsl.on_interactive = lambda: (p / "ai/out/r.md").write_text("x\n", encoding="utf-8", newline="\n")
+            room.cmd_start(c, self.args())
+            self.assertFalse((p / "ai/in/売上.csv").exists())
+            self.assertFalse((p / "_noai/final/r.md").exists())
+
     def test_restore_stops_when_final_was_edited_by_human(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
             v, c, p = self.setup_project(tmp, wsl)
             write = lambda: (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は増加\n", encoding="utf-8", newline="\n")
             wsl.on_interactive = write
-            room.cmd_start(c, self.args())
+            self.run_flow(c)
             final = p / "_noai/final/report.md"
             final.write_text("人が直した\n", encoding="utf-8", newline="\n")
             (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は減少\n", encoding="utf-8", newline="\n")
@@ -1310,13 +1339,13 @@ class MaskIntegrationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
             v, c, p = self.setup_project(tmp, wsl)
-            room.cmd_start(c, self.args())
+            self.run_flow(c)
             mt = (p / "ai/in/売上.csv").stat().st_mtime_ns
-            room.cmd_start(c, self.args())
+            self.run_flow(c)
             self.assertEqual(mt, (p / "ai/in/売上.csv").stat().st_mtime_ns)
             (p / "_noai/mask.toml").write_text(self.MASK + '[terms.PERSON]\nt = ["田中太郎"]\n', encoding="utf-8", newline="\n")
             (p / "_noai/raw/売上.csv").write_text("顧客,額\nアクメ商事株式会社,100\n田中太郎,1\n", encoding="utf-8", newline="\n")
-            room.cmd_start(c, self.args())
+            self.run_flow(c)
             self.assertIn("⟦PERSON_001⟧", (p / "ai/in/売上.csv").read_text(encoding="utf-8-sig"))
 
     def test_raw_without_mask_toml_stops_before_mount(self):
@@ -1325,7 +1354,7 @@ class MaskIntegrationTest(unittest.TestCase):
             v, c, p = self.setup_project(tmp, wsl)
             (p / "_noai/mask.toml").unlink()
             with self.assertRaises(room.RoomError):
-                room.cmd_start(c, self.args())
+                room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
             self.assertEqual(wsl.interactive_calls, [])
 
     def test_unresolved_placeholder_stops_and_writes_no_final(self):
@@ -1334,7 +1363,7 @@ class MaskIntegrationTest(unittest.TestCase):
             v, c, p = self.setup_project(tmp, wsl)
             wsl.on_interactive = lambda: (p / "ai/out/r.md").write_text("⟦CUST_099⟧\n", encoding="utf-8", newline="\n")
             with self.assertRaises(room.RoomError) as cm:
-                room.cmd_start(c, self.args())
+                self.run_flow(c)
             self.assertIn("CUST_099", str(cm.exception))
             self.assertFalse((p / "_noai/final/r.md").exists())
             self.assertFalse(wsl.mounted)
@@ -1345,7 +1374,7 @@ class MaskIntegrationTest(unittest.TestCase):
             v, c, p = self.setup_project(tmp, wsl)
             wsl.on_interactive = lambda: (p / "ai/out/r.md").write_text("形は ⟦CUST_nnn⟧ です\n", encoding="utf-8", newline="\n")
             with self.assertRaises(room.RoomError) as cm:
-                room.cmd_start(c, self.args())
+                self.run_flow(c)
             self.assertIn("括弧を外す", str(cm.exception))
             self.assertFalse((p / "_noai/final/r.md").exists())
             self.assertFalse(wsl.mounted)
@@ -1431,7 +1460,9 @@ class PullKnowledgeTest(unittest.TestCase):
                 (p / "ai/out/knowledge").mkdir(parents=True)
                 (p / "ai/out/knowledge/topic-cutover.md").write_text("---\nkind: integrated\n---\n⟦CUST_001⟧ の切替は11月\n", encoding="utf-8", newline="\n")
             wsl.on_interactive = ai
-            room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=True))
+            room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
+            room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=True, commit=False, yes=True))
+            room.cmd_restore(c, argparse.Namespace(name="proj-a", force=False))
             self.assertNotIn("アクメ", seen["in"])
             self.assertNotIn("アクメ", seen["name"])
             self.assertIn("⟦CUST_001⟧", seen["in"])
@@ -1610,7 +1641,9 @@ class NoDataModeTest(unittest.TestCase):
                 seen["in"] = (p / "ai/in/議事録.md").read_text(encoding="utf-8")
                 (p / "ai/out/要点.md").write_text("⟦CUST_001⟧ の要点\n", encoding="utf-8", newline="\n")
             wsl.on_interactive = ai
-            room.cmd_start(c, self.args())
+            room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
+            room.cmd_start(c, self.args(adopt=True))
+            room.cmd_restore(c, argparse.Namespace(name="proj-a", force=False))
             self.assertNotIn("アクメ", seen["in"])
             self.assertIn("アクメ商事 の要点", (p / "_noai/final/要点.md").read_text(encoding="utf-8"))
 

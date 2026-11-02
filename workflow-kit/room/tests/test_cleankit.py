@@ -445,5 +445,30 @@ class StripProfileTest(unittest.TestCase):
         self.assertEqual(ck.main(["profiles"]), 0)
 
 
+
+class SensitiveCheckTest(unittest.TestCase):
+    def run_check(self, texts, terms=()):
+        orig = ck.visible_text_xlsx
+        ck.visible_text_xlsx = lambda pkg: texts
+        try:
+            fs = []
+            ck.check_sensitive(None, ".xlsx", fs, terms)
+            return fs
+        finally:
+            ck.visible_text_xlsx = orig
+
+    def test_detects_amount_mail_phone_percent_and_terms(self):
+        fs = self.run_check(["売上 ¥1,200,000 / 3億円", "a.b@example.com", "03-1234-5678", "達成率 85%", "アクメ商事の件"], ["アクメ商事"])
+        by = {f.part: f for f in fs}
+        self.assertEqual(set(by), {"金額", "メール", "電話番号", "大きな数", "割合・KPI", "mask.toml の語"})
+        self.assertIn("3億円", by["金額"].samples)
+        self.assertEqual({f.code for f in fs}, {"sensitive-pattern", "sensitive-term"})
+
+    def test_plain_text_has_no_findings(self):
+        self.assertEqual(self.run_check(["手順を整理する", "項目 12", "2026-11-02"]), [])
+
+    def test_check_default_does_not_scan_sensitive(self):
+        self.assertNotIn("sensitive-pattern", codes(ck.check(ck.Pkg(build_xlsx()), ".xlsx")))
+
 if __name__ == "__main__":
     unittest.main()

@@ -637,7 +637,39 @@ def check_text(pkg, ext, fs):
                               "見えている文字か固定語に当たった）", miss))
 
 
-def check(pkg, ext):
+# 見えている文字の中の、AI に渡すと困りそうな形の検出（置換はしない。人が読んで通すときの手がかり。2026-11-02）
+SENSITIVE_PATTERNS = {
+    "金額": re.compile(r"[¥￥]\s?\d[\d,]*|\d[\d,.]*\s?(?:円|万円|億円|百万円|千円|兆円|USD|ドル)"),
+    "メール": re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+"),
+    "電話番号": re.compile(r"(?<![\d-])0\d{1,4}-\d{1,4}-\d{3,4}(?![\d-])"),
+    "大きな数": re.compile(r"(?<![\d,.])\d{1,3}(?:,\d{3}){2,}(?![\d,])"),
+    "割合・KPI": re.compile(r"\d+(?:\.\d+)?\s?(?:%|％|pt)"),
+}
+
+
+def load_terms(path):
+    """mask.toml の [terms.*] の語（配列の全要素）を返す。"""
+    import tomllib
+    try:
+        data = tomllib.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, tomllib.TOMLDecodeError) as e:
+        raise CleanError(f"語の一覧を読めない: {path}（{e}）")
+    return sorted({w for v in (data.get("terms") or {}).values() if isinstance(v, list) for w in v if isinstance(w, str) and w}, key=len, reverse=True)
+
+
+def check_sensitive(pkg, ext, fs, terms=()):
+    vis = visible_text_xlsx(pkg) if ext in (".xlsx", ".xlsm") else visible_text_pptx(pkg)
+    text = "\n".join(vis)
+    for label, rx in SENSITIVE_PATTERNS.items():
+        hits = sorted({m.group(0).strip() for m in rx.finditer(text)})
+        if hits:
+            fs.append(Finding("sensitive-pattern", label, f"見えている文字に、{label}の形が {len(hits)} 種類ある（置換はしない。通すかどうかは人が読んで決める）", hits))
+    hit_terms = [t for t in terms if t in text]
+    if hit_terms:
+        fs.append(Finding("sensitive-term", "mask.toml の語", f"見えている文字に、指定した語が {len(hit_terms)} 種類ある", hit_terms))
+
+
+def check(pkg, ext, sensitive=False, terms=()):
     fs = []
     check_common(pkg, fs)
     if ext in (".xlsx", ".xlsm"):
@@ -645,6 +677,8 @@ def check(pkg, ext):
     else:
         check_pptx(pkg, fs)
     check_text(pkg, ext, fs)
+    if sensitive:
+        check_sensitive(pkg, ext, fs, terms)
     return fs
 
 
@@ -1116,6 +1150,7 @@ def main(argv=None):
     c = sub.add_parser("check", help="残っている情報を一覧にする（ファイルは変えない）")
     c.add_argument("file")
     c.add_argument("--report", help="報告の md（既定: 入力の隣の <名前>.check-report.md）")
+    c.add_argument("--terms", help="mask.toml のパス。[terms.*] の語が見えている文字にあれば警告する（金額・メール・電話・割合の形は常に警告する）")
     k = sub.add_parser("clean", help="掃除した別ファイルを書く")
     k.add_argument("file")
     k.add_argument("out", help="出力のファイル、またはディレクトリ")
@@ -1144,7 +1179,7 @@ def main(argv=None):
     try:
         src, ext, data = read_input(a.file)
         if a.cmd == "check":
-            fs = check(Pkg(data), ext)
+            fs = check(Pkg(data), ext, sensitive=True, terms=load_terms(a.terms) if a.terms else ())
             rep = Path(a.report) if a.report else src.with_name(src.name + ".check-report.md")
             guard_outputs(rep)
             rep.write_text(report_md(src, fs), encoding="utf-8")

@@ -382,6 +382,8 @@ def check_provenance(p):
             problems.append(f"{rel}: 由来の記録が無い")
         elif (e.get("area"), e.get("project")) != (p.area, p.name):
             problems.append(f"{rel}: 由来が違う（{e.get('area')}/{e.get('project')}）")
+        elif e.get("pending"):
+            problems.append(f"{rel}: マスクの出力を、人がまだ確認していない（読んで --adopt で通す）")
         elif e.get("sha256") != sha256(f):
             problems.append(f"{rel}: 記録のあとで変更されている（ハッシュが違う）")
     return problems
@@ -392,7 +394,10 @@ def adopt_in(ctx, p):
     man = load_manifest(p)
     for f in in_files(p):
         rel = f.relative_to(p.ai).as_posix()
-        man["files"][rel] = {"sha256": sha256(f), "area": p.area, "project": p.name, "added": ctx.now()}
+        old = man["files"].get(rel, {})
+        e = {k: v for k, v in old.items() if k != "pending"}  # マスクの記録（raw_sha256 など）は残す
+        e.update({"sha256": sha256(f), "area": p.area, "project": p.name, "added": old.get("added", ctx.now()), "approved": ctx.now()})
+        man["files"][rel] = e
     manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
     manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     return len(man["files"])
@@ -1592,7 +1597,10 @@ def cmd_start(ctx, a):
     gateway = getattr(a, "gateway", False)
     first = gateway_check(ctx) if gateway else None  # 設定とトークンを、マウントの前に確かめる（取れなければここで止める）
     boundary = preflight(ctx, p)
-    masked = mask_project(ctx, p, yes=a.yes)
+    # 2026-11-02: start は自動でマスクしない（マスクは `room mask`。internal の Area だけ）。ai/in は人が確認して --adopt で通す
+    masked = 0
+    if maskkit.list_files(noai_dir(p) / "raw"):
+        ctx.say("注意: _noai/raw に原本がある。start は自動でマスクしない。必要なら `room mask` を先に実行し、ai/in を読んで --adopt で通す")
     if a.adopt:
         require_internal(p, "--adopt（人が通した入力の記録）")
         n = adopt_in(ctx, p)
@@ -1641,9 +1649,9 @@ def cmd_start(ctx, a):
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
-    restored, restore_problems = restore_project(ctx, p)
-    if restored:
-        ctx.say(f"復元した: {restored} ファイル → _noai/final")
+    restore_problems = []
+    if maskkit.list_files(p.ai / "out") and (noai_dir(p) / "map" / "mapping.json").exists():
+        ctx.say(f"注意: ai/out がある。start は自動で復元しない。必要なら `room restore {p.name}` を実行する")
     ignored = unexpected_ignored(ctx, p)
     status = [l for l in git(ctx.vault, "status", "--porcelain", "-uall", "--", f"projects/{p.name}").splitlines() if l]
     log_room(ctx, p, "start", checks, f"{result}、変更 {len(status)} 件")
@@ -1751,7 +1759,7 @@ def mask_project(ctx, p, yes=False):
     for rel, data in res["outputs"].items():
         write_bytes(p.ai / "in" / rel, data)
         man["files"][f"in/{rel}"] = {
-            "sha256": maskkit.sha256_bytes(data), "area": p.area, "project": p.name, "added": ctx.now(),
+            "sha256": maskkit.sha256_bytes(data), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,  # 人が読んで --adopt するまで start は通さない
             "raw_sha256": maskkit.sha256_bytes(raw[rel]), "mask_sha256": conf_hash, "mapping_version": version,
             # manifest は部屋の AI から見える。Area のファイル名は実名を含みうるので、名前は対応表の側（pull-sources.json）に置く
             "masked_from": f"areas/{p.area}/_noai/（名前は _noai/map/pull-sources.json）" if rel in pulled else f"_noai/raw/{rel}",
