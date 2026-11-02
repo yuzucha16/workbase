@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-02（Vault の 2 分割の前提を確認し、正式化して dotfiles に実装した）
+- PC1 の実機（ユーザー）: 除外フィルタで resources は検索・リンクから外れる（エクスプローラーには残る。受け入れ）。入れ子の `.obsidian` は独立。pc1 のリンク調査は `resources/` を指すもの 0 本。`30_link.bat` が止まるのは実ファイルがあるときだけ（ジャンクションは上書き）。dotfiles の `.obsidian` の写し先は works（決定）。
+- 正式化（ユーザー）。workbase は `.gitignore` に `/.obsidian`。文面直しは NA に分けて積んだ（一覧は `decisions.md`）。コミット `edc30d6` `9522a09` `2acc516` `3b0be80`。
+- dotfiles（`yuzucha16/dotfiles`）に実装（`3946432`）: `windows/obsidian/{resources,works}/.obsidian`、`scripts/obsidian_sync.py`（正本から works の共通分を生成。`--check` `-n`）、`links.map` の 2 本（resources 側は `|noparent`）、`30_link.bat` `30_link.sh`、`.gitignore`、試験 75 項目（Linux で通過）、README と `docs/`。`30_link.bat` の新分岐は Windows の実機で未確認。
+
 ### 2026-11-01（`<成果物名>` の決め方を案 1 にし、置き場の実測を 11-05 に統合した）
 - Open Questions の「サーバー側で AI を動かす形」を外した（ユーザー: 不要）。
 - 論点（AI が置き場を認識しているか、工程の組み合わせで正しく使えるか、聞き返すか）と進め方（ケース A・B・C、判定 3 点、規則なし→規則あり）をユーザーが承認した。実測の入口で「`ai/out/<成果物名>/` の階層は 1:1 なら要らないのでは」と出て、階層は `ai/out/` 直下の予約物との混在と `restore` の置換単位のために残すと確認し、名前は「外部にそのまま出せる形」、既定は Project 名と同じに決めた。
