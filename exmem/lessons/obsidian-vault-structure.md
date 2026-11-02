@@ -8,9 +8,9 @@ tags:
   - setup
 aliases:
   - obsidian-vault-structure
-triggers: [Vault の構造, works, PARA, resources, areas, projects, archives, 共有とローカル, 入れ子, clone, ジャンクション, .obsidian, 検索, ripgrep]
+triggers: [Vault の構造, Vault の分割, 2 分割, works, PARA, resources, areas, projects, archives, 共有とローカル, 入れ子, clone, ジャンクション, .obsidian, 検索, ripgrep]
 created: 2026-10-05
-updated: 2026-11-01
+updated: 2026-11-02
 sources:
   - Claude Code conversation "Vault の構造変更（共有とローカルのリポジトリ分離）と workflow の拡張" (2026-10-05)
 ---
@@ -29,22 +29,23 @@ sources:
 **現在の状態（確認: 2026-10-06、根拠: ユーザーの確認、起動したセッション、dotfiles の試験）**: 環境変数は `WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` は `%USERPROFILE%\.certs`（`VAULT_HOME` は廃止。`NOTES_DIR` は未設定）。Obsidian と Claude Code は、新しい場所で動いた。`.obsidian` は dotfiles へのジャンクション。WSL へは `WSLENV` の `WORKS_DIR/p` で渡す設計だが、実機の WSL では渡っていなかった（確認: 2026-10-06、[[obsidian-vault-home-works]]の Facts）。dotfiles の Linux の試験は 51/51 合格（再実行で再確認: 2026-10-06）。未了は、Claude Code の旧セッションの `--resume` が新パスで通らないこと（`cwd` の書き換えだけでは足りなかった。原因は未特定。[[claude-code-storage]]）。旧 `C:\vault`（旧 clone とバックアップ）は、この `--resume` の試験のために、削除せずに残している（ユーザーの指示）。rename の判断・原則・遭遇したことは、[[obsidian-vault-rename]]にまとめた。
 2026-10-05 に、2026-10-02 に決めた目標の構造から変更した。経緯は、下の「過去の構造」と、Decisions の「撤回済み」の注記に残す。
 
-**works の再定義（2026-10-31、ユーザーの承認。根拠は `topics/room-type-consolidation/docs/decisions.md` の同日の項）**: works（Vault）と workbase は 1:1 で、workbase は works の中の `resources/`。works と projects は 1:N の PC ローカルの台帳（remote なし）。`dev` の Project の git リポジトリ（N 個）は、開発環境のある OS に置く（今は WSL の `~/src/<repo>`）。上の図の `projects/` `areas/` `archives/` の構成は変わらない。
+**works の再定義（2026-10-31、ユーザーの承認。根拠は `topics/room-type-consolidation/docs/decisions.md` の同日の項）**: works と workbase は 1:1 で、workbase は works の中の `resources/`（2026-11-02 以降、Vault は works と `resources/` の 2 つ。下の「Vault の 2 分割」）。works と projects は 1:N の PC ローカルの台帳（remote なし）。`dev` の Project の git リポジトリ（N 個）は、開発環境のある OS に置く（今は WSL の `~/src/<repo>`）。上の図の `projects/` `areas/` `archives/` の構成は変わらない。
 
-**Vault の 2 分割（2026-11-01 仮決め、同日の `review 消化` で【保留 〜11-08】）**: `resources/`（md のみ）と `works/`（projects・areas・`resources_p/`）を別の Vault にする案。実装は未着手で、正式化の前に、入れ子の Vault で除外フィルタが効くかの実機確認、`.obsidian` の移し先、pc1 のリンク調査が要る。この節の図と記述は、1 Vault のまま。
+**Vault の 2 分割（2026-11-01 仮決め、2026-11-02 正式化。実装と動作確認も 11-02 に済んだ。根拠は `topics/room-type-consolidation/docs/decisions.md`）**: Vault は 2 つ。`resources/`（workbase。md のみ）と `works/`（projects・areas・`resources_p/`。html や excel など `inv` の成果物も見る）を別の Vault にする。works の `app.json` の `userIgnoreFilters` に `resources/` などを加えて、検索・リンク補完から外す（エクスプローラーには残るので、CSS スニペットで隠す）。入れ子の Vault は互いに独立で、`resources/` に `.obsidian` を作っても上位に影響しない（確認: 2026-11-02、ユーザー）。`resources/` を指す `[[リンク]]` は pc1・pc2 とも 0 本。
 
 ```text
-$HOME\works\           # PC ごとのローカルなリポジトリ（実ディレクトリ。ジャンクションではない）
+$HOME\works\           # PC ごとのローカルなリポジトリ（実ディレクトリ。ジャンクションではない）。Vault の 1 つ
 ├── .gitignore / .ignore / AGENTS.md / CLAUDE.md / docs/
-├── .obsidian/         # dotfiles へのジャンクション（実体は dotfiles の windows\obsidian\.obsidian）
+├── .obsidian/         # dotfiles へのジャンクション（works 用の置き場。共通の設定は resources 用から反映）
 ├── projects/  areas/  archives/   # ローカルの PARA
-└── resources/         # 共有リポジトリ workbase の clone（別リポジトリ）
+└── resources/         # 共有リポジトリ workbase の clone（別リポジトリ。別の Vault）
+    ├── .obsidian/     # dotfiles へのジャンクション（resources 用 = 正本。workbase は追跡しない）
     ├── exmem/  workflow-kit/  guides/  handson/
 ```
 
 - Vault のトップは、PC ごとのローカルなリポジトリ（業務用 PC は remote なし、個人用 PC は非公開 remote を使える）。`areas/` `projects/` `archives/`、`docs/`（作業ログ）、PC 用の `AGENTS.md` を持つ。作り方は、`workflow-kit` の導入フック（項目 5「ワークスペースの生成」）。
 - `resources/` は、共有リポジトリ `workbase`（GitHub: `yuzucha16/workbase`、非公開。公開範囲は未定）を、**直接 `git clone` したもの**（ghq の管理外。ジャンクションにしない）。トップの `.gitignore` が除外する。`workbase` は、単独で clone しても自己完結する（Vault のローカル側を知らない）。
-- `.obsidian/` の実体は dotfiles。トップへジャンクションで張る。`workspace*.json` は追跡しない。
+- `.obsidian/` の実体は dotfiles。works と `resources/` の 2 か所へジャンクションで張る（置き場は 2 つ）。resources 用が正本で、外観・スニペット・テーマ・コア設定は works 用へ一方向に自動で反映する（リンク適用時。手動でも走る）。プラグインは Vault ごとに別。どちらかに実ディレクトリが先にあると `30_link.bat` が止まる（手で退避して再実行）。仕組みの詳細は dotfiles の README。`workspace*.json` は追跡しない。判断は [[app-config-placement]]。
 - 変更の理由: 業務用 PC で、ローカルの作業もコミットしたい。共有（GitHub）とローカルを、1つの作業ツリーに混ぜられない。1つのリポジトリの作業ツリーは連続している必要があり、入れ子の `.git` の中は、外側のリポジトリから追跡できない。共有側がローカルの存在を知らない構成にして、共有側を汎用ナレッジとして育てられるようにした。境界の数は、公開範囲の種類（共有 / PC ローカル / 設定）に合わせた。
 - 却下案: 1つの作業ツリーに2つの git を重ねる（ルートの `.gitignore` が両方に効き、片方は `git add -f` 前提になる）、共有リポジトリをトップに置いて `company/` を入れ子にする（共有側がローカルの存在を知る）、トップをリポジトリにしない（`AGENTS.md` と `docs/` の持ち主がいない）、`resources/` を ghq の位置に置いてジャンクションで出す（下の検索の項）。
 - 検索（確認: 2026-10-05）: ripgrep（Claude Code の Grep を含む）は `.gitignore` を尊重するので、トップの `.gitignore` が除外する `resources/` は、検索から黙って外れる。トップの `.ignore` に `!/resources/` を置くと含まれる。ジャンクション越しのディレクトリは、Grep / Glob / `rg`（既定）が辿らない（`rg --follow` なら辿る）。

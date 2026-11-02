@@ -15,7 +15,7 @@ aliases:
   - data.jsonの追跡
 triggers: [.obsidian, 設定ディレクトリ, 置き場, dotfiles]
 created: 2026-10-04
-updated: 2026-10-16
+updated: 2026-11-02
 sources:
   - Claude Code conversation "colored-tags の data.json を追跡から外す" (2026-10-15)
   - Claude Code conversation ".obsidian の置き場の判断基準" (2026-10-04)
@@ -32,7 +32,7 @@ sources:
 
 ## Principles
 
-- **設定の置き場は、その設定が何と連動して変わるかで決める。** 連動先が Vault の中身（ノート規約、プロパティ型、検索除外）なら Vault 側、環境全体（テーマ・フォントを複数アプリでそろえるなど）なら dotfiles 側。連動するものと同じリポジトリにあれば、変更が1つのコミットで済む。
+- **設定の置き場は、その設定が何と連動して変わるかで決める。** 連動先が Vault の中身（ノート規約、プロパティ型、検索除外）なら Vault 側、環境全体（テーマ・フォントを複数アプリでそろえるなど）なら dotfiles 側。連動するものと同じリポジトリにあれば、変更が1つのコミットで済む。Vault が複数あるときは、Vault ごとに置き場を持つ（Obsidian の例は Decisions の 2026-11-02）。
 - **アプリが固定の場所を読む設定は、実体をその場所に置く。** リンクで別のリポジトリに逃がさない。リンクは、clone 順、リンク前の起動による衝突、コミット先の分離といった運用の負担を足す。
 - **設定ファイルの管理を2つのリポジトリで相互に参照させない。** セットアップの順序が循環し、片方だけの環境で動かなくなる。リポジトリ全体では、次の2項になる。
 - **リポジトリを切る線は、「PC に置かれる・実行されるもの」か「人か AI が読んで判断・作業するもの」か。** 前者は dotfiles、後者は workbase（共有リポジトリ）。迷ったら「PC を作り直すときに要るか」で決め、要るなら dotfiles に置く（2026-10-12 方針）。
@@ -84,6 +84,13 @@ sources:
 - **追跡対象のノートを検索したとき、日本語名の6ファイルが読めなかった**: `git ls-files` が非 ASCII のパスを引用符つきの8進エスケープで出力したため（仮説）。結果を概数とし、「検索できなかったファイルがある」と注記した。回避策は `core.quotepath=false` か `-z`（仮説。未実施）。
 
 ## Decisions
+
+### Vault の 2 分割で `.obsidian` の置き場が 2 つになった（2026-11-02。根拠は `topics/room-type-consolidation/docs/decisions.md`）
+
+- 決めたこと（ユーザー）: Vault を `resources/`（workbase）と works の 2 つにし、2 つの `.obsidian` の実体はどちらも dotfiles に置いて、それぞれへジャンクションで張る。resources 用が正本。共通の設定（外観・スニペット・テーマ・コア設定）は works 用へ一方向に自動で反映し、works だけ違う項目（`userIgnoreFilters`）は `app.override.json` で重ねる。プラグインは Vault ごとに別。workbase は dotfiles を知らず、`.obsidian` を追跡しない。依存の向き（dotfiles → workbase）は変わらない。仕組みの詳細は dotfiles 側。
+- 止まる条件は増えない: `30_link.bat` が止まるのは、リンク先に実ディレクトリが先にあるときだけ（Vault ごとに同じ）。ジャンクションが既にあれば上書きする。
+- 動作確認（2026-11-02、ユーザー）: 3 種の起動（`uv` `py` `python`）、2 本のジャンクション、`resources\` が無いときの `[SKIP]`、旧ジャンクションの上書き、両方の Vault が開くこと、すべて問題なし。
+- 却下案: 設定を dotfiles に 2 系統持ち、直すたびに対象を指定する（面倒）。同じ実体を 2 つの Vault に張る（`workspace.json` が衝突する）。
 
 ### `.obsidian` を dotfiles へ戻す（2026-10-05。2026-10-04 の決定「`notes` に置き続ける」を撤回）
 
