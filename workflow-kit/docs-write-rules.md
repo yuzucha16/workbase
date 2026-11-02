@@ -1,0 +1,41 @@
+# docs/ への書き込み先と、スクリプトの呼び方
+
+`wrap` と `review 消化` が、項目を閉じる・期日から上げるときに読む（2026-11-02 ユーザーの承認。`topics/token-cap/` の NA 5 の施策）。目的は、書き込み先を探す読みと、ファイルごとの Edit を減らすこと。書式の正本は `docs-format.md`、ファイルの役割は `docs-rules.md`。ここは「変更の種類 → 書き込み先 → 呼び方」だけを持つ。
+
+## 分担
+
+- **AI が判断する**: 済・一部済・未・omit の仕分け、根拠の文面、`decisions.md` の文面、昇格の案。
+- **スクリプトが置く**: 渡された結果を決まった場所へ書く（`tools/na_apply.py`）。文面は変えない。
+- 書式が想定外のとき（項目が一意に決まらない、`## Log` が無いなど）、スクリプトは何も書かず、理由を出して止まる（終了コード 2）。そのときは従来どおり手で直す。
+
+## 変更の種類と書き込み先
+
+| 変更 | `log.md` | `log-history.md` | `due.md` | `decisions.md` | 呼び方 |
+|---|---|---|---|---|---|
+| 項目が済 | 項目を消す | 当日の見出しに根拠つきで足す | 対応する行があれば消す | — | `na_apply.py close`（kind `done`） |
+| 項目を omit | 同上 | 同上 | 同上 | ユーザーの決定の文面を、AI が追記する | `close`（kind `omit`）+ `decisions.md` は Edit |
+| 一部済 | 残りの作業だけに書き直す（番号と起票日は残す） | 済んだ部分を足す | 同上 | — | `close`（kind `partial` + `rewrite`） |
+| 期日が来た | 項目として上げる（`【起票 MM-DD、期日 MM-DD】`） | — | 単発は行を消す。定例は次回の期日に書き換える | — | `na_apply.py due-up` |
+| 決定 | — | — | — | 追記（ユーザーの発言を根拠に） | Edit |
+
+番号は振り直さない（他の記録が `NA 5` のように参照するため）。
+
+## 呼び方
+
+`close`: 計画を JSON にして渡す。複数の項目を 1 回で閉じられる。全項目を検証してから書く（1 件でも失敗したら何も書かない）。まず `--dry-run` で差分を見てよい。
+
+```
+python -I workflow-kit/tools/na_apply.py close --plan <plan.json | -> [--dry-run]
+```
+
+`plan.json` の項目は `tools/na_apply.py` の先頭の説明に書いてある（`log` `history` `due` `date` `title` `items[item, section, kind, note, rewrite, due_match, title]`）。Windows の PowerShell で標準入力（`-`）に日本語を渡すと文字コードが崩れることがあるので、ファイルで渡す方が安全。
+
+`due-up`: `due.md` の期日が今日以前の行を、`log.md` の Next Actions の末尾に、続きの番号で上げる。
+
+```
+python -I workflow-kit/tools/na_apply.py due-up --due docs/due.md --log <log.md> [--only 語]... [--next 語=YYYY-MM-DD]... [--dry-run]
+```
+
+- どの行をどの単位の `log.md` に上げるかは AI が決める。単位に関係する行だけ `--only` で絞る。
+- 定例の行は、`--next 語=次回の期日` を渡したときだけ上げて書き換える。渡さなければ「上げなかった」と出す。
+- 期日の検出だけは、これまでどおり `tools/due.py`。

@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【workflow-kit】項目を閉じる・期日から上げる書き込みを `tools/na_apply.py`（close / due-up）に移す。判断は AI、置く場所はスクリプト（2026-11-02。token-cap NA 5 (g)）
+- 決めたこと: `wrap` の「現在状態を更新する」と `review 消化` の、済・一部済・omit の移し替えと期日の持ち上げを、`na_apply.py close` / `due-up` で 1 回にまとめてよい。仕分けと文面は AI のまま。書式が想定外なら何も書かず止まり、手で直す。呼び方と書き込み先の表は新設の `docs-write-rules.md`（`wrap-hook.md` `review-hook.md` に 1 行ずつ参照、`README.md` に 1 行）。単体テスト 11 件。
+- 根拠: ユーザーの発言: 「素案1はやりたかったものです。review 消化に限らず、wrapの一部…もスクリプトに移したい。ただ、AIのように柔軟性が落ちるのでそこは可能な限り落ちないようにしたい。」「close/due-upを承認します」。重い依頼 25 件のうち 15 件が項目をまとめた返答で、1 件あたり Edit が約 10 回（`topics/token-cap/records/2026-10-30-other-long-requests-breakdown.md`）。
+- 効果の測り方: この型の依頼の応答数（15.1）と読みの回数（約 13）を `requests_by_kind.py` で見る。入れた日は 2026-11-02。
+- 却下案: review 消化だけをスクリプト化（移し替えの動作は wrap と共通のため）。`docs-rules.md` や各フックへの表の書き足し（二重管理になる）。
+
 ### 【workflow-kit】review 入力 2 に注記の加算量の点検を足し、daily の材料取得は日付と時刻を明示して絞る（2026-11-02。daily 振り返りの施策 S1・S2、11-01 承認）
 - 決めたこと: ① `review-hook.md` の入力 2 に「注記を足した週は、その加算量を土台の増減と照らす」を足し、同じ字数以上を同じ項目から削った（5,973 字 → 5,965 字。決定の日付と「トークン。」などを削った）。② `exmem/lessons/retrospective-method-output.md` に、材料のコミットを `--since='YYYY-MM-DD 00:00' --until='次の日 00:00'` で絞る注記を足した。
 - 根拠: 日付だけの `--since=2026-11-02` は現在の時刻が補われ、当日 18 件が 0 件になった（実機で確認）。

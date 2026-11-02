@@ -52,6 +52,7 @@
 |---|---|
 | `docs-rules.md` | `docs/` の運用規則 |
 | `naming-rules.md` | ファイル名の規則（作る・改名する前に読む） |
+| `docs-write-rules.md` | 項目を閉じる・期日から上げるときの書き込み先と `tools/na_apply.py` の呼び方（wrap・review 消化が読む） |
 | `docs-format.md` | `docs/` の書式（log.md、log-history.md、due.md、decisions.md。書くときだけ読む） |
 | `docs-carry.md` | `decisions.md` の項目を知識にしたときの規則（`→` の付け方、運び方） |
 | `commit-push-rules.md` | コミットの規則（範囲、確認、身元・トレーラー、しないこと） |
