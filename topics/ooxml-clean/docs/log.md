@@ -18,10 +18,9 @@
 1. 【期日 11-09】境界の見直し（external / internal）の動作確認と残り: `records/2026-11-02-boundary-pending.md`（PC1 の確認 5 点と、単体スクリプト化、cleankit の internal 既定）。
 2. 【期日 11-12】room の `mask` への cleankit の組み込み（決定 2026-10-30）。11-02 の見直しで `start` が自動でマスクしなくなったので、組み込み先と要否を、1 の確認の後に決め直す。
 
-3. 【期日 11-16】外向け Area の共有（NA1）の動作確認（別セッション、PC1）: external のダミーの Area で、部屋の AI が `ai/out/stock/` に `scope: area`（`dest: knowledge|docs`）で書く → `room stock <名> --dst area`（cleankit の点検に当たると止まる）→ `areas/<Area>/ai/` → 次の `start` で `ai/ctx/area/` に写る → AI が読める。確認点: 点検の雑音と取りこぼし、`docs/inbox.md` 除外、1 MiB 上限、人が直した先を上書きしない。
-4. 【期日 11-16】internal の Area への適用: 決定・実装済み（2026-11-02）。出口は `room stock --dst kit|area` の一本で、internal にも `--dst area` と `ctx/area/` の写しを許した（`mask.toml` の語が空なら止まる・写さない）。残り: internal のダミーでの動作確認（NA3 と同じ確認点に、語が空で止まることを足す）。確認の後に、`restore`・`pull` の知識用の経路をコードから外す（ユーザーの決定。成果物の戻し `ai/out/deliverable/` は残す）。
+3. 【期日 11-16】internal の Area への適用: 決定・実装済み（2026-11-02）。出口は `room stock --dst kit|area` の一本で、internal にも `--dst area` と `ctx/area/` の写しを許した（`mask.toml` の語が空なら止まる・写さない）。残り: internal のダミーでの動作確認（別セッション、PC1。external の確認（`log-history.md` 2026-11-02）と同じ手順に、語が空で止まることを足す）。確認の後に、`restore`・`pull` の知識用の経路をコードから外す（ユーザーの決定。成果物の戻し `ai/out/deliverable/` は残す）。
 
 ## Open Questions
 
 - 報告（実データの抜粋入り）の置き場は決定済み（2026-10-30）: 組み込み後は `_noai/` 内の専用ディレクトリにまとめる。単体で叩くときの今の置き場（出力の隣）をどうするかは、組み込みの実装で決める。
-- 書いていない語（本文の個人名）は掃除では消えない。11-02 に `cleankit check` へ検出（金額・メール・電話・割合の形と `--terms` の語）を足した。実ファイルでの雑音と取りこぼしは NA1 の確認で見る。
+- 書いていない語（本文の個人名）は掃除では消えない。11-02 に `cleankit check` へ検出（金額・メール・電話・割合の形と `--terms` の語）を足した。NA1 の確認（11-02）で、ダミーの金額・メール・電話・割合は検出された。本文の個人名の取りこぼしは `--terms` の語を使う運用で残る。

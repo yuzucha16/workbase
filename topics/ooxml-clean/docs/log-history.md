@@ -2,9 +2,14 @@
 
 ## Log
 
+### 2026-11-02（外向け Area の共有（旧 NA3）の動作確認を閉じた）
+- ユーザーが PC1 の external のダミー Area で、手順 1〜8 をすべて OK と報告。cleankit の点検は金額・メール・電話・割合を検出して何も運ばずに止まり（表示は分かりやすい）、通せば `ai/knowledge/`・`ai/docs/` に着き、人が変えた先と、記録の無い先は上書きしない（B は同じ内容で「済み」）。`ctx/area/` への写し、`docs/inbox.md` 除外（`room.py:1365` の `AREA_AI_SKIP`。`start` 前の inbox の編集は写しに影響しないのが正しい）、1 MiB 上限、AI が読めることも問題なし。
+- 既知の限界: 本文の個人名は形で検出できず、`--terms` の語を渡したときだけ当たる。
+- 手順書きの反省: 手順 6 は「inbox が写らないこと」を確認点として書くべきだった（効果を探させた）。
+
 ### 2026-11-02（NA4: external と internal の出口を `room stock` の一本にした）
 - 依頼: internal の Area への `--dst area` と `ctx/area/` の適用。ユーザーの決定: 違いは入口だけ（internal は人が通した業務データを入れられる）、出口は行き先を内容だけで選ぶ一本、知識は実名なしで書くので `--dst area` で完結する。経緯: 別セッションで `stock` の経路を忘れた実績があり、2 経路は慣れると分からなくなる、との指摘。
-- 実装: `room.py`（`area_gate_terms` 新設、`stock_to_area` と `snapshot_area_ai` の external 限定を外し、internal は `mask.toml` の語が空なら止める）、部屋の AI への案内文、`room-context.md`、`room/README.md`、テスト（`StockAreaTest`、`AreaAiSnapshotTest` 通過。全件は 1 件が私のテストの誤りで失敗し、直して該当 14 件を通した。全件の再実行はしていない）。コミットはまだ。
+- 実装: `room.py`（`area_gate_terms` 新設、`stock_to_area` と `snapshot_area_ai` の external 限定を外し、internal は `mask.toml` の語が空なら止める）、部屋の AI への案内文、`room-context.md`、`room/README.md`、テスト（`StockAreaTest`、`AreaAiSnapshotTest` 通過。全件は 1 件が私のテストの誤りで失敗し、直して該当 14 件を通した。全件の再実行はしていない）。コミット 200cd86。
 - 判断は root の `docs/decisions.md` の 2026-11-02「知識の出口を `room stock --dst kit|area` の一本にし」の項。
 
 ### 2026-11-02（pptxtext の動作確認を閉じた）
