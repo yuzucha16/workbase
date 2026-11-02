@@ -1739,28 +1739,43 @@ class StockAreaTest(unittest.TestCase):
         d.update(kw)
         return argparse.Namespace(**d)
 
-    def put(self, p, rel, text):
-        f = p / "ai/out/area" / rel
+    def put(self, p, name, text, scope="area", dest=None):
+        f = p / "ai/out/stock" / name
         f.parent.mkdir(parents=True, exist_ok=True)
-        f.write_text(text, encoding="utf-8", newline="\n")
+        fm = f"---\nscope: {scope}\n" + (f"dest: {dest}\n" if dest else "") + "---\n"
+        f.write_text(fm + text, encoding="utf-8", newline="\n")
 
-    def test_delivers_knowledge_and_docs_and_is_idempotent(self):
+    def test_delivers_by_dest_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.setup(tmp)
-            self.put(p, "knowledge/a.md", "# 決定\n理由と経緯\n")
-            self.put(p, "docs/b.md", "# 経緯\n")
+            self.put(p, "a.md", "# 決定\n理由と経緯\n")
+            self.put(p, "b.md", "# 経緯\n", dest="docs")
             room.cmd_stock(c, self.ns())
-            self.assertEqual((v / "areas/area-x/ai/knowledge/a.md").read_text(encoding="utf-8"), "# 決定\n理由と経緯\n")
+            self.assertIn("理由と経緯", (v / "areas/area-x/ai/knowledge/a.md").read_text(encoding="utf-8"))
             self.assertTrue((v / "areas/area-x/ai/docs/b.md").exists())
             c.msgs.clear()
             room.cmd_stock(c, self.ns())
             self.assertIn("0 件を運んだ", c.msgs[-1])
 
+    def test_public_scope_is_not_delivered_to_area(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "pub.md", "公開向け\n", scope="public")
+            room.cmd_stock(c, self.ns())
+            self.assertFalse((v / "areas/area-x/ai").exists())
+
+    def test_bad_dest_is_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "a.md", "x\n", dest="../etc")
+            with self.assertRaises(room.RoomError):
+                room.cmd_stock(c, self.ns())
+
     def test_sensitive_hit_stops_everything(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.setup(tmp)
-            self.put(p, "knowledge/ok.md", "# 決定\n")
-            self.put(p, "knowledge/ng.md", "予算は 1,200,000 円、連絡は a@example.com\n")
+            self.put(p, "ok.md", "# 決定\n")
+            self.put(p, "ng.md", "予算は 1,200,000 円、連絡は a@example.com\n")
             with self.assertRaises(room.RoomError) as e:
                 room.cmd_stock(c, self.ns())
             self.assertIn("金額", str(e.exception))
@@ -1771,43 +1786,87 @@ class StockAreaTest(unittest.TestCase):
             v, c, p = self.setup(tmp)
             (p / "_noai").mkdir(exist_ok=True)
             (p / "_noai/mask.toml").write_text('[terms.CUST]\nnames = ["株式会社テスト"]\n', encoding="utf-8")
-            self.put(p, "docs/x.md", "株式会社テストとの経緯\n")
+            self.put(p, "x.md", "株式会社テストとの経緯\n", dest="docs")
             with self.assertRaises(room.RoomError):
                 room.cmd_stock(c, self.ns())
 
     def test_internal_area_is_refused(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.setup(tmp, boundary="internal")
-            self.put(p, "knowledge/a.md", "x\n")
-            with self.assertRaises(room.RoomError):
-                room.cmd_stock(c, self.ns())
-
-    def test_wrong_subdir_is_refused(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p = self.setup(tmp)
-            self.put(p, "other/a.md", "x\n")
+            self.put(p, "a.md", "x\n")
             with self.assertRaises(room.RoomError):
                 room.cmd_stock(c, self.ns())
 
     def test_human_edited_destination_is_not_overwritten(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.setup(tmp)
-            self.put(p, "knowledge/a.md", "v1\n")
+            self.put(p, "a.md", "v1\n")
             room.cmd_stock(c, self.ns())
             dst = v / "areas/area-x/ai/knowledge/a.md"
             dst.write_text("人が直した\n", encoding="utf-8")
-            self.put(p, "knowledge/a.md", "v2\n")
+            self.put(p, "a.md", "v2\n")
             room.cmd_stock(c, self.ns())
             self.assertEqual(dst.read_text(encoding="utf-8"), "人が直した\n")
 
     def test_updates_when_destination_is_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.setup(tmp)
-            self.put(p, "knowledge/a.md", "v1\n")
+            self.put(p, "a.md", "v1\n")
             room.cmd_stock(c, self.ns())
-            self.put(p, "knowledge/a.md", "v2\n")
+            self.put(p, "a.md", "v2\n")
             room.cmd_stock(c, self.ns())
-            self.assertEqual((v / "areas/area-x/ai/knowledge/a.md").read_text(encoding="utf-8"), "v2\n")
+            self.assertIn("v2", (v / "areas/area-x/ai/knowledge/a.md").read_text(encoding="utf-8"))
+
+    def test_kit_skips_scope_area(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            (v / "resources/exmem/inbox").mkdir(parents=True)
+            self.put(p, "a.md", "x\n")
+            room.cmd_stock(c, self.ns(dst="kit"))
+            self.assertEqual(list((v / "resources/exmem/inbox").glob("*.md")), [])
+
+
+class AreaAiSnapshotTest(unittest.TestCase):
+    def setup(self, tmp, boundary="external"):
+        v, c = opened(tmp)
+        ar = v / "areas/area-x/README.md"
+        ar.write_text(ar.read_text(encoding="utf-8").replace("boundary: internal", f"boundary: {boundary}"), encoding="utf-8", newline="\n")
+        base = v / "areas/area-x/ai"
+        (base / "knowledge").mkdir(parents=True)
+        (base / "docs").mkdir(parents=True)
+        return v, c, room.Project.load(c, "proj-a"), base
+
+    def test_copies_knowledge_and_docs_read_only_and_skips_inbox_and_hits(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, base = self.setup(tmp)
+            (base / "knowledge/k.md").write_text("知識\n", encoding="utf-8")
+            (base / "docs/decisions.md").write_text("決定\n", encoding="utf-8")
+            (base / "docs/inbox.md").write_text("仮置き\n", encoding="utf-8")
+            (base / "docs/leak.md").write_text("連絡は a@example.com\n", encoding="utf-8")
+            n = room.snapshot_area_ai(c, p)
+            self.assertEqual(n, 2)
+            out = p.ai / "ctx/area"
+            self.assertTrue((out / "knowledge/k.md").exists())
+            self.assertTrue((out / "docs/decisions.md").exists())
+            self.assertFalse((out / "docs/inbox.md").exists())
+            self.assertFalse((out / "docs/leak.md").exists())
+            self.assertFalse(os.access(out / "knowledge/k.md", os.W_OK) and os.geteuid() != 0)
+
+    def test_internal_area_copies_nothing_and_clears_old_copy(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, base = self.setup(tmp, boundary="internal")
+            (base / "knowledge/k.md").write_text("知識\n", encoding="utf-8")
+            (p.ai / "ctx/area").mkdir(parents=True)
+            (p.ai / "ctx/area/old.md").write_text("古い\n", encoding="utf-8")
+            self.assertEqual(room.snapshot_area_ai(c, p), 0)
+            self.assertFalse((p.ai / "ctx/area").exists())
+
+    def test_size_cap(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, base = self.setup(tmp)
+            (base / "knowledge/a.md").write_text("あ" * 200000, encoding="utf-8")
+            (base / "knowledge/b.md").write_text("い" * 200000, encoding="utf-8")
+            self.assertEqual(room.snapshot_area_ai(c, p), 1)
 
 
 class StockTest(unittest.TestCase):

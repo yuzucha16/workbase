@@ -1361,6 +1361,40 @@ def _snapshot(src, dst):
     os.chmod(dst, stat.S_IREAD)
 
 
+AREA_AI_COPY_DIRS = ("knowledge", "docs")
+AREA_AI_SKIP = {"docs/inbox.md"}  # Area の inbox は close の受け皿（案件の仮置き）で、過去の判断の資料ではない
+AREA_AI_MAX_BYTES = 1024 * 1024
+
+
+def snapshot_area_ai(ctx, p):
+    """external の Area の `ai/{knowledge,docs}/**.md` を、`ai/ctx/area/` に読み取り専用で写す（過去の決定・経緯を今の判断の資料にする）。
+    cleankit の検出に当たるファイルと、合計が上限を超える分は写さない（start は止めない）。写した件数を返す。"""
+    dst_root = p.ai / "ctx" / "area"
+    rmtree_force(dst_root)
+    if normalize_boundary(read_frontmatter(p.area_dir / "README.md").get("boundary", "")) != "external":
+        return 0
+    src_root = p.area_dir / "ai"
+    terms_path = p.dir / "_noai" / "mask.toml"
+    terms = cleankit.load_terms(terms_path) if terms_path.exists() else []
+    n, total = 0, 0
+    for d in AREA_AI_COPY_DIRS:
+        for f in sorted((src_root / d).rglob("*.md")) if (src_root / d).is_dir() else []:
+            rel = f.relative_to(src_root).as_posix()
+            if rel in AREA_AI_SKIP or not f.is_file():
+                continue
+            hits = cleankit.sensitive_hits(f.read_text(encoding="utf-8", errors="replace"), terms)
+            if hits:
+                ctx.say(f"  注意: Area の ai/{rel} は写さない（cleankit: {'、'.join(label for label, _h in hits)}）")
+                continue
+            if total + f.stat().st_size > AREA_AI_MAX_BYTES:
+                ctx.say(f"  注意: Area の ai/ の写しが上限（{AREA_AI_MAX_BYTES // 1024} KiB）を超える。ai/{rel} 以降は写さない")
+                return n
+            (dst_root / rel).parent.mkdir(parents=True, exist_ok=True)
+            _snapshot(f, dst_root / rel)
+            n, total = n + 1, total + f.stat().st_size
+    return n
+
+
 def snapshot_readme(p):
     """Project の README と、所属する Area の README（Area の共通ルール）を `ai/ctx/` に写す。Area の README の大きさを返す。"""
     ctx_dir = p.ai / "ctx"
@@ -1615,6 +1649,9 @@ def cmd_start(ctx, a):
     if area_size > AREA_README_WARN_BYTES:
         ctx.say(f"注意: Area の README が大きい（{area_size // 1024} KiB）。部屋の AI が開始時に読むので、"
                 "完了した Project の一覧などを畳むことを検討する")
+    n_area = snapshot_area_ai(ctx, p)
+    if n_area:
+        checks += f"、Area の ai/ の写し {n_area} 件（ctx/area/）"
     if push_shared(ctx, p):
         checks += "、共有知の写し送付"
     install_project_trust(ctx, p)
@@ -2046,7 +2083,7 @@ def stock_staleness(ctx, base):
 
 
 STOCK_DSTS = ("kit", "area")
-AREA_STOCK_DIRS = ("knowledge", "docs")  # --dst area で運べる、ai/out/area/ の直下の区分
+AREA_STOCK_DIRS = ("knowledge", "docs")  # --dst area で運べる、dest: に書ける区分（Area の ai/ の直下）
 
 
 def cmd_stock(ctx, a):
@@ -2054,45 +2091,52 @@ def cmd_stock(ctx, a):
     dst = getattr(a, "dst", None)
     if dst not in STOCK_DSTS:
         raise RoomError("--dst が要る: kit（公開の共有知。ai/out/stock/ → exmem/inbox/）か "
-                        "area（この Area の知識・経緯。ai/out/area/ → areas/<Area>/ai/。external の Area だけ）")
+                        "area（この Area の知識・経緯。ai/out/stock/ の scope: area → areas/<Area>/ai/。external の Area だけ）")
     if dst == "area":
         return stock_to_area(ctx, a)
     return stock_to_kit(ctx, a)
 
 
 def stock_to_area(ctx, a):
-    """ai/out/area/{knowledge,docs}/**.md を、areas/<Area>/ai/ の同じ相対パスへ運ぶ。external の Area だけ。
-    運ぶ前に cleankit の検出（金額・メール・電話などの形、mask.toml の語）を全ファイルに通し、1 つでも当たれば何も運ばず止まる。"""
+    """ai/out/stock/*.md のうち `scope: area` の下書きを、areas/<Area>/ai/<dest>/ へ運ぶ（dest: は knowledge か docs。既定は knowledge）。external の Area だけ。
+    運ぶ前に cleankit の検出（金額・メール・電話などの形、mask.toml の語）を対象の全ファイルに通し、1 つでも当たれば何も運ばず止まる。"""
     p = Project.load(ctx, a.name)
     if check_area(p) != "external":
         raise RoomError(f"--dst area は boundary: external の Area だけ（{p.area} は internal。実名つきの知識は `ai/out/knowledge/` に置き、"
                         "`room restore` で `_noai/knowledge/` に戻す）")
-    src = p.ai / "out" / "area"
-    files = sorted(f for f in src.rglob("*.md") if f.is_file()) if src.is_dir() else []
+    src = p.ai / "out" / "stock"
+    drafts = sorted(src.glob("*.md")) if src.is_dir() else []
+    files, skipped = [], []
+    for f in drafts:
+        meta = read_frontmatter(f)
+        if meta.get("scope", "") != "area":
+            skipped.append(f.name)
+            continue
+        dest = meta.get("dest", "") or "knowledge"
+        if dest not in AREA_STOCK_DIRS:
+            raise RoomError(f"{f.name}: dest: は {' か '.join(AREA_STOCK_DIRS)}（{dest!r} は不可）。何も運んでいない")
+        files.append((f, dest))
+    for n in skipped:
+        ctx.say(f"  運ばない（scope: area ではない。公開向けなら --dst kit）: {n}")
     if not files:
-        ctx.say("運ぶ下書きは無い（ai/out/area/knowledge/*.md、ai/out/area/docs/*.md）")
+        ctx.say("運ぶ下書きは無い（ai/out/stock/*.md の scope: area）")
         return
-    dest_root = p.area_dir / "ai"
     if not p.area_dir.is_dir():
         raise RoomError(f"Area が無い: {p.area_dir}")
-    bad = [f for f in files if f.relative_to(src).parts[0] not in AREA_STOCK_DIRS or len(f.relative_to(src).parts) < 2]
-    if bad:
-        raise RoomError("ai/out/area/ の直下は " + "、".join(AREA_STOCK_DIRS) + " のどちらかに置く: "
-                        + ", ".join(str(f.relative_to(src)) for f in bad) + "（何も運んでいない）")
+    dest_root = p.area_dir / "ai"
     terms_path = p.dir / "_noai" / "mask.toml"
     terms = cleankit.load_terms(terms_path) if terms_path.exists() else []
     problems = []
-    for f in files:
-        text = f.read_text(encoding="utf-8")
-        for label, hits in cleankit.sensitive_hits(text, terms):
-            problems.append(f"{f.relative_to(src)}: {label}: {', '.join(hits[:5])}" + (f" ほか {len(hits) - 5} 件" if len(hits) > 5 else ""))
+    for f, _d in files:
+        for label, hits in cleankit.sensitive_hits(f.read_text(encoding="utf-8"), terms):
+            problems.append(f"{f.name}: {label}: {', '.join(hits[:5])}" + (f" ほか {len(hits) - 5} 件" if len(hits) > 5 else ""))
     if problems:
         raise RoomError("運ぶ前の点検（cleankit）に当たった。何も運んでいない。部屋の AI に直させるか、人が確認して書き換える:\n  " + "\n  ".join(problems))
     man = load_manifest(p)
     sent = man.setdefault("area_stock", {})
     delivered = 0
-    for f in files:
-        rel = f.relative_to(src).as_posix()
+    for f, dest in files:
+        rel = f"{dest}/{f.name}"
         raw = f.read_bytes().replace(b"\r\n", b"\n")
         digest = hashlib.sha256(raw).hexdigest()
         dst = dest_root / rel
@@ -2147,7 +2191,7 @@ def stock_to_kit(ctx, a):
             continue
         meta = read_frontmatter(f)
         if meta.get("scope", "") == "area":
-            ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。external の Area は ai/out/area/ に置いて `room stock --dst area`、internal は ai/out/knowledge/ に置いて restore で Area に戻す）: {f.name}")
+            ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。external の Area は同じ下書きを `room stock --dst area` で運ぶ。internal は ai/out/knowledge/ に置いて restore で Area に戻す）: {f.name}")
             continue
         base, observed = meta.get("base_commit", ""), meta.get("observed", "")
         if not base or not observed:
@@ -3010,8 +3054,8 @@ def build_parser():
     pl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
-    st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ運ぶ（--dst kit: ai/out/stock/ → exmem/inbox/、--dst area: ai/out/area/ → areas/<Area>/ai/）")
-    st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。external だけ。cleankit の点検に当たると止まる）")
+    st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ運ぶ（--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
+    st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="確認を省く（印・対応表・cleankit の点検は行う）")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")

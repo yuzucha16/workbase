@@ -50,7 +50,7 @@ Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入
 - `base_commit: <~/shared/ROOM.md の基準コミット>`
 - `observed: YYYY-MM-DD`（観測した日。並べる順は到着順でなく、この日付）
 
-**`area`（Area の boundary が `external` のとき。2026-11-02）**: 実名を含めずに書く。`ai/out/area/knowledge/YYYY-MM-DD-<topic>.md`（知識）か `ai/out/area/docs/YYYY-MM-DD-<topic>.md`（決定・経緯）。人が `room stock <名> --dst area` で、`cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）を通して `areas/<Area>/ai/` の同じ相対パスに運ぶ。点検に当たると何も運ばれないので、当たった形を書き換える（`~/shared` の `ai/out/area/` を直す）。
+**`area`（Area の boundary が `external` のとき。2026-11-02）**: `ai/out/stock/YYYY-MM-DD-<topic>.md` に、frontmatter `scope: area` を付けて書く（`base_commit` と `observed` は付けない）。行き先の区分は `dest: knowledge`（知識。既定）か `dest: docs`（決定・経緯）。実名を含めずに書く。人が `room stock <名> --dst area` で、`cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）を通して `areas/<Area>/ai/<dest>/` に運ぶ。点検に当たると何も運ばれないので、当たった形を書き換える。次の Project 以降は、`start` が `areas/<Area>/ai/{knowledge,docs}/` の写しを `ctx/area/` に読み取り専用で置く。**過去の決定や経緯から今の判断をするときは、先に `ctx/area/` を読む**。
 
 **`area`（`internal` のとき）**: `ai/out/knowledge/YYYY-MM-DD-<topic>.md` に書く。frontmatter は `kind: lesson`（`stock 理解` なら `explain`）、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない（workbase の版に紐づかない）。マスクのまま書き、人が `room restore` で実名に戻して Area の知識置き場に置く。次の Project では、人が `room pull` で受け取る。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
 
@@ -79,7 +79,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 | `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（復元、works へのコミット） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
 | `stock`（`public`） | 下書きまで | `room stock <名> --dst kit`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
-| `stock`（`area`、external） | `ai/out/area/{knowledge,docs}/` に書く | `room stock <名> --dst area`（cleankit の点検を通して `areas/<Area>/ai/` へ） | `ai/out/area/` |
+| `stock`（`area`、external） | `ai/out/stock/` に `scope: area` で書く | `room stock <名> --dst area`（cleankit の点検を通して `areas/<Area>/ai/` へ）。次の Project の `ctx/area/` に写る | `ai/out/stock/` |
 | `stock`（`area`、internal） | `ai/out/knowledge/` に書く | `room restore`（`start` の終わりでも自動）で Area へ、次の Project で `room pull` | `ai/out/knowledge/` |
 
 `integrate` `review` は、部屋では行わない（`hooks.md` の r/w 表で －。works 側の workbase の作業）。works の作成と雛形の反映は `room mkworks`、部屋の作成は `room init`（どちらも人が打つ）。
