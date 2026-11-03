@@ -18,8 +18,7 @@
 ## Next Actions
 
 1. 【期日 11-10】Project の `docs/`(log・decisions への追記)を Area の共有知に統合する経路を設計する。今の `stock --dst area` は `ai/out/stock/*.md` を新規ファイルとして運ぶ形で、追記・マージの意図(各 Area で共有知として育てる)とずれる(2026-11-03 実機確認、ユーザー)。
-2. 【期日 11-10】別セッションで、古い記述を直す: `workflow-kit/room-context.md` 69 行、`workflow-kit/script-guide.md` 415 行、`guides/howto/ai-room-setup-script.md` 4.1 節、`guides/explain/cross-area-shared-knowledge.md`。11-03 に外した知識の経路(`room pull --where`、`ai/in/area/` に知識が入る)を、`ctx/area/` の写しと `stock --dst area` に合わせる(2026-11-03、ユーザー)。
-3. 【期日 11-10】動作確認(実機、PC1): 共通の xlsx を `areas/<Area>/_noai/source/` に置き、`room clean <Project> --path <glob>` で `ai/in/area/<相対パス>` に出ること、`start --adopt` で通ること(2026-11-03、ユーザー)。
+2. 【期日 11-10】動作確認(実機、PC1): 共通の xlsx を `areas/<Area>/_noai/source/` に置き、`room clean <Project> --path <glob>` で `ai/in/area/<相対パス>` に出ること、`start --adopt` で通ること(2026-11-03、ユーザー)。
 
 ## Open Questions
 

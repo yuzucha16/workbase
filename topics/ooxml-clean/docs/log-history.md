@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-03（NA 2: 古い記述の文書を `ctx/area/` と `stock --dst area` に直した）
+- ユーザーの承認: 4 文書の書き直しと、`workflow-kit/` の変更のコミット（分けてコミット）。
+- 直した: `room-context.md`（統合した知識、internal の `area`、台帳、残したい知見）、`script-guide.md`（原因の台帳）、`ai-room-setup-script.md`（4.1 を書き直し、6.1 に旧経路の注記、表と困りごとの `pull` 行を整理）、`cross-area-shared-knowledge.md`（冒頭に現行設計の注記）。文書だけの変更で、テストは対象外。
+- 残し: `ai-room-setup-script.md` 6.1 の `restore` の知識用の記述は、コードから外すとき（`mask` / `restore` の削除、due 11-30）に消す。
+
 ### 2026-11-03（NA 4: `pull` を廃止し、原本の置き場を共通性で分けた）
 - 経緯: NA 4（`pull` の軽量化）から、置き場の設計に広がった。Area の `source/` は、README に入らない Project 共通のファイル（憲章など）のために作ったもので、「原本は一律 Area」ではなかった。固有と共通で入口が2つになり、`pull` で束ねたが重くなった。Area の `ai/{knowledge,docs}/` は `start` が `ctx/area/` に読み取り専用で写す（`snapshot_area_ai`。検出に当たるものと 1 MiB 超は写さない）。
 - ユーザーの決定: 共通の md は Area の `ai/docs/`（実名を書かない運用）。共通の xlsx・pptx は `source/`（実名・機密なし、internal のみ）から `clean --path`。固有の原本は `raw/` に直接置く。`pull` 廃止。`source/` の名前は相対パスのまま `ai/in/area/` へ（名前に検出・`mask.toml` の語が当たれば止める）。
