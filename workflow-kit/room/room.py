@@ -1857,23 +1857,13 @@ def restore_project(ctx, p, force=False):
         restored = {rel: data for rel, data in out.items() if rel.startswith(DELIVERABLE_OUT)}
         if not restored:
             return 0, []
-    plans = []
-    try:
-        all_routes = routes(p)
-    except RoomError as e:
-        return 0, [str(e)]
-    for route in all_routes:
-        try:
-            plan = plan_publish(route, restored)
-        except RoomError as e:
-            return 0, [str(e)]
-        if plan and not route.root.is_dir():
-            return 0, [f"Area の{route.label}の置き場が無い: {route.root}（`room init {p.area}` で作ってから、restore をやり直す。何も書いていない）"]
-        plans.append((route, plan))
+    plans, errors, conflicts = deliver_plan(p, restored)  # 成果物を Area へ渡す処理は close と共有（restore を畳んでも close に残る）
+    if errors:
+        return 0, errors
     mf = n / "map" / "final-manifest.json"
     written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
     if not force:
-        changed = [c for route, plan in plans for c in publish_conflicts(p, route, plan)]
+        changed = list(conflicts)
         for rel, data in restored.items():
             dest = n / "final" / rel
             if dest.exists():
@@ -1886,9 +1876,48 @@ def restore_project(ctx, p, force=False):
         write_bytes(n / "final" / rel, data)
         written[rel] = maskkit.sha256_bytes(data)
     write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
+    deliver_write(ctx, p, plans)
+    return len(restored), []
+
+
+# ---------- 成果物を Area へ渡す（close が持つ。restore も同じ関数を使う） ----------
+
+def deliverable_items(p):
+    """ai/out/deliverable/ の下を、Area に渡す形で返す: ({ai/out からの相対パス: bytes}, 問題)。
+    マスクした Project（対応表がある）は実名に戻し、マスクしていない Project（clean だけ）はそのまま。ほかの ai/out は見ない。"""
+    out = {k: v for k, v in maskkit.list_files(p.ai / "out").items() if k.startswith(DELIVERABLE_OUT)}
+    mp = noai_dir(p) / "map" / "mapping.json"
+    if not out or not mp.exists():
+        return out, []
+    try:
+        items, problems = maskkit.restore_files(out, maskkit.Mapping.load(mp))
+    except maskkit.MaskError as e:
+        return {}, [str(e)]
+    return (items, []) if not problems else ({}, problems)
+
+
+def deliver_plan(p, items):
+    """何も書かずに、Area への書き出しを点検する: (計画, 渡せない理由, 人の変更が前回の書き出しから入っているファイル)。"""
+    plans, errors, conflicts = [], [], []
+    try:
+        all_routes = routes(p)
+    except RoomError as e:
+        return [], [str(e)], []
+    for route in all_routes:
+        try:
+            plan = plan_publish(route, items)
+        except RoomError as e:
+            return [], [str(e)], []
+        if plan and not route.root.is_dir():
+            return [], [f"Area の{route.label}の置き場が無い: {route.root}（`room init {p.area}` で作ってから、やり直す。何も書いていない）"], []
+        plans.append((route, plan))
+        conflicts += publish_conflicts(p, route, plan)
+    return plans, errors, conflicts
+
+
+def deliver_write(ctx, p, plans):
     for route, plan in plans:
         publish(ctx, p, route, plan)
-    return len(restored), []
 
 
 class Route:
@@ -2368,9 +2397,18 @@ def cmd_close(ctx, a):
     problems = check_decisions(p, close_text, area_gate_terms(p))
     if problems:
         raise RoomError("close.md の【決定】行に問題がある。何も変えていない:\n  " + "\n  ".join(problems))
+    items, problems = deliverable_items(p)
+    plans, errors, conflicts = deliver_plan(p, items)
+    problems += errors + conflicts
+    if problems:
+        raise RoomError("成果物（ai/out/deliverable/）を Area に渡せない。何も変えていない:\n  " + "\n  ".join(problems)
+                        + ("\n（Area 側の人の変更を退避してから、close をやり直す）" if conflicts else ""))
     cases = parse_cases(close_text) + [f"【決定】{body}" for body, _s, _b in parse_decisions(close_text)]
     today = ctx.today()
     reap = (datetime.date.fromisoformat(today) + datetime.timedelta(days=ctx.reap_days)).isoformat()
+    # 0. 成果物を Area へ（点検は上で済み。マスクした Project は実名に戻して）
+    if any(plan for _route, plan in plans):
+        deliver_write(ctx, p, plans)
     # 1. Area の inbox
     inbox = p.area_dir / "ai" / "docs" / "inbox.md"
     text, n = append_inbox(inbox.read_text(encoding="utf-8"), p.name, today, cases, f"archives/{p.name}/ai/out/close.md")

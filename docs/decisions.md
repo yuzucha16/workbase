@@ -7,7 +7,8 @@
 ### 【room】restore の成果物の経路をマスクから切り離す。mask/restore の古い記述を直す（2026-11-04）
 - 決めたこと（ユーザー）: ① 古い記述（コマンドの説明、手順書の「start で自動」）を今の動作に直す。② `restore` は、マスクしていない Project（`clean` だけ）でも、`ai/out/deliverable/` の下だけをそのまま Area の成果物置き場へ渡す（人が変えたファイルを守る停止と `--force` は同じ。ほかの `ai/out/` は触らない）。
 - 理由: Area の成果物置き場へ書けるのが `restore` だけで、対応表が無いと何もしなかったため、`clean` だけの Project は成果物を Area に戻せなかった。
-- 見直し: 11-30 の「`mask` / `restore` の削除」の判断のときに、マスクを畳んだ後の `restore` の名前と範囲（成果物の写しだけ残すか）を決める。
+- 追加（ユーザー、同日）: 成果物を Area へ渡す処理は `room close` が自分で持つ（`restore` を呼ばない）。`deliverable_items` `deliver_plan` `deliver_write` を `restore` と共有し、`restore` を消しても close に残る。点検は close の他の検査と同じく、何も変えずに止まる側で先に行う。
+- 見直し: 11-30 の「`mask` / `restore` の削除」の判断のときに、`restore` を消しても成果物の経路は close に残る。消す場合は `_noai/final/` と `map/final-manifest.json`、`publish` の退避先（`_noai/final/_prev/`）の置き場も決める。
 
 ### 【workflow-kit】承認のスクリーニング（サブエージェント）の効果と費用を測る。結果の 1 行記録と usage_report のサブエージェント行（2026-11-03）
 - 決めたこと（ユーザー）: ① スクリーニングの結果を、決定ごとに 1 行（推奨・型・覆す可能性・ユーザーの判断・一致）で `decisions.md` に残す（`approval-screening.md` の「結果の記録」）。② `usage_report.py` に「うちサブエージェント」の行を足す（合計の内数）。最初の対象は ee の承認プロセスに限る。works の実務のレビューへの拡充（論点出しの入力など）は、このあとの別の議論。

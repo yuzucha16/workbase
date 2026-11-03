@@ -2065,6 +2065,40 @@ class CloseTest(unittest.TestCase):
         (p / "ai/out/close.md").write_text(close_text, encoding="utf-8")
         return v, c, p
 
+    def test_close_delivers_deliverable_to_area_without_restore(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
+            (p / "ai/out/deliverable").mkdir(parents=True)
+            (p / "ai/out/deliverable/report.md").write_text("報告\n", encoding="utf-8", newline="\n")
+            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertEqual((v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"), "報告\n")
+            self.assertTrue((v / "archives/proj-a").is_dir())
+
+    def test_close_restores_names_in_deliverable_when_masked(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
+            m = room.maskkit.Mapping.load(p / "_noai/map/mapping.json")
+            m.ensure("CUST", "company1", ["アクメ商事株式会社"])
+            m.save(p / "_noai/map/mapping.json")
+            (p / "ai/out/deliverable").mkdir(parents=True)
+            (p / "ai/out/deliverable/report.md").write_text("⟦CUST_001⟧ の報告\n", encoding="utf-8", newline="\n")
+            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertIn("アクメ商事株式会社", (v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"))
+
+    def test_close_stops_before_any_change_when_area_deliverable_was_edited(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
+            dst = v / "areas/area-x/_noai/deliverable/proj-a"
+            dst.mkdir(parents=True)
+            (dst / "report.md").write_text("人が書いた\n", encoding="utf-8", newline="\n")
+            (p / "ai/out/deliverable").mkdir(parents=True)
+            (p / "ai/out/deliverable/report.md").write_text("報告\n", encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(room.RoomError, "Area に渡せない"):
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertTrue(p.exists())
+            self.assertEqual((dst / "report.md").read_text(encoding="utf-8"), "人が書いた\n")
+            self.assertNotIn("proj-a#", (v / "areas/area-x/ai/docs/inbox.md").read_text(encoding="utf-8"))
+
     def test_close_carries_decision_with_basis_and_trace_finds_it(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self._decision_project(tmp, "- 【案件】x\n- 【決定】列を固定する（根拠: 列は固定）\n")
