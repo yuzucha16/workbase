@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-03（11-02 の room 変更を既存の works に適用し、実機で動作を確認した）
+- ユーザーの依頼「昨日の room 周りの仕様変更を既存 works へ適用する手順」。11-02 のコミット（`9d35958` boundary、`54b2a8b` start の自動マスク・復元を外す、`2bd9328` `3e1e4be` `200cd86` stock --dst、`294b917` room mv、Vault 2 分割）から手順を組み、ユーザーが実行した。
+- 手順: resources を pull → `mkworks --update` → Area の `boundary:` を確認 → `internal` は `_noai/mask.toml` の語を確認（空だと `stock --dst area` が止まる）→ `ai/in/` を人が読んで `start --adopt` → 必要なら `init --only` → `start` と `stock --dst area` の動作確認 → `30_link.bat`。
+- 実機の結果: 既存の Area は 1 つ（`internal`）。手順 1〜8 すべて動作確認が取れた。
+- 途中で出た 2 つの止まり。(1) `AGENTS.md` の差分で `mkworks --update` が止まった（3 者マージの衝突は書かずに止まる設計。衝突箇所は手で直して再実行）。(2) 「git の身元が未設定なのでコミットしなかった」が出た。`mkworks --update` は雛形の反映までを行い、コミットだけを飛ばす。身元を設定して、`Room-Op: mkworks-update` と `Room-Rev` のトレーラーつきで手でコミットすれば、次回の基点になる。
+- 未確認のまま: `room/README.md` の `init` の行（「`--boundary` の既定値は無い。印が無ければ止まる」）と boundary の節（「無印は `external`」）の食い違い。internal の Area で `--dst area` を使った動作確認の記録（手順 7 に含めたかどうか）。
+
 ### 2026-11-03（`exmem/knowledge.base` が Vault を替えると空になる問題）
 - Obsidian で `knowledge.base` の一覧が空になった。プラグイン削除ではなく、フィルタ `file.inFolder("resources/exmem")` が、Vault を `works` から `resources` に替えたあとのパス（`exmem`）と合わなくなったのが原因。コアの `bases` は有効のまま。
 - ユーザーの指示で `file.path.contains("exmem/")` に変更し、どちらの Vault でも一致するようにした（途中の `inFolder("exmem")` で、`resources` の Vault は復旧を確認済み。最終形の表示は未確認）。

@@ -6,7 +6,7 @@
 
 - 経路: 受け皿 = トピック、入力 = `inbox.md`、見直し = `review`（記録 `docs/metrics/reviews.csv`、基準 `docs/alignment-baseline.md`、星取り `workflow-kit/token-matrix.md` は 11-01 に 110 点）。仕組みの決定は `review 消化` の3段で承認。仮決めは `【仮 〜日付】`。
 - やり方は `methods.md`。`brief 計画` は試験運用中。
-- room: type は `dev` と `inv`。検証用の works は `mkworks --sub`（実機で確認済み）。
+- room: type は `dev` と `inv`。検証用の works は `mkworks --sub`（実機で確認済み）。11-02 の room 変更（boundary の 2 値、start の自動マスク・復元の廃止、stock --dst）の既存 works への適用は、11-03 に ee が実機で通した（既存の Area は internal の 1 つ。手順と止まった所は `log-history.md` の 11-03）。
 - works の git 追跡は許可リスト方式（10-29 決定。`decisions.md`）。
 - Area の改名は `room mv <旧> <新>`（旧 `rename-area`。11-02 作り直し。部屋は `wsl --export`/`--import` で改名、履歴は追わない。ee が実機で動作確認済み）。
 - Python の版: uv 管理が正本（`script-guide.md` の「Python の版と呼び方」）。
