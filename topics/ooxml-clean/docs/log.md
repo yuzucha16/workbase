@@ -15,10 +15,11 @@
 - 実装済み（2026-11-03）: `pull` を廃止。原本は共通性で分ける(固有は `raw/`、共通の xlsx・pptx は `source/` を `room clean --path`、共通の md は Area の `ai/docs/`)。決定は root の `docs/decisions.md`。
 - 実装済み（2026-11-02）: 知識の出口を `room stock --dst kit|area` の一本にし、internal にも `--dst area` と `ctx/area/` の写しを許した（`mask.toml` の語が空なら止まる）。単体テストは関係する 14 件を通した。
 - 実機確認済み(2026-11-03、PC1): `clean --path` → `ai/in/area/`、`start --adopt` で通る。報告は `_noai/source/tmp/`(`461160d`)。
+- 実装済み(2026-11-03): `room close` の `【決定】` 行(根拠の実在検査と sensitive_hits で、移動前に止める)→ Area の inbox、`INBOX_NEW` の規約、`room trace <Project>#n`。`test_room` 全 167 件を通した。実機は未確認。
 
 ## Next Actions
 
-1. 【期日 11-10】設計は済(2026-11-03、ユーザー承認)。実装する: `close` の `【決定】` 行(根拠つき、根拠の実在検査、sensitive_hits)→ Area の inbox、`INBOX_NEW` の規約、`room trace <Project>#n`、単体テスト。仕様は root の `docs/decisions.md` の同日の項。
+1. 【期日 11-10】実機確認: 実際の Project で `【決定】` 行つきの `room close` と `room trace <Project>#n` を一度通す(実装・単体テストは 2026-11-03 に済み)。
 
 ## Open Questions
 

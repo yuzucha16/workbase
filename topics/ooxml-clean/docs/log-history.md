@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-04（NA 1: `【決定】` 行の経路を実装。実機確認は次のセッション）
+- 実装: `room.py` の `parse_decisions` / `check_decisions` / `basis_sections` / `cmd_trace`、`INBOX_NEW` の規約、`close` は検査に通らなければ何も変えずに止まる。識別子は `【案件】` と連番を共有。根拠は `ai/docs/{decisions,log-history,log}.md` の見出しの部分一致、当たった節（子の見出しまで）を `trace` が表示する。
+- テスト: 正常系(close と trace)と止まる 3 種(根拠なし、見出しに無い、機密らしい語)を追加。`test_room` 全 167 件が通った。文書は `room-context.md` と `room/README.md` に追記。
+- ユーザー: 実機確認は次のセッションで行う。コミットを依頼。
+
 ### 2026-11-03（NA 1: Project の決定を Area へ上げる経路の設計が済。実装は別セッション）
 - 問題: `stock --dst area` は新規ファイルの運搬で、Area で育てる共有知（追記・統合）と合わない。同名の `log.md` `decisions.md` は Project どうしで衝突する。`log.md` は状態で、共有知にならない。
 - ユーザーの決定: 案 C(`close` の `【決定】` 行 → Area の inbox → Area の AI が統合)。対象は decisions だけ、時機は `close` のみ、internal と external は同じ経路。正引き(Area の項目 → close 済み Project の詳細)を必須にし、根拠は見出しの部分一致、`room trace <Project>#n` を作る。Project 名は変えないので `room mv` との整合は扱わない。
