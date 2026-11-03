@@ -974,11 +974,11 @@ class BoundaryGuardTest(unittest.TestCase):
         readme.write_text(readme.read_text(encoding="utf-8").replace("boundary: internal", "boundary: external"), encoding="utf-8")
         return v, c, v / "projects/proj-a"
 
-    def test_pull_is_refused_for_external_area(self):
+    def test_clean_path_is_refused_for_external_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.external_project(tmp)
             with self.assertRaises(room.RoomError) as cm:
-                room.cmd_pull(c, argparse.Namespace(name="proj-a", path=["x"], yes=True))
+                room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["x"], yes=True))
             self.assertIn("internal", str(cm.exception))
 
     def test_mask_with_raw_is_refused_for_external_area(self):
@@ -1394,52 +1394,26 @@ class PullSourceTest(unittest.TestCase):
         (sd / "議事録.md").write_text("アクメ商事の件。決定: 切替は11月\n", encoding="utf-8", newline="\n")
         return v, c, p, k
 
-    def pull(self, c, **kw):
-        d = dict(name="proj-a", path=["議事録.md"], yes=True)
-        d.update(kw)
-        room.cmd_pull(c, argparse.Namespace(**d))
+    def place_raw(self, p, v):
+        """Project 固有の原本として、議事録.md を _noai/raw に直接置く。"""
+        (p / "_noai/raw/議事録.md").write_bytes((v / "areas/area-x/_noai/source/議事録.md").read_bytes())
 
-    def test_pull_from_source_selects_by_path_and_hides_names(self):
+    def test_clean_path_needs_a_path_inside_source(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
-            s = v / "areas/area-x/_noai/source"
-            (s / "客先A").mkdir(parents=True)
-            (s / "客先A/議事録.csv").write_text("アクメ商事,1\n", encoding="utf-8")
-            (s / "客先A/メモ.md").write_text("x\n", encoding="utf-8")
-            (s / "他社.csv").write_text("y\n", encoding="utf-8")
-            self.pull(c, path=["客先A/*.csv"])
-            names = sorted(f.name for f in (p / "_noai/raw/area").iterdir())
-            self.assertEqual(len(names), 1)
-            self.assertTrue(names[0].startswith("src-") and names[0].endswith(".csv"))
-            self.assertNotIn("議事録", names[0])
-            src = json.loads((p / "_noai/map/pull-sources.json").read_text(encoding="utf-8"))
-            self.assertEqual(list(src.values()), ["_noai/source/客先A/議事録.csv"])
-
-    def test_pull_from_source_needs_a_path_inside_source(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
-            (v / "areas/area-x/_noai/source").mkdir(parents=True, exist_ok=True)
-            (v / "areas/area-x/_noai/source/a.csv").write_text("x\n", encoding="utf-8")
-            for bad in (None, ["../knowledge/*.md", "/etc/passwd"]):
+            for bad in (None, ["../knowledge/*.md"], ["/etc/passwd"]):
                 with self.assertRaises(room.RoomError):
-                    self.pull(c, path=bad)
+                    room.cmd_clean(c, argparse.Namespace(name="proj-a", path=bad, yes=True)) if bad else room.pick_source_files(v / "areas/area-x/_noai/source", bad)
 
-    def test_mask_warns_about_hand_placed_raw(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
-            (p / "_noai/raw/手置き.md").write_text("アクメ商事\n", encoding="utf-8")
-            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
-            self.assertTrue(any("pull で取り出したものではない" in m for m in c.msgs))
-
-    def test_pull_then_start_hides_names_and_knowledge_out_is_not_restored_to_area(self):
+    def test_raw_original_is_masked_and_hides_names_and_knowledge_out_is_not_restored_to_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
             v, c, p, k = self.setup_area(tmp, wsl)
-            self.pull(c)
+            self.place_raw(p, v)
             seen = {}
 
             def ai():
-                f = next((p / "ai/in/area").iterdir())
+                f = p / "ai/in/議事録.md"
                 seen["in"] = f.read_text(encoding="utf-8")
                 seen["name"] = f.name
                 (p / "ai/out/knowledge").mkdir(parents=True)
@@ -1454,12 +1428,11 @@ class PullSourceTest(unittest.TestCase):
             self.assertFalse(k.exists())  # 知識の経路は外した。Area の知識置き場には書かれない
             man = (p / "ai/records/manifest.json").read_text(encoding="utf-8")
             self.assertNotIn("アクメ", man)
-            self.assertIn("pull-sources.json", man)
 
     def test_deliverable_returns_under_project_name_and_keeps_final_copy(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
-            self.pull(c)
+            self.place_raw(p, v)
             room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
             d = p / "ai/out/deliverable"
             d.mkdir(parents=True)
@@ -1473,7 +1446,7 @@ class PullSourceTest(unittest.TestCase):
     def test_deliverable_changed_by_human_stops_restore_unless_force(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
-            self.pull(c)
+            self.place_raw(p, v)
             room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
             d = p / "ai/out/deliverable"
             d.mkdir(parents=True)
@@ -1493,7 +1466,7 @@ class PullSourceTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
             (v / "areas/area-x/_noai/deliverable").rmdir()
-            self.pull(c)
+            self.place_raw(p, v)
             room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
             d = p / "ai/out/deliverable"
             d.mkdir(parents=True)
@@ -1506,7 +1479,7 @@ class PullSourceTest(unittest.TestCase):
     def test_deliverable_with_placeholder_name_is_refused(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
-            self.pull(c)
+            self.place_raw(p, v)
             room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)  # 対応表を作る（マスクしたことが無いと復元しない）
             out = p / "ai/out/deliverable"
             out.mkdir(parents=True)

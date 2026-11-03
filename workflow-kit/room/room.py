@@ -1,4 +1,4 @@
-"""room: AI 作業部屋の操作（mkworks / open / start / close / umount / mask / restore / pull / readme / stock）。
+"""room: AI 作業部屋の操作（mkworks / open / start / close / umount / mask / restore / readme / stock）。
 
 人が Windows で実行する。AI には実行させない（原本と対応表を読む工程を含むため）。
 設計は guides/explain/ai-room-why.md、手作業の手順は guides/howto/ai-room-setup.md。
@@ -310,7 +310,7 @@ def check_boundary_arg(value):
 
 
 def require_internal(p, what):
-    """業務データを AI の入力にする経路（pull・マスク・adopt）は、boundary: internal の Area だけ。"""
+    """業務データを AI の入力にする経路（clean・マスク・adopt）は、boundary: internal の Area だけ。"""
     if normalize_boundary(read_frontmatter(p.area_dir / "README.md").get("boundary", "")) != "internal":
         raise RoomError(f"{what}は boundary: internal の Area だけ（{p.area} は external 扱い。業務データは AI に入れない。"
                         f"社内向けなら Area の README.md に boundary: internal を付ける）")
@@ -1055,7 +1055,7 @@ updated: {today}
 
 
 def scaffold_area(ctx, area):
-    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（pull、restore、close）は、無ければ作らず、何も変えずに止まる。"""
+    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（clean --path、restore、close）は、無ければ作らず、何も変えずに止まる。"""
     root = ctx.vault / "areas" / area
     old = root / "knowledge"  # 2026-10-21 までの置き場（_noai の外で、守られていなかった）。自動では動かさない
     if old.is_dir():
@@ -1067,7 +1067,7 @@ def scaffold_area(ctx, area):
     sd = root / SOURCE_DEFAULT
     if not sd.is_dir():
         sd.mkdir(parents=True)
-        ctx.say(f"作った: areas/{area}/{SOURCE_DEFAULT}/（原本置き場。人が置く。pull --from source の取り出し元）")
+        ctx.say(f"作った: areas/{area}/{SOURCE_DEFAULT}/（共通の xlsx・pptx の原本置き場。人が置く。clean --path の読み元）")
     inbox = root / "ai" / "docs" / "inbox.md"
     if not inbox.exists():
         inbox.parent.mkdir(parents=True, exist_ok=True)
@@ -1725,10 +1725,10 @@ def write_bytes(path, data):
     path.write_bytes(data)
 
 
-SOURCE_DEFAULT = "_noai/source"  # Area の原本置き場（areas/<Area>/_noai/source/。人が置く。pull --from source の取り出し元）
+SOURCE_DEFAULT = "_noai/source"  # Area の原本置き場（areas/<Area>/_noai/source/。人が置く。clean --path の読み元）
 DELIVERABLE_OUT = "deliverable/"  # ai/out のこの下だけを Area の成果物置き場（<Project 名>/ の下）に戻す
 DELIVERABLE_DEFAULT = "_noai/deliverable"  # Area の成果物置き場（areas/<Area>/_noai/deliverable/<Project>/。人が読む最終版）
-PULL_PREFIX = "area/"  # _noai/raw の下の、Area から取り出した写しの置き場
+PULL_PREFIX = "area/"  # ai/in の下の、Area の source/ から掃除した共通の原本の置き場（Project 固有の原本は ai/in の直下）
 
 
 def deliverable_dir(p):
@@ -1739,16 +1739,6 @@ def source_dir(p):
     return p.area_dir / SOURCE_DEFAULT
 
 
-def pull_sources_path(p):
-    return noai_dir(p) / "map" / "pull-sources.json"
-
-
-def load_pull_sources(p):
-    """{_noai/raw からの相対パス: Area の原本置き場からの相対パス}。実名を含みうるので、_noai/map（部屋に渡らない）に置く。"""
-    path = pull_sources_path(p)
-    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
-
-
 def mask_project(ctx, p, yes=False):
     """_noai/raw の新しい・変わった原本を、マスクして ai/in へ。点検に通らなければ止める。作った件数を返す。"""
     n = noai_dir(p)
@@ -1756,9 +1746,6 @@ def mask_project(ctx, p, yes=False):
     if not raw:
         return 0
     require_internal(p, "原本のマスク（業務データを AI の入力にすること）")
-    stray = sorted(r for r in raw if not r.startswith(PULL_PREFIX))
-    if stray:
-        ctx.say(f"注意: _noai/raw に、pull で取り出したものではない原本がある（{len(stray)} 件）。原本は Area の {SOURCE_DEFAULT}/ に置き、`room pull --from source` で取り出す（raw は pull の出力）")
     conf_path = n / "mask.toml"
     if not conf_path.exists():
         raise RoomError(f"_noai/raw に原本があるが、{conf_path} が無い（マスクの指定を人が書く）")
@@ -1767,7 +1754,6 @@ def mask_project(ctx, p, yes=False):
         mapping = maskkit.Mapping.load(n / "map" / "mapping.json")
         conf_hash = maskkit.sha256_bytes(conf_path.read_bytes())
         man = load_manifest(p)
-        pulled = load_pull_sources(p)
         todo, rebuild = set(), False
         for rel, data in raw.items():
             e = man["files"].get(f"in/{rel}")
@@ -1791,8 +1777,7 @@ def mask_project(ctx, p, yes=False):
         man["files"][f"in/{rel}"] = {
             "sha256": maskkit.sha256_bytes(data), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,  # 人が読んで --adopt するまで start は通さない
             "raw_sha256": maskkit.sha256_bytes(raw[rel]), "mask_sha256": conf_hash, "mapping_version": version,
-            # manifest は部屋の AI から見える。Area のファイル名は実名を含みうるので、名前は対応表の側（pull-sources.json）に置く
-            "masked_from": f"areas/{p.area}/_noai/（名前は _noai/map/pull-sources.json）" if rel in pulled else f"_noai/raw/{rel}",
+            "masked_from": f"_noai/raw/{rel}",
         }
     mapping.save(n / "map" / "mapping.json")
     manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
@@ -1812,7 +1797,6 @@ def clean_project(ctx, p, items=None):
     items（{ai/in での相対パス: bytes}）を渡すと、raw を経由せず、それを掃除する（clean --path。Area の source/ を直接読む）。"""
     n = noai_dir(p)
     raw = raw_files(p) if items is None else items
-    pulled = load_pull_sources(p)
     if not raw:
         return 0
     require_internal(p, "原本の掃除（業務データを AI の入力にすること）")
@@ -1845,9 +1829,7 @@ def clean_project(ctx, p, items=None):
         man["files"][f"in/{rel}"] = {
             "sha256": maskkit.sha256_bytes(cleaned), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,
             "raw_sha256": digest, "cleaned": "strict",
-            # Area のファイル名は実名を含みうるので、名前は対応表（pull-sources.json）の側に置く
-            "masked_from": (f"areas/{p.area}/_noai/source/{rel[len(PULL_PREFIX):]}" if items is not None
-                            else f"areas/{p.area}/_noai/（名前は _noai/map/pull-sources.json）" if rel in pulled else f"_noai/raw/{rel}"),
+            "masked_from": f"areas/{p.area}/_noai/source/{rel[len(PULL_PREFIX):]}" if items is not None else f"_noai/raw/{rel}",
         }
         done += 1
         ctx.say(f"  掃除した: {rel}（{len(log)} 項目、残り {len(after)} 件: {cleankit.summary(after)}）")
@@ -2026,39 +2008,13 @@ def pick_source_files(src, patterns):
     root = src.resolve()
     picked = set()
     for pat in patterns:
-        if Path(pat).is_absolute() or ".." in Path(pat).parts:
+        if Path(pat).is_absolute() or Path(pat).anchor or pat.startswith(("/", chr(92))) or ".." in Path(pat).parts:
             raise RoomError(f"--path は source/ の中の相対パスで書く: {pat!r}")
         for f in src.glob(pat):
             if f.is_file() and root in f.resolve().parents:
                 picked.add(f)
     return sorted(picked)
 
-
-def cmd_pull(ctx, a):
-    """Area の原本置き場（_noai/source/）から、--path のファイルを _noai/raw/area/ に写す。マスクは room mask。実名を読むので人が実行する。知識の取り出しは 2026-11-03 に外した。"""
-    p = Project.load(ctx, a.name)
-    require_internal(p, "pull（Area の原本の取り出し）")
-    src = source_dir(p)
-    if not src.is_dir():
-        raise RoomError(f"Area の原本置き場が無い: {src}（`room init {p.area}` で作る）")
-    picked = pick_source_files(src, getattr(a, "path", None))
-    if not picked:
-        ctx.say("条件に合うファイルは無い")
-        return
-    ctx.say(f"取り出す候補（{len(picked)} 件。原本）:")
-    for f in picked:
-        ctx.say("  " + f.relative_to(src).as_posix())
-    if not a.yes and ctx.ask("この一覧を取り出してよいか [y/N]: ").strip().lower() != "y":
-        raise RoomError("取り出しを中止した")
-    sources = load_pull_sources(p)
-    for f in picked:
-        rel_src = f.relative_to(src).as_posix()
-        # ファイル名は実名を含みうる。部屋に渡る名前は、種類と元の相対パスのハッシュだけにする
-        rel = f"{PULL_PREFIX}src-{maskkit.sha256_bytes(f'source/{rel_src}'.encode('utf-8'))[:8]}{f.suffix.lower()}"
-        write_bytes(noai_dir(p) / "raw" / rel, f.read_bytes())
-        sources[rel] = f"{SOURCE_DEFAULT}/{rel_src}"
-    write_bytes(pull_sources_path(p), json.dumps(sources, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
-    ctx.say(f"取り出した: {len(picked)} ファイル → _noai/raw/{PULL_PREFIX}（次は `room mask {p.name}`。今回の条件に合わなくなった前回の分は、_noai/raw から手で消す）")
 
 def cmd_readme(ctx, a):
     """部屋の AI が書いた ai/out/readme-draft.md（本文だけ）を、Project の README.md の本文に反映する。frontmatter は変えない（updated だけ今日にする）。"""
@@ -3061,14 +3017,10 @@ def build_parser():
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
     cl = sub.add_parser("clean", help="_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（語のマスクは任意。通すのは start --adopt）")
     cl.add_argument("name")
-    cl.add_argument("--path", action="append", metavar="パス", help="Area の原本置き場(_noai/source/)からの相対パスか glob。指定すると raw に写さず直接掃除する(pull 不要)")
+    cl.add_argument("--path", action="append", metavar="パス", help="Area の原本置き場(_noai/source/)からの相対パスか glob。指定すると raw を経由せず直接掃除する(共通の xlsx・pptx 用)")
     cl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
-    pl = sub.add_parser("pull", help="Area の原本置き場（_noai/source/）から、--path のファイルを _noai/raw/area/ に写す（マスクは mask）")
-    pl.add_argument("name")
-    pl.add_argument("--path", action="append", metavar="パス", required=True, help="置き場からの相対パスか glob（複数指定可）")
-    pl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
     st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ運ぶ（--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
@@ -3103,7 +3055,7 @@ def main(argv=None):
     ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
         {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "mv": cmd_mv,
-         "mask": cmd_mask, "clean": cmd_clean, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
+         "mask": cmd_mask, "clean": cmd_clean, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2
