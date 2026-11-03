@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-03（NA 2: `clean --path` の実機確認が済。報告の置き場を `source/tmp/` に変えた）
+- 確認(ユーザー、PC1): `uv run room.py clean sample --path sample.xlsx`(起点は `areas/<Area>/_noai/source/`。`..` や外のパスは拒否される)で `ai/in/area/` に出て、`start --adopt` で通った。「それ以外は問題ありません」。
+- ユーザーの決定: `--path` の掃除の報告は、原本の隣の `source/tmp/` に置く(探す場所を増やさないため)。サブフォルダのファイルも `source/tmp/<相対パス>.clean-report.md` の 1 か所にまとめる(ユーザー承認)。
+- 実装: `461160d`(`room.py` の `clean_project`、`pick_source_files` が `tmp/` を除く、README、テスト)。関連テスト 4 件を通した(`test_room` 全件は回していない)。
+
 ### 2026-11-03（NA 2: 古い記述の文書を `ctx/area/` と `stock --dst area` に直した）
 - ユーザーの承認: 4 文書の書き直しと、`workflow-kit/` の変更のコミット（分けてコミット）。
 - 直した: `room-context.md`（統合した知識、internal の `area`、台帳、残したい知見）、`script-guide.md`（原因の台帳）、`ai-room-setup-script.md`（4.1 を書き直し、6.1 に旧経路の注記、表と困りごとの `pull` 行を整理）、`cross-area-shared-knowledge.md`（冒頭に現行設計の注記）。文書だけの変更で、テストは対象外。
