@@ -1114,7 +1114,7 @@ def report_md(src, fs, log=None, after=None, probs=None, out=None):
     if log is not None:
         L += [f"## 掃除したこと（出力: {Path(out).name}）", ""] + [f"- {x}" for x in log or ["（なし）"]] + [""]
         L += ["## 出力の整合", ""] + ([f"- {p}" for p in probs] or ["- 問題なし"]) + [""]
-    sections = [("元のファイルに残っていたもの", fs)] if after is None else [("元のファイルに残っていたもの", fs), ("掃除の後も残っているもの（人が確かめる）", after)]
+    sections = [("元のファイルに残っていたもの", fs)] if after is None else [("掃除の後も残っているもの（人が確かめる）", after), ("元のファイルに残っていたもの", fs)]
     for title, items in sections:
         L += [f"## {title}", ""]
         if not items:

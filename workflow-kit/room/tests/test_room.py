@@ -2452,7 +2452,7 @@ class CleanTest(unittest.TestCase):
             raw.write_bytes(dummy_fixture.build_xlsx())
             room.cmd_clean(c, argparse.Namespace(name="proj-a"))
             self.assertTrue((p / "ai/in/area/dummy.xlsx").exists())
-            self.assertTrue((p / "_noai/reports/area/dummy.xlsx.clean-report.md").exists())
+            self.assertTrue((p / "_noai/raw/tmp/area/dummy.xlsx.clean-report.md").exists())
             man = room.load_manifest(room.Project.load(c, "proj-a"))
             self.assertTrue(man["files"]["in/area/dummy.xlsx"]["pending"])
             self.assertTrue(room.check_provenance(room.Project.load(c, "proj-a")))

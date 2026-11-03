@@ -1632,7 +1632,7 @@ def cmd_start(ctx, a):
     boundary = preflight(ctx, p)
     # 2026-11-02: start は自動でマスクしない（マスクは `room mask`。internal の Area だけ）。ai/in は人が確認して --adopt で通す
     masked = 0
-    if maskkit.list_files(noai_dir(p) / "raw"):
+    if raw_files(p):
         ctx.say("注意: _noai/raw に原本がある。start は自動でマスクしない。必要なら `room mask` を先に実行し、ai/in を読んで --adopt で通す")
     if a.adopt:
         require_internal(p, "--adopt（人が通した入力の記録）")
@@ -1711,6 +1711,11 @@ def cmd_start(ctx, a):
 
 # ---------- マスクと復元（maskkit。仕様は mask-spec.md） ----------
 
+def raw_files(p):
+    """_noai/raw の原本。raw/tmp/ は room の出力（掃除の報告）の置き場なので原本に数えない。"""
+    return {k: v for k, v in maskkit.list_files(noai_dir(p) / "raw").items() if not k.startswith("tmp/")}
+
+
 def noai_dir(p):
     return p.dir / "_noai"
 
@@ -1747,7 +1752,7 @@ def load_pull_sources(p):
 def mask_project(ctx, p, yes=False):
     """_noai/raw の新しい・変わった原本を、マスクして ai/in へ。点検に通らなければ止める。作った件数を返す。"""
     n = noai_dir(p)
-    raw = maskkit.list_files(n / "raw")
+    raw = raw_files(p)
     if not raw:
         return 0
     require_internal(p, "原本のマスク（業務データを AI の入力にすること）")
@@ -1803,9 +1808,9 @@ def mask_project(ctx, p, yes=False):
 
 
 def clean_project(ctx, p):
-    """_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（2026-11-03: 語のマスクの代わりの入口）。報告は _noai/reports/（AI に見せない）。作った件数を返す。"""
+    """_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（2026-11-03: 語のマスクの代わりの入口）。報告は _noai/raw/tmp/（AI に見せない）。作った件数を返す。"""
     n = noai_dir(p)
-    raw = maskkit.list_files(n / "raw")
+    raw = raw_files(p)
     if not raw:
         return 0
     require_internal(p, "原本の掃除（業務データを AI の入力にすること）")
@@ -1828,11 +1833,11 @@ def clean_project(ctx, p):
         except cleankit.CleanError as err:
             ctx.say(f"  止めた（{rel}）: {err}")
             continue
-        rep = n / "reports" / (rel + ".clean-report.md")
+        rep = n / "raw" / "tmp" / (rel + ".clean-report.md")
         rep.parent.mkdir(parents=True, exist_ok=True)
         rep.write_text(cleankit.report_md(Path(rel), before, log, after, probs, Path(rel)), encoding="utf-8")
         if probs:
-            ctx.say(f"  止めた（{rel}）: 掃除の出力に整合の問題 {len(probs)} 件。ai/in へは渡さない。報告: _noai/reports/")
+            ctx.say(f"  止めた（{rel}）: 掃除の出力に整合の問題 {len(probs)} 件。ai/in へは渡さない。報告: _noai/raw/tmp/")
             continue
         write_bytes(p.ai / "in" / rel, cleaned)
         man["files"][f"in/{rel}"] = {
@@ -1844,7 +1849,7 @@ def clean_project(ctx, p):
     manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
     manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     if done:
-        ctx.say(f"掃除した: {done} ファイル → ai/in。報告（実データの抜粋入り）は _noai/reports/。読んで `start --adopt` で通す")
+        ctx.say(f"掃除した: {done} ファイル → ai/in。報告（実データの抜粋入り）は _noai/raw/tmp/。読んで `start --adopt` で通す")
     return done
 
 
