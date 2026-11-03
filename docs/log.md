@@ -16,7 +16,11 @@
 - 項目の移し替え・期日の持ち上げ: `workflow-kit/tools/na_apply.py`（close / due-up。呼び方は `docs-write-rules.md`）。実行は AI（人は介在しない）。当面は、処理の漏れがあるものとして読み、見つけたら報告する。漏れなし 3 回連続で外す（11-02 時点 0/3）。
 - 索引（triggers）: dotfiles のフックが依頼ごとに出す（`guides/explain/triggers-knowledge-index.md`）。参照構造の点検は `review` の入力 9（`mdgraph.py`。基準値は循環 91%、最大の深さ 5、辺/ファイル 7.4）。積み残しは `due.md` の 11-03・11-08。単体テストは `python -I -m unittest discover -s workflow-kit/tools/tests`。`exmem-index.md` は 1 ノート 1 行。
 
+- 論点出しの型: `exmem/lessons/issue-extraction-output.md`（v4、試用中。合図は「論点出し」「論点抽出」）。フィードバックは、ユーザーが「フィードバック」と言うと 1 行が出て、`topics/kit-growth/inbox.md` へ手で運ぶ。
+
 ## Next Actions
+
+1. **論点出しの型 v4 の実作業での確認（起票 11-03）**: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。
 
 
 期日のある項目は `due.md`。

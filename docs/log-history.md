@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-03（論点出しの型を作り、exmem の lesson に置いた）
+- ユーザーの依頼: 作業の前に論点だけを出させる工程の入力の型（貼り付けるプロンプト）の素案。2 案件（Excel マクロ）で試用し、想定内の論点に加えて、曖昧語の定義や決定同士の食い違いの指摘、論点の順序づけが副作用として出た（ユーザーの報告）。
+- 直し: v1 は観点（言葉）・枝番・「未定」欄、v2 は判断に「確」「聞」、v3 は「確・聞の順序」欄とフィードバックの手順、v4 は論点の表の「セットで決める ID」（フィードバックの直し案のとおり）。
+- 置き場: `exmem/lessons/issue-extraction-output.md`（貼り付け用プロンプトを含む）。`exmem-index.md` と `guides/quickref/ai-work-prompts.md` に行を足した（b6f9570）。フィードバックの行は `topics/kit-growth/inbox.md` へ手で運び、v4 に反映して選別済みへ移した（cf2e3d1）。
+- 未確認: 決定メモを使った作業セッションで、手戻りが減ったか。
+
 ### 2026-11-03（room: 知識用の restore・pull の経路を外した）
 - ユーザーの依頼(ooxml-clean の NA 3)。internal のダミーで `mask.toml` なしで止まることを確認(ユーザー)。`room.py`: `restore` の知識の経路(`ai/out/knowledge/`)、`pull` の知識の取り出し(`--from knowledge` `--where`)、`init` の知識置き場の作成、AI への指示文の知識の項を外した。`pull` は原本専用(`--path` 必須)。成果物の戻し(`ai/out/deliverable/`)と `stock --dst` は残した。単体テスト 163 件を通した(8c14faa)。
 - 知識用の通し試験 `room/pull-e2e-test.md` と、知識置き場前提の見本 `examples/meeting-note-example.md` を削除した(後者はユーザーの指示)。`due.md` の旧 `scope: area` の実機確認(restore 経由)は経路ごと無くなったので消した。
