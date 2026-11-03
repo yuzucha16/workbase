@@ -1363,25 +1363,18 @@ AREA_AI_MAX_BYTES = 1024 * 1024
 
 
 def area_gate_terms(p):
-    """Area の ai/ に出入りする文の点検に使う語（mask.toml の語）を返す。internal は、人が通した業務データが部屋にあるので、語が空なら None（関門を通せない）。"""
+    """Area の ai/ に出入りする文の点検に使う語（mask.toml の語）を返す。語は任意（2026-11-03: 語のマスクは必須にしない。無ければ形の検出だけ）。"""
     terms_path = p.dir / "_noai" / "mask.toml"
-    terms = cleankit.load_terms(terms_path) if terms_path.exists() else []
-    if not terms and normalize_boundary(read_frontmatter(p.area_dir / "README.md").get("boundary", "")) == "internal":
-        return None
-    return terms
+    return cleankit.load_terms(terms_path) if terms_path.exists() else []
 
 
 def snapshot_area_ai(ctx, p):
     """Area の `ai/{knowledge,docs}/**.md` を、`ai/ctx/area/` に読み取り専用で写す（過去の決定・経緯を今の判断の資料にする）。external と internal で同じ。
-    cleankit の検出に当たるファイルと、合計が上限を超える分は写さない（start は止めない）。internal は mask.toml の語が空なら写さない。写した件数を返す。"""
+    cleankit の検出に当たるファイルと、合計が上限を超える分は写さない（start は止めない）。写した件数を返す。"""
     dst_root = p.ai / "ctx" / "area"
     rmtree_force(dst_root)
     src_root = p.area_dir / "ai"
     terms = area_gate_terms(p)
-    if terms is None:
-        if src_root.is_dir():
-            ctx.say("  注意: internal の Area は mask.toml の語（顧客名など）が空なので、Area の ai/ を写さない")
-        return 0
     n, total = 0, 0
     for d in AREA_AI_COPY_DIRS:
         for f in sorted((src_root / d).rglob("*.md")) if (src_root / d).is_dir() else []:
@@ -1809,6 +1802,52 @@ def mask_project(ctx, p, yes=False):
     return len(res["outputs"])
 
 
+def clean_project(ctx, p):
+    """_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（2026-11-03: 語のマスクの代わりの入口）。報告は _noai/reports/（AI に見せない）。作った件数を返す。"""
+    n = noai_dir(p)
+    raw = maskkit.list_files(n / "raw")
+    if not raw:
+        return 0
+    require_internal(p, "原本の掃除（業務データを AI の入力にすること）")
+    actions = [x for x in cleankit.CLEAN_ACTIONS] + sorted(set(cleankit.PROFILES["strict"][1]))
+    man, done = load_manifest(p), 0
+    for rel, data in sorted(raw.items()):
+        ext = Path(rel).suffix.lower()
+        digest = maskkit.sha256_bytes(data)
+        e = man["files"].get(f"in/{rel}")
+        if e is not None and e.get("raw_sha256") == digest and (p.ai / "in" / rel).exists():
+            continue
+        if ext not in cleankit.SUPPORTED:
+            ctx.say(f"  掃除しない（xlsx・pptx 以外）: ai/in へ渡すかは人が決める: {rel}")
+            continue
+        try:
+            before = cleankit.check(cleankit.Pkg(data), ext)
+            cleaned, log = cleankit.clean(data, ext, actions)
+            probs = cleankit.integrity(cleaned)
+            after = cleankit.check(cleankit.Pkg(cleaned), ext)
+        except cleankit.CleanError as err:
+            ctx.say(f"  止めた（{rel}）: {err}")
+            continue
+        rep = n / "reports" / (rel + ".clean-report.md")
+        rep.parent.mkdir(parents=True, exist_ok=True)
+        rep.write_text(cleankit.report_md(Path(rel), before, log, after, probs, Path(rel)), encoding="utf-8")
+        if probs:
+            ctx.say(f"  止めた（{rel}）: 掃除の出力に整合の問題 {len(probs)} 件。ai/in へは渡さない。報告: _noai/reports/")
+            continue
+        write_bytes(p.ai / "in" / rel, cleaned)
+        man["files"][f"in/{rel}"] = {
+            "sha256": maskkit.sha256_bytes(cleaned), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,
+            "raw_sha256": digest, "cleaned": "strict", "masked_from": f"_noai/raw/{rel}",
+        }
+        done += 1
+        ctx.say(f"  掃除した: {rel}（{len(log)} 項目、残り {len(after)} 件: {cleankit.summary(after)}）")
+    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
+    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    if done:
+        ctx.say(f"掃除した: {done} ファイル → ai/in。報告（実データの抜粋入り）は _noai/reports/。読んで `start --adopt` で通す")
+    return done
+
+
 def restore_project(ctx, p, force=False):
     """ai/out を復元して _noai/final へ。戻らないもの、または人が変えた final があれば（force 以外は）何も書かずに問題の一覧を返す。"""
     n = noai_dir(p)
@@ -1930,6 +1969,13 @@ def cmd_mask(ctx, a):
         ctx.say("マスクするものは無い（原本が無いか、変更が無い）")
 
 
+def cmd_clean(ctx, a):
+    p = Project.load(ctx, a.name)
+    preflight(ctx, p)
+    if clean_project(ctx, p) == 0:
+        ctx.say("掃除するものは無い（原本が無いか、変更が無い）")
+
+
 def cmd_restore(ctx, a):
     p = Project.load(ctx, a.name)
     k, problems = restore_project(ctx, p, force=a.force)
@@ -2034,14 +2080,11 @@ def cmd_stock(ctx, a):
 
 
 def stock_to_area(ctx, a):
-    """ai/out/stock/*.md のうち `scope: area` の下書きを、areas/<Area>/ai/<dest>/ へ運ぶ（dest: は knowledge か docs。既定は knowledge）。external・internal 共通（internal は mask.toml の語が要る）。
+    """ai/out/stock/*.md のうち `scope: area` の下書きを、areas/<Area>/ai/<dest>/ へ運ぶ（dest: は knowledge か docs。既定は knowledge）。external・internal 共通。
     運ぶ前に cleankit の検出（金額・メール・電話などの形、mask.toml の語）を対象の全ファイルに通し、1 つでも当たれば何も運ばず止まる。"""
     p = Project.load(ctx, a.name)
     check_area(p)
     terms = area_gate_terms(p)
-    if terms is None:
-        raise RoomError(f"{p.area} は internal なので、運ぶ前の点検に mask.toml の語（顧客名など）が要る。"
-                        "`_noai/mask.toml` の [terms.*] に語を足してから、もう一度実行する。何も運んでいない")
     src = p.ai / "out" / "stock"
     drafts = sorted(src.glob("*.md")) if src.is_dir() else []
     files, skipped = [], []
@@ -2981,6 +3024,8 @@ def build_parser():
     s.add_argument("--no-commit", dest="commit", action="store_false", help="回収をコミットしない（既定はコミットする）")
     m = sub.add_parser("mask", help="_noai/raw の原本をマスクして ai/in へ（start でも自動で行う）")
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
+    cl = sub.add_parser("clean", help="_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（語のマスクは任意。通すのは start --adopt）")
+    cl.add_argument("name")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     pl = sub.add_parser("pull", help="Area の原本置き場（_noai/source/）から、--path のファイルを _noai/raw/area/ に写す（マスクは mask）")
@@ -3021,7 +3066,7 @@ def main(argv=None):
     ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
         {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "mv": cmd_mv,
-         "mask": cmd_mask, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
+         "mask": cmd_mask, "clean": cmd_clean, "restore": cmd_restore, "pull": cmd_pull, "readme": cmd_readme, "stock": cmd_stock}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2

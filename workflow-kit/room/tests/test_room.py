@@ -1730,14 +1730,12 @@ class StockAreaTest(unittest.TestCase):
             with self.assertRaises(room.RoomError):
                 room.cmd_stock(c, self.ns())
 
-    def test_internal_area_needs_terms(self):
+    def test_internal_area_without_terms_delivers_by_shape_check(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.setup(tmp, boundary="internal")
             self.put(p, "a.md", "x\n")
-            with self.assertRaises(room.RoomError) as e:
-                room.cmd_stock(c, self.ns())
-            self.assertIn("mask.toml", str(e.exception))
-            self.assertFalse((v / "areas/area-x/ai").exists())
+            room.cmd_stock(c, self.ns())
+            self.assertTrue(any((v / "areas/area-x/ai").rglob("a.md")))
 
     def test_internal_area_delivers_with_terms_and_term_hit_stops(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1806,14 +1804,11 @@ class AreaAiSnapshotTest(unittest.TestCase):
             self.assertFalse((out / "docs/leak.md").exists())
             self.assertFalse(os.access(out / "knowledge/k.md", os.W_OK) and os.geteuid() != 0)
 
-    def test_internal_area_without_terms_copies_nothing_and_clears_old_copy(self):
+    def test_internal_area_without_terms_still_copies(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, base = self.setup(tmp, boundary="internal")
             (base / "knowledge/k.md").write_text("知識\n", encoding="utf-8")
-            (p.ai / "ctx/area").mkdir(parents=True)
-            (p.ai / "ctx/area/old.md").write_text("古い\n", encoding="utf-8")
-            self.assertEqual(room.snapshot_area_ai(c, p), 0)
-            self.assertFalse((p.ai / "ctx/area").exists())
+            self.assertEqual(room.snapshot_area_ai(c, p), 1)
 
     def test_internal_area_with_terms_copies_and_skips_term_hits(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -2441,6 +2436,40 @@ class MkworksTest(unittest.TestCase):
             sh(v, "add", "-A", "--", ".gitignore", ".ignore", ".gitattributes", "README.md", "AGENTS.md", "CLAUDE.md", "docs")
             sh(v, "commit", "-qm", "init", "--trailer", f"Template-Rev: {base}")
             self.assertEqual((base, "Template-Rev"), room.mkworks_base(ctx_for(v)))
+
+
+class CleanTest(unittest.TestCase):
+    def test_clean_writes_strict_output_pending_and_adopt_passes(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import dummy_fixture
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            p = v / "projects/proj-a"
+            ar = v / "areas/area-x/README.md"
+            self.assertIn("boundary: internal", ar.read_text(encoding="utf-8"))
+            raw = p / "_noai/raw/area/dummy.xlsx"
+            raw.parent.mkdir(parents=True, exist_ok=True)
+            raw.write_bytes(dummy_fixture.build_xlsx())
+            room.cmd_clean(c, argparse.Namespace(name="proj-a"))
+            self.assertTrue((p / "ai/in/area/dummy.xlsx").exists())
+            self.assertTrue((p / "_noai/reports/area/dummy.xlsx.clean-report.md").exists())
+            man = room.load_manifest(room.Project.load(c, "proj-a"))
+            self.assertTrue(man["files"]["in/area/dummy.xlsx"]["pending"])
+            self.assertTrue(room.check_provenance(room.Project.load(c, "proj-a")))
+            room.adopt_in(c, room.Project.load(c, "proj-a"))
+            self.assertEqual(room.check_provenance(room.Project.load(c, "proj-a")), [])
+            room.cmd_clean(c, argparse.Namespace(name="proj-a"))  # 変更が無ければ作り直さない
+
+    def test_clean_refuses_external_area(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            ar = v / "areas/area-x/README.md"
+            ar.write_text(ar.read_text(encoding="utf-8").replace("boundary: internal", "boundary: external"), encoding="utf-8", newline="\n")
+            raw = v / "projects/proj-a/_noai/raw/area/a.xlsx"
+            raw.parent.mkdir(parents=True, exist_ok=True)
+            raw.write_bytes(b"x")
+            with self.assertRaises(room.RoomError):
+                room.cmd_clean(c, argparse.Namespace(name="proj-a"))
 
 
 if __name__ == "__main__":
