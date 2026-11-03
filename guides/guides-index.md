@@ -43,7 +43,7 @@ updated: 2026-10-28
 | なぜ「AI 作業部屋」を入れたのか、選択肢から選ぶまでの経緯と、試して確かめたことを、自分で説明できるようにする | [[ai-room-why]] | 理解ガイド |
 | Area の知識（実名入り）を、別の Project の部屋の AI に使わせる設計と、workbase の共有知との違いを、自分で説明できるようにする | [[cross-area-shared-knowledge]] | 理解ガイド |
 | AI に見せたくないファイルを、設定で隠す方式（禁止リスト）でなく、渡したものだけ見せる方式（許可リスト）にする理由を思い出す | [[ai-room-why#2. 理解のための基礎知識]] | 理解ガイド |
-| 実名入りの原本・成果物・知識が Area と Project のどこに置かれ、どの順に流れるか（`_noai/source` `deliverable` `knowledge`、`pull` → `mask` → `restore`）を、自分で説明できるようにする | [[ai-room-data-layout-explain]] | 理解ガイド |
+| 実名入りの原本・成果物・知識が Area と Project のどこに置かれ、どの順に流れるか（`_noai/source` `deliverable` `knowledge`、`clean`／`mask` → `restore`）を、自分で説明できるようにする | [[ai-room-data-layout-explain]] | 理解ガイド |
 | 同じ Area の Project を、同じ部屋で並行して `room start` したとき、何が共有され、どこで衝突するかを思い出す。後から start が止まる、`index.lock` で失敗する | [[ai-room-concurrent-start-explain]] | 理解ガイド |
 | 部屋で AI を使っていて、`Permission denied`、成果物がコミットに入らない、マウントが残る、などで困った | [[ai-room-why#3. チェックリスト（症状・疑問 → 原因 → 対処）]]、[[ai-room-setup#10. うまくいかないとき]] | 理解ガイド・手順書 |
 | WSL に AI 作業部屋を作り、Project の `ai/` だけを渡して Claude Code で作業する | [[ai-room-setup]] | 手順書 |

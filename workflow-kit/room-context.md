@@ -64,10 +64,10 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 
 ## 知識の統合と成果物の置き場（部屋の中）
 
-2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書き、人が `room restore`（`room start` の終わりでも自動）で実名に戻して Area に置く。
+2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書き、人が `room restore`（`start` は自動で行わない）で実名に戻して Area に置く。
 
 - **統合した知識**: `ctx/area/`（`start` が置く Area の `ai/{knowledge,docs}/` の読み取り専用の写し）を読み、統合したノートを `ai/out/stock/<英数字の名前>.md` に書く（`scope: area`、`dest: knowledge`）。実名を含めない。人が `room stock <名> --dst area` で運ぶ。同じ名前のファイルが Area にあり、前回運んだ後に人が変えていると、`stock` は運ばずに止まる（人が確認して消すか、名前を変える）。
-- **Area に実名で戻したい最終版**: `ai/out/deliverable/` の下に置く。`restore` が、Area の成果物置き場（Project 名の下）にも実名に戻して書く。Project の成果物は `ai/out/<成果物名>/` に置き（置き場と構成は `project-structure.md`）、`deliverable/` に置かない。`deliverable/` の外の `ai/out/<成果物名>/` は、従来どおり Project の `_noai/final/` に戻る。
+- **Area に実名で戻したい最終版**: `ai/out/deliverable/` の下に置く。人が `room restore` を実行すると、Area の成果物置き場（Project 名の下）にも書く（マスクした Project は実名に戻して、マスクしていない Project はそのまま）。Project の成果物は `ai/out/<成果物名>/` に置き（置き場と構成は `project-structure.md`）、`deliverable/` に置かない。`deliverable/` の外の `ai/out/<成果物名>/` は、従来どおり Project の `_noai/final/` に戻る。
 - **残したい知見**（`stock`）は、行き先を `scope:` で決める（下の `stock` の節）。Area の業務に固有なら `scope: area`、公開できる一般則なら `scope: public`（どちらも `ai/out/stock/`）。
 
 ## 分担と受け渡し

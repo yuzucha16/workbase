@@ -31,7 +31,7 @@ tags:
 uv run room.py open <Project> --area <Area>
 ```
 
-- `_noai/` には `raw/` `map/` `user/` ができる（`final/` は無い。復元しないため）
+- `_noai/` には `raw/` `map/` `user/` ができる（`final/` も作られるが、復元しなければ空）
 - README の本文（目的、完了条件）を書く。ひな形のままだと `close` が通ってしまう
 
 ## 2. 原本を置き、語の表を書く
@@ -46,12 +46,12 @@ uv run room.py open <Project> --area <Area>
 ## 3. マスクして、部屋で要約させる
 
 ```powershell
-uv run room.py mask <Project>      # 先に確かめたいとき（start の最初でも自動で行う）
+uv run room.py mask <Project>      # start の前に、人が実行する（start は自動でマスクしない）
 uv run room.py start <Project>
 ```
 
 1. `mask` が `_noai/raw/` を `ai/in/` にマスクして写す。語が残っていれば止まる
-2. 部屋の AI に、`ai/in/` を読んで要約・アクション抽出を頼む。要約は `ai/work/` に置く（`ai/out/` に置くと、終了時に実名へ戻した版が `_noai/final/` にできる）
+2. 部屋の AI に、`ai/in/` を読んで要約・アクション抽出を頼む。要約は `ai/work/` に置く（`ai/out/` に置いて `room restore` を実行すると、実名へ戻した版が `_noai/final/` にできる）
 3. 終わったら、`start` が自動でアンマウントする。要約を `ai/work/` に置いたので、**実名には戻らない**（復元は `ai/out/` だけに掛かる）
 
 - 目安: 「回収: 変更 N 件」に、要約のファイルが出る
@@ -59,7 +59,7 @@ uv run room.py start <Project>
 ## 4. 要約を読む
 
 - 要約はプレースホルダー入り。実名で読みたいときは、`_noai/map/` の対応表（実名入り）を人が見る。AI には見せない
-- 実名入りの版が欲しいなら、要約を `ai/out/` に置く（終了時に `_noai/final/` へ復元される。[[ai-room-setup-script]] の 6 章）
+- 実名入りの版が欲しいなら、要約を `ai/out/` に置く（`room restore` で `_noai/final/` へ復元される。[[ai-room-setup-script]] の 6 章）
 - 実名に戻した文書は、works のコミットの対象外（`_noai/` は追跡しない）
 
 ## うまくいかないとき

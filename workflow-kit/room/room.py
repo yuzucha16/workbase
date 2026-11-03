@@ -34,7 +34,7 @@ ROOM_UID = 1000
 REAP_DAYS_DEFAULT = 14
 GITIGNORE_REQUIRED = ("**/_noai/",)  # 2026-10-29: 許可リスト方式にしたので `!**/ai/out/` は必須でない（旧方式の works にあっても通る）
 AI_DIRS = ("ai/docs", "ai/in", "ai/work", "ai/out", "ai/records")
-# マスクと復元は、状態で決まる（設定は無い）。_noai/raw に原本があればマスクし、_noai/map/mapping.json があれば復元する。
+# マスクと復元は、人が `room mask` / `room restore` で行う（start は自動でしない）。復元は mapping.json があれば語を戻し、無ければ ai/out/deliverable/ だけそのまま Area へ渡す。
 # user/ は、人だけが使う仮置き（予約名。room は触らない）。
 NOAI_DIRS = ("_noai/raw", "_noai/map", "_noai/final", "_noai/user")
 AI_KEEP = ("ai/in", "ai/work", "ai/records")
@@ -1631,7 +1631,6 @@ def cmd_start(ctx, a):
     first = gateway_check(ctx) if gateway else None  # 設定とトークンを、マウントの前に確かめる（取れなければここで止める）
     boundary = preflight(ctx, p)
     # 2026-11-02: start は自動でマスクしない（マスクは `room mask`。internal の Area だけ）。ai/in は人が確認して --adopt で通す
-    masked = 0
     if raw_files(p):
         ctx.say("注意: _noai/raw に原本がある。start は自動でマスクしない。必要なら `room mask` を先に実行し、ai/in を読んで --adopt で通す")
     if a.adopt:
@@ -1642,7 +1641,7 @@ def cmd_start(ctx, a):
     if problems:
         raise RoomError("来歴チェックに失敗した:\n  " + "\n  ".join(problems)
                         + "\n（人が確認したファイルなら、--adopt で記録する）")
-    checks = f"area 一致、boundary={boundary}、in {len(in_files(p))} 件の来歴 OK" + (f"、マスク {masked} 件" if masked else "")
+    checks = f"area 一致、boundary={boundary}、in {len(in_files(p))} 件の来歴 OK"
     area_size = snapshot_readme(p)
     if area_size > AREA_README_WARN_BYTES:
         ctx.say(f"注意: Area の README が大きい（{area_size // 1024} KiB）。部屋の AI が開始時に読むので、"
@@ -1685,9 +1684,9 @@ def cmd_start(ctx, a):
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
-    restore_problems = []
-    if maskkit.list_files(p.ai / "out") and (noai_dir(p) / "map" / "mapping.json").exists():
-        ctx.say(f"注意: ai/out がある。start は自動で復元しない。必要なら `room restore {p.name}` を実行する")
+    if any(k.startswith(DELIVERABLE_OUT) for k in maskkit.list_files(p.ai / "out")) or (
+            maskkit.list_files(p.ai / "out") and (noai_dir(p) / "map" / "mapping.json").exists()):
+        ctx.say(f"注意: ai/out に戻していない出力がある。start は自動で戻さない。必要なら `room restore {p.name}` を実行する（成果物は Area へ渡る）")
     ignored = unexpected_ignored(ctx, p)
     status = [l for l in git(ctx.vault, "status", "--porcelain", "-uall", "--", f"projects/{p.name}").splitlines() if l]
     log_room(ctx, p, "start", checks, f"{result}、変更 {len(status)} 件")
@@ -1701,9 +1700,6 @@ def cmd_start(ctx, a):
         ctx.say("警告: 追跡されずに無視されているファイル（成果物が漏れている可能性）:")
         for f in ignored:
             ctx.say("  " + f)
-    if restore_problems:
-        raise RoomError("復元を止めた（_noai/final は変更していない。ai/out は回収済み）:\n  " + "\n  ".join(restore_problems)
-                        + "\n（直して `room restore " + p.name + "` を再実行する。コミットはしていない）")
     if a.commit:
         commit_paths(ctx, [f"projects/{p.name}"], f"[room] {p.name}: start {ctx.now()}",
                      trailers=room_trailers("start", p.area, p.name))
@@ -1847,15 +1843,20 @@ def restore_project(ctx, p, force=False):
     """ai/out を復元して _noai/final へ。戻らないもの、または人が変えた final があれば（force 以外は）何も書かずに問題の一覧を返す。"""
     n = noai_dir(p)
     out = maskkit.list_files(p.ai / "out")
-    if not out or not (n / "map" / "mapping.json").exists():  # マスクしたことが無い Project の ai/out は、戻すものではない
+    if not out:
         return 0, []
-    mapping = maskkit.Mapping.load(n / "map" / "mapping.json")
-    try:
-        restored, problems = maskkit.restore_files(out, mapping)
-    except maskkit.MaskError as e:
-        return 0, [str(e)]
-    if problems:
-        return 0, problems
+    if (n / "map" / "mapping.json").exists():
+        mapping = maskkit.Mapping.load(n / "map" / "mapping.json")
+        try:
+            restored, problems = maskkit.restore_files(out, mapping)
+        except maskkit.MaskError as e:
+            return 0, [str(e)]
+        if problems:
+            return 0, problems
+    else:  # マスクしたことが無い Project（clean だけ）: 戻す語は無い。成果物（ai/out/deliverable/）だけ、そのまま Area へ渡す。ほかの ai/out は触らない
+        restored = {rel: data for rel, data in out.items() if rel.startswith(DELIVERABLE_OUT)}
+        if not restored:
+            return 0, []
     plans = []
     try:
         all_routes = routes(p)
@@ -3105,16 +3106,16 @@ def build_parser():
     s.add_argument("--no-launch", action="store_true", help="起動せず、マウントしたまま待つ（Zed などで使う）")
     s.add_argument("--gateway", action="store_true", help="組織の LLM ゲートウェイで起動する（Windows 側でサインイン済みの ID トークンを、start の間だけ部屋に置いて更新する）")
     s.add_argument("--adopt", action="store_true", help="ai/in の現在のファイルを、この Project の入力として記録する")
-    s.add_argument("--yes", action="store_true", help="mask.toml が変わったときの作り直しを確認しない")
+    s.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない）")
     s.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
     s.add_argument("--no-commit", dest="commit", action="store_false", help="回収をコミットしない（既定はコミットする）")
-    m = sub.add_parser("mask", help="_noai/raw の原本をマスクして ai/in へ（start でも自動で行う）")
+    m = sub.add_parser("mask", help="_noai/raw の原本をマスクして ai/in へ（人が実行する。start は自動でマスクしない）")
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
     cl = sub.add_parser("clean", help="_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（語のマスクは任意。通すのは start --adopt）")
     cl.add_argument("name")
     cl.add_argument("--path", action="append", metavar="パス", help="Area の原本置き場(_noai/source/)からの相対パスか glob。指定すると raw を経由せず直接掃除する(共通の xlsx・pptx 用)")
     cl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
-    r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
+    r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ。ai/out/deliverable/ は Area の成果物置き場へも渡す（マスクしていない Project でもそのまま渡す。start は自動で行わない）")
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")

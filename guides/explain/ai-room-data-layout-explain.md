@@ -49,7 +49,7 @@ Area の _noai/deliverable/Project名/ ◀─ restore（実名に戻す）← �
 
 - 3つの関係は昇格: 原本 → 成果物 → 知識。知識は成果物の一部が一般化・蒸留されたもので、別系統ではない。
 - 実名を含むデータは、同じ親 `_noai/` に寄せる。works の `.gitignore`（`**/_noai/`）と AI の閲覧拒否が親の名前に結びついているので、新しい置き場も親の下に作れば同じ守りが効く。
-- マスクと復元は、設定でなく状態で決まる。`_noai/raw/` に原本があればマスクし、`_noai/map/mapping.json` があれば（マスクしたことがあれば）復元する。Project ごとの「データの型」の設定は無い。
+- マスクと復元は、設定でなく状態で決まる。`_noai/raw/` に原本があればマスクし、`_noai/map/mapping.json` があれば（マスクしたことがあれば）語を戻して復元する。どちらも人が実行する（`start` は自動でしない）。マスクしていない Project は、`ai/out/deliverable/` だけをそのまま Area へ渡す（2026-11-04）。Project ごとの「データの型」の設定は無い。
 - 名前: `ai/in/` `ai/out/` は部屋の側（実名なし）の語。Area 側（実名あり）は `source` `deliverable` と呼び、混ざらないようにした。
 - 自分で説明するときの一言: 「Project 共通の xlsx・pptx は Area の `_noai/source/`、Project 固有の原本は Project の `_noai/raw/` に置く。どちらも `clean` で掃除して `ai/in/` に渡し、結果は `restore` が実名に戻して Area に返す」
 

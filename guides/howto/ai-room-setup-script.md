@@ -141,7 +141,7 @@ Get-ChildItem $HOME\works\projects\pilot2-2\ai\in               # マスク済�
 
 - 実際の運用では、`_noai/raw/` に原本を置き、`_noai/mask.toml` に語の表（`[terms.<種類>] キー = ["正式名", "表記ゆれ"]`、`[columns] "シート!列名" = "種類"`）を書く
 - **辞書にない名前は、置き換わらない**。ダミーの CSV の担当「山田」が実例で、部屋の AI が気づいて報告した。列で指定する仕組みは `[columns]`
-- 語が残っていれば止まる。`start` の最初にも、自動で行う
+- 語が残っていれば止まる。`start` は自動でマスクしない（人が先に実行する。2026-11-02）
 
 ### 4.1 Area の知識を部屋で使う（`stock --dst area` と `ctx/area/`。2026-11-03 に `pull` から置き換え）
 
@@ -181,7 +181,7 @@ uv run room.py start pilot2-1
 1. チェック（Project と Area の `area:`、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴）→ README の写しを `ai/ctx/` に置く → 共有知を部屋の `~/shared` に送る
 2. `ai/` を `/mnt/room/pilot2-1` にマウントし（`in/` は読み取り専用）、部屋で `claude` を起動する
 3. 部屋の `claude` に作業を頼む（例: 「`ai/out/hello.md` を作って」）。`/exit` で戻る
-4. 自動で、アンマウント、マウント点の削除、復元（`restore`）、変更の一覧が出る
+4. 自動で、アンマウント、マウント点の削除、変更の一覧が出る（復元は自動でしない。`ai/out` があれば案内が出るので、人が `restore` を実行する）
 
 - 目安: 「回収: 変更 N 件」の下に、`ai/out/` の新しいファイルが `??` で出る
 - 信頼の確認（`Quick safety check: Is this a project you trust?`）が、新しい Project の最初に出る。内容を確認して進める
@@ -205,7 +205,7 @@ uv run room.py start pilot2-1 --no-launch
 
 ## 6. 回収する（`restore` `readme` `stock`）
 
-`start` の終わりに、`restore` が自動で動く（マスクして対応表ができた Project のときだけ。マスクしていない Project の `ai/out/` は触らない）。
+`restore` は人が実行する（`start` は自動で行わず、案内だけ出す。2026-11-02）。マスクして対応表ができた Project は、語を実名に戻す。マスクしていない Project（`clean` だけ）は、`ai/out/deliverable/` の下だけをそのまま Area の成果物置き場へ渡し、ほかの `ai/out/` は触らない（2026-11-04）。
 
 - 成果物の中のプレースホルダー（`⟦CUST_001⟧` など）を、対応表で実名に戻し、`_noai/final/` に書く（実名入りなので、works のコミットの対象外）
 - **止まる場合**: 戻らないプレースホルダー、未知の形式があると、何も書かずに一覧を出して止まる。AI が本文に `⟦CUST_nnn⟧` のような**書式の説明**を書いたときも止まる（番号が無いため）。直して、`uv run room.py restore pilot2-2` を再実行する

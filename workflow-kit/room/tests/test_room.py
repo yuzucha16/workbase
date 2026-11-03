@@ -1443,6 +1443,26 @@ class PullSourceTest(unittest.TestCase):
             self.assertTrue((p / "_noai/final/deliverable/report.md").exists())
             self.assertFalse((k / "report.md").exists())
 
+    def test_deliverable_goes_to_area_without_masking(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p, _k = self.setup_area(tmp)
+            self.assertFalse((p / "_noai/map/mapping.json").exists())
+            d = p / "ai/out/deliverable"
+            d.mkdir(parents=True)
+            (d / "report.md").write_text("報告\n", encoding="utf-8", newline="\n")
+            (p / "ai/out/tool.py").write_text("print(1)\n", encoding="utf-8", newline="\n")
+            pr = room.Project.load(c, "proj-a")
+            self.assertEqual(room.restore_project(c, pr), (1, []))
+            self.assertEqual((v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"), "報告\n")
+            self.assertFalse((p / "_noai/final/tool.py").exists())
+            (d / "report.md").write_text("改訂\n", encoding="utf-8", newline="\n")
+            self.assertEqual(room.restore_project(c, pr), (1, []))
+            (v / "areas/area-x/_noai/deliverable/proj-a/report.md").write_text("人の変更\n", encoding="utf-8", newline="\n")
+            (d / "report.md").write_text("再改訂\n", encoding="utf-8", newline="\n")
+            k, problems = room.restore_project(c, pr)
+            self.assertEqual(k, 0)
+            self.assertTrue(problems)
+
     def test_deliverable_changed_by_human_stops_restore_unless_force(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
