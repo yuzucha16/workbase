@@ -29,7 +29,7 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 
 1. **完了条件**: `ai/ctx/README.md` の完了条件を、実測（コマンドと結果）で確かめ、結果を書く。未達なら、`close.md` は書かず、残りを `ai/docs/log.md` の Next Actions に書いて止まる。
 2. **暫定の見直し**: `ai/docs/decisions.md` で暫定にしていた決定を、実測で見直す。変えるものは、人の承認を得てから `decisions.md` に書く。
-3. **未解決の振り分け**: Next Actions と Open Questions の残りを、Area へ渡す、次の Project、破棄に分ける。Area へ渡すものは、`- 【案件】<内容>` の行にする（`room close` がこの行を Area の `ai/docs/inbox.md` に追記する）。
+3. **未解決の振り分け**: Next Actions と Open Questions の残りを、Area へ渡す、次の Project、破棄に分ける。Area へ渡すものは、`- 【案件】<内容>` の行にする（`room close` がこの行を Area の `ai/docs/inbox.md` に追記する）。Project の決定を Area へ上げるときは、`- 【決定】<要旨>（根拠: <ai/docs/{decisions,log-history,log}.md の見出しの一部>）` の行にする（根拠が見出しに無い、または機密らしい語があると close が止まる。`room trace <Project>#n` で根拠の節を引ける）。
 4. **【汎用】候補**: `ai/docs/decisions.md` の未仕分けの【汎用】を一覧にして示す。`stock` は、人が言ったときだけ行う（`ai/out/stock/` に下書き）。
 
 ## README 本文の下書きの書き方（部屋の中）

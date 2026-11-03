@@ -2035,6 +2035,41 @@ class CloseTest(unittest.TestCase):
             log = subprocess.run(["git", "-C", str(v), "log", "-1", "--format=%s"], capture_output=True, text=True, encoding="utf-8").stdout
             self.assertIn("[room] proj-a を close", log)
 
+    def _decision_project(self, tmp, close_text):
+        v, c = opened(tmp, FakeWsl())
+        p = v / "projects/proj-a"
+        fill_readme(p)
+        room.scaffold_area(c, "area-x")
+        (p / "ai/docs").mkdir(parents=True, exist_ok=True)
+        (p / "ai/docs/decisions.md").write_text("# decisions\n\n## 列は固定にする\n理由A\n\n## 別の項\n理由B\n", encoding="utf-8")
+        (p / "ai/out/close.md").write_text(close_text, encoding="utf-8")
+        return v, c, p
+
+    def test_close_carries_decision_with_basis_and_trace_finds_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self._decision_project(tmp, "- 【案件】x\n- 【決定】列を固定する（根拠: 列は固定）\n")
+            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            inbox = (v / "areas/area-x/ai/docs/inbox.md").read_text(encoding="utf-8")
+            self.assertIn("`proj-a#1` x", inbox)
+            self.assertIn("`proj-a#2` 【決定】列を固定する（根拠: 列は固定）", inbox)
+            c.msgs.clear()
+            room.cmd_trace(c, argparse.Namespace(ref="proj-a#2"))
+            out = "\n".join(c.msgs)
+            self.assertIn("理由A", out)
+            self.assertNotIn("理由B", out)
+
+    def test_close_stops_on_bad_decision_before_any_change(self):
+        for text, msg in [("- 【決定】根拠なし\n", "根拠が無い"),
+                          ("- 【決定】x（根拠: 存在しない見出し）\n", "見出しに無い"),
+                          ("- 【決定】連絡は a@example.com（根拠: 列は固定）\n", "機密")]:
+            with self.subTest(text=text), tempfile.TemporaryDirectory() as tmp:
+                v, c, p = self._decision_project(tmp, text)
+                with self.assertRaisesRegex(room.RoomError, msg):
+                    room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+                self.assertTrue(p.exists())
+                self.assertFalse((v / "archives/proj-a").exists())
+                self.assertNotIn("proj-a#", (v / "areas/area-x/ai/docs/inbox.md").read_text(encoding="utf-8"))
+
     def test_close_without_inbox_stops_before_any_change(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
