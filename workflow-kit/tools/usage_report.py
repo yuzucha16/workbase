@@ -13,7 +13,7 @@
   --root   ログの場所（既定 ~/.claude/projects）
 
 数え方: 1つの API 応答は JSONL の複数行に分かれて同じ usage が繰り返されるので、message.id + requestId で1回だけ数える。
-サブエージェントのログ（subagents/）も、親と同じ sessionId に含める。ログは個人の作業内容を含むので、出力を公開リポジトリに貼らない。
+サブエージェントのログ（subagents/、isSidechain）も、親と同じ sessionId に含める。合計の内数として「うちサブエージェント」の行を出す（2026-11-03。サブエージェントを起動した週だけ出る）。ログは個人の作業内容を含むので、出力を公開リポジトリに貼らない。
 """
 import argparse
 import json
@@ -27,7 +27,7 @@ KINDS = ("input", "output", "cache_read", "cache_write", "cache_write_1h")   # c
 
 
 def read_messages(root):
-    """(session, project, model, timestamp, usage dict) を重複なしで返す。session のタイトルも別に集める。"""
+    """(session, project, model, timestamp, usage dict, サブエージェントか) を重複なしで返す。session のタイトルも別に集める。"""
     seen = {}
     titles = {}
     for f in root.rglob("*.jsonl"):
@@ -59,13 +59,14 @@ def read_messages(root):
                 key = (m.get("id"), d.get("requestId")) if m.get("id") else (d.get("uuid"),)
                 w_all = u.get("cache_creation_input_tokens") or 0
                 w_1h = min(w_all, (u.get("cache_creation") or {}).get("ephemeral_1h_input_tokens") or 0)
+                side = bool(d.get("isSidechain")) or "subagents" in f.parts   # サブエージェントの応答（親の記録には現れない）
                 seen[key] = (sid, project, m.get("model") or "?", ts, {
                     "input": u.get("input_tokens") or 0,
                     "output": u.get("output_tokens") or 0,
                     "cache_read": u.get("cache_read_input_tokens") or 0,
                     "cache_write": w_all - w_1h,
                     "cache_write_1h": w_1h,
-                })
+                }, side)
     return list(seen.values()), titles
 
 
@@ -134,8 +135,8 @@ def load(root, by, prices):
     msgs, titles = read_messages(root)
     if not msgs:
         sys.exit("集計できるメッセージが無い")
-    per = defaultdict(lambda: defaultdict(lambda: {"u": zero(), "cost": 0.0, "project": "", "models": defaultdict(int), "n": 0}))
-    for sid, project, model, ts, u in msgs:
+    per = defaultdict(lambda: defaultdict(lambda: {"u": zero(), "sub": zero(), "sub_n": 0, "cost": 0.0, "project": "", "models": defaultdict(int), "n": 0}))
+    for sid, project, model, ts, u, side in msgs:
         if not total(u):   # <synthetic>（エラー応答など）は使用量が 0
             continue
         s = per[period_key(ts, by)][sid]
@@ -143,6 +144,9 @@ def load(root, by, prices):
         s["project"] = project
         s["models"][model] += total(u)
         s["n"] += 1
+        if side:
+            add(s["sub"], u)
+            s["sub_n"] += 1
         s["cost"] += cost(u, model, prices) or 0.0
     return per, titles
 
@@ -182,6 +186,12 @@ def main():
         if prices:
             line += f"  概算 ${sum(s['cost'] for s in sess.values()):,.2f}"
         print(line)
+        sub, sub_n = zero(), 0
+        for s in sess.values():
+            add(sub, s["sub"])
+            sub_n += s["sub_n"]
+        if sub_n:   # サブエージェントの分（合計の内数）。承認のスクリーニングなどの費用を見る
+            print(f"  うちサブエージェント {fmt(total(sub))} ({total(sub) / total(tot) * 100:.1f}%)  応答 {sub_n}  (出力 {fmt(sub['output'])} / キャッシュ読取 {fmt(sub['cache_read'])} / キャッシュ作成 {fmt(sub['cache_write'] + sub['cache_write_1h'])})")
         print(f"  セッション {len(sess)} 件  1件当たり: 平均 {fmt(avg)} / 中央値 {fmt(median)} / 最大 {fmt(sizes[-1])} / 最小 {fmt(sizes[0])}")
         print("  モデル別: " + ", ".join(f"{m} {fmt(n)} ({n / total(tot) * 100:.0f}%)" for m, n in sorted(models.items(), key=lambda x: -x[1])))
         print("  プロジェクト別: " + ", ".join(f"{project_name(p)} {fmt(n)} ({n / total(tot) * 100:.0f}%)" for p, n in sorted(projects.items(), key=lambda x: -x[1])[:5]))
