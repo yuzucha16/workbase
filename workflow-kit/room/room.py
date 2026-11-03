@@ -1807,10 +1807,12 @@ def mask_project(ctx, p, yes=False):
     return len(res["outputs"])
 
 
-def clean_project(ctx, p):
-    """_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（2026-11-03: 語のマスクの代わりの入口）。報告は _noai/raw/tmp/（AI に見せない）。作った件数を返す。"""
+def clean_project(ctx, p, items=None):
+    """_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（2026-11-03: 語のマスクの代わりの入口）。報告は _noai/raw/tmp/（AI に見せない）。作った件数を返す。
+    items（{ai/in での相対パス: bytes}）を渡すと、raw を経由せず、それを掃除する（clean --path。Area の source/ を直接読む）。"""
     n = noai_dir(p)
-    raw = raw_files(p)
+    raw = raw_files(p) if items is None else items
+    pulled = load_pull_sources(p)
     if not raw:
         return 0
     require_internal(p, "原本の掃除（業務データを AI の入力にすること）")
@@ -1842,7 +1844,10 @@ def clean_project(ctx, p):
         write_bytes(p.ai / "in" / rel, cleaned)
         man["files"][f"in/{rel}"] = {
             "sha256": maskkit.sha256_bytes(cleaned), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,
-            "raw_sha256": digest, "cleaned": "strict", "masked_from": f"_noai/raw/{rel}",
+            "raw_sha256": digest, "cleaned": "strict",
+            # Area のファイル名は実名を含みうるので、名前は対応表（pull-sources.json）の側に置く
+            "masked_from": (f"areas/{p.area}/_noai/source/{rel[len(PULL_PREFIX):]}" if items is not None
+                            else f"areas/{p.area}/_noai/（名前は _noai/map/pull-sources.json）" if rel in pulled else f"_noai/raw/{rel}"),
         }
         done += 1
         ctx.say(f"  掃除した: {rel}（{len(log)} 項目、残り {len(after)} 件: {cleankit.summary(after)}）")
@@ -1977,7 +1982,32 @@ def cmd_mask(ctx, a):
 def cmd_clean(ctx, a):
     p = Project.load(ctx, a.name)
     preflight(ctx, p)
-    if clean_project(ctx, p) == 0:
+    items = None
+    if getattr(a, "path", None):
+        require_internal(p, "clean --path（Area の原本の掃除）")
+        src = source_dir(p)
+        if not src.is_dir():
+            raise RoomError(f"Area の原本置き場が無い: {src}（`room init {p.area}` で作る）")
+        picked = pick_source_files(src, a.path)
+        if not picked:
+            ctx.say("条件に合うファイルは無い")
+            return
+        ctx.say(f"掃除する候補（{len(picked)} 件。原本）:")
+        for f in picked:
+            ctx.say("  " + f.relative_to(src).as_posix())
+        if not getattr(a, "yes", False) and ctx.ask("この一覧を掃除してよいか [y/N]: ").strip().lower() != "y":
+            raise RoomError("掃除を中止した")
+        # source/ は実名を置かない運用（2026-11-03 ユーザーの決定）。名前は相対パスのまま ai/in/area/ に出す。万一に備え、名前を点検する
+        terms, items, bad = area_gate_terms(p), {}, []
+        for f in picked:
+            rel_src = f.relative_to(src).as_posix()
+            hits = cleankit.sensitive_hits(rel_src, terms)
+            if hits:
+                bad.append(f"{rel_src}（{'、'.join(label for label, _h in hits)}）")
+            items[f"{PULL_PREFIX}{rel_src}"] = f.read_bytes()
+        if bad:
+            raise RoomError("ファイル名に実名や機密らしい語がある。何も掃除していない（source/ の名前を直す）:\n  " + "\n  ".join(bad))
+    if clean_project(ctx, p, items) == 0:
         ctx.say("掃除するものは無い（原本が無いか、変更が無い）")
 
 
@@ -3031,6 +3061,8 @@ def build_parser():
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
     cl = sub.add_parser("clean", help="_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（語のマスクは任意。通すのは start --adopt）")
     cl.add_argument("name")
+    cl.add_argument("--path", action="append", metavar="パス", help="Area の原本置き場(_noai/source/)からの相対パスか glob。指定すると raw に写さず直接掃除する(pull 不要)")
+    cl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     pl = sub.add_parser("pull", help="Area の原本置き場（_noai/source/）から、--path のファイルを _noai/raw/area/ に写す（マスクは mask）")

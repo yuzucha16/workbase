@@ -2460,6 +2460,35 @@ class CleanTest(unittest.TestCase):
             self.assertEqual(room.check_provenance(room.Project.load(c, "proj-a")), [])
             room.cmd_clean(c, argparse.Namespace(name="proj-a"))  # 変更が無ければ作り直さない
 
+    def test_clean_path_reads_source_directly_keeping_relative_name(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import dummy_fixture
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            p = v / "projects/proj-a"
+            src = v / "areas/area-x/_noai/source/顧客共通/一覧.xlsx"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_bytes(dummy_fixture.build_xlsx())
+            room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["顧客共通/*.xlsx"], yes=True))
+            self.assertTrue((p / "ai/in/area/顧客共通/一覧.xlsx").exists())
+            self.assertFalse((p / "_noai/raw/area").exists())  # raw に写さない
+            man = room.load_manifest(room.Project.load(c, "proj-a"))
+            e = man["files"]["in/area/顧客共通/一覧.xlsx"]
+            self.assertTrue(e["pending"])
+            self.assertEqual(e["masked_from"], "areas/area-x/_noai/source/顧客共通/一覧.xlsx")
+
+    def test_clean_path_stops_on_sensitive_file_name(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import dummy_fixture
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            src = v / "areas/area-x/_noai/source/taro@example.com.xlsx"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_bytes(dummy_fixture.build_xlsx())
+            with self.assertRaises(room.RoomError):
+                room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["*.xlsx"], yes=True))
+            self.assertFalse((v / "projects/proj-a/ai/in/area").exists())
+
     def test_clean_refuses_external_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c = opened(tmp)
