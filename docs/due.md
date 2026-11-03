@@ -18,17 +18,14 @@
 | 2026-11-10 | 単発 | token-cap: `AGENTS.md` に足した 2 行（10-29。まとめて呼ぶ、編集後に読み直さない）の効果。`requests_by_kind.py --since 2026-10-30` で応答の平均が下がったかを見る（wrap-hook の測定と同時。11-05 から延期） | AI（ユーザーの依頼で） |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断 | ユーザー |
 | 2026-11-11 | 単発 | token-cap: `integrate` の上限（仮 〜11-29）の個別の効果を再測定（`requests_by_kind.py --csv` で integrate の 10-27 以降の件数を見る。Windows 側と room 側。11-05 から延期）。10-29 の値（Windows 側、10-01 以降 16 件）: 10-27 より前 13 件は応答 9.4・1 件 809k・ピーク平均 92k。10-27 以降 3 件は応答 11.0・708k・ピーク 85k（うち 1 件は 7 応答でピーク 134k）。件数が少なく判定保留。room 側（PC1）の件数は未確認 | AI（ユーザーの依頼で） |
-| 2026-11-12 | 単発 | ooxml-clean NA 1: room の `mask` への組み込み（pptx の確認は済。報告の置き場の OQ もここで決める） | AI（ユーザーの依頼で） |
+| 2026-11-12 | 単発 | ooxml-clean NA 1・2: room の `mask` への組み込み(pptx の確認は済。報告の置き場の OQ もここで決める)。あわせて mask / restore / pull の単体スクリプト化と cleankit の internal 既定を決める | AI(ユーザーの依頼で) |
 | 2026-11-12 | 単発 | ooxml-clean OQ: 本文の個人名は `mask.toml` の運用に任せるか、候補の検出を足すか（判断） | ユーザー |
-| 2026-11-16 | 単発 | ooxml-clean NA 3: 外向け Area の共有（`room stock --dst area` と `ctx/area/` の写し）の PC1 での動作確認（別セッション。期日は仮） | ユーザー |
-| 2026-11-16 | 単発 | ooxml-clean NA 4: internal の Area への適用を決める（ee が na に積んだ。期日は仮） | ユーザー |
 | 2026-11-13 | 単発 | office-output-types NA 2: PC1 で入力 2〜3 種類の見出し・列名だけで定義表の行を書く（実機） | ユーザー（PC1） |
 | 2026-11-14 | 単発 | office-output-types NA 3: 雛形を `exmem/lessons/` に昇格するか（11-13 の実機の後） | ユーザー |
 | 2026-11-14 | 単発 | token-cap OQ: Zed の System tools が 9.0k → 9.9k に増えた原因（実機の Zed） | ユーザー（実機） |
 | 2026-11-15 | 単発 | 旧 `logbook-design` NA 1: 実機でしか確かめられない畳み候補。room の OQ 4 項（マウントの可視性、プリンタ設定、マスクから復元までの通し、pptx）と、obsidian-vault-backup の NA 2 項（WSL の張り直し〔`GHQ_ROOT` は WSL の中で確認〕、`vault-backup.bat`）。実機の機会がなければ、項ごとに「畳む（OQ/NA を閉じる）」か「延期」かを決める | ユーザー |
 | 2026-11-15 | 単発 | 旧 `logbook-design` NA 5: 追記の型 (b)（OQ・NA を本体に 1 つ）が、その後の lessons 追記で守られているか確かめる。既存ファイルの直しは `review 消化` で。守られていれば取り下げ | AI（`review 消化` で） |
 | 2026-11-16 | 単発 | `mdrank.py` の値が下がった理由（元は直下 log の OQ。11-01 は 1 位 24/40、上位 5 件 35/40。10-30 は 25/40、35/40。場面の一覧か `triggers:` の変更の影響と見ているが未調査。引当率は母数が 42 件から 1383 件に変わり、単純には比べられない）。次の `review` の入力 9 で前回と比べる | AI（`review` で） |
-| 2026-11-16 | 単発 | `stock` の `scope: area` の実機確認（旧 `hook-room-alignment` NA 1）: 部屋の AI が `ai/out/knowledge/` に `kind: lesson` で書く → `restore` で Area に実名で置く → 次の Project の `room pull --where kind=lesson` で受け取れるか。`room pull --where` の仕様変更の予告があれば、`room-context.md` の `stock` の節と合わせて見直す（単体テストのみ。2026-10-24）。実機の機会がなければ延期か取り下げを決める（11-08 から延期） | ユーザー（実機） |
 | 2026-11-17 | 単発 | office-output-types OQ: 型を足す順とテキストを共通の受け渡しにする案の当否、取得層の切り出し | ユーザー |
 | 2026-11-29 | 単発 | `brief 計画` は実務で3回使うまで試験運用（`decisions.md` の 2026-10-25）。使った回数: 0（10-29 時点）。3回に達していれば試験運用を閉じる判断、未達なら続ける（monthly で確認） | ユーザー |
 | 2026-11-29 | 定例 | monthly の振り返り（28日周期、日曜）。R-2026-10-25-02 の検証もここで | ユーザー |

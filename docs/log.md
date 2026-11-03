@@ -18,7 +18,6 @@
 
 ## Next Actions
 
-- 【起票 11-03、期限 11-10】room の知識用の `restore`・`pull` の経路をコードから外す（`room.py` とテスト、`room/README.md` の `restore` `pull` `stock` の行）。外すのは、`ai/out/knowledge/` を `restore` で Area の知識置き場に書く経路と、`pull` の知識用の経路。成果物の戻し（`ai/out/deliverable/` → `_noai/deliverable/`）は残す。根拠は `decisions.md` の 11-02「知識の出口を `stock --dst` の一本に」（internal での動作確認の後に外す、とユーザーが決めた）。11-03 の実機（internal の Area）で `stock --dst area` を実行し、`mask.toml` が無いために止まるところまでは確認した（語を入れて運べる所までは未観察）。進め方（ユーザー決定 11-03）: 外す前に、`mask.toml` に語を入れて `stock --dst area` で運べるところまで 1 回通す（ユーザーが実機で行う）。外す作業の中で、`room/README.md` の古い記述も直す（`stock` の行の「internal の Area は使えない（`restore` の経路）」、`mask` と `restore` の行の「`start` が自動で行う」）。
 
 期日のある項目は `due.md`。
 

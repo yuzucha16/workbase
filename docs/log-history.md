@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-03（room: 知識用の restore・pull の経路を外した）
+- ユーザーの依頼(ooxml-clean の NA 3)。internal のダミーで `mask.toml` なしで止まることを確認(ユーザー)。`room.py`: `restore` の知識の経路(`ai/out/knowledge/`)、`pull` の知識の取り出し(`--from knowledge` `--where`)、`init` の知識置き場の作成、AI への指示文の知識の項を外した。`pull` は原本専用(`--path` 必須)。成果物の戻し(`ai/out/deliverable/`)と `stock --dst` は残した。単体テスト 163 件を通した(8c14faa)。
+- 知識用の通し試験 `room/pull-e2e-test.md` と、知識置き場前提の見本 `examples/meeting-note-example.md` を削除した(後者はユーザーの指示)。`due.md` の旧 `scope: area` の実機確認(restore 経由)は経路ごと無くなったので消した。
+
 ### 2026-11-03（11-02 の room 変更を既存の works に適用し、実機で動作を確認した）
 - ユーザーの依頼「昨日の room 周りの仕様変更を既存 works へ適用する手順」。11-02 のコミット（`9d35958` boundary、`54b2a8b` start の自動マスク・復元を外す、`2bd9328` `3e1e4be` `200cd86` stock --dst、`294b917` room mv、Vault 2 分割）から手順を組み、ユーザーが実行した。
 - 手順: resources を pull → `mkworks --update` → Area の `boundary:` を確認 → `internal` は `_noai/mask.toml` の語を確認（空だと `stock --dst area` が止まる）→ `ai/in/` を人が読んで `start --adopt` → 必要なら `init --only` → `start` と `stock --dst area` の動作確認 → `30_link.bat`。
