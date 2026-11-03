@@ -11,13 +11,14 @@
 - 実装済み（2026-10-29）: プロファイル `standard` / `strict`（グラフ・画像・埋め込み・ピボット・接続を参照ごと外す。`--allow` で残す）。PC1 の実 xlsx・pptx で確認済み（2026-10-30、11-02、ユーザー）。pptx は strict が必須に近く unseen の区分が多いため、読ませる用途は取り出しに割り切った（`decisions.md` の同日の項）。cleankit の確認はこれで閉じた。
 - 実装済み（2026-11-02）: `workflow-kit/room/pptxtext.py`（v0）と単体テスト 3 件。見えているスライドの文章・表・SmartArt・つながった矢印を md に出す。画像・グラフは印だけ。PC1 の実 pptx で動作確認済み（2026-11-02、ユーザー、問題なし）。要件の拡充は、足りないところが見えたときに積む。直させる用途の掃除（cleankit の pptx 手直し）は、需要が見えるまでしない。
 
+- 実装済み（2026-11-03）: `room clean`（strict の掃除 → `ai/in`、`pending`）。語のマスクは必須でなくなった(任意の補助)。
 - 実装済み（2026-11-02）: 知識の出口を `room stock --dst kit|area` の一本にし、internal にも `--dst area` と `ctx/area/` の写しを許した（`mask.toml` の語が空なら止まる）。単体テストは関係する 14 件を通した。
 
 ## Next Actions
 
-1. 【期日 11-09】境界の見直しの確認は完了（2026-11-03、ユーザー、5 点とも問題なし）。残り: mask / restore / pull の単体スクリプト化と、cleankit の internal 既定（`records/2026-11-02-boundary-pending.md`「積んだ残り」）。どちらも 2 の組み込みと一緒に決める。
-2. 【期日 11-12】room の `mask` への cleankit の組み込み（決定 2026-10-30）。1 の残りと合わせて決め直す（`start` は 11-02 から自動でマスクしない）。
-3. 完了（2026-11-03）: internal のダミー確認（`mask.toml` なしで止まる、ユーザー）。`restore` の知識の経路（`ai/out/knowledge/`）と `pull` の知識の取り出し（`--from knowledge` `--where`）をコードから外した。`pull` は原本専用（`--path` 必須）、`init` は知識置き場を作らない。残るのは成果物の戻し（`ai/out/deliverable/`）と `stock --dst`。単体テスト 163 件を通した。
+1. 【期日 11-12】`room clean` の実機確認(PC1 の internal の Area で、実 xlsx・pptx を `pull` → `clean` → 読む → `start --adopt`)。報告 `_noai/reports/` の置き場と、`mask.toml` が無くても `stock --dst area` と Area の写しが通ることも見る。
+2. 【期日 11-30】`room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー)。単体スクリプト化はしない。
+3. 完了(2026-11-03): 語のマスクの必須を外した(`area_gate_terms` は語が空でも通る)。`room clean` を追加(internal だけ、strict、単体テスト 2 件)。決定は `decisions.md` の同日の項。
 
 ## Open Questions
 

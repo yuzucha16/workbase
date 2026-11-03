@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-03（語のマスクを必須から外し、room clean を入れた）
+- ユーザーの決定: mask / restore / pull の単体スクリプト化はしない。strict を既定にする。人名だけ語で管理する利点が薄く（金額・KPI は列挙できない）、external は一から作るので業務データが入らない、という指摘で、語のマスクは external・internal とも必須にしない。削除は使ってから決める。internal の入口は明示の `room clean`。
+- 実装: `area_gate_terms` を語が空でも通す形に、`room clean`（`clean_project`、strict、`_noai/reports/`、manifest は pending）を追加。単体テストは 207 件を通した。決定は `decisions.md` の同日の項。
+
 ### 2026-11-03（境界の見直しの確認が済み、知識用の経路を外した）
 - NA 1: PC1 の確認 5 点はすべて問題なし(ユーザー)。残りの単体スクリプト化と cleankit の internal 既定は、`mask` への組み込み(NA 2)と一緒に決める(使わないと分かってから、が元の方針)。
 - NA 3: internal のダミーで `mask.toml` なしで止まることを確認(ユーザー)。`restore`・`pull` の知識用の経路をコードから外した(8c14faa。詳細は直下の `docs/log-history.md`)。
