@@ -2308,7 +2308,7 @@ def cmd_umount(ctx, a):
 
 INBOX_NEW = (
     "# inbox（Project から Area への郵便受け）\n\n"
-    "Project の `room start` / `room close` の回収が、【案件】の項目をここへ追記する。Area の AI が、次に Area の部屋を開いたとき（`start`）に読み、"
+    "Project の `room close` が、【案件】と【決定】の項目をここへ追記する。Area の作業（Area の AI を動かす入口は未定。`docs/log.md` の NA）で読み、"
     "取り込んだら「取り込み済み」に移す。同じ項目は二度送らない（識別子 = Project 名 + 連番）。\n\n"
     "【決定】の項目（`- \\`Project#n\\` 【決定】要旨（根拠: 見出しの一部）`）は、Area の `decisions.md` に統合する。"
     "統合するとき、`Project#n` と根拠を、`decisions.md` の該当の項に残す（`room trace Project#n` で、閉じた Project の該当節を引くため）。\n\n"

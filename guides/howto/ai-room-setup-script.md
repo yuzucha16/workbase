@@ -30,7 +30,7 @@ tags:
 | 3 | Project を作る（`open`） | スクリプト + README は人 | `projects/pilot2-1/` ができ、README を書いた |
 | 4 | マスクする（`mask`。任意）。4.1: Area の知識を部屋で使う（`stock --dst area`） | スクリプト | `ai/in/` にマスク済みのファイルが入る（4.1: `ctx/area/` に Area の知識の写し） |
 | 5 | 部屋で使う（`start`） | スクリプト | 成果物が `ai/out/` に現れ、マウントが残らない |
-| 6 | 回収する（`restore` `readme` `stock`）。6.1: 統合した知識を Area に戻す | スクリプト | 実名に戻った成果物が `_noai/final/` にある（6.1: Area の `knowledge/` にも） |
+| 6 | 回収する（`restore` `readme` `stock`）。6.1: Area に戻すもの | スクリプト | 実名に戻った成果物が `_noai/final/` にある（6.1: Area の成果物置き場にも） |
 | 7 | 閉じる（`close`） | スクリプト + `close.md` は部屋の AI | `archives/pilot2-1/` に移った |
 | 8 | 片付ける（`reap`、部屋の削除） | スクリプト | 会話履歴が消え、README に `reaped:` が付く |
 | 9 | うまくいかないとき | | |
@@ -220,48 +220,10 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 - `stock` の運び先は `resources/exmem/inbox/`（**公開リポジトリ**）。対応表の語を含む下書きは運ばれない。運んだメモは、未追跡のまま残る（コミットしない方針）
 - Excel の成果物は、`_noai/final/` のファイルを Excel で開き、ピボットは「すべて更新」を押す。シート名・値・コメントが実名に戻っているか確認する
 
-### 6.1 統合した知識を Area に戻す（`ai/out/knowledge/`。2026-10-21 追加。実機で確認済み: 2026-10-21、問題なし）
+### 6.1 Area に戻すもの（2026-11-03 に整理）
 
-**旧経路（2026-11-03 に知識用は `stock --dst area` へ置き換え。4.1 を使う。ここは `restore` の動作の記録として残す）**: 4.1 で取り出した知識を、部屋の AI が統合し、実名に戻して Area に置く。`restore` が自動で行う（`start` の終わり）。**部屋の AI は実名を見ない**。
-
-1. 部屋で起動し、AI に頼む:
-
-   ```powershell
-   uv run room.py start pilot2-3
-   ```
-
-   部屋の `claude` に: 「`ai/in/area/` を読み、`ai/out/knowledge/topic-cutover.md` に統合ノートを書いて。frontmatter は `kind: integrated`、`status: active`、`org` はそのまま。`⟦…⟧` の記号は変えない。ファイル名は英数字で」。`/exit` で戻る
-2. 自動で `restore` が動き、`ai/out/knowledge/` の下が、実名に戻って Area に書かれる:
-
-   ```powershell
-   Get-Content $HOME\works\areas\pilot2\knowledge\topic-cutover.md      # アクメ商事株式会社、田中太郎
-   Get-Content $HOME\works\projects\pilot2-3\_noai\final\knowledge\topic-cutover.md     # 同じ内容
-   ```
-
-3. **人の変更を守る停止を確かめる**（`start` をもう一度やり直す必要はない。`ai/out/` に前回の出力が残っている）:
-
-   ```powershell
-   Add-Content "$HOME\works\areas\pilot2\knowledge\topic-cutover.md" "`n人が追記した1行"     # Area 側を人が書き換える
-   uv run room.py restore pilot2-3                                                          # 止まる
-   ```
-
-   「Area の知識が、前回の書き出しから変わっている（人の変更を上書きしてしまう）」と出て、何も書かずに止まる。Area のファイルは人の1行を保ったまま。確認して上書きしてよければ:
-
-   ```powershell
-   uv run room.py restore pilot2-3 --force
-   Get-Content "$HOME\works\areas\pilot2\knowledge\topic-cutover.md"                          # 人の1行は消えている
-   Get-Content "$HOME\works\projects\pilot2-3\_noai\final\_prev\knowledge\topic-cutover.md"   # 人の1行が残っている
-   ```
-
-   対照: 人が書き換えていないときは、止まらない（もう一度 `restore` するだけ）
-
-- 書き出すのは、`ai/out/knowledge/` の下だけ（ほかの成果物は従来どおり `_noai/final/` にだけ書く）。書き出し先は `knowledge_dest`（既定 `areas/<Area>/_noai/knowledge/`）
-- **止まる場合**: ファイル名にプレースホルダー（`⟦CUST_001⟧.md` など）が残る、置き場の外を指す名前、は何も書かずに止まる。直して `uv run room.py restore pilot2-3` を再実行する
-- 前回の書き出し（`_noai/map/knowledge-manifest.json` のハッシュ）から人が変えた既存ファイルがあると、`restore` は何も書かずに止まる（`--force` で上書き。直前の版は `_noai/final/_prev/knowledge/` に退避される。2026-10-21 に、警告から止める仕様に変えた）。`start` の終わりで止まったときも、`ai/out/` は回収済みなので、直して `restore` を再実行する
-- **確認ポイント**:
-  - 部屋の AI が `ai/in/area/` を読める（`in/` は読み取り専用でマウントされる）。プレースホルダーを壊さない
-  - Area の統合ノートに、`⟦…⟧` が残らず、実名に戻っている（`org:` の値も）
-  - 人が Area 側を変えたあとの `restore` が止まり、`--force` で上書きされて、直前の版が退避される
+- 知識・決定・経緯は、`ai/out/knowledge/` と `restore` の経路を外した。4.1 の `stock --dst area` で運ぶ。
+- Area に実名で戻したい最終版は `ai/out/deliverable/` に置く。`room restore`（マスクしていない Project でもそのまま）か、`room close` が Area の `_noai/deliverable/<Project>/` に書く。Area 側を人が変えていると何も書かずに止まる（`restore --force` で上書き。直前の版は `_noai/final/_prev/deliverable/`）。
 
 ## 7. 閉じる（`close`）
 

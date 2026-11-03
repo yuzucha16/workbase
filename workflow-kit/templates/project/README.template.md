@@ -13,9 +13,7 @@ updated: <YYYY-MM-DD>
 
 計画: `ai/work/plan/`（`brief 計画` の出力。先頭の `status: 仮 | 正式` と `approved:` で承認を示す。無ければ未作成）
 
-## いま / あなた待ち / 次の一手
-
-<各1行。詳細は `docs/log.md`。`docs/` が無い小さな Project では省く。README が窓口の役を兼ねる（予算 2KB）>
+開発リポジトリ（`dev` で git のコードを扱うとき）: 上の frontmatter に `repos:`（url、where、branch。書式は `workflow-kit/project-structure.md`）を足す。無ければこの行を消す。
 
 ## 完了条件
 

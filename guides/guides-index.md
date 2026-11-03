@@ -47,6 +47,7 @@ updated: 2026-10-28
 | 同じ Area の Project を、同じ部屋で並行して `room start` したとき、何が共有され、どこで衝突するかを思い出す。後から start が止まる、`index.lock` で失敗する | [[ai-room-concurrent-start-explain]] | 理解ガイド |
 | 部屋で AI を使っていて、`Permission denied`、成果物がコミットに入らない、マウントが残る、などで困った | [[ai-room-why#3. チェックリスト（症状・疑問 → 原因 → 対処）]]、[[ai-room-setup#10. うまくいかないとき]] | 理解ガイド・手順書 |
 | WSL に AI 作業部屋を作り、Project の `ai/` だけを渡して Claude Code で作業する | [[ai-room-setup]] | 手順書 |
+| Area の中の Project の一生を、`room` コマンドと合言葉（`brief` `wrap` 論点出し `brief 計画` など）を組み合わせた 1 枚で見る | [[ai-room-lifecycle]] | 手順書 |
 | 実際の名前（`pilot2` `pilot2-1`）で、`room.py` を1手ずつ通して、部屋の作成から `close` まで行う | [[ai-room-setup-script]] | 手順書 |
 | 実際の名前（`pilot` `pilot-1`）で、`room.py` を使わずに、マウント・アンマウントを含めて手作業で通す | [[ai-room-setup-manual]] | 手順書 |
 | room の中から GitHub の非公開リポジトリを clone する（読み取り専用の deploy key。push は拒否される） | [[room-github-deploy-key-setup]] | 手順書 |
@@ -99,7 +100,7 @@ updated: 2026-10-28
 
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
-| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[room-github-deploy-key-setup]]、[[bedrock-first-hello]]、[[claude-usage-report]]、[[ooxml-clean]]、[[works-gitignore-allowlist-migration]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
+| 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-lifecycle]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[room-github-deploy-key-setup]]、[[bedrock-first-hello]]、[[claude-usage-report]]、[[ooxml-clean]]、[[works-gitignore-allowlist-migration]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
 | 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools-explain]]、[[ai-room-data-layout-explain]]、[[ai-room-concurrent-start-explain]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 

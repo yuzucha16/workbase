@@ -38,7 +38,7 @@
 | works（Project、Area） | 計画は、実名なしで Project の `ai/work/plan/` に置く(承認の印は先頭の `status: 仮 | 正式` と `approved: 日付`。`room start` が正式のハッシュを記録し、承認後の変更を警告して仮に戻す。2026-11-03 の決定。それ以前は `ai/in/plan/`)。知識は Area の `_noai/knowledge/`。承認はユーザーが書く(AI は正式にしない)。Area の README の最新の Project の1行は、`room open` が足す |
 | dotfiles | dotfiles 自身の `docs/` で完結させる（依存は dotfiles → workbase の一方向）。workbase に影響するときだけ、名前で指す1行を workbase 側に書く |
 | room（道具の開発） | workbase の題材と同じ（道具のコードは `workflow-kit/room/`） |
-| room の中（業務） | 部屋の `ai/work/` → `ai/in/`。マスク後の語だけで書く |
+| room の中（業務） | 部屋の `ai/work/`（計画は `ai/work/plan/`）。マスク後の語だけで書く |
 
 実務の中身は workbase に入れない。
 
