@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【workflow-kit】原本の置き場を共通性で分け、`room pull` を廃止する（2026-11-03）
+- 決めたこと（ユーザー）: ① Project 共通の文書で md にできるものは Area の `ai/docs/`（実名を書かない。`start` が `ctx/area/` に写す）。② Project 共通の xlsx・pptx（実名・機密なし、internal のみ）は Area の `_noai/source/` に置き、`room clean <Project> --path <glob>` で直接掃除する（`raw/` を経由しない）。③ Project 固有の原本は Project の `_noai/raw/` に人が直接置く。④ `pull` は廃止（窓口は `clean` の1本）。⑤ `source/` から `ai/in/area/` へは相対パスのまま出す。名前に検出・`mask.toml` の語が当たれば止める。
+- 理由: Area の `source/` は、README に入らない Project 共通のファイル（憲章など）のために作った。固有と共通で入口が2つになり、それを `pull` で束ねたが、`pull` 自体が重く、窓口が複数に見えた。2026-10 の整理は「原本は Area に一本化」と読めたが、意図は共通性による境界だった。
+- 反映: `1f7aca9`、`9f89f2f`。文書は `guides/explain/ai-room-data-layout-explain.md` を直した。残り（`workflow-kit/room-context.md` `script-guide.md` `guides/howto/ai-room-setup-script.md` 4.1 `cross-area-shared-knowledge.md`）は、11-03 に外した知識の経路の記述を含めて、直す。
+
 ### 【workflow-kit】`templates/workspace/` の「works（Obsidian の Vault）」を「works（Obsidian の Vault の 1 つ。`resources/` は別の Vault）」に直す（2026-11-02）
 - 決めたこと: Vault の 2 分割（正式化: 2026-11-02）に合わせ、`templates/workspace/README.md` と `AGENTS.md` の 5 行目を直した。薄い `AGENTS.md` の項目は増減していない（文面のみ）。既存の works は、次に手で直すか、そのままでもよい（意味は変わらない）。
 - 根拠: ユーザーの発言: 「良いです」「承認します。進め方よいです」（文面直しの素案への承認）。経緯は `topics/room-type-consolidation/docs/decisions.md`。

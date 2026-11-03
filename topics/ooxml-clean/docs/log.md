@@ -18,7 +18,7 @@
 
 1. 【期日 11-12】`room clean` の実機確認は済(2026-11-03、PC1 の internal の Area。`pull` 以外は問題なし)。残りは NA 4・5 に分けた。
 2. 【期日 11-30】`room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー)。単体スクリプト化はしない。
-4. 実装済み(2026-11-03、実機確認待ち。期日 11-10): `room clean --path <glob>` が `source/` を直接読む(pull 不要)。次は実機で使い、`pull` を畳むか決める。元の指摘: `pull` の軽量化(2026-11-03 実機確認でユーザーが「ついていけない」と指摘): `source/` → `raw/area/` の写し(名前を `src-<ハッシュ>` に変える)の必要性を見直し、`clean` が `source/` を直接読む等の緩和策を検討する。
+4. 完了(2026-11-03、実機確認は NA 1 と同じ機会に): `pull` を廃止。原本は共通性で分ける(固有は `raw/`、共通の xlsx・pptx は `source/` を `clean --path`、共通の md は Area の `ai/docs/`)。残り: `room-context.md` `script-guide.md` `ai-room-setup-script.md` 4.1 `cross-area-shared-knowledge.md` の古い記述を直す(期日 11-10)。
 5. 【期日 11-10】Project の `docs/`(log・decisions への追記)を Area の共有知に統合する経路を設計する。今の `stock --dst area` は `ai/out/stock/*.md` を新規ファイルとして運ぶ形で、追記・マージの意図(各 Area で共有知として育てる)とずれる(2026-11-03 実機確認、ユーザー)。
 3. 完了(2026-11-03): 語のマスクの必須を外した(`area_gate_terms` は語が空でも通る)。`room clean` を追加(internal だけ、strict、単体テスト 2 件)。決定は `decisions.md` の同日の項。
 

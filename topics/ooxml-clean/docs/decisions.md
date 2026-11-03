@@ -2,6 +2,9 @@
 
 ## Decisions
 
+### 【kit 全体】原本の置き場を共通性で分け、`room pull` を廃止（2026-11-03）
+- 決めたこと（ユーザー）と理由は、root の `docs/decisions.md` の同名の項を参照。この件の NA 4（`pull` の軽量化）は、これで解決した。
+
 ### 【この件】`room clean` の報告は `_noai/raw/tmp/` に置く(2026-11-03)
 - 決めたこと(ユーザー): 報告(実データの抜粋入り)を `_noai/reports/` から `_noai/raw/tmp/` へ。`raw/tmp/` は原本に数えない(`mask` `clean` `start` の注意が拾わない)。章の順は、掃除の後も残っているものを先に。
 
