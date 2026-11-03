@@ -15,13 +15,13 @@
 - 実装済み（2026-11-03）: `pull` を廃止。原本は共通性で分ける(固有は `raw/`、共通の xlsx・pptx は `source/` を `room clean --path`、共通の md は Area の `ai/docs/`)。決定は root の `docs/decisions.md`。
 - 実装済み（2026-11-02）: 知識の出口を `room stock --dst kit|area` の一本にし、internal にも `--dst area` と `ctx/area/` の写しを許した（`mask.toml` の語が空なら止まる）。単体テストは関係する 14 件を通した。
 - 実機確認済み(2026-11-03、PC1): `clean --path` → `ai/in/area/`、`start --adopt` で通る。報告は `_noai/source/tmp/`(`461160d`)。
-- 実装済み（2026-11-03）: `workflow-kit/room/exceltext.py`（v0。pptxtext の xlsx 版）と単体テスト 4 件、`room clean --text`（xlsx・pptx を md に取り出して `ai/in/<名前>.md`、`pending`）。`test_room` 含む全 214 件を通した。実ファイル（PC1）は未確認。
+- 実装済み（2026-11-03）: `workflow-kit/room/exceltext.py`（v0。pptxtext の xlsx 版）と単体テスト 4 件。単体のスクリプトとして使う（room には組み込まない。11-03 に一度 `room clean --text` を足したが、ユーザーの指示で外した）。実ファイル（PC1）は未確認。
 - 実装済み(2026-11-03): `room close` の `【決定】` 行(根拠の実在検査と sensitive_hits で、移動前に止める)→ Area の inbox、`INBOX_NEW` の規約、`room trace <Project>#n`。`test_room` 全 167 件を通した。実機は未確認。
 
 ## Next Actions
 
 1. 【期日 11-10】実機確認: 実際の Project で `【決定】` 行つきの `room close` と `room trace <Project>#n` を一度通す(実装・単体テストは 2026-11-03 に済み)。
-2. 実機確認: PC1 の実 xlsx を `exceltext.py` 単体と `room clean <Project> --text`（`--path` も）に通し、md の読みやすさ・取りこぼし・大きさを見て仕様を足す。
+2. 実機確認: PC1 の実 xlsx を `exceltext.py` に通し、md の読みやすさ・取りこぼし・大きさを見て仕様を足す。
 
 ## Open Questions
 

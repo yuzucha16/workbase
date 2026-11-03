@@ -45,7 +45,7 @@ uv run room.py mv <旧Area> <新Area> [--no-commit]
 | （`start` の中） | 共有知の写し（方式 A）: `<Vault>/resources/` の `AGENTS.md`、`workflow-kit/`（`workflow-kit/room/` は `README.md` だけ。コード・テスト・設定は送らない。2026-10-17）、`exmem/{AGENTS.md,README.md,tags.md,lessons/}`、`guides/` を tar.gz にして、部屋の `~/shared` に読み取り専用で送る（起動のたびに入れ替え。途中では更新しない）。基準コミット（と未コミットの変更の有無）を manifest の `shared` に記録し、`~/shared/ROOM.md` に案内を置く。あわせて、部屋の `~/.claude/CLAUDE.md`（Claude Code が作業ディレクトリによらず読む）に `ROOM.md` への案内を、目印（`room-shared:begin`〜`end`）で囲んだ範囲だけ入れ替えて置く（ほかの内容は変えない）。`resources/` が無ければ送らない。部屋の `~/.claude/CLAUDE.md` に案内を、`~/.claude/settings.json` に `Read(~/shared/**)` の許可（読み取りだけ）を足す |
 | `trace <Project>#n` | Area の inbox・`decisions.md` の項目の根拠を引き、閉じた Project の `ai/docs/` の該当節を表示する（部屋の AI には出さない） |
 | `close` | マウントが無いこと、`ai/out/close.md`（部屋の AI が書く）を確認 → 【決定】行（根拠の実在と cleankit の点検に通らなければ移動前に止まる）と【案件】を Area の `ai/docs/inbox.md` に追記（重複しない。inbox が無ければ作らず、何も変えずに止まる。`init` で作る）→ README を `status: done`、`closed`、`reap_after` に → Area の一覧を「完了した Project」に → ファイル単位の `git mv` で `archives/` へ（追跡外の `_noai/` も移す） |
-| `clean` | `clean <Project> [--path <glob>]... [--text]`（internal だけ。2026-11-03。`pull` は 2026-11-03 に廃止。原本の置き場は共通性で分ける: Project 固有は `_noai/raw/` に人が直接置く、Project 共通の xlsx・pptx は Area の `_noai/source/` に置いて `--path` で読む。共通の md は Area の `ai/docs/` に置けば `ctx/area/` に自動で写る）: `_noai/raw/` の xlsx・pptx を `cleankit` の `strict` で掃除して `ai/in/` へ（xlsx・pptx 以外は注意だけ出して通さない）。報告（実データの抜粋入り）は、raw 経由なら `_noai/raw/tmp/`（原本に数えない）、`--path` なら `_noai/source/tmp/`（原本の隣。`--path` の対象に入れない）。どちらも部屋に渡らない。整合の問題があれば `ai/in/` へ渡さない。`--path` を付けると、Area の `_noai/source/` を直接読み（`pull` と raw への写しは不要）、`ai/in/area/<相対パス>` に出す（`source/` は実名を置かない運用なので名前はそのまま。名前に検出・`mask.toml` の語が当たれば止める。2026-11-03）。manifest は `pending`、人が読んで `start --adopt` で通す。語のマスクは要らない（`mask` は任意の補助。削除は使ってから決める）。`--text` を付けると、掃除の代わりに見えている内容を md に取り出す（xlsx は `exceltext`、pptx は `pptxtext`。`ai/in/<相対パス>.md`、`--path` なら `ai/in/area/<相対パス>.md`。manifest は `extracted: text` で `pending`。clean の報告は作らず、画面に `cleankit` の検出の件数だけ出す。2026-11-03。読ませる用途はこちら） |
+| `clean` | `clean <Project> [--path <glob>]...`（internal だけ。2026-11-03。`pull` は 2026-11-03 に廃止。原本の置き場は共通性で分ける: Project 固有は `_noai/raw/` に人が直接置く、Project 共通の xlsx・pptx は Area の `_noai/source/` に置いて `--path` で読む。共通の md は Area の `ai/docs/` に置けば `ctx/area/` に自動で写る）: `_noai/raw/` の xlsx・pptx を `cleankit` の `strict` で掃除して `ai/in/` へ（xlsx・pptx 以外は注意だけ出して通さない）。報告（実データの抜粋入り）は、raw 経由なら `_noai/raw/tmp/`（原本に数えない）、`--path` なら `_noai/source/tmp/`（原本の隣。`--path` の対象に入れない）。どちらも部屋に渡らない。整合の問題があれば `ai/in/` へ渡さない。`--path` を付けると、Area の `_noai/source/` を直接読み（`pull` と raw への写しは不要）、`ai/in/area/<相対パス>` に出す（`source/` は実名を置かない運用なので名前はそのまま。名前に検出・`mask.toml` の語が当たれば止める。2026-11-03）。manifest は `pending`、人が読んで `start --adopt` で通す。語のマスクは要らない（`mask` は任意の補助。削除は使ってから決める） |
 | `mask` | `_noai/raw/` の新しい・変わった原本（csv・md・txt・xlsx・pptx）を、`_noai/mask.toml` に従ってマスクし `ai/in/` へ。manifest に原本・マスク後・`mask.toml` のハッシュと対応表の版を記録。語が残っていれば止める（`start` の最初でも自動で行う） |
 | `restore` | `ai/out/` を復元して `_noai/final/` へ。戻らないプレースホルダー・未知の形式があれば、何も書かずに一覧を出して止める。`_noai/final/` を人が前回の復元から変えていたときも止める（`--force` で上書き。前回の書き出しのハッシュは `_noai/map/final-manifest.json`）。`start` の終わりでも自動で行う。（`ai/out/knowledge/` の知識の経路は 2026-11-03 に外した。知識の出口は `stock --dst`）**`ai/out/deliverable/` の下も、復元したあと Area の成果物置き場（`areas/<Area>/_noai/deliverable/<Project 名>/`。Project 名の下に置くので、Project どうしで名前が衝突しない。`init` が `deliverable/` を作る。2026-10-21。単体テストのみ）に書く**（前回の書き出しは `_noai/map/deliverable-manifest.json`、退避は `_noai/final/_prev/deliverable/`）。`_noai/final/` にも残る。ファイル名にプレースホルダーが残る、置き場の外を指す、場合は何も書かずに止まる。前回の書き出し（`_noai/map/deliverable-manifest.json` のハッシュ）から人が変えた既存ファイルがあれば、何も書かずに止まる（`--force` で上書き。直前の版は `_noai/final/_prev/deliverable/` に退避する）。 |
 | `readme` | 部屋の AI が書いた `ai/out/readme-draft.md`（本文だけ）を、`README.md` の本文に反映する（frontmatter は変えず、`updated` だけ今日にする。確認あり、`--yes` で省略）。`open` の判断部分（目的・完了条件）を AI が下書きする形 |
@@ -60,7 +60,7 @@ uv run room.py mv <旧Area> <新Area> [--no-commit]
 Area の `README.md` の `boundary:` は `external`（外向け相当。**既定**）か `internal`。無印や、それ以外の値は `external` として扱う（厳しい側に倒す）。
 
 - `external`: 業務データを AI の入力にしない。`clean`、`_noai/raw/` の原本のマスク、`start --adopt` は止まる。AI に入れるのは、ユーザー自身が作るもの（論点整理、課題設定、プロジェクト管理、治具ツールなど）だけ。
-- `internal`: 人が通したファイルだけを入れる（ファイル単位。`ai/in/` に置き、`start --adopt` で manifest にハッシュを記録する）。`cleankit`（`strict` が向く）と `pptxtext`・`exceltext`（`clean --text`）は、通す前の一次スクリーニング。マスクは補助で、通すかどうかは人の目で決める。
+- `internal`: 人が通したファイルだけを入れる（ファイル単位。`ai/in/` に置き、`start --adopt` で manifest にハッシュを記録する）。`cleankit`（`strict` が向く）と `pptxtext`・`exceltext` は、通す前の一次スクリーニング。マスクは補助で、通すかどうかは人の目で決める。
 - 顧客ごとの違いが要るときは、`boundary:` の値を増やさず、別のキーで足す。
 
 ## マスクと復元は状態で決まる
@@ -139,11 +139,10 @@ uv run --script pptxtext.py <入力.pptx> <出力.md>
 - 出すもの: スライドごとの見出し（タイトル）、文章（階層は箇条書きのインデント。上から下、左から右）、表（markdown の表）、SmartArt（入れ子の箇条書き）、両端が図形につながった矢印（`A → B`）、グラフと画像は `[グラフ: タイトル]` `[画像]` だけ。
 - v0 の割り切り: 画像の中の文字は取り出さない。つながっていない矢印・線は出さない。グラフの値、グループの入れ子の位置、プレースホルダーの位置（レイアウトを継ぐもの）は未対応（位置が分からない図形は最後に並ぶ）。実ファイルで見て仕様を足す。
 - 掃除（`cleankit.py`）は、AI にファイルを直させて返してもらう用途のために残す（需要が見えるまで pptx の手直しはしない）。
-- room では `room clean <Project> --text`（`--path` も可）で `ai/in/` に md を出す。
 
 ## xlsx の取り出し（`exceltext.py`、v0）
 
-`pptxtext` の xlsx 版（2026-11-03。用途・扱いは同じ: 読ませる用途、標準ライブラリだけ、**人が実行する**、出力はこのリポジトリの中に書けない）。見えているシートの見えているセルの値と図形だけを markdown にするので、非表示のシート・行・列、コメント、定義名、数式、プロパティ、外部リンク、キャッシュの写しは構造上出ない。room では `room clean <Project> --text` が呼ぶ。
+`pptxtext` の xlsx 版（2026-11-03。用途・扱いは同じ: 読ませる用途、標準ライブラリだけ、**人が実行する**、出力はこのリポジトリの中に書けない）。見えているシートの見えているセルの値と図形だけを markdown にするので、非表示のシート・行・列、コメント、定義名、数式、プロパティ、外部リンク、キャッシュの写しは構造上出ない。room からは呼ばない（pptxtext と同じ。room の経路は `clean` の掃除）。
 
 ```powershell
 uv run --script exceltext.py <入力.xlsx> <出力.md>
