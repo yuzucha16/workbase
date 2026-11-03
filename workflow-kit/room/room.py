@@ -1059,11 +1059,7 @@ def scaffold_area(ctx, area):
     root = ctx.vault / "areas" / area
     old = root / "knowledge"  # 2026-10-21 までの置き場（_noai の外で、守られていなかった）。自動では動かさない
     if old.is_dir():
-        ctx.say(f"警告: areas/{area}/knowledge/ がある。知識置き場は {KNOWLEDGE_DEFAULT}/ に移った。中身を人が移す（追跡に入っていれば、履歴にも実名が残っている）")
-    kd = root / KNOWLEDGE_DEFAULT
-    if not kd.is_dir():
-        kd.mkdir(parents=True)
-        ctx.say(f"作った: areas/{area}/{KNOWLEDGE_DEFAULT}/（知識置き場。pull の取り出し元、restore の書き出し先）")
+        ctx.say(f"警告: areas/{area}/knowledge/ がある。実名を含む中身は、人が確認して移す（追跡に入っていれば、履歴にも実名が残っている）。知識の出口は `room stock --dst area`")
     dd = root / DELIVERABLE_DEFAULT
     if not dd.is_dir():
         dd.mkdir(parents=True)
@@ -1452,7 +1448,6 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 
 Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
 
-- 統合した知識: `ai/out/knowledge/<英数字の名前>.md`。frontmatter は `kind: integrated`、`status: active`、`org` は元のまま。`ai/in/area/` を読んでマスクのまま書く。
 - Area に実名で戻したい最終版（Area の成果物置き場に置くもの）だけ: `ai/out/deliverable/` の下に置く。Project の成果物は `ai/out/<成果物名>/`（置き場と構成は `workflow-kit/project-structure.md`）。
 
 部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git add` `git commit` `git log`）。リポジトリは `room start` が用意済みなので、許可を取らずに使ってよい。自分で `git init` や `git config` をしない（`.git` を作ると works に回収される。`git status` が失敗したときは、作らずに人に伝える）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。人に言われなくても、作業の区切りと wrap のたびにコミットする（push はしない）。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
@@ -1732,21 +1727,10 @@ def write_bytes(path, data):
     path.write_bytes(data)
 
 
-KNOWLEDGE_DEFAULT = "_noai/knowledge"  # Area の知識置き場（areas/<Area>/_noai/knowledge/。実名を含むので _noai の下＝追跡外・AI に見せない）。README の knowledge_dest: で変える
 SOURCE_DEFAULT = "_noai/source"  # Area の原本置き場（areas/<Area>/_noai/source/。人が置く。pull --from source の取り出し元）
-KNOWLEDGE_OUT = "knowledge/"  # ai/out のこの下だけを Area の知識置き場に戻す
 DELIVERABLE_OUT = "deliverable/"  # ai/out のこの下だけを Area の成果物置き場（<Project 名>/ の下）に戻す
 DELIVERABLE_DEFAULT = "_noai/deliverable"  # Area の成果物置き場（areas/<Area>/_noai/deliverable/<Project>/。人が読む最終版）
 PULL_PREFIX = "area/"  # _noai/raw の下の、Area から取り出した写しの置き場
-
-
-def knowledge_dir(p):
-    """Area の知識置き場。README の knowledge_dest:（Area からの相対パス）で変えられる。Area の外を指す指定は拒否する。"""
-    dest = str(p.fm.get("knowledge_dest") or KNOWLEDGE_DEFAULT).strip().strip("\"'")
-    d = (p.area_dir / dest).resolve()
-    if p.area_dir.resolve() not in d.parents:
-        raise RoomError(f"knowledge_dest が Area の中を指していない: {dest}")
-    return d
 
 
 def deliverable_dir(p):
@@ -1762,7 +1746,7 @@ def pull_sources_path(p):
 
 
 def load_pull_sources(p):
-    """{_noai/raw からの相対パス: Area の知識置き場からの相対パス}。実名を含みうるので、_noai/map（部屋に渡らない）に置く。"""
+    """{_noai/raw からの相対パス: Area の原本置き場からの相対パス}。実名を含みうるので、_noai/map（部屋に渡らない）に置く。"""
     path = pull_sources_path(p)
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
@@ -1880,9 +1864,8 @@ class Route:
 
 
 def routes(p):
-    """知識は Area に1つの共有の置き場へ、成果物は Project の名前の下へ戻す（Project どうしで名前が衝突しないように）。"""
+    """成果物は Project の名前の下へ戻す（Project どうしで名前が衝突しないように）。知識の経路は 2026-11-03 に外した（出口は stock --dst）。"""
     return [
-        Route(KNOWLEDGE_OUT, "知識", "knowledge-manifest.json", knowledge_dir(p), knowledge_dir(p)),
         Route(DELIVERABLE_OUT, "成果物", "deliverable-manifest.json", deliverable_dir(p) / p.name, deliverable_dir(p)),
     ]
 
@@ -1955,45 +1938,6 @@ def cmd_restore(ctx, a):
     ctx.say(f"復元した: {k} ファイル → _noai/final")
 
 
-def read_frontmatter_values(path):
-    """frontmatter を {キー: 文字列 または文字列のリスト} で返す（`- 値` 形式と `[a, b]` 形式のリストを読む）。"""
-    fm, _ = split_frontmatter(Path(path).read_text(encoding="utf-8"))
-    data, key = {}, None
-    unq = lambda s: s.strip().strip("\"'")
-    for line in (fm or "").split("\n"):
-        m = re.match(r"^([A-Za-z0-9_]+):\s*(.*?)\s*$", line)
-        if m:
-            key, val = m.group(1), re.sub(r"\s+#.*$", "", m.group(2))
-            if val.startswith("[") and val.endswith("]"):
-                data[key] = [unq(x) for x in val[1:-1].split(",") if x.strip()]
-            else:
-                data[key] = unq(val) if val else []
-            continue
-        m = re.match(r"^\s+-\s*(.*?)\s*$", line)
-        if m and key and isinstance(data.get(key), list):
-            data[key].append(unq(m.group(1)))
-    return data
-
-
-def parse_where(items):
-    conds = []
-    for it in items or []:
-        k, sep, v = it.partition("=")
-        if not sep or not k.strip() or not v.strip():
-            raise RoomError(f"--where は <項目>=<値> の形で書く: {it!r}")
-        conds.append((k.strip(), v.strip()))
-    return conds
-
-
-def matches_where(fm, conds):
-    for k, v in conds:
-        have = fm.get(k)
-        have = have if isinstance(have, list) else [have]
-        if v not in have:
-            return False
-    return True
-
-
 def pick_source_files(src, patterns):
     """Area の原本置き場（source/）から、--path の glob に合うファイルを選ぶ。置き場の外を指す指定は拒否する。"""
     if not patterns:
@@ -2010,33 +1954,17 @@ def pick_source_files(src, patterns):
 
 
 def cmd_pull(ctx, a):
-    """Area の知識置き場（--from knowledge）か原本置き場（--from source）から、ファイルを _noai/raw/area/ に写す。マスクは room mask（start でも自動）。実名を読むので人が実行する。"""
+    """Area の原本置き場（_noai/source/）から、--path のファイルを _noai/raw/area/ に写す。マスクは room mask。実名を読むので人が実行する。知識の取り出しは 2026-11-03 に外した。"""
     p = Project.load(ctx, a.name)
-    require_internal(p, "pull（Area の知識・原本の取り出し）")
-    origin = getattr(a, "origin", None) or "knowledge"
-    if origin == "source":
-        src = source_dir(p)
-        if not src.is_dir():
-            raise RoomError(f"Area の原本置き場が無い: {src}（`room init {p.area}` で作る）")
-        picked = pick_source_files(src, getattr(a, "path", None))
-        label, ext_of = "原本", lambda f: f.suffix.lower()
-    else:
-        conds = parse_where(a.where)
-        src = knowledge_dir(p)
-        if not src.is_dir():
-            raise RoomError(f"Area の知識置き場が無い: {src}")
-        picked = []
-        for f in sorted(src.rglob("*.md")):
-            fm = read_frontmatter_values(f)
-            if fm.get("status") not in (None, [], "active"):
-                continue
-            if matches_where(fm, conds):
-                picked.append(f)
-        label, ext_of = "status: active の知識", lambda f: ".md"
+    require_internal(p, "pull（Area の原本の取り出し）")
+    src = source_dir(p)
+    if not src.is_dir():
+        raise RoomError(f"Area の原本置き場が無い: {src}（`room init {p.area}` で作る）")
+    picked = pick_source_files(src, getattr(a, "path", None))
     if not picked:
         ctx.say("条件に合うファイルは無い")
         return
-    ctx.say(f"取り出す候補（{len(picked)} 件。{label}）:")
+    ctx.say(f"取り出す候補（{len(picked)} 件。原本）:")
     for f in picked:
         ctx.say("  " + f.relative_to(src).as_posix())
     if not a.yes and ctx.ask("この一覧を取り出してよいか [y/N]: ").strip().lower() != "y":
@@ -2044,12 +1972,10 @@ def cmd_pull(ctx, a):
     sources = load_pull_sources(p)
     for f in picked:
         rel_src = f.relative_to(src).as_posix()
-        # ファイル名は実名を含みうる。部屋に渡る名前は、日付（知識）または種類（原本）と、元の相対パスのハッシュだけにする
-        m = re.match(r"(\d{4}-\d{2}-\d{2})-", f.name)
-        head = (m.group(1) if m else "note") if origin == "knowledge" else "src"
-        rel = f"{PULL_PREFIX}{head}-{maskkit.sha256_bytes((rel_src if origin == 'knowledge' else f'source/{rel_src}').encode('utf-8'))[:8]}{ext_of(f)}"
+        # ファイル名は実名を含みうる。部屋に渡る名前は、種類と元の相対パスのハッシュだけにする
+        rel = f"{PULL_PREFIX}src-{maskkit.sha256_bytes(f'source/{rel_src}'.encode('utf-8'))[:8]}{f.suffix.lower()}"
         write_bytes(noai_dir(p) / "raw" / rel, f.read_bytes())
-        sources[rel] = rel_src if origin == "knowledge" else f"{SOURCE_DEFAULT}/{rel_src}"
+        sources[rel] = f"{SOURCE_DEFAULT}/{rel_src}"
     write_bytes(pull_sources_path(p), json.dumps(sources, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
     ctx.say(f"取り出した: {len(picked)} ファイル → _noai/raw/{PULL_PREFIX}（次は `room mask {p.name}`。今回の条件に合わなくなった前回の分は、_noai/raw から手で消す）")
 
@@ -3057,10 +2983,9 @@ def build_parser():
     m.add_argument("name"); m.add_argument("--yes", action="store_true")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
-    pl = sub.add_parser("pull", help="Area の知識置き場から、条件に合う知識を _noai/raw/area/ に写す（マスクは mask / start）")
-    pl.add_argument("name"); pl.add_argument("--where", action="append", metavar="項目=値", help="frontmatter の項目で絞る（複数指定は AND。リストの項目は要素に一致）")
-    pl.add_argument("--from", dest="origin", choices=("knowledge", "source"), default="knowledge", help="取り出し元: knowledge（知識。--where で絞る）/ source（原本。--path で選ぶ）。既定は knowledge")
-    pl.add_argument("--path", action="append", metavar="パス", help="--from source のとき、置き場からの相対パスか glob（複数指定可）")
+    pl = sub.add_parser("pull", help="Area の原本置き場（_noai/source/）から、--path のファイルを _noai/raw/area/ に写す（マスクは mask）")
+    pl.add_argument("name")
+    pl.add_argument("--path", action="append", metavar="パス", required=True, help="置き場からの相対パスか glob（複数指定可）")
     pl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")

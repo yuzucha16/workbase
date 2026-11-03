@@ -15,10 +15,9 @@
 
 ## Next Actions
 
-1. 【期日 11-09】境界の見直し（external / internal）の動作確認と残り: `records/2026-11-02-boundary-pending.md`（PC1 の確認 5 点と、単体スクリプト化、cleankit の internal 既定）。
-2. 【期日 11-12】room の `mask` への cleankit の組み込み（決定 2026-10-30）。11-02 の見直しで `start` が自動でマスクしなくなったので、組み込み先と要否を、1 の確認の後に決め直す。
-
-3. 【期日 11-16】internal の Area への適用: 決定・実装済み（2026-11-02）。出口は `room stock --dst kit|area` の一本で、internal にも `--dst area` と `ctx/area/` の写しを許した（`mask.toml` の語が空なら止まる・写さない）。残り: internal のダミーでの動作確認（別セッション、PC1。external の確認（`log-history.md` 2026-11-02）と同じ手順に、語が空で止まることを足す）。確認の後に、`restore`・`pull` の知識用の経路をコードから外す（ユーザーの決定。成果物の戻し `ai/out/deliverable/` は残す）。
+1. 【期日 11-09】境界の見直しの確認は完了（2026-11-03、ユーザー、5 点とも問題なし）。残り: mask / restore / pull の単体スクリプト化と、cleankit の internal 既定（`records/2026-11-02-boundary-pending.md`「積んだ残り」）。どちらも 2 の組み込みと一緒に決める。
+2. 【期日 11-12】room の `mask` への cleankit の組み込み（決定 2026-10-30）。1 の残りと合わせて決め直す（`start` は 11-02 から自動でマスクしない）。
+3. 完了（2026-11-03）: internal のダミー確認（`mask.toml` なしで止まる、ユーザー）。`restore` の知識の経路（`ai/out/knowledge/`）と `pull` の知識の取り出し（`--from knowledge` `--where`）をコードから外した。`pull` は原本専用（`--path` 必須）、`init` は知識置き場を作らない。残るのは成果物の戻し（`ai/out/deliverable/`）と `stock --dst`。単体テスト 163 件を通した。
 
 ## Open Questions
 

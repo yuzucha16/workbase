@@ -978,7 +978,7 @@ class BoundaryGuardTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.external_project(tmp)
             with self.assertRaises(room.RoomError) as cm:
-                room.cmd_pull(c, argparse.Namespace(name="proj-a", where=["org=x"], yes=True))
+                room.cmd_pull(c, argparse.Namespace(name="proj-a", path=["x"], yes=True))
             self.assertIn("internal", str(cm.exception))
 
     def test_mask_with_raw_is_refused_for_external_area(self):
@@ -1380,39 +1380,24 @@ class MaskIntegrationTest(unittest.TestCase):
             self.assertFalse(wsl.mounted)
 
 
-class PullKnowledgeTest(unittest.TestCase):
+class PullSourceTest(unittest.TestCase):
     MASK = '[terms.CUST]\nacme = ["アクメ商事株式会社", "アクメ商事"]\n'
-
-    def note(self, org, status="active", body="アクメ商事の件。決定: 切替は11月\n"):
-        return f"---\ntype: area-note\nkind: meeting\nstatus: {status}\norg:\n  - {org}\n---\n\n# 定例\n\n{body}"
 
     def setup_area(self, tmp, wsl=None):
         v, c = opened(tmp, wsl)
         p = v / "projects/proj-a"
         (p / "_noai/mask.toml").write_text(self.MASK, encoding="utf-8", newline="\n")
-        k = v / "areas/area-x/_noai/knowledge"
-        k.mkdir(parents=True)
-        (v / "areas/area-x/_noai/deliverable").mkdir()
-        (k / "2026-10-14-アクメ商事-定例.md").write_text(self.note("アクメ商事"), encoding="utf-8", newline="\n")
-        (k / "2026-10-15-other.md").write_text(self.note("自社", body="自社のみ\n"), encoding="utf-8", newline="\n")
-        (k / "2026-10-01-old.md").write_text(self.note("アクメ商事", status="superseded"), encoding="utf-8", newline="\n")
+        k = v / "areas/area-x/_noai/knowledge"  # 知識の経路は外した（作られない）
+        (v / "areas/area-x/_noai/deliverable").mkdir(parents=True, exist_ok=True)
+        sd = v / "areas/area-x/_noai/source"
+        sd.mkdir(parents=True, exist_ok=True)
+        (sd / "議事録.md").write_text("アクメ商事の件。決定: 切替は11月\n", encoding="utf-8", newline="\n")
         return v, c, p, k
 
     def pull(self, c, **kw):
-        d = dict(name="proj-a", where=["org=アクメ商事"], yes=True)
+        d = dict(name="proj-a", path=["議事録.md"], yes=True)
         d.update(kw)
         room.cmd_pull(c, argparse.Namespace(**d))
-
-    def test_pull_filters_and_hides_real_file_names(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
-            self.pull(c)
-            names = sorted(f.name for f in (p / "_noai/raw/area").iterdir())
-            self.assertEqual(len(names), 1)  # org 一致かつ status: active の1件だけ
-            self.assertTrue(names[0].startswith("2026-10-14-"))
-            self.assertNotIn("アクメ", names[0])
-            src = json.loads((p / "_noai/map/pull-sources.json").read_text(encoding="utf-8"))
-            self.assertEqual(list(src.values()), ["2026-10-14-アクメ商事-定例.md"])
 
     def test_pull_from_source_selects_by_path_and_hides_names(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1422,7 +1407,7 @@ class PullKnowledgeTest(unittest.TestCase):
             (s / "客先A/議事録.csv").write_text("アクメ商事,1\n", encoding="utf-8")
             (s / "客先A/メモ.md").write_text("x\n", encoding="utf-8")
             (s / "他社.csv").write_text("y\n", encoding="utf-8")
-            self.pull(c, origin="source", path=["客先A/*.csv"])
+            self.pull(c, path=["客先A/*.csv"])
             names = sorted(f.name for f in (p / "_noai/raw/area").iterdir())
             self.assertEqual(len(names), 1)
             self.assertTrue(names[0].startswith("src-") and names[0].endswith(".csv"))
@@ -1433,11 +1418,11 @@ class PullKnowledgeTest(unittest.TestCase):
     def test_pull_from_source_needs_a_path_inside_source(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
-            (v / "areas/area-x/_noai/source").mkdir(parents=True)
+            (v / "areas/area-x/_noai/source").mkdir(parents=True, exist_ok=True)
             (v / "areas/area-x/_noai/source/a.csv").write_text("x\n", encoding="utf-8")
-            for bad in (None, ["../knowledge/*.md"]):
+            for bad in (None, ["../knowledge/*.md", "/etc/passwd"]):
                 with self.assertRaises(room.RoomError):
-                    self.pull(c, origin="source", path=bad)
+                    self.pull(c, path=bad)
 
     def test_mask_warns_about_hand_placed_raw(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1446,7 +1431,7 @@ class PullKnowledgeTest(unittest.TestCase):
             room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
             self.assertTrue(any("pull で取り出したものではない" in m for m in c.msgs))
 
-    def test_pull_then_start_then_integrated_note_returns_to_area(self):
+    def test_pull_then_start_hides_names_and_knowledge_out_is_not_restored_to_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
             v, c, p, k = self.setup_area(tmp, wsl)
@@ -1458,7 +1443,7 @@ class PullKnowledgeTest(unittest.TestCase):
                 seen["in"] = f.read_text(encoding="utf-8")
                 seen["name"] = f.name
                 (p / "ai/out/knowledge").mkdir(parents=True)
-                (p / "ai/out/knowledge/topic-cutover.md").write_text("---\nkind: integrated\n---\n⟦CUST_001⟧ の切替は11月\n", encoding="utf-8", newline="\n")
+                (p / "ai/out/knowledge/topic-cutover.md").write_text("⟦CUST_001⟧ の切替は11月\n", encoding="utf-8", newline="\n")
             wsl.on_interactive = ai
             room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
             room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=True, commit=False, yes=True))
@@ -1466,7 +1451,7 @@ class PullKnowledgeTest(unittest.TestCase):
             self.assertNotIn("アクメ", seen["in"])
             self.assertNotIn("アクメ", seen["name"])
             self.assertIn("⟦CUST_001⟧", seen["in"])
-            self.assertIn("アクメ商事株式会社 の切替は11月", (k / "topic-cutover.md").read_text(encoding="utf-8"))
+            self.assertFalse(k.exists())  # 知識の経路は外した。Area の知識置き場には書かれない
             man = (p / "ai/records/manifest.json").read_text(encoding="utf-8")
             self.assertNotIn("アクメ", man)
             self.assertIn("pull-sources.json", man)
@@ -1518,62 +1503,17 @@ class PullKnowledgeTest(unittest.TestCase):
             self.assertIn("成果物の置き場が無い", problems[0])
             self.assertFalse((p / "_noai/final/deliverable").exists())
 
-    def test_changed_area_file_stops_restore_unless_force(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p, k = self.setup_area(tmp, wsl)
-            out = p / "ai/out/knowledge"
-            out.mkdir(parents=True)
-            (out / "t.md").write_text("⟦CUST_001⟧ v1\n", encoding="utf-8", newline="\n")
-            self.pull(c)
-            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
-            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a")), (1, []))
-            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a")), (1, []))  # 人が変えていなければ止まらない
-            (k / "t.md").write_text("人が直した\n", encoding="utf-8", newline="\n")
-            (out / "t.md").write_text("⟦CUST_001⟧ v2\n", encoding="utf-8", newline="\n")
-            n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
-            self.assertEqual(n, 0)
-            self.assertIn("t.md", problems[0])
-            self.assertEqual((k / "t.md").read_text(encoding="utf-8"), "人が直した\n")  # 何も書かない
-            self.assertFalse((p / "_noai/final/_prev").exists())
-            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a"), force=True)[1], [])
-            self.assertIn("v2", (k / "t.md").read_text(encoding="utf-8"))
-            self.assertEqual((p / "_noai/final/_prev/knowledge/t.md").read_text(encoding="utf-8"), "人が直した\n")
-
-    def test_restore_without_knowledge_dir_stops_and_writes_nothing(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
-            self.pull(c)
-            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
-            out = p / "ai/out/knowledge"
-            out.mkdir(parents=True)
-            (out / "t.md").write_text("⟦CUST_001⟧ v1\n", encoding="utf-8", newline="\n")
-            shutil.rmtree(k)
-            n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
-            self.assertEqual(n, 0)
-            self.assertIn("room init area-x", problems[0])
-            self.assertFalse(k.exists())
-            self.assertFalse((p / "_noai/final/knowledge").exists())
-
-    def test_bad_names_and_options_are_refused(self):
+    def test_deliverable_with_placeholder_name_is_refused(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, k = self.setup_area(tmp)
             self.pull(c)
             room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)  # 対応表を作る（マスクしたことが無いと復元しない）
-            out = p / "ai/out/knowledge"
+            out = p / "ai/out/deliverable"
             out.mkdir(parents=True)
             (out / "⟦CUST_001⟧.md").write_text("x\n", encoding="utf-8", newline="\n")
             k_, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
             self.assertEqual(k_, 0)
             self.assertIn("プレースホルダー", problems[0])
-            self.assertFalse((k / "⟦CUST_001⟧.md").exists())
-            with self.assertRaises(room.RoomError):
-                self.pull(c, where=["org"])
-            (v / "projects/proj-a/README.md").write_text(
-                (v / "projects/proj-a/README.md").read_text(encoding="utf-8").replace("---\n", "---\nknowledge_dest: ../x\n", 1),
-                encoding="utf-8", newline="\n")
-            with self.assertRaises(room.RoomError):
-                self.pull(c)
 
 
 class NoDataModeTest(unittest.TestCase):
@@ -2141,11 +2081,11 @@ class CloseTest(unittest.TestCase):
             self.assertTrue(p.exists())
             self.assertFalse((v / "archives/proj-a").exists())
 
-    def test_init_scaffolds_area_knowledge_and_inbox_without_touching_existing(self):
+    def test_init_scaffolds_area_dirs_and_inbox_without_touching_existing(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=False))
-            self.assertTrue((v / "areas/area-y/_noai/knowledge").is_dir())
+            self.assertFalse((v / "areas/area-y/_noai/knowledge").exists())
             self.assertTrue((v / "areas/area-y/_noai/source").is_dir())
             self.assertTrue((v / "areas/area-y/_noai/deliverable").is_dir())
             self.assertEqual((v / "areas/area-y/ai/docs/inbox.md").read_text(encoding="utf-8"), room.INBOX_NEW)
@@ -2163,14 +2103,14 @@ class CloseTest(unittest.TestCase):
             room.scaffold_area(c, "area-x")
             self.assertTrue(any("knowledge/ がある" in m for m in c.msgs))
             self.assertTrue((old / "a.md").exists())
-            self.assertTrue((v / "areas/area-x/_noai/knowledge").is_dir())
+            self.assertFalse((v / "areas/area-x/_noai/knowledge").exists())
 
     def test_init_scaffolds_existing_area_even_when_room_exists(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             with self.assertRaises(room.RoomError):
                 room.cmd_init(ctx_for(v, FakeWsl()), argparse.Namespace(area="area-x", resume=False))
-            self.assertTrue((v / "areas/area-x/_noai/knowledge").is_dir())
+            self.assertFalse((v / "areas/area-x/_noai/knowledge").exists())
 
     def test_close_second_run_does_not_duplicate_inbox(self):
         with tempfile.TemporaryDirectory() as tmp:
