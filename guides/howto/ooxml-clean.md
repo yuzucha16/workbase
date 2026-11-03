@@ -29,7 +29,7 @@ tags:
 
 | 選ぶもの | 指定 | 中身 |
 |---|---|---|
-| プロファイル | `--profile` | 掃除の強さ。`standard`（既定）か `strict` |
+| プロファイル | `--profile` | 掃除の強さ。`standard` か `strict`（既定。2026-11-03 に変更） |
 | 部品の種類 | `--allow` | `strict` が外す種類のうち、残すもの。`charts` `images` `embeddings` `pivots` `connections` |
 | 個別の動作 | `--keep` / `--also` | 既定の掃除から外す / 任意の動作を足す |
 

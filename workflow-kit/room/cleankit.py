@@ -1172,7 +1172,7 @@ def main(argv=None):
     k.add_argument("out", help="出力のファイル、またはディレクトリ")
     k.add_argument("--keep", default="", help="外さない動作（カンマ区切り）: " + ", ".join(CLEAN_ACTIONS))
     k.add_argument("--also", default="", help="既定では行わない動作を足す（カンマ区切り）: " + ", ".join(OPTIONAL_ACTIONS))
-    k.add_argument("--profile", default="standard", choices=list(PROFILES), help="掃除の強さ: " + "; ".join(f"{n} = {d}" for n, (d, _x) in PROFILES.items()))
+    k.add_argument("--profile", default="strict", choices=list(PROFILES), help="掃除の強さ: " + "; ".join(f"{n} = {d}" for n, (d, _x) in PROFILES.items()))
     k.add_argument("--allow", default="", help="プロファイルが外す部品の種類のうち、残すもの（カンマ区切り）: " + ", ".join(STRIP_KINDS))
     k.add_argument("--report", help="報告の md（既定: 出力の隣の <名前>.clean-report.md）")
     k.add_argument("--force", action="store_true", help="出力が既にあれば上書きする")
