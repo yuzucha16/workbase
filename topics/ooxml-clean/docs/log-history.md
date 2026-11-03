@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-03（NA 4: `pull` を廃止し、原本の置き場を共通性で分けた）
+- 経緯: NA 4（`pull` の軽量化）から、置き場の設計に広がった。Area の `source/` は、README に入らない Project 共通のファイル（憲章など）のために作ったもので、「原本は一律 Area」ではなかった。固有と共通で入口が2つになり、`pull` で束ねたが重くなった。Area の `ai/{knowledge,docs}/` は `start` が `ctx/area/` に読み取り専用で写す（`snapshot_area_ai`。検出に当たるものと 1 MiB 超は写さない）。
+- ユーザーの決定: 共通の md は Area の `ai/docs/`（実名を書かない運用）。共通の xlsx・pptx は `source/`（実名・機密なし、internal のみ）から `clean --path`。固有の原本は `raw/` に直接置く。`pull` 廃止。`source/` の名前は相対パスのまま `ai/in/area/` へ（名前に検出・`mask.toml` の語が当たれば止める）。
+- 実装: `1f7aca9`（`clean --path`）、`9f89f2f`（`pull` 廃止、テスト書き直し。Windows で `/etc/passwd` 形の `--path` が例外になる不具合も直した）、`433ec12`（理解ガイド `ai-room-data-layout-explain.md` と決定の記録）。`test_room.py` 165 件が通った。実機は未。
+- 古い記述が残る文書: `workflow-kit/room-context.md` 69 行、`workflow-kit/script-guide.md` 415 行、`guides/howto/ai-room-setup-script.md` 4.1 節、`guides/explain/cross-area-shared-knowledge.md`。11-03 に外した知識の経路（`room pull --where`、`ai/in/area/` に知識が入る、`ai/out/knowledge/`）を、`pull` 廃止の前から書いている。直し方は、現行の `ctx/area/` の写しと `stock --dst area` に合わせる。
+- NA の整理（ユーザー）: `room clean` の実機確認（旧 NA 1）は、NA 4・5 に分けたので削除した。`mask` / `restore` の削除（旧 NA 2）は上位の `docs/due.md`（11-30）に積んだ。
+
 ### 2026-11-03（語のマスクを必須から外し、room clean を入れた）
 - ユーザーの決定: mask / restore / pull の単体スクリプト化はしない。strict を既定にする。人名だけ語で管理する利点が薄く（金額・KPI は列挙できない）、external は一から作るので業務データが入らない、という指摘で、語のマスクは external・internal とも必須にしない。削除は使ってから決める。internal の入口は明示の `room clean`。
 - 実装: `area_gate_terms` を語が空でも通す形に、`room clean`（`clean_project`、strict、`_noai/reports/`、manifest は pending）を追加。単体テストは 207 件を通した。決定は `decisions.md` の同日の項。

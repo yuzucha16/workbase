@@ -12,15 +12,14 @@
 - 実装済み（2026-11-02）: `workflow-kit/room/pptxtext.py`（v0）と単体テスト 3 件。見えているスライドの文章・表・SmartArt・つながった矢印を md に出す。画像・グラフは印だけ。PC1 の実 pptx で動作確認済み（2026-11-02、ユーザー、問題なし）。要件の拡充は、足りないところが見えたときに積む。直させる用途の掃除（cleankit の pptx 手直し）は、需要が見えるまでしない。
 
 - 実装済み（2026-11-03）: `room clean`（strict の掃除 → `ai/in`、`pending`。報告は `_noai/raw/tmp/`、章の順は「掃除の後も残っているもの」が先）。語のマスクは必須でなくなった(任意の補助)。
+- 実装済み（2026-11-03）: `pull` を廃止。原本は共通性で分ける(固有は `raw/`、共通の xlsx・pptx は `source/` を `room clean --path`、共通の md は Area の `ai/docs/`)。決定は root の `docs/decisions.md`。
 - 実装済み（2026-11-02）: 知識の出口を `room stock --dst kit|area` の一本にし、internal にも `--dst area` と `ctx/area/` の写しを許した（`mask.toml` の語が空なら止まる）。単体テストは関係する 14 件を通した。
 
 ## Next Actions
 
-1. 【期日 11-12】`room clean` の実機確認は済(2026-11-03、PC1 の internal の Area。`pull` 以外は問題なし)。残りは NA 4・5 に分けた。
-2. 【期日 11-30】`room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー)。単体スクリプト化はしない。
-4. 完了(2026-11-03、実機確認は NA 1 と同じ機会に): `pull` を廃止。原本は共通性で分ける(固有は `raw/`、共通の xlsx・pptx は `source/` を `clean --path`、共通の md は Area の `ai/docs/`)。残り: `room-context.md` `script-guide.md` `ai-room-setup-script.md` 4.1 `cross-area-shared-knowledge.md` の古い記述を直す(期日 11-10)。
-5. 【期日 11-10】Project の `docs/`(log・decisions への追記)を Area の共有知に統合する経路を設計する。今の `stock --dst area` は `ai/out/stock/*.md` を新規ファイルとして運ぶ形で、追記・マージの意図(各 Area で共有知として育てる)とずれる(2026-11-03 実機確認、ユーザー)。
-3. 完了(2026-11-03): 語のマスクの必須を外した(`area_gate_terms` は語が空でも通る)。`room clean` を追加(internal だけ、strict、単体テスト 2 件)。決定は `decisions.md` の同日の項。
+1. 【期日 11-10】Project の `docs/`(log・decisions への追記)を Area の共有知に統合する経路を設計する。今の `stock --dst area` は `ai/out/stock/*.md` を新規ファイルとして運ぶ形で、追記・マージの意図(各 Area で共有知として育てる)とずれる(2026-11-03 実機確認、ユーザー)。
+2. 【期日 11-10】別セッションで、古い記述を直す: `workflow-kit/room-context.md` 69 行、`workflow-kit/script-guide.md` 415 行、`guides/howto/ai-room-setup-script.md` 4.1 節、`guides/explain/cross-area-shared-knowledge.md`。11-03 に外した知識の経路(`room pull --where`、`ai/in/area/` に知識が入る)を、`ctx/area/` の写しと `stock --dst area` に合わせる(2026-11-03、ユーザー)。
+3. 【期日 11-10】動作確認(実機、PC1): 共通の xlsx を `areas/<Area>/_noai/source/` に置き、`room clean <Project> --path <glob>` で `ai/in/area/<相対パス>` に出ること、`start --adopt` で通ること(2026-11-03、ユーザー)。
 
 ## Open Questions
 
