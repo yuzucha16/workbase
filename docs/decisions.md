@@ -4,6 +4,13 @@
 
 ## Decisions
 
+### 【room】計画（6R 等）は `ai/work/plan/` に置いたまま、承認は `status` と `approved` で示し、`start` が変更を検知する（2026-11-03）
+- 決めたこと（ユーザー）: ① 計画は `ai/work/plan/` に置き続け、`ai/in/plan/` へ移す手順（`room plan` や `stock --dst plan`）は作らない。README の「計画:」の行は `ai/work/plan/` へのリンクにする。② 承認は各ファイルの先頭の `status: 仮 | 正式` と `approved: 日付`（人が書く）。③ `room start` が正式なファイルのハッシュを manifest の `plans` に記録し、次の start で `approved` が同じまま内容が変わっていれば警告して `仮` に戻す。再承認は `approved` の日付を書き換える。④ AI の書き換えは止めず、検知だけでよい（`ai/in/` と違って読み取り専用にしない。ユーザー: 「検知だけでOK」）。
+- 理由: 移す手順が人の手作業で重く、`ai/work/` はユーザーも編集できる。整合性（AI が承認済みの計画を黙って書き換える）は検知で足りる。
+- 実装: `room.py`（`check_plan_approval`、`README_TEMPLATE`）、テスト 3 本、`README.template.md`、`brief-plan.md`、`room-context.md`、`project-structure.md`、`exmem/lessons/planning-method.md`。実機は未確認。既存の Project の README の「計画:」の行は書き換えない。
+- 上の 2026-10-25「計画と部屋の README の紐付けは案 D」の置き場（`ai/in/plan/`）を置き換える（固定のポインタ1行で結ぶ点は同じ）。
+- 未決: README の完了条件・範囲外・Open Questions が 6R と重複する件（畳み方）。`room readme` を `room stock` の考え方（点検・衝突検出・記録）に揃える件。
+
 ### 【room】restore の成果物の経路をマスクから切り離す。mask/restore の古い記述を直す（2026-11-04）
 - 決めたこと（ユーザー）: ① 古い記述（コマンドの説明、手順書の「start で自動」）を今の動作に直す。② `restore` は、マスクしていない Project（`clean` だけ）でも、`ai/out/deliverable/` の下だけをそのまま Area の成果物置き場へ渡す（人が変えたファイルを守る停止と `--force` は同じ。ほかの `ai/out/` は触らない）。
 - 理由: Area の成果物置き場へ書けるのが `restore` だけで、対応表が無いと何もしなかったため、`clean` だけの Project は成果物を Area に戻せなかった。

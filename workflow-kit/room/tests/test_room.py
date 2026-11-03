@@ -938,7 +938,7 @@ class OpenTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             v, c = opened(tmp)
             text = (v / "projects" / "proj-a" / "README.md").read_text(encoding="utf-8")
-            self.assertIn("計画: `ai/in/plan/`", text)
+            self.assertIn("計画: `ai/work/plan/`", text)
             self.assertFalse([l for l in room.readme_placeholders(text) if "計画" in l])
 
     def test_open_refuses_without_gitignore_rules(self):
@@ -1013,6 +1013,47 @@ class StartTest(unittest.TestCase):
             self.assertFalse((p / "ai/ctx").exists(), "ctx は消える")
             self.assertIn("start", (p / "ai/records/room-log.md").read_text(encoding="utf-8"))
             self.assertTrue(any("result.md" in m for m in c.msgs))
+
+    def _plan(self, v, status="正式", approved="2026-11-03", body="本文\n"):
+        f = v / "projects" / "proj-a" / "ai" / "work" / "plan" / "6r.md"
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(f"---\nstatus: {status}\napproved: {approved}\n---\n{body}", encoding="utf-8")
+        return f
+
+    def _plans(self, v):
+        mp = v / "projects/proj-a/ai/records/manifest.json"
+        return json.loads(mp.read_text(encoding="utf-8")).get("plans", {}) if mp.exists() else {}
+
+    def test_plan_approval_records_and_detects_change(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            f = self._plan(v)
+            room.cmd_start(c, self.args())
+            self.assertIn("ai/work/plan/6r.md", self._plans(v))
+            room.cmd_start(c, self.args())
+            self.assertEqual(room.read_frontmatter(f)["status"], "正式")
+            f.write_text(f.read_text(encoding="utf-8") + "AI が足した\n", encoding="utf-8")
+            room.cmd_start(c, self.args())
+            self.assertEqual(room.read_frontmatter(f)["status"], "仮")
+            self.assertTrue(any("変更されている" in m for m in c.msgs))
+            self.assertNotIn("ai/work/plan/6r.md", self._plans(v))
+
+    def test_plan_reapproval_by_new_date_rerecords(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            f = self._plan(v)
+            room.cmd_start(c, self.args())
+            self._plan(v, approved="2026-11-05", body="直した\n")
+            room.cmd_start(c, self.args())
+            self.assertEqual(room.read_frontmatter(f)["status"], "正式")
+            self.assertEqual(self._plans(v)["ai/work/plan/6r.md"]["approved"], "2026-11-05")
+
+    def test_plan_draft_is_not_recorded(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            self._plan(v, status="仮")
+            room.cmd_start(c, self.args())
+            self.assertEqual(self._plans(v), {})
 
     def test_start_sets_up_and_discards_room_git(self):
         with tempfile.TemporaryDirectory() as tmp:

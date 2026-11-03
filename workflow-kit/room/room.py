@@ -404,6 +404,53 @@ def adopt_in(ctx, p):
     return len(man["files"])
 
 
+PLAN_DIR = "ai/work/plan"
+
+
+def check_plan_approval(ctx, p):
+    """計画（ai/work/plan/*.md）の承認ラベルを点検する。`status: 正式` と `approved:` のあるファイルのハッシュを manifest に記録し、
+    記録のあとで内容が変わっていれば（approved の日付が同じまま）警告して `status: 仮` に戻す。再承認は approved の日付を書き換える。
+    AI の書き換えを止めず、検知する（2026-11-03 ユーザーの決定）。"""
+    base = p.dir / PLAN_DIR
+    files = sorted(base.rglob("*.md")) if base.is_dir() else []
+    man = load_manifest(p)
+    plans = man.setdefault("plans", {})
+    changed, formal = False, 0
+    for f in files:
+        rel = f.relative_to(p.dir).as_posix()
+        text = f.read_text(encoding="utf-8")
+        if split_frontmatter(text)[0] is None:
+            continue
+        meta = read_frontmatter(f)
+        if meta.get("status", "") != "正式":
+            if plans.pop(rel, None) is not None:
+                changed = True
+            continue
+        approved = meta.get("approved", "")
+        if not approved:
+            ctx.say(f"警告: {rel} は status: 正式 だが approved: が無い。承認の日付を書く（記録していない）")
+            continue
+        formal += 1
+        digest = sha256(f)
+        rec = plans.get(rel)
+        if rec is None or rec.get("approved") != approved:
+            plans[rel] = {"sha256": digest, "approved": approved, "recorded": ctx.now()}
+            changed = True
+        elif rec.get("sha256") != digest:
+            ctx.say(f"警告: {rel} は承認（{approved}）のあとで変更されている。status を 仮 に戻す。人が内容を確認し、"
+                    "正式に戻すときは approved の日付を書き換える")
+            f.write_text(update_frontmatter(text, {"status": "仮"}), encoding="utf-8", newline="\n")
+            del plans[rel]
+            changed = True
+    for rel in [k for k in plans if not (p.dir / k).exists()]:
+        del plans[rel]
+        changed = True
+    if changed:
+        manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
+        manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    return formal
+
+
 # ---------- 記録 ----------
 
 LOG_HEADER = (
@@ -628,7 +675,7 @@ updated: {today}
 
 <目的を1〜2文。所属 Area: [[areas/{area}/README|{area}]]>
 
-計画: `ai/in/plan/`（承認版。`brief 計画` の出力。無ければ未作成）
+計画: `ai/work/plan/`（`brief 計画` の出力。先頭の `status: 仮 | 正式` と `approved:` で承認を示す。無ければ未作成）
 
 開発リポジトリ（`dev` で git のコードを扱うとき）: 上の frontmatter に `repos:`（url、where、branch。書式は `workflow-kit/project-structure.md`）を足す。無ければこの行を消す。
 
@@ -1642,6 +1689,9 @@ def cmd_start(ctx, a):
         raise RoomError("来歴チェックに失敗した:\n  " + "\n  ".join(problems)
                         + "\n（人が確認したファイルなら、--adopt で記録する）")
     checks = f"area 一致、boundary={boundary}、in {len(in_files(p))} 件の来歴 OK"
+    n_plan = check_plan_approval(ctx, p)
+    if n_plan:
+        checks += f"、正式な計画 {n_plan} 件"
     area_size = snapshot_readme(p)
     if area_size > AREA_README_WARN_BYTES:
         ctx.say(f"注意: Area の README が大きい（{area_size // 1024} KiB）。部屋の AI が開始時に読むので、"
