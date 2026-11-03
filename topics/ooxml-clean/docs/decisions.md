@@ -44,3 +44,8 @@
 ### 【この件】`clean --path` の報告は Area の `_noai/source/tmp/` に置く(2026-11-03)
 - ユーザーの発言: 「cleanしたときのreportは、source/tmp/ 配下においてください。…ファイルを探しにあっちこっち行くことになるからです」。
 - 決めたこと: `--path` の報告は `areas/<Area>/_noai/source/tmp/<相対パス>.clean-report.md`(`tmp/` は `--path` の対象から除く)。`raw` 経由の `clean` は `_noai/raw/tmp/` のまま。実装は `461160d`。
+
+### 【この件】xlsx も読ませる用途は取り出し（`exceltext.py`）にし、room には `clean --text` で組み込む（2026-11-03）
+- ユーザーの発言: 「exceltext.pyを作ってほしい。既存のpptxtextと同じ用途・仕様を考えています。area/_noaiにおいて、room startからai/inへ。その他、単体スクリプトとしても利用したい」。
+- 決めたこと（AI の推測で進めた。違えば直す）: ① 仕様は pptxtext に揃え、見えているシートの見えているセルの値（計算済みの値）と図形だけを md に出す（許可方式）。② room の入口は `start` でなく `clean --text`。`start` は 2026-11-02 から `ai/in/` を作らず（読み取り専用でマウントし、`pending` を止めるだけ）、`ai/in/` への経路は `clean`（raw 経由・`--path` で Area の `_noai/source/`）に一本化しているため。③ `--text` は pptx にも効く（`pptxtext` が room に入っていなかったので一緒に入れた）。出力は `ai/in/<相対パス>.md`（同名の xlsx と pptx がぶつからない）、`pending`、人が読んで `start --adopt`。④ 既定は掃除のまま（`--text` は明示）。
+- 却下案: `start` の中で自動で取り出す（`start` は 11-02 にマスクと復元を自動でしないと決めた方針と合わない）。

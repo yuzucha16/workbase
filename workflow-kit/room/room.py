@@ -27,7 +27,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cleankit  # noqa: E402
+import exceltext  # noqa: E402
 import maskkit  # noqa: E402
+import pptxtext  # noqa: E402
 
 MOUNT_ROOT = "/mnt/room"
 ROOM_UID = 1000
@@ -1792,9 +1794,13 @@ def mask_project(ctx, p, yes=False):
     return len(res["outputs"])
 
 
-def clean_project(ctx, p, items=None):
+TEXT_EXTRACT = {".xlsx": exceltext.extract, ".xlsm": exceltext.extract, ".pptx": pptxtext.extract, ".pptm": pptxtext.extract}
+
+
+def clean_project(ctx, p, items=None, text=False):
     """_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（2026-11-03: 語のマスクの代わりの入口）。報告は _noai/raw/tmp/（AI に見せない）。作った件数を返す。
-    items（{ai/in での相対パス: bytes}）を渡すと、raw を経由せず、それを掃除する（clean --path。Area の source/ を直接読む）。"""
+    items（{ai/in での相対パス: bytes}）を渡すと、raw を経由せず、それを掃除する（clean --path。Area の source/ を直接読む）。
+    text=True（clean --text。2026-11-03）は、掃除の代わりに exceltext・pptxtext で見えている内容を md に取り出し、ai/in/<相対パス>.md に置く（読ませる用途）。"""
     n = noai_dir(p)
     raw = raw_files(p) if items is None else items
     if not raw:
@@ -1805,8 +1811,12 @@ def clean_project(ctx, p, items=None):
     for rel, data in sorted(raw.items()):
         ext = Path(rel).suffix.lower()
         digest = maskkit.sha256_bytes(data)
-        e = man["files"].get(f"in/{rel}")
-        if e is not None and e.get("raw_sha256") == digest and (p.ai / "in" / rel).exists():
+        out_rel = rel + ".md" if text else rel
+        e = man["files"].get(f"in/{out_rel}")
+        if e is not None and e.get("raw_sha256") == digest and (p.ai / "in" / out_rel).exists():
+            continue
+        if text and ext in TEXT_EXTRACT:
+            done += extract_one(ctx, p, man, rel, out_rel, data, digest, items is not None)
             continue
         if ext not in cleankit.SUPPORTED:
             ctx.say(f"  掃除しない（xlsx・pptx 以外）: ai/in へ渡すかは人が決める: {rel}")
@@ -1838,9 +1848,31 @@ def clean_project(ctx, p, items=None):
         ctx.say(f"  掃除した: {rel}（{len(log)} 項目、残り {len(after)} 件: {cleankit.summary(after)}）")
     manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
     manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
-    if done:
+    if done and text:
+        ctx.say(f"取り出した: {done} ファイル → ai/in（.md）。ai/in の md を人が読んで `start --adopt` で通す")
+    elif done:
         ctx.say(f"掃除した: {done} ファイル → ai/in。報告（実データの抜粋入り）は {rep_where}。読んで `start --adopt` で通す")
     return done
+
+
+def extract_one(ctx, p, man, rel, out_rel, data, digest, from_source):
+    """xlsx・pptx の見えている内容を md に取り出して ai/in へ（clean --text）。画面には検出の件数だけ出す（中身は出さない）。書いた件数（0 か 1）を返す。"""
+    try:
+        md = TEXT_EXTRACT[Path(rel).suffix.lower()](data)
+    except cleankit.CleanError as err:
+        ctx.say(f"  止めた（{rel}）: {err}")
+        return 0
+    body = md.encode("utf-8")
+    write_bytes(p.ai / "in" / out_rel, body)
+    man["files"][f"in/{out_rel}"] = {
+        "sha256": maskkit.sha256_bytes(body), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,
+        "raw_sha256": digest, "extracted": "text",
+        "masked_from": f"areas/{p.area}/_noai/source/{rel[len(PULL_PREFIX):]}" if from_source else f"_noai/raw/{rel}",
+    }
+    hits = cleankit.sensitive_hits(md, area_gate_terms(p))
+    note = "、".join(f"{label} {len(h)}" for label, h in hits) if hits else "なし"
+    ctx.say(f"  取り出した: {out_rel}（{md.count(chr(10))} 行。検出: {note}）")
+    return 1
 
 
 def restore_project(ctx, p, force=False):
@@ -1992,7 +2024,7 @@ def cmd_clean(ctx, a):
             items[f"{PULL_PREFIX}{rel_src}"] = f.read_bytes()
         if bad:
             raise RoomError("ファイル名に実名や機密らしい語がある。何も掃除していない（source/ の名前を直す）:\n  " + "\n  ".join(bad))
-    if clean_project(ctx, p, items) == 0:
+    if clean_project(ctx, p, items, text=getattr(a, "text", False)) == 0:
         ctx.say("掃除するものは無い（原本が無いか、変更が無い）")
 
 
@@ -3114,6 +3146,7 @@ def build_parser():
     cl.add_argument("name")
     cl.add_argument("--path", action="append", metavar="パス", help="Area の原本置き場(_noai/source/)からの相対パスか glob。指定すると raw を経由せず直接掃除する(共通の xlsx・pptx 用)")
     cl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
+    cl.add_argument("--text", action="store_true", help="掃除の代わりに、見えている内容を md に取り出す（xlsx は exceltext、pptx は pptxtext。ai/in/<名前>.md。読ませる用途）")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ（start の終わりでも自動で行う）")
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")

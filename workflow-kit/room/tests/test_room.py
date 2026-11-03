@@ -2499,6 +2499,33 @@ class CleanTest(unittest.TestCase):
                 room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["*.xlsx"], yes=True))
             self.assertFalse((v / "projects/proj-a/ai/in/area").exists())
 
+    def test_clean_text_extracts_md_pending(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import dummy_fixture
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            p = v / "projects/proj-a"
+            raw = p / "_noai/raw/dummy.xlsx"
+            raw.parent.mkdir(parents=True, exist_ok=True)
+            raw.write_bytes(dummy_fixture.build_xlsx())
+            src = v / "areas/area-x/_noai/source/共通/一覧.xlsx"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_bytes(dummy_fixture.build_xlsx())
+            room.cmd_clean(c, argparse.Namespace(name="proj-a", text=True))
+            room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["共通/*.xlsx"], yes=True, text=True))
+            md = p / "ai/in/dummy.xlsx.md"
+            self.assertTrue(md.read_text(encoding="utf-8").startswith("## シート 1: "))
+            self.assertFalse((p / "ai/in/dummy.xlsx").exists())  # 掃除した xlsx は出さない
+            self.assertFalse((p / "_noai/raw/tmp").exists())
+            man = room.load_manifest(room.Project.load(c, "proj-a"))
+            e = man["files"]["in/dummy.xlsx.md"]
+            self.assertTrue(e["pending"])
+            self.assertEqual(e["extracted"], "text")
+            self.assertEqual(man["files"]["in/area/共通/一覧.xlsx.md"]["masked_from"], "areas/area-x/_noai/source/共通/一覧.xlsx")
+            before = md.stat().st_mtime_ns
+            room.cmd_clean(c, argparse.Namespace(name="proj-a", text=True))  # 変更が無ければ作り直さない
+            self.assertEqual(before, md.stat().st_mtime_ns)
+
     def test_clean_refuses_external_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c = opened(tmp)

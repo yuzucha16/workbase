@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-03（xlsx の取り出し `exceltext.py` v0 と `room clean --text`）
+- 実装: `workflow-kit/room/exceltext.py`（pptxtext の部品を再利用。値・日付・%・図形・グラフ・SmartArt・矢印）、`room.py` の `clean_project(text=True)` と `extract_one`、`clean --text`。
+- テスト: `tests/test_exceltext.py` 4 件（隠れたシート・行・列・ふりがな・コメント・定義名・数式・代替テキスト・プロパティが出ない、書式、図形の順、CLI）と `test_room` に 1 件。全 214 件が通った。openpyxl で作り LibreOffice で保存し直した xlsx でも出力を目視（計算済みの値は LibreOffice 保存の方だけにある）。
+- 入口を `start` でなく `clean --text` にした理由は `decisions.md` の同日の項。
+
 ### 2026-11-04（NA 1: `【決定】` 行の経路を実装。実機確認は次のセッション）
 - 実装: `room.py` の `parse_decisions` / `check_decisions` / `basis_sections` / `cmd_trace`、`INBOX_NEW` の規約、`close` は検査に通らなければ何も変えずに止まる。識別子は `【案件】` と連番を共有。根拠は `ai/docs/{decisions,log-history,log}.md` の見出しの部分一致、当たった節（子の見出しまで）を `trace` が表示する。
 - テスト: 正常系(close と trace)と止まる 3 種(根拠なし、見出しに無い、機密らしい語)を追加。`test_room` 全 167 件が通った。文書は `room-context.md` と `room/README.md` に追記。
