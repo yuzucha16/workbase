@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【workflow-kit】Project の決定を Area へ上げる経路は `close` の `【決定】` 行（inbox 経由）。根拠で正引きできる(2026-11-03)
+- 決めたこと（ユーザー）: ① 案 C。`close.md` の `【決定】` 行を、`【案件】` と同じく Area の `ai/docs/inbox.md` へ追記し、Area の部屋の AI が Area の `decisions.md` に統合する。② 運ぶのは decisions だけ（様子を見て他も運ぶ可能性あり）。③ 運ぶ時機は `close` のみ。④ internal・external は同じ経路。⑤ 正引き（Area の項目 → close 済み Project の詳細）を必須にする。理由は decisions に無くてもよいが、辿れること。根拠の指し方は見出しの部分一致で十分。⑥ `room trace <Project>#n` を作る。⑦ Project 名の変更は無いので、`room mv` との整合は扱わない。
+- 仕様（実装セッション向け）: 行は `- 【決定】<要旨>（根拠: <見出しの一部>）`。`close` は根拠が Project の `ai/docs/{decisions,log-history,log}.md` の見出しに含まれるか調べ、無ければ移動前に止める。`cleankit.sensitive_hits` を `【決定】` 行にも通し、当たれば止める。識別子 `Project#n` は `【案件】` と連番を共有。inbox の出典は `archives/<Project>/ai/out/close.md`。`INBOX_NEW` に、統合時に `Project#n` と根拠を残す規約を書く。`room trace` は inbox と Area の `decisions.md` から `Project#n` の根拠を引き、`archives/<Project>/ai/docs/` の該当節を表示する（部屋の AI には出さない）。
+- 理由: `stock --dst area` は新規ファイルの運搬で、育てる共有知（追記・統合）と合わない。`close` → inbox → Area の AI の 2 段は【案件】で既に動いている。`reap` は `archives/` を消さないので、詳細の本体は残る。
+
 ### 【workflow-kit】原本の置き場を共通性で分け、`room pull` を廃止する（2026-11-03）
 - 決めたこと（ユーザー）: ① Project 共通の文書で md にできるものは Area の `ai/docs/`（実名を書かない。`start` が `ctx/area/` に写す）。② Project 共通の xlsx・pptx（実名・機密なし、internal のみ）は Area の `_noai/source/` に置き、`room clean <Project> --path <glob>` で直接掃除する（`raw/` を経由しない）。③ Project 固有の原本は Project の `_noai/raw/` に人が直接置く。④ `pull` は廃止（窓口は `clean` の1本）。⑤ `source/` から `ai/in/area/` へは相対パスのまま出す。名前に検出・`mask.toml` の語が当たれば止める。
 - 理由: Area の `source/` は、README に入らない Project 共通のファイル（憲章など）のために作った。固有と共通で入口が2つになり、それを `pull` で束ねたが、`pull` 自体が重く、窓口が複数に見えた。2026-10 の整理は「原本は Area に一本化」と読めたが、意図は共通性による境界だった。

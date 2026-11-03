@@ -18,7 +18,7 @@
 
 ## Next Actions
 
-1. 【期日 11-10】Project の `docs/`(log・decisions への追記)を Area の共有知に統合する経路を設計する。今の `stock --dst area` は `ai/out/stock/*.md` を新規ファイルとして運ぶ形で、追記・マージの意図(各 Area で共有知として育てる)とずれる(2026-11-03 実機確認、ユーザー)。
+1. 【期日 11-10】設計は済(2026-11-03、ユーザー承認)。実装する: `close` の `【決定】` 行(根拠つき、根拠の実在検査、sensitive_hits)→ Area の inbox、`INBOX_NEW` の規約、`room trace <Project>#n`、単体テスト。仕様は root の `docs/decisions.md` の同日の項。
 
 ## Open Questions
 

@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-03（NA 1: Project の決定を Area へ上げる経路の設計が済。実装は別セッション）
+- 問題: `stock --dst area` は新規ファイルの運搬で、Area で育てる共有知（追記・統合）と合わない。同名の `log.md` `decisions.md` は Project どうしで衝突する。`log.md` は状態で、共有知にならない。
+- ユーザーの決定: 案 C(`close` の `【決定】` 行 → Area の inbox → Area の AI が統合)。対象は decisions だけ、時機は `close` のみ、internal と external は同じ経路。正引き(Area の項目 → close 済み Project の詳細)を必須にし、根拠は見出しの部分一致、`room trace <Project>#n` を作る。Project 名は変えないので `room mv` との整合は扱わない。
+- 記録: root の `docs/decisions.md` に仕様つきで追加。実装(`close` の拡張、`INBOX_NEW`、`room trace`、テスト)は NA 1 に残した。
+
 ### 2026-11-03（NA 2: `clean --path` の実機確認が済。報告の置き場を `source/tmp/` に変えた）
 - 確認(ユーザー、PC1): `uv run room.py clean sample --path sample.xlsx`(起点は `areas/<Area>/_noai/source/`。`..` や外のパスは拒否される)で `ai/in/area/` に出て、`start --adopt` で通った。「それ以外は問題ありません」。
 - ユーザーの決定: `--path` の掃除の報告は、原本の隣の `source/tmp/` に置く(探す場所を増やさないため)。サブフォルダのファイルも `source/tmp/<相対パス>.clean-report.md` の 1 か所にまとめる(ユーザー承認)。
