@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-04（room の mask / restore の棚卸しと、成果物を Area へ渡す経路の切り離し）
+- ユーザーの依頼: mask / restore の残りの使いどころと、`_noai/` の置き場（raw・final など）の棚卸し。続けて、古い記述を直すことと、成果物を Area へ渡す経路をマスクから切り離すことを依頼（ユーザー）。
+- 分かったこと: mask / restore は手動のみ。Area の成果物置き場へ書けるのが `restore` だけで、対応表（`mapping.json`）が無いと何もしなかったため、`clean` だけの Project は成果物を Area に戻せなかった。`mask.toml` は点検の語（`stock --dst area`、`clean --path`、`close`）にも使う。棚卸しは `notes/room-mask-restore/2026-11-04-usage-inventory.md`。
+- 直し: help・`start` の残骸・README・手順書の「start で自動」を修正（fe83572）。`restore` が、マスクしていない Project でも `ai/out/deliverable/` をそのまま Area へ渡す（同）。成果物の処理を `deliverable_items` `deliver_plan` `deliver_write` に切り出し、`close` が `restore` を呼ばずに持つ（43e8717）。試験 217 件。
+- 決定: `restore` は残す（単独・途中用）。`close` は `restore` を呼ばず自分で持つ（ユーザー）。削除の判断は 11-30（`due.md`）。
+- 未確認: 実機（PC1）での `restore` と `close` の成果物の Area への書き出し（別セッションで確認）。
+
 ### 2026-11-03（サブエージェントを承認の第三者レビューに使う試行: 測定と記録を足した）
 - ユーザーの依頼: 雑談ベースの探索型で、サブエージェントの活用を仮ぎめ程度に限定運用し、使えるかとトークン消費への影響を見る。最初は承認プロセスのみ。works の実務（論点出しの入力など）への拡充は A・B・C の後。
 - 分かったこと: 承認のスクリーニングは 10-18 から約 11 回使われていた。粗い読みでは大半が推奨と一致し、違った判断は 2 件（room の計画の紐付け、rebase の禁止）。推奨が構造化されておらず、型を付けた覆しの記録は 2 件。測定スクリプトはサブエージェント分を除外していた。
