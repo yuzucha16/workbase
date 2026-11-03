@@ -19,7 +19,7 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 - 手順書は `~/shared/workflow-kit/` にある（読み取り専用の写し。基準コミットは `~/shared/ROOM.md`）。
 - 副作用を伴う手順（Project の作成、状態の更新、`archives/` への移動、works へのコミット）は AI が行わない。判断をファイルに書いて、人が `room` で反映する（部屋の git へのコミットは別で、AI が行う。下）。
 - スクリプトや変換を作るときは、言語をユーザーに聞かず、優先順位 Python → ps1 → bat で決める（`script-guide.md` の「言語の選び方」）。あわせて同じ文書の「実行の方針」に従う（部屋で完結できるなら、すべて部屋で実行する。Excel・COM などの Windows 依存部は、できるだけ小さな層にして、人の手数を 1 コマンドに減らす。2026-10-21）。人が Windows で実行する薄い層は、Python が既定（2026-10-21）。同じ文書の「Windows で実行するスクリプト」に従う（束ねる役も同じ言語、bat は起動用の 3 行だけ。作った直後に、Python なら `python3 ~/shared/workflow-kit/tools/check_py.py`、ps1 なら部屋の pwsh 7 で `~/shared/workflow-kit/tools/check-ps1.ps1` を実行する）。ps1 は、実行先に Python が無いときなどの例外。
-- 人が Windows で叩いた `verify` / `run` の失敗を伝えたら、ログを頼む前に `ai/work/<名前>-result.json` を読み、Area の台帳（`ai/in/area/` の、title が `Windows 実行の原因の台帳` のファイル）を引く。原因が分かったら `ai/out/knowledge/windows-run-causes.md` に書く（`script-guide.md` の「原因の台帳」。2026-10-25）。
+- 人が Windows で叩いた `verify` / `run` の失敗を伝えたら、ログを頼む前に `ai/work/<名前>-result.json` を読み、Area の台帳（`ctx/area/knowledge/windows-run-causes.md`）を引く。原因が分かったら `ai/out/stock/windows-run-causes.md`（`scope: area`）に書く（`script-guide.md` の「原因の台帳」。2026-10-25）。
 - 部屋の git（`/mnt/room/<名>` の下で使える、部屋のローカルの git）は例外で、AI が使う（許可は要らない。リポジトリは `room start` が用意済みなので、AI は `git init` `git config` をしない。この案内は、部屋の `~/.claude/CLAUDE.md` と `~/shared/ROOM.md` の両方に入る。`git diff` で回収される変更を見る。コミットは、人に言われなくても、作業の区切りと `wrap` のたびに行う。push は、リモートが無いので行わない）。セッションの終わりに捨てるので、works には届かない。works へのコミットは人の `room start` の回収が既定で行い、人が最終コミット分を回収する。
 - `wrap-hook.md` の手順「コミットする」は、部屋では部屋の git へのコミットまで行う（指示は要らない。push はしない。works へのコミットは回収の側）。`wrap-hook.md` の手順「昇格の案を出す」の知識化は、部屋では `ai/out/stock/` の下書きに一本化する（下の `stock`）。部屋の `wrap` は、業務の知識を `ai/docs/` に残し、共有知は `stock` の窓口だけから出す（公開は `ai/out/stock/`、Area の業務は `ai/out/knowledge/`）。
 
@@ -52,7 +52,7 @@ Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入
 
 **`area`（external・internal 共通。internal も 2026-11-02 に同じ道にした）**: `ai/out/stock/YYYY-MM-DD-<topic>.md` に、frontmatter `scope: area` を付けて書く（`base_commit` と `observed` は付けない）。行き先の区分は `dest: knowledge`（知識。既定）か `dest: docs`（決定・経緯）。実名を含めずに書く。人が `room stock <名> --dst area` で、`cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）を通して `areas/<Area>/ai/<dest>/` に運ぶ（internal は `mask.toml` の語が空だと止まる。人が通した業務データが部屋にあるため）。点検に当たると何も運ばれないので、当たった形を書き換える。次の Project 以降は、`start` が `areas/<Area>/ai/{knowledge,docs}/` の写しを `ctx/area/` に読み取り専用で置く。**過去の決定や経緯から今の判断をするときは、先に `ctx/area/` を読む**。
 
-**`area`（`internal` のとき）**: `ai/out/knowledge/YYYY-MM-DD-<topic>.md` に書く。frontmatter は `kind: lesson`（`stock 理解` なら `explain`）、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない（workbase の版に紐づかない）。マスクのまま書き、人が `room restore` で実名に戻して Area の知識置き場に置く。次の Project では、人が `room pull` で受け取る。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
+`area` は internal も上の道（`ai/out/stock/` → `--dst area` → `ctx/area/`）を使う（2026-11-03 に `restore` / `pull` の知識用の経路を外した）。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
 
 `stock 理解` の下書き（`kind: explain`）も同じ場所に書く。形は `stock-explain.md`（部屋の中では、マスク後の語だけで書く。対応表の語を含む下書きは、`room stock` が運ばない）。
 
@@ -66,9 +66,9 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 
 2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書き、人が `room restore`（`room start` の終わりでも自動）で実名に戻して Area に置く。
 
-- **統合した知識**: `ai/in/area/`（Area から `room pull` で渡された、マスク済みの写し）を読み、統合したノートを `ai/out/knowledge/<英数字の名前>.md` に書く。frontmatter は `kind: integrated`、`status: active`、`org` は元のまま。`⟦…⟧` の記号は変えない。Area の知識置き場の既存ファイルを、人が前回から変えていると、`restore` は止まる（人が `--force` で判断する）。
+- **統合した知識**: `ctx/area/`（`start` が置く Area の `ai/{knowledge,docs}/` の読み取り専用の写し）を読み、統合したノートを `ai/out/stock/<英数字の名前>.md` に書く（`scope: area`、`dest: knowledge`）。実名を含めない。人が `room stock <名> --dst area` で運ぶ。同じ名前のファイルが Area にあり、前回運んだ後に人が変えていると、`stock` は運ばずに止まる（人が確認して消すか、名前を変える）。
 - **Area に実名で戻したい最終版**: `ai/out/deliverable/` の下に置く。`restore` が、Area の成果物置き場（Project 名の下）にも実名に戻して書く。Project の成果物は `ai/out/<成果物名>/` に置き（置き場と構成は `project-structure.md`）、`deliverable/` に置かない。`deliverable/` の外の `ai/out/<成果物名>/` は、従来どおり Project の `_noai/final/` に戻る。
-- **残したい知見**（`stock`）は、行き先を `scope:` で決める（下の `stock` の節）。Area の業務に固有なら上の `ai/out/knowledge/`、公開できる一般則なら `ai/out/stock/`。
+- **残したい知見**（`stock`）は、行き先を `scope:` で決める（下の `stock` の節）。Area の業務に固有なら `scope: area`、公開できる一般則なら `scope: public`（どちらも `ai/out/stock/`）。
 
 ## 分担と受け渡し
 
