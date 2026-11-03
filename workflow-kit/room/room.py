@@ -1801,7 +1801,7 @@ def clean_project(ctx, p, items=None):
         return 0
     require_internal(p, "原本の掃除（業務データを AI の入力にすること）")
     actions = [x for x in cleankit.CLEAN_ACTIONS] + sorted(set(cleankit.PROFILES["strict"][1]))
-    man, done = load_manifest(p), 0
+    man, done, rep_where = load_manifest(p), 0, "_noai/raw/tmp/"
     for rel, data in sorted(raw.items()):
         ext = Path(rel).suffix.lower()
         digest = maskkit.sha256_bytes(data)
@@ -1819,11 +1819,14 @@ def clean_project(ctx, p, items=None):
         except cleankit.CleanError as err:
             ctx.say(f"  止めた（{rel}）: {err}")
             continue
-        rep = n / "raw" / "tmp" / (rel + ".clean-report.md")
+        if items is None:
+            rep, rep_where = n / "raw" / "tmp" / (rel + ".clean-report.md"), "_noai/raw/tmp/"
+        else:  # 2026-11-03 ユーザーの決定: 原本の隣（Area の source/tmp/）に置く。探す場所を増やさない
+            rep, rep_where = source_dir(p) / "tmp" / (rel[len(PULL_PREFIX):] + ".clean-report.md"), "_noai/source/tmp/"
         rep.parent.mkdir(parents=True, exist_ok=True)
         rep.write_text(cleankit.report_md(Path(rel), before, log, after, probs, Path(rel)), encoding="utf-8")
         if probs:
-            ctx.say(f"  止めた（{rel}）: 掃除の出力に整合の問題 {len(probs)} 件。ai/in へは渡さない。報告: _noai/raw/tmp/")
+            ctx.say(f"  止めた（{rel}）: 掃除の出力に整合の問題 {len(probs)} 件。ai/in へは渡さない。報告: {rep_where}")
             continue
         write_bytes(p.ai / "in" / rel, cleaned)
         man["files"][f"in/{rel}"] = {
@@ -1836,7 +1839,7 @@ def clean_project(ctx, p, items=None):
     manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
     manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     if done:
-        ctx.say(f"掃除した: {done} ファイル → ai/in。報告（実データの抜粋入り）は _noai/raw/tmp/。読んで `start --adopt` で通す")
+        ctx.say(f"掃除した: {done} ファイル → ai/in。報告（実データの抜粋入り）は {rep_where}。読んで `start --adopt` で通す")
     return done
 
 
@@ -2011,7 +2014,7 @@ def pick_source_files(src, patterns):
         if Path(pat).is_absolute() or Path(pat).anchor or pat.startswith(("/", chr(92))) or ".." in Path(pat).parts:
             raise RoomError(f"--path は source/ の中の相対パスで書く: {pat!r}")
         for f in src.glob(pat):
-            if f.is_file() and root in f.resolve().parents:
+            if f.is_file() and root in f.resolve().parents and f.relative_to(src).parts[0] != "tmp":
                 picked.add(f)
     return sorted(picked)
 
