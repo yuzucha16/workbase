@@ -2,6 +2,9 @@
 
 ## Decisions
 
+### 【この件】`room clean` の報告は `_noai/raw/tmp/` に置く(2026-11-03)
+- 決めたこと(ユーザー): 報告(実データの抜粋入り)を `_noai/reports/` から `_noai/raw/tmp/` へ。`raw/tmp/` は原本に数えない(`mask` `clean` `start` の注意が拾わない)。章の順は、掃除の後も残っているものを先に。
+
 ### 【この件】語のマスクを必須にしない。入口は `room clean`、既定は strict（2026-11-03）
 - 決めたこと（ユーザー）: ① mask / restore / pull の単体スクリプト化はしない（この件から外す）。② cleankit の既定を `strict` にする。③ 語のマスクは external・internal とも必須にしない（守る対象が人名だけでなく金額・KPI など列挙できないため。external は一から作るので業務データが入らず、入ったなら境界違反として止める側）。まず必須だけ外し、`room mask` と `restore` の削除は使ってから決める（ガイドラインの緩和もありうるため）。④ internal の入口は明示の `room clean`（`_noai/raw` → strict の掃除 → `ai/in`、`pending`、`start --adopt` で通す）。`start` は自動で掃除しない。
 

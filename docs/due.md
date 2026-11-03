@@ -18,7 +18,8 @@
 | 2026-11-10 | 単発 | token-cap: `AGENTS.md` に足した 2 行（10-29。まとめて呼ぶ、編集後に読み直さない）の効果。`requests_by_kind.py --since 2026-10-30` で応答の平均が下がったかを見る（wrap-hook の測定と同時。11-05 から延期） | AI（ユーザーの依頼で） |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断 | ユーザー |
 | 2026-11-11 | 単発 | token-cap: `integrate` の上限（仮 〜11-29）の個別の効果を再測定（`requests_by_kind.py --csv` で integrate の 10-27 以降の件数を見る。Windows 側と room 側。11-05 から延期）。10-29 の値（Windows 側、10-01 以降 16 件）: 10-27 より前 13 件は応答 9.4・1 件 809k・ピーク平均 92k。10-27 以降 3 件は応答 11.0・708k・ピーク 85k（うち 1 件は 7 応答でピーク 134k）。件数が少なく判定保留。room 側（PC1）の件数は未確認 | AI（ユーザーの依頼で） |
-| 2026-11-12 | 単発 | ooxml-clean NA 1・2: room の `mask` への組み込み(pptx の確認は済。報告の置き場の OQ もここで決める)。あわせて mask / restore / pull の単体スクリプト化と cleankit の internal 既定を決める | AI(ユーザーの依頼で) |
+| 2026-11-10 | 単発 | ooxml-clean NA 4・5: `pull` の軽量化と、Project の `docs/` を Area の共有知へ統合する経路の設計 | AI(ユーザーの依頼で) |
+| 2026-11-12 | 単発 | ooxml-clean NA 2: room の `mask` への組み込み(pptx の確認は済。報告の置き場の OQ もここで決める)。あわせて mask / restore / pull の単体スクリプト化と cleankit の internal 既定を決める | AI(ユーザーの依頼で) |
 | 2026-11-12 | 単発 | ooxml-clean OQ: 本文の個人名は `mask.toml` の運用に任せるか、候補の検出を足すか（判断） | ユーザー |
 | 2026-11-13 | 単発 | office-output-types NA 2: PC1 で入力 2〜3 種類の見出し・列名だけで定義表の行を書く（実機） | ユーザー（PC1） |
 | 2026-11-14 | 単発 | office-output-types NA 3: 雛形を `exmem/lessons/` に昇格するか（11-13 の実機の後） | ユーザー |
