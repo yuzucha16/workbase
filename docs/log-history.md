@@ -7,7 +7,8 @@
 - 手順: resources を pull → `mkworks --update` → Area の `boundary:` を確認 → `internal` は `_noai/mask.toml` の語を確認（空だと `stock --dst area` が止まる）→ `ai/in/` を人が読んで `start --adopt` → 必要なら `init --only` → `start` と `stock --dst area` の動作確認 → `30_link.bat`。
 - 実機の結果: 既存の Area は 1 つ（`internal`）。手順 1〜8 すべて動作確認が取れた。
 - 途中で出た 2 つの止まり。(1) `AGENTS.md` の差分で `mkworks --update` が止まった（3 者マージの衝突は書かずに止まる設計。衝突箇所は手で直して再実行）。(2) 「git の身元が未設定なのでコミットしなかった」が出た。`mkworks --update` は雛形の反映までを行い、コミットだけを飛ばす。身元を設定して、`Room-Op: mkworks-update` と `Room-Rev` のトレーラーつきで手でコミットすれば、次回の基点になる。
-- 未確認のまま: `room/README.md` の `init` の行（「`--boundary` の既定値は無い。印が無ければ止まる」）と boundary の節（「無印は `external`」）の食い違い。internal の Area で `--dst area` を使った動作確認の記録（手順 7 に含めたかどうか）。
+- 手順 7 で internal の Area の `stock --dst area` を実行し、`_noai/mask.toml` が無いために止まった（語が空なら止まる仕様どおり）。語を入れて運べる所までは未観察。ユーザーの指示で、知識用の `restore`・`pull` の経路を外す作業を Next Actions に起票した。
+- `room/README.md` の `init` の行を実装に合わせて直した（`--boundary` を省くと `external`。止まらない。旧記述「既定値は無い。印が無ければ止まる」と boundary の節「無印は `external`」が食い違っていた。`room.py` の `cmd_init` は既定 `external`）。
 
 ### 2026-11-03（`exmem/knowledge.base` が Vault を替えると空になる問題）
 - Obsidian で `knowledge.base` の一覧が空になった。プラグイン削除ではなく、フィルタ `file.inFolder("resources/exmem")` が、Vault を `works` から `resources` に替えたあとのパス（`exmem`）と合わなくなったのが原因。コアの `bases` は有効のまま。
