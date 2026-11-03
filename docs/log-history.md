@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-03（Project の README と 6R の関係の調査、計画の承認ラベルと変更検知の実装）
+- ユーザーの依頼: `room readme` を `room stock` の考え方に揃え、可能なら一本化する検討。途中で、Project の README と 6R の関係（README に入るもの・入らないものの行き先）と、計画を窓口に置くパスの相談になった。
+- 分かったこと: `room readme` の行き先は Area ではなく Project の README（ai/ の外）で、本文の丸ごと置換。cleankit の点検、人の変更との衝突検出、manifest の記録が無く、`--commit` だけ持つ（stock と逆）。6R は README に写さず、固定の 1 行のポインタだけで結んでいた（10-25 の案 D）。
+- 決定(ユーザー): 計画は `ai/work/plan/` に置いたままにし、移す手順は作らない。承認は `status: 仮 | 正式` と `approved:`、`start` が正式のハッシュを記録して承認後の変更を警告し仮に戻す。AI の書き換えは検知だけで足りる。
+- 実装: 87e5ff0（`room.py` の `check_plan_approval`、テスト 3 本、README ひな形と文書 5 件）。実機は未確認。詳細は `decisions.md` の同日の項。
+- 残り: README の 3 項目を畳む件、`room readme` を stock に揃える件を NA 3・4 に積んだ。
+
 ### 2026-11-04（room の mask / restore の棚卸しと、成果物を Area へ渡す経路の切り離し）
 - ユーザーの依頼: mask / restore の残りの使いどころと、`_noai/` の置き場（raw・final など）の棚卸し。続けて、古い記述を直すことと、成果物を Area へ渡す経路をマスクから切り離すことを依頼（ユーザー）。
 - 分かったこと: mask / restore は手動のみ。Area の成果物置き場へ書けるのが `restore` だけで、対応表（`mapping.json`）が無いと何もしなかったため、`clean` だけの Project は成果物を Area に戻せなかった。`mask.toml` は点検の語（`stock --dst area`、`clean --path`、`close`）にも使う。棚卸しは `notes/room-mask-restore/2026-11-04-usage-inventory.md`。

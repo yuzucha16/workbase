@@ -25,6 +25,10 @@
 
 2. **room の成果物の Area への書き出しの実機確認（起票 11-04）**: `clean` だけの Project（マスクしていない）で `ai/out/deliverable/` にファイルを置き、① `room restore <名>` と ② `room close <名>` が、Area の `_noai/deliverable/<Project>/` に書くかを見る。マスクした Project は実名に戻って書かれるか、Area 側を人が変えたあとは何も書かずに止まるか（close は何も変えずに止まる）も見る。実機でしか確かめられない。
 
+3. **README の完了条件・範囲外・Open Questions を、6R と重複しない形に畳む（起票 11-03）**: Project の README の 3 項目は 6R（`ai/work/plan/`）の「期待する成果」「今回のスコープ」の対象外、「裏づけ・未決」と重なる。6R を指す 1 行に畳むか、今のまま残すか、README_TEMPLATE と `room-context.md` の読み方を含めて決める。決めるのは ee。
+
+4. **`room readme` を `room stock --dst area` の考え方に揃える（起票 11-03）**: readme は cleankit の点検、start 後に人が直した README との衝突検出、manifest への記録が無く、`--commit` だけ持つ。案 A（推奨）は、コマンド 2 本のまま「運ぶ」部品（点検・衝突検出・記録）を共通にする。ee の決定待ち: `--commit` を外すか、衝突時に止めるか差分 y/N か。案の比較は `notes/room-readme-stock/2026-11-03-alignment.md`（プロジェクトの共有フォルダ）。
+
 期日のある項目は `due.md`。
 
 ## Open Questions
