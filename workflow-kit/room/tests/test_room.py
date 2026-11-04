@@ -475,6 +475,12 @@ class InitTest(unittest.TestCase):
                         "--no-sandbox", "NODE_EXTRA_CA_CERTS"):
                 self.assertIn(key, scripts[cr][0])
             self.assertLess(conv, cr)
+            # Marp CLI（2026-11-04）: root が版を固定して入れ、Chromium の後。room-chrome を指す包みを置く
+            mp = idx("@marp-team/marp-cli@")
+            self.assertTrue(scripts[mp][1])
+            self.assertLess(cr, mp)
+            for key in (room.MARP_CLI_VERSION, "--browser-path /usr/local/bin/room-chrome", "room-marp", "</dev/null", "PUPPETEER_SKIP_DOWNLOAD=1"):
+                self.assertIn(key, scripts[mp][0])
             self.assertLess(idx("latest-v24.x"), conv)
             self.assertLess(conv, idx("astral.sh"))
             # PowerShell 7 と静的チェッカーの道具（2026-10-21）: root が、版と SHA-256 を固定して入れる

@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-04（`init` に Marp CLI の段を追加した）
+
+- `room.py` に `MARP_INSTALL`（`marp-cli@4.5.1` を root が npm で固定、`PUPPETEER_SKIP_DOWNLOAD=1`）と段 `marp`（Quarto の後）を追加。`/usr/local/bin/room-marp` が `room-chrome` を `--browser-path` で指す包み。呼ぶ側は `</dev/null`。`room/README.md` と単体テストも更新。
+- 確認: 単体テスト 183 件 OK。`init myenv --only marp` の実機で、日本語 md → pptx（76KB）、`--version` 4.5.1。`python -I -m unittest` は `tests` を import できず、`uv run python -m unittest tests.test_room` で実行する。
+- 完了した Next Action: 「`init` に Marp CLI の段を足す」（根拠: 上のコミット）。
+
 ### 2026-11-04（Marp・Slidev・Quarto の実機比較を済ませた）
 
 - 部屋に Marp CLI 4.5.1 と Slidev 53.0.0 を、人が root で入れた（`ai` は `/usr/local` に書けない。PowerShell の二重引用符で `$d` が空になり 1 回やり直し）。Marp は `--browser-path /usr/local/bin/room-chrome` が要る。Slidev は、テーマ・`playwright-chromium`（リビジョン 1248 で部屋と一致）・Vite のキャッシュ用フォルダ（`.vite`）が要った。

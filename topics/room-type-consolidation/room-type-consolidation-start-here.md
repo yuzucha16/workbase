@@ -13,7 +13,7 @@ type の集約は反映済み（2026-10-24）。10-31 に、room の GitHub 認�
 
 ## 次の一手
 
-`inv` の実験 eg2、`init` への Marp の追加、比較結果の引き渡し、部屋の Slidev の削除（人）。詳細は `docs/log.md`。
+`inv` の実験 eg2、比較結果の引き渡し、部屋の Slidev の削除（人）。詳細は `docs/log.md`。
 
 ## 読む順
 

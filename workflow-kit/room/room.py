@@ -967,6 +967,22 @@ cd /; rm -rf "$T"
 quarto --version
 """ % {"v": QUARTO_VERSION, "sha": QUARTO_SHA256}
 
+# Marp CLI（Markdown → pptx・PDF・HTML。2026-11-04 に部屋で実機比較: 4.5.1 が通った。pptx は画像の型で、編集できる清書は Quarto）: root が npm で版を固定して入れる（Chromium の後）。
+# ブラウザは部屋の Chromium（room-chrome）を --browser-path で指す薄い包み /usr/local/bin/room-marp を置く（ai が呼べる）。Marp は標準入力を読むので、呼ぶ側は </dev/null を付ける。
+MARP_CLI_VERSION = "4.5.1"
+MARP_INSTALL = r"""set -e
+export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt NPM_CONFIG_CAFILE=/etc/ssl/certs/ca-certificates.crt
+[ -x /usr/local/bin/room-chrome ]
+[ -d "$(npm root -g)/@marp-team/marp-cli" ] || PUPPETEER_SKIP_DOWNLOAD=1 npm install -g --silent @marp-team/marp-cli@%(v)s
+B=$(npm prefix -g)/bin/marp
+[ -e "$B" ]
+printf '#!/bin/sh
+exec "%%s" --browser-path /usr/local/bin/room-chrome "$@"
+' "$B" > /usr/local/bin/room-marp
+chmod 755 /usr/local/bin/room-marp
+"$B" --version </dev/null
+""" % {"v": MARP_CLI_VERSION}
+
 # PowerShell 7 と、静的チェッカー（workflow-kit/tools/check-ps1.ps1）の道具（2026-10-21）: 部屋の AI が書く .ps1 を、実行せずに構文・規約・PSScriptAnalyzer で点検し、Pester で差し替えテストをするため。
 # pwsh は公式の tarball（版と SHA-256 を固定。x64 の SHA-256 は取得して一致を確認した: 2026-10-21）を /opt に置き、root が入れる（ai は書き換えられない）。
 # 部屋の pwsh は 7 に固定する。ICU を入れないので、globalization は invariant にし、テレメトリと更新確認を切る（/usr/local/bin/pwsh の薄い包み）。
@@ -1193,7 +1209,7 @@ def scaffold_area(ctx, area):
 
 
 # init の段（--only で選ぶ名前）。base は一般ユーザー・wsl.conf・分離の確認（部屋を terminate する）
-INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "quarto", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
+INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "quarto", "marp", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
 
 # Python の版の正本（uv 管理。docs/decisions.md 2026-10-29）。部屋の python3 もこの版にそろえる
 PYTHON_VERSION_FILE = Path(__file__).resolve().parent / ".python-version"
@@ -1293,6 +1309,8 @@ def cmd_init(ctx, a):
         step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
     if want("quarto"):
         step_script(ctx, distro, "Quarto（公式の tarball、チェックサム確認つき。Chromium の後）", QUARTO_INSTALL, root=True)
+    if want("marp"):
+        step_script(ctx, distro, "Marp CLI（npm で版を固定。Chromium の後。呼び出しは room-marp）", MARP_INSTALL, root=True)
     if want("pwsh"):
         step_script(ctx, distro, "PowerShell 7（公式の tarball、チェックサム確認つき）と PSScriptAnalyzer・Pester（版を固定）", PWSH_INSTALL, root=True)
     if want("npm"):
