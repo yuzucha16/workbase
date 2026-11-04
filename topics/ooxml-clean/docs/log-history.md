@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-04（close に向けた Open Questions の整理）
+- 依頼: トピックを close に向かわせたい。NA 1・2 は PC1 の実機確認。Open Questions 2 件の状況を確認。
+- 済: Open Questions の 2 件（報告の置き場は 11-03 に決定・実装・実機確認済み。書いていない語は `check` の検出と `--terms` の運用で補う制約として受け入れ）。`decisions.md` に制約の 1 項を追記し、`log.md` の Open Questions を空にした。
+- 残り: NA 1・2（PC1 の実機確認）だけ。済んだら close。
+
 ### 2026-11-04（clean 後に残るテナント ID・ラベル ID の洗い出しと掃除）
 - ユーザーの報告: cleankit / room clean の後も、秘密度ラベル ID と site id（テナント ID）が残る。類似の残りを洗い出してから、clean で落とす依頼。
 - 洗い出し（ダミー値の合成 xlsx・pptx で実測。実ファイルは見ていない）: 原因は `docMetadata/LabelInfo.xml`（根の関係 `classificationlabels` でつながるため `props` でも `orphans` でも消えず、値が属性なので `unseen-text` にも出ない）。ほかに両プロファイルで残る 13 項目を一覧にした（`dc:identifier`、`app.xml` の `Template`・`HLinks`、外部ハイパーリンク先、xlsx の `fileSharing`・`revisionPtr`、pptx の `changesInfos`・`revisionInfo`、tags、webextensions。customXml は standard だけ残る）。記録は project files の `notes/ooxml-clean/2026-11-04-tenant-residue.md`。
