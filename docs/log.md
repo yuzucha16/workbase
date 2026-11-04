@@ -26,17 +26,7 @@
 
 1. **論点出しの型 v4 の実作業での確認（起票 11-03）**: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。
 
-3. **README の完了条件・範囲外・Open Questions を、6R と重複しない形に畳む（起票 11-03）**: Project の README の 3 項目は 6R（`ai/work/plan/`）の「期待する成果」「今回のスコープ」の対象外、「裏づけ・未決」と重なる。6R を指す 1 行に畳むか、今のまま残すか、README_TEMPLATE と `room-context.md` の読み方を含めて決める。決めるのは ee。
-
-4. **`room readme` を `room stock --dst area` の考え方に揃える（起票 11-03）**: readme は cleankit の点検、start 後に人が直した README との衝突検出、manifest への記録が無く、`--commit` だけ持つ。案 A（推奨）は、コマンド 2 本のまま「運ぶ」部品（点検・衝突検出・記録）を共通にする。ee の決定待ち: `--commit` を外すか、衝突時に止めるか差分 y/N か。案の比較は `notes/room-readme-stock/2026-11-03-alignment.md`（プロジェクトの共有フォルダ）。
-
-5. **Area 側の運営の入口を決める（起票 11-04）**: ① Area の `ai/docs/inbox.md` の【案件】【決定】を Area の `decisions.md` に統合する「Area の AI」を動かす入口が無い（`room start` は Project しか開かない。Area の `decisions.md` も `init` は作らない）。② Area の終わり方（`archives/` へ移す契機と手順）が無い。③ 外向け（external）の Area で、前の Project の成果物を次の Project に渡す道が無い（`--adopt` が止まる）。決めるのは ee。調査は `notes/room-lifecycle/2026-11-04-current-flow.md`（プロジェクトの共有フォルダ）の 3-B。
-
-6. **前半のお作法の順の確認（起票 11-04）**: `start` の直後の「作業を始めて → README 下書き → 論点出し → brief 計画 → 承認」の順（`guides/howto/ai-room-lifecycle.md` の 4 節）は運用の例で、room も手順書も強制しない。この順でよいか、論点出しと 6R のどちらを先にするかを決める。NA 3（README を 6R に畳む）と一緒に決める。
-
-7. **`room stock` の move・`--dst` 省略・表の実機確認（起票 11-04）**: PC1 で pull し、`room stock <Project>`（`--dst` なし）で、`scope: area` と `scope: public` の下書きが両方運ばれ、`ai/out/stock/` の元が消え、運んだ後の表（ファイル名・移動先・備考）が出ることを見る。`scope:` が無い下書きで止まることも見る（担当: ユーザー（実機））
-
-8. **`room close` の y/N 警告の実機確認（起票 11-04）**: PC1 で pull し、README がひな形のまま・`ai/out/close.md` 無しの Project を `room close` して、警告と `[y/N]` が出ること、y で archives へ移ること、N で何も変わらないことを見る。非対話（パイプ経由など）で止まることも確かめる。確認できたら閉じる（決定は `decisions.md` の 11-04）。
+3. **`room readme` を廃止するか（起票 11-04）**: README が目的・成果物・計画へのリンクだけになり、AI の下書きを運ぶコマンドの使い道が薄い。廃止するなら、`brief` の最初の下書きを `ai/work/plan/6r.md`（`status: 仮`）に変え、`hooks.md` `room/README.md` `ai-room-lifecycle.md` `room-context.md` の記述と `cmd_readme` を外す。決めるのは ee。
 
 期日のある項目は `due.md`。
 5. 【起票 11-04、期日 11-04】保留 2 件（元は log の Open Questions。11-05 から前倒し）: ① `repos/` の受け渡し（`dev` の `env/` の実使用の後に決める）、② `restore_project` の `_noai/final/` の上書き（保護の実機の確認は 11-04 に仕様どおりで済み。残りは方針の決定）（担当: ユーザー（実機））

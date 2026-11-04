@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-04（README を畳む: 完了条件・範囲外・Open Questions を 6R に一本化）
+- ユーザーの決定: NA 3 は README の 3 項目を 1 行に畳む。NA 4（`room readme` を stock に揃える）は不要。`room readme` は、README が縮むなら廃止できると回答した（使い道の洗い出しは同日、この thread）。
+- 直し: `README_TEMPLATE` と `README.template.md` から 3 節を外し、`close` のひな形点検の語を 2 つ外した。文書 3 件を直した。単体テスト 182 件 OK。実機は未確認。
+- 残り: `room readme` の廃止の可否を NA 3 に積んだ。
+
 ### 2026-11-04（room close の停止条件を y/N の警告に緩めた）
 - ユーザーの依頼: `room close` が「README にプレースホルダーが残る」「close.md が無い」で止まるのを、y/N の警告にして y なら進めたい。動作確認やちょっとした作業で重い。
 - 実装: `close_warnings` と `confirm_close_warnings`（room.py）。非対話は止める。README、howto 2 件、`decisions.md` を直した。テスト 231 件通過、実機は未確認。

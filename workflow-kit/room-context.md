@@ -37,7 +37,7 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入の `<…>` がある）なら、`brief` の最初に、人に断ってから下書きする。名前・Area・type は `room open` の引数で決まっているので、聞かない（判断基準は `project-structure.md` の「Project を立てる前の判断基準」）。
 
 1. **聞く**（選択式。答えが1つに定まるものは宣言する）: 主題（言語や方式など）、完了条件の種類、見直し日。`dev` の Project は、`brief-work-types.md` の「開発」の項目を、**実装の前に**ここで聞く。
-2. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文だけ（目的、完了条件、成果物、範囲外、Open Questions。雛形は `templates/project/README.template.md`。frontmatter を含めない）。完了条件は、AI が具体案（成果物）を出し、ユーザーが承認してから書く（ユーザーが完了条件を自分で書いて渡したときは、その文を案として扱い、承認の言葉を得てから「ユーザー承認」を書く）。承認の前に「ユーザー承認: 日付」を書かない。既に `readme-draft.md` があれば、読んでから更新する。
+2. **下書きを書く**: `ai/out/readme-draft.md` に、README の本文だけ（目的、成果物。完了条件・範囲外・未決は計画 `ai/work/plan/` の 6R に書く。雛形は `templates/project/README.template.md`。frontmatter を含めない）。完了条件は、AI が具体案（成果物）を出し、ユーザーが承認してから書く（ユーザーが完了条件を自分で書いて渡したときは、その文を案として扱い、承認の言葉を得てから「ユーザー承認」を書く）。承認の前に「ユーザー承認: 日付」を書かない。既に `readme-draft.md` があれば、読んでから更新する。
 3. **記録する**: `ai/docs/log-history.md` に1項目（現在状態に影響するなら `ai/docs/log.md` も更新）。判断（完了条件など）は、ユーザーが承認したものだけを `ai/docs/decisions.md` に決定として書く。
 4. **報告する**: 下書きのパス、type、完了条件、見直し日と、人が `room readme <名>` で反映すること（Project と Area の `README.md` は書き込めない）。コミットはしない。
 
