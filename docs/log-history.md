@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-04（review 消化: NA 1 を閉じ、NA 2・3・5 を due.md に移した）
+- NA 1（`clean --path` の Tab 補完の実機確認と採否）: 済。ユーザーが PC1 で確かめ、問題なく動いたので閉じた（11-04、ユーザー）。採るので `room-completion.ps1` と dotfiles の 4 行は残す。
+- NA 2（`room open --from` の実機確認）→ `due.md` の 11-11、NA 5（保留 2 件）→ 11-12、NA 3（論点出しの型 v4 の確認）→ 11-13 に移し、log から消した（ユーザーの指示。期日は 11-11 以降で 1 件ずつ別の日）。
+- NA 4（Area 側の運営の入口）は、ユーザーが別の thread で進めるので触らない。番号を保つため `4.` と書いた。
+- 漏れの確認: `due.py` は今日以前の行なし。閉じ済みなのに残る項目は見つからなかった（`docs-write-rules.md` の連続回数を 1/3 に）。
+
 ### 2026-11-04（Area の中の Project の一生の howto）
 - ユーザーの依頼: area / project / room のライフサイクルを、room とフックを組み合わせた全体像として howto に残す。調査（`notes/room-lifecycle/2026-11-04-current-flow.md`、project files）→ 古い記述 10 件の修正 → `guides/howto/ai-room-lifecycle.md`（0f82b44）。範囲は Area の中に絞った。
 - 同日の room 整理（`room readme` 廃止、close の y/N、stock の move、`open --from`）に合わせて howto を直した（8197911）。
