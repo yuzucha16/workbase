@@ -20,7 +20,6 @@
 | 2026-11-11 | 単発 | log の NA 2（11-04 に due へ移した。ユーザー）: `room open --from` の実機確認（起票 11-04）: PC1 で workbase を pull し、実際に `room close` した Project で `uv run room.py open <新> --area <Area> --from <閉じた Project>` を試す。見るのは、① `projects/<新>/ai/in/from-<前>/` に `out/`（成果物と `close.md`）と `work/plan/`（正式な計画だけ）が写り、`stock/` と `readme-draft.md` は写らないこと、② 続けて `room start <新> --no-launch` が来歴チェックで止まらないこと、③ README の `from:` と Area README の進行中の行の「← 前」、④ external の Area でも通ること、⑤ 別の PC や `ai/out/` が無い Project では、何も作らず理由を出して止まること。写し方・止まる条件の手直しは、結果を見て決める。仕様は `project-structure.md` の「閉じた Project の引き継ぎ」。 | ユーザー（PC1） |
 | 2026-11-13 | 単発 | log の NA 3（11-04 に due へ移した。ユーザー）: 論点出しの型 v4 の実作業での確認（起票 11-03）: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。 | ユーザー |
 | 2026-11-30 | 単発 | ooxml-clean: `room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー。単体スクリプト化はしない) | ユーザー |
-| 2026-11-12 | 単発 | ooxml-clean OQ: 本文の個人名は `mask.toml` の運用に任せるか、候補の検出を足すか（判断） | ユーザー |
 | 2026-11-13 | 単発 | office-output-types NA 2: PC1 で入力 2〜3 種類の見出し・列名だけで定義表の行を書く（実機） | ユーザー（PC1） |
 | 2026-11-14 | 単発 | office-output-types NA 3: 雛形を `exmem/lessons/` に昇格するか（11-13 の実機の後） | ユーザー |
 | 2026-11-14 | 単発 | token-cap OQ: Zed の System tools が 9.0k → 9.9k に増えた原因（実機の Zed） | ユーザー（実機） |

@@ -15,7 +15,7 @@
 - `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-15・11-29。
 - ファイル名: `workflow-kit/naming-rules.md`（10-29 決定）。一括改名はしない。
 - 人が叩くスクリプトは `run` / `verify` / `release`（`script-guide.md`）。Windows は未確認。
-- 項目の移し替え・期日の持ち上げ: `workflow-kit/tools/na_apply.py`（close / due-up。呼び方は `docs-write-rules.md`）。実行は AI（人は介在しない）。当面は、処理の漏れがあるものとして読み、見つけたら報告する。漏れなし 3 回連続で外す（11-04 時点 1/3）。
+- 項目の移し替え・期日の持ち上げ: `workflow-kit/tools/na_apply.py`（close / due-up。呼び方は `docs-write-rules.md`）。実行は AI（人は介在しない）。当面は、処理の漏れがあるものとして読み、見つけたら報告する。漏れなし 3 回連続で外す（11-04 の review 消化で漏れが見つかり 0/3 に戻した）。
 - 索引（triggers）: dotfiles のフックが依頼ごとに出す（`guides/explain/triggers-knowledge-index.md`）。参照構造の点検は `review` の入力 9（`mdgraph.py`。基準値は循環 91%、最大の深さ 5、辺/ファイル 7.4）。積み残しは `due.md` の 11-03・11-08。単体テストは `python -I -m unittest discover -s workflow-kit/tools/tests`。`exmem-index.md` は 1 ノート 1 行。
 
 - 論点出しの型: `exmem/lessons/issue-extraction-output.md`（v4、試用中。合図は「論点出し」「論点抽出」）。フィードバックは、ユーザーが「フィードバック」と言うと 1 行が出て、`topics/kit-growth/inbox.md` へ手で運ぶ。
@@ -26,6 +26,10 @@
 4. **Area 側の運営の入口を決める（起票 11-04）**: ① Area の `ai/docs/inbox.md` の【案件】【決定】を Area の `decisions.md` に統合する「Area の AI」を動かす入口が無い（`room start` は Project しか開かない。Area の `decisions.md` も `init` は作らない）。② Area の終わり方（`archives/` へ移す契機と手順）が無い。方式は 11-04 に決定済み（状態はリンク、決定・知識は転記＋出典、Area の log.md は持たない。`decisions.md` 同日）。次回はここの決定から始める。残りは入口・decisions.md の置き場（`docs/` か `ai/docs/`）・終わり方で、決めるのは ee。調査は `notes/room-lifecycle/2026-11-04-current-flow.md`（プロジェクトの共有フォルダ）の 3-B。`room open --from` の案 C（Area に資産を置く）もこの入口が決まるまで見送り。
 
 5. **`guides/howto/` を triggers 索引の対象にするか、ライフサイクルの繋がりを明示する大局案を決める（起票 11-04）**: `ai-room-lifecycle.md` の前半の順（6R → 論点出し）は、`find_knowledge.py --triggers` に出ず、`brief` との紐づけも無かったため、文書の修正が横展開で漏れた。案: ① `guides/howto/` を索引の走査対象にする、② 前半の順の正本を 1 か所（`hooks.md` の連鎖）に置き、howto は指すだけにする、③ 新しいフックを足すときの点検（`hook-common.md` の「フックを足す・消すとき」）に、howto と triggers の確認を足す。別セッションで扱う（ユーザー）。
+
+7. **`room stock` の move・`--dst` 省略・表の実機確認（起票 11-04）**: PC1 で pull し、`room stock <Project>`（`--dst` なし）で、`scope: area` と `scope: public` の下書きが両方運ばれ、`ai/out/stock/` の元が消え、運んだ後の表（ファイル名・移動先・備考）が出ることを見る。`scope:` が無い下書きで止まることも見る（担当: ユーザー（実機））
+
+8. **`room close` の y/N 警告の実機確認（起票 11-04）**: PC1 で pull し、README がひな形のまま・`ai/out/close.md` 無しの Project を `room close` して、警告と `[y/N]` が出ること、y で archives へ移ること、N で何も変わらないことを見る。非対話（パイプ経由など）で止まることも確かめる。確認できたら閉じる（決定は `decisions.md` の 11-04）。
 
 期日のある項目は `due.md`。
 

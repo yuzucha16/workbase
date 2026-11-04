@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-04（review 消化: 漏れの修復）
+- 漏れ（`7e881ad` の上書きで、履歴に残らないまま消えていた）: NA 7（`room stock` の move・`--dst` 省略・表の実機確認）と NA 8（`room close` の y/N 警告の実機確認）を `log.md` に戻した（ユーザー承認、11-04）。
+- `due.md` の 11-12「ooxml-clean OQ: 本文の個人名」は、OQ を 11-04 に閉じた（`c41c8e2`）ので行を消した。
+- PC1 でやることの一覧: `notes/pc1-todo/2026-11-05-pc1-todo.md`（プロジェクトの共有フォルダ）。
+- 漏れの確認: 上の 3 件が見つかった（`docs-write-rules.md` の連続回数は 0/3 に戻す）。
+
 ### 2026-11-04（`plan` フックの追加）
 - ユーザーの問い「brief と論点抽出・課題設定の関係」から、状態 1（`room open` 直後）と状態 2（`room start` 直後）の整理になり、状態 1 を `plan` に分けた（`decisions.md` 同日）。`brief-plan.md` を `plan-fields.md` に改名し、`plan-hook.md` を新設。確認: `check_hook_outline.py` が通った。
 - 同日、`guides/quickref/ai-work-prompts.md` に「brief 即」（ゴールと完了の判断だけを書き、聞き返し 0 で始める型）を足した（c5bfc00）。フックは増やさず、依頼文の書き方として置く（ユーザー）。次の `review 消化` で使い心地を見て、標準形として `brief-hook.md` に入れるか決める。
