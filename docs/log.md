@@ -9,6 +9,7 @@
 - room: type は `dev` と `inv`。検証用の works は `mkworks --sub`（実機で確認済み）。11-02 の room 変更（boundary の 2 値、start の自動マスク・復元の廃止、stock --dst）の既存 works への適用は、11-03 に ee が実機で通した（既存の Area は internal の 1 つ。手順と止まった所は `log-history.md` の 11-03）。
 - works の git 追跡は許可リスト方式（10-29 決定。`decisions.md`）。
 - Area の改名は `room mv <旧> <新>`（旧 `rename-area`。11-02 作り直し。部屋は `wsl --export`/`--import` で改名、履歴は追わない。ee が実機で動作確認済み）。
+- 実機確認済み（11-04、PC1）: `room restore` / `close` の成果物の Area への書き出し、計画の承認の検知（`status: 正式` → 変更で `仮` に戻る）。
 - Python の版: uv 管理が正本（`script-guide.md` の「Python の版と呼び方」）。
 - `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-15・11-29。
 - ファイル名: `workflow-kit/naming-rules.md`（10-29 決定）。一括改名はしない。
@@ -25,8 +26,6 @@
 
 1. **論点出しの型 v4 の実作業での確認（起票 11-03）**: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。
 
-2. **room の成果物の Area への書き出しの実機確認（起票 11-04）**: `clean` だけの Project（マスクしていない）で `ai/out/deliverable/` にファイルを置き、① `room restore <名>` と ② `room close <名>` が、Area の `_noai/deliverable/<Project>/` に書くかを見る。マスクした Project は実名に戻って書かれるか、Area 側を人が変えたあとは何も書かずに止まるか（close は何も変えずに止まる）も見る。実機でしか確かめられない。
-
 3. **README の完了条件・範囲外・Open Questions を、6R と重複しない形に畳む（起票 11-03）**: Project の README の 3 項目は 6R（`ai/work/plan/`）の「期待する成果」「今回のスコープ」の対象外、「裏づけ・未決」と重なる。6R を指す 1 行に畳むか、今のまま残すか、README_TEMPLATE と `room-context.md` の読み方を含めて決める。決めるのは ee。
 
 4. **`room readme` を `room stock --dst area` の考え方に揃える（起票 11-03）**: readme は cleankit の点検、start 後に人が直した README との衝突検出、manifest への記録が無く、`--commit` だけ持つ。案 A（推奨）は、コマンド 2 本のまま「運ぶ」部品（点検・衝突検出・記録）を共通にする。ee の決定待ち: `--commit` を外すか、衝突時に止めるか差分 y/N か。案の比較は `notes/room-readme-stock/2026-11-03-alignment.md`（プロジェクトの共有フォルダ）。
@@ -36,6 +35,7 @@
 6. **前半のお作法の順の確認（起票 11-04）**: `start` の直後の「作業を始めて → README 下書き → 論点出し → brief 計画 → 承認」の順（`guides/howto/ai-room-lifecycle.md` の 4 節）は運用の例で、room も手順書も強制しない。この順でよいか、論点出しと 6R のどちらを先にするかを決める。NA 3（README を 6R に畳む）と一緒に決める。
 
 期日のある項目は `due.md`。
+5. 【起票 11-04、期日 11-04】保留 2 件（元は log の Open Questions。11-05 から前倒し）: ① `repos/` の受け渡し（`dev` の `env/` の実使用の後に決める）、② `restore_project` の `_noai/final/` の上書き（保護の実機の確認は 11-04 に仕様どおりで済み。残りは方針の決定）（担当: ユーザー（実機））
 
 ## Open Questions
 

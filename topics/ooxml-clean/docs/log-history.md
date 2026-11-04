@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-04（NA 1: 【決定】行つきの close と room trace の実機確認）
+- 済（NA1）: ユーザーが PC1 で `room close` の成果物の書き出しと同じ確認の中で通し、仕様どおりで問題なしと報告（11-04）。`【決定】` 行の Area の inbox への追記と `room trace` を含む。
+  - 元の項目: 【期日 11-10】実機確認: 実際の Project で `【決定】` 行つきの `room close` と `room trace <Project>#n` を一度通す(実装・単体テストは 2026-11-03 に済み)。
+
 ### 2026-11-03（xlsx の取り出し `exceltext.py` v0）
 - 実装: `workflow-kit/room/exceltext.py`（pptxtext の部品を再利用。値・日付・%・図形・グラフ・SmartArt・矢印）。一度 `room clean --text` を足したが、ユーザーの指示（pptxtext も room から呼ばれていない、従来仕様を続ける）で外した。
 - テスト: `tests/test_exceltext.py` 4 件（隠れたシート・行・列・ふりがな・コメント・定義名・数式・代替テキスト・プロパティが出ない、書式、図形の順、CLI）。openpyxl で作り LibreOffice で保存し直した xlsx でも出力を目視（計算済みの値は LibreOffice 保存の方だけにある）。

@@ -12,6 +12,10 @@
 - 実装: cleankit の check と clean の報告の既定を、入力の隣の `tmp/` にした（clean はこれまで出力の隣）。テスト、`room/README.md`、`guides/howto/ooxml-clean.md` を直した。
 - 続き（ユーザーの決定）: 報告を `<名前>-report.md`（見出し末尾に (clean)/(check)）にし、room clean の報告に sensitive 点検を足し、cleankit clean は整合の問題で出力を書かないようにした。
 
+### 2026-11-04（PC1 の実機確認: 成果物の Area への書き出しと計画の承認の検知）
+- 済（NA2）: ユーザーが PC1 で `room restore` と `room close` の成果物の Area への書き出しを確認し、仕様どおりで問題なしと報告（11-04）。あわせて、同じ Project で試した 87e5ff0 の計画の承認の検知（status: 正式 → 本文変更で仮に戻る → approved の書き換えで再承認）も仕様どおり（実機の確認が済み）。
+  - 元の項目: **room の成果物の Area への書き出しの実機確認（起票 11-04）**: `clean` だけの Project（マスクしていない）で `ai/out/deliverable/` にファイルを置き、① `room restore <名>` と ② `room close <名>` が、Area の `_noai/deliverable/<Project>/` に書くかを見る。マスクした Project は実名に戻って書かれるか、Area 側を人が変えたあとは何も書かずに止まるか（close は何も変えずに止まる）も見る。実機でしか確かめられない。
+
 ### 2026-11-03（Project の README と 6R の関係の調査、計画の承認ラベルと変更検知の実装）
 - ユーザーの依頼: `room readme` を `room stock` の考え方に揃え、可能なら一本化する検討。途中で、Project の README と 6R の関係（README に入るもの・入らないものの行き先）と、計画を窓口に置くパスの相談になった。
 - 分かったこと: `room readme` の行き先は Area ではなく Project の README（ai/ の外）で、本文の丸ごと置換。cleankit の点検、人の変更との衝突検出、manifest の記録が無く、`--commit` だけ持つ（stock と逆）。6R は README に写さず、固定の 1 行のポインタだけで結んでいた（10-25 の案 D）。
