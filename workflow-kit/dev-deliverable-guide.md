@@ -6,7 +6,7 @@
 
 ## 置き場
 
-`ai/` と `_noai/` の直下の用途と、成果物（`ai/out/<成果物名>/`）の構成要素の用途は、`project-structure.md` が正本（ここに図を重ねない）。成果物は `ai/out/<成果物名>/` に置く。`close.md` `stock/` などの予約名は成果物の名前にしない。
+`ai/` と `_noai/` の直下の用途と、成果物（`ai/out/<成果物名>/`）の構成要素の用途は、`project-structure.md` が正本（ここに図を重ねない）。成果物は `ai/out/<成果物名>/` に置く。`close.md` `stock/` などの予約名は成果物の名前にしない。`<成果物名>` の既定は `<Project>` と同じ。外部に出す名前が Project 名と違うときだけ、その名前にする（2026-11-01 ユーザーの決定、2026-11-04 に手順書へ反映）。
 
 Area の共通ルール（Project を跨ぐ約束）は、Area の README に書く。部屋の AI は `ai/ctx/area-README.md` で読む。Project 固有の約束は、成果物の README か、Project の `ai/docs/decisions.md` に置く。
 

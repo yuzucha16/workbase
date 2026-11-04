@@ -4,7 +4,6 @@
 
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
-| 2026-11-05 | 単発 | room-type-consolidation の実機確認（起票 10-25。追加の作業が入ったため 11-05 に設定、11-01 ユーザー）: 1 Project で `env/` と `tests/` と `docs/` に加えて `src/`（コード開発）を通す実測（題材は同じ WSL の Python 環境。`repos:` を書いた `dev` の Project）。観察点: 構成要素の選び方、置き場の取り違えの再発、検証が自己向けになって弱くならないか（ユーザー、10-25）。案 A の実装（`a9d03cc` `721f3f9`。単体テストのみ）の実機確認: ① `room start` で `~/src/<repo>` が `--add-dir` で渡り、その `CLAUDE.md` が読まれる ② AI が `git -C ~/src/<repo>` で commit でき、`ai/` に化けない ③ 修正した `ROOM.md` が届いて置き場の取り違えが再発しない ④ `room close` が未 push の clone で止まる ⑤ 対話での `cd` 後の cwd の持続（未測）。あわせて置き場の実測（11-01、旧 11-07 の「聞き返すか」を統合）: ケース A `src/` のみ、B `src/` `tests/` `docs/`、C `env/` `src/` `tests/` `docs/` `report.md` を、置き場を依頼に書かずに通す。規則なしで `<成果物名>` の付け方を見てから、`dev-deliverable-guide.md` に「既定は Project 名と同じ」を書いて再測。詳細は `topics/room-type-consolidation/docs/log.md` | ユーザー（実機） |
 | 2026-11-05 | 単発 | token-cap NA 6: 出力の型（8 本）の試用の結果を見る（誤爆、型の品質、開始時の大きさ） | ユーザー |
 | 2026-11-06 | 単発 | token-cap NA 5: 応答数を減らす手段（(b)(f)〜(i)）の優先と残す・畳むを決める | ユーザー |
 | 2026-11-08 | 単発 | token-cap NA 4: 土台の整理の再判断（NA 7 は 11-01 に閉じ、26k は注記が主因と確定）。100k 運用の効果を見てから決める | ユーザー |
@@ -18,6 +17,7 @@
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断 | ユーザー |
 | 2026-11-11 | 単発 | token-cap: `integrate` の上限（仮 〜11-29）の個別の効果を再測定（`requests_by_kind.py --csv` で integrate の 10-27 以降の件数を見る。Windows 側と room 側。11-05 から延期）。10-29 の値（Windows 側、10-01 以降 16 件）: 10-27 より前 13 件は応答 9.4・1 件 809k・ピーク平均 92k。10-27 以降 3 件は応答 11.0・708k・ピーク 85k（うち 1 件は 7 応答でピーク 134k）。件数が少なく判定保留。room 側（PC1）の件数は未確認 | AI（ユーザーの依頼で） |
 | 2026-11-11 | 単発 | log の NA 2（11-04 に due へ移した。ユーザー）: `room open --from` の実機確認（起票 11-04）: PC1 で workbase を pull し、実際に `room close` した Project で `uv run room.py open <新> --area <Area> --from <閉じた Project>` を試す。見るのは、① `projects/<新>/ai/in/from-<前>/` に `out/`（成果物と `close.md`）と `work/plan/`（正式な計画だけ）が写り、`stock/` と `readme-draft.md` は写らないこと、② 続けて `room start <新> --no-launch` が来歴チェックで止まらないこと、③ README の `from:` と Area README の進行中の行の「← 前」、④ external の Area でも通ること、⑤ 別の PC や `ai/out/` が無い Project では、何も作らず理由を出して止まること。写し方・止まる条件の手直しは、結果を見て決める。仕様は `project-structure.md` の「閉じた Project の引き継ぎ」。 | ユーザー（PC1） |
+| 2026-11-11 | 単発 | room-type-consolidation の判断（起票 11-04）: 構成要素の選び方、`git -C` の守られなさへの手当て、成果物名の規則の効き。詳細は `topics/room-type-consolidation/docs/log.md` | ユーザー |
 | 2026-11-13 | 単発 | log の NA 3（11-04 に due へ移した。ユーザー）: 論点出しの型 v4 の実作業での確認（起票 11-03）: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。 | ユーザー |
 | 2026-11-30 | 単発 | ooxml-clean: `room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー。単体スクリプト化はしない) | ユーザー |
 | 2026-11-12 | 単発 | ooxml-clean OQ: 本文の個人名は `mask.toml` の運用に任せるか、候補の検出を足すか（判断） | ユーザー |

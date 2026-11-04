@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-11-04（案 A の実機確認と置き場の実測。別セッション `claude -p` を `room start --cmd` で起動して測った）
+- 方法: 部屋 `room-myenv` に使い捨てのローカル bare と clone（`~/src/probe-repo`。`CLAUDE.md` に合言葉）を作り、Project `rtc-probe`（`repos:` 付き）で ①〜⑤、`rtc-calc-*`（`repos:` なし）でケース A・B・C を通した。依頼に置き場は書かない。`--cmd` の中の `$(cat …)` は cwd が移る前に展開されるので絶対パス（`/mnt/room/<名>/work/prompt.txt`）で渡す。マウントが残ったら `room umount --area myenv`。
+- 案 A（`due.md` の 5 点）: ① `--add-dir` と `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` が付き、`CLAUDE.md` の合言葉を AI が引用した（OK）。② `git -C` の commit は clone の `main` に入り、`ai/` 側に化けない（OK。回収の変更にコードは出ない）。③ `ROOM.md` が届き、置き場の取り違えは A・B・C 計 5 回中 1 回（A で `ai/` 直下）。④ `room close` は未 push の clone で止まる（OK）。⑤ 対話で `cd … && git` が承認なしで通り、cwd は `~/src/probe-repo` に移って持続した（`claude -p` では承認待ちで止まる）。AI は `ROOM.md` の「`git -C` を使う」を守っていない。
+- ケース A・B・C（規則なし）: 成果物名は 3 件とも `calc`、置き場は `ai/out/calc/`。A は 1 ファイル、B は平ら（`calc.py` `test_calc.py` `README.md`）、C は `src/` `tests/` `pyproject.toml` `uv.lock` `README.md` `report.md`（`env/` `docs/` は使わない）。聞き返し 0 件。`dev-deliverable-guide.md` だけに規則を書いても AI は読まず、効かなかった（ユーザー承認で書いた）。
+- 規則を `ROOM.md` の雛形（`room.py`）に足して再測（ユーザー承認）: A は `ai/calc.py`（誤配置）、B は `ai/out/calc/src` `tests`（名前は `calc`）、C は `ai/out/rtc-calc-c/`（Project 名と同じ）。A の追試 2 回は `ai/out/calc/`（名前 `calc`）。規則あり 5 回中、Project 名と同じは 1 回。`ai/` 直下はばらつきの範囲と見る。
+- ユーザーの決定: A の追試後に測定を切る。使い捨ての Project 6 つ、部屋の clone と bare を削除した。works 側に `rtc-probe` の削除が未コミットで残る（works の git）。費用は 1 回 $0.05〜$0.32。
+- 変更（kit）: `workflow-kit/dev-deliverable-guide.md` に `<成果物名>` の既定、`workflow-kit/room/room.py` の `ROOM.md` 雛形に同じ文。
+
 ### 2026-11-02（Vault の 2 分割の前提を確認し、正式化して dotfiles に実装した）
 - PC1 の実機（ユーザー）: 除外フィルタで resources は検索・リンクから外れる（エクスプローラーには残る。受け入れ）。入れ子の `.obsidian` は独立。pc1 のリンク調査は `resources/` を指すもの 0 本。`30_link.bat` が止まるのは実ファイルがあるときだけ（ジャンクションは上書き）。dotfiles の `.obsidian` の写し先は works（決定）。
 - 正式化（ユーザー）。workbase は `.gitignore` に `/.obsidian`。文面直しは NA に分けて積んだ（一覧は `decisions.md`）。コミット `edc30d6` `9522a09` `2acc516` `3b0be80`。
