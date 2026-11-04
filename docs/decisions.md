@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【guides】`room start` 直後の前半の進め方は 6R → 論点出し → 憲章以降（任意）。行き来を許し、強制しない（2026-11-04）
+- 決めたこと（ユーザー）: 6R を必須の入口にし、論点出しは 6R の未決を振り分ける関門とする。憲章・WBS・マイルストーンは任意（大きめの Project だけ）。6R は更新する前提で書き、論点出しの結果は 6R に書き戻す。
+- 理由: 6R の問題意識・未決が論点の材料になる。`brief-plan.md` の「6R で止まってよい」と矛盾しない。反映先は `guides/howto/ai-room-lifecycle.md` の 4 節。`brief-plan.md` の手順は変えていない。
+
 ### 【room】閉じた Project の再作業は、開き直さず `room open <新> --from <前>` で引き継ぐ（2026-11-04）
 - 決めたこと（ユーザー）: ① 案 B を採る。`archives/` の Project は `projects/` に戻さず（案 A: reopen は不採用）、新しい完了条件を持つ別の Project を作って過去資産を引き継ぐ。Area に資産を置く案 C は、Area の側の入口（Area の AI）が決まるまで見送り。② external の Area でも `--from` を許す（AI の側から AI の側への写しで、`--adopt` の関門の対象外）。③ `archives/<前>/ai/out/` と計画は git 追跡外なので、別の PC では写すものが無く止まる。同じ PC で使う前提にし、止まるときは理由を出す。
 - 実装: `room open --from`（`collect_from` `apply_from`、`room.py`）。条件は同じ Area の `archives/` で `status: done`、写すものが無ければ何も作らず止まる。写し先 `ai/in/from-<前>/`（`ai/` からの相対パスのまま）、manifest に確認済み＋`origin`、README に `from:`、Area README の進行中の行に「← <前>」。テスト `OpenFromTest`（185 件通過）。手順は `project-structure.md` の「閉じた Project の引き継ぎ」、`brief-plan.md` に `close.md` と前の計画を読む一文。

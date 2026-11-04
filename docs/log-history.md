@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-04（Area の中の Project の一生の howto）
+- ユーザーの依頼: area / project / room のライフサイクルを、room とフックを組み合わせた全体像として howto に残す。調査（`notes/room-lifecycle/2026-11-04-current-flow.md`、project files）→ 古い記述 10 件の修正 → `guides/howto/ai-room-lifecycle.md`（0f82b44）。範囲は Area の中に絞った。
+- 同日の room 整理（`room readme` 廃止、close の y/N、stock の move、`open --from`）に合わせて howto を直した（8197911）。
+- 前半の順（NA「前半のお作法の順の確認」を閉じた）: 6R → 論点出し → 憲章・WBS・マイルストーン（任意）。行き来してよく、強制しない。根拠: howto の 4 節。
+- 残り: Area 側の運営の入口（Area の AI、Area の終わり方）は `log.md` の NA に残す。
+
 ### 2026-11-04（閉じた Project の再作業: room open --from）
 - ユーザーの相談: `room close` と `room reap` で archives に移した Project を、機能追加など過去資産を使う再作業で使いたい。案を比べ、案 B（開き直さず、新しい Project が前の Project を引き継ぐ）を採用。external でも許す、archives の `ai/out/` が無ければ止める、もユーザーが了承（`decisions.md` の同日）。
 - 実装: `room open --from <前>`（`collect_from` `apply_from`）。`ai/in/from-<前>/` に成果物・`close.md`・正式な計画を写し、manifest に確認済み＋`origin`、README に `from:`。テスト `OpenFromTest` 3 件、全 183 件通過。`project-structure.md` に節、`brief-plan.md` に一文。push 済み（1d6d0e5）。実機は未確認（Next Actions に積んだ）。

@@ -31,8 +31,6 @@
 
 1. **Area 側の運営の入口を決める（起票 11-04）**: ① Area の `ai/docs/inbox.md` の【案件】【決定】を Area の `decisions.md` に統合する「Area の AI」を動かす入口が無い（`room start` は Project しか開かない。Area の `decisions.md` も `init` は作らない）。② Area の終わり方（`archives/` へ移す契機と手順）が無い。決めるのは ee。調査は `notes/room-lifecycle/2026-11-04-current-flow.md`（プロジェクトの共有フォルダ）の 3-B。`room open --from` の案 C（Area に資産を置く）もこの入口が決まるまで見送り。
 
-1. **前半のお作法の順の確認（起票 11-04）**: `start` の直後の「作業を始めて → 6R の下書き → 論点出し → brief 計画 → 承認」の順（`guides/howto/ai-room-lifecycle.md` の 4 節）は運用の例で、room も手順書も強制しない。論点出しと 6R のどちらを先にするかを決める。
-
 期日のある項目は `due.md`。
 5. 【起票 11-04、期日 11-04】保留 2 件（元は log の Open Questions。11-05 から前倒し）: ① `repos/` の受け渡し（`dev` の `env/` の実使用の後に決める）、② `restore_project` の `_noai/final/` の上書き（保護の実機の確認は 11-04 に仕様どおりで済み。残りは方針の決定）（担当: ユーザー（実機））
 
