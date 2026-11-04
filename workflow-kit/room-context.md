@@ -78,7 +78,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 | `brief` | 開始インタビュー | `room start <名>`（チェック、写しの送付、マウント、起動。マスクは人が先に `room mask`） | `ai/ctx/`、`ai/in/` |
 | `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（works へのコミット。復元は人が `room restore`） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（`ai/out/deliverable/` を Area の成果物置き場へ、Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
-| `stock`（`public`） | 下書きまで | `room stock <名> --dst kit`（人が1件ずつ確認して `exmem/inbox/` へ運ぶ） | `ai/out/stock/`（先頭に基準コミットと観測日） |
+| `stock`（`public`） | 下書きまで | `room stock <名> --dst kit`（確認なしで `exmem/inbox/` へ運び、運んだ後に表を出す） | `ai/out/stock/`（先頭に基準コミットと観測日） |
 | `stock`（`area`。external・internal 共通） | `ai/out/stock/` に `scope: area` で書く（実名なし） | `room stock <名> --dst area`（cleankit の点検を通して `areas/<Area>/ai/` へ。internal は `mask.toml` の語が要る）。次の Project の `ctx/area/` に写る | `ai/out/stock/` |
 
 `integrate` `review` は、部屋では行わない（`hooks.md` の r/w 表で －。works 側の workbase の作業）。works の作成と雛形の反映は `room mkworks`、部屋の作成は `room init`（どちらも人が打つ）。
