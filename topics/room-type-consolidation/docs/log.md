@@ -6,6 +6,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 - 【期日 11-11、起票 11-04】`inv` の工程別構造の実験 eg2（社内の Excel・テキスト。マスクの差分）を、別セッションで行う。結果は `records/` に残し、構造を直す。
 - 【期日 11-11、起票 11-04】比較の結果（`records/2026-11-04-slide-tools-live-compare.md`。結論: pptx が成果物なら、お手軽は Marp 既定、初版を人が直すなら Quarto。Slidev は HTML 発表が主のときだけ）を `topics/office-output-types` に渡す。
+- 【期日 11-11、起票 11-04】`inv` の工程の組み合わせ試験(`dev` の a) `src` のみ、b) `env`+`src`、c) `src`+`env`+`tests` と同じ形)。工程(`question.md` `sources/` `findings/` `checks/` `report.md` `publish/`)を、a) 少ない組み合わせ、b) 中間、c) 全部、のように変えて部屋に渡し、置き場などの観点(`ai/out/<成果物名>/` の下の置き場、聞き返し、`dev` との差)でフィードバックを見る。設計(組み合わせの決め方と観点)は着手時に決める。eg2 とは別に、eg2 の結果(社内 Excel・テキスト)を受けて行ってよい。
 - 【人・期日 11-05、起票 11-04】部屋に残る Slidev を root で消す（下記）。`~/cmp` は消した。
 
 ```

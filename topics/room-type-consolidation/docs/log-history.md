@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-04（`inv` の工程の組み合わせ試験を起票した）
+- ユーザーの依頼: office-output-types の NA 6（Quarto で 1 サンプル）の続きとして、`dev` の a) `src` のみ、b) `env`+`src`、c) `src`+`env`+`tests` と同じ形の組み合わせ試験を `inv` 版で行う。Next Actions に起票（期日 11-11）。
+- `docs/due.md` の「Marp と Slidev を人が導入して比較」の行（比較は済み）を、この試験の行に置き換えた。eg2 は別の項目のまま。
+
 ### 2026-11-04（`init` に Marp CLI の段を追加した）
 
 - `room.py` に `MARP_INSTALL`（`marp-cli@4.5.1` を root が npm で固定、`PUPPETEER_SKIP_DOWNLOAD=1`）と段 `marp`（Quarto の後）を追加。`/usr/local/bin/room-marp` が `room-chrome` を `--browser-path` で指す包み。呼ぶ側は `</dev/null`。`room/README.md` と単体テストも更新。

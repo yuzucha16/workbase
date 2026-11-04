@@ -8,7 +8,7 @@
 | 2026-11-06 | 単発 | token-cap NA 5: 応答数を減らす手段（(b)(f)〜(i)）の優先と残す・畳むを決める | ユーザー |
 | 2026-11-08 | 単発 | token-cap NA 4: 土台の整理の再判断（NA 7 は 11-01 に閉じ、26k は注記が主因と確定）。100k 運用の効果を見てから決める | ユーザー |
 | 2026-11-11 | 単発 | room-type-consolidation: `inv` の実験 eg2（社内 Excel・テキスト。マスクの差分）を別セッションで行う。起票 11-04 | ユーザー |
-| 2026-11-11 | 単発 | room-type-consolidation: Marp と Slidev を人が部屋に導入し（版固定の `npm i -g`）、Quarto と横並びで実機比較する。起票 11-04 | ユーザー |
+| 2026-11-11 | 単発 | room-type-consolidation: `inv` の工程の組み合わせ試験(`dev` の a)b)c) と同じ形。工程を変えて部屋に渡し、置き場などの観点でフィードバックを見る)。起票 11-04 | ユーザー |
 | 2026-11-08 | 定例 | weekly の振り返り（7日周期、日曜。材料は `topics/kit-growth/records/`）。仮決めの期限切れを数える | ユーザー |
 | 2026-11-08 | 単発 | 索引（triggers）の引き当て率の初回: `python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。語の足し方か出し方を決める。あわせて部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）への備え（短い札の禁止、完全一致の書き方、現状維持）を決める。現状（誤爆する）は単体テスト `test_substring_match_false_positive_is_current_behavior` で固定してあり、方針を変えるときはこのテストも直す。あわせて、旧 `md-link-graph` の積み残し 2 件: ① 上限 30 語で誤爆が増えていないか、取りこぼしは `triggers:` に語を足す案にする、② S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は付けない方針のまま届かなければ見直す。`logbook/` を `--triggers` の対象にするかの判断もこの結果の後（旧 `logbook-design` NA 3）。構造の点検（循環・階層・複雑度）は `review` の入力 9 | ユーザー（AI が実行） |
 | 2026-11-09 | 単発 | log の Next Actions 2（11-03 から延期。room-type-consolidation などで成果物の周辺を整えてから。11-01 ユーザー）: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`。未決は `release` の束ね先。起票 10-25）。旧 `hook-room-alignment` の同じ項目はここに統合。見るもの: uv の取得、文字コード、y/n と日本語のひとこと。最初の失敗が原因の台帳（`script-guide.md`）の初めての使用になる | ユーザー（実機） |
