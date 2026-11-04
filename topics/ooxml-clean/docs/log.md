@@ -21,6 +21,7 @@
 
 ## Next Actions
 
+1. 【起票 11-04】実機確認: PC1 の実 xlsx・pptx を最新の `cleankit` / `room clean` に通し、(a) `LabelInfo.xml` とテナント ID（site id）が出力に残らないこと、(b) 報告の `tenant-id` が残る場合はセルや図形の表示文字だけであること、(c) Excel・PowerPoint が警告なしに開くこと（ラベル・customXml・共同編集の履歴を外した出力）を見る。残りがあれば部品の種類を足す。
 2. 実機確認: PC1 の実 xlsx を `exceltext.py` に通し、md の読みやすさ・取りこぼし・大きさを見て仕様を足す。
 
 ## Open Questions

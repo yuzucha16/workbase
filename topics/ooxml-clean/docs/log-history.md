@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-04（clean 後に残るテナント ID・ラベル ID の洗い出しと掃除）
+- ユーザーの報告: cleankit / room clean の後も、秘密度ラベル ID と site id（テナント ID）が残る。類似の残りを洗い出してから、clean で落とす依頼。
+- 洗い出し（ダミー値の合成 xlsx・pptx で実測。実ファイルは見ていない）: 原因は `docMetadata/LabelInfo.xml`（根の関係 `classificationlabels` でつながるため `props` でも `orphans` でも消えず、値が属性なので `unseen-text` にも出ない）。ほかに両プロファイルで残る 13 項目を一覧にした（`dc:identifier`、`app.xml` の `Template`・`HLinks`、外部ハイパーリンク先、xlsx の `fileSharing`・`revisionPtr`、pptx の `changesInfos`・`revisionInfo`、tags、webextensions。customXml は standard だけ残る）。記録は project files の `notes/ooxml-clean/2026-11-04-tenant-residue.md`。
+- 実装（ユーザーの「実装に進んで」で、推奨 1〜6 をそのまま。9a56026）: `labels`・`custom-xml` を既定に、`hyperlinks`・`tags`・`addins` を strict に、`props`・`revisions` を広げた。check に `label-info`・`pptx-revisions`・`revision-ptr`・`tenant-id`（全 XML からドメイン・アカウント・`siteId` 等を探す網）を足した。単体テスト 5 件、room 全体 236 件が通った。LibreOffice で standard・strict の出力が PDF に変換できた。ダミーの出力でテナント ID・ラベル ID は残らなかった（セルや図形の表示文字に入った URL は消さず、`tenant-id` で報告する）。
+- 未確認: PC1 の実ファイルでの残り方と、Excel・PowerPoint で開くこと（Next Actions 1）。
+
 ### 2026-11-04（NA 1: 【決定】行つきの close と room trace の実機確認）
 - 済（NA1）: ユーザーが PC1 で `room close` の成果物の書き出しと同じ確認の中で通し、仕様どおりで問題なしと報告（11-04）。`【決定】` 行の Area の inbox への追記と `room trace` を含む。
   - 元の項目: 【期日 11-10】実機確認: 実際の Project で `【決定】` 行つきの `room close` と `room trace <Project>#n` を一度通す(実装・単体テストは 2026-11-03 に済み)。
