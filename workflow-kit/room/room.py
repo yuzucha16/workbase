@@ -754,6 +754,55 @@ def move_area_entry(text, name, date):
     return add_area_entry("\n".join(lines), "## 完了した Project", entry)
 
 
+FROM_SKIP = ("out/stock", "out/readme-draft.md")  # 引き継がない（stock は運搬の下書き、readme-draft は README の下書き）
+
+
+def collect_from(ctx, src, area):
+    """--from: archives/<P1> から、新しい Project の ai/in/from-<P1>/ に写すファイルを集める。[(相対パス, 元のパス)]。
+    写すもの: ai/out/ の成果物と close.md（stock/ と readme-draft.md は除く）、ai/work/plan/ の status: 正式 の計画。
+    _noai/ と ai/ctx/ は写さない。条件に合わなければ、何も作らずに止める。"""
+    readme = src / "README.md"
+    if not readme.exists():
+        raise RoomError(f"--from の Project が archives に無い: {src}")
+    fm = read_frontmatter(readme)
+    if fm.get("status") != "done":
+        raise RoomError(f"--from は閉じた Project（status: done）だけ。{src.name} は status: {fm.get('status', '')}")
+    if fm.get("area") != area:
+        raise RoomError(f"--from の Project の Area が違う（{src.name} は {fm.get('area')}、新しい Project は {area}）")
+    items = []
+    out = src / "ai" / "out"
+    if out.is_dir():
+        for f in sorted(out.rglob("*")):
+            rel = f.relative_to(src / "ai").as_posix()
+            if f.is_file() and f.name != ".gitkeep" and not any(rel == x or rel.startswith(x + "/") for x in FROM_SKIP):
+                items.append((rel, f))
+    plan = src / PLAN_DIR
+    if plan.is_dir():
+        for f in sorted(plan.rglob("*.md")):
+            text = f.read_text(encoding="utf-8")
+            if split_frontmatter(text)[0] is not None and read_frontmatter(f).get("status") == "正式":
+                items.append((f.relative_to(src / "ai").as_posix(), f))
+    if not items:
+        raise RoomError(f"写すものが無い: {src.name} の ai/out/ と、正式な計画（ai/work/plan/）が archives に無い。"
+                        "ai/out/ は git で追跡しないので、別の PC には無い。閉じた PC で実行する")
+    return items
+
+
+def apply_from(ctx, p, src_name, items):
+    """集めたファイルを ai/in/from-<P1>/ に写し、来歴を manifest に記録する（確認済み。AI の側から AI の側への写し）。"""
+    man = load_manifest(p)
+    for rel, f in items:
+        dst = p.ai / "in" / f"from-{src_name}" / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(f, dst)
+        key = dst.relative_to(p.ai).as_posix()
+        digest = sha256(dst)
+        man["files"][key] = {"sha256": digest, "area": p.area, "project": p.name, "added": ctx.now(), "approved": ctx.now(),
+                             "origin": {"project": src_name, "path": f"archives/{src_name}/ai/{rel}", "sha256": digest}}
+    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
+    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+
 def cmd_open(ctx, a):
     check_gitignore(ctx)
     area_dir = ctx.vault / "areas" / a.area
@@ -773,6 +822,8 @@ def cmd_open(ctx, a):
     for top in ("projects", "archives"):
         if (ctx.vault / top / a.name).exists():
             raise RoomError(f"同名がすでにある: {top}/{a.name}")
+    src = getattr(a, "from_project", None)
+    items = collect_from(ctx, ctx.vault / "archives" / src, a.area) if src else []
     p = Project(ctx, a.name)
     p.area = a.area
     p.dir.mkdir(parents=True)
@@ -785,13 +836,18 @@ def cmd_open(ctx, a):
         (p.dir / "ai" / "docs" / fname).write_text(text, encoding="utf-8", newline="\n")
     p.readme.write_text(README_TEMPLATE.format(area=a.area, type=a.type, today=ctx.today(), name=a.name),
                         encoding="utf-8", newline="\n")
-    entry = f"- [[projects/{a.name}/README|{a.name}]]（{ctx.today()} 開始）"
+    if src:
+        p.readme.write_text(update_frontmatter(p.readme.read_text(encoding="utf-8"), {"from": src}), encoding="utf-8", newline="\n")
+        apply_from(ctx, p, src, items)
+    entry = f"- [[projects/{a.name}/README|{a.name}]]（{ctx.today()} 開始" + (f"、← [[archives/{src}/README|{src}]]" if src else "") + "）"
     area_readme.write_text(add_area_entry(area_readme.read_text(encoding="utf-8"), "## 進行中の Project", entry),
                            encoding="utf-8", newline="\n")
     log_room(ctx, p, "open", "area 一致、boundary あり", "ひな形を作成")
     if p.distro not in ctx.wsl.distros():
         ctx.say(f"注意: 部屋（{p.distro}）がまだ無い。guides/howto/ai-room-setup.md の 3 章で作る")
     ctx.say(f"作った: projects/{a.name}（ai/ と _noai/）。README の <...> を埋める")
+    if src:
+        ctx.say(f"{src} から {len(items)} ファイルを ai/in/from-{src}/ に写した（来歴は manifest。`brief 計画` が close.md と前の計画を読む）")
     if a.commit:  # 初期状態を、戻る起点としてコミットする（既定。--no-commit で省く）
         commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）", only=True,
                      trailers=room_trailers("open", a.area, a.name))
@@ -3227,6 +3283,7 @@ def build_parser():
     o = sub.add_parser("open", help="Project のひな形を作る")
     o.add_argument("name"); o.add_argument("--area", required=True)
     o.add_argument("--type", default="dev", choices=["dev", "inv"])
+    o.add_argument("--from", dest="from_project", metavar="PROJECT", help="閉じた Project（archives/、同じ Area）の成果物・close.md・正式な計画を、ai/in/from-<PROJECT>/ に写して引き継ぐ")
     o.add_argument("--boundary", choices=BOUNDARIES, help="Area に boundary: が無いときに付ける値（external か internal。無印は external）")
     o.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
     o.add_argument("--no-commit", dest="commit", action="store_false", help="初期状態をコミットしない（既定はコミットする）")

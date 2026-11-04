@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【room】閉じた Project の再作業は、開き直さず `room open <新> --from <前>` で引き継ぐ（2026-11-04）
+- 決めたこと（ユーザー）: ① 案 B を採る。`archives/` の Project は `projects/` に戻さず（案 A: reopen は不採用）、新しい完了条件を持つ別の Project を作って過去資産を引き継ぐ。Area に資産を置く案 C は、Area の側の入口（Area の AI）が決まるまで見送り。② external の Area でも `--from` を許す（AI の側から AI の側への写しで、`--adopt` の関門の対象外）。③ `archives/<前>/ai/out/` と計画は git 追跡外なので、別の PC では写すものが無く止まる。同じ PC で使う前提にし、止まるときは理由を出す。
+- 実装: `room open --from`（`collect_from` `apply_from`、`room.py`）。条件は同じ Area の `archives/` で `status: done`、写すものが無ければ何も作らず止まる。写し先 `ai/in/from-<前>/`（`ai/` からの相対パスのまま）、manifest に確認済み＋`origin`、README に `from:`、Area README の進行中の行に「← <前>」。テスト `OpenFromTest`（185 件通過）。手順は `project-structure.md` の「閉じた Project の引き継ぎ」、`brief-plan.md` に `close.md` と前の計画を読む一文。
+- 理由: 既存の方針（1 Project = 1 成果物、前の成果物は次の Project の `ai/in/` へ）をコマンドにしただけで、close・reap・trace を変えない。external で `--adopt` が止まり渡せない穴も塞ぐ。比較は `notes/room-reuse/2026-11-04-options.md`（project files）。実機は未確認。
+
 ### 【room】Project の README から完了条件・範囲外・Open Questions を外し、計画（6R）に一本化する。`room readme` を stock に揃える件は不要（2026-11-04）
 - 決めたこと（ユーザー）: ① README の完了条件・範囲外・Open Questions は 6R（`ai/work/plan/`）と重複するので、README では 1 行（計画へのリンクに添えた「ここに書く」）に畳む。README に残るのは目的・成果物・計画へのリンク。② `room readme` を `room stock` の考え方（点検・衝突検出・記録）に揃える件は不要（ユーザー: 「na4は不要」）。
 - 実装: `README_TEMPLATE`（`room.py`）、`README.template.md`、`README_PLACEHOLDERS`（`close` の点検の対象から 2 語を外した）、`project-structure.md`、`room-context.md`、`ai-room-setup-script.md`。既存の Project の README は書き換えない。

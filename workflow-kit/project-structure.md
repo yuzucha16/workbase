@@ -16,7 +16,7 @@ Project は、問題解決の単位で、1 つの部屋で行う。問題解決�
 **線は、活動ではなく成果物で引く。** 活動は反復し、1 つの Project に混ざる（調べながら作り、作りながら調べる）。活動で type を決めると、決められない。成果物なら、1 つに決まる。
 
 - 曖昧なときは、成果物の名前で決める（設計書にまとめるなら `dev`、結論の報告なら `inv`）。
-- 調べてから作る流れは、Project を分ける。`inv` の `report.md` を次の Project の `ai/in/` に置き、`room start --adopt` で入力として記録する。1 Project の中で type を変えない。
+- 調べてから作る流れは、Project を分ける。`inv` の `report.md` は、閉じた後なら `room open <次> --area <A> --from <inv の Project>` で次の Project の `ai/in/from-<inv の Project>/` に引き継ぐ（下の「閉じた Project の引き継ぎ」）。まだ閉じていない成果物は、internal の Area なら人が `ai/in/` に置いて `room start --adopt` で記録する。1 Project の中で type を変えない。
 - type の違いは、作業の構造の違いで、**成果物のサブディレクトリの組み合わせ**に現れる（`inv` は `report.md`。`dev` は `docs/` `src/` `env/` `tests/` `tools/` から必要なもの）。`room` は type で動きを変えない（README の frontmatter に書くだけ）。違いを持つのは、この文書と `dev-deliverable-guide.md`、`brief-work-types.md`、`brief-hook.md`、調査の出力の型（`research-explain-output`）。
 - 活動と置き場の対応は、下の表の「主な活動」の列に目安として載せる。拘束ではない。
 
@@ -58,7 +58,7 @@ Project は、問題解決の単位で、1 つの部屋で行う。問題解決�
 
 - 置き場は、成果物と同じ `ai/out/<成果物名>/`（全 type 共通）。`dev` の正の向きは上の表。`inv` は、問い（章立て）と品質条件（出典、未確認の明記）が兼ねる（`methods.md` の調査の Must）。
 - `ai/work/` の下書きや使い捨てのスクリプトとは別物。`ai/docs/`（作業の記録）にも入れない。
-- 前の Project の基準文書を次の Project に渡すときは、人が次の Project の `ai/in/` に置き、`room start --adopt` で入力として記録する。
+- 前の Project の基準文書を次の Project に渡すときは、前の Project を `room close` で閉じ、`room open <次> --area <A> --from <前>` で引き継ぐ（下の「閉じた Project の引き継ぎ」）。
 - 設計メモ（design、coding-rules）は `ai/docs/`。下書きは `ai/docs/` に入れない（`ai/docs/` を「作業の記録」の意味だけにする）。
 - `ai/in/` は部屋では読み取り専用なので、AI が集めた資料は `ai/work/` に置く。
 - `inv` と、`dev` の構成要素（特に `env/` と `tests/` だけの成果物）は、実測が無い叩き台。
@@ -110,3 +110,15 @@ README 本文（目的、成果物、計画へのリンク。雛形は `template
 - 上限（Project 3件、Area 5件）の見直し。
 - Project の構造（type は2種 `dev` `inv`、`ai/work/` の下書きの分離）の実測。`inv` と、`dev` の構成要素（`env/`、`tests/` だけ）は叩き台で、実測が無い。
 - `target:` の書式と、`ai/in/target/` に置くものの一覧(`room-type-consolidation` の `docs/log.md` の Open Questions)。
+
+## 閉じた Project の引き継ぎ（機能追加・改訂など、過去の資産を使う再作業）
+
+2026-11-04 決定。閉じた（`room close` 済みで `archives/` にある）Project は開き直さない。再作業は、新しい完了条件を持つ別の Project にする（1 Project = 1 成果物、入れ子にしない）。
+
+- 手順: `room open <新> --area <A> [--type] --from <前>`。<前> は同じ Area の `archives/<前>/`（`status: done`）。
+- 写すもの（`ai/in/from-<前>/` の下に、`ai/` からの相対パスのまま）: `ai/out/` の成果物と `close.md`（`stock/` と `readme-draft.md` は除く）、`ai/work/plan/` の `status: 正式` の計画（6R など）。`_noai/` と `ai/ctx/` は写さない。
+- 来歴: 写したファイルは manifest に確認済みで記録する（`origin` に元の Project・パス・ハッシュ）。AI の側から AI の側への写しなので、`--adopt` の関門（internal だけ）は通さず、external の Area でも使える。新しい Project の README に `from: <前>`、Area README の進行中の行に「← <前>」が付く。
+- `brief 計画` は、`ai/in/from-<前>/` の `close.md`（完了条件の実測、暫定の見直し）と前の計画を読み、6R の「状況」に前回の到達点と残りを書き、完了条件は今回の差分で書く。
+- 止まる条件（何も作らない）: <前> が archives に無い・`status: done` でない・別の Area、または写すものが無い。`ai/out/` と計画は git で追跡しないので、別の PC には無い。閉じた PC で実行する。
+- `room reap` 済みでも使える（reap は会話履歴と作業用の一時ファイルだけを消す）。経緯を引くときは `room trace` が従来どおり使える。
+- 開き直し（archives を projects に戻す）はしない。閉じ方を誤ったときは、人が git で戻す。

@@ -9,6 +9,7 @@
 - room: type は `dev` と `inv`。検証用の works は `mkworks --sub`（実機で確認済み）。11-02 の room 変更（boundary の 2 値、start の自動マスク・復元の廃止、stock --dst）の既存 works への適用は、11-03 に ee が実機で通した（既存の Area は internal の 1 つ。手順と止まった所は `log-history.md` の 11-03）。
 - works の git 追跡は許可リスト方式（10-29 決定。`decisions.md`）。
 - Area の改名は `room mv <旧> <新>`（旧 `rename-area`。11-02 作り直し。部屋は `wsl --export`/`--import` で改名、履歴は追わない。ee が実機で動作確認済み）。
+- room open --from（11-04 実装。閉じた Project の成果物・close.md・正式な計画を、新しい Project の `ai/in/from-<前>/` に引き継ぐ。実機は未確認）。
 - 実機確認済み（11-04、PC1）: `room restore` / `close` の成果物の Area への書き出し、計画の承認の検知（`status: 正式` → 変更で `仮` に戻る）。
 - Python の版: uv 管理が正本（`script-guide.md` の「Python の版と呼び方」）。
 - `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-15・11-29。

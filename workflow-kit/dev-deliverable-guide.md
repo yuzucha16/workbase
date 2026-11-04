@@ -80,7 +80,7 @@ HTML など、`docs/` から生成するものは派生物。直接編集しな�
 
 `dev` の工程のうち、環境構築とテストだけを成果物にする Project（`env/` を構成要素にする。実測が無い）。`env/` が主の成果物が想定するのは、主にテスト環境を作ること。上の型（守ること、README の型、テストの2層、完了の定義）は、そのまま使う。違いだけをここに書く。
 
-別の成果物との関係: 子の Project ではなく、独立の Project（1 Project = 1 成果物。Project は入れ子にしない）。成果物の受け渡しは、ほかの Project と同じく、人が次の Project の `ai/in/` に置き、`room start --adopt` で入力として記録する。例: `env/` が主の成果物 → 次の `dev` の `ai/in/`、`src/` の要求仕様書とソース → `tests/` だけの `dev` の `ai/in/`。
+別の成果物との関係: 子の Project ではなく、独立の Project（1 Project = 1 成果物。Project は入れ子にしない）。成果物の受け渡しは、ほかの Project と同じく、前の Project を閉じてから `room open <次> --area <A> --from <前>` で引き継ぐ（`project-structure.md`）。例: `env/` が主の成果物 → 次の `dev` の `ai/in/`、`src/` の要求仕様書とソース → `tests/` だけの `dev` の `ai/in/`。
 
 | | ツール・アプリ（`src/`） | `env/` が主（環境構築） | `tests/` だけ（テスト） |
 |---|---|---|---|

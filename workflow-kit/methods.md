@@ -35,7 +35,7 @@
 - **業務の成果物**（`areas/` `projects/`）では、AI が成果物の中身を見られないことがある。検証は、基準文書の検証項目に沿って、人かマスク済みの写しで行う。固有の中身は workbase に置かない。
   - 置き場: 成果物と同じフォルダ（`ai/out/<成果物名>/`）。`dev` の Project は `docs/` の3文書が兼ねる（`dev-deliverable-guide.md`）。
   - 書き方: マスク後の語か一般化した形だけで書く。抽出の基点は `ai/in/` の manifest の原本ハッシュ。照合の結果もマスク後の語で書き、実名を見て直す内容は `_noai/` に置く。
-  - 次の Project へ: 人が `ai/in/` に置き、`room start --adopt` で渡す。Area の README の一覧に、成果物ごとの最新の Project を1行書く。
+  - 次の Project へ: 閉じた後は `room open <次> --area <A> --from <前>` で引き継ぐ（`project-structure.md`）。閉じる前に渡すときは、人が `ai/in/` に置き、`room start --adopt`（internal のみ）で渡す。Area の README の一覧に、成果物ごとの最新の Project を1行書く。
 
 ## 計画（これから始める取り組みの目的とゴールを、ユーザーと AI で共有するとき）
 

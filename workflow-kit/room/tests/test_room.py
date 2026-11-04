@@ -2109,6 +2109,69 @@ def tty(answer=None):
     return stack
 
 
+class OpenFromTest(unittest.TestCase):
+    """room open --from: 閉じた Project の成果物・close.md・正式な計画を、新しい Project の ai/in/from-<P1>/ に写す。"""
+
+    def archived(self, tmp, boundary="internal"):
+        v = make_vault(tmp)
+        (v / "areas/area-x/README.md").write_text(AREA_README.replace("boundary: internal", f"boundary: {boundary}"), encoding="utf-8", newline="\n")
+        a = v / "archives" / "old"
+        for d in ("ai/out/tool", "ai/out/stock", "ai/work/plan", "ai/ctx"):
+            (a / d).mkdir(parents=True)
+        (a / "README.md").write_text("---\nstatus: done\narea: area-x\n---\n\n# old\n", encoding="utf-8", newline="\n")
+        (a / "ai/out/tool/main.py").write_text("print(1)\n", encoding="utf-8")
+        (a / "ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
+        (a / "ai/out/readme-draft.md").write_text("draft\n", encoding="utf-8")
+        (a / "ai/out/stock/s.md").write_text("s\n", encoding="utf-8")
+        (a / "ai/work/plan/6r.md").write_text("---\nstatus: 正式\napproved: 2026-10-01\n---\n\n6R\n", encoding="utf-8")
+        (a / "ai/work/plan/draft.md").write_text("---\nstatus: 仮\n---\n\nd\n", encoding="utf-8")
+        (a / "ai/ctx/README.md").write_text("ctx\n", encoding="utf-8")
+        return v
+
+    def open_from(self, v, src="old", name="new"):
+        c = ctx_for(v)
+        room.cmd_open(c, argparse.Namespace(name=name, area="area-x", type="dev", boundary=None, commit=False, from_project=src))
+        return c
+
+    def test_copies_outputs_close_and_formal_plan_with_provenance(self):
+        for boundary in ("internal", "external"):  # external でも使える（AI の側から AI の側への写し）
+            with self.subTest(boundary=boundary), tempfile.TemporaryDirectory() as tmp:
+                v = self.archived(tmp, boundary)
+                self.open_from(v)
+                base = v / "projects/new/ai/in/from-old"
+                got = sorted(f.relative_to(base).as_posix() for f in base.rglob("*") if f.is_file())
+                self.assertEqual(got, ["out/close.md", "out/tool/main.py", "work/plan/6r.md"])
+                p = room.Project.load(ctx_for(v), "new")
+                self.assertEqual(room.check_provenance(p), [])
+                e = room.load_manifest(p)["files"]["in/from-old/out/tool/main.py"]
+                self.assertEqual(e["origin"]["project"], "old")
+                self.assertEqual(e["origin"]["path"], "archives/old/ai/out/tool/main.py")
+                self.assertIn("from: old", (v / "projects/new/README.md").read_text(encoding="utf-8"))
+                self.assertIn("archives/old/README", (v / "areas/area-x/README.md").read_text(encoding="utf-8"))
+
+    def test_copied_files_are_not_a_plan_of_the_new_project(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = self.archived(tmp)
+            c = self.open_from(v)
+            p = room.Project.load(c, "new")
+            self.assertEqual(room.check_plan_approval(c, p), 0)
+
+    def test_refuses_and_creates_nothing(self):
+        cases = {
+            "not archived": lambda v: shutil.rmtree(v / "archives/old"),
+            "not done": lambda v: (v / "archives/old/README.md").write_text("---\nstatus: active\narea: area-x\n---\n", encoding="utf-8"),
+            "other area": lambda v: (v / "archives/old/README.md").write_text("---\nstatus: done\narea: area-y\n---\n", encoding="utf-8"),
+            "nothing to copy": lambda v: (shutil.rmtree(v / "archives/old/ai/out"), shutil.rmtree(v / "archives/old/ai/work")),
+        }
+        for label, mutate in cases.items():
+            with self.subTest(label), tempfile.TemporaryDirectory() as tmp:
+                v = self.archived(tmp)
+                mutate(v)
+                with self.assertRaises(room.RoomError):
+                    self.open_from(v)
+                self.assertFalse((v / "projects/new").exists())
+
+
 class CloseTest(unittest.TestCase):
     def test_close_warns_and_proceeds_on_y_with_template_readme_and_no_close_md(self):
         with tempfile.TemporaryDirectory() as tmp:
