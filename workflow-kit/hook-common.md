@@ -80,6 +80,7 @@ H2 の見出しは名前だけにする（括弧の注記を付けない）。�
 |---|---|---|---|
 | `brief`（`brief-hook.md` の手順「事前確認」） | `review` | 前回の `review` から7日以上（前回の日付は、`[review]` で始まる最後のコミット。取り方は `review-hook.md` の手順「コミットする」） | 一度だけ |
 | `brief`（`brief-hook.md` の手順「事前確認」） | `review 消化` | Next Actions と Open Questions の合計が10件を超える | 一度だけ |
+| `brief`（`brief-hook.md` の手順「事前確認」） | `plan` | 部屋で `ai/work/plan/` が無い、または先頭が `status: 仮` | 一度だけ。勧めるだけで止めない |
 | `wrap`（報告の「ユーザーに求めること」） | `review` | 同上（7日以上） | 報告のたびに、条件を満たすとき |
 | `review`（入力 3 の警告の目安） | `integrate` | `exmem/inbox/` の未統合メモが5件以上 | 報告のたびに、条件を満たすとき |
 
@@ -90,6 +91,7 @@ H2 の見出しは名前だけにする（括弧の注記を付けない）。�
 | フック | 書く記録 | 手順 |
 |---|---|---|
 | `brief` | `events`: 質問ごとの行（`kind=interview`）、探索型でゴールが変わったとき（`kind=goal_change`） | 手順「記録する」 |
+| `plan` | なし | |
 | `wrap` | なし | |
 | `stock` | なし | |
 | `integrate` | なし | |

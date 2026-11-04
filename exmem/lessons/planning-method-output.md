@@ -9,7 +9,7 @@ aliases:
   - 計画の出力の型
   - 計画で始めて
   - 計画1の出力
-triggers: [計画, 6R, 憲章, WBS, マイルストーン, 計画で始めて, brief 計画, したい取り組み]
+triggers: [計画, 6R, 憲章, WBS, マイルストーン, 計画で始めて, brief 計画, plan, 計画を立てて, したい取り組み]
 created: 2026-10-28
 updated: 2026-10-28
 sources:
@@ -18,7 +18,7 @@ sources:
 
 # 計画の出力の型: 6R・憲章・成果物 WBS・マイルストーンの形と作り方の Must
 
-[[planning-method]] の、応答の形だけを切り出したノート。これから始める取り組みの目的とゴールを共有する計画を作るときに読む。欄の詳しい定義、置き場の表、既定値は `workflow-kit/brief-plan.md`(計画を作るときだけ読む。全文は11KB)。背景は元のノート(2026-10-28 に切り出した。`topics/token-cap/records/2026-10-28-brief-mode-load.md`)。
+[[planning-method]] の、応答の形だけを切り出したノート。これから始める取り組みの目的とゴールを共有する計画を作るときに読む。欄の詳しい定義、置き場の表、既定値は `workflow-kit/plan-fields.md`(計画を作るときだけ読む。全文は11KB)。背景は元のノート(2026-10-28 に切り出した。`topics/token-cap/records/2026-10-28-brief-mode-load.md`)。
 
 ## 作り方の Must（4つ）
 

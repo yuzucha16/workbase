@@ -675,7 +675,7 @@ updated: {today}
 
 <目的を1〜2文。所属 Area: [[areas/{area}/README|{area}]]>
 
-計画: `ai/work/plan/`（`brief 計画` の出力。先頭の `status: 仮 | 正式` と `approved:` で承認を示す。無ければ未作成）。完了条件・範囲外・未決は、ここ（6R）に書く。README には写さない
+計画: `ai/work/plan/`（`plan` の出力。先頭の `status: 仮 | 正式` と `approved:` で承認を示す。無ければ未作成）。完了条件・範囲外・未決は、ここ（6R）に書く。README には写さない
 
 開発リポジトリ（`dev` で git のコードを扱うとき）: 上の frontmatter に `repos:`（url、where、branch。書式は `workflow-kit/project-structure.md`）を足す。無ければこの行を消す。
 
@@ -847,7 +847,7 @@ def cmd_open(ctx, a):
         ctx.say(f"注意: 部屋（{p.distro}）がまだ無い。guides/howto/ai-room-setup.md の 3 章で作る")
     ctx.say(f"作った: projects/{a.name}（ai/ と _noai/）。README の <...> を埋める")
     if src:
-        ctx.say(f"{src} から {len(items)} ファイルを ai/in/from-{src}/ に写した（来歴は manifest。`brief 計画` が close.md と前の計画を読む）")
+        ctx.say(f"{src} から {len(items)} ファイルを ai/in/from-{src}/ に写した（来歴は manifest。`plan` が close.md と前の計画を読む）")
     if a.commit:  # 初期状態を、戻る起点としてコミットする（既定。--no-commit で省く）
         commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）", only=True,
                      trailers=room_trailers("open", a.area, a.name))

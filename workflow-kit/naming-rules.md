@@ -24,6 +24,7 @@
    | `-explain` | 理解ガイドが `exmem/lessons/` の同名のノートと重なるときの区別 | `guides/explain/` |
    | `-rules` | 手順書が従う規則 | `workflow-kit/` |
    | `-hook` | 合言葉の手順書 | `workflow-kit/` |
+   | `-fields` | 合言葉の手順書が読む、欄と手順の定義 | `workflow-kit/` |
 
 5. **日付**: `YYYY-MM-DD-` の接頭辞は、時点の記録（`records/` の中の、その日の調査・測定・案）だけに付ける。`records/` の索引・まとめ・型（`*-index` `*-record`）には付けない。知識（`exmem/lessons/` `guides/`）と規則には付けない。日付の後に主題の語を 1 つ以上置き、日付を除いても名前として成り立たせる（`2026-10-26-logbook-proposal` は可、`2026-10-26-proposal` は不可）。
 6. **版**: 名前に入れず、上書きして履歴は git に任せる。旧版と新版を並べる必要があるときだけ `-v2` を付ける。名前の一部になっている `-2`（`research-method-2`）は残す。

@@ -34,7 +34,7 @@ Project を終えるときの、部屋の AI の判断。人が頼んだとき�
 
 ## README 本文の下書きの書き方（部屋の中）
 
-Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入の `<…>` がある）なら、`brief` の最初に、人に断ってから下書きする。名前・Area・type は `room open` の引数で決まっているので、聞かない（判断基準は `project-structure.md` の「Project を立てる前の判断基準」）。
+Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入の `<…>` がある）なら、`plan` の最初に、人に断ってから下書きする。名前・Area・type は `room open` の引数で決まっているので、聞かない（判断基準は `project-structure.md` の「Project を立てる前の判断基準」）。
 
 1. **聞く**（選択式。答えが1つに定まるものは宣言する）: 主題（言語や方式など）、完了条件の種類、見直し日。`dev` の Project は、`brief-work-types.md` の「開発」の項目を、**実装の前に**ここで聞く。
 2. **下書きを書く**: `ai/work/plan/6r.md`（先頭に `status: 仮`）に、目的・完了条件・範囲外・未決を 6R として書く。README の目的・成果物は人が埋める（部屋の AI は README に書けない）ので、報告に 1〜2 文の案を添える。完了条件は、AI が具体案（成果物）を出し、ユーザーが承認してから書く（ユーザーが完了条件を自分で書いて渡したときは、その文を案として扱い、承認の言葉を得てから「ユーザー承認」を書く）。承認の前に「ユーザー承認: 日付」を書かない。既に `ai/work/plan/` に下書きがあれば、読んでから更新する。
@@ -74,7 +74,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 
 | 場面 | AI（部屋の中）が行う | 人（`room`）が行う | 受け渡しのファイル |
 |---|---|---|---|
-| `open`（合言葉なし） | 目的・完了条件の聞き取りと 6R の下書き（下の節） | `room open <名>`（ひな形）。README の目的・成果物は人が埋める | `ai/work/plan/6r.md`（`status: 仮`） |
+| `plan` | 目的・完了条件の聞き取りと 6R の下書き（下の節）、論点出し、憲章以降（任意） | `room open <名>`（ひな形）。README の目的・成果物は人が埋める | `ai/work/plan/6r.md`（`status: 仮`） |
 | `brief` | 開始インタビュー | `room start <名>`（チェック、写しの送付、マウント、起動。マスクは人が先に `room mask`） | `ai/ctx/`、`ai/in/` |
 | `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（works へのコミット。復元は人が `room restore`） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（`ai/out/deliverable/` を Area の成果物置き場へ、Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |

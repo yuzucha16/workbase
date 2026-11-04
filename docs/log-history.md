@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-04（`plan` フックの追加）
+- ユーザーの問い「brief と論点抽出・課題設定の関係」から、状態 1（`room open` 直後）と状態 2（`room start` 直後）の整理になり、状態 1 を `plan` に分けた（`decisions.md` 同日）。`brief-plan.md` を `plan-fields.md` に改名し、`plan-hook.md` を新設。確認: `check_hook_outline.py` が通った。
+- 起票: `guides/howto/` の triggers 索引化と、ライフサイクルの繋がりの明示（`log.md` の NA 5、別セッション）。
+
 ### 2026-11-04（review 消化）
 - 一部済（NA1）: ② `restore_project` の `_noai/final/` 上書き保護はユーザーが omit（今の仕組みでは final・map を使わないため。11-04）。① `repos/` の受け渡しは残す。
 - omit（NA1）: `repos/`(= works/repos/、ghq の root)の受け渡し(スナップショットと patch)は、env/ を使っても部屋に持ち込む場面がなく、必要が出ていないため omit(ユーザー、11-04)。必要になったら新しく起票する。

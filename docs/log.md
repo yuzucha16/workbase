@@ -5,7 +5,7 @@
 ## 状態
 
 - 経路: 受け皿 = トピック、入力 = `inbox.md`、見直し = `review`（記録 `docs/metrics/reviews.csv`、基準 `docs/alignment-baseline.md`、星取り `workflow-kit/token-matrix.md` は 11-01 に 110 点）。仕組みの決定は `review 消化` の3段で承認。仮決めは `【仮 〜日付】`。
-- やり方は `methods.md`。`brief 計画` は試験運用中。
+- やり方は `methods.md`。`plan` は試験運用中。
 - room: type は `dev` と `inv`。検証用の works は `mkworks --sub`（実機で確認済み）。11-02 の room 変更（boundary の 2 値、start の自動マスク・復元の廃止、stock --dst）の既存 works への適用は、11-03 に ee が実機で通した（既存の Area は internal の 1 つ。手順と止まった所は `log-history.md` の 11-03）。
 - works の git 追跡は許可リスト方式（10-29 決定。`decisions.md`）。
 - Area の改名は `room mv <旧> <新>`（旧 `rename-area`。11-02 作り直し。部屋は `wsl --export`/`--import` で改名、履歴は追わない。ee が実機で動作確認済み）。
@@ -24,6 +24,8 @@
 ## Next Actions
 
 4. **Area 側の運営の入口を決める（起票 11-04）**: ① Area の `ai/docs/inbox.md` の【案件】【決定】を Area の `decisions.md` に統合する「Area の AI」を動かす入口が無い（`room start` は Project しか開かない。Area の `decisions.md` も `init` は作らない）。② Area の終わり方（`archives/` へ移す契機と手順）が無い。方式は 11-04 に決定済み（状態はリンク、決定・知識は転記＋出典、Area の log.md は持たない。`decisions.md` 同日）。次回はここの決定から始める。残りは入口・decisions.md の置き場（`docs/` か `ai/docs/`）・終わり方で、決めるのは ee。調査は `notes/room-lifecycle/2026-11-04-current-flow.md`（プロジェクトの共有フォルダ）の 3-B。`room open --from` の案 C（Area に資産を置く）もこの入口が決まるまで見送り。
+
+5. **`guides/howto/` を triggers 索引の対象にするか、ライフサイクルの繋がりを明示する大局案を決める（起票 11-04）**: `ai-room-lifecycle.md` の前半の順（6R → 論点出し）は、`find_knowledge.py --triggers` に出ず、`brief` との紐づけも無かったため、文書の修正が横展開で漏れた。案: ① `guides/howto/` を索引の走査対象にする、② 前半の順の正本を 1 か所（`hooks.md` の連鎖）に置き、howto は指すだけにする、③ 新しいフックを足すときの点検（`hook-common.md` の「フックを足す・消すとき」）に、howto と triggers の確認を足す。別セッションで扱う（ユーザー）。
 
 期日のある項目は `due.md`。
 

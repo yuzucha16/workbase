@@ -4,6 +4,7 @@
 
 | 合言葉 | 別名（日本語） | 読むファイル | 寿命・時機 | 要点 |
 |---|---|---|---|---|
+| `plan` | 「計画を立てて」<br>「論点出し」「課題設定」＝論点出しだけ | `plan-hook.md`（手順と欄は `plan-fields.md`） | Project の方向性を決めるとき（`room open` の直後。計画が無い・`仮`） | 6R → 論点出し → 憲章・WBS・マイルストーン（任意）を `ai/work/plan/` に作る。承認は人。`brief` が一度だけ勧める。小規模では使わなくてよい（2026-11-04） |
 | `brief` | 「作業を始めて」 | `brief-hook.md` | セッションの開始 | 開始インタビュー。引数は持たない（2026-10-28）。出力の型は依頼の言葉で引く |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push（許可リストにあれば）を、AI が順序を固定して行う。部屋では、部屋の git へのコミットまで（push はしない） |
 | `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。部屋では下書きまで（`ai/out/stock/`）で、人が `room stock` で運ぶ。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
@@ -12,7 +13,7 @@
 | （常時） | | `docs-rules.md` | `docs/` を更新するとき | `docs/` の運用規則 |
 | （常時） | | `commit-push-rules.md`（push は `push-rules.md`、まれな場面は `commit-special.md`） | コミットの前（push の前は `push-rules.md`） | コミットと push の規則 |
 
-- 連鎖: `[brief → 作業 → wrap]×N`。`stock` と `integrate` は随時。works の作成と雛形の反映、Project の開始と終了は合言葉を持たず、人が `room mkworks` `room open` `room close` で行う（部屋の AI が書く `ai/out/close.md` の書き方は `room-context.md`）。トピックの終了は `topics/AGENTS.md`。
+- 連鎖: `[plan] → [brief → 作業 → wrap]×N`（`plan` は Project の始めと、方向が変わったとき。省いてよい）。`stock` と `integrate` は随時。works の作成と雛形の反映、Project の開始と終了は合言葉を持たず、人が `room mkworks` `room open` `room close` で行う（部屋の AI が書く `ai/out/close.md` の書き方は `room-context.md`）。トピックの終了は `topics/AGENTS.md`。
 - 全フックの共通規則（冒頭の定型、改善、承認、フックを足す・消すとき）は `hook-common.md`。
 - 上のファイルが読めない場合（`workbase` を clone していない PC など）は、記憶で代用せず、ユーザーに伝えて止まる。
 - ディレクトリ名: `exmem/knowledge/` は `exmem/lessons/` に、`cheatsheets/` は `guides/`（`howto/` `explain/` `quickref/`）に、2026-10-10 に改名した。履歴の中の旧名は、これで読み替える。
@@ -38,6 +39,7 @@
 
 | フック | works | workbase | dotfiles | room |
 |---|---|---|---|---|
+| `plan` | rw | rw | rw | rw |
 | `brief` | rw | rw | rw | rw |
 | `wrap` | rw | rw | rw | rw（部屋の git にコミット。works へのコミットは人の `room start` の回収） |
 | `stock` | w | rw | w | w |
