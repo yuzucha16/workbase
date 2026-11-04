@@ -6,6 +6,13 @@
 - 一部済（NA1）: ② `restore_project` の `_noai/final/` 上書き保護はユーザーが omit（今の仕組みでは final・map を使わないため。11-04）。① `repos/` の受け渡しは残す。
 - omit（NA1）: `repos/`(= works/repos/、ghq の root)の受け渡し(スナップショットと patch)は、env/ を使っても部屋に持ち込む場面がなく、必要が出ていないため omit(ユーザー、11-04)。必要になったら新しく起票する。
   - 元の項目: 【起票 11-04、期日 11-04】`repos/` の受け渡し（スナップショットと patch。未検証）の保留。`dev` の `env/` は実使用済み（11-04 ユーザー）。残りは、受け渡しが必要かどうかの判断（担当: ユーザー）
+
+### 2026-11-04（NA 4: Area の log と inbox の当初案、Area が Project の情報を持つ方式を決定）
+- ユーザーの問い「Area の log は当初どう使う想定だったか。inbox も」に、10-06〜11-03 の経緯で答えた（`notes/area-ops/2026-11-04-area-log-inbox-origin.md`、project files）。log は用途が一度も決まらず、inbox は 10-12 の部屋の決定 #5 の郵便受け（any → inbox → decisions の 1 本）。
+- 決定（ユーザー）: 状態はリンク、決定・知識は転記＋出典、Area の `docs/log.md` は持たない（`decisions.md` 同日、31f1612）。
+- 残り（`log.md` の NA 4）: Area の AI の入口、`decisions.md` の置き場（`docs/` か `ai/docs/`）、Area の終わり方。次回は、この 3 つの決定から始める（ユーザー）。
+- 漏れの確認: 閉じ済みなのに残る項目は見つからなかった。
+
 ### 2026-11-04（review 消化: NA 1 を閉じ、NA 2・3・5 を due.md に移した）
 - NA 1（`clean --path` の Tab 補完の実機確認と採否）: 済。ユーザーが PC1 で確かめ、問題なく動いたので閉じた（11-04、ユーザー）。採るので `room-completion.ps1` と dotfiles の 4 行は残す。
 - NA 2（`room open --from` の実機確認）→ `due.md` の 11-11、NA 5（保留 2 件）→ 11-12、NA 3（論点出しの型 v4 の確認）→ 11-13 に移し、log から消した（ユーザーの指示。期日は 11-11 以降で 1 件ずつ別の日）。
