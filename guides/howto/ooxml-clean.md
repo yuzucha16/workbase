@@ -18,7 +18,7 @@ tags:
 | やりたいこと | コマンド |
 |---|---|
 | 残っているものを一覧にする（ファイルは変えない） | `uv run --script cleankit.py check <ファイル>`（報告は `<ファイルのフォルダ>/tmp/`。`--report <報告.md>` で変えられる） |
-| 既定の強さで掃除する | `uv run --script cleankit.py clean <ファイル> <出力先>` |
+| 既定の強さで掃除する | `uv run --script cleankit.py clean <ファイル>`（入力の位置に置き、元は `tmp/<名前>_org1.xlsx` へ。`<出力先>` を足すと別ファイルに書く） |
 | 最も強く掃除する | `uv run --script cleankit.py clean <ファイル> <出力先> --profile strict` |
 | strict から画像だけ残す | `… --profile strict --allow images` |
 | 非表示の行・列の値だけ空にする | `… --also hidden-rows,hidden-cols` |

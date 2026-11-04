@@ -8,6 +8,7 @@
 - 決めたこと（ユーザーの依頼）: `cleankit.py check` と `clean` の報告（`.check-report.md` / `.clean-report.md`）の既定を、入力（原本）の隣の `tmp/` にする。room clean の `_noai/raw/tmp/`・`_noai/source/tmp/` と同じ考え。`--report` で変えられる。
 - 理由: check の報告がカレントに出て探しにくく、room clean と置き場が違った。clean は出力の隣だったので、AI に渡すフォルダに報告が混ざりえた。
 - 追加の決定（同日、ユーザー）: ① 報告のファイル名は `<名前>-report.md`、見出し（1 つ目の大項目）の末尾に `(clean)` か `(check)`。② room clean の報告に、金額等の形と mask.toml の語の点検（`sensitive=True`）を足す（止めない）。③ cleankit clean も、整合の問題があれば出力を書かず 2 を返す（報告は書く）。
+- 追加の決定（同日、ユーザー）: `cleankit clean <ファイル>` は出力先を省ける。省くと入力の位置に掃除したファイルを置き、元は入力の隣の `tmp/<名前>_org<番号><拡張子>`（番号は 1 から空いている最初）に退避する。退避を確かめてから置換し、整合の問題があれば何も動かさない。出力先を付けた従来の呼び方は残す。
 - room clean は cleankit を読み込んで同じ関数を呼ぶ。外側の差（強さの選択、終了コード、boundary）は役割の違いとして揃えない。
 
 ### 【room】計画（6R 等）は `ai/work/plan/` に置いたまま、承認は `status` と `approved` で示し、`start` が変更を検知する（2026-11-03）

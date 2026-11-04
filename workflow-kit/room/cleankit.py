@@ -9,7 +9,7 @@
 考え方と残り方の一覧は mask-spec.md の「クリーン化」。
 
   python cleankit.py check <ファイル> [--report <md>]
-  python cleankit.py clean <ファイル> <出力> [--profile standard|strict] [--allow <種類,...>] [--keep <動作,...>] [--also <動作,...>] [--report <md>] [--force]
+  python cleankit.py clean <ファイル> [<出力>] [--profile standard|strict] [--allow <種類,...>] [--keep <動作,...>] [--also <動作,...>] [--report <md>] [--force]
   python cleankit.py profiles
 
 check: 残っている情報を一覧にする（既知の残り方に加え、見えている文字と固定語に当たらない文字を unseen-text として出す）。clean: 既定の動作（CLEAN_ACTIONS）で取り除いた別ファイルを書き、出力をもう一度点検する。
@@ -1151,6 +1151,16 @@ def guard_outputs(*paths):
             raise CleanError(f"出力先がこのリポジトリ（公開）の中: {p}。_noai/ など、リポジトリの外か追跡しない場所を指定する")
 
 
+def next_backup(src):
+    """元のファイルの退避先: 入力の隣の tmp/<名前>_org<番号><拡張子>。番号は 1 から、空いている最初のもの。"""
+    n = 1
+    while True:
+        b = src.parent / "tmp" / f"{src.stem}_org{n}{src.suffix}"
+        if not b.exists():
+            return b
+        n += 1
+
+
 def default_report(src, kind):
     """報告の既定の置き場: 入力（原本）の隣の tmp/。room clean（_noai/raw/tmp/、_noai/source/tmp/）と揃える（2026-11-04 ユーザーの依頼）。"""
     return src.parent / "tmp" / f"{src.name}-report.md"
@@ -1175,7 +1185,7 @@ def main(argv=None):
     c.add_argument("--terms", help="mask.toml のパス。[terms.*] の語が見えている文字にあれば警告する（金額・メール・電話・割合の形は常に警告する）")
     k = sub.add_parser("clean", help="掃除した別ファイルを書く")
     k.add_argument("file")
-    k.add_argument("out", help="出力のファイル、またはディレクトリ")
+    k.add_argument("out", nargs="?", help="出力のファイル、またはディレクトリ。省くと入力の位置に掃除したファイルを置き、元のファイルは入力の隣の tmp/<名前>_org<番号><拡張子> に退避する（番号は 1 から順に採番）")
     k.add_argument("--keep", default="", help="外さない動作（カンマ区切り）: " + ", ".join(CLEAN_ACTIONS))
     k.add_argument("--also", default="", help="既定では行わない動作を足す（カンマ区切り）: " + ", ".join(OPTIONAL_ACTIONS))
     k.add_argument("--profile", default="strict", choices=list(PROFILES), help="掃除の強さ: " + "; ".join(f"{n} = {d}" for n, (d, _x) in PROFILES.items()))
@@ -1216,15 +1226,19 @@ def main(argv=None):
         bad = keep - set(CLEAN_ACTIONS)
         if bad:
             raise CleanError(f"知らない動作: {', '.join(sorted(bad))}")
-        out = Path(a.out)
-        if out.is_dir() or out.suffix.lower() not in SUPPORTED:
-            out = out / src.name  # 拡張子が対象の形式でなければ、ディレクトリとみなす
-        if out.resolve() == src.resolve():
-            raise CleanError("出力が元のファイルと同じ（元のファイルは変えない）")
-        if out.exists() and not a.force:
-            raise CleanError(f"出力が既にある: {out}（--force で上書き）")
+        backup = None
+        if a.out is None:  # 入力の位置に置く。元のファイルは tmp/ へ退避する
+            out, backup = src, next_backup(src)
+        else:
+            out = Path(a.out)
+            if out.is_dir() or out.suffix.lower() not in SUPPORTED:
+                out = out / src.name  # 拡張子が対象の形式でなければ、ディレクトリとみなす
+            if out.resolve() == src.resolve():
+                raise CleanError("出力が元のファイルと同じ（出力を省くと、元を tmp/ に退避して入力の位置に置く）")
+            if out.exists() and not a.force:
+                raise CleanError(f"出力が既にある: {out}（--force で上書き）")
         rep = Path(a.report) if a.report else default_report(src, "clean")
-        guard_outputs(out, rep)
+        guard_outputs(*(x for x in (out, backup, rep) if x is not None))
         also = {x.strip() for x in a.also.split(",") if x.strip()}
         if also - set(OPTIONAL_ACTIONS):
             raise CleanError(f"知らない動作: {', '.join(sorted(also - set(OPTIONAL_ACTIONS)))}")
@@ -1243,7 +1257,17 @@ def main(argv=None):
             print(f"止めた: 掃除の出力に整合の問題 {len(probs)} 件。出力は書いていない。報告: {rep}（実データの抜粋が載る。AI に見せない）", file=sys.stderr)
             return 2
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_bytes(cleaned)
+        if backup is not None:  # 退避を先に書き、確かめてから入力の位置を置き換える（途中で止まっても元は残る）
+            backup.parent.mkdir(parents=True, exist_ok=True)
+            backup.write_bytes(data)
+            if backup.read_bytes() != data:
+                raise CleanError(f"退避を書けなかった: {backup}（元のファイルは変えていない）")
+            tmp_new = out.with_name(out.name + ".new")
+            tmp_new.write_bytes(cleaned)
+            tmp_new.replace(out)
+            print(f"元のファイルを退避: {backup}（実データが残る。AI に見せない）")
+        else:
+            out.write_bytes(cleaned)
         print(f"掃除: {src.name} → {out}（{len(log)} 項目）")
         print(f"残り: {len(after)} 件（{summary(after)}）")
         if probs:

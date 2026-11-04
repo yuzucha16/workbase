@@ -320,6 +320,37 @@ class XlsxTest(unittest.TestCase):
             self.assertEqual(ck.main(["check", str(Path(d) / "a.docx")]), 2)
 
 
+class InPlaceTest(unittest.TestCase):
+    def test_in_place_backs_up_original(self):
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "dummy.xlsx"
+            data = build_xlsx()
+            src.write_bytes(data)
+            ck.main(["clean", str(src)])
+            self.assertEqual((Path(d) / "tmp" / "dummy_org1.xlsx").read_bytes(), data)  # 元は tmp/ に退避
+            self.assertNotEqual(src.read_bytes(), data)  # 入力の位置は掃除済み
+            self.assertTrue((Path(d) / "tmp" / "dummy.xlsx-report.md").exists())
+            self.assertFalse((Path(d) / "dummy.xlsx.new").exists())
+            ck.main(["clean", str(src)])  # もう一度: 番号が進む（掃除済みのものが _org2 になる）
+            self.assertTrue((Path(d) / "tmp" / "dummy_org2.xlsx").exists())
+            self.assertEqual((Path(d) / "tmp" / "dummy_org1.xlsx").read_bytes(), data)
+
+    def test_integrity_failure_leaves_original(self):
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "dummy.xlsx"
+            data = build_xlsx()
+            src.write_bytes(data)
+            orig = ck.integrity
+            ck.integrity = lambda x: ["dummy: 壊れている"]
+            try:
+                rc = ck.main(["clean", str(src)])
+            finally:
+                ck.integrity = orig
+            self.assertEqual(rc, 2)
+            self.assertEqual(src.read_bytes(), data)
+            self.assertFalse((Path(d) / "tmp" / "dummy_org1.xlsx").exists())
+
+
 class IntegrityStopTest(unittest.TestCase):
     def test_no_output_when_integrity_fails(self):
         with tempfile.TemporaryDirectory() as d:
