@@ -152,7 +152,7 @@ Area に溜めた知識・決定・経緯を、別の Project の部屋の AI �
 **手順2. Area に運ぶ**（人が実行）:
 
 ```powershell
-uv run room.py stock pilot2-3 --dst area     # 一覧を確認して y（--yes で省く）。運んだ下書きは ai/out/stock/ から消える（move）
+uv run room.py stock pilot2-3 [--dst area]   # --dst を省くと scope: に従って kit と area の両方へ。 一覧を確認して y（--yes で省く）。運んだ下書きは ai/out/stock/ から消える（move）
 Get-ChildItem $HOME\works\areas\pilot2\ai\knowledge
 ```
 

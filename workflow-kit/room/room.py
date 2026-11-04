@@ -2167,15 +2167,35 @@ AREA_STOCK_DIRS = ("knowledge", "docs")  # --dst area で運べる、dest: に�
 def cmd_stock(ctx, a):
     """知見の下書きを、人の確認を経て行き先へ運ぶ（move: 運び先を確かめてから ai/out/stock/ の元を消す。運ばなかった下書きは残る）。--dst kit は exmem/inbox/、--dst area は Area の ai/ 配下。行き先を省くと止まる。コミットしない。"""
     dst = getattr(a, "dst", None)
+    if dst is None:
+        return stock_all(ctx, a)
     if dst not in STOCK_DSTS:
-        raise RoomError("--dst が要る: kit（公開の共有知。ai/out/stock/ → exmem/inbox/）か "
-                        "area（この Area の知識・経緯。ai/out/stock/ の scope: area → areas/<Area>/ai/）")
+        raise RoomError(f"--dst は kit か area（{dst!r} は不可）。省くと、各下書きの scope: に従って両方へ運ぶ")
     if dst == "area":
         return stock_to_area(ctx, a)
     return stock_to_kit(ctx, a)
 
 
-def stock_to_area(ctx, a):
+def stock_all(ctx, a):
+    """--dst を省いたとき: 各下書きの `scope:` に従う（area → Area の ai/、public → exmem/inbox/）。
+    scope が無い・不明な下書きが 1 つでもあれば、何も運ばず止まる（公開側へ誤って運ばないため）。どちらもコミット・push しない。"""
+    p = Project.load(ctx, a.name)
+    src = p.ai / "out" / "stock"
+    drafts = sorted(src.glob("*.md")) if src.is_dir() else []
+    if not drafts:
+        ctx.say("運ぶ下書きは無い（ai/out/stock/*.md）")
+        return
+    bad = [f.name for f in drafts if read_frontmatter(f).get("scope", "") not in ("public", "area")]
+    if bad:
+        raise RoomError("scope: が無い、または public / area ではない下書きがある。何も運んでいない（部屋の AI に scope: を書かせる）:\n  " + "\n  ".join(bad))
+    kinds = {read_frontmatter(f).get("scope") for f in drafts}
+    if "area" in kinds:
+        stock_to_area(ctx, a, quiet=True)
+    if "public" in kinds:
+        stock_to_kit(ctx, a, quiet=True)
+
+
+def stock_to_area(ctx, a, quiet=False):
     """ai/out/stock/*.md のうち `scope: area` の下書きを、areas/<Area>/ai/<dest>/ へ運ぶ（dest: は knowledge か docs。既定は knowledge）。external・internal 共通。
     運ぶ前に cleankit の検出（金額・メール・電話などの形、mask.toml の語）を対象の全ファイルに通し、1 つでも当たれば何も運ばず止まる。"""
     p = Project.load(ctx, a.name)
@@ -2194,7 +2214,8 @@ def stock_to_area(ctx, a):
             raise RoomError(f"{f.name}: dest: は {' か '.join(AREA_STOCK_DIRS)}（{dest!r} は不可）。何も運んでいない")
         files.append((f, dest))
     for n in skipped:
-        ctx.say(f"  運ばない（scope: area ではない。公開向けなら --dst kit）: {n}")
+        if not quiet:
+            ctx.say(f"  運ばない（scope: area ではない。公開向けなら --dst kit）: {n}")
     if not files:
         ctx.say("運ぶ下書きは無い（ai/out/stock/*.md の scope: area）")
         return
@@ -2239,7 +2260,7 @@ def stock_to_area(ctx, a):
     ctx.say(f"{delivered} 件を運んだ")
 
 
-def stock_to_kit(ctx, a):
+def stock_to_kit(ctx, a, quiet=False):
     """ai/out/stock/*.md（部屋の AI の【汎用】の下書き）を、人の確認を経て resources/exmem/inbox/ に運ぶ（move: 運んだら元を消す）。コミットしない（stock-hook.md の方針）。"""
     p = Project.load(ctx, a.name)
     src = p.ai / "out" / "stock"
@@ -2269,7 +2290,8 @@ def stock_to_kit(ctx, a):
             continue
         meta = read_frontmatter(f)
         if meta.get("scope", "") == "area":
-            ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。同じ下書きを `room stock --dst area` で運ぶ）: {f.name}")
+            if not quiet:
+                ctx.say(f"  運ばない（scope: area は Area の知識。公開の exmem/inbox に入れない。同じ下書きを `room stock --dst area` で運ぶ）: {f.name}")
             continue
         base, observed = meta.get("base_commit", ""), meta.get("observed", "")
         if not base or not observed:
@@ -3233,8 +3255,8 @@ def build_parser():
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
-    st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
-    st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
+    st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst を省くと各下書きの scope: に従って両方へ運ぶ。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
+    st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと各下書きの scope: に従って両方へ運ぶ。scope: が無い・不明なら止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="確認を省く（印・対応表・cleankit の点検は行う）")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")

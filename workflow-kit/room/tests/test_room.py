@@ -1941,8 +1941,27 @@ class StockTest(unittest.TestCase):
     def test_dst_is_required(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, r, base = self.setup(tmp)
-            with self.assertRaises(room.RoomError):
+            p = v / "projects/proj-a"
+            (p / "ai/out/stock").mkdir(parents=True)
+            (p / "ai/out/stock/nos.md").write_text("---\ntitle: x\n---\nx\n", encoding="utf-8")
+            with self.assertRaises(room.RoomError):  # scope: が無い下書きがあれば、何も運ばず止まる
                 room.cmd_stock(c, self.ns(dst=None))
+            self.assertTrue((p / "ai/out/stock/nos.md").exists())
+
+    def test_omitted_dst_follows_scope_and_never_commits(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, r, base = self.setup(tmp)
+            p = v / "projects/proj-a"
+            (p / "ai/out/stock").mkdir(parents=True)
+            pub = self.DRAFT.format(base=base).replace("type: inbox\n", "type: inbox\nscope: public\n")
+            (p / "ai/out/stock/2026-10-12-topic-a.md").write_text(pub, encoding="utf-8")
+            (p / "ai/out/stock/area-note.md").write_text("---\nscope: area\n---\n# 決定\n", encoding="utf-8")
+            head = subprocess.run(["git", "-C", str(r), "rev-parse", "HEAD"], capture_output=True, text=True).stdout
+            room.cmd_stock(c, self.ns(dst=None))
+            self.assertEqual(len(list((r / "exmem/inbox").glob("*.md"))), 1)
+            self.assertTrue((v / "areas/area-x/ai/knowledge/area-note.md").exists())
+            self.assertEqual(list((p / "ai/out/stock").glob("*.md")), [])
+            self.assertEqual(head, subprocess.run(["git", "-C", str(r), "rev-parse", "HEAD"], capture_output=True, text=True).stdout)
 
     def test_delivers_without_stale_mark_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as tmp:
