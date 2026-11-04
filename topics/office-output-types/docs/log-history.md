@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-04（markdown → pptx の叩き台。道具の調査）
+- 経緯: NA が実機待ちだけになったため、ee が markdown → pptx を AI 活用に組み込む叩き台を選んだ。Marp とその類似ツールの比較と、2026 年の流行を調査した。
+- 結果: Marp と Slidev の通常の pptx は画像。Quarto は編集できる pptx で、雛形を使える。ee の決定で主は Quarto、副は Marp（`decisions.md`）。理解ガイドを `guides/explain/markdown-to-pptx-quarto-explain.md` に出力し、`guides-index.md` に足した。
+- 未確認: どの道具も実機は未試験。Quarto の部屋への入れ方、Chromium の検出、日本語の崩れ（NA 5）。
+
 ### 2026-11-02（公開 pptx 4 つの試行を取り下げた）
 - omit（NA1）: ユーザーの方針転換(設計書風・組織目標風を AI に入力できなくなった)で、NA1 を omit。`decisions.md` の同日の項。テキスト出力の型の試し方は Area の internal/external の範囲で決め直す(未定)。公開 pptx 4 つの試行の元の記述は 10-30 の `decisions.md` の項に残る。
   - 元の項目: （omit 2026-11-02。公開 pptx 4 つの試行は、設計書・組織目標の類を AI に入力できなくなったため取り下げ。`decisions.md`）

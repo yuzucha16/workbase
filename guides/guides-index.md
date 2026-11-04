@@ -60,6 +60,7 @@ updated: 2026-10-28
 | 部屋の中で、Markdown の HTML 化、mermaid の画像出力、xlsx の変換と再計算をしたい。入っている道具と、使い方（`room-mmdc` など）を思い出す | [[ai-room-convert-tools-explain#3. v1 で入れたもの]] | 理解ガイド |
 | Windows が要る実行（pwsh、Excel 固有の機能）を、AI がスクリプトを作り人が 1 件ずつ実行する形にする案（`room run`）と、その境界への影響を思い出す | [[ai-room-convert-tools-explain#7. room run の案（未実装）]] | 理解ガイド |
 | 部屋の Chromium が起動しない、PDF の漢字の字形が中国式になる、日本語が化ける、などで困った | [[ai-room-convert-tools-explain#5. 実機で分かったこと（PC2、2026-10-20）]] | 理解ガイド |
+| Markdown から pptx を作る道具（Quarto 主・Marp 副）の違いと、編集できる pptx にする理由、AI 活用への組み込み方を思い出す | [[markdown-to-pptx-quarto-explain]] | 理解ガイド |
 
 ### 仕組みを見直す
 
@@ -101,7 +102,7 @@ updated: 2026-10-28
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
 | 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-lifecycle]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[ai-room-mask-summary]]、[[room-github-deploy-key-setup]]、[[bedrock-first-hello]]、[[claude-usage-report]]、[[ooxml-clean]]、[[works-gitignore-allowlist-migration]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools-explain]]、[[ai-room-data-layout-explain]]、[[ai-room-concurrent-start-explain]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools-explain]]、[[ai-room-data-layout-explain]]、[[ai-room-concurrent-start-explain]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]]、[[markdown-to-pptx-quarto-explain]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新
