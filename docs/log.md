@@ -21,6 +21,8 @@
 
 ## Next Actions
 
+1. **`clean --path` の Tab 補完の実機確認と採否（起票 11-04）**: PC1 で workbase と dotfiles を pull し、新しい PowerShell で `uv run room.py clean <Project> --path ` の Tab が `_noai/source/` の中を出すか（フォルダ単位で降りられるか、`tmp/` が出ないか、日本語・空白のある名前が引用符つきで入るか）を見る。pwsh では未確認。2〜3 日使って、採るか、プロファイルが遅くなる件も含めて決める（ee、11-04）。採らないなら `room-completion.ps1` と dotfiles の 4 行を外す。
+
 1. **論点出しの型 v4 の実作業での確認（起票 11-03）**: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。
 
 2. **room の成果物の Area への書き出しの実機確認（起票 11-04）**: `clean` だけの Project（マスクしていない）で `ai/out/deliverable/` にファイルを置き、① `room restore <名>` と ② `room close <名>` が、Area の `_noai/deliverable/<Project>/` に書くかを見る。マスクした Project は実名に戻って書かれるか、Area 側を人が変えたあとは何も書かずに止まるか（close は何も変えずに止まる）も見る。実機でしか確かめられない。

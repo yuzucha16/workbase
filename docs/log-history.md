@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-04（room clean --path の Tab 補完を作った）
+- ユーザーの依頼: `--path`（Area の `_noai/source/` からの相対パス）を Tab で補完したい。コピペが手間。`--path` は `start` でなく `clean` にある（訂正して回答）。
+- 案を 3 つ出し、ユーザーが案 1（PowerShell の補完関数。追加インストール不要）を選んだ。ターミナルが遅くなる懸念があり、2〜3 日使って正式に判断する（ユーザー）。
+- 実装: `workflow-kit/room/room-completion.ps1`（cc395aa）と README の節。dotfiles の `windows/powershell/profile.ps1` から `$env:WFKIT_DIR` 経由で読み込む（dotfiles 72f06ff、8693e77。push 済み）。作った環境に pwsh が無く、動作は未確認。
 ### 2026-11-04（cleankit の報告の置き場を room clean に揃えた）
 - ユーザーの依頼: room clean と cleankit clean / check の関係を確かめ、差をなくしたい。cleankit check の報告がカレントに出るので、room clean と同じ tmp/ にしたい。
 - 分かったこと: room clean は cleankit を読み込んで同じ関数を呼ぶ（掃除の中身は同じ、strict 固定）。差は外側（入出力、強さの選択、報告の置き場、整合の問題時に出力を書くか、終了コード、boundary）。差の表は `notes/cleankit-room-align/2026-11-04-diff.md`（プロジェクトの共有フォルダ）。
