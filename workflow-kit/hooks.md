@@ -25,7 +25,7 @@
 |---|---|
 | `room mkworks` | works のトップの作成（PC に1回）と、雛形の変更の反映（`--update`） |
 | `room open` / `start` / `close` | Project のひな形、起動の準備（写しの送付、マウント）と回収（works へのコミット）、Area への引き渡しと `archives/` への移動。マスク・復元は別コマンド（`mask` `restore`。`start` は自動で行わない） |
-| `room stock` | 部屋の AI の `stock` の下書きを、人が確認して運ぶ（move: 運んだら `ai/out/stock/` の元を消す。`--dst` を省くと `scope:` に従って両方）。`--dst kit`: `ai/out/stock/` → `exmem/inbox/`。`--dst area`（external・internal 共通）: `scope: area` の下書き → `areas/<Area>/ai/`（cleankit の点検が関門） |
+| `room stock` | 部屋の AI の `stock` の下書きを運ぶ（1 件ごとの確認は無い。運んだ後に表を出す。move: 運んだら `ai/out/stock/` の元を消す。`--dst` を省くと `scope:` に従って両方）。`--dst kit`: `ai/out/stock/` → `exmem/inbox/`。`--dst area`（external・internal 共通）: `scope: area` の下書き → `areas/<Area>/ai/`（cleankit の点検が関門） |
 | `room readme` | AI の下書き（`ai/out/readme-draft.md`）を README に反映する |
 
 上のほかのコマンド（`init` `mask` `restore` `umount` `aws-key` `shell` `reap` `mv`）は、フックと対にならない。`room/README.md` を見る（この表に写さない）。

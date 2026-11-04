@@ -1747,13 +1747,16 @@ class StockAreaTest(unittest.TestCase):
             self.assertTrue((p / "ai/out/stock/pub.md").exists())  # scope 違いは運ばず残す
             self.assertTrue((p / "ai/out/stock/a.md").exists())  # 衝突で運ばなかったものは残す
 
-    def test_declined_draft_stays(self):
+    def test_no_prompt_and_table_after_move(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.setup(tmp)
             self.put(p, "a.md", "x\n")
-            with mock.patch("builtins.input", return_value="n"):
+            self.put(p, "b.md", "y\n", dest="docs")
+            with mock.patch("builtins.input", side_effect=AssertionError("確認を聞かない")):
                 room.cmd_stock(c, self.ns(yes=False))
-            self.assertTrue((p / "ai/out/stock/a.md").exists())
+            self.assertFalse((p / "ai/out/stock/a.md").exists())
+            self.assertIn("| a.md | areas/area-x/ai/knowledge/a.md |  |", c.msgs)
+            self.assertIn("| b.md | areas/area-x/ai/docs/b.md |  |", c.msgs)
 
     def test_leftover_already_in_area_is_removed(self):
         with tempfile.TemporaryDirectory() as tmp:

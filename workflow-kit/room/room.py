@@ -2165,16 +2165,28 @@ AREA_STOCK_DIRS = ("knowledge", "docs")  # --dst area で運べる、dest: に�
 
 
 def cmd_stock(ctx, a):
-    """知見の下書きを、人の確認を経て行き先へ運ぶ（move: 運び先を確かめてから ai/out/stock/ の元を消す。運ばなかった下書きは残る）。--dst kit は exmem/inbox/、--dst area は Area の ai/ 配下。行き先を省くと止まる。コミットしない。"""
+    """知見の下書きを、点検を経て行き先へ運ぶ（確認の問いは出さない。運んだ後に表で示す。move: 運び先を確かめてから ai/out/stock/ の元を消す。運ばなかった下書きは残る）。--dst kit は exmem/inbox/、--dst area は Area の ai/ 配下。行き先を省くと止まる。コミットしない。"""
     dst = getattr(a, "dst", None)
     if dst is None:
-        return stock_all(ctx, a)
-    if dst not in STOCK_DSTS:
+        rows = stock_all(ctx, a)
+    elif dst not in STOCK_DSTS:
         raise RoomError(f"--dst は kit か area（{dst!r} は不可）。省くと、各下書きの scope: に従って両方へ運ぶ")
-    if dst == "area":
-        return stock_to_area(ctx, a)
-    return stock_to_kit(ctx, a)
+    elif dst == "area":
+        rows = stock_to_area(ctx, a)
+    else:
+        rows = stock_to_kit(ctx, a)
+    print_stock_table(ctx, rows)
 
+
+def print_stock_table(ctx, rows):
+    """運んだ後に、ファイル名と移動先を表で出す（move なので元は消えている。確認の問いは出さない: 2026-11-04 ee の決定）。"""
+    if not rows:
+        return
+    ctx.say("\n運んだもの（移動元は消した）:")
+    ctx.say("| ファイル | 移動先 | 備考 |")
+    ctx.say("|---|---|---|")
+    for name, to, note in rows:
+        ctx.say(f"| {name} | {to} | {note} |")
 
 def stock_all(ctx, a):
     """--dst を省いたとき: 各下書きの `scope:` に従う（area → Area の ai/、public → exmem/inbox/）。
@@ -2184,15 +2196,17 @@ def stock_all(ctx, a):
     drafts = sorted(src.glob("*.md")) if src.is_dir() else []
     if not drafts:
         ctx.say("運ぶ下書きは無い（ai/out/stock/*.md）")
-        return
+        return []
     bad = [f.name for f in drafts if read_frontmatter(f).get("scope", "") not in ("public", "area")]
     if bad:
         raise RoomError("scope: が無い、または public / area ではない下書きがある。何も運んでいない（部屋の AI に scope: を書かせる）:\n  " + "\n  ".join(bad))
     kinds = {read_frontmatter(f).get("scope") for f in drafts}
+    rows = []
     if "area" in kinds:
-        stock_to_area(ctx, a, quiet=True)
+        rows += stock_to_area(ctx, a, quiet=True)
     if "public" in kinds:
-        stock_to_kit(ctx, a, quiet=True)
+        rows += stock_to_kit(ctx, a, quiet=True)
+    return rows
 
 
 def stock_to_area(ctx, a, quiet=False):
@@ -2218,7 +2232,7 @@ def stock_to_area(ctx, a, quiet=False):
             ctx.say(f"  運ばない（scope: area ではない。公開向けなら --dst kit）: {n}")
     if not files:
         ctx.say("運ぶ下書きは無い（ai/out/stock/*.md の scope: area）")
-        return
+        return []
     if not p.area_dir.is_dir():
         raise RoomError(f"Area が無い: {p.area_dir}")
     dest_root = p.area_dir / "ai"
@@ -2231,6 +2245,7 @@ def stock_to_area(ctx, a, quiet=False):
     man = load_manifest(p)
     sent = man.setdefault("area_stock", {})
     delivered = 0
+    rows = []
     for f, dest in files:
         rel = f"{dest}/{f.name}"
         raw = f.read_bytes().replace(b"\r\n", b"\n")
@@ -2245,19 +2260,17 @@ def stock_to_area(ctx, a, quiet=False):
             if sent.get(rel, {}).get("sha256") != cur:
                 ctx.say(f"  運ばない（Area の ai/{rel} は、前回運んだ後に人が変えた、または運んだ記録が無い。人が確認して消すか、名前を変える）")
                 continue
-        ctx.say(f"  {rel}" + ("（上書き: 前回運んだ版から更新）" if dst.exists() else "（新規）"))
-        if not a.yes and input(f"    areas/{p.area}/ai/ に運ぶか（運んだら元は消す） [y/N]: ").strip().lower() != "y":
-            ctx.say("    運ばなかった")
-            continue
+        existed = dst.exists()
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_bytes(raw)
         sent[rel] = {"sha256": digest, "delivered": ctx.now(), "src": f.name}
         save_manifest(p, man)
         delivered += 1
-        ctx.say(f"    運んだ: areas/{p.area}/ai/{rel}（コミットしていない）")
+        rows.append((f.name, f"areas/{p.area}/ai/{rel}", "上書き" if existed else ""))
         stock_remove_source(ctx, f, dst, raw)
     save_manifest(p, man)
     ctx.say(f"{delivered} 件を運んだ")
+    return rows
 
 
 def stock_to_kit(ctx, a, quiet=False):
@@ -2267,7 +2280,7 @@ def stock_to_kit(ctx, a, quiet=False):
     drafts = sorted(f for f in src.glob("*.md")) if src.exists() else []
     if not drafts:
         ctx.say("運ぶ下書きは無い（ai/out/stock/*.md）")
-        return
+        return []
     inbox = share_root(ctx) / "exmem" / "inbox"
     if not inbox.is_dir():
         raise RoomError(f"運び先が無い: {inbox}")
@@ -2276,6 +2289,7 @@ def stock_to_kit(ctx, a, quiet=False):
     man = load_manifest(p)
     sent = man.setdefault("stock", {})
     delivered = 0
+    rows = []
     for f in drafts:
         raw = f.read_bytes()
         digest = hashlib.sha256(raw).hexdigest()
@@ -2316,10 +2330,6 @@ def stock_to_kit(ctx, a, quiet=False):
         else:
             stale = f"統合先の候補が特定できない（lessons の変更 {len(changed)} 件）" if changed else ""
         title = meta.get("title", f.name)
-        ctx.say(f"  {f.name}: {title}" + (f"\n    印: 基準が古い可能性 — {stale}" if stale else ""))
-        if not a.yes and input("    exmem/inbox に運ぶか（運んだら元は消す） [y/N]: ").strip().lower() != "y":
-            ctx.say("    運ばなかった")
-            continue
         if stale:
             text = update_frontmatter(text, {"base_stale": f'"{stale}"'})
         dst = inbox / f.name
@@ -2331,10 +2341,11 @@ def stock_to_kit(ctx, a, quiet=False):
         sent[f.name] = {"sha256": digest, "delivered": ctx.now(), "inbox": dst.name, "base_commit": base, "stale": bool(stale)}
         save_manifest(p, man)
         delivered += 1
-        ctx.say(f"    運んだ: exmem/inbox/{dst.name}（未追跡のまま。点検: check-inbox.ps1）")
+        rows.append((f.name, f"exmem/inbox/{dst.name}", f"基準が古い可能性: {stale}" if stale else ""))
         stock_remove_source(ctx, f, dst, text.encode("utf-8"))
     save_manifest(p, man)
-    ctx.say(f"{delivered} 件を運んだ")
+    ctx.say(f"{delivered} 件を運んだ（exmem/inbox は未追跡のまま。点検: check-inbox.ps1）")
+    return rows
 
 
 # ---------- umount ----------
@@ -3257,7 +3268,7 @@ def build_parser():
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
     st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst を省くと各下書きの scope: に従って両方へ運ぶ。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
     st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと各下書きの scope: に従って両方へ運ぶ。scope: が無い・不明なら止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
-    st.add_argument("--yes", action="store_true", help="確認を省く（印・対応表・cleankit の点検は行う）")
+    st.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない。2026-11-04 に1件ごとの確認を廃止した）")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
