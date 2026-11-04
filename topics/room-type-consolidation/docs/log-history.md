@@ -3,6 +3,7 @@
 ## Log
 
 ### 2026-11-04（案 A の実機確認と置き場の実測。別セッション `claude -p` を `room start --cmd` で起動して測った）
+- 【同日の後半】実測を受けた判断 3 点を決めた（`decisions.md`）。`project-structure.md` に予約名 `deliverable` と逃げ道（専用サブディレクトリ＋README の記録）を足し、`git -C` を「望ましい」に緩めた（`room.py` の `ROOM.md` 雛形も）。成果物名の衝突は `routes()` が Project 名の下に固定するので起きない。`due.md` の 11-11 の行を消した。
 - 方法: 部屋 `room-myenv` に使い捨てのローカル bare と clone（`~/src/probe-repo`。`CLAUDE.md` に合言葉）を作り、Project `rtc-probe`（`repos:` 付き）で ①〜⑤、`rtc-calc-*`（`repos:` なし）でケース A・B・C を通した。依頼に置き場は書かない。`--cmd` の中の `$(cat …)` は cwd が移る前に展開されるので絶対パス（`/mnt/room/<名>/work/prompt.txt`）で渡す。マウントが残ったら `room umount --area myenv`。
 - 案 A（`due.md` の 5 点）: ① `--add-dir` と `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` が付き、`CLAUDE.md` の合言葉を AI が引用した（OK）。② `git -C` の commit は clone の `main` に入り、`ai/` 側に化けない（OK。回収の変更にコードは出ない）。③ `ROOM.md` が届き、置き場の取り違えは A・B・C 計 5 回中 1 回（A で `ai/` 直下）。④ `room close` は未 push の clone で止まる（OK）。⑤ 対話で `cd … && git` が承認なしで通り、cwd は `~/src/probe-repo` に移って持続した（`claude -p` では承認待ちで止まる）。AI は `ROOM.md` の「`git -C` を使う」を守っていない。
 - ケース A・B・C（規則なし）: 成果物名は 3 件とも `calc`、置き場は `ai/out/calc/`。A は 1 ファイル、B は平ら（`calc.py` `test_calc.py` `README.md`）、C は `src/` `tests/` `pyproject.toml` `uv.lock` `README.md` `report.md`（`env/` `docs/` は使わない）。聞き返し 0 件。`dev-deliverable-guide.md` だけに規則を書いても AI は読まず、効かなかった（ユーザー承認で書いた）。

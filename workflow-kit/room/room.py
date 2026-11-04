@@ -1537,7 +1537,7 @@ Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
 
 部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git add` `git commit` `git log`）。リポジトリは `room start` が用意済みなので、許可を取らずに使ってよい。自分で `git init` や `git config` をしない（`.git` を作ると works に回収される。`git status` が失敗したときは、作らずに人に伝える）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。人に言われなくても、作業の区切りと wrap のたびにコミットする（push はしない）。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
 
-開発リポジトリ（`dev` の Project）: git で管理するコードは、部屋の `~/src/<repo>` にある clone で扱う（`room start` が追加ディレクトリとして渡す。`CLAUDE.md` も読まれる）。cwd は `/mnt/room/<名>` のまま。git は `cd` せず `git -C ~/src/<repo> ...` で使う（`cd` 後の git は承認待ちになる）。push はできない（読み取り専用の deploy key）。コミットまでにとどめ、push は人が部屋の外から行う。git で管理しない試作や一時のコードは `ai/out/<成果物名>/src/` に置く。
+開発リポジトリ（`dev` の Project）: git で管理するコードは、部屋の `~/src/<repo>` にある clone で扱う（`room start` が追加ディレクトリとして渡す。`CLAUDE.md` も読まれる）。cwd は `/mnt/room/<名>` のまま。git は `git -C ~/src/<repo> ...` で使うのが望ましい（`cd` 後の git も、cwd が変わらず実害がなければ許容する）。push はできない（読み取り専用の deploy key）。コミットまでにとどめ、push は人が部屋の外から行う。git で管理しない試作や一時のコードは `ai/out/<成果物名>/src/` に置く。
 
 `ai/out/` の文書に、`⟦` と `⟧` を、マスクの記号以外の用途で書かない。説明文でプレースホルダーの形を示すときは、「CUST_001 の形」のように括弧なしで書く（`⟦CUST_nnn⟧` のような書き方は、復元が壊れた記号として止まる）。
 """
