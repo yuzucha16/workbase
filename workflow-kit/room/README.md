@@ -161,6 +161,16 @@ uv run --script exceltext.py <入力.xlsx> <出力.md>
 - 出さないもの: 非表示・とても非表示のシート、非表示の行（フィルターで隠れた行を含む）・列、非表示の図形、コメント・メモ、ヘッダー・フッター、定義名、数式そのもの、入力規則、ふりがな、代替テキスト、図形の名前、プロパティ。
 - v0 の割り切り: 計算済みの値が保存されていない数式（一部のツールが書いた xlsx）は空になる。通貨・桁区切り・小数桁などの表示の書式は再現せず、数値のまま出す。白い文字・行の高さ 0 など、書式で見えなくしたものは出る（非表示の指定だけを見る）。大きな表を全部出すので、行数が多いシートは md も大きくなる。xls（旧形式）は扱わない。実ファイルで見て仕様を足す。
 
+## `clean --path` の Tab 補完（2026-11-04）
+
+`room-completion.ps1` を PowerShell のプロファイルから読み込むと、`uv run room.py clean <Project> --path <Tab>` で、Area の `_noai/source/` の中（`tmp/` は除く）が候補に出る。追加のインストールは要らない。Area は `projects/<Project>/README.md` の `area:` から引き、置き場は room.py と同じ順（`$env:ROOM_VAULT`、`$env:WORKS_DIR`、`~/works`）で探す。
+
+```powershell
+. "<works>\resources\workflow-kit\room\room-completion.ps1"   # プロファイルに1行足す（dotfiles 側）
+```
+
+状態: 実機未確認（作った環境に pwsh が無く、PC1 で試す）。2〜3日使って、正式に採るか判断する（ee、2026-11-04）。
+
 ## 未実装
 
 - `/home/ai` を開いたときの会話履歴（`-home-ai`）は、Project に紐づかないので `reap` は消さない。残っていれば警告するだけ
