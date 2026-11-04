@@ -34,6 +34,8 @@
 
 6. **前半のお作法の順の確認（起票 11-04）**: `start` の直後の「作業を始めて → README 下書き → 論点出し → brief 計画 → 承認」の順（`guides/howto/ai-room-lifecycle.md` の 4 節）は運用の例で、room も手順書も強制しない。この順でよいか、論点出しと 6R のどちらを先にするかを決める。NA 3（README を 6R に畳む）と一緒に決める。
 
+7. **`room stock` の move・`--dst` 省略・表の実機確認（起票 11-04）**: PC1 で pull し、`room stock <Project>`（`--dst` なし）で、`scope: area` と `scope: public` の下書きが両方運ばれ、`ai/out/stock/` の元が消え、運んだ後の表（ファイル名・移動先・備考）が出ることを見る。`scope:` が無い下書きで止まることも見る（担当: ユーザー（実機））
+
 期日のある項目は `due.md`。
 5. 【起票 11-04、期日 11-04】保留 2 件（元は log の Open Questions。11-05 から前倒し）: ① `repos/` の受け渡し（`dev` の `env/` の実使用の後に決める）、② `restore_project` の `_noai/final/` の上書き（保護の実機の確認は 11-04 に仕様どおりで済み。残りは方針の決定）（担当: ユーザー（実機））
 
