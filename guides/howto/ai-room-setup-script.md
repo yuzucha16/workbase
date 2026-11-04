@@ -152,7 +152,7 @@ Area に溜めた知識・決定・経緯を、別の Project の部屋の AI �
 **手順2. Area に運ぶ**（人が実行）:
 
 ```powershell
-uv run room.py stock pilot2-3 --dst area     # 一覧を確認して y（--yes で省く）
+uv run room.py stock pilot2-3 --dst area     # 一覧を確認して y（--yes で省く）。運んだ下書きは ai/out/stock/ から消える（move）
 Get-ChildItem $HOME\works\areas\pilot2\ai\knowledge
 ```
 
@@ -217,7 +217,7 @@ uv run room.py readme pilot2-2          # 部屋の AI が書いた ai/out/readm
 uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書きを、1件ずつ確認して resources/exmem/inbox/ に運ぶ
 ```
 
-- `stock` の運び先は `resources/exmem/inbox/`（**公開リポジトリ**）。対応表の語を含む下書きは運ばれない。運んだメモは、未追跡のまま残る（コミットしない方針）
+- `stock` の運び先は `resources/exmem/inbox/`（**公開リポジトリ**）。対応表の語を含む下書きは運ばれない。運んだメモは、未追跡のまま残る（コミットしない方針）。運んだ下書きは `ai/out/stock/` から消える（move。2026-11-04）。残っているのは、まだ運んでいないものだけ
 - Excel の成果物は、`_noai/final/` のファイルを Excel で開き、ピボットは「すべて更新」を押す。シート名・値・コメントが実名に戻っているか確認する
 
 ### 6.1 Area に戻すもの（2026-11-03 に整理）

@@ -4,6 +4,15 @@
 
 ## Decisions
 
+### 【room】`room stock` を copy から move にする（2026-11-04）
+
+- 決定（ee の依頼）: `room stock`（`--dst kit` と `--dst area`）は、運んだ下書きを `ai/out/stock/` から消す。理由: 元が残り続けると、stock したのかしていないのか分からない。
+- 順序: 運び先に書く → manifest に記録して保存 → 運び先を読み直して書いた内容と一致を確かめる → 元を消す。一致しない・消せない（Windows のファイルのロックなど）ときは、元を残して警告する。次の実行は、同じ内容を運んだ記録（または Area に同じ内容）があるので「済み」と判定し、運び直さずに元を消す。途中で止まっても、元だけ消えて記録が無い状態にはならない。
+- 運ばなかった下書き（scope 違い、cleankit・衝突・frontmatter で止まった、確認で N）は残す。残っている下書き＝まだ運んでいないもの、と読める。
+- copy の頃に残った元: 同じ内容の運んだ記録があれば、最初の実行で消える（運び直さない）。
+- 却下・見送り: `--keep`（copy に戻す）と `--dry-run` は足さない。1件ずつの y/N の確認（`--yes` で省略）が事前の確認を兼ねる。`ai/out/stock/` が空になっても、ディレクトリは残す（部屋の AI の書き場所）。
+- 前提の確認: `room stock` は部屋の外（Windows）で動き、`ai/out/` は読み取り専用にしていない（読み取り専用にするのは `ai/in/` と `ctx/area/` の写し。room.py で確認）ので消せる。テストは `workflow-kit/room/tests/test_room.py` の `StockAreaTest` と `StockTest`（179 件通過）。
+
 ### 【room】cleankit の報告の既定の置き場を、入力の隣の `tmp/` にする（room clean と同じ。2026-11-04）
 - 決めたこと（ユーザーの依頼）: `cleankit.py check` と `clean` の報告（`.check-report.md` / `.clean-report.md`）の既定を、入力（原本）の隣の `tmp/` にする。room clean の `_noai/raw/tmp/`・`_noai/source/tmp/` と同じ考え。`--report` で変えられる。
 - 理由: check の報告がカレントに出て探しにくく、room clean と置き場が違った。clean は出力の隣だったので、AI に渡すフォルダに報告が混ざりえた。

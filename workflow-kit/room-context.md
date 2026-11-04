@@ -56,7 +56,7 @@ Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入
 
 `stock 理解` の下書き（`kind: explain`）も同じ場所に書く。形は `stock-explain.md`（部屋の中では、マスク後の語だけで書く。対応表の語を含む下書きは、`room stock` が運ばない）。
 
-`public` は、人が `room stock <名> --dst kit` で確認して `exmem/inbox/` に運ぶ。`kind` はそのまま運ばれる。`scope: area` の下書きが `ai/out/stock/` にあっても、`room stock` は運ばない。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
+`public` は、人が `room stock <名> --dst kit` で確認して `exmem/inbox/` に運ぶ。運ばれた下書きは `ai/out/stock/` から消える（move。2026-11-04）。消えた下書きを書き直さない。残っている下書きは、まだ運ばれていないもの（`area` も同じ）。`kind` はそのまま運ばれる。`scope: area` の下書きが `ai/out/stock/` にあっても、`room stock` は運ばない。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
 
 ## 計画（部屋の中）
 

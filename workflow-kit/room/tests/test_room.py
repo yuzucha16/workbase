@@ -1727,9 +1727,66 @@ class StockAreaTest(unittest.TestCase):
             room.cmd_stock(c, self.ns())
             self.assertIn("理由と経緯", (v / "areas/area-x/ai/knowledge/a.md").read_text(encoding="utf-8"))
             self.assertTrue((v / "areas/area-x/ai/docs/b.md").exists())
+            self.assertEqual(list((p / "ai/out/stock").glob("*.md")), [])  # move: 元は消える
+            man = json.loads((p / "ai/records/manifest.json").read_text(encoding="utf-8"))
+            self.assertIn("knowledge/a.md", man["area_stock"])  # 元が無くても、運んだ記録は残る
             c.msgs.clear()
             room.cmd_stock(c, self.ns())
-            self.assertIn("0 件を運んだ", c.msgs[-1])
+            self.assertIn("運ぶ下書きは無い", c.msgs[-1])
+
+    def test_not_delivered_drafts_stay(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "pub.md", "公開向け\n", scope="public")
+            self.put(p, "a.md", "v1\n")
+            room.cmd_stock(c, self.ns())
+            dst = v / "areas/area-x/ai/knowledge/a.md"
+            dst.write_text("人が直した\n", encoding="utf-8")
+            self.put(p, "a.md", "v2\n")
+            room.cmd_stock(c, self.ns())
+            self.assertTrue((p / "ai/out/stock/pub.md").exists())  # scope 違いは運ばず残す
+            self.assertTrue((p / "ai/out/stock/a.md").exists())  # 衝突で運ばなかったものは残す
+
+    def test_declined_draft_stays(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "a.md", "x\n")
+            with mock.patch("builtins.input", return_value="n"):
+                room.cmd_stock(c, self.ns(yes=False))
+            self.assertTrue((p / "ai/out/stock/a.md").exists())
+
+    def test_leftover_already_in_area_is_removed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "a.md", "x\n")
+            src = (p / "ai/out/stock/a.md").read_bytes()
+            room.cmd_stock(c, self.ns())
+            (p / "ai/out/stock/a.md").write_bytes(src)  # copy 時代に残った元（同じ内容が Area にある）
+            room.cmd_stock(c, self.ns())
+            self.assertFalse((p / "ai/out/stock/a.md").exists())
+
+    def test_source_kept_when_destination_does_not_match(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "a.md", "x\n")
+            real = Path.write_bytes
+            def broken(self_, data):
+                return real(self_, data + b"!" if "areas" in str(self_) else data)
+            with mock.patch.object(Path, "write_bytes", broken):
+                room.cmd_stock(c, self.ns())
+            self.assertTrue((p / "ai/out/stock/a.md").exists())
+            self.assertTrue(any("元は消していない" in m for m in c.msgs))
+
+    def test_unlink_failure_warns_and_next_run_removes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self.setup(tmp)
+            self.put(p, "a.md", "x\n")
+            with mock.patch.object(Path, "unlink", side_effect=PermissionError("locked")):
+                room.cmd_stock(c, self.ns())
+            self.assertTrue((p / "ai/out/stock/a.md").exists())
+            self.assertTrue((v / "areas/area-x/ai/knowledge/a.md").exists())
+            room.cmd_stock(c, self.ns())
+            self.assertFalse((p / "ai/out/stock/a.md").exists())
 
     def test_public_scope_is_not_delivered_to_area(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1896,8 +1953,14 @@ class StockTest(unittest.TestCase):
             room.cmd_stock(c, self.ns())
             got = (r / "exmem/inbox/2026-10-12-topic-a.md").read_text(encoding="utf-8")
             self.assertNotIn("base_stale", got)
+            self.assertFalse((p / "ai/out/stock/2026-10-12-topic-a.md").exists())  # move: 元は消える
             room.cmd_stock(c, self.ns())
             self.assertEqual(len(list((r / "exmem/inbox").glob("*.md"))), 1)
+            # copy 時代に残った元（同じ内容を運んだ記録がある）は、運び直さずに消す
+            (p / "ai/out/stock/2026-10-12-topic-a.md").write_text(self.DRAFT.format(base=base), encoding="utf-8")
+            room.cmd_stock(c, self.ns())
+            self.assertEqual(len(list((r / "exmem/inbox").glob("*.md"))), 1)
+            self.assertFalse((p / "ai/out/stock/2026-10-12-topic-a.md").exists())
 
     def test_stale_mark_when_target_lesson_changed(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1949,6 +2012,8 @@ class StockTest(unittest.TestCase):
             room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
             room.cmd_stock(c, self.ns())
             self.assertEqual(list((r / "exmem/inbox").glob("*.md")), [])
+            self.assertTrue((p / "ai/out/stock/no-header.md").exists())  # 運ばなかったものは残る
+            self.assertTrue((p / "ai/out/stock/leak.md").exists())
 
 
 class SharedPermissionTest(unittest.TestCase):

@@ -1485,6 +1485,7 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
   - `base_commit: {commit}`
   - `observed: 書いた日（YYYY-MM-DD）`
 - `area`（この Area の業務に固有。非公開）: これも `ai/out/stock/` に下書きを書く（`public` と同じ置き場）。frontmatter に `scope: area` と、運び先 `dest: knowledge`（既定。過去の決定・経緯なら `docs`）を足す。stock の7見出しの型で、`kind: lesson` か `explain`、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない。実名・金額・連絡先は書かない（人が `room stock --dst area` で点検を通して Area の `ai/` へ運ぶ。点検に当たると止まる）。
+- 人が `room stock` で運んだ下書きは、`ai/out/stock/` から消える（運び先へ移る）。消えた下書きを書き直さない。残っている下書きは、まだ運んでいないもの。
 
 Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
 
@@ -2138,12 +2139,33 @@ def stock_staleness(ctx, base):
     return True, [l.strip().removeprefix("exmem/") for l in out.splitlines() if l.strip()]
 
 
+def save_manifest(p, man):
+    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
+    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+
+def stock_remove_source(ctx, src, dst=None, expected=None):
+    """stock は move（2026-11-04 ee の決定。元が残ると stock 済みか分からなくなるため）。
+    運び先を読み直して書いた内容と同じことを確かめてから、ai/out/stock/ の元を消す。違えば消さない。
+    呼ぶ前に manifest を保存しておく（元を消した後に止まっても、運んだ記録は残る）。消せなければ警告だけ（次の実行で「済み」として消す）。"""
+    if dst is not None and (not dst.exists() or dst.read_bytes() != expected):
+        ctx.say(f"    警告: 運び先の内容が書いたものと一致しない。元は消していない: {src.name}")
+        return False
+    try:
+        src.unlink()
+    except OSError as e:
+        ctx.say(f"    警告: 元を消せなかった（{e}）。次の `room stock` で消す: {src.name}")
+        return False
+    ctx.say(f"    元を消した: ai/out/stock/{src.name}")
+    return True
+
+
 STOCK_DSTS = ("kit", "area")
 AREA_STOCK_DIRS = ("knowledge", "docs")  # --dst area で運べる、dest: に書ける区分（Area の ai/ の直下）
 
 
 def cmd_stock(ctx, a):
-    """知見の下書きを、人の確認を経て行き先へ運ぶ。--dst kit は exmem/inbox/、--dst area は Area の ai/ 配下。行き先を省くと止まる。コミットしない。"""
+    """知見の下書きを、人の確認を経て行き先へ運ぶ（move: 運び先を確かめてから ai/out/stock/ の元を消す。運ばなかった下書きは残る）。--dst kit は exmem/inbox/、--dst area は Area の ai/ 配下。行き先を省くと止まる。コミットしない。"""
     dst = getattr(a, "dst", None)
     if dst not in STOCK_DSTS:
         raise RoomError("--dst が要る: kit（公開の共有知。ai/out/stock/ → exmem/inbox/）か "
@@ -2197,26 +2219,28 @@ def stock_to_area(ctx, a):
             cur = hashlib.sha256(dst.read_bytes()).hexdigest()
             if cur == digest:
                 ctx.say(f"  済み（同じ内容が Area にある）: {rel}")
+                stock_remove_source(ctx, f)
                 continue
             if sent.get(rel, {}).get("sha256") != cur:
                 ctx.say(f"  運ばない（Area の ai/{rel} は、前回運んだ後に人が変えた、または運んだ記録が無い。人が確認して消すか、名前を変える）")
                 continue
         ctx.say(f"  {rel}" + ("（上書き: 前回運んだ版から更新）" if dst.exists() else "（新規）"))
-        if not a.yes and input(f"    areas/{p.area}/ai/ に運ぶか [y/N]: ").strip().lower() != "y":
+        if not a.yes and input(f"    areas/{p.area}/ai/ に運ぶか（運んだら元は消す） [y/N]: ").strip().lower() != "y":
             ctx.say("    運ばなかった")
             continue
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_bytes(raw)
-        sent[rel] = {"sha256": digest, "delivered": ctx.now()}
+        sent[rel] = {"sha256": digest, "delivered": ctx.now(), "src": f.name}
+        save_manifest(p, man)
         delivered += 1
         ctx.say(f"    運んだ: areas/{p.area}/ai/{rel}（コミットしていない）")
-    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
-    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+        stock_remove_source(ctx, f, dst, raw)
+    save_manifest(p, man)
     ctx.say(f"{delivered} 件を運んだ")
 
 
 def stock_to_kit(ctx, a):
-    """ai/out/stock/*.md（部屋の AI の【汎用】の下書き）を、人の確認を経て resources/exmem/inbox/ に運ぶ。コミットしない（stock-hook.md の方針）。"""
+    """ai/out/stock/*.md（部屋の AI の【汎用】の下書き）を、人の確認を経て resources/exmem/inbox/ に運ぶ（move: 運んだら元を消す）。コミットしない（stock-hook.md の方針）。"""
     p = Project.load(ctx, a.name)
     src = p.ai / "out" / "stock"
     drafts = sorted(f for f in src.glob("*.md")) if src.exists() else []
@@ -2236,6 +2260,7 @@ def stock_to_kit(ctx, a):
         digest = hashlib.sha256(raw).hexdigest()
         if sent.get(f.name, {}).get("sha256") == digest:
             ctx.say(f"  済み（同じ内容を運んだ）: {f.name}")
+            stock_remove_source(ctx, f)
             continue
         text = raw.decode("utf-8").replace("\r\n", "\n")
         fm = split_frontmatter(text)[0]
@@ -2270,7 +2295,7 @@ def stock_to_kit(ctx, a):
             stale = f"統合先の候補が特定できない（lessons の変更 {len(changed)} 件）" if changed else ""
         title = meta.get("title", f.name)
         ctx.say(f"  {f.name}: {title}" + (f"\n    印: 基準が古い可能性 — {stale}" if stale else ""))
-        if not a.yes and input("    exmem/inbox に運ぶか [y/N]: ").strip().lower() != "y":
+        if not a.yes and input("    exmem/inbox に運ぶか（運んだら元は消す） [y/N]: ").strip().lower() != "y":
             ctx.say("    運ばなかった")
             continue
         if stale:
@@ -2282,10 +2307,11 @@ def stock_to_kit(ctx, a):
             k += 1
         dst.write_text(text, encoding="utf-8", newline="\n")
         sent[f.name] = {"sha256": digest, "delivered": ctx.now(), "inbox": dst.name, "base_commit": base, "stale": bool(stale)}
+        save_manifest(p, man)
         delivered += 1
         ctx.say(f"    運んだ: exmem/inbox/{dst.name}（未追跡のまま。点検: check-inbox.ps1）")
-    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
-    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+        stock_remove_source(ctx, f, dst, text.encode("utf-8"))
+    save_manifest(p, man)
     ctx.say(f"{delivered} 件を運んだ")
 
 
@@ -3207,7 +3233,7 @@ def build_parser():
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
     rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
-    st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ運ぶ（--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
+    st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
     st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="確認を省く（印・対応表・cleankit の点検は行う）")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
