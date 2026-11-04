@@ -4,7 +4,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 ## Next Actions
 
-- 【期日 11-11、起票 11-04】`inv` の工程別構造（素案は `project-structure.md` の `inv` の構成要素。11-04 に採用）の実験を、別セッションで観点別に行う。最初は eg1 を通しで 1 回: お題は「プレゼン資料作成ツールの比較（Marp、Quarto、Slidev）。AI 活用を想定した選定軸と、作成時間短縮の方法」。`report.md` の清書（`publish/`）をこれらでできないか、という `topics/office-output-types` の検討（markdown → pptx。Quarto は部屋に導入済み）のインプットになる。調査の起点は `guides/explain/markdown-to-pptx-quarto-explain.md`。次に eg2（社内 Excel・テキスト。マスクの差分）。結果は `records/` に残し、構造を直す。
+- 【期日 11-11、起票 11-04】`inv` の工程別構造（素案は `project-structure.md` の `inv` の構成要素。11-04 に採用）の実験を、別セッションで観点別に行う。最初は eg1 を通しで 1 回: お題は「プレゼン資料作成ツールの比較（Marp、Quarto、Slidev）。AI 活用を想定した選定軸と、作成時間短縮の方法」。`report.md` の清書（`publish/`）をこれらでできないか、という `topics/office-output-types` の検討（markdown → pptx。Quarto は部屋に導入済み）のインプットになる。調査の起点は `guides/explain/markdown-to-pptx-quarto-explain.md`。eg1 の依頼文と `question.md` 初稿は 11-04 に部屋へ渡した（`records/2026-11-04-inv-slide-tools-compare-request.md`）。次は別セッションで部屋の返答を見せてもらい、調査の中身と構造（`ai/docs/inv-log.md` の迷い・改善提案）を見る。その後に eg2（社内 Excel・テキスト。マスクの差分）。結果は `records/` に残し、構造を直す。
 
 ## Open Questions
 

@@ -5,6 +5,7 @@
 ### 2026-11-04（`inv` の工程別構造の素案を採用した）
 - `dev` が `env/` `src/` `tests/` `docs/` と工程別なので、`inv` も工程別にする素案を出し、ユーザーが承認した（`decisions.md`）。構成要素は `question.md` `sources/` `findings/` `checks/` `report.md`、清書の `publish/`（ユーザーの追加。pptx まで成果物に含む）。`project-structure.md` に反映（コミット済み、叩き台）。
 - 実験のお題を決めた: プレゼン資料作成ツールの比較（Marp、Quarto、Slidev）。AI 活用を想定した選定軸と作成時間短縮の方法。`topics/office-output-types` の markdown → pptx の検討のインプットになる。実験は別セッションで観点別に行う（`log.md` の Next Actions）。
+- 【同日の後半】eg1 の依頼文と `question.md` 初稿を `records/2026-11-04-inv-slide-tools-compare-request.md` に保存し、ユーザーが部屋へ渡した（Project `compare-slide-tools`、external。`ai/in/` に Quarto の調査と雛形 pptx を置いた）。返答は別セッションで見せてもらう。
 
 ### 2026-11-04（案 A の実機確認と置き場の実測。別セッション `claude -p` を `room start --cmd` で起動して測った）
 - 【同日の後半】実測を受けた判断 3 点を決めた（`decisions.md`）。`project-structure.md` に予約名 `deliverable` と逃げ道（専用サブディレクトリ＋README の記録）を足し、`git -C` を「望ましい」に緩めた（`room.py` の `ROOM.md` 雛形も）。成果物名の衝突は `routes()` が Project 名の下に固定するので起きない。`due.md` の 11-11 の行を消した。
