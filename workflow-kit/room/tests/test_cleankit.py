@@ -329,10 +329,12 @@ class InPlaceTest(unittest.TestCase):
             ck.main(["clean", str(src)])
             self.assertEqual((Path(d) / "tmp" / "dummy_org1.xlsx").read_bytes(), data)  # 元は tmp/ に退避
             self.assertNotEqual(src.read_bytes(), data)  # 入力の位置は掃除済み
-            self.assertTrue((Path(d) / "tmp" / "dummy.xlsx-report.md").exists())
+            self.assertTrue((Path(d) / "tmp" / "dummy_org1.xlsx-report.md").exists())  # 報告は退避した元と対
+            self.assertFalse((Path(d) / "tmp" / "dummy.xlsx-report.md").exists())
             self.assertFalse((Path(d) / "dummy.xlsx.new").exists())
             ck.main(["clean", str(src)])  # もう一度: 番号が進む（掃除済みのものが _org2 になる）
             self.assertTrue((Path(d) / "tmp" / "dummy_org2.xlsx").exists())
+            self.assertTrue((Path(d) / "tmp" / "dummy_org2.xlsx-report.md").exists())
             self.assertEqual((Path(d) / "tmp" / "dummy_org1.xlsx").read_bytes(), data)
 
     def test_integrity_failure_leaves_original(self):
@@ -349,6 +351,7 @@ class InPlaceTest(unittest.TestCase):
             self.assertEqual(rc, 2)
             self.assertEqual(src.read_bytes(), data)
             self.assertFalse((Path(d) / "tmp" / "dummy_org1.xlsx").exists())
+            self.assertTrue((Path(d) / "tmp" / "dummy_org1.xlsx-report.md").exists())  # 止めても報告は書く
 
 
 class IntegrityStopTest(unittest.TestCase):

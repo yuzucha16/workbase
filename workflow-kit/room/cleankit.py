@@ -1237,7 +1237,12 @@ def main(argv=None):
                 raise CleanError("出力が元のファイルと同じ（出力を省くと、元を tmp/ に退避して入力の位置に置く）")
             if out.exists() and not a.force:
                 raise CleanError(f"出力が既にある: {out}（--force で上書き）")
-        rep = Path(a.report) if a.report else default_report(src, "clean")
+        if a.report:
+            rep = Path(a.report)
+        elif backup is not None:  # 退避した元と対にする: tmp/<名前>_org1.xlsx-report.md
+            rep = backup.with_name(backup.name + "-report.md")
+        else:
+            rep = default_report(src, "clean")
         guard_outputs(*(x for x in (out, backup, rep) if x is not None))
         also = {x.strip() for x in a.also.split(",") if x.strip()}
         if also - set(OPTIONAL_ACTIONS):
