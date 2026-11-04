@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-04（Marp・Slidev・Quarto の実機比較を済ませた）
+
+- 部屋に Marp CLI 4.5.1 と Slidev 53.0.0 を、人が root で入れた（`ai` は `/usr/local` に書けない。PowerShell の二重引用符で `$d` が空になり 1 回やり直し）。Marp は `--browser-path /usr/local/bin/room-chrome` が要る。Slidev は、テーマ・`playwright-chromium`（リビジョン 1248 で部屋と一致）・Vite のキャッシュ用フォルダ（`.vite`）が要った。
+- 結果と示唆は `records/2026-11-04-slide-tools-live-compare.md`: 編集できる pptx は Quarto だけ。Marp・Slidev の pptx は画像（ノートは入る）。Marp の `--pptx-editable` は表・ノート・日本語の字形に問題。見た目は Marp の組み込みテーマが整い、Slidev は既定だと素朴。Quarto は素の Office 風で、人の微修正向き。
+- ユーザーの方針: Quarto と Marp 既定を部屋に入れて使い分ける。`init` への Marp 追加を承認。Slidev を含む不要物は消す（`~/cmp` は消した。グローバルの Slidev は root が要るので人へ）。
+- 完了した Next Action: 「Marp と Slidev を部屋に入れて Quarto と横並びで実機比較する」（根拠: 上の records）。結果の引き渡し（`office-output-types`）は残した。
+
 ### 2026-11-04（eg1 の結果を確認し、`inv` の構造を直した）
 - 部屋の成果物（`out/compare-slide-tools/`）と工程ログを読んだ。調査は筋が通り、6 工程の構成要素は使われた（所要は約 25 分）。弱い点は、Marp と Slidev が文書のみ、裏取りが語句の grep まで、report の出典欄に S3・S13 が無いこと。記録は `records/2026-11-04-inv-slide-tools-compare-result.md`。
 - ユーザーの承認で、提案 1・3・4（台帳に「実測」と取得失敗の欄、findings の行 ID、checks を 1 ファイル）を `project-structure.md` に反映。提案 2・5 は実験の依頼文で対応。`ai/in/` が空に見えたのはマウントポイントの差。
