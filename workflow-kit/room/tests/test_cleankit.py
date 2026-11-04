@@ -309,15 +309,31 @@ class XlsxTest(unittest.TestCase):
             self.assertEqual(rc, 1)  # グラフの写しと非表示の行が残る
             self.assertEqual(src.read_bytes(), self.data)
             self.assertTrue((Path(d) / "out" / "dummy.xlsx").exists())
-            self.assertTrue((Path(d) / "tmp" / "dummy.xlsx.clean-report.md").exists())  # 報告は入力の隣の tmp/（room clean と同じ）
-            self.assertFalse((Path(d) / "out" / "dummy.xlsx.clean-report.md").exists())
+            self.assertTrue((Path(d) / "tmp" / "dummy.xlsx-report.md").exists())  # 報告は入力の隣の tmp/（room clean と同じ）
+            self.assertIn("(clean)", (Path(d) / "tmp" / "dummy.xlsx-report.md").read_text(encoding="utf-8").splitlines()[0])
             self.assertEqual(ck.main(["check", str(src)]), 1)
-            self.assertTrue((Path(d) / "tmp" / "dummy.xlsx.check-report.md").exists())
-            self.assertFalse((Path(d) / "dummy.xlsx.check-report.md").exists())
+            self.assertIn("(check)", (Path(d) / "tmp" / "dummy.xlsx-report.md").read_text(encoding="utf-8").splitlines()[0])
+            self.assertFalse((Path(d) / "dummy.xlsx-report.md").exists())
             self.assertEqual(ck.main(["clean", str(src), str(src)]), 2)
             self.assertEqual(ck.main(["clean", str(src), str(Path(d) / "out")]), 2)  # 上書きしない
             (Path(d) / "a.docx").write_bytes(b"x")
             self.assertEqual(ck.main(["check", str(Path(d) / "a.docx")]), 2)
+
+
+class IntegrityStopTest(unittest.TestCase):
+    def test_no_output_when_integrity_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "dummy.xlsx"
+            src.write_bytes(build_xlsx())
+            orig = ck.integrity
+            ck.integrity = lambda data: ["dummy: 壊れている"]
+            try:
+                rc = ck.main(["clean", str(src), str(Path(d) / "out")])
+            finally:
+                ck.integrity = orig
+            self.assertEqual(rc, 2)
+            self.assertFalse((Path(d) / "out").exists())  # 出力は書かない
+            self.assertTrue((Path(d) / "tmp" / "dummy.xlsx-report.md").exists())  # 報告は書く
 
 
 class GuardTest(unittest.TestCase):

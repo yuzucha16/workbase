@@ -1861,14 +1861,14 @@ def clean_project(ctx, p, items=None):
             before = cleankit.check(cleankit.Pkg(data), ext)
             cleaned, log = cleankit.clean(data, ext, actions)
             probs = cleankit.integrity(cleaned)
-            after = cleankit.check(cleankit.Pkg(cleaned), ext)
+            after = cleankit.check(cleankit.Pkg(cleaned), ext, sensitive=True, terms=area_gate_terms(p))  # 金額等の形と mask.toml の語（置換せず、報告に載せる）
         except cleankit.CleanError as err:
             ctx.say(f"  止めた（{rel}）: {err}")
             continue
         if items is None:
-            rep, rep_where = n / "raw" / "tmp" / (rel + ".clean-report.md"), "_noai/raw/tmp/"
+            rep, rep_where = n / "raw" / "tmp" / (rel + "-report.md"), "_noai/raw/tmp/"
         else:  # 2026-11-03 ユーザーの決定: 原本の隣（Area の source/tmp/）に置く。探す場所を増やさない
-            rep, rep_where = source_dir(p) / "tmp" / (rel[len(PULL_PREFIX):] + ".clean-report.md"), "_noai/source/tmp/"
+            rep, rep_where = source_dir(p) / "tmp" / (rel[len(PULL_PREFIX):] + "-report.md"), "_noai/source/tmp/"
         rep.parent.mkdir(parents=True, exist_ok=True)
         rep.write_text(cleankit.report_md(Path(rel), before, log, after, probs, Path(rel)), encoding="utf-8")
         if probs:

@@ -2555,7 +2555,7 @@ class CleanTest(unittest.TestCase):
             raw.write_bytes(dummy_fixture.build_xlsx())
             room.cmd_clean(c, argparse.Namespace(name="proj-a"))
             self.assertTrue((p / "ai/in/area/dummy.xlsx").exists())
-            self.assertTrue((p / "_noai/raw/tmp/area/dummy.xlsx.clean-report.md").exists())
+            self.assertTrue((p / "_noai/raw/tmp/area/dummy.xlsx-report.md").exists())
             man = room.load_manifest(room.Project.load(c, "proj-a"))
             self.assertTrue(man["files"]["in/area/dummy.xlsx"]["pending"])
             self.assertTrue(room.check_provenance(room.Project.load(c, "proj-a")))
@@ -2575,7 +2575,7 @@ class CleanTest(unittest.TestCase):
             room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["顧客共通/*.xlsx"], yes=True))
             self.assertTrue((p / "ai/in/area/顧客共通/一覧.xlsx").exists())
             self.assertFalse((p / "_noai/raw/area").exists())  # raw に写さない
-            self.assertTrue((v / "areas/area-x/_noai/source/tmp/顧客共通/一覧.xlsx.clean-report.md").exists())  # 報告は原本の隣
+            self.assertTrue((v / "areas/area-x/_noai/source/tmp/顧客共通/一覧.xlsx-report.md").exists())  # 報告は原本の隣
             self.assertFalse((p / "_noai/raw/tmp").exists())
             man = room.load_manifest(room.Project.load(c, "proj-a"))
             e = man["files"]["in/area/顧客共通/一覧.xlsx"]

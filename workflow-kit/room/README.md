@@ -121,14 +121,14 @@ WSL は差し替えて、一時ディレクトリの git で行う（実際の�
 xlsx・xlsm・pptx・pptm の、消したつもりで残っている情報（非表示シート、グラフ・ピボットのキャッシュ、定義名、コメント、文書プロパティ、ノート、埋め込みなど）を点検し、掃除した別ファイルを書く（2026-10-26。ダミーの単体テストと、LibreOffice で開き直す確認まで。Excel・PowerPoint 本体は未確認）。仕組みは `guides/explain/ooxml-residue.md`。**人が実行する**（原本と、残っていた実データを読むため）。room への組み込みは未定（実ファイルの点検の結果を見て決める）。
 
 ```powershell
-uv run --script cleankit.py check <ファイル> [--terms <mask.toml>]  # 点検だけ。報告は <ファイルのフォルダ>/tmp/<ファイル>.check-report.md（2026-11-04 に room clean と同じ置き方に揃えた）。見えている文字の中の金額・メール・電話・割合の形と、--terms の語を警告する（置換はしない。2026-11-02）
-uv run --script cleankit.py clean <ファイル> <出力先>     # 掃除。報告は <ファイルのフォルダ>/tmp/<ファイル>.clean-report.md（出力の隣ではなく原本の隣。2026-11-04）
+uv run --script cleankit.py check <ファイル> [--terms <mask.toml>]  # 点検だけ。報告は <ファイルのフォルダ>/tmp/<ファイル>-report.md（見出しの末尾が (check)）（2026-11-04 に room clean と同じ置き方に揃えた）。見えている文字の中の金額・メール・電話・割合の形と、--terms の語を警告する（置換はしない。2026-11-02）
+uv run --script cleankit.py clean <ファイル> <出力先>     # 掃除。報告は <ファイルのフォルダ>/tmp/<ファイル>-report.md（見出しの末尾が (clean)。出力の隣ではなく原本の隣。2026-11-04）。整合の問題があれば出力を書かず止まる（2 を返す。room clean と同じ）
 uv run --script cleankit.py clean <ファイル> <出力先> --keep notes,comments   # 動作を外す
 ```
 
 - 元ファイルは変えない。出力が元と同じ・既にあるときは止まる（`--force` で上書き）。
 - 報告には実データの抜粋が載る。**報告は AI に見せない**（`_noai/` の下か、AI が読めない場所に置く）。画面には件数だけを出す。
-- 出力と報告を、このリポジトリ（公開）の中に書こうとすると止まる（2026-10-27。`./` を指定して、実データ入りの報告が作業ツリーに出た事例から）。`.gitignore` にも `*.check-report.md` `*.clean-report.md` を足した。
+- 出力と報告を、このリポジトリ（公開）の中に書こうとすると止まる（2026-10-27。`./` を指定して、実データ入りの報告が作業ツリーに出た事例から）。`.gitignore` にも報告のファイル名（`*-report.md`）を足した。
 - 終了コード: 0 = 要確認なし、1 = 要確認あり（報告を見る）、2 = 実行できない。
 - 掃除の既定（`--keep` で外せる）: `hidden-sheets`（非表示シートを消し、参照する数式は値に、定義名は削除）、`hidden-slides`、`notes`、`comments`、`props`、`abspath`、`printer`、`thumbnail`、`calcchain`、`revisions`、`ref-names`（`#REF!` の定義名）、`shared-strings`（使っていない共有文字列）、`orphans`（関係からたどれない部品）、`hidden-names`（非表示の定義名。AccessDatabase など。`_xl` で始まる内部の名前は残す）、`external-links`（外部ブックへのリンクを切る。数式は値に、外部パス・値の写し・外部を参照する定義名を消す）。
 - 既定では行わず `--also` で足す動作（カンマ区切り）: `hidden-rows`（非表示の行のセルの値・数式を空にする。行は残る）、`hidden-cols`（非表示の列）。空にした後は、行・列が隠れたままでも点検の報告には出ない。

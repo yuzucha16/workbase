@@ -6,7 +6,7 @@
 - ユーザーの依頼: room clean と cleankit clean / check の関係を確かめ、差をなくしたい。cleankit check の報告がカレントに出るので、room clean と同じ tmp/ にしたい。
 - 分かったこと: room clean は cleankit を読み込んで同じ関数を呼ぶ（掃除の中身は同じ、strict 固定）。差は外側（入出力、強さの選択、報告の置き場、整合の問題時に出力を書くか、終了コード、boundary）。差の表は `notes/cleankit-room-align/2026-11-04-diff.md`（プロジェクトの共有フォルダ）。
 - 実装: cleankit の check と clean の報告の既定を、入力の隣の `tmp/` にした（clean はこれまで出力の隣）。テスト、`room/README.md`、`guides/howto/ooxml-clean.md` を直した。
-- 残り（ユーザーの決定待ち）: room clean の報告に金額等の形と mask.toml の語の点検を足すか。cleankit clean も整合の問題で出力を書かないようにするか。
+- 続き（ユーザーの決定）: 報告を `<名前>-report.md`（見出し末尾に (clean)/(check)）にし、room clean の報告に sensitive 点検を足し、cleankit clean は整合の問題で出力を書かないようにした。
 
 ### 2026-11-03（Project の README と 6R の関係の調査、計画の承認ラベルと変更検知の実装）
 - ユーザーの依頼: `room readme` を `room stock` の考え方に揃え、可能なら一本化する検討。途中で、Project の README と 6R の関係（README に入るもの・入らないものの行き先）と、計画を窓口に置くパスの相談になった。
