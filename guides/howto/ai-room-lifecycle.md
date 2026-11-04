@@ -21,7 +21,7 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 |---|---|---|---|
 | `room` コマンド | 人（Windows の端末） | `room open`、`room start` | 決まった手順の副作用（作る、マウント、運ぶ、移す）。AI は実行しない |
 | 合言葉のフック | 部屋の AI（人が言う） | `brief`、`wrap`、`stock`、論点出し | 判断（聞き取り、下書き、振り分け）。書くのは部屋の中だけ |
-| ファイル | 両者の受け渡し | `ai/out/readme-draft.md`、`ai/out/close.md`、`ai/out/stock/` | 2 つの層をつなぐのは**ファイルだけ** |
+| ファイル | 両者の受け渡し | `ai/out/close.md`、`ai/out/stock/` | 2 つの層をつなぐのは**ファイルだけ** |
 
 ## 2. 全体の流れ
 
@@ -45,7 +45,7 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 | 6 | 前半のお作法（4 節） | 合言葉を言う、承認する | 下書きを作る | － | README 本文、論点、計画 |
 | 7 | 作業 | 指示、承認 | 成果物を `ai/out/<成果物名>/` に作る。`wrap` で `ai/docs/` を更新 | － | 成果物、記録 |
 | 8 | 終わり（セッションごと） | 部屋を閉じる（Enter） | `wrap` | － | 回収（`ai/docs/` が works にコミットされる） |
-| 9 | 運ぶ（随時） | `room readme`、`room stock --dst kit\|area`、`room restore` | `stock` で下書き（`ai/out/stock/`） | 点検（cleankit）に当たる、人が Area 側を変えている | README 本文、共有知、Area の成果物 |
+| 9 | 運ぶ（随時） | `room stock --dst kit\|area`、`room restore` | `stock` で下書き（`ai/out/stock/`） | 点検（cleankit）に当たる、人が Area 側を変えている | 共有知、Area の成果物 |
 | 10 | 閉じる判断 | 「閉じよう」と言う | `ai/out/close.md`（完了条件の実測、決定の見直し、【案件】【決定】の振り分け） | 完了条件が未達なら書かず Next Actions に残す | `close.md` |
 | 11 | 閉じる | `room close <P>` | － | `close.md` 無し、README に `<…>`、マウント残り、決定の根拠が不明 | `archives/<P>/`、成果物と【案件】【決定】が Area へ |
 | 12 | 片付ける | `room reap`（close の 14 日後。早めるなら `--force`） | － | － | 会話履歴が消える（写しは Windows 側に残る） |
@@ -62,7 +62,7 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 | 順 | 言うこと | 目的 | できるもの | 置き場 |
 |---|---|---|---|---|
 | ① | 「作業を始めて」（`brief`） | ゴールと前提をそろえる。確定型か探索型かを決める | 今日のゴールの要約 | 会話（`events` があれば記録） |
-| ② | （README がひな形なら ① の中で）README の下書き | 目的と完了条件を文にする | `ai/out/readme-draft.md` | 人が `room readme <P>` で反映 |
+| ② | （README がひな形なら ① の中で）6R の下書き | 目的と完了条件を文にする | `ai/work/plan/6r.md`（`status: 仮`） | 人が README の目的・成果物を埋める |
 | ③ | 「論点出し」「課題設定」 | 作業の前に、決める点だけを洗い出す。各 ID に 決／任／後／確／聞 を付ける | 決定メモ | 会話。残すものは `ai/docs/decisions.md` |
 | ④ | 「brief 計画」（6R） | 取り組みの目的とゴールを共有する。6R → 憲章 → WBS → マイルストーン | 計画のファイル | `ai/work/plan/`（先頭 `status: 仮`） |
 | ⑤ | 承認 | 計画を正式にする | `status: 正式`、`approved: 日付` | 人が先頭を書く。AI は正式にしない |
@@ -75,7 +75,7 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 
 | もの | 生まれる | 育てる | Area へ | close 後 |
 |---|---|---|---|---|
-| README | `room open`（ひな形） | AI の `readme-draft.md` → `room readme` | Area の一覧に 1 行（open で進行中、close で完了） | `archives/<P>/README.md`（`status: done`） |
+| README | `room open`（ひな形） | 人が埋める（AI の 6R の下書きを参照） | Area の一覧に 1 行（open で進行中、close で完了） | `archives/<P>/README.md`（`status: done`） |
 | 計画（6R ほか） | `brief 計画` → `ai/work/plan/` | 人が正式にする | 運ばない | `archives/` に残る |
 | 作業の記録（`ai/docs/`） | `room open` | AI が `wrap` で更新 | close の【案件】【決定】行だけ | `archives/` に残る。`room trace` の引き先 |
 | 成果物 | AI が `ai/out/<成果物名>/` | － | `ai/out/deliverable/` の下だけ、`restore` か `close` で渡る | `archives/` に残る（許可リスト方式では git 追跡外） |

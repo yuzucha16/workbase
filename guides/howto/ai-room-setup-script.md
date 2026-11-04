@@ -213,7 +213,6 @@ uv run room.py start pilot2-1 --no-launch
 
 ```powershell
 uv run room.py restore pilot2-2
-uv run room.py readme pilot2-2          # 部屋の AI が書いた ai/out/readme-draft.md を README の本文に反映（確認あり）
 uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書きを、確認なしで（運んだ後に表を出す）resources/exmem/inbox/ に運ぶ
 ```
 

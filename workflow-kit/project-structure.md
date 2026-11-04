@@ -28,7 +28,7 @@ Project は、問題解決の単位で、1 つの部屋で行う。問題解決�
 | `ai/ctx/` | `room start` が作る前提の写し（Project と Area の README）。追跡しない（git が無視する） | （前提） | 読むだけ |
 | `ai/in/` | 人が渡す入力。調べて得た資料、Area から渡された知識（`in/area/`）、マスク済みのデータ、前の Project の成果物。部屋では読み取り専用 | 調べる（の結果を受け取る） | 読むだけ |
 | `ai/work/` | 途中の作業。集めた資料、整理、設計の下書き、試行、使い捨てのスクリプト。捨ててよい | 調べる、整理する、計画する（案を作る） | 読み書き |
-| `ai/out/` | 最終成果物 `<成果物名>/`。基準文書と検証を伴う。予約名: `readme-draft.md` `close.md` `stock/`（成果物の名前にしない） | 計画する（結論）、作る、確かめる | 読み書き |
+| `ai/out/` | 最終成果物 `<成果物名>/`。基準文書と検証を伴う。予約名: `close.md` `stock/`（成果物の名前にしない） | 計画する（結論）、作る、確かめる | 読み書き |
 | `ai/docs/` | 作業の記録だけ。`log.md`（現在状態）・`decisions.md`（判断）・`log-history.md`（経緯）の3つ（`room open` が雛形を置く） | 全活動の跡（何を決めたか） | 読み書き |
 | `ai/records/` | 機械が書く実行記録（費用の推定、応答本文、部屋の操作のログ）、AI への指示の記録 | 作るの跡 | 読み書き |
 | `_noai/` | 原本 `raw/`、対応表 `map/`、復元済みの成果物 `final/`、`mask.toml`、人だけの仮置き `user/`。マスクと復元は状態で決まる（`room/README.md`）。追跡しない | （AI の外） | 見えない |
@@ -100,7 +100,7 @@ repos:
    - 進行中の Project の上限を超えないか（暫定: 3件）。
 3. **type を決める**（`dev` か `inv`。成果物で決める。結論と出典で保守しないなら `inv`、作って保守するもの（文書だけ、環境やテストだけの成果物を含む）なら `dev`。曖昧なら成果物の名前で決める。Area は既定値のヒント）。Project の名前は `<動詞か領域>-<主題>`（例: `learn-c-pool-allocator`。works 内で一意）。`dev` の Project は、`brief-work-types.md` の「開発」の項目を、**実装の前に**最初の `brief` で聞く。
 
-README 本文（目的、成果物、計画へのリンク。雛形は `templates/project/README.template.md`）は、部屋の AI が下書きし、人が `room readme` で反映する（書き方は `room-context.md`）。
+README 本文（目的、成果物、計画へのリンク。雛形は `templates/project/README.template.md`）は、`room open` のひな形を人が埋める（部屋の AI は README に書けない。目的・完了条件の下書きは 6R として `ai/work/plan/` に書く。書き方は `room-context.md`）。
 
 ## 未決
 

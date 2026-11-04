@@ -7,7 +7,7 @@
 ### 【room】Project の README から完了条件・範囲外・Open Questions を外し、計画（6R）に一本化する。`room readme` を stock に揃える件は不要（2026-11-04）
 - 決めたこと（ユーザー）: ① README の完了条件・範囲外・Open Questions は 6R（`ai/work/plan/`）と重複するので、README では 1 行（計画へのリンクに添えた「ここに書く」）に畳む。README に残るのは目的・成果物・計画へのリンク。② `room readme` を `room stock` の考え方（点検・衝突検出・記録）に揃える件は不要（ユーザー: 「na4は不要」）。
 - 実装: `README_TEMPLATE`（`room.py`）、`README.template.md`、`README_PLACEHOLDERS`（`close` の点検の対象から 2 語を外した）、`project-structure.md`、`room-context.md`、`ai-room-setup-script.md`。既存の Project の README は書き換えない。
-- 未決: `room readme` 自体を廃止するか（README が目的・成果物だけになると、AI の下書きを運ぶ必要が薄い）。ユーザーの決定待ち。
+- 続き（ユーザー、同日）: `room readme` を廃止してよい。`cmd_readme`・サブコマンド・テストを外し、`readme-draft.md` の予約名もなくした。`brief` の最初の下書きは `ai/work/plan/6r.md`（`status: 仮`）に書き、README の目的・成果物は人が埋める（部屋の AI は README に書けない）。
 
 ### 【room】`room close` の「README がひな形のまま」「`close.md` が無い」を、停止から y/N の警告に緩める（2026-11-04）
 

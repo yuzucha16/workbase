@@ -2088,34 +2088,6 @@ def pick_source_files(src, patterns):
     return sorted(picked)
 
 
-def cmd_readme(ctx, a):
-    """部屋の AI が書いた ai/out/readme-draft.md（本文だけ）を、Project の README.md の本文に反映する。frontmatter は変えない（updated だけ今日にする）。"""
-    p = Project.load(ctx, a.name)
-    draft = p.ai / "out" / "readme-draft.md"
-    if not draft.exists():
-        raise RoomError(f"下書きが無い: {draft}（部屋の AI に ai/out/readme-draft.md を書かせる）")
-    body = draft.read_text(encoding="utf-8").replace("\r\n", "\n")
-    if split_frontmatter(body)[0] is not None:
-        raise RoomError("下書きに frontmatter がある。本文だけにする（frontmatter は README.md のものを使う）")
-    if not body.strip():
-        raise RoomError("下書きが空")
-    old = p.readme.read_text(encoding="utf-8")
-    _fm, old_body = split_frontmatter(old)
-    new = update_frontmatter(old, {"updated": ctx.today()})
-    new = new[:len(new) - len(old_body)] + body.rstrip("\n") + "\n"
-    if new == old:
-        ctx.say("README.md は下書きと同じ。変更なし")
-        return
-    ctx.say("README.md の本文を、下書きに置き換える（frontmatter は変えない）")
-    if not a.yes and input("反映してよいか [y/N]: ").strip().lower() != "y":
-        raise RoomError("反映を中止した")
-    p.readme.write_text(new, encoding="utf-8", newline="\n")
-    ctx.say("反映した。確認して、コミットする（`git diff projects/" + p.name + "/README.md`）")
-    if a.commit:
-        commit_paths(ctx, [f"projects/{p.name}/README.md"], f"[room] {p.name}: README を更新 {ctx.now()}",
-                     trailers=room_trailers("readme", p.area, p.name))
-
-
 # ---------- 【汎用】の下書きの回収（stock） ----------
 
 def stock_staleness(ctx, base):
@@ -3275,8 +3247,6 @@ def build_parser():
     cl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ。ai/out/deliverable/ は Area の成果物置き場へも渡す（マスクしていない Project でもそのまま渡す。start は自動で行わない）")
     r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
-    rd = sub.add_parser("readme", help="ai/out/readme-draft.md を README.md の本文に反映する")
-    rd.add_argument("name"); rd.add_argument("--yes", action="store_true"); rd.add_argument("--commit", action="store_true")
     st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst を省くと各下書きの scope: に従って両方へ運ぶ。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
     st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと各下書きの scope: に従って両方へ運ぶ。scope: が無い・不明なら止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない。2026-11-04 に1件ごとの確認を廃止した）")
@@ -3311,7 +3281,7 @@ def main(argv=None):
     ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
         {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "mv": cmd_mv,
-         "mask": cmd_mask, "clean": cmd_clean, "restore": cmd_restore, "readme": cmd_readme, "stock": cmd_stock, "trace": cmd_trace}[a.command](ctx, a)
+         "mask": cmd_mask, "clean": cmd_clean, "restore": cmd_restore, "stock": cmd_stock, "trace": cmd_trace}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2
