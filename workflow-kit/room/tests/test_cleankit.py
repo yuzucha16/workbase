@@ -531,5 +531,103 @@ class SensitiveCheckTest(unittest.TestCase):
     def test_check_default_does_not_scan_sensitive(self):
         self.assertNotIn("sensitive-pattern", codes(ck.check(ck.Pkg(build_xlsx()), ".xlsx")))
 
+TENANT = "11111111-2222-3333-4444-555555555555"
+LABEL_ID = "66666666-7777-8888-9999-000000000000"
+SP_URL = "https://dummytenant.sharepoint.com/sites/DummySite"
+
+
+def add_tenant_parts(data, pres_part=None):
+    """既存のダミーに、ラベル・customXml・共同編集の履歴など、テナントを特定できる部品を足す。"""
+    t = texts(data)
+    t["docMetadata/LabelInfo.xml"] = (HDR + f'<clbl:labelList xmlns:clbl="http://schemas.microsoft.com/office/2020/mipLabelMetadata">'
+                                      f'<clbl:label id="{{{LABEL_ID}}}" siteId="{{{TENANT}}}" enabled="1"/></clbl:labelList>')
+    t["customXml/item1.xml"] = HDR + f'<p:properties xmlns:p="http://schemas.microsoft.com/office/2006/metadata/properties"><Url>{SP_URL}/doc</Url></p:properties>'
+    t["customXml/itemProps1.xml"] = HDR + '<ds:datastoreItem xmlns:ds="http://schemas.openxmlformats.org/officeDocument/2006/customXml" ds:itemID="{ITEM}"/>'
+    t["customXml/_rels/item1.xml.rels"] = rels(("rId1", "customXmlProps", "itemProps1.xml"))
+    t["_rels/.rels"] = t["_rels/.rels"].replace(
+        "</Relationships>", '<Relationship Id="rIdL" Type="http://schemas.microsoft.com/office/2020/02/relationships/classificationlabels" '
+        'Target="docMetadata/LabelInfo.xml"/></Relationships>')
+    t["[Content_Types].xml"] = t["[Content_Types].xml"].replace("</Types>",
+        '<Override PartName="/docMetadata/LabelInfo.xml" ContentType="application/vnd.ms-office.classificationlabels+xml"/>'
+        '<Override PartName="/customXml/itemProps1.xml" ContentType="application/vnd.openxmlformats-officedocument.customXmlProperties+xml"/></Types>')
+    core = t["docProps/core.xml"].replace("</cp:coreProperties>", f"<dc:identifier>DOCID-{TENANT}</dc:identifier></cp:coreProperties>")
+    t["docProps/core.xml"] = core
+    t["docProps/app.xml"] = t.get("docProps/app.xml", APP).replace("</Properties>", f"<Template>{SP_URL}/t.potx</Template></Properties>")
+    return t
+
+
+def rel_add(t, part, item):
+    rp = re.sub(r"([^/]+)$", r"_rels/\1.rels", part)
+    t[rp] = t[rp].replace("</Relationships>", item + "</Relationships>")
+
+
+class TenantTest(unittest.TestCase):
+    def xlsx(self):
+        t = add_tenant_parts(build_xlsx())
+        t["xl/workbook.xml"] = t["xl/workbook.xml"].replace(
+            "<sheets>", f'<fileSharing userName="dummy.user@dummytenant.onmicrosoft.com"/><xr:revisionPtr xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" documentId="13_ncr:1_{{{TENANT}}}"/><sheets>', 1)
+        rel_add(t, "xl/workbook.xml", f'<Relationship Id="rIdCx" Type="{RT}customXml" Target="../customXml/item1.xml"/>')
+        return zipit(t)
+
+    def pptx(self):
+        t = add_tenant_parts(build_pptx())
+        t["ppt/changesInfos/changesInfo1.xml"] = HDR + f'<pc:chgInfo xmlns:pc="x"><pc:docChg userId="S::dummy.user@dummytenant.onmicrosoft.com::{TENANT}"/></pc:chgInfo>'
+        t["ppt/revisionInfo.xml"] = HDR + f'<r:revInfo xmlns:r="x"><r:client id="{{{TENANT}}}"/></r:revInfo>'
+        t["[Content_Types].xml"] = t["[Content_Types].xml"].replace("</Types>",
+            '<Override PartName="/ppt/changesInfos/changesInfo1.xml" ContentType="application/vnd.ms-powerpoint.changesinfo+xml"/>'
+            '<Override PartName="/ppt/revisionInfo.xml" ContentType="application/vnd.ms-powerpoint.revisioninfo+xml"/></Types>')
+        rel_add(t, "ppt/presentation.xml",
+                f'<Relationship Id="rIdCx" Type="{RT}customXml" Target="../customXml/item1.xml"/>'
+                '<Relationship Id="rIdCh" Type="http://schemas.microsoft.com/office/2016/11/relationships/changesInfo" Target="changesInfos/changesInfo1.xml"/>'
+                '<Relationship Id="rIdRv" Type="http://schemas.microsoft.com/office/2015/10/relationships/revisionInfo" Target="revisionInfo.xml"/>')
+        t["ppt/tags/tag1.xml"] = HDR + '<p:tagLst xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:tag name="PATH" val="dummy"/></p:tagLst>'
+        rel_add(t, "ppt/presentation.xml", f'<Relationship Id="rIdTg" Type="{RT}tags" Target="tags/tag1.xml"/>')
+        t["ppt/slides/_rels/slide1.xml.rels"] = t["ppt/slides/_rels/slide1.xml.rels"].replace(
+            "</Relationships>", f'<Relationship Id="rIdH" Type="{RT}hyperlink" Target="{SP_URL}/x" TargetMode="External"/></Relationships>')
+        t["ppt/slides/slide1.xml"] = t["ppt/slides/slide1.xml"].replace(
+            "<a:t>", '<a:t>', 1)
+        return zipit(t)
+
+    def test_check_finds_tenant(self):
+        for data, ext in ((self.xlsx(), ".xlsx"), (self.pptx(), ".pptx")):
+            fs = ck.check(ck.Pkg(data), ext)
+            self.assertLessEqual({"label-info", "tenant-id", "custom-xml"}, codes(fs))
+        self.assertLessEqual({"revision-ptr", "file-sharing"}, codes(ck.check(ck.Pkg(self.xlsx()), ".xlsx")))
+        self.assertIn("pptx-revisions", codes(ck.check(ck.Pkg(self.pptx()), ".pptx")))
+
+    def test_standard_clean_removes_labels_and_ids(self):
+        for data, ext in ((self.xlsx(), ".xlsx"), (self.pptx(), ".pptx")):
+            out, _log = ck.clean(data, ext, list(ck.CLEAN_ACTIONS))
+            self.assertEqual(ck.integrity(out), [])
+            t = texts(out)
+            self.assertNotIn("docMetadata/LabelInfo.xml", t)
+            self.assertNotIn("customXml/item1.xml", t)
+            self.assertNotIn("dummytenant", "".join(v for n, v in t.items() if n.startswith(("docProps", "customXml", "ppt/changesInfos", "xl/workbook"))))
+            allt = "\n".join(t.values())
+            self.assertNotIn(LABEL_ID, allt)
+            self.assertNotIn(f"DOCID-{TENANT}", allt)
+            self.assertNotIn("fileSharing", allt)
+            self.assertNotIn("revisionPtr", allt)
+            self.assertNotIn("changesInfo", allt)
+            self.assertNotIn("revisionInfo", allt)
+            self.assertNotIn("classificationlabels", allt)
+
+    def test_keep_labels(self):
+        out, _log = ck.clean(self.xlsx(), ".xlsx", [a for a in ck.CLEAN_ACTIONS if a != "labels"])
+        self.assertIn("docMetadata/LabelInfo.xml", texts(out))
+
+    def test_strict_removes_links_and_tags(self):
+        out, _log = ck.clean(self.pptx(), ".pptx", list(ck.CLEAN_ACTIONS) + list(ck.PROFILES["strict"][1]))
+        self.assertEqual(ck.integrity(out), [])
+        t = texts(out)
+        self.assertNotIn("dummytenant", "\n".join(t.values()))
+        self.assertNotIn("ppt/tags/tag1.xml", t)
+
+    def test_standard_keeps_external_link_and_reports_it(self):
+        out, _log = ck.clean(self.pptx(), ".pptx", list(ck.CLEAN_ACTIONS))
+        self.assertIn(SP_URL, texts(out)["ppt/slides/_rels/slide1.xml.rels"])
+        self.assertIn("tenant-id", codes(ck.check(ck.Pkg(out), ".pptx")))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -32,17 +32,22 @@ SAMPLE_LEN = 60
 SAMPLE_MAX = 5
 
 # clean の既定の動作（--keep で外せる）。報告だけのもの（キャッシュ、外部リンク、埋め込みなど）は消さない
+CORE_TAGS = ("dc:creator", "cp:lastModifiedBy", "dc:title", "dc:subject", "cp:keywords",
+             "dc:description", "cp:category", "cp:contentStatus", "dc:identifier")
+
 CLEAN_ACTIONS = {
     "hidden-sheets": "非表示シート（hidden / veryHidden）を消し、参照する数式は値に、定義名は削除",
     "hidden-slides": "非表示スライドを消す",
     "notes": "スライドのノートを外す",
     "comments": "コメントと作成者（xlsx の persons、pptx の commentAuthors / authors）を外す",
-    "props": "文書プロパティの個人情報（作成者・更新者・会社・管理者・タイトルなど）を空にし、シート名の一覧と custom.xml を外す",
+    "props": "文書プロパティの個人情報（作成者・更新者・会社・管理者・タイトル・文書 ID・テンプレートのパス・リンク先の一覧など）を空にし、シート名の一覧と custom.xml を外す。xlsx は書き込みパスワードの設定者名（fileSharing）も外す",
+    "labels": "秘密度ラベルの部品（docMetadata/LabelInfo.xml。ラベル ID とテナント ID を持つ）を外す",
+    "custom-xml": "カスタム XML（SharePoint の列の値・リスト ID・サイトの URL など）を外す。Power Query（DataMashup）と引用文献は残す（前者は strict の connections が外す）",
     "abspath": "保存場所の絶対パス（x15ac:absPath）を消す",
     "printer": "プリンター設定を外す",
     "thumbnail": "縮小画像を外す",
     "calcchain": "計算順の一覧（calcChain）を外す（Excel が作り直す）",
-    "revisions": "変更履歴（revisions）を外す",
+    "revisions": "変更履歴（revisions）を外す。pptx の共同編集の履歴（changesInfo。作成者・userId）と revisionInfo、xlsx の文書 GUID（revisionPtr）も外す",
     "ref-names": "参照先が無い（#REF!）定義名を消す",
     "hidden-names": "非表示の定義名を消す（取り込み元のパスを持つ AccessDatabase など。_xl で始まる Excel 内部の名前は残す）",
     "external-links": "外部ブックへのリンクを切る（数式は値に、リンクの部品・外部パス・値の写し・外部を参照する定義名を消す）",
@@ -62,6 +67,9 @@ STRIP_KINDS = {
     "images": ("画像（図形・背景・シートの背景。縮小画像は thumbnail が別に外す）", {"image"}),
     "embeddings": ("埋め込みオブジェクト（OLE、埋め込みブック）", {"oleObject", "package"}),
     "pivots": ("ピボットの部品（キャッシュ全件を含む。ピボットの表は値として残る）", {"pivotCacheDefinition", "pivotCacheRecords", "pivotTable"}),
+    "hyperlinks": ("外部ハイパーリンクの先（リンクは外し、表示の文字は残す。SharePoint の URL・UNC パスなど）", set()),
+    "tags": ("タグ（アドインが書いた値。pptx の p:tags）", {"tags"}),
+    "addins": ("アドイン（webextensions）", {"webextension", "webextensiontaskpanes"}),
     "connections": ("接続・クエリ・データモデル・customXml", {"connections", "queryTable", "customXml", "powerPivotData"}),
 }
 
@@ -233,8 +241,7 @@ def check_common(pkg, fs):
     core = pkg.text("docProps/core.xml")
     if core:
         vals = []
-        for tag in ("dc:creator", "cp:lastModifiedBy", "dc:title", "dc:subject", "cp:keywords",
-                    "dc:description", "cp:category", "cp:contentStatus"):
+        for tag in CORE_TAGS:
             for m in re.finditer(rf"<{tag}\b[^>]*>(.*?)</{tag}>", core, re.S):
                 if plain(m.group(1)):
                     vals.append(f"{tag}: {plain(m.group(1))}")
@@ -243,15 +250,18 @@ def check_common(pkg, fs):
     app = pkg.text("docProps/app.xml")
     if app:
         vals = []
-        for tag in ("Company", "Manager", "HyperlinkBase"):
+        for tag in ("Company", "Manager", "HyperlinkBase", "Template"):
             m = re.search(rf"<{tag}\b[^>]*>(.*?)</{tag}>", app, re.S)
             if m and plain(m.group(1)):
                 vals.append(f"{tag}: {plain(m.group(1))}")
+        m = re.search(r"<HLinks\b.*?</HLinks>", app, re.S)
+        if m:
+            vals.append("HLinks: " + " / ".join(plain(x) for x in re.findall(r"<vt:lpwstr>(.*?)</vt:lpwstr>", m.group(0), re.S)))
         m = re.search(r"<TitlesOfParts\b.*?</TitlesOfParts>", app, re.S)
         if m:
             vals.append("TitlesOfParts: " + " / ".join(plain(x) for x in re.findall(r"<vt:lpstr>(.*?)</vt:lpstr>", m.group(0), re.S)))
         if vals:
-            fs.append(Finding("props-app", "docProps/app.xml", "会社名・部品名の一覧（シート名・スライドのタイトル）", vals))
+            fs.append(Finding("props-app", "docProps/app.xml", "会社名・テンプレートのパス・リンク先・部品名の一覧（シート名・スライドのタイトル）", vals))
     for _rid, ty, tgt in pkg.internal(""):
         if ty == "custom-properties" and pkg.has(tgt):
             t = pkg.text(tgt) or ""
@@ -259,6 +269,10 @@ def check_common(pkg, fs):
                      for m in re.finditer(r"<property\b([^>]*)>(.*?)</property>", t, re.S)]
             if props:
                 fs.append(Finding("props-custom", tgt, f"ユーザー定義のプロパティ（{len(props)} 件。秘密度ラベル MSIP_Label_* もここ）", props))
+        if ty == "classificationlabels" and pkg.has(tgt):
+            t = pkg.text(tgt) or ""
+            labs = [f"id={attrs(m).get('id', '')} siteId={attrs(m).get('siteId', '')}" for m in re.findall(r"<(?:\w+:)?label\b[^>]*>", t)]
+            fs.append(Finding("label-info", tgt, f"秘密度ラベルの部品（ラベル ID とテナント ID。{len(labs)} 件）", labs))
         if ty == "thumbnail" and pkg.has(tgt):
             fs.append(Finding("thumbnail", tgt, "縮小画像（文字が写る）"))
     ext = []
@@ -290,6 +304,29 @@ def check_common(pkg, fs):
                 f = Finding("chart-cache", n, f"グラフの元データの写し（{len(pts)} 個。参照: {', '.join(refs) or 'なし'}）", pts)
                 f.refs = refs
                 fs.append(f)
+
+
+# テナント・アカウントを特定できる形の網（既知の部品に限らず、全 XML を見る。clean の後にも残りを出す）
+_TENANT_RES = (
+    ("ドメイン", re.compile(r"[\w.-]+\.(?:sharepoint(?:-df)?\.com|onmicrosoft\.com|microsoftonline\.com|office365\.com)\b", re.I)),
+    ("アカウント", re.compile(r"[\w.+-]{1,64}@[\w-]{1,63}(?:\.[\w-]{1,63})+")),
+    ("S:: 形式のユーザー ID", re.compile(r"\bS::[^\s\"<>]+")),
+)
+_TENANT_ATTR_RE = re.compile(r'\b(siteId|tenantId|userId|providerId|objectId|oid)="([^"]+)"', re.I)
+
+
+def check_tenant(pkg, fs):
+    for n in pkg.order:
+        if n not in pkg.parts or not n.lower().endswith(XML_EXT):
+            continue
+        t = pkg.text(n) or ""
+        hits = []
+        for label, rx in _TENANT_RES:
+            hits += [f"{label}: {m.group(0)[:60]}" for m in rx.finditer(t)]
+        hits += [f"{m.group(1)}: {m.group(2)[:60]}" for m in _TENANT_ATTR_RE.finditer(t) if m.group(2)]
+        hits = sorted(set(hits))
+        if hits:
+            fs.append(Finding("tenant-id", n, f"テナント・アカウントを特定できる形（{len(hits)} 種類）", hits[:SAMPLE_MAX * 4]))
 
 
 # ---------- 点検: xlsx ----------
@@ -341,6 +378,9 @@ def check_xlsx(pkg, fs):
     m = re.search(r'<x15ac:absPath\b[^>]*\burl="([^"]*)"', t)
     if m:
         fs.append(Finding("abspath", wb, "保存した場所の絶対パス", [_unesc(m.group(1), _XML_UNESC)]))
+    m = re.search(r"<xr:revisionPtr\b[^>]*\bdocumentId=\"([^\"]*)\"", t)
+    if m:
+        fs.append(Finding("revision-ptr", wb, "文書の GUID（共同編集の識別子。文書の名寄せに使える）", [m.group(1)]))
     m = re.search(r"<fileSharing\b[^>]*/>", t)
     if m and attrs(m.group(0)).get("userName"):
         fs.append(Finding("file-sharing", wb, "書き込みパスワードの設定者名", [attrs(m.group(0))["userName"]]))
@@ -462,6 +502,10 @@ def check_pptx(pkg, fs):
                 used_layouts.add(tgt)
             elif ty == "comments" and pkg.has(tgt):
                 fs.append(Finding("comment", tgt, f"{i} 枚目のコメント", [plain(pkg.text(tgt) or "")]))
+    revs = [tgt for _r, _t, tgt in pkg.internal(pres, {"changesInfo", "revisionInfo"}) if pkg.has(tgt)]
+    if revs:
+        ids = sorted({m for tgt in revs for m in re.findall(r'(?:userId|id)="([^"]*)"', pkg.text(tgt) or "")})
+        fs.append(Finding("pptx-revisions", "", f"共同編集の履歴（作成者・userId・クライアント GUID。{len(revs)} 件）", ids or revs))
     for n in pkg.order:
         if n in pkg.parts and re.match(r"ppt/(commentAuthors|authors)\.xml$", n):
             d = pkg.text(n) or ""
@@ -693,6 +737,7 @@ def check(pkg, ext, sensitive=False, terms=()):
     else:
         check_pptx(pkg, fs)
     check_text(pkg, ext, fs)
+    check_tenant(pkg, fs)
     if sensitive:
         check_sensitive(pkg, ext, fs, terms)
     return fs
@@ -817,6 +862,16 @@ def clean_xlsx(pkg, actions, log):
         t2 = re.sub(r"<x15ac:absPath\b[^>]*/>", "", t2)
         if t2 != t:
             log.append("保存場所の絶対パスを消した")
+        t = t2
+    if "props" in actions:
+        t2 = re.sub(r"<fileSharing\b[^>]*/>", "", t)
+        if t2 != t:
+            log.append("書き込みパスワードの設定者名（fileSharing）を外した")
+        t = t2
+    if "revisions" in actions:
+        t2 = re.sub(r"<xr:revisionPtr\b[^>]*/>", "", t)
+        if t2 != t:
+            log.append("文書の GUID（revisionPtr）を外した")
         t = t2
     pkg.put(wb, t)
     if "calcchain" in actions and pkg.drop_rels_of(wb, {"calcChain"}):
@@ -990,6 +1045,8 @@ def clean_pptx(pkg, actions, log):
             log.append(f"コメントを外した: {s['path']}")
     if "comments" in actions and pkg.drop_rels_of(pres, {"commentAuthors", "authors"}):
         log.append("コメントの作成者を外した")
+    if "revisions" in actions and pkg.drop_rels_of(pres, {"changesInfo", "revisionInfo"}):
+        log.append("共同編集の履歴（changesInfo・revisionInfo）を外した")
 
 
 # ---------- 掃除: 共通 ----------
@@ -998,18 +1055,31 @@ def clean_common(pkg, actions, log):
     if "props" in actions:
         core = pkg.text("docProps/core.xml")
         if core is not None:
-            for tag in ("dc:creator", "cp:lastModifiedBy", "dc:title", "dc:subject", "cp:keywords",
-                        "dc:description", "cp:category", "cp:contentStatus"):
+            for tag in CORE_TAGS:
                 core = re.sub(rf"(<{tag}\b[^>]*>).*?(</{tag}>)", r"\1\2", core, flags=re.S)
             pkg.put("docProps/core.xml", core)
         app = pkg.text("docProps/app.xml")
         if app is not None:
-            for tag in ("Company", "Manager", "HyperlinkBase"):
+            for tag in ("Company", "Manager", "HyperlinkBase", "Template"):
                 app = re.sub(rf"(<{tag}\b[^>]*>).*?(</{tag}>)", r"\1\2", app, flags=re.S)
-            app = re.sub(r"<(HeadingPairs|TitlesOfParts)\b.*?</\1>", "", app, flags=re.S)
+            app = re.sub(r"<(HeadingPairs|TitlesOfParts|HLinks)\b.*?</\1>", "", app, flags=re.S)
             pkg.put("docProps/app.xml", app)
         pkg.drop_rels_of("", {"custom-properties"})
         log.append("文書プロパティの個人情報を空にした")
+    if "labels" in actions and pkg.drop_rels_of("", {"classificationlabels"}):
+        log.append("秘密度ラベルの部品（LabelInfo）を外した")
+    if "custom-xml" in actions:
+        n = 0
+        for rp in [x for x in pkg.order if x.endswith(".rels") and x in pkg.parts]:
+            src = "" if rp == "_rels/.rels" else re.sub(r"(^|/)_rels/([^/]+)\.rels$", r"\1\2", rp)
+            for rid, _ty, tgt in pkg.internal(src, {"customXml"}):
+                body = pkg.text(tgt) or ""
+                if "DataMashup" in body or re.search(r"<(?:\w+:)?Sources\b", body):
+                    continue
+                pkg.drop_rel(src, rid)
+                n += 1
+        if n:
+            log.append(f"カスタム XML を外した: 関係 {n} 件")
     if "thumbnail" in actions and pkg.drop_rels_of("", {"thumbnail"}):
         log.append("縮小画像を外した")
 
@@ -1023,6 +1093,12 @@ def strip_refs(xml, rid):
     xml = re.sub(rf'<mc:AlternateContent\b(?:(?!</mc:AlternateContent>).)*?<oleObject\b[^>]*{ref}.*?</mc:AlternateContent>', "", xml, flags=flags)
     xml = re.sub(rf'<oleObject\b[^>]*{ref}[^>]*(?:/>|>.*?</oleObject>)', "", xml, flags=flags)
     xml = re.sub(rf'<(picture|pivotCache)\b[^>]*{ref}[^>]*/>', "", xml)
+    xml = re.sub(rf'<p:tags\b[^>]*{ref}[^>]*/>', "", xml)
+    xml = re.sub(r"<p:custDataLst>\s*</p:custDataLst>", "", xml)
+    xml = re.sub(rf'<a:hlink(?:Click|MouseOver)\b[^>]*{ref}[^>]*/>', "", xml)
+    xml = re.sub(rf'<a:hlink(?:Click|MouseOver)\b[^>]*{ref}[^>]*[^/]>.*?</a:hlink(?:Click|MouseOver)>', "", xml, flags=flags)
+    xml = re.sub(rf'<hyperlink\b[^>]*{ref}[^>]*/>', "", xml)
+    xml = re.sub(r"<hyperlinks>\s*</hyperlinks>", "", xml)
     xml = re.sub(r"<(oleObjects|pivotCaches)>\s*</\1>", "", xml)
     return re.sub(rf'\s+(?:r:(?:id|embed|link|pict)|o:relid)="{re.escape(rid)}"', "", xml)
 
@@ -1040,6 +1116,18 @@ def strip_kinds(pkg, kinds, log):
                 pkg.put(src, strip_refs(xml, rid))
             pkg.drop_rel(src, rid)
             counts[types[ty]] = counts.get(types[ty], 0) + 1
+    if "hyperlinks" in kinds:
+        for n in list(pkg.order):
+            if n not in pkg.parts or not n.endswith(".rels"):
+                continue
+            src = "" if n == "_rels/.rels" else re.sub(r"(^|/)_rels/([^/]+)\.rels$", r"\1\2", n)
+            for r in pkg.rels(src):
+                if r.get("TargetMode") == "External" and rtype(r) == "hyperlink":
+                    xml = pkg.text(src) if src else None
+                    if xml is not None and src.lower().endswith(XML_EXT):
+                        pkg.put(src, strip_refs(xml, r.get("Id", "")))
+                    pkg.drop_rel(src, r.get("Id"))
+                    counts["hyperlinks"] = counts.get("hyperlinks", 0) + 1
     for k, c in counts.items():
         log.append(f"{STRIP_KINDS[k][0].split('（')[0]}を外した: 関係 {c} 件")
 
@@ -1050,7 +1138,7 @@ def clean(data, ext, actions):
         raise CleanError("同じ名前のエントリーが複数ある zip は掃除しない（どちらが読まれるかがアプリで違う）")
     log = []
     kinds = [k for k in STRIP_KINDS if k in actions]
-    if kinds:
+    if kinds or {"labels", "custom-xml", "revisions"} & set(actions):
         actions = set(actions) | {"orphans"}  # 外した部品の本体を消すのに要る
     if ext in (".xlsx", ".xlsm"):
         clean_xlsx(pkg, set(actions), log)
