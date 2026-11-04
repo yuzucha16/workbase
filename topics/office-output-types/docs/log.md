@@ -15,6 +15,7 @@
 2. 【期日 11-13】PC1 で、入力 2〜3 種類の見出し・列名だけ（実データなし）で、定義表の行を書く。足りない項目を雛形に戻す。
 3. 【期日 11-14】雛形を `exmem/lessons/` に昇格するか、1 回回した後に決める（提案: 昇格は 1 回回してから）。
 5. 【期日 11-18】PC1 の PowerPoint で `records/2026-11-04-quarto-trial-biz-udpgothic.pptx` を開き、フォントが BIZ UDPゴシックで出るか見る（雛形は `records/reference-biz-udpgothic.pptx`。`.qmd` は試験の元）。Quarto の `init` への追加は実装・試験済み（11-04、`room.py` の `quarto` 段）。次: 実機の `init --only quarto` で新しい部屋に入ることの確認と、`init` に足したことのレビュー。
+6. 【期日なし、起票 11-04】Quarto で 1 サンプルを作ってみる。お題は「room を AI Lightning Talk で紹介する」。AI が Markdown（`.qmd`）の下書きを作り、人が直し、`quarto render` で pptx にし、`records/reference-biz-udpgothic.pptx` を雛形に使う。見るのは、流れが通るか、1 枚 1 メッセージの下書きの質、直す手間。
 4. 【期日なし・案件待ち】Excel → テキスト（アンケート集約、設計書・議事録を Excel に残す習慣の分析）の型は、テキスト用の叩き台が回った後（試し方は決め直し）、案件が来たときに足す。
 
 ## Open Questions
