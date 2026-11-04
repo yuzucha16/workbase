@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-04（eg1 の結果を確認し、`inv` の構造を直した）
+- 部屋の成果物（`out/compare-slide-tools/`）と工程ログを読んだ。調査は筋が通り、6 工程の構成要素は使われた（所要は約 25 分）。弱い点は、Marp と Slidev が文書のみ、裏取りが語句の grep まで、report の出典欄に S3・S13 が無いこと。記録は `records/2026-11-04-inv-slide-tools-compare-result.md`。
+- ユーザーの承認で、提案 1・3・4（台帳に「実測」と取得失敗の欄、findings の行 ID、checks を 1 ファイル）を `project-structure.md` に反映。提案 2・5 は実験の依頼文で対応。`ai/in/` が空に見えたのはマウントポイントの差。
+- npx の拒否は「人が事前に導入する」と決めた。Marp・Slidev の横並び比較を Next Actions に足した。決定は `decisions.md`。
+
 ### 2026-11-04（`inv` の工程別構造の素案を採用した）
 - `dev` が `env/` `src/` `tests/` `docs/` と工程別なので、`inv` も工程別にする素案を出し、ユーザーが承認した（`decisions.md`）。構成要素は `question.md` `sources/` `findings/` `checks/` `report.md`、清書の `publish/`（ユーザーの追加。pptx まで成果物に含む）。`project-structure.md` に反映（コミット済み、叩き台）。
 - 実験のお題を決めた: プレゼン資料作成ツールの比較（Marp、Quarto、Slidev）。AI 活用を想定した選定軸と作成時間短縮の方法。`topics/office-output-types` の markdown → pptx の検討のインプットになる。実験は別セッションで観点別に行う（`log.md` の Next Actions）。
