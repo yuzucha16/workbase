@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【room】Area が Project の情報を持つ方式は、状態はリンク（トップダウン）、決定・知識は転記＋出典（ボトムアップ）。Area の `docs/log.md` は持たない（2026-11-04）
+- 決めたこと（ユーザー）: 案はボトムアップを主にし、片方向リンクは出典として添える。状態（status・期限・進捗）は転記せず、Project の frontmatter を正本にして Area は Bases で読む。決定・知識は `close` が Project から Area の inbox へ運び（any → inbox → decisions の 1 本の経路）、Area の AI が `decisions.md` に統合する。統合した項には `Project#n` と根拠を残し、`room trace` で閉じた Project の詳細を引く。
+- 理由: Project は閉じて `archives/` へ移り、`ai/out/` と計画は git 追跡外なので、Area が Project へのリンクだけで成り立つと閉じた後・別の PC で読めなくなる。Area の AI が決定を引くたびに閉じた Project を開かせたくない。状態は転記するとすぐ古くなる。
+- 帰結: Area の `docs/log.md` は用途が残らない（状態は Bases、決定は decisions、待ちは inbox、候補は README）ので持たない。10-06 の「Area に docs/ を持たない」と 10-07 の「Area の decisions.md」は両立。経緯は `notes/area-ops/2026-11-04-area-log-inbox-origin.md`（プロジェクトの共有フォルダ）。
+- 残り（log.md の NA 4）: Area の AI の入口、decisions.md の置き場（`docs/` か `ai/docs/` か）、Area の終わり方。
+
 ### 【guides】`room start` 直後の前半の進め方は 6R → 論点出し → 憲章以降（任意）。行き来を許し、強制しない（2026-11-04）
 - 決めたこと（ユーザー）: 6R を必須の入口にし、論点出しは 6R の未決を振り分ける関門とする。憲章・WBS・マイルストーンは任意（大きめの Project だけ）。6R は更新する前提で書き、論点出しの結果は 6R に書き戻す。
 - 理由: 6R の問題意識・未決が論点の材料になる。`brief-plan.md` の「6R で止まってよい」と矛盾しない。反映先は `guides/howto/ai-room-lifecycle.md` の 4 節。`brief-plan.md` の手順は変えていない。
