@@ -13,7 +13,7 @@ triggers: [Marp, Quarto, Pandoc, Slidev, markdown to pptx, スライド, パワ�
 
 Markdown を pptx にする道具を比べ、なぜ Quarto を主、Marp を副にしたかを、自分で説明できるところまで理解するための文書。調査日は 2026-11-04。
 
-> **状態: 調査のみ。どの道具も実機では未試験。** 公式ページで確認したことは [公式]、ブログなどの二次情報は [二次]、筆者の見立ては【推測】と書く。
+> **状態: Quarto は 11-04 に部屋で実機試験済み（8 節）。Marp などは未試験。** 公式ページで確認したことは [公式]、ブログなどの二次情報は [二次]、筆者の見立ては【推測】と書く。
 
 ## 1. 3行で表すと
 
@@ -73,11 +73,19 @@ Markdown を pptx にする道具を比べ、なぜ Quarto を主、Marp を副�
 - `--pptx-editable` が、日本語と mermaid で使えるか。
 - 同じ Markdown を Quarto と Marp に通し、直す手間を比べる。
 
-## 8. 要確認事項
+## 8. 実機の試験結果（2026-11-04、部屋 room-myenv）と要確認事項
 
-- Quarto の部屋への入れ方（deb か tarball か）と版。公式の取得ページから版を読み取れなかった。
-- Quarto が、部屋の Chromium を見つけるか。
-- 日本語フォントと mermaid の日本語が、pptx で崩れないか。
+試験: ai のホーム（`~/.local/opt/quarto`）に Quarto 1.11.9 の tarball（linux-amd64、SHA-256 `9d037baa…1a3056e03a1530`、取得元は GitHub Releases）を展開した。試験用であり、部屋の方針（root が版を固定して入れる）からは外れる。
+
+- 入れ方と版: tarball を展開するだけで `quarto --version` は 1.11.9。root 不要。
+- 拡張子: `{mermaid}` などの実行コードを含む文書は `.qmd` が要る。`.md` だと「You must use the .qmd extension」で止まる。
+- Chromium: Quarto は部屋の Playwright の Chromium を**自動では見つけない**（「Chrome not found」）。`QUARTO_CHROMIUM=/opt/ms-playwright/chromium-1248/chrome-linux64/chrome` を指定すると通った。`quarto install chrome-headless-shell` は不要。
+- 結果: `quarto render t.qmd --to pptx` で 5 枚（表紙、`#` のセクション、箇条書き、図、2列）と発表者ノートができた。レイアウトは表紙 1、箇条書き 2、セクション 3、2列 4、図は 8 が自動で選ばれた。
+- mermaid の日本語: PNG に四角なく出た（目視）。
+- フォント: pptx にはフォント名が埋め込まれず、PowerPoint 側の既定に従う。LibreOffice の PDF では、NotoSansCJKsc と jp が混在した（`/etc/fonts/local.conf` の jp 優先がこのディストロの LibreOffice に効いていない可能性。pptx 自体の問題ではない）。PowerPoint での見た目は未確認（PC1 で開く）。
+
+未確認:
+
 - 雛形に合わせるとき、どこまでを雛形側のレイアウトにできるか（共通背景、ロゴ、フォント）。
 - Marp CLI の最新版と、`--pptx-editable` の現在の安定度。
 - 第三者による、編集できる pptx の品質比較は見つからなかった。

@@ -1,0 +1,36 @@
+---
+title: 日本語の試験
+format:
+  pptx:
+    reference-doc: reference-biz.pptx
+---
+
+# セクション
+
+## 要点
+
+- 一つ目の要点です
+- 二つ目: 漢字の字形（直、骨、令）
+- **太字**と通常
+
+## 図
+
+```{mermaid}
+flowchart LR
+  A[入力Excel] --> B[集約] --> C[マスター]
+```
+
+## 2列
+
+:::: {.columns}
+::: {.column width="50%"}
+左の列
+:::
+::: {.column width="50%"}
+右の列
+:::
+::::
+
+::: notes
+発表者ノートの試験
+:::

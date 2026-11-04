@@ -941,6 +941,32 @@ chmod 755 /usr/local/bin/room-mmdc /usr/local/bin/room-chrome /usr/local/share/r
 mmdc --version
 """ % {"pw": PLAYWRIGHT_VERSION, "mm": MERMAID_CLI_VERSION}
 
+# Quarto（Markdown → pptx。2026-11-04 に部屋で実機試験: 1.11.9 の tarball が通った）: 公式の tarball を版と SHA-256 で固定し、root が /opt に置く（ai は書き換えられない）。x64 だけ。
+# Quarto は部屋の Playwright の Chromium を自動では見つけない（「Chrome not found」）ので、/usr/local/bin/quarto の薄い包みで QUARTO_CHROMIUM を指す。mermaid を含む文書は .qmd にする。
+# pptx の日本語フォントの雛形は topics/office-output-types/records/reference-biz-udpgothic.pptx（テーマのフォントが BIZ UDPGothic。Windows 標準。pptx にはフォント名だけが入り、実体は表示する PC のもの）
+QUARTO_VERSION = "1.11.9"
+QUARTO_SHA256 = "9d037baa3b38ffac7217edca1d2e53760b0fab4d5749220740a32056e03a1530"
+QUARTO_INSTALL = r"""set -e
+[ "$(uname -m)" = x86_64 ] || { echo "Quarto: x64 だけ対応"; exit 1; }
+[ -x /opt/quarto/bin/quarto ] && { echo "Quarto: 入っている"; /usr/local/bin/quarto --version; exit 0; }
+T=$(mktemp -d); cd "$T"
+F=quarto-%(v)s-linux-amd64.tar.gz
+curl -fsSL -O "https://github.com/quarto-dev/quarto-cli/releases/download/v%(v)s/$F"
+echo "%(sha)s  $F" | sha256sum -c -
+mkdir -p /opt/quarto
+tar -xzf "$F" -C /opt/quarto --strip-components=1
+chmod -R a+rX /opt/quarto
+C=$(find /opt/ms-playwright -name chrome -type f | head -1)
+[ -n "$C" ]
+printf '#!/bin/sh
+export QUARTO_CHROMIUM="%%s"
+exec /opt/quarto/bin/quarto "$@"
+' "$C" > /usr/local/bin/quarto
+chmod 755 /usr/local/bin/quarto
+cd /; rm -rf "$T"
+quarto --version
+""" % {"v": QUARTO_VERSION, "sha": QUARTO_SHA256}
+
 # PowerShell 7 と、静的チェッカー（workflow-kit/tools/check-ps1.ps1）の道具（2026-10-21）: 部屋の AI が書く .ps1 を、実行せずに構文・規約・PSScriptAnalyzer で点検し、Pester で差し替えテストをするため。
 # pwsh は公式の tarball（版と SHA-256 を固定。x64 の SHA-256 は取得して一致を確認した: 2026-10-21）を /opt に置き、root が入れる（ai は書き換えられない）。
 # 部屋の pwsh は 7 に固定する。ICU を入れないので、globalization は invariant にし、テレメトリと更新確認を切る（/usr/local/bin/pwsh の薄い包み）。
@@ -1167,7 +1193,7 @@ def scaffold_area(ctx, area):
 
 
 # init の段（--only で選ぶ名前）。base は一般ユーザー・wsl.conf・分離の確認（部屋を terminate する）
-INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
+INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "quarto", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
 
 # Python の版の正本（uv 管理。docs/decisions.md 2026-10-29）。部屋の python3 もこの版にそろえる
 PYTHON_VERSION_FILE = Path(__file__).resolve().parent / ".python-version"
@@ -1265,6 +1291,8 @@ def cmd_init(ctx, a):
     # step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
     if want("chromium"):
         step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
+    if want("quarto"):
+        step_script(ctx, distro, "Quarto（公式の tarball、チェックサム確認つき。Chromium の後）", QUARTO_INSTALL, root=True)
     if want("pwsh"):
         step_script(ctx, distro, "PowerShell 7（公式の tarball、チェックサム確認つき）と PSScriptAnalyzer・Pester（版を固定）", PWSH_INSTALL, root=True)
     if want("npm"):

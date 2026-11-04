@@ -2,6 +2,11 @@
 
 ## Decisions
 
+### 【この件】Quarto を部屋の `init` に足す（2026-11-04）
+- ユーザーの発言: 「initに足します。」「pptxは問題なく開けました。日本語も良いですが、フォントは気になりますね」
+- 決めたこと: 部屋の `init` に Quarto（版固定の tarball、root が入れる）と `QUARTO_CHROMIUM` の設定を足す。pptx は PC1 の PowerPoint で問題なく開けた。フォントは別途決める（候補: Noto Sans JP、BIZ UDPゴシック、PlemolJP）。
+- 根拠: 部屋での実機試験が通った（`guides/explain/markdown-to-pptx-quarto-explain.md` の 8 節）。
+
 ### 【この件】公開 pptx 4 つの試行を取り下げる（2026-11-02）
 - ユーザーの発言: 「方針転換します。areaの internal/external 導入の背景にあるとおり、設計書風も組織目標風もAIにインプットできなくなりました。omitします。」
 - 決めたこと: 2026-10-30 の「公開 pptx 4 つで試行する」を取り下げる。Next Actions 1 を omit。テキスト出力の型の試し方は、Area の internal/external の取り決めの範囲で決め直す（未定）。
