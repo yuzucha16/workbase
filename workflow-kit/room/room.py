@@ -2476,13 +2476,34 @@ def unpushed_repos(ctx, p):
     return out
 
 
+def close_warnings(p, close_md):
+    """close を止めずに y/N で確かめる条件（2026-11-04 に停止から警告へ緩めた。動作確認や小さな作業で重いため）。[説明]。"""
+    out = []
+    left = readme_placeholders(p.readme.read_text(encoding="utf-8"))
+    if left:
+        out.append("README がひな形のまま（<...> が残っている）:\n    " + "\n    ".join(left))
+    if not close_md.exists():
+        out.append("ai/out/close.md が無い（Area の inbox に渡す【案件】【決定】は 0 件になる。書かせるなら、部屋の AI に close の判断を行わせる）")
+    return out
+
+
+def confirm_close_warnings(ctx, warned, interactive=None):
+    """警告を見せて y/N。y 以外と、非対話（端末でない）では、何も変えずに止める。"""
+    msg = "\n  ".join(warned)
+    if interactive is None:
+        interactive = sys.stdin.isatty()
+    if not interactive:
+        raise RoomError("close を止めた（非対話では警告を承知できない。何も変えていない）:\n  " + msg
+                        + "\n（端末から実行すれば、y/N で承知のうえ続けられる）")
+    ctx.say("警告:\n  " + msg)
+    if input("このまま close してよいか [y/N]: ").strip().lower() != "y":
+        raise RoomError("close を中止した。何も変えていない")
+
+
 def cmd_close(ctx, a):
     p = Project.load(ctx, a.name)
     if p.fm.get("status") != "active":
         raise RoomError(f"Project が active でない: status={p.fm.get('status')}")
-    left = readme_placeholders(p.readme.read_text(encoding="utf-8"))
-    if left:
-        raise RoomError("README がひな形のまま（<...> が残っている）。埋めてから close する:\n  " + "\n  ".join(left))
     check_gitignore(ctx)
     check_area(p)
     check_distro(ctx, p)
@@ -2494,15 +2515,16 @@ def cmd_close(ctx, a):
         raise RoomError("部屋の clone に、push していないものがある。room は push できないので、人が部屋の外から push してから close する:\n  "
                         + "\n  ".join(pending))
     close_md = p.ai / "out" / "close.md"
-    if not close_md.exists():
-        raise RoomError("ai/out/close.md が無い。部屋の AI に close の判断を行わせて、書かせる")
+    warned = close_warnings(p, close_md)
+    if warned:
+        confirm_close_warnings(ctx, warned)
     problems = check_provenance(p)
     if problems:
         raise RoomError("来歴チェックに失敗した:\n  " + "\n  ".join(problems))
     inbox = p.area_dir / "ai" / "docs" / "inbox.md"
     if not inbox.exists():
         raise RoomError(f"Area の inbox が無い: {inbox}（`room init {p.area}` で作ってから、close をやり直す。何も変えていない）")
-    close_text = close_md.read_text(encoding="utf-8")
+    close_text = close_md.read_text(encoding="utf-8") if close_md.exists() else ""
     problems = check_decisions(p, close_text, area_gate_terms(p))
     if problems:
         raise RoomError("close.md の【決定】行に問題がある。何も変えていない:\n  " + "\n  ".join(problems))
@@ -2532,7 +2554,8 @@ def cmd_close(ctx, a):
     # 3. Area の一覧
     ar = p.area_dir / "README.md"
     ar.write_text(move_area_entry(ar.read_text(encoding="utf-8"), p.name, today), encoding="utf-8", newline="\n")
-    log_room(ctx, p, "close", f"area 一致、案件 {len(cases)} 件", f"archives へ移動、reap_after {reap}")
+    note = f"、警告を承知で続行（{' / '.join(w.split('（')[0] for w in warned)}）" if warned else ""
+    log_room(ctx, p, "close", f"area 一致、案件 {len(cases)} 件{note}", f"archives へ移動、reap_after {reap}")
     rmtree_force(p.ai / "ctx")
     # 4. archives へ（追跡するファイルは、ファイル単位の git mv）
     git(ctx.vault, "add", "-A", "--", f"projects/{p.name}", f"areas/{p.area}")
@@ -3269,7 +3292,7 @@ def build_parser():
     st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst を省くと各下書きの scope: に従って両方へ運ぶ。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
     st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと各下書きの scope: に従って両方へ運ぶ。scope: が無い・不明なら止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない。2026-11-04 に1件ごとの確認を廃止した）")
-    c = sub.add_parser("close", help="Area へ渡し、archives へ移す（ai/out/close.md が要る）")
+    c = sub.add_parser("close", help="Area へ渡し、archives へ移す（README がひな形のまま・ai/out/close.md が無いときは y/N で確かめる。非対話では止まる）")
     c.add_argument("name"); c.add_argument("--commit", action="store_true")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
     i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")

@@ -119,7 +119,7 @@ uv run room.py open pilot2-1 --area pilot2
 - `--type dev|inv`（省略は `dev`）で、成果物の種類を決める。`dev` は作って保守する成果物、`inv` は調べて結論を出す成果物（`project-structure.md`）。`_noai/` の中身は `type` に関係なく同じ（`raw/` `map/` `final/` `user/`）。マスクと復元は状態で決まる（原本が `raw/` にあればマスクし、対応表ができたら終了時に復元する。`workflow-kit/room/README.md`）。`user/` は人だけの仮置き（予約名）。マスクした資料の要約を出すときは [[ai-room-mask-summary]]
 - `projects/pilot2-1/` に、`README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final,user}` ができ、Area の README の「進行中の Project」に1行足される。`ai/ctx/` は `start` が作る
 - 初期状態を、既定でコミットする（`--no-commit` で省く）。コミットされるのは、Project のひな形と、Area の README だけ（Area のほかのファイルは含めない）
-- **README の本文を書く**（目的、完了条件、成果物、範囲外）。ひな形のままだと、`close` が通ってしまい、【案件】に「ひな形のまま」と出る
+- **README の本文を書く**（目的、完了条件、成果物、範囲外）。ひな形のままだと、`close` が警告して `[y/N]` で確かめる（動作確認や小さな作業なら y で進めてよい）
 
 ```powershell
 notepad $HOME\works\projects\pilot2-1\README.md

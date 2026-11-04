@@ -32,7 +32,7 @@ uv run room.py open <Project> --area <Area>
 ```
 
 - `_noai/` には `raw/` `map/` `user/` ができる（`final/` も作られるが、復元しなければ空）
-- README の本文（目的、完了条件）を書く。ひな形のままだと `close` が通ってしまう
+- README の本文（目的、完了条件）を書く。ひな形のままだと `close` が警告して `[y/N]` で確かめる
 
 ## 2. 原本を置き、語の表を書く
 

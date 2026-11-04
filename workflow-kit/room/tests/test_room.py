@@ -2123,13 +2123,44 @@ def fill_readme(p):
     (p / "README.md").write_text(text, encoding="utf-8", newline="\n")
 
 
+def tty(answer=None):
+    """close の y/N を、端末からの実行として答える（answer が None なら非対話）。"""
+    stdin = mock.MagicMock()
+    stdin.isatty.return_value = answer is not None
+    patches = [mock.patch.object(room.sys, "stdin", stdin)]
+    if answer is not None:
+        patches.append(mock.patch("builtins.input", return_value=answer))
+    stack = contextlib.ExitStack()
+    for pt in patches:
+        stack.enter_context(pt)
+    return stack
+
+
 class CloseTest(unittest.TestCase):
+    def test_close_warns_and_proceeds_on_y_with_template_readme_and_no_close_md(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            room.scaffold_area(c, "area-x")
+            with tty("y"):
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertFalse((v / "projects/proj-a").exists())
+            self.assertTrue((v / "archives/proj-a/README.md").exists())
+            self.assertIn("status: done", (v / "archives/proj-a/README.md").read_text(encoding="utf-8"))
+
+    def test_close_warning_n_changes_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            room.scaffold_area(c, "area-x")
+            with tty("n"), self.assertRaisesRegex(room.RoomError, "中止"):
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertTrue((v / "projects/proj-a").exists())
+
     def test_close_refuses_template_readme(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c = opened(tmp, FakeWsl())
             p = v / "projects/proj-a"
             (p / "ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
-            with self.assertRaisesRegex(room.RoomError, "ひな形のまま"):
+            with tty(), self.assertRaisesRegex(room.RoomError, "非対話.*\n.*ひな形のまま"):
                 room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
             self.assertTrue(p.exists())
 
@@ -2138,7 +2169,7 @@ class CloseTest(unittest.TestCase):
             wsl = FakeWsl()
             v, c = opened(tmp, wsl)
             fill_readme(v / "projects/proj-a")
-            with self.assertRaises(room.RoomError):
+            with tty(), self.assertRaisesRegex(room.RoomError, "close.md が無い"):
                 room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
             (v / "projects/proj-a/ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
             wsl.mounted = True
