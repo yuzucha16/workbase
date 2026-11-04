@@ -11,6 +11,10 @@
 - ユーザーの決定: A の追試後に測定を切る。使い捨ての Project 6 つ、部屋の clone と bare を削除した。works 側に `rtc-probe` の削除が未コミットで残る（works の git）。費用は 1 回 $0.05〜$0.32。
 - 変更（kit）: `workflow-kit/dev-deliverable-guide.md` に `<成果物名>` の既定、`workflow-kit/room/room.py` の `ROOM.md` 雛形に同じ文。
 
+### 2026-11-04（Vault 2 分割の実装を close した）
+- `git -C` 緩和の反映を確かめた: `ROOM.md` は `room start` ごとに `ROOM_GUIDE`（`room.py`）から作り直されるので、既存の部屋は次の `start` で反映される。`mkworks --update` は不要。`templates/workspace/` に `git -C` の記述は無く、`room/README.md` 43 行は緩和後の文。実機の `start` は未確認。
+- PC2 でも `30_link.bat` を実機で実行し、問題なし（ユーザー）。PC1（11-02）と合わせて両 PC で確認済み。`docs/due.md` の 11-09 の行（Vault 2 分割の実装）は消した。
+
 ### 2026-11-02（Vault の 2 分割の前提を確認し、正式化して dotfiles に実装した）
 - PC1 の実機（ユーザー）: 除外フィルタで resources は検索・リンクから外れる（エクスプローラーには残る。受け入れ）。入れ子の `.obsidian` は独立。pc1 のリンク調査は `resources/` を指すもの 0 本。`30_link.bat` が止まるのは実ファイルがあるときだけ（ジャンクションは上書き）。dotfiles の `.obsidian` の写し先は works（決定）。
 - 正式化（ユーザー）。workbase は `.gitignore` に `/.obsidian`。文面直しは NA に分けて積んだ（一覧は `decisions.md`）。コミット `edc30d6` `9522a09` `2acc516` `3b0be80`。
