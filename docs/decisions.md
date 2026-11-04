@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【workflow-kit】保留 2 件(`repos/` の受け渡し、`restore_project` の上書き保護)を omit にする(2026-11-04)
+- 決めたこと(ユーザー、`review 消化`): ① `repos/`(= `works/repos/`、ghq の root)のリポジトリを部屋へ渡すスナップショットと patch の案は omit。`dev` の `env/` を使っても部屋に持ち込む場面がなく、必要が出ていない。② `restore_project` が `_noai/final/` の人の変更を上書きする件の保護案(正本の宣言、上書き前の警告)は omit。「いまの仕組みでは final、map などを使わない」ため。
+- 見直しの条件: ① は `repos/` のリポジトリを部屋で触る必要が出たとき、新しく起票する。② は `_noai/final/` を使う経路が戻るとき。
+- 元の保留: 10-16・10-18・10-19 の `review 消化`(`log-history.md`)。
 ### 【room】Area が Project の情報を持つ方式は、状態はリンク（トップダウン）、決定・知識は転記＋出典（ボトムアップ）。Area の `docs/log.md` は持たない（2026-11-04）
 - 決めたこと（ユーザー）: 案はボトムアップを主にし、片方向リンクは出典として添える。状態（status・期限・進捗）は転記せず、Project の frontmatter を正本にして Area は Bases で読む。決定・知識は `close` が Project から Area の inbox へ運び（any → inbox → decisions の 1 本の経路）、Area の AI が `decisions.md` に統合する。統合した項には `Project#n` と根拠を残し、`room trace` で閉じた Project の詳細を引く。
 - 理由: Project は閉じて `archives/` へ移り、`ai/out/` と計画は git 追跡外なので、Area が Project へのリンクだけで成り立つと閉じた後・別の PC で読めなくなる。Area の AI が決定を引くたびに閉じた Project を開かせたくない。状態は転記するとすぐ古くなる。
