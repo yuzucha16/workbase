@@ -25,6 +25,8 @@
 
 1. **`clean --path` の Tab 補完の実機確認と採否（起票 11-04）**: PC1 で workbase と dotfiles を pull し、新しい PowerShell で `uv run room.py clean <Project> --path ` の Tab が `_noai/source/` の中を出すか（フォルダ単位で降りられるか、`tmp/` が出ないか、日本語・空白のある名前が引用符つきで入るか）を見る。pwsh では未確認。2〜3 日使って、採るか、プロファイルが遅くなる件も含めて決める（ee、11-04）。採らないなら `room-completion.ps1` と dotfiles の 4 行を外す。
 
+1. **`room open --from` の実機確認（起票 11-04）**: PC1 で workbase を pull し、実際に `room close` した Project で `uv run room.py open <新> --area <Area> --from <閉じた Project>` を試す。見るのは、① `projects/<新>/ai/in/from-<前>/` に `out/`（成果物と `close.md`）と `work/plan/`（正式な計画だけ）が写り、`stock/` と `readme-draft.md` は写らないこと、② 続けて `room start <新> --no-launch` が来歴チェックで止まらないこと、③ README の `from:` と Area README の進行中の行の「← 前」、④ external の Area でも通ること、⑤ 別の PC や `ai/out/` が無い Project では、何も作らず理由を出して止まること。写し方・止まる条件の手直しは、結果を見て決める。仕様は `project-structure.md` の「閉じた Project の引き継ぎ」。
+
 1. **論点出しの型 v4 の実作業での確認（起票 11-03）**: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。
 
 期日のある項目は `due.md`。

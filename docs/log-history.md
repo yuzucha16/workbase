@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-04（閉じた Project の再作業: room open --from）
+- ユーザーの相談: `room close` と `room reap` で archives に移した Project を、機能追加など過去資産を使う再作業で使いたい。案を比べ、案 B（開き直さず、新しい Project が前の Project を引き継ぐ）を採用。external でも許す、archives の `ai/out/` が無ければ止める、もユーザーが了承（`decisions.md` の同日）。
+- 実装: `room open --from <前>`（`collect_from` `apply_from`）。`ai/in/from-<前>/` に成果物・`close.md`・正式な計画を写し、manifest に確認済み＋`origin`、README に `from:`。テスト `OpenFromTest` 3 件、全 183 件通過。`project-structure.md` に節、`brief-plan.md` に一文。push 済み（1d6d0e5）。実機は未確認（Next Actions に積んだ）。
+- 比較の正本は project files の `notes/room-reuse/2026-11-04-options.md`。
+
 ### 2026-11-04（README を畳む: 完了条件・範囲外・Open Questions を 6R に一本化）
 - ユーザーの決定: NA 3 は README の 3 項目を 1 行に畳む。NA 4（`room readme` を stock に揃える）は不要。`room readme` は、README が縮むなら廃止できると回答した（使い道の洗い出しは同日、この thread）。
 - 直し: `README_TEMPLATE` と `README.template.md` から 3 節を外し、`close` のひな形点検の語を 2 つ外した。文書 3 件を直した。単体テスト 182 件 OK。実機は未確認。
