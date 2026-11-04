@@ -8,6 +8,7 @@
 - 決めたこと（ユーザー）: Project の状態を 2 つに分ける。① `room open` 直後（方向性が未決）は `plan`（別名「計画を立てて」。6R → 論点出し → 憲章以降は任意）、② `room start` 直後（各タスクが未完了）は `brief`。名前 `plan` は仮。`brief` は `ai/work/plan/` が無い・`仮` のときに一度だけ勧める（進めるだけ。小規模では、計画をユーザーの頭の中で進めてよい）。論点出しは 6R の後が標準。
 - 実装: `workflow-kit/plan-hook.md`（新）、手順と欄は `brief-plan.md` を `plan-fields.md` に改名。`brief-hook.md`（README の下書きを `plan` へ移し、事前確認に計画の状態を足した）、`hooks.md`、`hook-common.md`（記録の表、勧める条件の表）、`hook-matrix.md`、`naming-rules.md`（`-fields`）、`room-context.md`、`issue-extraction-output.md`。`check_hook_outline.py` は通る。旧名 `brief 計画` は、履歴（`decisions.md`、`log-history.md`、`topics/token-cap/records/`）に残し、読み替える。
 - 理由: 旧い `brief` は状態 2 を扱うのに、状態 1（README の下書き、計画）の仕事も持ち、「引数は持たない」と `brief 計画` が食い違って不安定だった。ゴール決定（A）と達成（B）の分離（`exmem/lessons/session-goal-modes.md`）に合わせた。
+- 追記（同日）: 1 セッション 2〜3 依頼の制約（token-cap）に合わせ、`brief` は「ゴールと完了の判断を先に書き、聞き返し 0」で使う（「brief 即」。`guides/quickref/ai-work-prompts.md`）。ユーザーは、これが `brief` の標準的な使い方になる見込み。フックは増やさず、依頼文の書き方で済ませる。`plan` の r/w は `brief` と同じ rw のまま（ユーザー確認済み）。
 - 未決: 論点出しの単独合言葉と `plan` の関係の実測、`正式` の計画から brief がゴール候補を出す動き（実機未確認）、`正式` でない計画で brief を止めるか（今は勧めるだけ）。
 
 ### 【workflow-kit】保留 2 件(`repos/` の受け渡し、`restore_project` の上書き保護)を omit にする(2026-11-04)

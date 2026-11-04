@@ -4,6 +4,8 @@
 
 ### 2026-11-04（`plan` フックの追加）
 - ユーザーの問い「brief と論点抽出・課題設定の関係」から、状態 1（`room open` 直後）と状態 2（`room start` 直後）の整理になり、状態 1 を `plan` に分けた（`decisions.md` 同日）。`brief-plan.md` を `plan-fields.md` に改名し、`plan-hook.md` を新設。確認: `check_hook_outline.py` が通った。
+- 同日、`guides/quickref/ai-work-prompts.md` に「brief 即」（ゴールと完了の判断だけを書き、聞き返し 0 で始める型）を足した（c5bfc00）。フックは増やさず、依頼文の書き方として置く（ユーザー）。次の `review 消化` で使い心地を見て、標準形として `brief-hook.md` に入れるか決める。
+- 回答: `brief` と `review 消化` の使い分け（先を決めるか、溜まった項目を閉じるか）を説明した（変更なし）。
 - 起票: `guides/howto/` の triggers 索引化と、ライフサイクルの繋がりの明示（`log.md` の NA 5、別セッション）。
 
 ### 2026-11-04（review 消化）
