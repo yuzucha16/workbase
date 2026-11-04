@@ -10,9 +10,9 @@ tags:
 aliases:
   - Zedのdotfiles管理
   - Zedの設定の再現
-triggers: [Zed, dotfiles, settings.json, 設定の再現, 同期, 管理, シンボリックリンク, エディタ設定, 配置]
+triggers: [Zed, dotfiles, settings.json, 設定の再現, 同期, 管理, シンボリックリンク, エディタ設定, 配置, ハイライト, highlight, 色が付かない, ps1, PowerShell, extension, Zed.log, failed to load language, NUL, .scm, theme_overrides, テーマ切り替え]
 created: 2026-10-01
-updated: 2026-10-16
+updated: 2026-11-04
 sources:
   - Claude (Claude Code via Zed ACP) conversation "Zedのextension/ACPエージェントのdotfiles管理" (2026-10-01)
   - "%APPDATA%\\Zed / %LOCALAPPDATA%\\Zed / dotfilesリポジトリ（2026-10-01 に確認）"
@@ -72,6 +72,22 @@ Zedの設定・extension・ACPエージェントをdotfilesリポジトリで管
 - **テーマ JSON の重複キー**（`link_text.hover` を二重に書いた）。テーマは Zed のスキーマ（`https://zed.dev/schema/themes/v0.2.0.json`）違反があると、警告が出るか読み込まれない。
 - **`%APPDATA%\zed\themes` が空の実ディレクトリだと、dotfiles のリンクスクリプトが `[ERR]` を出す**。空であることを確認して削除し、ジャンクションにした。
 - **GitHub のコード検索ページは未ログインでは取得できない**。Zed のソースを読むときは `raw.githubusercontent.com` のファイル URL を使う。
+
+### ハイライトが消えたときの切り分けと復旧（2026-11-03）
+
+- Principles:
+  - ハイライトが消えたら、テーマのせいにする前に、文字列やコメントを含む全要素が無色かを見る。テーマの違いなら文字列やキーワードの色は変わっても消えない。全部が無色なら言語そのものが読み込めていない。
+  - 言語の読み込み失敗は、画面ではなく `Zed.log` で確かめる。`failed to load language <名前>` としてログにだけ残る。
+  - 壊れた拡張は `extensions\installed\<名前>` を消して再取得させる。拡張は Zed が自動生成するキャッシュで、`auto_install_extensions` に載っていれば、再起動で入り直す。
+- Decisions:
+  - **標準の Gruvbox Dark と自作の Material Gruvbox Dark を、テーマセレクタ（Ctrl+K Ctrl+T）で行き来する**（2026-11-03）。根拠: Material は低コントラストで、この環境では暗すぎて見えない。標準は見えるが明るい。状況で使い分けたい（ユーザーの要望）。却下案: 中間の明るさの第 3 テーマ（必要になったら足す）／システムのライト・ダーク設定への連動（ライト・ダークの意味とずれる）。
+  - **`theme_overrides` は、行き来する両方のテーマ名のキーに、同じ内容を書く**（2026-11-03）。根拠: テーマ名ごとのキーで効くので、片方にしか書かないと切り替えた側で上書きが消える。却下案: なし（実機で両テーマに効くことを確認した）。
+- Facts:
+  - `%LOCALAPPDATA%\Zed\extensions\installed\powershell` の `brackets.scm` `indents.scm` `outline.scm` と、`html` の `.scm` 5 個が、中身すべて NUL（0x00）になっていた。`.wasm` や `highlights.scm`（PowerShell）は無事だった（確認: 2026-11-03、根拠: バイト列の先頭が `00` かの検査）。
+  - そのときの `Zed.log` は、`failed to load language PowerShell: Error loading brackets query … Query error at 1:1. Invalid syntax`。1 つのクエリが壊れるだけで、その言語全体が読み込めない（Zed.log）。
+  - 2 拡張の `installed` ディレクトリを削除して Zed を再起動すると、`.ps1` のハイライトが戻り、両テーマで `theme_overrides` も効いた（確認: 2026-11-03、根拠: ユーザーの目視）。
+  - NUL 埋めの原因は、クラッシュなどで書き込みが途中で切れたこと（仮説）。
+- Gotchas: テーマ変更の直後に `.ps1` のハイライトが全部消えたが、原因はテーマではなく拡張のキャッシュ（`.scm`）の NUL 埋めで、時期が重なっただけ。`Zed.log` で `failed to load language` を探し、壊れた拡張の `installed\<名前>` を削除して再起動する。ほかの拡張も、`.scm` が全部 NUL でないか検査する。
 
 ### 未確認（仮説）
 
