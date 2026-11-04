@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【room】cleankit の報告の既定の置き場を、入力の隣の `tmp/` にする（room clean と同じ。2026-11-04）
+- 決めたこと（ユーザーの依頼）: `cleankit.py check` と `clean` の報告（`.check-report.md` / `.clean-report.md`）の既定を、入力（原本）の隣の `tmp/` にする。room clean の `_noai/raw/tmp/`・`_noai/source/tmp/` と同じ考え。`--report` で変えられる。
+- 理由: check の報告がカレントに出て探しにくく、room clean と置き場が違った。clean は出力の隣だったので、AI に渡すフォルダに報告が混ざりえた。
+- room clean は cleankit を読み込んで同じ関数を呼ぶ。外側の差（強さの選択、終了コード、boundary）は役割の違いとして揃えない。
+
 ### 【room】計画（6R 等）は `ai/work/plan/` に置いたまま、承認は `status` と `approved` で示し、`start` が変更を検知する（2026-11-03）
 - 決めたこと（ユーザー）: ① 計画は `ai/work/plan/` に置き続け、`ai/in/plan/` へ移す手順（`room plan` や `stock --dst plan`）は作らない。README の「計画:」の行は `ai/work/plan/` へのリンクにする。② 承認は各ファイルの先頭の `status: 仮 | 正式` と `approved: 日付`（人が書く）。③ `room start` が正式なファイルのハッシュを manifest の `plans` に記録し、次の start で `approved` が同じまま内容が変わっていれば警告して `仮` に戻す。再承認は `approved` の日付を書き換える。④ AI の書き換えは止めず、検知だけでよい（`ai/in/` と違って読み取り専用にしない。ユーザー: 「検知だけでOK」）。
 - 理由: 移す手順が人の手作業で重く、`ai/work/` はユーザーも編集できる。整合性（AI が承認済みの計画を黙って書き換える）は検知で足りる。

@@ -121,8 +121,8 @@ WSL は差し替えて、一時ディレクトリの git で行う（実際の�
 xlsx・xlsm・pptx・pptm の、消したつもりで残っている情報（非表示シート、グラフ・ピボットのキャッシュ、定義名、コメント、文書プロパティ、ノート、埋め込みなど）を点検し、掃除した別ファイルを書く（2026-10-26。ダミーの単体テストと、LibreOffice で開き直す確認まで。Excel・PowerPoint 本体は未確認）。仕組みは `guides/explain/ooxml-residue.md`。**人が実行する**（原本と、残っていた実データを読むため）。room への組み込みは未定（実ファイルの点検の結果を見て決める）。
 
 ```powershell
-uv run --script cleankit.py check <ファイル> [--terms <mask.toml>]  # 点検だけ。報告は <ファイル>.check-report.md。見えている文字の中の金額・メール・電話・割合の形と、--terms の語を警告する（置換はしない。2026-11-02）
-uv run --script cleankit.py clean <ファイル> <出力先>     # 掃除。報告は <出力>.clean-report.md
+uv run --script cleankit.py check <ファイル> [--terms <mask.toml>]  # 点検だけ。報告は <ファイルのフォルダ>/tmp/<ファイル>.check-report.md（2026-11-04 に room clean と同じ置き方に揃えた）。見えている文字の中の金額・メール・電話・割合の形と、--terms の語を警告する（置換はしない。2026-11-02）
+uv run --script cleankit.py clean <ファイル> <出力先>     # 掃除。報告は <ファイルのフォルダ>/tmp/<ファイル>.clean-report.md（出力の隣ではなく原本の隣。2026-11-04）
 uv run --script cleankit.py clean <ファイル> <出力先> --keep notes,comments   # 動作を外す
 ```
 

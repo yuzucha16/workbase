@@ -1150,6 +1150,11 @@ def guard_outputs(*paths):
             raise CleanError(f"出力先がこのリポジトリ（公開）の中: {p}。_noai/ など、リポジトリの外か追跡しない場所を指定する")
 
 
+def default_report(src, kind):
+    """報告の既定の置き場: 入力（原本）の隣の tmp/。room clean（_noai/raw/tmp/、_noai/source/tmp/）と揃える（2026-11-04 ユーザーの依頼）。"""
+    return src.parent / "tmp" / f"{src.name}.{kind}-report.md"
+
+
 def read_input(path):
     p = Path(path)
     ext = p.suffix.lower()
@@ -1165,7 +1170,7 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("check", help="残っている情報を一覧にする（ファイルは変えない）")
     c.add_argument("file")
-    c.add_argument("--report", help="報告の md（既定: 入力の隣の <名前>.check-report.md）")
+    c.add_argument("--report", help="報告の md（既定: 入力の隣の tmp/<名前>.check-report.md。room clean と同じ置き方）")
     c.add_argument("--terms", help="mask.toml のパス。[terms.*] の語が見えている文字にあれば警告する（金額・メール・電話・割合の形は常に警告する）")
     k = sub.add_parser("clean", help="掃除した別ファイルを書く")
     k.add_argument("file")
@@ -1174,7 +1179,7 @@ def main(argv=None):
     k.add_argument("--also", default="", help="既定では行わない動作を足す（カンマ区切り）: " + ", ".join(OPTIONAL_ACTIONS))
     k.add_argument("--profile", default="strict", choices=list(PROFILES), help="掃除の強さ: " + "; ".join(f"{n} = {d}" for n, (d, _x) in PROFILES.items()))
     k.add_argument("--allow", default="", help="プロファイルが外す部品の種類のうち、残すもの（カンマ区切り）: " + ", ".join(STRIP_KINDS))
-    k.add_argument("--report", help="報告の md（既定: 出力の隣の <名前>.clean-report.md）")
+    k.add_argument("--report", help="報告の md（既定: 入力の隣の tmp/<名前>.clean-report.md。room clean と同じ置き方）")
     k.add_argument("--force", action="store_true", help="出力が既にあれば上書きする")
     sub.add_parser("profiles", help="プロファイルと、部品の種類・動作の一覧を出す")
     a = ap.parse_args(argv)
@@ -1196,8 +1201,9 @@ def main(argv=None):
         src, ext, data = read_input(a.file)
         if a.cmd == "check":
             fs = check(Pkg(data), ext, sensitive=True, terms=load_terms(a.terms) if a.terms else ())
-            rep = Path(a.report) if a.report else src.with_name(src.name + ".check-report.md")
+            rep = Path(a.report) if a.report else default_report(src, "check")
             guard_outputs(rep)
+            rep.parent.mkdir(parents=True, exist_ok=True)
             rep.write_text(report_md(src, fs), encoding="utf-8")
             print(f"点検: {src.name}: {len(fs)} 件（{summary(fs)}）")
             probs = integrity(data)
@@ -1216,7 +1222,7 @@ def main(argv=None):
             raise CleanError("出力が元のファイルと同じ（元のファイルは変えない）")
         if out.exists() and not a.force:
             raise CleanError(f"出力が既にある: {out}（--force で上書き）")
-        rep = Path(a.report) if a.report else out.with_name(out.name + ".clean-report.md")
+        rep = Path(a.report) if a.report else default_report(src, "clean")
         guard_outputs(out, rep)
         also = {x.strip() for x in a.also.split(",") if x.strip()}
         if also - set(OPTIONAL_ACTIONS):
@@ -1232,6 +1238,7 @@ def main(argv=None):
         after = check(Pkg(cleaned), ext)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_bytes(cleaned)
+        rep.parent.mkdir(parents=True, exist_ok=True)
         rep.write_text(report_md(src, before, log, after, probs, out), encoding="utf-8")
         print(f"掃除: {src.name} → {out}（{len(log)} 項目）")
         print(f"残り: {len(after)} 件（{summary(after)}）")

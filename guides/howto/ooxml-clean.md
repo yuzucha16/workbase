@@ -17,7 +17,7 @@ tags:
 
 | やりたいこと | コマンド |
 |---|---|
-| 残っているものを一覧にする（ファイルは変えない） | `uv run --script cleankit.py check <ファイル> --report <報告.md>` |
+| 残っているものを一覧にする（ファイルは変えない） | `uv run --script cleankit.py check <ファイル>`（報告は `<ファイルのフォルダ>/tmp/`。`--report <報告.md>` で変えられる） |
 | 既定の強さで掃除する | `uv run --script cleankit.py clean <ファイル> <出力先>` |
 | 最も強く掃除する | `uv run --script cleankit.py clean <ファイル> <出力先> --profile strict` |
 | strict から画像だけ残す | `… --profile strict --allow images` |
@@ -53,7 +53,7 @@ tags:
 ## 手順
 
 1. **元ファイルを用意する。** 元のファイルは変わらない。出力先は、このリポジトリ（公開）の外にする（中を指すと止まる）。
-2. **点検する。** `check` を実行する。画面には件数だけ出る。終了コードが 0 なら要確認なし、1 なら報告を見る。報告（`.check-report.md`）は実データを含むので、`_noai/` など AI が読めない場所に置く。
+2. **点検する。** `check` を実行する。画面には件数だけ出る。終了コードが 0 なら要確認なし、1 なら報告を見る。報告（`.check-report.md`）は、既定で原本の隣の `tmp/` に出る（`clean` の `.clean-report.md` も同じ。room clean の `_noai/raw/tmp/`・`_noai/source/tmp/` と揃えた。2026-11-04）。実データを含むので、原本を `_noai/` など AI が読めない場所に置いておけば、報告も同じ側に出る。
 3. **強さを選ぶ。** 迷ったら次で決める。
 
    | 状況 | 選ぶもの |
