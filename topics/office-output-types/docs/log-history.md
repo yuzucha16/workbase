@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-04（reference-doc の手順を room-type-consolidation から移管した）
+- 経緯: ユーザー「関係が強いので office-output-types に移管。7 段は ここで管理」。叩き台を `records/` に移し、NA 7 に起票した。
+- 回答: 雛形は固有名詞があり部屋に渡せない。必須はスライド番号・フッター・ヘッダー・ロゴ。フォントと色は一致、余白は許容。
+
+### 2026-11-04（room-type-consolidation から比較の結果を受けた）
+- ユーザー: 「quarto を主、marp 規定を副とした。どちらも room init で導入できる」。`decisions.md` に追記。
+
 ### 2026-11-06（Quarto の実機試験と init への追加）
 - 経緯: NA 5 で、部屋 room-myenv に Quarto 1.11.9 の tarball を試験用に入れ、日本語と mermaid を含む `.qmd` を pptx にした。
 - 結果: 通った。`.md` では mermaid が通らず `.qmd` が要る。Chromium は自動検出されず `QUARTO_CHROMIUM` の指定が要る。mermaid の日本語は正常。pptx のフォントは名前だけが入る。ee の決定で `init` に足し（`decisions.md` 11-04）、フォントは BIZ UDPGothic（フォールバックは pptx で効かないため）。

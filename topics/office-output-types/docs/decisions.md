@@ -40,3 +40,4 @@
 - ユーザーの発言: 「主をquarto/pandocにしてください。副をmarpでやってみます」「最初は合わせる必要はないです。ただ後々合わせるようにしたい」「画像だと毎回AIを通すことになるので手離れもよくしたい」。
 - 決めたこと: 主は Quarto（編集できる pptx。`reference-doc` で後から組織の雛形に合わせる）。副は Marp（ee が試す）。最初は雛形に合わせない。Quarto を入れる試験は別セッションで AI が行う。
 - 根拠: Marp の通常の pptx は画像で、直すたびに AI を通すことになる。調査は `guides/explain/markdown-to-pptx-quarto-explain.md`。
+- 追記（11-04、比較の結果の受け渡し）: ユーザー「quarto を主、marp 規定を副とした。どちらも room init で導入できる」。`init` の段は `quarto` と `marp`。比較は `topics/room-type-consolidation/records/2026-11-04-slide-tools-live-compare.md`（pptx が成果物なら Marp 既定がお手軽、初版を人が直すなら Quarto。Slidev は HTML 発表が主のときだけ）。Slidev は採用しない。

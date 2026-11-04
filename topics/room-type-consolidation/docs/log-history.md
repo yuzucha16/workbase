@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-11-04（oq1 を omit、oq2 の手順の叩き台）
+- oq1（`inv` の基準文書は仮決め）: ユーザー「omit。na の中で修正していく」。
+- oq2（Quarto の `reference-doc`）: ユーザー「ここで具体化したい。基準のマスタースライドとサンプルレイアウトは持っている」。手順 7 段の叩き台を作ったが、同日にユーザーの指示で `topics/office-output-types` に移管した（`records/` と NA 7）。
+
+### 2026-11-04（na2・na4 を閉じた）
+- na2（比較の結果を office-output-types に渡す）: ユーザー「quarto を主、marp 規定を副とした。どちらも room init で導入できる」。`topics/office-output-types` の `docs/decisions.md` と `docs/log-history.md` に追記して close。
+- na4（部屋に残る Slidev の削除）: ユーザーが削除済みと報告。close。
+
 ### 2026-11-04（`inv` の工程の組み合わせ試験を起票した）
 - ユーザーの依頼: office-output-types の NA 6（Quarto で 1 サンプル）の続きとして、`dev` の a) `src` のみ、b) `env`+`src`、c) `src`+`env`+`tests` と同じ形の組み合わせ試験を `inv` 版で行う。Next Actions に起票（期日 11-11）。
 - `docs/due.md` の「Marp と Slidev を人が導入して比較」の行（比較は済み）を、この試験の行に置き換えた。eg2 は別の項目のまま。
