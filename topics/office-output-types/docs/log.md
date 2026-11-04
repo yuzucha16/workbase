@@ -7,7 +7,7 @@
 - 基準文書の雛形 `records/2026-10-30-master-book-baseline-template.md`: 固定部 R1〜R6（シートは役割ごと、マスターはフラットな表、可視化はマスターだけ、入力元は設定シート、列は キー/属性/指標、予実は縦持ち）、入力、マスターの列定義、可視化、要件と検証、分担。固定部は ee が確認済み（10-30）。
 - 読み取りの定義表（入力の形が揃えられない前提。型は少数、行はファイルごと、未定義は止める、名寄せ辞書）は仮決め。ee の入力の型は多くて 5 程度。
 - テキスト出力の型（pptx → テキストなど）の議論を始めた（10-30 の雑談）。要点は Open Questions。公開 pptx 4 つの試行は取り下げた（2026-11-02）。
-- markdown → pptx の叩き台（11-04）: 主は Quarto（編集できる pptx。後で組織の雛形に合わせる）、副は Marp（ee が試す）。調査は `guides/explain/markdown-to-pptx-quarto-explain.md`。Quarto は 11-04 に部屋で実機試験済み（通った。ただし `.qmd` と `QUARTO_CHROMIUM` の指定が要る）。Marp は未試験。
+- markdown → pptx（11-04〜11-06）: 主は Quarto（編集できる pptx）、副は Marp（ee が試す）。Quarto は部屋で実機試験が通り、`init` に `quarto` 段を足した（`room.py`、テスト 237 件 OK）。pptx のフォントは BIZ UDPGothic を雛形のテーマに指定（フォールバック指定は pptx で不可）。雛形と試験 pptx は `records/`。調査と試験結果は `guides/explain/markdown-to-pptx-quarto-explain.md`。PC1 の PowerPoint での見え方は未確認。
 - 実物（PC1のブック）との突き合わせは未。トピックは 2026-10-30 に作成（d4b10ef）。
 
 ## Next Actions

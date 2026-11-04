@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-06（Quarto の実機試験と init への追加）
+- 経緯: NA 5 で、部屋 room-myenv に Quarto 1.11.9 の tarball を試験用に入れ、日本語と mermaid を含む `.qmd` を pptx にした。
+- 結果: 通った。`.md` では mermaid が通らず `.qmd` が要る。Chromium は自動検出されず `QUARTO_CHROMIUM` の指定が要る。mermaid の日本語は正常。pptx のフォントは名前だけが入る。ee の決定で `init` に足し（`decisions.md` 11-04）、フォントは BIZ UDPGothic（フォールバックは pptx で効かないため）。
+- 根拠: `fc46b75`（`room.py` の `quarto` 段、雛形と試験 pptx を `records/` に置いた）、`b81d927`（NA 6 を追加）。
+- 閉じた項目: NA 5 の「入れ方・版・Chromium・日本語」の部分（一部済。残りは PC1 でのフォント確認と新しい部屋での `init --only quarto`）。
+
 ### 2026-11-04（markdown → pptx の叩き台。道具の調査）
 - 経緯: NA が実機待ちだけになったため、ee が markdown → pptx を AI 活用に組み込む叩き台を選んだ。Marp とその類似ツールの比較と、2026 年の流行を調査した。
 - 結果: Marp と Slidev の通常の pptx は画像。Quarto は編集できる pptx で、雛形を使える。ee の決定で主は Quarto、副は Marp（`decisions.md`）。理解ガイドを `guides/explain/markdown-to-pptx-quarto-explain.md` に出力し、`guides-index.md` に足した。
