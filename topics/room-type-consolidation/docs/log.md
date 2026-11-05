@@ -4,6 +4,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 ## Next Actions
 
+- 【期日 11-12、起票 11-05】eg2 の room 版（myenv・internal・`sample_inveg2`。同じ c01.csv）を人が部屋で行い、返答と `ai/docs/inv-log.md` を別セッションで見せる。手順と依頼文と比べる観点は `records/2026-11-05-inv-eg2-room-request.md`。結果は部屋なし（`records/2026-11-05-inv-eg2-population-csv.md`）と比べて `records/` に残す。
 - 【期日 11-11、起票 11-04】`inv` の工程の組み合わせ試験(`dev` の a) `src` のみ、b) `env`+`src`、c) `src`+`env`+`tests` と同じ形)。工程(`question.md` `sources/` `findings/` `checks/` `report.md` `publish/`)を、a) 少ない組み合わせ、b) 中間、c) 全部、のように変えて部屋に渡し、置き場などの観点(`ai/out/<成果物名>/` の下の置き場、聞き返し、`dev` との差)でフィードバックを見る。設計(組み合わせの決め方と観点)は着手時に決める。eg2 とは別に、eg2 の結果(社内 Excel・テキスト)を受けて行ってよい。
 
 ## Open Questions
