@@ -6,7 +6,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 - 【起票 11-06、期日 11-13】`room start` の後にマウントが残り、次の `room start` が「マウントが残っている」で止まる。ユーザーの所見: Zed の remote server がプロセスをつかんでいる可能性があり、`room start` を解除したあと Zed を再起動すると直る。確かめる(Zed を閉じた状態で `start` を繰り返し、残るかを見る)。原因が Zed なら、`room/README.md` か `ai-room-lifecycle.md` に「止まったら Zed を再起動」と書く。`umount` の案内文に足すかも決める。
 - 【起票 11-06、期日 11-13】並行して `room start` を起動すると、共有知の送付が競合して起動しない(`rm: cannot remove '/home/ai/shared.new/workflow-kit': Directory not empty`。2 Project を同時に起動したときに再現)。`exmem/lessons/ai-room-concurrent-start.md` の「横で完成させて置き換える」と合わない経路がある。`room.py` の送付(`shared.new` の扱い)を見直す。
-- 【起票 11-05】「pptx で」と同じように「quarto/revealjs で」と明示したとき、簡易スライド(`publish/` の html)を作るかを見る。方法は `records/2026-11-05-inv-pptx-explicit-result.md`(重さの言葉だけ「報告資料にして、quarto/revealjs で」に変える。`quarto` が部屋にあるかも見る)。うまくいけば quickref の清書の行に足す。
+- 【起票 11-05、試験済み 11-06】「quarto/revealjs で」の追試は済み(`records/2026-11-06-inv-quarto-explicit-result.md`。`.qmd` と html が出たが `publish/` でなく `out/` 直下で、`report.md` なし)。quickref の清書の行に足すか(「`publish/` に置いて `report.md` も付けて」と添える案)を、ユーザーが決める。
 - 【人の確認】`room umount --area myenv` が `sample_inveg1` の古いマウントで失敗した。確認して外す。
 
 ## Open Questions
