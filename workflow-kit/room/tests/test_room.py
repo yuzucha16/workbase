@@ -2279,6 +2279,30 @@ class CloseTest(unittest.TestCase):
             with self.assertRaises(room.RoomError):
                 room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
 
+    def test_close_warns_on_stray_out_folder_and_n_changes_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            p = v / "projects/proj-a"
+            fill_readme(p)
+            (p / "ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
+            (p / "ai/out/stock").mkdir()
+            (p / "ai/out/proj-a").mkdir()
+            (p / "ai/out/final-report").mkdir()
+            with tty("n"), self.assertRaisesRegex(room.RoomError, "中止"):
+                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertTrue(p.exists())
+            self.assertEqual(room.stray_out_dirs(room.Project.load(c, "proj-a")), ["final-report"])
+
+    def test_close_no_stray_warning_for_project_name_stock_and_deliverable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            p = v / "projects/proj-a"
+            fill_readme(p)
+            (p / "ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
+            for d in ("stock", "proj-a", "deliverable"):
+                (p / "ai/out" / d).mkdir()
+            self.assertEqual(room.stray_out_dirs(room.Project.load(c, "proj-a")), [])
+
     def test_close_moves_to_archives_and_hands_over(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()

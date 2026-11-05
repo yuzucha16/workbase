@@ -2484,7 +2484,23 @@ def close_warnings(p, close_md):
         out.append("README がひな形のまま（<...> が残っている）:\n    " + "\n    ".join(left))
     if not close_md.exists():
         out.append("ai/out/close.md が無い（再作業の `room open --from` が引き継ぐ close の判断が残らない。書かせるなら、部屋の AI に close の判断を行わせる）")
+    stray = stray_out_dirs(p)
+    if stray:
+        out.append("ai/out/ に、Area へ渡らないフォルダがある（渡るのは ai/out/" + p.name + "/ と旧名 deliverable/ だけ）: "
+                   + "、".join(f"{s}/" for s in stray) + "。渡したいなら、" + p.name + "/ の下へ移してから close する")
     return out
+
+
+OUT_NOT_DELIVERED_OK = ("stock",)  # ai/out/ の直下で、Area へ渡らなくてよいフォルダ（知見の下書き）
+
+
+def stray_out_dirs(p):
+    """ai/out/ の直下のフォルダのうち、Area へ渡らず、渡らなくてよいとも決まっていないもの（NA 9。2026-11-05）。"""
+    out = p.ai / "out"
+    if not out.is_dir():
+        return []
+    ok = {p.name, DELIVERABLE_OUT.rstrip("/"), *OUT_NOT_DELIVERED_OK}
+    return sorted(d.name for d in out.iterdir() if d.is_dir() and d.name not in ok)
 
 
 def confirm_close_warnings(ctx, warned, interactive=None):

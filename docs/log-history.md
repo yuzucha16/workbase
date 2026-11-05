@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-05（room: close の警告）
+- 済（NA9）: 案 2 を採用（ee: 「na9: 2にします」）。`room close` は `ai/out/` 直下に Project 名・`deliverable/`・`stock/` 以外のフォルダがあると警告して `[y/N]`（`stray_out_dirs`、`close_warnings`。非対話では止まる）。単体テスト 2 件追加。実機は未確認。案 1・3 は採らない。
+  - 元の項目: **成果物を `ai/out/<Project 名>/` 以外に置かれると、`room close` で Area に渡らない（起票 11-05）**: 部屋の AI が成果物を Project 名以外のフォルダに置くことが約 5 回に 1 回ある（ユーザーの実測）。11-05 の変更で Area へ渡すのは `ai/out/<Project 名>/` の下だけになったため、踏むと何も渡らず、`close` は黙って進む。案: ① 渡るのは Project 名のフォルダだけだと部屋の案内で強く言う、② `close` が `ai/out/` の直下に Project 名以外のフォルダ（`stock/` を除く）を見つけたら警告して `[y/N]`、③ 塊が 1 つだけなら名前を問わずに渡す。決めるのは ee。決定は `decisions.md` の 11-05。 期日のある項目は `due.md`。
+
 ### 2026-11-05（room: close --area）
 - NA 4 の実装: `room close --area <Area>` を追加（`room.py` の `cmd_close_area`、単体テスト `CloseAreaTest` 3 件）。条件・移し先は `decisions.md` の同日。実機は未確認。移し先と部屋を消さない点は、ユーザーが承認した。成果物を `archives/` に残す案は未決のまま。
 - wrap: 残る NA は 4（実機確認と成果物の案）・5・9。閉じる項目なし。

@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【room】`close` は、成果物が Project 名のフォルダ以外にあると警告する（2026-11-05）
+- 決めたこと（ユーザー）: NA 9 の案 2。`ai/out/` 直下に Project 名・`deliverable/`・`stock/` 以外のフォルダがあれば、`close` が警告して `[y/N]`（非対話では止まる）。
+- 却下案: 案 1（案内で強く言うだけ。約 5 回に 1 回の取りこぼしを防げない）、案 3（塊が 1 つなら名前を問わず渡す。意図しないものを Area に渡しうる）。
+
 ### 【room】Area の log・decisions・inbox を持たない。記録は archives から横断検索で引く（2026-11-05）
 - 決めたこと（ユーザー）: 前提を、Area の log/decisions は archives の記録を検索・サルベージできれば不要、knowledge は今後に生かすので残す、に分けた。`docs/` は各 Project の状態で、Area へ上げない。Area 全体にまたがる方針は決定でなく知識として `stock`（scope: area）で残す。Project をまたぐ知識の整理役（「Area の AI」の常設）は要らない。必要なときだけ ee が、矛盾点と時系列の整理を AI に頼む。
 - 実装: `room close` は【案件】【決定】を Area の inbox へ運ばない（根拠の点検も外した）。`room init` は inbox を作らない（既存は触らない）。`room trace --area <Area> <語>` を新設（Area の `archives/` の `ai/docs/` を閉じた順に横断。旧 `trace <Project>#n` は廃止）。【案件】は再作業の `room open --from` が `close.md` で引き継ぐ。
