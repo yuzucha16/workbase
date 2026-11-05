@@ -222,7 +222,7 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 ### 6.1 Area に戻すもの（2026-11-03 に整理）
 
 - 知識・決定・経緯は、`ai/out/knowledge/` と `restore` の経路を外した。4.1 の `stock --dst area` で運ぶ。
-- Area に実名で戻したい最終版は `ai/out/deliverable/` に置く。`room restore`（マスクしていない Project でもそのまま）か、`room close` が Area の `_noai/deliverable/<Project>/` に書く。Area 側を人が変えていると何も書かずに止まる（`restore --force` で上書き。直前の版は `_noai/final/_prev/deliverable/`）。
+- Area に実名で戻す最終成果物は `ai/out/<Project 名>/` に置く（旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。`room restore`（マスクしていない Project でもそのまま）か、`room close` が Area の `_noai/deliverable/<Project>/` に書く。Area 側を人が変えていると何も書かずに止まる（`restore --force` で上書き。直前の版は `_noai/final/_prev/deliverable/`）。
 
 ## 7. 閉じる（`close`）
 

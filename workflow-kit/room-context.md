@@ -68,7 +68,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書く。知識は人が `room stock --dst area` で、最終版は `room restore` か `room close` で Area に置く（`start` は自動で行わない）。
 
 - **統合した知識**: `ctx/area/`（`start` が置く Area の `ai/{knowledge,docs}/` の読み取り専用の写し）を読み、統合したノートを `ai/out/stock/<英数字の名前>.md` に書く（`scope: area`、`dest: knowledge`）。実名を含めない。人が `room stock <名> --dst area` で運ぶ。同じ名前のファイルが Area にあり、前回運んだ後に人が変えていると、`stock` は運ばずに止まる（人が確認して消すか、名前を変える）。
-- **Area に実名で戻したい最終版**: `ai/out/deliverable/` の下に置く。人が `room restore` を実行するか、`room close` すると、Area の成果物置き場（Project 名の下）に書く（マスクした Project は実名に戻して、マスクしていない Project はそのまま）。Project の成果物は `ai/out/<成果物名>/` に置き（置き場と構成は `project-structure.md`）、`deliverable/` に置かない。`deliverable/` の外の `ai/out/<成果物名>/` は、従来どおり Project の `_noai/final/` に戻る。
+- **最終成果物（Area に実名で戻す）**: `ai/out/<Project 名>/` の下に置く（成果物の塊は 1 つ。旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。人が `room restore` を実行するか、`room close` すると、Area の成果物置き場（Project 名の下）に書く（マスクした Project は実名に戻して、マスクしていない Project はそのまま）。置き場と構成は `project-structure.md`。それ以外の `ai/out/` 直下（`close.md` など）は Area へ渡らず、`restore` では Project の `_noai/final/` に戻る。
 - **残したい知見**（`stock`）は、行き先を `scope:` で決める（下の `stock` の節）。Area の業務に固有なら `scope: area`、公開できる一般則なら `scope: public`（どちらも `ai/out/stock/`）。
 
 ## 分担と受け渡し
@@ -78,7 +78,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 | `plan` | 目的・完了条件の聞き取りと 6R の下書き（下の節）、論点出し、憲章以降（任意） | `room open <名>`（ひな形）。README の目的・成果物は人が埋める | `ai/work/plan/6r.md`（`status: 仮`） |
 | `brief` | 開始インタビュー | `room start <名>`（チェック、写しの送付、マウント、起動。マスクは人が先に `room mask`） | `ai/ctx/`、`ai/in/` |
 | `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（works へのコミット。復元は人が `room restore`） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
-| `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（`ai/out/deliverable/` を Area の成果物置き場へ、Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
+| `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（`ai/out/<Project 名>/` を Area の成果物置き場へ、Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
 | `stock`（`public`） | 下書きまで | `room stock <名> --dst kit`（確認なしで `exmem/inbox/` へ運び、運んだ後に表を出す） | `ai/out/stock/`（先頭に基準コミットと観測日） |
 | `stock`（`area`。external・internal 共通） | `ai/out/stock/` に `scope: area` で書く（実名なし） | `room stock <名> --dst area`（cleankit の点検を通して `areas/<Area>/ai/` へ。internal は `mask.toml` の語が要る）。次の Project の `ctx/area/` に写る | `ai/out/stock/` |
 

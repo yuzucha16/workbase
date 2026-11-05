@@ -78,7 +78,7 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 | README | `room open`（ひな形） | 人が埋める（AI の 6R の下書きを参照） | Area の一覧に 1 行（open で進行中、close で完了） | `archives/<P>/README.md`（`status: done`） |
 | 計画（6R ほか） | `plan` → `ai/work/plan/` | 人が正式にする | 運ばない | `archives/` に残る。再作業では `--from` が正式の計画を引き継ぐ |
 | 作業の記録（`ai/docs/`） | `room open` | AI が `wrap` で更新 | close の【案件】【決定】行だけ | `archives/` に残る。`room trace` の引き先 |
-| 成果物 | AI が `ai/out/<成果物名>/` | － | `ai/out/deliverable/` の下だけ、`restore` か `close` で渡る | `archives/` に残る（許可リスト方式では git 追跡外） |
+| 成果物 | AI が `ai/out/<成果物名>/` | － | `ai/out/<Project 名>/` の下だけ、`restore` か `close` で渡る | `archives/` に残る（許可リスト方式では git 追跡外） |
 | 知見 | AI の `stock` → `ai/out/stock/` | － | `room stock --dst area`（Area の `ai/`）、`--dst kit`（workbase の `exmem/inbox/`） | － |
 
 README の置き換え方、`stock` の点検、`restore` の止まり方の詳細は [[ai-room-setup-script]] の 6 章と `workflow-kit/room/README.md`。

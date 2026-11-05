@@ -1580,7 +1580,7 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 
 Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
 
-- Area に実名で戻したい最終版（Area の成果物置き場に置くもの）だけ: `ai/out/deliverable/` の下に置く。Project の成果物は `ai/out/<成果物名>/`（`<成果物名>` の既定は Project 名と同じ。外部に出す名前が違うときだけ、その名前にする。置き場と構成は `workflow-kit/project-structure.md`）。
+- Project の成果物（固まった単位の最終成果物は 1 つ）は `ai/out/<成果物名>/` に置く。`<成果物名>` は Project 名と同じにする。`room close` が、この下を実名に戻して Area の成果物置き場（`<Project 名>/` の下）へ渡す。旧名の `ai/out/deliverable/` も同じ扱い。外部に出す名前が違うときだけ、その名前にしてよい（その場合は Area へ渡らない。置き場と構成は `workflow-kit/project-structure.md`）。
 
 部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git add` `git commit` `git log`）。リポジトリは `room start` が用意済みなので、許可を取らずに使ってよい。自分で `git init` や `git config` をしない（`.git` を作ると works に回収される。`git status` が失敗したときは、作らずに人に伝える）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。人に言われなくても、作業の区切りと wrap のたびにコミットする（push はしない）。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
 
@@ -1826,7 +1826,7 @@ def cmd_start(ctx, a):
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
-    if any(k.startswith(DELIVERABLE_OUT) for k in maskkit.list_files(p.ai / "out")) or (
+    if any(is_deliverable_key(p, k) for k in maskkit.list_files(p.ai / "out")) or (
             maskkit.list_files(p.ai / "out") and (noai_dir(p) / "map" / "mapping.json").exists()):
         ctx.say(f"注意: ai/out に戻していない出力がある。start は自動で戻さない。必要なら `room restore {p.name}` を実行する（成果物は Area へ渡る）")
     ignored = unexpected_ignored(ctx, p)
@@ -1864,7 +1864,23 @@ def write_bytes(path, data):
 
 
 SOURCE_DEFAULT = "_noai/source"  # Area の原本置き場（areas/<Area>/_noai/source/。人が置く。clean --path の読み元）
-DELIVERABLE_OUT = "deliverable/"  # ai/out のこの下だけを Area の成果物置き場（<Project 名>/ の下）に戻す
+DELIVERABLE_OUT = "deliverable/"  # 内部の正規形の接頭辞。Area の成果物置き場（<Project 名>/ の下）へ戻す対象は ai/out/<Project 名>/（成果物の塊は 1 つ。2026-11-05）。旧名 ai/out/deliverable/ も同じ扱い
+
+
+def is_deliverable_key(p, rel):
+    """ai/out からの相対パスが、Area へ渡す成果物か（ai/out/<Project 名>/ の下、または旧名の ai/out/deliverable/ の下）。"""
+    return rel.startswith(f"{p.name}/") or rel.startswith(DELIVERABLE_OUT)
+
+
+def deliverable_view(p, items):
+    """渡す成果物だけを、正規形（deliverable/ 始まり）のキーにして返す。ai/out/<Project 名>/a.md も deliverable/a.md も、Area では <Project 名>/a.md になる。"""
+    out = {}
+    for rel, data in items.items():
+        if rel.startswith(f"{p.name}/"):
+            out[DELIVERABLE_OUT + rel[len(p.name) + 1:]] = data
+        elif rel.startswith(DELIVERABLE_OUT):
+            out[rel] = data
+    return out
 DELIVERABLE_DEFAULT = "_noai/deliverable"  # Area の成果物置き場（areas/<Area>/_noai/deliverable/<Project>/。人が読む最終版）
 PULL_PREFIX = "area/"  # ai/in の下の、Area の source/ から掃除した共通の原本の置き場（Project 固有の原本は ai/in の直下）
 
@@ -1996,7 +2012,7 @@ def restore_project(ctx, p, force=False):
         if problems:
             return 0, problems
     else:  # マスクしたことが無い Project（clean だけ）: 戻す語は無い。成果物（ai/out/deliverable/）だけ、そのまま Area へ渡す。ほかの ai/out は触らない
-        restored = {rel: data for rel, data in out.items() if rel.startswith(DELIVERABLE_OUT)}
+        restored = {rel: data for rel, data in out.items() if is_deliverable_key(p, rel)}
         if not restored:
             return 0, []
     plans, errors, conflicts = deliver_plan(p, restored)  # 成果物を Area へ渡す処理は close と共有（restore を畳んでも close に残る）
@@ -2025,9 +2041,9 @@ def restore_project(ctx, p, force=False):
 # ---------- 成果物を Area へ渡す（close が持つ。restore も同じ関数を使う） ----------
 
 def deliverable_items(p):
-    """ai/out/deliverable/ の下を、Area に渡す形で返す: ({ai/out からの相対パス: bytes}, 問題)。
+    """ai/out/<Project 名>/（旧名 ai/out/deliverable/）の下を、Area に渡す形で返す: ({ai/out からの相対パス: bytes}, 問題)。
     マスクした Project（対応表がある）は実名に戻し、マスクしていない Project（clean だけ）はそのまま。ほかの ai/out は見ない。"""
-    out = {k: v for k, v in maskkit.list_files(p.ai / "out").items() if k.startswith(DELIVERABLE_OUT)}
+    out = {k: v for k, v in maskkit.list_files(p.ai / "out").items() if is_deliverable_key(p, k)}
     mp = noai_dir(p) / "map" / "mapping.json"
     if not out or not mp.exists():
         return out, []
@@ -2041,6 +2057,7 @@ def deliverable_items(p):
 def deliver_plan(p, items):
     """何も書かずに、Area への書き出しを点検する: (計画, 渡せない理由, 人の変更が前回の書き出しから入っているファイル)。"""
     plans, errors, conflicts = [], [], []
+    items = deliverable_view(p, items)
     try:
         all_routes = routes(p)
     except RoomError as e:
@@ -2595,7 +2612,7 @@ def cmd_close(ctx, a):
     plans, errors, conflicts = deliver_plan(p, items)
     problems += errors + conflicts
     if problems:
-        raise RoomError("成果物（ai/out/deliverable/）を Area に渡せない。何も変えていない:\n  " + "\n  ".join(problems)
+        raise RoomError("成果物（ai/out/<Project 名>/）を Area に渡せない。何も変えていない:\n  " + "\n  ".join(problems)
                         + ("\n（Area 側の人の変更を退避してから、close をやり直す）" if conflicts else ""))
     cases = parse_cases(close_text) + [f"【決定】{body}" for body, _s, _b in parse_decisions(close_text)]
     today = ctx.today()

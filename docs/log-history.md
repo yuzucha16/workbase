@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-05（room: Area へ渡す成果物の単位）
+- ユーザーの質問から、`room close` が `ai/out/deliverable/` の下だけを渡し、`ai/out/<成果物名>/` を渡していないことが分かった。ユーザーの決定: 塊は 1 つで、`ai/out/<Project 名>/` を Project 名の下にそのまま置く（`decisions.md` の同日）。
+
 ### 2026-11-05（room: stock の public の scope、open --from の緩和）
 - ユーザーの報告: ① 部屋の `stock` で `scope: public` の記載が案内に無く、`room stock` が宛先不明で止まる（`area` は記載あり）。② `room open --from` が、元に `ai/work/plan` が無いと止まる（ユーザーは `room start --from` と書いたが、`--from` は `open` にある）。
 - 対応: 案内に `scope: public` を足し、`--from` は写すものが無くても来歴だけで開くようにした（`decisions.md` の同日）。テスト 186 件通過。

@@ -2303,6 +2303,31 @@ class CloseTest(unittest.TestCase):
             self.assertEqual((v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"), "報告\n")
             self.assertTrue((v / "archives/proj-a").is_dir())
 
+    def test_close_delivers_out_project_name_dir_as_is_under_project_name(self):
+        with tempfile.TemporaryDirectory() as tmp:  # 成果物の塊は ai/out/<Project 名>/。Area では <Project 名>/ の直下に置く（2026-11-05）
+            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
+            (p / "ai/out/proj-a/sub").mkdir(parents=True)
+            (p / "ai/out/proj-a/report.md").write_text("報告\n", encoding="utf-8", newline="\n")
+            (p / "ai/out/proj-a/sub/x.md").write_text("x\n", encoding="utf-8", newline="\n")
+            (p / "ai/out/other.md").write_text("対象外\n", encoding="utf-8", newline="\n")
+            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            base = v / "areas/area-x/_noai/deliverable/proj-a"
+            self.assertEqual((base / "report.md").read_text(encoding="utf-8"), "報告\n")
+            self.assertTrue((base / "sub/x.md").exists())
+            self.assertFalse((base / "other.md").exists())
+            self.assertFalse((base / "proj-a").exists())
+
+    def test_close_restores_names_in_project_name_dir_when_masked(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
+            m = room.maskkit.Mapping.load(p / "_noai/map/mapping.json")
+            m.ensure("CUST", "company1", ["アクメ商事株式会社"])
+            m.save(p / "_noai/map/mapping.json")
+            (p / "ai/out/proj-a").mkdir(parents=True)
+            (p / "ai/out/proj-a/report.md").write_text("⟦CUST_001⟧ の報告\n", encoding="utf-8", newline="\n")
+            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
+            self.assertIn("アクメ商事株式会社", (v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"))
+
     def test_close_restores_names_in_deliverable_when_masked(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self._decision_project(tmp, "- 【案件】x\n")

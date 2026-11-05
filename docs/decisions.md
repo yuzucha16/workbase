@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【room】Area へ渡す最終成果物は `ai/out/<Project 名>/`（成果物の塊は 1 つ）。`deliverable/` の予約はやめる（2026-11-05）
+- 決めたこと（ユーザー）: `room close`（と `restore`）が Area の `_noai/deliverable/<Project 名>/` へ渡すのは、`ai/out/<Project 名>/` の下を、そのまま Project 名の直下に置く形。成果物の塊は 1 つなので、ディレクトリ名を重ねない。10-21 の `ai/out/deliverable/`（Area に戻す専用の予約名）は、成果物名（既定は Project 名）が置き場の単位になったので、役目を終えた。ユーザーの認識は「昨日まではそういう仕様」だったが、コードは 10-21 のままだった。
+- 実装: `room.py` の `is_deliverable_key` と `deliverable_view`（`ai/out/<Project 名>/` を内部の正規形 `deliverable/` に読み替える）。旧名の `ai/out/deliverable/` も同じく渡す（既存の Project のため）。`close.md` `stock/` などの `ai/out/` 直下は渡さない。テスト 2 件を足した（188 件通過）。書き出しの規則（人の変更を守る停止、`--force`、`_prev` への退避、マスクの復元）は変えない。実機は未確認。
+- 注意: 成果物名を Project 名と別にした Project は、Area へ渡らない（`ai/out/` に残る）。
+
 ### 【room】部屋の `stock` の `public` の下書きにも `scope: public` を書かせる。`room open --from` は写すものが無くても止めない（2026-11-05）
 - 決めたこと（ユーザー）: ① 部屋の案内（`room.py` の `ROOM_GUIDE`、`room-context.md`）の `public` の節に、frontmatter `scope: public`（運び先は workbase の `exmem/inbox/`）を足す。`area` には `scope: area` の記載があったが `public` には無く、部屋の AI が `scope:` を書かないため、`room stock`（`--dst` なし）が宛先不明で止まっていた。`scope:` が無い下書きで止まる動き（11-04 の追記）は変えない。② `room open --from` は、写すもの（成果物・`close.md`・正式な計画）が無くても止めず、注意を出して `from:` と Area README の「← <前>」だけ付けて開く。小さな Project は計画を作らないことがある。11-04 の決定 ③ の「止まるときは理由を出す」を、「止めずに注意を出す」に変えた（archives に無い・done でない・別の Area は従来どおり止まる）。
 - 実装: `room.py`（`ROOM_GUIDE`、`collect_from`、`cmd_open`）、`room-context.md`、`project-structure.md`。テスト `StockPublicScopeTest`、`OpenFromTest` に 2 件（計画なしで成果物を写す、写すもの無しで来歴だけ付ける）。単体テスト 186 件通過。実機は未確認。
