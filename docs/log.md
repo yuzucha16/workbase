@@ -24,7 +24,7 @@
 
 ## Next Actions
 
-4. **Area の終わり方を決める（起票 11-04、11-05 に縮めた）**: Area の log・decisions は持たない（11-05 決定。記録は `archives/` に残り、`room trace --area <Area> <語>` で横断して引く。必要なときに ee が AI に矛盾点・時系列の整理を頼む）。Area の inbox は廃止し、close は【案件】【決定】を Area へ運ばなくなった（実装済み。実機は未確認）。残りは Area の終わり方（`archives/` へ移す契機と手順）。案: 条件は Project が 0 件・`stock` の scope: area の未処理が 0 件・ee の宣言、手順は `room close --area`。決めるのは ee。`room open --from` の案 C（Area に資産を置く）の扱いも、ここで決める。調査は `notes/area-ops/2026-11-05-archive-salvage.md` と `notes/room-lifecycle/2026-11-04-current-flow.md` の 3-B。
+4. **`room close --area` を実装する（起票 11-04、11-05 に決定済みへ）**: 条件は、Project が 0 件・`stock` の scope: area の未処理が 0 件・ee の宣言（ee が 11-05 に OK）。手順は `archives/` へ Area を移す形で、細部は実装時に決める。あわせて、成果物を Area に渡さず Project の状態として `archives/` に残す案（一貫性が高い。ee が 11-05 に「もう少し試してから決める」）の判断を、実機で試した後に行う。`room open --from` の案 C（Area に資産を置く）は見送り（11-05）。調査は `notes/area-ops/2026-11-05-archive-salvage.md`。
 
 5. **`guides/howto/` を triggers 索引の対象にするか、ライフサイクルの繋がりを明示する大局案を決める（起票 11-04）**: `ai-room-lifecycle.md` の前半の順（6R → 論点出し）は、`find_knowledge.py --triggers` に出ず、`brief` との紐づけも無かったため、文書の修正が横展開で漏れた。案: ① `guides/howto/` を索引の走査対象にする、② 前半の順の正本を 1 か所（`hooks.md` の連鎖）に置き、howto は指すだけにする、③ 新しいフックを足すときの点検（`hook-common.md` の「フックを足す・消すとき」）に、howto と triggers の確認を足す。別セッションで扱う（ユーザー）。
 
