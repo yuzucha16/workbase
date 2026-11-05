@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-05(`inv` の工程の組み合わせ試験。NA 2 を閉じる)
+- 部屋 `room-myenv` で `sample_invA/B/C` を `claude -p`(`room start --cmd`)で通した。重さの言葉だけで頼み、A は `report.md` のみ、B は＋`sources/` `findings/`、C は＋`checks/`。置き場は 3 件とも `ai/out/<Project 名>/`、聞き返し 0(`records/2026-11-05-inv-combo-test-result.md`、設計は同日の `-design.md`)。`claude -p` は `--permission-mode acceptEdits --allowedTools ...` とプロンプトの stdin 渡しが要る。
+- ユーザーが指摘 3 点を採用(`decisions.md`)。`project-structure.md` に反映。`sample_inv*` を削除。依頼の書き方を `guides/quickref/ai-work-prompts.md` に追加。C の「pptx で」追試を NA に起票(11-18)。コミット `f40966d` ほか。
+
 ### 2026-11-05（eg2: 社内 Excel 想定の CSV 分析。NA 1 を閉じる）
 - 国勢調査の男女別人口 c01.csv を、部屋なしで `inv` の構成要素を再現して分析→示唆まで 1 周した（`records/2026-11-05-inv-eg2-population-csv.md`）。マスクは、公開データで対象が無く、ユーザーが「不要」と判断。
 - ユーザー「良いです」: 構造への提案 4 点を `project-structure.md` に反映（`checks/` の取り込みの落とし穴、台帳の URL 無しの書き方、スクリプトの置き場 `ai/work/scripts/`、仮定の書き方）。

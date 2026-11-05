@@ -5,7 +5,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 ## Next Actions
 
 - 【期日 11-12、起票 11-05】eg2 の room 版（myenv・internal・`sample_inveg2`。同じ c01.csv）を人が部屋で行い、返答と `ai/docs/inv-log.md` を別セッションで見せる。手順と依頼文と比べる観点は `records/2026-11-05-inv-eg2-room-request.md`。結果は部屋なし（`records/2026-11-05-inv-eg2-population-csv.md`）と比べて `records/` に残す。
-- 【期日 11-18、起票 11-05】組み合わせ試験の指摘 3 点(結果は `records/2026-11-05-inv-combo-test-result.md`)を、人が採否を決める。①「pptx で」と明示したときに `publish/` を作るかの追試(C のやり直し)、②`project-structure.md` の `inv` の節の `ai/` 前提と部屋の cwd のずれ(読み替えの一言)、③軽い依頼では `checks/` を `report.md` に含めてよいという一言。works に `sample_invA/B/C` が残る(未 close。`dev` の追試と同じく試験後に削除する)。
+- 【期日 11-18、起票 11-05】C の追試: 依頼に「pptx で」と明示したとき、`publish/` を作るかを見る(`records/2026-11-05-inv-combo-test-design.md` の方法。重さの言葉は `guides/quickref/ai-work-prompts.md` の「調査の重さを言葉で伝える」)。`sample_inv*` は削除済みなので、新しい Project で行う。
 
 ## Open Questions
 
