@@ -3,7 +3,8 @@
 ## Log
 
 ### 2026-11-05（room: close --area）
-- NA 4 の実装: `room close --area <Area>` を追加（`room.py` の `cmd_close_area`、単体テスト `CloseAreaTest` 3 件）。条件・移し先は `decisions.md` の同日。実機は未確認。成果物を `archives/` に残す案は未決のまま。
+- NA 4 の実装: `room close --area <Area>` を追加（`room.py` の `cmd_close_area`、単体テスト `CloseAreaTest` 3 件）。条件・移し先は `decisions.md` の同日。実機は未確認。移し先と部屋を消さない点は、ユーザーが承認した。成果物を `archives/` に残す案は未決のまま。
+- wrap: 残る NA は 4（実機確認と成果物の案）・5・9。閉じる項目なし。
 
 ### 2026-11-05（review 消化 / NA 7・8 を閉じる）
 - 済（NA7）: ユーザーが PC1 で動作確認を終えた（public の scope も直っていた）。11-05 ユーザー

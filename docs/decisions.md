@@ -10,7 +10,7 @@
 - 却下: Area の `decisions.md` の置き場を決める案（`docs/` か `ai/docs/`）、Area の AI の入口（`room start --area`）。前提が変わり論点が消えた。
 - 範囲: 他の PC は対象外（ユーザー）。実機は未確認。調査は `notes/area-ops/2026-11-05-archive-salvage.md`。
 - 追記（同日、ユーザー）: Area の終わり方は、Project が 0 件・`stock` の scope: area の未処理が 0 件・ee の宣言の 3 条件で OK。`room open --from` の案 C（Area に資産を置く）は見送り（再作業は案 B で足りるか試す）。成果物を Area へ渡さず Project の状態として `archives/` に残す案は、もう少し試してから決める（未決）。
-- 実装（同日、ユーザーの依頼）: `room close --area <Area>`。3 条件を確かめ（stock の未処理は archives の Project の `ai/out/stock/` で見る）、y/N の宣言（非対話は止まる）の後、`areas/<Area>` を `archives/areas/<Area>` へ移し、README に status: closed と closed を付ける。部屋は消さない（`wsl --unregister` は人）。`archives/areas/` に置くのは、Project の `archives/<名>` と混ざらず、`room trace` の走査（`archives/*/README.md`）に当たらないため。実機は未確認。
+- 実装（同日、ユーザーの依頼）: `room close --area <Area>`。3 条件を確かめ（stock の未処理は archives の Project の `ai/out/stock/` で見る）、y/N の宣言（非対話は止まる）の後、`areas/<Area>` を `archives/areas/<Area>` へ移し、README に status: closed と closed を付ける。部屋は消さない（`wsl --unregister` は人）。ユーザーが同日に承認した。`archives/areas/` に置くのは、Project の `archives/<名>` と混ざらず、`room trace` の走査（`archives/*/README.md`）に当たらないため。実機は未確認。
 
 ### 【room】Area へ渡す最終成果物は `ai/out/<Project 名>/`（成果物の塊は 1 つ）。`deliverable/` の予約はやめる（2026-11-05）
 - 決めたこと（ユーザー）: `room close`（と `restore`）が Area の `_noai/deliverable/<Project 名>/` へ渡すのは、`ai/out/<Project 名>/` の下を、そのまま Project 名の直下に置く形。成果物の塊は 1 つなので、ディレクトリ名を重ねない。10-21 の `ai/out/deliverable/`（Area に戻す専用の予約名）は、成果物名（既定は Project 名）が置き場の単位になったので、役目を終えた。ユーザーの認識は「昨日まではそういう仕様」だったが、コードは 10-21 のままだった。
