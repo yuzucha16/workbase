@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-05(eg2 の room 版。NA 1 を閉じる)
+- `myenv`(internal)の `sample_inveg2` で、`mask`(cp932 が通り、UTF-8 に変換)→ `start --adopt --cmd`(`claude -p`)→ `restore` を実行。聞き返し 0、構成は部屋なしと同じで過不足なし、結論の数字も一致(`records/2026-11-05-inv-eg2-room-result.md`)。AI の改善提案 5 点は反映未決。`close` は非対話で警告(README ひな形、`close.md` 無し)に止まり、ユーザーが端末から実行した。
+- ユーザーが、複数工程を分割して進めるときの初手プロンプトの試験を NA に追加。
+
 ### 2026-11-05(「pptx で」の追試)
 - C の追試(`records/2026-11-05-inv-pptx-explicit-result.md`)。部屋 `room-myenv` の `sample_invP` で「報告資料にして、pptx で」と明示すると `publish/` に pptx と `deck.js` が出た(聞き返し 0)。quickref の清書の行に反映(a757975)。NA 「C の追試」を閉じた。ユーザーが次の追試(quarto/revealjs)を NA に起票。
 - 取り違え: 最初に Area を env-external で作り、works で revert した(`env-external` の `ai/` の未追跡はユーザーが処理)。

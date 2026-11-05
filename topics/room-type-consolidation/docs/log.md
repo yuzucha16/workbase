@@ -4,7 +4,8 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 ## Next Actions
 
-- 【期日 11-12、起票 11-05】eg2 の room 版（myenv・internal・`sample_inveg2`。同じ c01.csv）を人が部屋で行い、返答と `ai/docs/inv-log.md` を別セッションで見せる。手順と依頼文と比べる観点は `records/2026-11-05-inv-eg2-room-request.md`。結果は部屋なし（`records/2026-11-05-inv-eg2-population-csv.md`）と比べて `records/` に残す。
+- 【起票 11-05】`dev`・`inv` とも、1 つの Project で複数の工程を行いたく、かつ 1 回のプロンプトで終わらせず分割して進めたいとき、初手のプロンプトをどう書くかを試験する(工程の区切りの伝え方、2 回目以降の続け方、`ai/docs/` の記録で引き継げるか、`close` までの扱い。方法は `records/` に設計を置いてから)。
+- 【起票 11-05】eg2 room 版の指摘 5 点(落とし穴の置き場、`sources.md` 1 本、findings の自動生成、計算出力の置き場、仮定)を `project-structure.md` に反映するか、ユーザーが決める。結果は `records/2026-11-05-inv-eg2-room-result.md`。
 - 【起票 11-05】「pptx で」と同じように「quarto/revealjs で」と明示したとき、簡易スライド(`publish/` の html)を作るかを見る。方法は `records/2026-11-05-inv-pptx-explicit-result.md`(重さの言葉だけ「報告資料にして、quarto/revealjs で」に変える。`quarto` が部屋にあるかも見る)。うまくいけば quickref の清書の行に足す。
 - 【人の確認】`room umount --area myenv` が `sample_inveg1` の古いマウントで失敗した。確認して外す。
 
