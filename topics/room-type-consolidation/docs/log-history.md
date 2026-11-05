@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-06(並行 room start の競合。NA 2 を閉じる)
+- 原因は、並行する 2 つの start が同じ `~/shared.new` と `~/shared.old` を消し合うこと。`room.py` の `push_shared` で、送付を部屋の `flock`(`~/.shared.lock`)の下で直列にした(単体テスト 188 件通過)。ユーザーが実機で 2 Project の同時 `room start` を確認し、起動できた。NA 4(人の確認: `umount --area` の失敗)は対応済みとして閉じた。
+
 ### 2026-11-06(分割して進める試験)
 - `dev`(csvinfo)と `inv`(uv と pip-tools)で、新しいセッション 6 回(6R → 論点出し → 判断と承認 → 工程 → 工程 → 終える)を実施。同じ観点で動けた。足りない点 3 つ(成果物名、`inv` の `src/`、承認後の 6R の書き換え)を `project-structure.md` などに反映し、新 Project で 3 回目まで再試験して解消を確認。結果は `records/2026-11-06-split-test-result.md`。ユーザーが反映と `env/` の扱いを承認。コミット 08b8fd0。
 
