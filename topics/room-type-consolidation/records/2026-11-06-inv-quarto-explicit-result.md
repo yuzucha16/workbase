@@ -20,3 +20,17 @@ pptx 追試（`2026-11-05-inv-pptx-explicit-result.md`）の続き。部屋 `roo
 ## 反映（案。ユーザーの承認待ち）
 
 `guides/quickref/ai-work-prompts.md` の清書の行に「quarto/revealjs で」を足す。足すなら「`publish/` に置いて、`report.md` も付けて」と添える（添えないと直下に出る）。
+
+## 修正と再試(同日)
+
+指摘 1 を直した。同じ依頼で再試した結果:
+
+| 回 | 直し | 結果 |
+|---|---|---|
+| `sample_invR` | `project-structure.md` に「形式を書いたら `report.md` 本体、清書物は `publish/`」を追記 | 変わらず(`out/` 直下に `report.qmd` `report.html`) |
+| `sample_invS` | `room-context.md` にも追記 | 変わらず |
+| `sample_invT` | 部屋の案内文(`room.py` の `POINTER_TEXT`。常に読まれる `~/.claude/CLAUDE.md`)に追記 | `report.md` `question.md` `sources.md` `findings/` `publish/report.{qmd,html}` |
+| `sample_invU`(pptx 対照) | 同上 | `report.md` `sources/sources.md` `findings/` `publish/`(pptx・`build.js`) |
+
+- 原因: `claude -p` の部屋のエージェントは `~/shared` の手順書を読みに行かない(会話記録に読んだ形跡なし)。常に読まれる案内文に書かない限り、規則は効かない。
+- 形式の違いによる差は、置き場と `report.md` では無くなった。残る差: quarto 版は `question.md` と平らな `sources.md` を作った(pptx 版は `sources/sources.md`、`question.md` なし)。ばらつきの範囲と見て、規則は足していない。
