@@ -31,6 +31,8 @@
 
 8. **`room close` の y/N 警告の実機確認（起票 11-04）**: PC1 で pull し、README がひな形のまま・`ai/out/close.md` 無しの Project を `room close` して、警告と `[y/N]` が出ること、y で archives へ移ること、N で何も変わらないことを見る。非対話（パイプ経由など）で止まることも確かめる。確認できたら閉じる（決定は `decisions.md` の 11-04）。
 
+9. **成果物を `ai/out/<Project 名>/` 以外に置かれると、`room close` で Area に渡らない（起票 11-05）**: 部屋の AI が成果物を Project 名以外のフォルダに置くことが約 5 回に 1 回ある（ユーザーの実測）。11-05 の変更で Area へ渡すのは `ai/out/<Project 名>/` の下だけになったため、踏むと何も渡らず、`close` は黙って進む。案: ① 渡るのは Project 名のフォルダだけだと部屋の案内で強く言う、② `close` が `ai/out/` の直下に Project 名以外のフォルダ（`stock/` を除く）を見つけたら警告して `[y/N]`、③ 塊が 1 つだけなら名前を問わずに渡す。決めるのは ee。決定は `decisions.md` の 11-05。
+
 期日のある項目は `due.md`。
 
 ## Open Questions
