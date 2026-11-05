@@ -175,7 +175,7 @@ Area を増やすと、部屋（ディストロ）とログインも増える。
 
 - **1セッション = `room start` 1回**。シェルが子を fork して exec し、終わるのを wait するのと同じ形で、回収の手順を忘れない
 - 回収が失敗したら（戻らなかったプレースホルダーなど）、`archives/` に移さず、zombie のまま残して再実行できるようにする
-- **Area への同期は郵便受け方式**。回収のとき、【案件】の項目を Area の `ai/docs/inbox.md` に追記し、Area の AI が次の `start` で取り込む。Area の `decisions.md` に直接書かないのは、Area の部屋が同時に開いていると書き込みがぶつかるため。毎セッション少しずつ進み、`close` に集中しない
+- **（2026-11-05 に廃止。close は Area へ運ばず、記録は archives から `room trace --area` で引く。`docs/decisions.md` 同日）Area への同期は郵便受け方式**。回収のとき、【案件】の項目を Area の `ai/docs/inbox.md` に追記し、Area の AI が次の `start` で取り込む。Area の `decisions.md` に直接書かないのは、Area の部屋が同時に開いていると書き込みがぶつかるため。毎セッション少しずつ進み、`close` に集中しない
 - 【汎用】のナレッジ化は、ユーザーが言ったときだけ。部屋の AI は下書きまで
 
 | 記録 | 中身 | 置き場 |
@@ -317,7 +317,7 @@ Area を増やすと、部屋（ディストロ）とログインも増える。
 | スクリプト | Windows 側の Python 1本（`room.py`）。uv で管理し、バージョンを固定する |
 | 渡すフォルダ | `projects/<Project>/ai/` だけ。`_noai/`（原本、対応表、実データ入りの成果物）は `ai/` の外で、git で追跡しない |
 | コマンド | 人が言うのは `room open` / `room start` / `room close`。部屋の中の AI は、既存の `start` / `wrap` と、`close` の判断（`ai/out/close.md` を書く。書き方は `workflow-kit/room-context.md`）を行う |
-| Area への同期 | 郵便受け（Area の `ai/docs/inbox.md`）。同じ Area の【案件】だけ |
+| Area への同期 | （11-05 廃止）郵便受け（Area の `ai/docs/inbox.md`）。同じ Area の【案件】だけ |
 | マスク | 対象は csv と xlsx（docx・pptx は後）。xlsx は zip レベルの置換。置換後に点検 |
 | 部屋の片付け | `close` から14日（変更可）後に、会話履歴を記録に写して消す |
 | works 側の許可設定 | `projects/` `areas/` `archives/` を丸ごと deny（安全網。境界の保証は部屋が担う） |

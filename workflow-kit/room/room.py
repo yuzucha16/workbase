@@ -1201,11 +1201,7 @@ def scaffold_area(ctx, area):
     if not sd.is_dir():
         sd.mkdir(parents=True)
         ctx.say(f"作った: areas/{area}/{SOURCE_DEFAULT}/（共通の xlsx・pptx の原本置き場。人が置く。clean --path の読み元）")
-    inbox = root / "ai" / "docs" / "inbox.md"
-    if not inbox.exists():
-        inbox.parent.mkdir(parents=True, exist_ok=True)
-        inbox.write_text(INBOX_NEW, encoding="utf-8", newline="\n")
-        ctx.say(f"作った: areas/{area}/ai/docs/inbox.md（close が【案件】を追記する郵便受け）")
+
 
 
 # init の段（--only で選ぶ名前）。base は一般ユーザー・wsl.conf・分離の確認（部屋を terminate する）
@@ -2445,85 +2441,9 @@ def cmd_umount(ctx, a):
 
 # ---------- close ----------
 
-INBOX_NEW = (
-    "# inbox（Project から Area への郵便受け）\n\n"
-    "Project の `room close` が、【案件】と【決定】の項目をここへ追記する。Area の作業（Area の AI を動かす入口は未定。`docs/log.md` の NA）で読み、"
-    "取り込んだら「取り込み済み」に移す。同じ項目は二度送らない（識別子 = Project 名 + 連番）。\n\n"
-    "【決定】の項目（`- \\`Project#n\\` 【決定】要旨（根拠: 見出しの一部）`）は、Area の `decisions.md` に統合する。"
-    "統合するとき、`Project#n` と根拠を、`decisions.md` の該当の項に残す（`room trace Project#n` で、閉じた Project の該当節を引くため）。\n\n"
-    "## 未取り込み\n\n## 取り込み済み\n\nなし。\n"
-)
-
-DECISION_RE = re.compile(r"^\s*-\s*【決定】(.+?)\s*$", re.M)
-BASIS_RE = re.compile(r"（根拠:\s*(.+?)）\s*$")
 BASIS_FILES = ("decisions.md", "log-history.md", "log.md")
 
 
-def parse_cases(close_md):
-    return [m.group(1).strip() for m in re.finditer(r"^\s*-\s*【案件】(.+)$", close_md, re.M)]
-
-
-def parse_decisions(close_md):
-    """close.md の【決定】行。[(行の本文, 要旨, 根拠)]。根拠が無い行は根拠を空で返す。"""
-    out = []
-    for m in DECISION_RE.finditer(close_md):
-        body = m.group(1).strip()
-        b = BASIS_RE.search(body)
-        out.append((body, body[:b.start()].strip() if b else body, b.group(1).strip() if b else ""))
-    return out
-
-
-def basis_sections(docs_dir, basis):
-    """Project の ai/docs/{decisions,log-history,log}.md のうち、見出しに basis を含む節。[(ファイル名, 見出し, 本文)]。"""
-    found = []
-    for fn in BASIS_FILES:
-        f = docs_dir / fn
-        if not f.is_file():
-            continue
-        lines = f.read_text(encoding="utf-8").split("\n")
-        starts = [i for i, l in enumerate(lines) if re.match(r"#{1,6}\s", l)]
-        for k, i in enumerate(starts):
-            if basis in lines[i]:
-                level = len(lines[i]) - len(lines[i].lstrip("#"))
-                end = len(lines)
-                for j in starts[k + 1:]:
-                    if len(lines[j]) - len(lines[j].lstrip("#")) <= level:
-                        end = j
-                        break
-                found.append((fn, lines[i].strip(), "\n".join(lines[i:end]).rstrip()))
-    return found
-
-
-def check_decisions(p, close_md_text, terms):
-    """【決定】行の検査（根拠の書式・実在、機密）。問題の一覧を返す。"""
-    problems = []
-    for body, _summary, basis in parse_decisions(close_md_text):
-        if not basis:
-            problems.append(f"【決定】に根拠が無い（`（根拠: <見出しの一部>）` を末尾に付ける）: {body[:40]}")
-        elif not basis_sections(p.ai / "docs", basis):
-            problems.append(f"【決定】の根拠が ai/docs/{{{','.join(BASIS_FILES)}}} の見出しに無い: {basis}")
-        for label, hits in cleankit.sensitive_hits(body, terms):
-            problems.append(f"【決定】に機密らしい語（{label}: {', '.join(hits[:3])}）: {body[:40]}")
-    return problems
-
-
-def append_inbox(text, name, date, items, source):
-    existing = {m.group(2).strip(): int(m.group(1))
-                for m in re.finditer(rf"`{re.escape(name)}#(\d+)`\s*(.+)$", text, re.M)}
-    top = max(existing.values(), default=0)
-    new = [t for t in items if t not in existing]
-    if not new:
-        return text, 0
-    block = [f"### {name}（{date}、close で渡した）", ""]
-    for i, t in enumerate(new, start=top + 1):
-        block.append(f"- `{name}#{i}` {t}")
-    block += ["", f"出典: `{source}`", ""]
-    lines = text.split("\n")
-    idx = next((i for i, l in enumerate(lines) if l.strip() == "## 取り込み済み"), None)
-    if idx is None:
-        return text.rstrip("\n") + "\n\n" + "\n".join(block), len(new)
-    lines[idx:idx] = block
-    return "\n".join(lines), len(new)
 
 
 README_PLACEHOLDERS = ("<目的を1〜2文", "<最終成果物>")
@@ -2563,7 +2483,7 @@ def close_warnings(p, close_md):
     if left:
         out.append("README がひな形のまま（<...> が残っている）:\n    " + "\n    ".join(left))
     if not close_md.exists():
-        out.append("ai/out/close.md が無い（Area の inbox に渡す【案件】【決定】は 0 件になる。書かせるなら、部屋の AI に close の判断を行わせる）")
+        out.append("ai/out/close.md が無い（再作業の `room open --from` が引き継ぐ close の判断が残らない。書かせるなら、部屋の AI に close の判断を行わせる）")
     return out
 
 
@@ -2601,30 +2521,17 @@ def cmd_close(ctx, a):
     problems = check_provenance(p)
     if problems:
         raise RoomError("来歴チェックに失敗した:\n  " + "\n  ".join(problems))
-    inbox = p.area_dir / "ai" / "docs" / "inbox.md"
-    if not inbox.exists():
-        raise RoomError(f"Area の inbox が無い: {inbox}（`room init {p.area}` で作ってから、close をやり直す。何も変えていない）")
-    close_text = close_md.read_text(encoding="utf-8") if close_md.exists() else ""
-    problems = check_decisions(p, close_text, area_gate_terms(p))
-    if problems:
-        raise RoomError("close.md の【決定】行に問題がある。何も変えていない:\n  " + "\n  ".join(problems))
     items, problems = deliverable_items(p)
     plans, errors, conflicts = deliver_plan(p, items)
     problems += errors + conflicts
     if problems:
         raise RoomError("成果物（ai/out/<Project 名>/）を Area に渡せない。何も変えていない:\n  " + "\n  ".join(problems)
                         + ("\n（Area 側の人の変更を退避してから、close をやり直す）" if conflicts else ""))
-    cases = parse_cases(close_text) + [f"【決定】{body}" for body, _s, _b in parse_decisions(close_text)]
     today = ctx.today()
     reap = (datetime.date.fromisoformat(today) + datetime.timedelta(days=ctx.reap_days)).isoformat()
     # 0. 成果物を Area へ（点検は上で済み。マスクした Project は実名に戻して）
     if any(plan for _route, plan in plans):
         deliver_write(ctx, p, plans)
-    # 1. Area の inbox
-    inbox = p.area_dir / "ai" / "docs" / "inbox.md"
-    text, n = append_inbox(inbox.read_text(encoding="utf-8"), p.name, today, cases, f"archives/{p.name}/ai/out/close.md")
-    inbox.write_text(text, encoding="utf-8", newline="\n")
-    ctx.say(f"Area の inbox に【案件】【決定】{n} 件を追記した（{len(cases) - n} 件は送信済み）")
     # 2. README の状態
     p.readme.write_text(
         update_frontmatter(p.readme.read_text(encoding="utf-8"),
@@ -2635,7 +2542,7 @@ def cmd_close(ctx, a):
     ar = p.area_dir / "README.md"
     ar.write_text(move_area_entry(ar.read_text(encoding="utf-8"), p.name, today), encoding="utf-8", newline="\n")
     note = f"、警告を承知で続行（{' / '.join(w.split('（')[0] for w in warned)}）" if warned else ""
-    log_room(ctx, p, "close", f"area 一致、案件 {len(cases)} 件{note}", f"archives へ移動、reap_after {reap}")
+    log_room(ctx, p, "close", f"area 一致{note}", f"archives へ移動、reap_after {reap}")
     rmtree_force(p.ai / "ctx")
     # 4. archives へ（追跡するファイルは、ファイル単位の git mv）
     git(ctx.vault, "add", "-A", "--", f"projects/{p.name}", f"areas/{p.area}")
@@ -2662,42 +2569,49 @@ def cmd_close(ctx, a):
                      extra_allowed=(f"projects/{p.name}",), trailers=room_trailers("close", p.area, p.name))
 
 
+def search_archives(vault, area, word):
+    """Area の archives/ の Project の ai/docs/{decisions,log-history,log}.md を見出しの節に分け、word を含む節を返す。
+    閉じた順（closed、同日は名前）。[(Project, closed, ファイル名, 見出し, [一致した行])]。"""
+    found = []
+    projects = []
+    for readme in (vault / "archives").glob("*/README.md"):
+        fm = read_frontmatter(readme)
+        if fm.get("area") == area:
+            projects.append((str(fm.get("closed", "")), readme.parent.name, readme.parent))
+    for closed, name, d in sorted(projects):
+        for fn in BASIS_FILES:
+            f = d / "ai" / "docs" / fn
+            if not f.is_file():
+                continue
+            lines = f.read_text(encoding="utf-8").split("\n")
+            head, hits = "(見出しの前)", []
+            for l in lines + ["# "]:
+                if re.match(r"#{1,6}\s", l):
+                    if hits:
+                        found.append((name, closed, fn, head, hits))
+                    head, hits = l.strip(), []
+                    if word in l:
+                        hits.append(l.strip())
+                elif word in l:
+                    hits.append(l.strip())
+    return found
+
+
 def cmd_trace(ctx, a):
-    """`Project#n` の根拠を、Area の inbox と decisions.md から引き、閉じた Project の該当節を表示する（部屋の AI には出さない）。"""
-    m = re.fullmatch(r"(.+)#(\d+)", a.ref)
-    if not m:
-        raise RoomError("書式は <Project>#<番号>（例: proj-a#3）")
-    name = m.group(1)
-    tag = f"`{a.ref}`"
-    lines = []
-    for f in sorted((ctx.vault / "areas").glob("*/ai/docs/*.md")):
-        if f.name not in ("inbox.md", "decisions.md"):
-            continue
-        text = f.read_text(encoding="utf-8").split("\n")
-        for i, l in enumerate(text):
-            if tag in l:
-                lines.append((f.relative_to(ctx.vault).as_posix(), i + 1, l.strip()))
-    if not lines:
-        raise RoomError(f"{a.ref} が Area の inbox・decisions.md に見つからない")
-    bases = set()
-    for rel, no, l in lines:
-        ctx.say(f"{rel}:{no}: {l}")
-        b = BASIS_RE.search(l) or re.search(r"根拠:\s*([^）)。\s][^）)。]*)", l)
-        if b:
-            bases.add(b.group(1).strip())
-    if not bases:
-        raise RoomError("根拠の指定（根拠: <見出しの一部>）が見つからない")
-    docs = ctx.vault / "archives" / name / "ai" / "docs"
-    if not docs.is_dir():
-        docs = ctx.vault / "projects" / name / "ai" / "docs"
-    if not docs.is_dir():
-        raise RoomError(f"{name} の ai/docs/ が archives にも projects にも無い")
-    for basis in sorted(bases):
-        secs = basis_sections(docs, basis)
-        if not secs:
-            ctx.say(f"根拠 '{basis}' に当たる節が無い")
-        for fn, head, body in secs:
-            ctx.say(f"\n--- {name}/ai/docs/{fn} : {head} ---\n{body}")
+    """Area の閉じた Project（archives/）の記録（ai/docs/ の decisions・log-history・log）を語で横断して探す。閉じた順に、節の見出しと一致した行を表示する（部屋の AI には出さない）。"""
+    if not (ctx.vault / "areas" / a.area).is_dir():
+        raise RoomError(f"Area が無い: {a.area}")
+    found = search_archives(ctx.vault, a.area, a.word)
+    if not found:
+        raise RoomError(f"Area {a.area} の archives に '{a.word}' を含む節が無い")
+    for name, closed, fn, head, hits in found:
+        ctx.say(f"archives/{name}/ai/docs/{fn}（closed {closed or '?'}） : {head}")
+        for l in hits[:3]:
+            if l != head:
+                ctx.say(f"    {l[:160]}")
+        if len(hits) > 3:
+            ctx.say(f"    …ほか {len(hits) - 3} 行")
+    ctx.say(f"{len(found)} 節。全文は各ファイルを読む（`archives/<Project>/ai/docs/`）")
 
 
 # ---------- reap（閉じた Project が部屋に残した跡を、期限で片付ける） ----------
@@ -3386,8 +3300,8 @@ def build_parser():
     rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
     rp.add_argument("name", nargs="?"); rp.add_argument("--yes", action="store_true")
     rp.add_argument("--force", action="store_true", help="期限前でも消す（名前を指定したとき）")
-    tr = sub.add_parser("trace", help="Area の項目 <Project>#<番号> の根拠を引き、閉じた Project の該当節を表示する")
-    tr.add_argument("ref")
+    tr = sub.add_parser("trace", help="Area の閉じた Project（archives/）の記録を語で横断して探す（閉じた順）")
+    tr.add_argument("--area", required=True); tr.add_argument("word")
     ra = sub.add_parser("mv",help="Area を改名する（areas/・Project の area:・来歴・リンク・部屋 room-<Area>。履歴は追わない）")
     ra.add_argument("old"); ra.add_argument("new")
     ra.add_argument("--no-commit", dest="commit", action="store_false", default=True, help="改名をコミットしない（既定はコミットする）")

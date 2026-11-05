@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【room】Area の log・decisions・inbox を持たない。記録は archives から横断検索で引く（2026-11-05）
+- 決めたこと（ユーザー）: 前提を、Area の log/decisions は archives の記録を検索・サルベージできれば不要、knowledge は今後に生かすので残す、に分けた。`docs/` は各 Project の状態で、Area へ上げない。Area 全体にまたがる方針は決定でなく知識として `stock`（scope: area）で残す。Project をまたぐ知識の整理役（「Area の AI」の常設）は要らない。必要なときだけ ee が、矛盾点と時系列の整理を AI に頼む。
+- 実装: `room close` は【案件】【決定】を Area の inbox へ運ばない（根拠の点検も外した）。`room init` は inbox を作らない（既存は触らない）。`room trace --area <Area> <語>` を新設（Area の `archives/` の `ai/docs/` を閉じた順に横断。旧 `trace <Project>#n` は廃止）。【案件】は再作業の `room open --from` が `close.md` で引き継ぐ。
+- 却下: Area の `decisions.md` の置き場を決める案（`docs/` か `ai/docs/`）、Area の AI の入口（`room start --area`）。前提が変わり論点が消えた。
+- 範囲: 他の PC は対象外（ユーザー）。実機は未確認。調査は `notes/area-ops/2026-11-05-archive-salvage.md`。
+
 ### 【room】Area へ渡す最終成果物は `ai/out/<Project 名>/`（成果物の塊は 1 つ）。`deliverable/` の予約はやめる（2026-11-05）
 - 決めたこと（ユーザー）: `room close`（と `restore`）が Area の `_noai/deliverable/<Project 名>/` へ渡すのは、`ai/out/<Project 名>/` の下を、そのまま Project 名の直下に置く形。成果物の塊は 1 つなので、ディレクトリ名を重ねない。10-21 の `ai/out/deliverable/`（Area に戻す専用の予約名）は、成果物名（既定は Project 名）が置き場の単位になったので、役目を終えた。ユーザーの認識は「昨日まではそういう仕様」だったが、コードは 10-21 のままだった。
 - 実装: `room.py` の `is_deliverable_key` と `deliverable_view`（`ai/out/<Project 名>/` を内部の正規形 `deliverable/` に読み替える）。旧名の `ai/out/deliverable/` も同じく渡す（既存の Project のため）。`close.md` `stock/` などの `ai/out/` 直下は渡さない。テスト 2 件を足した（188 件通過）。書き出しの規則（人の変更を守る停止、`--force`、`_prev` への退避、マスクの復元）は変えない。実機は未確認。

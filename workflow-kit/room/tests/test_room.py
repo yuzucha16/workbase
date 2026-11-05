@@ -903,22 +903,6 @@ class AreaListTest(unittest.TestCase):
         self.assertIn("なし。", head)
 
 
-class InboxTest(unittest.TestCase):
-    def test_idempotent_and_numbering(self):
-        t, n = room.append_inbox(room.INBOX_NEW, "p", "2026-10-12", ["A", "B"], "src")
-        self.assertEqual(n, 2)
-        self.assertIn("`p#1` A", t)
-        t2, n2 = room.append_inbox(t, "p", "2026-10-13", ["B", "C"], "src")
-        self.assertEqual(n2, 1)
-        self.assertIn("`p#3` C", t2)
-        self.assertEqual(t2.count("`p#2` B"), 1)
-        self.assertLess(t2.index("`p#3` C"), t2.index("## 取り込み済み"))
-
-    def test_parse_cases(self):
-        md = "- 【案件】やること1\n- 【汎用】別\n  - 【案件】やること2\n本文 【案件】は拾わない\n"
-        self.assertEqual(room.parse_cases(md), ["やること1", "やること2"])
-
-
 class OpenTest(unittest.TestCase):
     def test_open_creates_layout(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -2252,7 +2236,7 @@ class CloseTest(unittest.TestCase):
             v, c = opened(tmp, wsl)
             p = v / "projects/proj-a"
             fill_readme(p)
-            room.scaffold_area(c, "area-x")  # inbox は init が作る（close は作らない）
+            room.scaffold_area(c, "area-x")
             (p / "ai/out/close.md").write_text("- 【案件】運用で埋める\n- 【案件】表記ゆれを直す\n", encoding="utf-8")
             (p / "ai/out/final.md").write_text("成果物\n", encoding="utf-8")
             (p / "_noai/raw/orig.csv").write_text("secret\n", encoding="utf-8")
@@ -2269,9 +2253,7 @@ class CloseTest(unittest.TestCase):
             fm = room.read_frontmatter(a / "README.md")
             self.assertEqual((fm["status"], fm["closed"], fm["reap_after"]), ("done", "2026-10-12", "2026-10-26"))
             self.assertNotIn("review", fm)
-            inbox = (v / "areas/area-x/ai/docs/inbox.md").read_text(encoding="utf-8")
-            self.assertIn("`proj-a#1` 運用で埋める", inbox)
-            self.assertIn("`proj-a#2` 表記ゆれを直す", inbox)
+            self.assertFalse((v / "areas/area-x/ai/docs/inbox.md").exists(), "close は Area の inbox を作らない・足さない")
             area = (v / "areas/area-x/README.md").read_text(encoding="utf-8")
             self.assertIn("[[archives/proj-a/README|proj-a]]", area)
             tracked = subprocess.run(["git", "-C", str(v), "ls-files"], capture_output=True, text=True, encoding="utf-8").stdout
@@ -2351,58 +2333,31 @@ class CloseTest(unittest.TestCase):
                 room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
             self.assertTrue(p.exists())
             self.assertEqual((dst / "report.md").read_text(encoding="utf-8"), "人が書いた\n")
-            self.assertNotIn("proj-a#", (v / "areas/area-x/ai/docs/inbox.md").read_text(encoding="utf-8"))
 
-    def test_close_carries_decision_with_basis_and_trace_finds_it(self):
+    def test_close_does_not_write_area_inbox_and_trace_searches_archives(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self._decision_project(tmp, "- 【案件】x\n- 【決定】列を固定する（根拠: 列は固定）\n")
             room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-            inbox = (v / "areas/area-x/ai/docs/inbox.md").read_text(encoding="utf-8")
-            self.assertIn("`proj-a#1` x", inbox)
-            self.assertIn("`proj-a#2` 【決定】列を固定する（根拠: 列は固定）", inbox)
+            self.assertFalse((v / "areas/area-x/ai/docs/inbox.md").exists())
             c.msgs.clear()
-            room.cmd_trace(c, argparse.Namespace(ref="proj-a#2"))
+            room.cmd_trace(c, argparse.Namespace(area="area-x", word="理由A"))
             out = "\n".join(c.msgs)
+            self.assertIn("archives/proj-a/ai/docs/decisions.md", out)
             self.assertIn("理由A", out)
             self.assertNotIn("理由B", out)
+            with self.assertRaisesRegex(room.RoomError, "節が無い"):
+                room.cmd_trace(c, argparse.Namespace(area="area-x", word="存在しない語zzz"))
+            with self.assertRaisesRegex(room.RoomError, "Area が無い"):
+                room.cmd_trace(c, argparse.Namespace(area="area-none", word="x"))
 
-    def test_close_stops_on_bad_decision_before_any_change(self):
-        for text, msg in [("- 【決定】根拠なし\n", "根拠が無い"),
-                          ("- 【決定】x（根拠: 存在しない見出し）\n", "見出しに無い"),
-                          ("- 【決定】連絡は a@example.com（根拠: 列は固定）\n", "機密")]:
-            with self.subTest(text=text), tempfile.TemporaryDirectory() as tmp:
-                v, c, p = self._decision_project(tmp, text)
-                with self.assertRaisesRegex(room.RoomError, msg):
-                    room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-                self.assertTrue(p.exists())
-                self.assertFalse((v / "archives/proj-a").exists())
-                self.assertNotIn("proj-a#", (v / "areas/area-x/ai/docs/inbox.md").read_text(encoding="utf-8"))
-
-    def test_close_without_inbox_stops_before_any_change(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c = opened(tmp, wsl)
-            p = v / "projects/proj-a"
-            fill_readme(p)
-            (p / "ai/out/close.md").write_text("- 【案件】運用で埋める\n", encoding="utf-8")
-            with self.assertRaises(room.RoomError) as e:
-                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-            self.assertIn("room init area-x", str(e.exception))
-            self.assertFalse((v / "areas/area-x/ai/docs/inbox.md").exists())
-            self.assertTrue(p.exists())
-            self.assertFalse((v / "archives/proj-a").exists())
-
-    def test_init_scaffolds_area_dirs_and_inbox_without_touching_existing(self):
+    def test_init_scaffolds_area_dirs_without_inbox(self):
         with tempfile.TemporaryDirectory() as tmp:
             v = make_vault(tmp)
             room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=False))
             self.assertFalse((v / "areas/area-y/_noai/knowledge").exists())
             self.assertTrue((v / "areas/area-y/_noai/source").is_dir())
             self.assertTrue((v / "areas/area-y/_noai/deliverable").is_dir())
-            self.assertEqual((v / "areas/area-y/ai/docs/inbox.md").read_text(encoding="utf-8"), room.INBOX_NEW)
-            (v / "areas/area-y/ai/docs/inbox.md").write_text("既存\n", encoding="utf-8")
-            room.scaffold_area(ctx_for(v, FakeWsl()), "area-y")
-            self.assertEqual((v / "areas/area-y/ai/docs/inbox.md").read_text(encoding="utf-8"), "既存\n")
+            self.assertFalse((v / "areas/area-y/ai/docs/inbox.md").exists())
 
     def test_scaffold_warns_about_old_knowledge_dir_and_does_not_move_it(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -2422,14 +2377,6 @@ class CloseTest(unittest.TestCase):
             with self.assertRaises(room.RoomError):
                 room.cmd_init(ctx_for(v, FakeWsl()), argparse.Namespace(area="area-x", resume=False))
             self.assertFalse((v / "areas/area-x/_noai/knowledge").exists())
-
-    def test_close_second_run_does_not_duplicate_inbox(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c = opened(tmp)
-            text, n = room.append_inbox(room.INBOX_NEW, "proj-a", "2026-10-12", ["x"], "s")
-            again, n2 = room.append_inbox(text, "proj-a", "2026-10-12", ["x"], "s")
-            self.assertEqual((n, n2), (1, 0))
-            self.assertEqual(text, again)
 
 
 class RoomGitWrapperTest(unittest.TestCase):
