@@ -4,6 +4,7 @@
 
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
+| 2026-11-06 | 単発 | token-cap NA 6: 出力の型（8 本）の試用の結果を見る（誤爆、型の品質、開始時の大きさ。11-05 から延期） | ユーザー |
 | 2026-11-06 | 単発 | token-cap NA 5: 応答数を減らす手段（(b)(f)〜(i)）の優先と残す・畳むを決める | ユーザー |
 | 2026-11-08 | 単発 | token-cap NA 4: 土台の整理の再判断（NA 7 は 11-01 に閉じ、26k は注記が主因と確定）。100k 運用の効果を見てから決める | ユーザー |
 | 2026-11-11 | 単発 | room-type-consolidation: `inv` の実験 eg2（社内 Excel・テキスト。マスクの差分）を別セッションで行う。起票 11-04 | ユーザー |
@@ -16,7 +17,7 @@
 | 2026-11-10 | 単発 | token-cap: `AGENTS.md` に足した 2 行（10-29。まとめて呼ぶ、編集後に読み直さない）の効果。`requests_by_kind.py --since 2026-10-30` で応答の平均が下がったかを見る（wrap-hook の測定と同時。11-05 から延期） | AI（ユーザーの依頼で） |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断 | ユーザー |
 | 2026-11-11 | 単発 | token-cap: `integrate` の上限（仮 〜11-29）の個別の効果を再測定（`requests_by_kind.py --csv` で integrate の 10-27 以降の件数を見る。Windows 側と room 側。11-05 から延期）。10-29 の値（Windows 側、10-01 以降 16 件）: 10-27 より前 13 件は応答 9.4・1 件 809k・ピーク平均 92k。10-27 以降 3 件は応答 11.0・708k・ピーク 85k（うち 1 件は 7 応答でピーク 134k）。件数が少なく判定保留。room 側（PC1）の件数は未確認 | AI（ユーザーの依頼で） |
-| 2026-11-11 | 単発 | log の NA 2（11-04 に due へ移した。ユーザー）: `room open --from` の実機確認（起票 11-04）: PC1 で workbase を pull し、実際に `room close` した Project で `uv run room.py open <新> --area <Area> --from <閉じた Project>` を試す。見るのは、① `projects/<新>/ai/in/from-<前>/` に `out/`（成果物と `close.md`）と `work/plan/`（正式な計画だけ）が写り、`stock/` と `readme-draft.md` は写らないこと、② 続けて `room start <新> --no-launch` が来歴チェックで止まらないこと、③ README の `from:` と Area README の進行中の行の「← 前」、④ external の Area でも通ること、⑤ 別の PC や `ai/out/` が無い Project では、何も作らず理由を出して止まること。写し方・止まる条件の手直しは、結果を見て決める。仕様は `project-structure.md` の「閉じた Project の引き継ぎ」。 | ユーザー（PC1） |
+| 2026-11-11 | 単発 | log の NA 2（11-04 に due へ移した。ユーザー）: `room open --from` の実機確認（起票 11-04）: PC1 で workbase を pull し、実際に `room close` した Project で `uv run room.py open <新> --area <Area> --from <閉じた Project>` を試す。見るのは、① `projects/<新>/ai/in/from-<前>/` に `out/`（成果物と `close.md`）と `work/plan/`（正式な計画だけ）が写り、`stock/` と `readme-draft.md` は写らないこと、② 続けて `room start <新> --no-launch` が来歴チェックで止まらないこと、③ README の `from:` と Area README の進行中の行の「← 前」、④ external の Area でも通ること、⑤ 別の PC や `ai/out/` が無い Project では、止めずに来歴だけ付けて開くこと（11-05 変更）。⑥ 事前に `room close` で、`ai/out/<Project 名>/` の下だけが Area へ渡ること。写し方・止まる条件の手直しは、結果を見て決める。仕様は `project-structure.md` の「閉じた Project の引き継ぎ」。 | ユーザー（PC1） |
 | 2026-11-13 | 単発 | log の NA 3（11-04 に due へ移した。ユーザー）: 論点出しの型 v4 の実作業での確認（起票 11-03）: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。 | ユーザー |
 | 2026-11-30 | 単発 | ooxml-clean: `room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー。単体スクリプト化はしない) | ユーザー |
 | 2026-11-13 | 単発 | office-output-types NA 2: PC1 で入力 2〜3 種類の見出し・列名だけで定義表の行を書く（実機） | ユーザー（PC1） |
