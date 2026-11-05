@@ -21,6 +21,7 @@
 | 2026-11-13 | 単発 | log の NA 3（11-04 に due へ移した。ユーザー）: 論点出しの型 v4 の実作業での確認（起票 11-03）: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。 | ユーザー |
 | 2026-11-30 | 単発 | ooxml-clean: `room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー。単体スクリプト化はしない) | ユーザー |
 | 2026-11-13 | 単発 | office-output-types NA 2: PC1 で入力 2〜3 種類の見出し・列名だけで定義表の行を書く（実機） | ユーザー（PC1） |
+| 2026-11-13 | 単発 | room-type-consolidation: `room start` の後にマウントが残る件の様子見(1 週間。起票 11-06、ユーザー)。期日までに再発したら、`room-log.md` に記録されたつかむプロセスで原因を決める(Zed が原因なら `room/README.md` か `ai-room-lifecycle.md` に「止まったら Zed を再起動」と書く。`umount` の案内文に足すかも決める)。再発しなければ、`unmount()` の再試行(1 秒おき 10 回)と記録の追加で close。残っている `sample_inv` `sample_inveg1` のマウントは `room umount --area myenv` で外す | ユーザー |
 | 2026-11-14 | 単発 | office-output-types NA 3: 雛形を `exmem/lessons/` に昇格するか（11-13 の実機の後） | ユーザー |
 | 2026-11-14 | 単発 | token-cap OQ: Zed の System tools が 9.0k → 9.9k に増えた原因（実機の Zed） | ユーザー（実機） |
 | 2026-11-15 | 単発 | 旧 `logbook-design` NA 1: 実機でしか確かめられない畳み候補。room の OQ 4 項（マウントの可視性、プリンタ設定、マスクから復元までの通し、pptx）と、obsidian-vault-backup の NA 2 項（WSL の張り直し〔`GHQ_ROOT` は WSL の中で確認〕、`vault-backup.bat`）。実機の機会がなければ、項ごとに「畳む（OQ/NA を閉じる）」か「延期」かを決める | ユーザー |

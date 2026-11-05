@@ -13,7 +13,7 @@ type の集約は反映済み（2026-10-24）。10-31 に、room の GitHub 認�
 
 ## 次の一手
 
-`inv` の工程の組み合わせ試験、比較結果の引き渡し、部屋の Slidev の削除（人）。詳細は `docs/log.md`。
+Next Actions は空。残りは `docs/due.md` の room-type-consolidation の行（11-11 `inv` の組み合わせ試験、11-12 eg2 の room 版、11-13 マウント残りの様子見）。
 
 ## 読む順
 

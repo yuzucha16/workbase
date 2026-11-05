@@ -4,7 +4,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 ## Next Actions
 
-- 【起票 11-06、期日 11-13】`room start` の後にマウントが残り、次の `room start` が「マウントが残っている」で止まる。ユーザーの所見: Zed の remote server がプロセスをつかんでいる可能性があり、`room start` を解除したあと Zed を再起動すると直る。調査(11-06): 仕組みは `umount` の busy(つかむプロセスがあると外れず、`2>/dev/null || break` で黙って諦める)。実測で再現した。ただし 10-25 以降の `claude -p` の回にも 9 件あり、Zed だけが原因ではない。`unmount()` を再試行(1 秒おき 10 回)に直し、残ったらつかんでいるプロセスを `room-log.md` に書くようにした(テスト済み)。残っている `sample_inv` `sample_inveg1` のマウントは、`room umount --area myenv` で外す(別テストは完了済み)。次: 次に残ったとき、記録のプロセスで原因を決める(Zed を閉じた `start` の繰り返しは、その後)。原因が Zed なら、`room/README.md` か `ai-room-lifecycle.md` に「止まったら Zed を再起動」と書く。`umount` の案内文に足すかも決める。
+- （なし。マウントが残る件は 11-06 に `docs/due.md` へ移した。期日 11-13。再発すれば調査、しなければ close）
 
 ## Open Questions
 
