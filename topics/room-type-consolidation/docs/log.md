@@ -5,7 +5,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 ## Next Actions
 
 - 【起票 11-06、期日 11-13】`room start` の後にマウントが残り、次の `room start` が「マウントが残っている」で止まる。ユーザーの所見: Zed の remote server がプロセスをつかんでいる可能性があり、`room start` を解除したあと Zed を再起動すると直る。確かめる(Zed を閉じた状態で `start` を繰り返し、残るかを見る)。原因が Zed なら、`room/README.md` か `ai-room-lifecycle.md` に「止まったら Zed を再起動」と書く。`umount` の案内文に足すかも決める。
-- 【起票 11-05、試験済み 11-06】「quarto/revealjs で」の追試は済み(`records/2026-11-06-inv-quarto-explicit-result.md`。`.qmd` と html が出たが `publish/` でなく `out/` 直下で、`report.md` なし)。quickref の清書の行に足すか(「`publish/` に置いて `report.md` も付けて」と添える案)を、ユーザーが決める。
+- 【起票 11-05、解決 11-06】「quarto/revealjs で」の追試は済み、pptx と同じ動き(`report.md` 本体、清書物は `publish/`)に直した(`records/2026-11-06-inv-quarto-explicit-result.md`)。原因は、部屋のエージェントが `~/shared` の手順書を読まないこと。規則は常に読まれる案内文(`room.py` の `POINTER_TEXT`)に置いた。残るばらつき: quarto 版は `question.md` と平らな `sources.md` を作った。次の整理で、この項を log-history に移す。
 
 ## Open Questions
 
