@@ -8,6 +8,7 @@
 ### 2026-11-05（room: stock の public の scope、open --from の緩和）
 - ユーザーの報告: ① 部屋の `stock` で `scope: public` の記載が案内に無く、`room stock` が宛先不明で止まる（`area` は記載あり）。② `room open --from` が、元に `ai/work/plan` が無いと止まる（ユーザーは `room start --from` と書いたが、`--from` は `open` にある）。
 - 対応: 案内に `scope: public` を足し、`--from` は写すものが無くても来歴だけで開くようにした（`decisions.md` の同日）。テスト 186 件通過。
+- 続き: `room close` が Area へ渡すのは `ai/out/deliverable/` だけで `ai/out/<成果物名>/` を渡していなかったため、ユーザーの決定で `ai/out/<Project 名>/` を渡す形にした（8ad2bba の後、ec23279。テスト 188 件）。部屋の AI が約 1/5 の頻度で別名のフォルダに置くと渡らない問題を NA 9 に起票（0a234c3）。
 
 ### 2026-11-04（review 消化: 漏れの修復）
 - 漏れ（`7e881ad` の上書きで、履歴に残らないまま消えていた）: NA 7（`room stock` の move・`--dst` 省略・表の実機確認）と NA 8（`room close` の y/N 警告の実機確認）を `log.md` に戻した（ユーザー承認、11-04）。

@@ -10,6 +10,7 @@
 - works の git 追跡は許可リスト方式（10-29 決定。`decisions.md`）。
 - Area の改名は `room mv <旧> <新>`（旧 `rename-area`。11-02 作り直し。部屋は `wsl --export`/`--import` で改名、履歴は追わない。ee が実機で動作確認済み）。
 - room open --from（11-04 実装。閉じた Project の成果物・close.md・正式な計画を、新しい Project の `ai/in/from-<前>/` に引き継ぐ。11-05: 写すものが無くても止めず、来歴だけ付けて開く。実機は未確認）。
+- room close が Area へ渡す成果物は `ai/out/<Project 名>/`（11-05 変更。旧名 `deliverable/` も可。`decisions.md` 同日。実機は未確認）。部屋の AI が別名のフォルダに置くと渡らない問題は NA 9。
 - 実機確認済み（11-04、PC1）: `room restore` / `close` の成果物の Area への書き出し、計画の承認の検知（`status: 正式` → 変更で `仮` に戻る）。
 - Python の版: uv 管理が正本（`script-guide.md` の「Python の版と呼び方」）。
 - `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-15・11-29。
