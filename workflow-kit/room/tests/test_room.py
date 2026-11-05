@@ -1126,6 +1126,26 @@ class StartTest(unittest.TestCase):
             room.cmd_start(c, self.args())
             self.assertTrue(os.stat(keep).st_mode & stat.S_IWRITE)
 
+    def test_unmount_retries_and_reports_holders(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            p = room.Project.load(c, "proj-a")
+            wsl.mounted = True
+            wsl.script_orig = wsl.script
+            # umount が効かない（busy）部屋を模す
+            def busy(distro, text, root=False):
+                rc, out, err = wsl.script_orig(distro, text, root)
+                if "umount" in text:
+                    wsl.mounted = True
+                if "/proc/[0-9]*" in text:
+                    return 0, "123 cwd zed-remote-server\n", ""
+                return rc, out, err
+            wsl.script = busy
+            self.assertFalse(room.unmount(c, p))
+            self.assertIn("seq 1 10", wsl.scripts[0][1])
+            self.assertIn("zed-remote-server", p.holders)
+
     def test_start_blocked_by_existing_mount(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()

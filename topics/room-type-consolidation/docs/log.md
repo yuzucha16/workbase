@@ -4,7 +4,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 ## Next Actions
 
-- 【起票 11-06、期日 11-13】`room start` の後にマウントが残り、次の `room start` が「マウントが残っている」で止まる。ユーザーの所見: Zed の remote server がプロセスをつかんでいる可能性があり、`room start` を解除したあと Zed を再起動すると直る。確かめる(Zed を閉じた状態で `start` を繰り返し、残るかを見る)。原因が Zed なら、`room/README.md` か `ai-room-lifecycle.md` に「止まったら Zed を再起動」と書く。`umount` の案内文に足すかも決める。
+- 【起票 11-06、期日 11-13】`room start` の後にマウントが残り、次の `room start` が「マウントが残っている」で止まる。ユーザーの所見: Zed の remote server がプロセスをつかんでいる可能性があり、`room start` を解除したあと Zed を再起動すると直る。調査(11-06): 仕組みは `umount` の busy(つかむプロセスがあると外れず、`2>/dev/null || break` で黙って諦める)。実測で再現した。ただし 10-25 以降の `claude -p` の回にも 9 件あり、Zed だけが原因ではない。`unmount()` を再試行(1 秒おき 10 回)に直し、残ったらつかんでいるプロセスを `room-log.md` に書くようにした(テスト済み)。次: 次に残ったとき、記録のプロセスで原因を決める(Zed を閉じた `start` の繰り返しは、その後)。原因が Zed なら、`room/README.md` か `ai-room-lifecycle.md` に「止まったら Zed を再起動」と書く。`umount` の案内文に足すかも決める。
 - 【起票 11-05、解決 11-06】「quarto/revealjs で」の追試は済み、pptx と同じ動き(`report.md` 本体、清書物は `publish/`)に直した(`records/2026-11-06-inv-quarto-explicit-result.md`)。原因は、部屋のエージェントが `~/shared` の手順書を読まないこと。規則は常に読まれる案内文(`room.py` の `POINTER_TEXT`)に置いた。残るばらつき: quarto 版は `question.md` と平らな `sources.md` を作った。次の整理で、この項を log-history に移す。
 
 ## Open Questions
