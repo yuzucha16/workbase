@@ -1637,6 +1637,7 @@ class SharedPushTest(unittest.TestCase):
             distro, data, script = wsl.pushes[0]
             self.assertEqual(distro, "room-area-x")
             self.assertIn("chmod -R a-w", script)
+            self.assertIn("flock 9", script, "並行 start の送付を直列にする")
             self.assertIn('mv "$HOME/shared.new" "$HOME/shared"', script, "横で展開してから置き換える（読む最中に無い時間を作らない）")
             names = tarfile.open(fileobj=io.BytesIO(data), mode="r:gz").getnames()
             self.assertIn("workflow-kit/hooks.md", names)

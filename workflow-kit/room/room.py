@@ -1637,6 +1637,7 @@ POINTER_END = "<!-- room-shared:end -->"
 POINTER_TEXT = """共有知（読み取り専用の写し）が `~/shared` にある。作業の前に `~/shared/ROOM.md` を読む。
 合言葉（`brief` `wrap` など）を言われたら、`~/shared/workflow-kit/hooks.md` の表に従って手順書を読む。`~/shared` には書かない。
 git は、`/mnt/room/<名>` の下で自由に使ってよい（許可は不要）。部屋のローカルの git が `room start` で用意済みで、`git status` `git diff` `git add` `git commit` `git log` がそのまま動く。
+成果物（報告・調査・スライドなど）を作る前に、`~/shared/workflow-kit/project-structure.md` の Project の type の節を読む。依頼が清書の形式（pptx・quarto/revealjs など）を指定したときは、形式によらず、`report.md` を本体にし、清書物は `out/<Project 名>/publish/` に置く（出力だけを直下に置かない）。
 自分で `git init` や `git config` をしない（`.git` を作ると works に回収される）。コミットは人に言われなくても、作業の区切りと wrap のたびに行う（push はしない）。ここのコミットは部屋の中だけの記録で、セッションの終わりに捨てる。"""
 
 
@@ -1738,7 +1739,9 @@ def push_shared(ctx, p):
     d = f"\"$HOME/{SHARE_DEST}\""
     n = f"\"$HOME/{SHARE_DEST}.new\""
     o = f"\"$HOME/{SHARE_DEST}.old\""
+    # 並行する start が同じ .new/.old を壊し合わないよう、部屋の中のロックで送付を直列にする（後から来た側は待つ）
     script = (f"set -e; "
+              f"exec 9>\"$HOME/.shared.lock\"; flock 9; "
               f"if [ -e {n} ]; then chmod -R u+w {n}; rm -rf {n}; fi; "
               f"if [ -e {o} ]; then chmod -R u+w {o}; rm -rf {o}; fi; "
               f"mkdir -p {n} && tar xzf - -C {n}; "
