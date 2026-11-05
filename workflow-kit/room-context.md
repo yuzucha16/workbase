@@ -68,7 +68,7 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書く。知識は人が `room stock --dst area` で、最終版は `room restore` か `room close` で Area に置く（`start` は自動で行わない）。
 
 - **統合した知識**: `ctx/area/`（`start` が置く Area の `ai/{knowledge,docs}/` の読み取り専用の写し）を読み、統合したノートを `ai/out/stock/<英数字の名前>.md` に書く（`scope: area`、`dest: knowledge`）。実名を含めない。人が `room stock <名> --dst area` で運ぶ。同じ名前のファイルが Area にあり、前回運んだ後に人が変えていると、`stock` は運ばずに止まる（人が確認して消すか、名前を変える）。
-- **最終成果物（Area に実名で戻す）**: `ai/out/<Project 名>/` の下に置く（成果物の塊は 1 つ。旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。人が `room restore` を実行するか、`room close` すると、Area の成果物置き場（Project 名の下）に書く（マスクした Project は実名に戻して、マスクしていない Project はそのまま）。置き場と構成は `project-structure.md`。それ以外の `ai/out/` 直下（`close.md` など）は Area へ渡らず、`restore` では Project の `_noai/final/` に戻る。
+- **最終成果物（Area に実名で戻す）**: `ai/out/<Project 名>/` の下に置く（成果物の塊は 1 つ。旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。人が `room restore` を実行するか、`room close` すると、Area の成果物置き場（Project 名の下）に書く（マスクした Project は実名に戻して、マスクしていない Project はそのまま）。置き場と構成は `project-structure.md`。成果物を作る前に、`project-structure.md` の type の節（`inv` なら「`inv` の補足」）を読む。依頼が清書の形式（pptx・quarto/revealjs など）を指定したときは、形式によらず、`report.md` を本体に作り、清書物は `ai/out/<Project 名>/publish/` に置く（出力だけを直下に置かない）。それ以外の `ai/out/` 直下（`close.md` など）は Area へ渡らず、`restore` では Project の `_noai/final/` に戻る。
 - **残したい知見**（`stock`）は、行き先を `scope:` で決める（下の `stock` の節）。Area の業務に固有なら `scope: area`、公開できる一般則なら `scope: public`（どちらも `ai/out/stock/`）。
 
 ## 分担と受け渡し
