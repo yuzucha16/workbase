@@ -19,7 +19,7 @@ aliases:
   - 許可リスト方式の隔離
 triggers: [作業部屋, 隔離, 許可リスト, WSL, 領域, マスク, room, スコープ, セキュリティ, 機密, AIに見せない, マウント]
 created: 2026-10-13
-updated: 2026-10-27
+updated: 2026-11-05
 sources:
   - Claude Code conversation "room の並行 start" (2026-10-21)
   - Claude Code conversation "Area を跨ぐ共有知の設計と実装" (2026-10-21)
@@ -202,6 +202,9 @@ sources:
 - 状況: 部屋の curl が証明書エラー（60）になる
   - 原因: TLS 検査のプロキシのルート証明書が部屋に無い。`WSLENV` 経由の壊れた `SSL_CERT_FILE` も重なる
   - 解決: `--ca-cert` で検査用のルート証明書を入れた。通った
+- 状況: 部屋で `claude -p` を `room start --cmd` から起動して試験すると、書き込みの許可で止まり何も作られない。`--allowedTools` の後ろにプロンプトを引数で置くと「prompt が無い」エラーになる
+  - 原因: `-p` は承認を聞けない。`--allowedTools` は可変長の引数で、後ろのプロンプトを吸う
+  - 解決: `--permission-mode acceptEdits --allowedTools 'Bash WebFetch WebSearch Read Write Edit Glob Grep'` を付け、プロンプトは引数でなく stdin（`< /mnt/room/<名>/work/prompt.txt`）で渡す。cwd は `/mnt/room/<名>`（`ai/` そのもの）。`$(cat …)` は絶対パスで。終わったら `room umount --area <Area>`（2026-11-05、`inv` の組み合わせ試験で確認。`topics/room-type-consolidation/records/2026-11-05-inv-combo-test-result.md`）
 
 ## Open Questions
 
