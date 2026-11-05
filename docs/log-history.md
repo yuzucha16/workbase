@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-05（review 消化 / NA 4: Area の log・decisions・inbox を持たない）
+- `review 消化`: 期日は token-cap NA 6（出力の型の試用）の 1 件で、ユーザーの指示で 11-06 に延期。token-cap NA 4 の札を 11-08 に直し、PC1 手順メモと `due.md` 11-11 の `open --from` の確認項目を 11-05 の変更（止めずに来歴だけ付けて開く、成果物は `ai/out/<Project 名>/` の下だけ）に合わせた（a2c32d9）。
+- NA 4 の再設計: ユーザーが前提を「Area の log/decisions は archives からサルベージできれば不要、knowledge は残す、`docs/` は Project の状態」に変えた。`room trace` が Area の inbox・decisions.md 起点で、archives の横断検索の入口が無いことを `room.py` で確認。決定: 【決定】は Area へ運ばない、Area 全体の方針は知識として `stock`（scope: area）、整理役は常設しない、inbox 廃止、【案件】は `--from` が引き継ぐ。実装: close・init の inbox 廃止、`room trace --area <Area> <語>`（13e604d、単体テスト 183 件）。実機は未確認。
+- 追加の決定: Area の終わり方の条件は Project 0 件・`stock` の scope: area の未処理 0 件・ee の宣言。`open --from` の案 C は見送り。成果物を Project の状態として `archives/` に残す案は、試してから決める（6a2d801）。判断は `decisions.md` の同日の項。調査は `notes/area-ops/2026-11-05-archive-salvage.md`。
+
 ### 2026-11-05（room: Area へ渡す成果物の単位）
 - ユーザーの質問から、`room close` が `ai/out/deliverable/` の下だけを渡し、`ai/out/<成果物名>/` を渡していないことが分かった。ユーザーの決定: 塊は 1 つで、`ai/out/<Project 名>/` を Project 名の下にそのまま置く（`decisions.md` の同日）。
 
