@@ -84,6 +84,16 @@ Project は、問題解決の単位で、1 つの部屋で行う。問題解決�
 - `ai/in/` は部屋では読み取り専用なので、AI が集めた資料は `ai/work/` に置く。
 - `inv` と、`dev` の構成要素（特に `env/` と `tests/` だけの成果物）は、実測が無い叩き台。
 
+## 複数回に分けて進める（2026-11-06 分割試験。ユーザーの承認待ち）
+
+実際の Project は、1 回のプロンプトで終わらず、新しいセッションで分けて進める。試験（`topics/room-type-consolidation/records/2026-11-06-split-test-result.md`）では、`dev` `inv` とも、6 回の新しいセッション（6R → 論点出し → 判断と承認 → 工程 → 工程 → 終える）を、依頼「続きです。次は <工程> まで。」だけで、同じ観点（置き場、範囲、記録、裏取り）で進められた。引き継ぎの正本は `ai/docs/log.md`（現在状態と次）・`ai/docs/decisions.md`（判断）・`ai/work/plan/`（6R、論点）の 3 つで、会話の記憶には頼らない。守ること:
+
+- 成果物名は 6R の時点で **Project 名と同じ**に決める（`ai/out/<Project 名>/`。`csvinfo` のような別名にしない。`room close` が渡すのはこの名前の下だけ）。6R の「変更先の洗い出し」も、type の構成要素（上の表）の名前で書く（`inv` に `src/` は無い。試験用のスクリプトは `ai/work/scripts/`、根拠の出力は `findings/`）。`report.md` は `ai/out/<Project 名>/` の下に置く（`ai/out/` 直下に置かない）。
+- 6R を承認（`status: 正式`）したあとは、6R を書き換えない（書き換えると次の `room start` が `仮` に戻す）。進捗は `ai/docs/log.md`、判断は `decisions.md` に書く。
+- 各セッションの終わりに `log.md` の現在状態と Next Actions を更新する（論点出しだけのセッションでも）。依頼された工程より先に進まない。
+- 最後のセッションで、`ai/out/close.md` を書く（完了条件の照合、未解決の振り分け）。README の記入と `close` は人。
+- 人が `room start` を並行して動かさない（共有知の送付が競合して起動しない）。マウントが残ったら `room umount --area <Area>`。
+
 ## 開発リポジトリ（`repos:`。2026-10-31 ユーザーの決定）
 
 `dev` で git のリポジトリを扱うときは、README の frontmatter に `repos:` を書く（`inv` は書かない）。
