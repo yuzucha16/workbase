@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-06(「quarto/revealjs で」の追試。NA 3 を閉じる)
+- 「pptx で」と同じ依頼で、形式の言葉だけ「quarto/revealjs で」に変えて試験。初回は `out/` 直下に `.qmd` と html が出た(`publish/` なし、`report.md` なし)。原因は、`claude -p` の部屋のエージェントが `~/shared` の手順書を読まないこと。規則を常に読まれる案内文(`room.py` の `POINTER_TEXT`)に置き、`project-structure.md` の `inv` の補足に「形式によらず `report.md` を本体、清書物は `publish/`。軽い依頼は `question.md` を作らない。情報源は 1〜2 件なら `sources.md`、3 件以上なら `sources/sources.md`」を足した(ユーザーの指示)。再試 8 回のうち、基準の文を強めた後の quarto・pptx 各 1 回は同じ構成。知見は `exmem/inbox/2026-11-06-claude-p-ignores-shared-docs.md`(未統合)。結果は `records/2026-11-06-inv-quarto-explicit-result.md`(コミット `0f6632f` ほか)。
+
 ### 2026-11-06(並行 room start の競合。NA 2 を閉じる)
 - 原因は、並行する 2 つの start が同じ `~/shared.new` と `~/shared.old` を消し合うこと。`room.py` の `push_shared` で、送付を部屋の `flock`(`~/.shared.lock`)の下で直列にした(単体テスト 188 件通過)。ユーザーが実機で 2 Project の同時 `room start` を確認し、起動できた。NA 4(人の確認: `umount --area` の失敗)は対応済みとして閉じた。
 
