@@ -4,7 +4,8 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 ## Next Actions
 
-- 【済 11-06】分割して進める試験(`records/2026-11-06-split-test-result.md`)。6 回の分割で同じ観点で動けた。足りない点を `project-structure.md`「複数回に分けて進める」・`plan-fields.md`・quickref に反映し、3 回目まで再試験で確認。残り: 反映のユーザー承認、マウントが残る原因の調査(`room start` の回収)、`env/` を使わず直下に置く dev の扱いの判断。
+- 【起票 11-06、期日 11-13】`room start` の後にマウントが残り、次の `room start` が「マウントが残っている」で止まる。ユーザーの所見: Zed の remote server がプロセスをつかんでいる可能性があり、`room start` を解除したあと Zed を再起動すると直る。確かめる(Zed を閉じた状態で `start` を繰り返し、残るかを見る)。原因が Zed なら、`room/README.md` か `ai-room-lifecycle.md` に「止まったら Zed を再起動」と書く。`umount` の案内文に足すかも決める。
+- 【起票 11-06、期日 11-13】並行して `room start` を起動すると、共有知の送付が競合して起動しない(`rm: cannot remove '/home/ai/shared.new/workflow-kit': Directory not empty`。2 Project を同時に起動したときに再現)。`exmem/lessons/ai-room-concurrent-start.md` の「横で完成させて置き換える」と合わない経路がある。`room.py` の送付(`shared.new` の扱い)を見直す。
 - 【起票 11-05】「pptx で」と同じように「quarto/revealjs で」と明示したとき、簡易スライド(`publish/` の html)を作るかを見る。方法は `records/2026-11-05-inv-pptx-explicit-result.md`(重さの言葉だけ「報告資料にして、quarto/revealjs で」に変える。`quarto` が部屋にあるかも見る)。うまくいけば quickref の清書の行に足す。
 - 【人の確認】`room umount --area myenv` が `sample_inveg1` の古いマウントで失敗した。確認して外す。
 

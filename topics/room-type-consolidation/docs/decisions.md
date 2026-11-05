@@ -2,6 +2,12 @@
 
 ## Decisions
 
+### 【この件】分割して進める試験の反映を承認(2026-11-06)
+
+- 手順書への反映(`project-structure.md` の「複数回に分けて進める」、`plan-fields.md` の 1 行、quickref の「分割して進める」)を承認。根拠: ユーザー「承認します」。
+- `dev` が `env/` を使わず、uv プロジェクトを成果物の直下(`pyproject.toml` など)に置くのは許容。根拠: ユーザー「良いです」。
+- マウントが残る件は、ユーザーの所見(Zed の remote server がつかんでいる可能性。`room start` の解除後に Zed を再起動すると直る)を Next Actions に積む。
+
 ### 【この件】eg2 の room 版の指摘 5 点を採る(2026-11-05)
 
 - 根拠: ユーザー「指摘5点をここで反映してください」。結果は `records/2026-11-05-inv-eg2-room-result.md`。

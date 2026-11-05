@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-06(分割して進める試験)
+- `dev`(csvinfo)と `inv`(uv と pip-tools)で、新しいセッション 6 回(6R → 論点出し → 判断と承認 → 工程 → 工程 → 終える)を実施。同じ観点で動けた。足りない点 3 つ(成果物名、`inv` の `src/`、承認後の 6R の書き換え)を `project-structure.md` などに反映し、新 Project で 3 回目まで再試験して解消を確認。結果は `records/2026-11-06-split-test-result.md`。ユーザーが反映と `env/` の扱いを承認。コミット 08b8fd0。
+
 ### 2026-11-05(eg2 の room 版。NA 1 を閉じる)
 - `myenv`(internal)の `sample_inveg2` で、`mask`(cp932 が通り、UTF-8 に変換)→ `start --adopt --cmd`(`claude -p`)→ `restore` を実行。聞き返し 0、構成は部屋なしと同じで過不足なし、結論の数字も一致(`records/2026-11-05-inv-eg2-room-result.md`)。AI の改善提案 5 点は反映未決。`close` は非対話で警告(README ひな形、`close.md` 無し)に止まり、ユーザーが端末から実行した。
 - ユーザーが、複数工程を分割して進めるときの初手プロンプトの試験を NA に追加(別セッションで行う)。
