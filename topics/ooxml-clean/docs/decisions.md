@@ -52,3 +52,8 @@
 ### 【この件】xlsx も読ませる用途は取り出し（`exceltext.py`）にし、room には組み込まない（2026-11-03）
 - ユーザーの発言: 「exceltext.pyを作ってほしい。既存のpptxtextと同じ用途・仕様を考えています」。その後「pptxtextがroomに呼ばれてるわけではなくて、room checkが呼ばれているのか。勘違いしていました。この要望はomitして従来仕様を継続してください」。
 - 決めたこと: `exceltext.py` は pptxtext と同じく単体のスクリプトにする（見えているシートの見えているセルの値と図形だけを md に出す。許可方式）。room の経路は従来どおり `clean`（cleankit の strict の掃除）。一度足した `room clean --text` は外した（`9726e16` で追加、次のコミットで削除）。
+
+### 【この件】`room clean` と `cleankit` の一本化は見送る（2026-11-05）
+- ユーザーの発言: 「この一本化は諦めます」。経緯は「思った以上に影響範囲が広い」「単に動作確認が面倒」。
+- 検討した案: ① `cleankit check` を `room clean --check` に寄せる（Project 外のファイルを点検できなくなる。標準出力に実データの抜粋が出る）、② `cleankit clean` を `room clean` に寄せ、`cleankit check` だけを本機能にする（`--profile` `--allow` `--keep` `--also` と `_org<n>` 退避が失われる。`room clean` に足すなら共通化が要る）。
+- 決めたこと: どちらもしない。`cleankit`（単体、Project 外も可、調整オプションあり）と `room clean`（Project 内、strict 固定）を今のまま並べる。再検討するなら、①の抜粋の扱いと②の調整オプションの扱いを先に決める。

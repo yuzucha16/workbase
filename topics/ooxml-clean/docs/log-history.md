@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-11-05（NA 1: 最新の cleankit / room clean の実機確認が済）
+- 済（NA1）: ユーザーが PC1 の実 xlsx・pptx を最新の cleankit / room clean に通し、問題なしと報告（11-05）。ラベル ID・テナント ID の残り方と、Excel・PowerPoint で警告なしに開くことを含む。
+  - 元の項目: 【起票 11-04】実機確認: PC1 の実 xlsx・pptx を最新の `cleankit` / `room clean` に通し、(a) `LabelInfo.xml` とテナント ID（site id）が出力に残らないこと、(b) 報告の `tenant-id` が残る場合はセルや図形の表示文字だけであること、(c) Excel・PowerPoint が警告なしに開くこと（ラベル・customXml・共同編集の履歴を外した出力）を見る。残りがあれば部品の種類を足す。
+
+### 2026-11-05（NA 2: exceltext.py の実機確認が済）
+- 済（NA2）: ユーザーが PC1 の実 xlsx を exceltext.py に通し、問題なしと報告（11-05）。仕様の追加は無し。
+  - 元の項目: 実機確認: PC1 の実 xlsx を `exceltext.py` に通し、md の読みやすさ・取りこぼし・大きさを見て仕様を足す。
+
 ### 2026-11-04（close に向けた Open Questions の整理）
 - 依頼: トピックを close に向かわせたい。NA 1・2 は PC1 の実機確認。Open Questions 2 件の状況を確認。
 - 済: Open Questions の 2 件（報告の置き場は 11-03 に決定・実装・実機確認済み。書いていない語は `check` の検出と `--terms` の運用で補う制約として受け入れ）。`decisions.md` に制約の 1 項を追記し、`log.md` の Open Questions を空にした。

@@ -17,12 +17,13 @@
 - 実機確認済み(2026-11-03、PC1): `clean --path` → `ai/in/area/`、`start --adopt` で通る。報告は `_noai/source/tmp/`(`461160d`)。
 - 実装済み（2026-11-03）: `workflow-kit/room/exceltext.py`（v0。pptxtext の xlsx 版）と単体テスト 4 件。単体のスクリプトとして使う（room には組み込まない。11-03 に一度 `room clean --text` を足したが、ユーザーの指示で外した）。実ファイル（PC1）は未確認。
 - 実装済み(2026-11-03): `room close` の `【決定】` 行(根拠の実在検査と sensitive_hits で、移動前に止める)→ Area の inbox、`INBOX_NEW` の規約、`room trace <Project>#n`。`test_room` 全 167 件を通した。実機確認済み（2026-11-04、PC1、ユーザー）。
-- 実装済み（2026-11-04）: clean 後に残るテナント ID・ラベル ID の掃除。`labels`・`custom-xml` を既定に、`hyperlinks`・`tags`・`addins` を strict に足し、`props`・`revisions` を広げ、check に `tenant-id` ほかを足した（単体テスト 5 件。ダミー値の合成ファイルで standard・strict の出力を実測し、LibreOffice で開けた）。PC1 の実ファイルで、ラベル・テナント ID が残らないことと Excel・PowerPoint で開けることは未確認。
+- 実装済み（2026-11-04）: clean 後に残るテナント ID・ラベル ID の掃除。`labels`・`custom-xml` を既定に、`hyperlinks`・`tags`・`addins` を strict に足し、`props`・`revisions` を広げ、check に `tenant-id` ほかを足した（単体テスト 5 件。ダミー値の合成ファイルで standard・strict の出力を実測し、LibreOffice で開けた）。PC1 の実ファイルで、ラベル・テナント ID が残らないことと Excel・PowerPoint で開けることは確認済み（2026-11-05、ユーザー、問題なし）。
+- 確認済み（2026-11-05、PC1、ユーザー）: `exceltext.py` を実 xlsx に通して問題なし。
+- 見送り（2026-11-05）: `room clean` と `cleankit` の一本化（`cleankit check` を `room clean --check` に寄せる案、`cleankit clean` を `room clean` に寄せる案とも）。影響範囲が広く、確認の手間に見合わない（`decisions.md`）。cleankit と room clean は今のまま並べて使う。
 
 ## Next Actions
 
-1. 【起票 11-04】実機確認: PC1 の実 xlsx・pptx を最新の `cleankit` / `room clean` に通し、(a) `LabelInfo.xml` とテナント ID（site id）が出力に残らないこと、(b) 報告の `tenant-id` が残る場合はセルや図形の表示文字だけであること、(c) Excel・PowerPoint が警告なしに開くこと（ラベル・customXml・共同編集の履歴を外した出力）を見る。残りがあれば部品の種類を足す。
-2. 実機確認: PC1 の実 xlsx を `exceltext.py` に通し、md の読みやすさ・取りこぼし・大きさを見て仕様を足す。
+なし。残りは `docs/due.md` の 11-30（`mask` / `restore` の削除。使ってみてから決める）。
 
 ## Open Questions
 
