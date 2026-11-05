@@ -2190,6 +2190,55 @@ class OpenFromTest(unittest.TestCase):
                 self.assertFalse((v / "projects/new").exists())
 
 
+class CloseAreaTest(unittest.TestCase):
+    def args(self, area="area-x", commit=False):
+        return argparse.Namespace(name=None, area=area, commit=commit)
+
+    def empty_area(self, tmp):
+        v = make_vault(tmp)
+        (v / "areas/area-x/ai").mkdir()
+        (v / "areas/area-x/ai/k.md").write_text("知識\n", encoding="utf-8")
+        (v / "areas/area-x/_noai").mkdir()
+        (v / "areas/area-x/_noai/s.txt").write_text("追跡外\n", encoding="utf-8")
+        return v, ctx_for(v, FakeWsl())
+
+    def test_moves_area_to_archives_on_y(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = self.empty_area(tmp)
+            with tty("y"):
+                room.cmd_close(c, self.args(commit=True))
+            self.assertFalse((v / "areas/area-x").exists())
+            d = v / "archives/areas/area-x"
+            self.assertTrue((d / "ai/k.md").exists())
+            self.assertTrue((d / "_noai/s.txt").exists())
+            self.assertIn("status: closed", (d / "README.md").read_text(encoding="utf-8"))
+
+    def test_n_and_noninteractive_change_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = self.empty_area(tmp)
+            with tty("n"), self.assertRaisesRegex(room.RoomError, "中止"):
+                room.cmd_close(c, self.args())
+            with tty(), self.assertRaisesRegex(room.RoomError, "非対話"):
+                room.cmd_close(c, self.args())
+            self.assertTrue((v / "areas/area-x/README.md").exists())
+
+    def test_stops_with_active_project_or_pending_area_stock(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            with tty("y"), self.assertRaisesRegex(room.RoomError, "進行中の Project がある: proj-a"):
+                room.cmd_close(c, self.args())
+            (v / "projects/proj-a").rename(v / "archives/proj-a")
+            s = v / "archives/proj-a/ai/out/stock"
+            s.mkdir(parents=True)
+            (s / "d.md").write_text("---\nscope: area\n---\nx\n", encoding="utf-8")
+            with tty("y"), self.assertRaisesRegex(room.RoomError, "scope: area が未処理"):
+                room.cmd_close(c, self.args())
+            (s / "d.md").unlink()
+            with tty("y"):
+                room.cmd_close(c, self.args())
+            self.assertTrue((v / "archives/areas/area-x/README.md").exists())
+
+
 class CloseTest(unittest.TestCase):
     def test_close_warns_and_proceeds_on_y_with_template_readme_and_no_close_md(self):
         with tempfile.TemporaryDirectory() as tmp:

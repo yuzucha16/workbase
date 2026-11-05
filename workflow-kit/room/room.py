@@ -2500,7 +2500,68 @@ def confirm_close_warnings(ctx, warned, interactive=None):
         raise RoomError("close を中止した。何も変えていない")
 
 
+def area_projects(ctx, area, top):
+    """projects/ か archives/ のうち、area: が <area> の Project のディレクトリ（名前順）。"""
+    return sorted(r.parent for r in (ctx.vault / top).glob("*/README.md") if read_frontmatter(r).get("area") == area)
+
+
+def cmd_close_area(ctx, a):
+    """Area を終える（2026-11-05 決定）。条件: Project が 0 件・stock の scope: area の未処理が 0 件・ee の宣言（y/N。非対話では止まる）。
+    areas/<Area> を archives/areas/<Area> へ移す。部屋（room-<Area>）は消さない（`wsl --unregister` は人が行う）。"""
+    area = a.area
+    src = ctx.vault / "areas" / area
+    if not AREA_NAME_RE.match(area) or not (src / "README.md").is_file():
+        raise RoomError(f"Area が無い: {src}")
+    dest = ctx.vault / "archives" / "areas" / area
+    if dest.exists():
+        raise RoomError(f"同名がすでにある: {dest}")
+    problems = [f"進行中の Project がある: {d.name}" for d in area_projects(ctx, area, "projects")]
+    for d in area_projects(ctx, area, "archives"):
+        problems += [f"stock の scope: area が未処理: archives/{d.name}/ai/out/stock/{f.name}（`room stock` で運ぶか消す）"
+                     for f in sorted((d / "ai" / "out" / "stock").glob("*.md")) if read_frontmatter(f).get("scope", "") == "area"]
+    distro = f"room-{area}"
+    if distro in ctx.wsl.distros():
+        mounts = room_mounts(ctx, distro)
+        if mounts:
+            problems.append("マウントが残っている（`room umount --area " + area + "`）:\n    " + "\n    ".join(mounts))
+    if problems:
+        raise RoomError(f"Area {area} を終えられない。何も変えていない:\n  " + "\n  ".join(problems))
+    if not sys.stdin.isatty():
+        raise RoomError("close --area を止めた（非対話では宣言できない。何も変えていない。端末から実行する）")
+    ctx.say(f"Area {area} を終える: areas/{area} → archives/areas/{area}（Project 0 件、stock scope: area の未処理 0 件）")
+    if input("この Area を終えてよいか [y/N]: ").strip().lower() != "y":
+        raise RoomError("close --area を中止した。何も変えていない")
+    today = ctx.today()
+    ar = src / "README.md"
+    ar.write_text(update_frontmatter(ar.read_text(encoding="utf-8"), {"status": "closed", "updated": today, "closed": today}),
+                  encoding="utf-8", newline="\n")
+    git(ctx.vault, "add", "-A", "--", f"areas/{area}")
+    files = [f for f in git(ctx.vault, "ls-files", "-z", "--", f"areas/{area}").split("\0") if f]
+    for f in files:
+        to = "archives/areas/" + f[len("areas/"):]
+        (ctx.vault / to).parent.mkdir(parents=True, exist_ok=True)
+        git(ctx.vault, "mv", f, to)
+    for f in sorted(src.rglob("*")):
+        if f.is_file():  # 追跡外（_noai など）
+            to = dest / f.relative_to(src)
+            to.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(f), str(to))
+    for d in sorted((x for x in src.rglob("*") if x.is_dir()), key=lambda x: len(str(x)), reverse=True):
+        os.rmdir(d)
+    os.rmdir(src)
+    ctx.say(f"archives/areas/{area} へ移した（追跡 {len(files)} ファイル）")
+    if distro in ctx.wsl.distros():
+        ctx.say(f"部屋 {distro} は残してある。不要なら人が `wsl --unregister {distro}` で消す")
+    if a.commit:
+        commit_paths(ctx, [f"archives/areas/{area}"], f"[room] Area {area} を close し archives へ移動",
+                     extra_allowed=(f"areas/{area}",), trailers=room_trailers("close", area))
+
+
 def cmd_close(ctx, a):
+    if getattr(a, "area", None):
+        return cmd_close_area(ctx, a)
+    if not a.name:
+        raise RoomError("Project 名か --area <Area> を指定する")
     p = Project.load(ctx, a.name)
     if p.fm.get("status") != "active":
         raise RoomError(f"Project が active でない: status={p.fm.get('status')}")
@@ -3286,7 +3347,8 @@ def build_parser():
     st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと各下書きの scope: に従って両方へ運ぶ。scope: が無い・不明なら止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない。2026-11-04 に1件ごとの確認を廃止した）")
     c = sub.add_parser("close", help="Area へ渡し、archives へ移す（README がひな形のまま・ai/out/close.md が無いときは y/N で確かめる。非対話では止まる）")
-    c.add_argument("name"); c.add_argument("--commit", action="store_true")
+    c.add_argument("name", nargs="?"); c.add_argument("--commit", action="store_true")
+    c.add_argument("--area", help="Project でなく Area を終える（Project 0 件・stock の scope: area の未処理 0 件が条件。y/N で宣言。areas/<Area> → archives/areas/<Area>。部屋は消さない）")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")
     i.add_argument("area"); i.add_argument("--resume", action="store_true", help="作りかけの部屋に、設定と道具を入れ直す")
     i.add_argument("--only", help="既存の部屋に、指定した段だけを入れ直す（--resume を含む。カンマ区切り: " + ", ".join(INIT_STEPS) + "）")

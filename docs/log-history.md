@@ -2,6 +2,15 @@
 
 ## Log
 
+### 2026-11-05（room: close --area）
+- NA 4 の実装: `room close --area <Area>` を追加（`room.py` の `cmd_close_area`、単体テスト `CloseAreaTest` 3 件）。条件・移し先は `decisions.md` の同日。実機は未確認。成果物を `archives/` に残す案は未決のまま。
+
+### 2026-11-05（review 消化 / NA 7・8 を閉じる）
+- 済（NA7）: ユーザーが PC1 で動作確認を終えた（public の scope も直っていた）。11-05 ユーザー
+  - 元の項目: **`room stock` の move・`--dst` 省略・表の実機確認（起票 11-04）**: PC1 で pull し、`room stock <Project>`（`--dst` なし）で、`scope: area` と `scope: public` の下書きが両方運ばれ、`ai/out/stock/` の元が消え、運んだ後の表（ファイル名・移動先・備考）が出ることを見る。`scope:` が無い下書きで止まることも見る。11-05 に部屋の案内へ `public` の `scope: public` を足したので、`room start` で案内を新しくした後の下書きで見る（担当: ユーザー（実機））
+- 済（NA8）: ユーザーが PC1 で動作確認を終えた。11-05 ユーザー
+  - 元の項目: **`room close` の y/N 警告の実機確認（起票 11-04）**: PC1 で pull し、README がひな形のまま・`ai/out/close.md` 無しの Project を `room close` して、警告と `[y/N]` が出ること、y で archives へ移ること、N で何も変わらないことを見る。非対話（パイプ経由など）で止まることも確かめる。確認できたら閉じる（決定は `decisions.md` の 11-04）。
+
 ### 2026-11-05（review 消化 / NA 4: Area の log・decisions・inbox を持たない）
 - `review 消化`: 期日は token-cap NA 6（出力の型の試用）の 1 件で、ユーザーの指示で 11-06 に延期。token-cap NA 4 の札を 11-08 に直し、PC1 手順メモと `due.md` 11-11 の `open --from` の確認項目を 11-05 の変更（止めずに来歴だけ付けて開く、成果物は `ai/out/<Project 名>/` の下だけ）に合わせた（a2c32d9）。
 - NA 4 の再設計: ユーザーが前提を「Area の log/decisions は archives からサルベージできれば不要、knowledge は残す、`docs/` は Project の状態」に変えた。`room trace` が Area の inbox・decisions.md 起点で、archives の横断検索の入口が無いことを `room.py` で確認。決定: 【決定】は Area へ運ばない、Area 全体の方針は知識として `stock`（scope: area）、整理役は常設しない、inbox 廃止、【案件】は `--from` が引き継ぐ。実装: close・init の inbox 廃止、`room trace --area <Area> <語>`（13e604d、単体テスト 183 件）。実機は未確認。

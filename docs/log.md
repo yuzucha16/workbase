@@ -11,7 +11,7 @@
 - Area の改名は `room mv <旧> <新>`（旧 `rename-area`。11-02 作り直し。部屋は `wsl --export`/`--import` で改名、履歴は追わない。ee が実機で動作確認済み）。
 - room open --from（11-04 実装。閉じた Project の成果物・close.md・正式な計画を、新しい Project の `ai/in/from-<前>/` に引き継ぐ。11-05: 写すものが無くても止めず、来歴だけ付けて開く。実機は未確認）。
 - room close が Area へ渡す成果物は `ai/out/<Project 名>/`（11-05 変更。旧名 `deliverable/` も可。`decisions.md` 同日。実機は未確認）。部屋の AI が別名のフォルダに置くと渡らない問題は NA 9。
-- Area の log・decisions・inbox は持たない（11-05 決定）。`room close` は【案件】【決定】を Area へ運ばず、記録は `archives/` に残る。引くのは `room trace --area <Area> <語>`（横断検索。実機は未確認）。Area の終わり方は NA 4。
+- Area の log・decisions・inbox は持たない（11-05 決定）。`room close` は【案件】【決定】を Area へ運ばず、記録は `archives/` に残る。引くのは `room trace --area <Area> <語>`（横断検索。実機は未確認）。Area は `room close --area` で終える（11-05 実装。実機は未確認。NA 4）。
 - 実機確認済み（11-04、PC1）: `room restore` / `close` の成果物の Area への書き出し、計画の承認の検知（`status: 正式` → 変更で `仮` に戻る）。
 - Python の版: uv 管理が正本（`script-guide.md` の「Python の版と呼び方」）。
 - `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-15・11-29。
@@ -25,13 +25,9 @@
 
 ## Next Actions
 
-4. **`room close --area` を実装する（起票 11-04、11-05 に決定済みへ）**: 条件は、Project が 0 件・`stock` の scope: area の未処理が 0 件・ee の宣言（ee が 11-05 に OK）。手順は `archives/` へ Area を移す形で、細部は実装時に決める。あわせて、成果物を Area に渡さず Project の状態として `archives/` に残す案（一貫性が高い。ee が 11-05 に「もう少し試してから決める」）の判断を、実機で試した後に行う。`room open --from` の案 C（Area に資産を置く）は見送り（11-05）。調査は `notes/area-ops/2026-11-05-archive-salvage.md`。
+4. **`room close --area` の実機確認と、成果物を `archives/` に残す案の判断（起票 11-04、11-05 に実装）**: `room close --area <Area>` は実装済み（単体テスト済み。条件は Project 0 件・`stock` の scope: area の未処理 0 件・y/N の宣言。`areas/<Area>` → `archives/areas/<Area>`。部屋は消さず、`wsl --unregister` は人）。残り: ① PC1 の実機で、Project を全部閉じた Area に試す（止まる条件と、移った後の `room trace --area` が引けること）、② 成果物を Area に渡さず Project の状態として `archives/` に残す案は、実機で試してから決める（ee が 11-05 に「もう少し試してから決める」）。`room open --from` の案 C は見送り（11-05）。調査は `notes/area-ops/2026-11-05-archive-salvage.md`。
 
 5. **`guides/howto/` を triggers 索引の対象にするか、ライフサイクルの繋がりを明示する大局案を決める（起票 11-04）**: `ai-room-lifecycle.md` の前半の順（6R → 論点出し）は、`find_knowledge.py --triggers` に出ず、`brief` との紐づけも無かったため、文書の修正が横展開で漏れた。案: ① `guides/howto/` を索引の走査対象にする、② 前半の順の正本を 1 か所（`hooks.md` の連鎖）に置き、howto は指すだけにする、③ 新しいフックを足すときの点検（`hook-common.md` の「フックを足す・消すとき」）に、howto と triggers の確認を足す。別セッションで扱う（ユーザー）。
-
-7. **`room stock` の move・`--dst` 省略・表の実機確認（起票 11-04）**: PC1 で pull し、`room stock <Project>`（`--dst` なし）で、`scope: area` と `scope: public` の下書きが両方運ばれ、`ai/out/stock/` の元が消え、運んだ後の表（ファイル名・移動先・備考）が出ることを見る。`scope:` が無い下書きで止まることも見る。11-05 に部屋の案内へ `public` の `scope: public` を足したので、`room start` で案内を新しくした後の下書きで見る（担当: ユーザー（実機））
-
-8. **`room close` の y/N 警告の実機確認（起票 11-04）**: PC1 で pull し、README がひな形のまま・`ai/out/close.md` 無しの Project を `room close` して、警告と `[y/N]` が出ること、y で archives へ移ること、N で何も変わらないことを見る。非対話（パイプ経由など）で止まることも確かめる。確認できたら閉じる（決定は `decisions.md` の 11-04）。
 
 9. **成果物を `ai/out/<Project 名>/` 以外に置かれると、`room close` で Area に渡らない（起票 11-05）**: 部屋の AI が成果物を Project 名以外のフォルダに置くことが約 5 回に 1 回ある（ユーザーの実測）。11-05 の変更で Area へ渡すのは `ai/out/<Project 名>/` の下だけになったため、踏むと何も渡らず、`close` は黙って進む。案: ① 渡るのは Project 名のフォルダだけだと部屋の案内で強く言う、② `close` が `ai/out/` の直下に Project 名以外のフォルダ（`stock/` を除く）を見つけたら警告して `[y/N]`、③ 塊が 1 つだけなら名前を問わずに渡す。決めるのは ee。決定は `decisions.md` の 11-05。
 

@@ -12,7 +12,7 @@ tags:
 Area を作ってから、Project を立て、作業し、閉じ、片付けるまでを、**人が打つ `room` コマンド**と、**部屋の AI に言う合言葉（フック）**を組み合わせて 1 枚で見る手順書。コマンドを 1 手ずつ打つ実例は [[ai-room-setup-script]]、理由は [[ai-room-why]]。ここは「いま何の段で、誰が何を言うか」を見るための地図。
 
 - **ゴール（完了の目安）**: Project の成果物が Area に渡り、`archives/` に移り、`reap` で会話履歴が消える。
-- **範囲**: 1 つの Area の中の Project。Area そのものの運営は範囲外。Area の log・decisions は持たず（2026-11-05）、記録は `archives/` から `room trace --area` で引く。Area の終わり方は `docs/log.md` の NA 4。
+- **範囲**: 1 つの Area の中の Project。Area そのものの運営は範囲外。Area の log・decisions は持たず（2026-11-05）、記録は `archives/` から `room trace --area` で引く。Area を終えるのは `room close --area <Area>`（条件は Project 0 件・`stock` の scope: area の未処理 0 件・y/N の宣言。`areas/<Area>` を `archives/areas/<Area>` へ移す。部屋は消さない。2026-11-05）。
 - 基準は 2026-11-04 時点のコード（`room.py`）。確認していない箇所は「未確認」と書く。
 
 ## 1. 登場するもの
@@ -91,5 +91,5 @@ README の置き換え方、`stock` の点検、`restore` の止まり方の詳�
 
 ## 未決
 
-- Area 側の運営（inbox の取り込み、Area の終わり方）は範囲外。入口が決まったら 4 の後に足す。
+- Area 側の運営（inbox の取り込み）は範囲外。Area の終わり方は `room close --area`（上の「範囲」）。
 - 実機で未確認: `room open --from`、`room close` の y/N 警告、`room stock` の move（`docs/log.md`）。
