@@ -552,16 +552,43 @@ def discard_room_git(ctx, p):
     ctx.wsl.script(p.distro, f"rm -rf {shlex.quote('/home/ai/gitdirs/' + p.name)}\n", root=True)
 
 
+def holders_script(mount_point):
+    """マウント点をつかんでいるプロセス（cwd・開いているファイル）を 1 行ずつ出す。調べるだけで何も変えない。"""
+    mp = shlex.quote(mount_point)
+    return (
+        f"mp={mp}\n"
+        "for p in /proc/[0-9]*; do\n"
+        "  pid=${p#/proc/}; why=\n"
+        "  case \"$(readlink $p/cwd 2>/dev/null)\" in \"$mp\"|\"$mp\"/*) why=cwd;; esac\n"
+        "  if [ -z \"$why\" ]; then for f in $p/fd/*; do case \"$(readlink $f 2>/dev/null)\" in \"$mp\"/*) why=fd; break;; esac; done; fi\n"
+        "  [ -n \"$why\" ] && echo \"$pid $why $(tr '\\0' ' ' < $p/cmdline 2>/dev/null | cut -c1-100)\"\n"
+        "done\n"
+        "true\n"
+    )
+
+
+UMOUNT_TRIES = 10  # busy のときは 1 秒おきに再試行する。重ねてマウントされた分は、成功のたびに次を外す
+
+
 def unmount(ctx, p):
-    """アンマウントし、マウント点を消し、残りを確認する。残っていれば False。"""
+    """アンマウントし、マウント点を消し、残りを確認する。残っていれば False。
+    つかんでいるプロセスが終わるまでの一時的な busy に備えて再試行する。それでも残れば、つかんでいるプロセスを知らせる（p.holders）。"""
     mp = shlex.quote(p.mount_point)
     script = (
-        f"for i in 1 2 3 4 5; do umount {mp} 2>/dev/null || break; done\n"
+        f"for i in $(seq 1 {UMOUNT_TRIES}); do\n"
+        f"  grep -qF \" {p.mount_point} \" /proc/mounts || break\n"
+        f"  umount {mp} 2>/dev/null || sleep 1\n"
+        "done\n"
         f"rmdir {mp} 2>/dev/null || true\n"
     )
     ctx.wsl.script(p.distro, script, root=True)
     time.sleep(ctx.settle)
     left, _others = split_mounts(room_mounts(ctx, p.distro), p)  # 同じ部屋でほかの Project が動いていてもよい
+    p.holders = ""
+    if left:
+        _rc, out, _err = ctx.wsl.script(p.distro, holders_script(p.mount_point), root=True)
+        p.holders = "; ".join(l.strip() for l in out.splitlines() if l.strip()).replace("|", "/")  # 記録の表を壊さない
+        ctx.say("アンマウントできなかった。つかんでいるプロセス: " + (p.holders or "見つからない（部屋の外か、直後に終わった）"))
     # 入力の読み取り専用を、Windows 側で戻す（人が差し替えられるように）
     # （マウント時は .gitkeep も含めて in/ の全ファイルを読み取り専用にするので、戻すのも全ファイル）
     base = p.ai / "in"
@@ -1637,7 +1664,7 @@ POINTER_END = "<!-- room-shared:end -->"
 POINTER_TEXT = """共有知（読み取り専用の写し）が `~/shared` にある。作業の前に `~/shared/ROOM.md` を読む。
 合言葉（`brief` `wrap` など）を言われたら、`~/shared/workflow-kit/hooks.md` の表に従って手順書を読む。`~/shared` には書かない。
 git は、`/mnt/room/<名>` の下で自由に使ってよい（許可は不要）。部屋のローカルの git が `room start` で用意済みで、`git status` `git diff` `git add` `git commit` `git log` がそのまま動く。
-成果物（報告・調査・スライドなど）を作る前に、`~/shared/workflow-kit/project-structure.md` の Project の type の節を読む。依頼が清書の形式（pptx・quarto/revealjs など）を指定したときは、形式によらず、`report.md` を本体にし、清書物は `out/<Project 名>/publish/` に置く（出力だけを直下に置かない）。
+成果物（報告・調査・スライドなど）を作る前に、`~/shared/workflow-kit/project-structure.md` の Project の type の節を読む。依頼が清書の形式（pptx・quarto/revealjs など）を指定したときは、形式によらず、`report.md` を本体にし、清書物は `out/<Project 名>/publish/` に置く（出力だけを直下に置かない）。軽い依頼・報告資料では `question.md` を作らず、問いと仮定を `report.md` の冒頭に書く。情報源は、1〜2 件のときだけ `sources.md` 1 本(直下)、3 件以上のときは必ず `sources/sources.md`(直下に `sources.md` を置かない)。
 自分で `git init` や `git config` をしない（`.git` を作ると works に回収される）。コミットは人に言われなくても、作業の区切りと wrap のたびに行う（push はしない）。ここのコミットは部屋の中だけの記録で、セッションの終わりに捨てる。"""
 
 
@@ -1823,7 +1850,7 @@ def cmd_start(ctx, a):
         discard_room_git(ctx, p)
         rmtree_force(p.ai / "ctx")
     if not ok:
-        log_room(ctx, p, "start", checks, result + "、**マウントが残っている**")
+        log_room(ctx, p, "start", checks, result + "、**マウントが残っている**（つかんでいるプロセス: " + (p.holders or "なし") + "）")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
     if any(is_deliverable_key(p, k) for k in maskkit.list_files(p.ai / "out")) or (
             maskkit.list_files(p.ai / "out") and (noai_dir(p) / "map" / "mapping.json").exists()):

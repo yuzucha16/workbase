@@ -34,3 +34,17 @@ pptx 追試（`2026-11-05-inv-pptx-explicit-result.md`）の続き。部屋 `roo
 
 - 原因: `claude -p` の部屋のエージェントは `~/shared` の手順書を読みに行かない(会話記録に読んだ形跡なし)。常に読まれる案内文に書かない限り、規則は効かない。
 - 形式の違いによる差は、置き場と `report.md` では無くなった。残る差: quarto 版は `question.md` と平らな `sources.md` を作った(pptx 版は `sources/sources.md`、`question.md` なし)。ばらつきの範囲と見て、規則は足していない。
+
+## 構成をそろえる規則と再試(同日、ユーザーの指示)
+
+残るばらつき(`question.md` の有無、`sources` の形)を規則でそろえた(`project-structure.md` の `inv` の補足と、案内文 `POINTER_TEXT`): 軽い依頼・報告資料では `question.md` を作らず、情報源は 1〜2 件なら直下の `sources.md`、3 件以上なら必ず `sources/sources.md`。
+
+| 回 | 形式 | 結果 |
+|---|---|---|
+| `sample_invV` | quarto | `report.md` `sources/sources.md` `publish/`(qmd・html) |
+| `sample_invW` | pptx | `report.md` `sources.md`(6 件なのに直下。基準から外れた) `publish/` |
+| `sample_invX`(基準の文を強めた) | quarto | `report.md` `sources/sources.md` `publish/` |
+| `sample_invY` | pptx | `report.md` `sources/sources.md` `publish/`(pptx・qmd) |
+
+- 強めた文では、2 形式とも同じ構成。1 回ずつなので、ばらつきが無いとまでは言えない。
+- 知見は `exmem/inbox/2026-11-06-claude-p-ignores-shared-docs.md`(未統合)。
