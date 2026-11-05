@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06(マウントが残る件の原因調査。NA は調査中のまま残す)
+- ユーザーの見立て(Zed の remote server が、プロセスをつかむ)を仮説として調べた。`room-myenv` に使い捨てのマウントを作って試すと、cwd がマウント上の子プロセスが生きている間は `umount: target is busy`(rc=32)で残り、子が終われば外れた。`unmount()` は `2>/dev/null || break` で、この失敗を黙って捨てていた。
+- Zed だけが原因ではない。全 Project の `room-log.md` に「マウントが残っている」が 9 件あり、10-25(Zed 以前)の `sample_inv` `sample_dev` ほかと、11-05〜06 の `claude -p` の回を含む。調査の時点で、残ったマウント(`sample_inv` `sample_inveg1`)をつかむ実プロセスは無く、`zed-remote-server` は defunct のみだった。一時的な busy と整合する。
+- 直した: `unmount()` を 1 秒おき 10 回の再試行にし、残ったらつかむプロセス(cwd・fd)を `room-log.md` と標準出力に出す(`room.py`、テスト追加。部屋のテスト 243 件 OK、実機で再試行と検出を確認)。コミット `be1a7e4`(`room.py` 本体は並行セッションの `0f6632f` に含まれた)。原因の確定は、次に残ったときの記録による。
+
 ### 2026-11-06(「quarto/revealjs で」の追試。NA 3 を閉じる)
 - 「pptx で」と同じ依頼で、形式の言葉だけ「quarto/revealjs で」に変えて試験。初回は `out/` 直下に `.qmd` と html が出た(`publish/` なし、`report.md` なし)。原因は、`claude -p` の部屋のエージェントが `~/shared` の手順書を読まないこと。規則を常に読まれる案内文(`room.py` の `POINTER_TEXT`)に置き、`project-structure.md` の `inv` の補足に「形式によらず `report.md` を本体、清書物は `publish/`。軽い依頼は `question.md` を作らない。情報源は 1〜2 件なら `sources.md`、3 件以上なら `sources/sources.md`」を足した(ユーザーの指示)。再試 8 回のうち、基準の文を強めた後の quarto・pptx 各 1 回は同じ構成。知見は `exmem/inbox/2026-11-06-claude-p-ignores-shared-docs.md`(未統合)。結果は `records/2026-11-06-inv-quarto-explicit-result.md`(コミット `0f6632f` ほか)。
 
