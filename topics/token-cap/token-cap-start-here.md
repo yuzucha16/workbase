@@ -13,7 +13,7 @@ PC1 の 10-21 以降は room（WSL）側にあり、合算 約 170.7M（85%）�
 
 ## 次の一手
 
-11-05 に `repeat_reads.py` を再実行して縮小の効果を見る（`docs/due.md`）。NA 1b（完了条件の A/B）は 3 回で応答数に差が出ず、10-29 に打ち切って閉じた（`records/2026-10-29-na1b-ab-prompts.md`）。結果を受けて「token-cap の続き」。
+効果確認は PC2 Windows 側を 11-05 に測った。次は PC1（room）を 11-06 に同じ手順で測る（コマンドは `records/2026-11-05-pc2-windows-effect.md` の末尾）。NA 1b（完了条件の A/B）は 3 回で応答数に差が出ず、10-29 に打ち切って閉じた（`records/2026-10-29-na1b-ab-prompts.md`）。結果を受けて「token-cap の続き」。
 
 ## スクリプト
 

@@ -2,6 +2,8 @@
 
 ## Log
 
+- 2026-11-05（効果確認: PC2 Windows 側）: 「そろそろ効果確認に入りましょう」。進め方を示し、ee が 2 点を決めた（主戦場だけを測る、`--since` を 10-27 と 10-30 の 2 通りにする）。`repeat_reads.py` と `requests_by_kind.py` を実行し、CSV を区間別に集計して `records/2026-11-05-pc2-windows-effect.md` に記録した。結果: 1 件あたり 574k → 323〜384k、ピーク 89k → 55〜65k。縮小は log・commit-push-rules・docs-rules で有効、wrap-hook は増量（5,960 → 8,267 バイト、`git log`）で 1 回あたりが上がった。AGENTS.md の 2 行と integrate は保留、continue の応答が増加。`log.md` の状態と `due.md` の更新は PC1 の後（ee）。wrap。
+
 - 2026-11-02（NA 5 に着手: 移し替えのスクリプト化）: 「NA5 をここでやります。優先度と上位 2 つの素案」。優先度は (g) 移し替えのスクリプト化 → 書き込み先を探す読みの削減 → (h) → (b) → (f) → (i)。素案 1・2 を 1 つの施策にまとめ、`workflow-kit/tools/na_apply.py`（close / due-up）と `docs-write-rules.md` を入れた（ee 承認。当面は両対応）。効果は 11-05 の測定で、まとめ返答の応答数（15.1）と読み（約 13 回）を見る。wrap。
 
 - 2026-11-01（NA 7 を閉じた）: 「token-cap の続き na7」。最初の応答の入力（26,519 = 読み 16,027 + 書き 10,490）を会話記録の添付の種類ごとに数えた。`/context` との差 約 6.3k は、遅延ツール名・エージェント一覧・session_context・環境・フックなど、ハーネスが付ける注記が主因（約 16k 文字 ≒ 5〜7k トークン）。動かせる量は増えず、上限は約 2.4〜3.0k のまま。ee が NA 7 を閉じ、26k の土台は遅延ツールなどの仕組みによると確定。NA 4 の再判断は 100k 運用の効果を見てからにする（期日 11-08。`decisions.md`）。`records/2026-11-01-first-response-breakdown.md`。wrap。

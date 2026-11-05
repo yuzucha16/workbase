@@ -13,6 +13,7 @@
 - 全文読みの縮小（NA 5 の (d)）: 上位 3 本、`docs-rules.md`、`stock-hook.md` は縮小・分割済み（10-29。大きさは `records/2026-10-29-repeat-reads-2.md`）。効果の再測定は 11-05 で、`docs/due.md` に移した（ee の決定 10-29）。次に多い全文読み（`token-cap-start-here.md` 22 回、各トピックの `docs/log.md`）は小さく、優先度は低い。
 - 相談の型の費用（10-29 測定）: 型の有無で事実集めの量は同じ。同じ 12 応答で型ありが +16.9%（差の大半は `decisions.md` を探す読みと、記録・push の規則書。`records/2026-10-29-consultation-pattern-cost.md`）。本文は `exmem/lessons/consultation-pattern.md` に移した。応答ごとの表は `decompose_session.py --steps --upto N`。
 - 測定スクリプト 3 本（`requests_by_kind.py`、`repeat_reads.py`、`decompose_session.py`）は `workflow-kit/tools/` に移した（ee の決定 10-29。`topics/` は room にコピーされないため）。今後の token-cap のスクリプトも `workflow-kit/tools/` に作る。
+- 効果確認（11-05）: PC2 Windows 側を測った（`records/2026-11-05-pc2-windows-effect.md`）。1 件あたりのトークンは 574k → 323〜384k、ピーク平均 89k → 55〜65k（100k 運用の効果）。全文読みは log・commit-push-rules・docs-rules で縮小、stock-hook・hook-common は変わらず、wrap-hook は 5.9KB → 8.3KB に増えて 1 回あたりが上がった。wrap の応答 8.2 → 6.7。AGENTS.md の 2 行と integrate は判定保留。continue の応答が 4.9 → 7.8 に増加。方針（ee 11-05）: 測るのは主戦場のみ（PC1 = room、PC2 = Windows。反対側は除外）。`--since` は 10-27（100k 運用）と 10-30（10-29 の縮小）の 2 通り。PC1 は 11-06。due.md の更新と次の縮小候補の判断は、PC1 の後（ee の決定）。
 - 解説は `guides/explain/claude-code-cost-session-size.md`。
 
 ## Next Actions
