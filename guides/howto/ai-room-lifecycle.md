@@ -50,7 +50,7 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 | 11 | 閉じる | `room close <P>` | － | マウント残り、未 push の clone、決定の根拠が不明。**README がひな形のまま・`close.md` 無しは警告（y/N。非対話では止まる）** | `archives/<P>/`、成果物と【案件】【決定】が Area へ |
 | 12 | 片付ける | `room reap`（close の 14 日後。早めるなら `--force`） | － | － | 会話履歴が消える（写しは Windows 側に残る） |
 | 13 | 後から引く | `room trace <P>#n` | － | － | 閉じた Project の根拠の節 |
-| 14 | 再作業（機能追加など） | `room open <新> --area <A> --from <前>` | `plan` が引き継いだ `close.md` と前の計画を読む | 前が `archives/` に無い／`done` でない／別の Area、写すものが無い（成果物は git 追跡外なので、閉じた PC で） | `ai/in/from-<前>/`。archives は開き直さない |
+| 14 | 再作業（機能追加など） | `room open <新> --area <A> --from <前>` | `plan` が引き継いだ `close.md` と前の計画を読む | 前が `archives/` に無い／`done` でない／別の Area（写すものが無いときは止めず来歴だけ。成果物は git 追跡外なので、閉じた PC で） | `ai/in/from-<前>/`。archives は開き直さない |
 
 ### 判断基準
 

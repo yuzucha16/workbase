@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-05（room: stock の public の scope、open --from の緩和）
+- ユーザーの報告: ① 部屋の `stock` で `scope: public` の記載が案内に無く、`room stock` が宛先不明で止まる（`area` は記載あり）。② `room open --from` が、元に `ai/work/plan` が無いと止まる（ユーザーは `room start --from` と書いたが、`--from` は `open` にある）。
+- 対応: 案内に `scope: public` を足し、`--from` は写すものが無くても来歴だけで開くようにした（`decisions.md` の同日）。テスト 186 件通過。
+
 ### 2026-11-04（review 消化: 漏れの修復）
 - 漏れ（`7e881ad` の上書きで、履歴に残らないまま消えていた）: NA 7（`room stock` の move・`--dst` 省略・表の実機確認）と NA 8（`room close` の y/N 警告の実機確認）を `log.md` に戻した（ユーザー承認、11-04）。
 - `due.md` の 11-12「ooxml-clean OQ: 本文の個人名」は、OQ を 11-04 に閉じた（`c41c8e2`）ので行を消した。

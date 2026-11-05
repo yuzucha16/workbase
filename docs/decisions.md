@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【room】部屋の `stock` の `public` の下書きにも `scope: public` を書かせる。`room open --from` は写すものが無くても止めない（2026-11-05）
+- 決めたこと（ユーザー）: ① 部屋の案内（`room.py` の `ROOM_GUIDE`、`room-context.md`）の `public` の節に、frontmatter `scope: public`（運び先は workbase の `exmem/inbox/`）を足す。`area` には `scope: area` の記載があったが `public` には無く、部屋の AI が `scope:` を書かないため、`room stock`（`--dst` なし）が宛先不明で止まっていた。`scope:` が無い下書きで止まる動き（11-04 の追記）は変えない。② `room open --from` は、写すもの（成果物・`close.md`・正式な計画）が無くても止めず、注意を出して `from:` と Area README の「← <前>」だけ付けて開く。小さな Project は計画を作らないことがある。11-04 の決定 ③ の「止まるときは理由を出す」を、「止めずに注意を出す」に変えた（archives に無い・done でない・別の Area は従来どおり止まる）。
+- 実装: `room.py`（`ROOM_GUIDE`、`collect_from`、`cmd_open`）、`room-context.md`、`project-structure.md`。テスト `StockPublicScopeTest`、`OpenFromTest` に 2 件（計画なしで成果物を写す、写すもの無しで来歴だけ付ける）。単体テスト 186 件通過。実機は未確認。
+- 注意: すでに `scope:` 無しで書かれた `public` の下書きは、`room stock <名> --dst kit` で運べる（`--dst kit` は `scope:` を見ず、`area` だけを除く）。部屋の案内は次の `room start` で新しくなる。
+
 ### 【workflow-kit】`brief 計画` を独立させ、フック `plan` を足す。`brief` は `room start` 直後（作業の方向性が未決）専用にする（2026-11-04）
 - 決めたこと（ユーザー）: Project の状態を 2 つに分ける。① `room open` 直後（方向性が未決）は `plan`（別名「計画を立てて」。6R → 論点出し → 憲章以降は任意）、② `room start` 直後（各タスクが未完了）は `brief`。名前 `plan` は仮。`brief` は `ai/work/plan/` が無い・`仮` のときに一度だけ勧める（進めるだけ。小規模では、計画をユーザーの頭の中で進めてよい）。論点出しは 6R の後が標準。
 - 実装: `workflow-kit/plan-hook.md`（新）、手順と欄は `brief-plan.md` を `plan-fields.md` に改名。`brief-hook.md`（README の下書きを `plan` へ移し、事前確認に計画の状態を足した）、`hooks.md`、`hook-common.md`（記録の表、勧める条件の表）、`hook-matrix.md`、`naming-rules.md`（`-fields`）、`room-context.md`、`issue-extraction-output.md`。`check_hook_outline.py` は通る。旧名 `brief 計画` は、履歴（`decisions.md`、`log-history.md`、`topics/token-cap/records/`）に残し、読み替える。

@@ -45,8 +45,9 @@ Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入
 
 まず行き先を決める（2026-10-24 ユーザーの決定）。問いは「実名や社内の事情を剥がしても、社外の人が使えるか」。使えれば `scope: public`、剥がすと意味が無くなれば `scope: area`。迷うときは `area`（公開は取り返しがつかない。後で一般化して `public` に出せる）。形は `stock-hook.md` の7見出しで、どちらも同じ。
 
-**`public`**: `ai/out/stock/YYYY-MM-DD-<topic>.md` に書く。frontmatter に次の2つを足す（点検スクリプトは、知らない項目があっても FAIL にしない）。
+**`public`**（運び先は workbase の `exmem/inbox/`）: `ai/out/stock/YYYY-MM-DD-<topic>.md` に書く。frontmatter に次の3つを足す（点検スクリプトは、知らない項目があっても FAIL にしない）。`scope:` が無いと、`room stock`（`--dst` なし）が宛先不明で何も運ばずに止まる（2026-11-05）。
 
+- `scope: public`
 - `base_commit: <~/shared/ROOM.md の基準コミット>`
 - `observed: YYYY-MM-DD`（観測した日。並べる順は到着順でなく、この日付）
 

@@ -760,7 +760,7 @@ FROM_SKIP = ("out/stock", "out/readme-draft.md")  # 引き継がない（stock �
 def collect_from(ctx, src, area):
     """--from: archives/<P1> から、新しい Project の ai/in/from-<P1>/ に写すファイルを集める。[(相対パス, 元のパス)]。
     写すもの: ai/out/ の成果物と close.md（stock/ と readme-draft.md は除く）、ai/work/plan/ の status: 正式 の計画。
-    _noai/ と ai/ctx/ は写さない。条件に合わなければ、何も作らずに止める。"""
+    _noai/ と ai/ctx/ は写さない。Project の条件（archives・done・同じ Area）に合わなければ、何も作らずに止める。写すものが無いだけなら止めない。"""
     readme = src / "README.md"
     if not readme.exists():
         raise RoomError(f"--from の Project が archives に無い: {src}")
@@ -782,9 +782,9 @@ def collect_from(ctx, src, area):
             text = f.read_text(encoding="utf-8")
             if split_frontmatter(text)[0] is not None and read_frontmatter(f).get("status") == "正式":
                 items.append((f.relative_to(src / "ai").as_posix(), f))
-    if not items:
-        raise RoomError(f"写すものが無い: {src.name} の ai/out/ と、正式な計画（ai/work/plan/）が archives に無い。"
-                        "ai/out/ は git で追跡しないので、別の PC には無い。閉じた PC で実行する")
+    if not items:  # 小さな Project は計画も成果物も無いことがある。止めずに、来歴（from:）だけ付けて開く（2026-11-05 ee の決定）
+        ctx.say(f"注意: 写すものが無い（{src.name} の ai/out/ に成果物・close.md が無く、正式な計画（ai/work/plan/）も無い）。"
+                "来歴（from:）だけ付けて開く。ai/out/ と計画は git で追跡しないので、別の PC には無い。閉じた PC で使うなら、作り直して閉じた PC で実行する")
     return items
 
 
@@ -846,7 +846,7 @@ def cmd_open(ctx, a):
     if p.distro not in ctx.wsl.distros():
         ctx.say(f"注意: 部屋（{p.distro}）がまだ無い。guides/howto/ai-room-setup.md の 3 章で作る")
     ctx.say(f"作った: projects/{a.name}（ai/ と _noai/）。README の <...> を埋める")
-    if src:
+    if src and items:
         ctx.say(f"{src} から {len(items)} ファイルを ai/in/from-{src}/ に写した（来歴は manifest。`plan` が close.md と前の計画を読む）")
     if a.commit:  # 初期状態を、戻る起点としてコミットする（既定。--no-commit で省く）
         commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）", only=True,
@@ -1571,7 +1571,8 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 
 残したい知見（`stock`）は、先に行き先を決める。問いは「実名や社内の事情を剥がしても、社外の人が使えるか」。使えれば `scope: public`、剥がすと意味が無くなれば `scope: area`。迷うときは `area`。
 
-- `public`（公開の共有知）: 直接書かず、`ai/out/stock/` に下書きを書く。下書きの frontmatter に次を足す。人が確認して `exmem/inbox/` へ運ぶ。
+- `public`（公開の共有知。運び先は workbase の `exmem/inbox/`）: 直接書かず、`ai/out/stock/` に下書きを書く。下書きの frontmatter に次を足す。人が確認して `exmem/inbox/` へ運ぶ（`scope:` が無いと `room stock` が宛先不明で止まる）。
+  - `scope: public`
   - `base_commit: {commit}`
   - `observed: 書いた日（YYYY-MM-DD）`
 - `area`（この Area の業務に固有。非公開）: これも `ai/out/stock/` に下書きを書く（`public` と同じ置き場）。frontmatter に `scope: area` と、運び先 `dest: knowledge`（既定。過去の決定・経緯なら `docs`）を足す。stock の7見出しの型で、`kind: lesson` か `explain`、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない。実名・金額・連絡先は書かない（人が `room stock --dst area` で点検を通して Area の `ai/` へ運ぶ。点検に当たると止まる）。

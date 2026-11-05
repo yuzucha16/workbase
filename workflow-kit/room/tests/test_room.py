@@ -2115,6 +2115,15 @@ def tty(answer=None):
     return stack
 
 
+class StockPublicScopeTest(unittest.TestCase):
+    def test_room_guide_tells_public_drafts_to_write_scope(self):
+        # scope: public が無いと room stock（--dst なし）が宛先不明で止まる（2026-11-05）
+        public = next(l for l in room.ROOM_GUIDE.splitlines() if l.startswith("- `public`"))
+        rest = room.ROOM_GUIDE.split(public, 1)[1].split("\n- `area`", 1)[0]
+        self.assertIn("exmem/inbox/", public)
+        self.assertIn("`scope: public`", rest)
+
+
 class OpenFromTest(unittest.TestCase):
     """room open --from: 閉じた Project の成果物・close.md・正式な計画を、新しい Project の ai/in/from-<P1>/ に写す。"""
 
@@ -2162,12 +2171,31 @@ class OpenFromTest(unittest.TestCase):
             p = room.Project.load(c, "new")
             self.assertEqual(room.check_plan_approval(c, p), 0)
 
+    def test_no_plan_still_copies_outputs(self):
+        with tempfile.TemporaryDirectory() as tmp:  # 小さな Project は計画が無い（2026-11-05）
+            v = self.archived(tmp)
+            shutil.rmtree(v / "archives/old/ai/work")
+            self.open_from(v)
+            base = v / "projects/new/ai/in/from-old"
+            got = sorted(f.relative_to(base).as_posix() for f in base.rglob("*") if f.is_file())
+            self.assertEqual(got, ["out/close.md", "out/tool/main.py"])
+
+    def test_nothing_to_copy_opens_with_provenance_only(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v = self.archived(tmp)
+            shutil.rmtree(v / "archives/old/ai/out")
+            shutil.rmtree(v / "archives/old/ai/work")
+            c = self.open_from(v)
+            self.assertTrue(any("写すものが無い" in m for m in c.msgs))
+            self.assertFalse((v / "projects/new/ai/in/from-old").exists())
+            self.assertIn("from: old", (v / "projects/new/README.md").read_text(encoding="utf-8"))
+            self.assertIn("archives/old/README", (v / "areas/area-x/README.md").read_text(encoding="utf-8"))
+
     def test_refuses_and_creates_nothing(self):
         cases = {
             "not archived": lambda v: shutil.rmtree(v / "archives/old"),
             "not done": lambda v: (v / "archives/old/README.md").write_text("---\nstatus: active\narea: area-x\n---\n", encoding="utf-8"),
             "other area": lambda v: (v / "archives/old/README.md").write_text("---\nstatus: done\narea: area-y\n---\n", encoding="utf-8"),
-            "nothing to copy": lambda v: (shutil.rmtree(v / "archives/old/ai/out"), shutil.rmtree(v / "archives/old/ai/work")),
         }
         for label, mutate in cases.items():
             with self.subTest(label), tempfile.TemporaryDirectory() as tmp:

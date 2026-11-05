@@ -134,6 +134,7 @@ README 本文（目的、成果物、計画へのリンク。雛形は `template
 - 写すもの（`ai/in/from-<前>/` の下に、`ai/` からの相対パスのまま）: `ai/out/` の成果物と `close.md`（`stock/` と `readme-draft.md` は除く）、`ai/work/plan/` の `status: 正式` の計画（6R など）。`_noai/` と `ai/ctx/` は写さない。
 - 来歴: 写したファイルは manifest に確認済みで記録する（`origin` に元の Project・パス・ハッシュ）。AI の側から AI の側への写しなので、`--adopt` の関門（internal だけ）は通さず、external の Area でも使える。新しい Project の README に `from: <前>`、Area README の進行中の行に「← <前>」が付く。
 - `plan` は、`ai/in/from-<前>/` の `close.md`（完了条件の実測、暫定の見直し）と前の計画を読み、6R の「状況」に前回の到達点と残りを書き、完了条件は今回の差分で書く。
-- 止まる条件（何も作らない）: <前> が archives に無い・`status: done` でない・別の Area、または写すものが無い。`ai/out/` と計画は git で追跡しないので、別の PC には無い。閉じた PC で実行する。
+- 止まる条件（何も作らない）: <前> が archives に無い・`status: done` でない・別の Area。
+- 写すものが無い（成果物・`close.md`・正式な計画のどれも無い。小さな Project は計画を作らないことがある）ときは止めずに、注意を出して `from:` と Area README の「← <前>」だけ付けて開く（2026-11-05）。`ai/out/` と計画は git で追跡しないので、別の PC には無い。写したいものがあるなら、閉じた PC で実行する。
 - `room reap` 済みでも使える（reap は会話履歴と作業用の一時ファイルだけを消す）。経緯を引くときは `room trace` が従来どおり使える。
 - 開き直し（archives を projects に戻す）はしない。閉じ方を誤ったときは、人が git で戻す。
