@@ -967,6 +967,19 @@ chmod 755 /usr/local/bin/room-mmdc /usr/local/bin/room-chrome /usr/local/share/r
 mmdc --version
 """ % {"pw": PLAYWRIGHT_VERSION, "mm": MERMAID_CLI_VERSION}
 
+# Noto Sans JP（revealjs スライドの本文フォント。2026-11-06 に部屋で実機確認: variable TTF が fc-list に出て、描画も Noto Sans JP になった）: google/fonts の ofl/notosansjp を SHA-256 で固定し、root が /usr/local/share/fonts に置く（ai は書き換えられない）。上流が変わるとチェックサムが合わず止まる（そのときは値を更新する）。
+NOTOSANSJP_SHA256 = "c2f3b4d463500a2ddcd3849cded1fceeb9fd6d1c32e6cbecd568453ba50fc68f"
+NOTOSANSJP_INSTALL = r"""set -e
+fc-list | grep -q 'Noto Sans JP,' && { echo "Noto Sans JP: 入っている"; exit 0; }
+T=$(mktemp -d); cd "$T"
+curl -fsSL -o NotoSansJP-VF.ttf 'https://raw.githubusercontent.com/google/fonts/main/ofl/notosansjp/NotoSansJP%%5Bwght%%5D.ttf'
+echo "%(sha)s  NotoSansJP-VF.ttf" | sha256sum -c -
+mkdir -p /usr/local/share/fonts
+install -m 644 NotoSansJP-VF.ttf /usr/local/share/fonts/NotoSansJP-VF.ttf
+fc-cache -f
+fc-list | grep -q 'Noto Sans JP,'
+""" % {"sha": NOTOSANSJP_SHA256}
+
 # Quarto（Markdown → pptx。2026-11-04 に部屋で実機試験: 1.11.9 の tarball が通った）: 公式の tarball を版と SHA-256 で固定し、root が /opt に置く（ai は書き換えられない）。x64 だけ。
 # Quarto は部屋の Playwright の Chromium を自動では見つけない（「Chrome not found」）ので、/usr/local/bin/quarto の薄い包みで QUARTO_CHROMIUM を指す。mermaid を含む文書は .qmd にする。
 # pptx の日本語フォントの雛形は topics/office-output-types/records/reference-biz-udpgothic.pptx（テーマのフォントが BIZ UDPGothic。Windows 標準。pptx にはフォント名だけが入り、実体は表示する PC のもの）
@@ -1231,7 +1244,7 @@ def scaffold_area(ctx, area):
 
 
 # init の段（--only で選ぶ名前）。base は一般ユーザー・wsl.conf・分離の確認（部屋を terminate する）
-INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "chromium", "quarto", "marp", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
+INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "notosansjp", "chromium", "quarto", "marp", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
 
 # Python の版の正本（uv 管理。docs/decisions.md 2026-10-29）。部屋の python3 もこの版にそろえる
 PYTHON_VERSION_FILE = Path(__file__).resolve().parent / ".python-version"
@@ -1327,6 +1340,8 @@ def cmd_init(ctx, a):
         step_script(ctx, distro, "変換の道具（LibreOffice、日本語フォント、pandoc。大きいので数分かかる）", CONVERT_TOOLS_INSTALL, root=True)
     # 等幅フォント PlemolJP は、使い捨ての部屋での試験が安定するまで入れない（約 220 MB の取得で時間がかかる。ee の依頼、2026-10-20）。戻すときは次の行のコメントを外し、tests の PlemolJP の確認も戻す
     # step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
+    if want("notosansjp"):
+        step_script(ctx, distro, "Noto Sans JP（revealjs の本文フォント。SHA-256 確認つき）", NOTOSANSJP_INSTALL, root=True)
     if want("chromium"):
         step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
     if want("quarto"):

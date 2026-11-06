@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】`room init` に Noto Sans JP の段（`notosansjp`）を足す（2026-11-06）
+- 根拠: ユーザー「roomのnoto sans jpをインストールして試してください。うまくいけば、`room init`でインストールできるようにします。」「進めてください。」。revealjs スライドの本文フォントを Noto Sans JP にする決定（`exmem/lessons/revealjs-diagram-layout-output.md`）に合わせる。
+- 決めたこと: google/fonts の `ofl/notosansjp`（variable TTF）を SHA-256 で固定し、root が `/usr/local/share/fonts` に置く（ai は書き換えられない）。`--only notosansjp` で単独に入れ直せる。部屋で実機確認（チェックサム OK、`fc-list` に出る、描画も Noto Sans JP）。単体テスト 210 件 OK。
+- 却下案: ai の `~/.local/share/fonts` に入れる（ai が書き換えられる）。
+- 注意: 上流のファイルが変わるとチェックサムが合わず止まる。そのときは値を更新する。
+
 ### 【汎用】トピック room-type-consolidation を閉じ、この件の決定を 1 項にまとめて移す（2026-11-06）
 - 根拠: ユーザー「room-type-consolidation をトピッククローズしたい」。マウント残りの件は「完了で消えています。反映もれです」。`records/` の仕分けは「logbook/に残します。作ります。削除してよいです」「進めてください」。「分割手順は良い作業でした。今後もこのような実施ができると助かる」。
 - 決めたこと（元は `topics/room-type-consolidation/docs/decisions.md` の【この件】。日付とユーザーの発言は要約）:
