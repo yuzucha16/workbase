@@ -9,6 +9,7 @@
 | 2026-11-09 | 単発 | log の Next Actions 2（11-03 から延期。room-type-consolidation などで成果物の周辺を整えてから。11-01 ユーザー）: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`。未決は `release` の束ね先。起票 10-25）。旧 `hook-room-alignment` の同じ項目はここに統合。見るもの: uv の取得、文字コード、y/n と日本語のひとこと。最初の失敗が原因の台帳（`script-guide.md`）の初めての使用になる | ユーザー（実機） |
 | 2026-11-10 | 単発 | PC1 で `frame` が読めて動くか確かめる（読めなければ貼る方法に戻る。起票 11-06。ユーザーが 11-10 に行うと 11-06 に言った） | ユーザー（実機） |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断 | ユーザー |
+| 2026-11-13 | 単発 | `mask` / `restore` 削除で書き換えた文書類の第三者確認（`/code-review` など別の目に通す。起票 11-06）。対象: `workflow-kit/room/README.md`、`room-context.md`、`hooks.md`、`project-structure.md`、`guides/howto/{ai-room-setup,ai-room-setup-script,ai-room-lifecycle,ooxml-clean}.md`、`guides/explain/{ai-room-why,ooxml-residue,cross-area-shared-knowledge}.md`。見る点: 削除済みの `mask` `restore` `final/` `mask-spec.md` への言及の取りこぼし、リンク切れ、手順の飛び。履歴の `exmem/lessons/` は対象外 | ユーザー |
 | 2026-11-16 | 単発 | `mdrank.py` の値が下がった理由（元は直下 log の OQ。11-01 は 1 位 24/40、上位 5 件 35/40。10-30 は 25/40、35/40。場面の一覧か `triggers:` の変更の影響と見ているが未調査。引当率は母数が 42 件から 1383 件に変わり、単純には比べられない）。次の `review` の入力 9 で前回と比べる | AI（`review` で） |
 | 2026-11-29 | 定例 | monthly の振り返り（28日周期、日曜）。R-2026-10-25-02 の検証もここで | ユーザー |
 | 2026-11-29 | 単発 | 旧 `logbook-design` NA 2・4: (a) `--check-aging` の FAIL 1 件（`logbook/user-thinking-habits.md` が budget 32KB を 40 バイト超過）を圧縮か budget の付け直しで決める。(b) 週次の記録（`docs/records/`）を 1 回手で畳む試行（置き場は変えない）。月次の振り返りと同時 | ユーザー |

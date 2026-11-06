@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06（log.md を 6.7KB → 3.3KB に畳んだ）
+- ユーザーの依頼（予算 4KB 超過）。案 B で、完了済みの room 項目を `decisions.md` の【room】の項と `room/README.md` へのポインタに畳み、未確認の旗だけ残した。第三者確認の対象一覧は `due.md` の 11-13 の行へ移した（NA には 1 行だけ残す）。
+- 畳んだ状態の要点（原文の数値）: 閉じた room の確認は 11-03〜11-06。11-02 の room 変更（boundary の 2 値、start の自動マスク・復元の廃止、stock --dst）の既存 works への適用は 11-03 に ee が実機で通した（既存の Area は internal の 1 つ）。`room mv`（旧 `rename-area`。11-02 作り直し。`wsl --export`/`--import`、履歴は追わない）は実機確認済み。`room open --from`（11-04 実装。11-05: 写すものが無くても止めず来歴だけ付けて開く。11-06 PC1 で確認済み）。close が Area へ渡す成果物は `ai/out/<Project 名>/`（11-05。旧 `deliverable/` も可。11-06 確認済み）。Area は log・decisions・inbox を持たない（11-05）。`room trace --area`・`room close --area` は 11-06 に確認済み。11-04 PC1 で `room restore` / `close` の成果物の書き出しと計画の承認の検知（`status: 正式` → 変更で `仮` に戻る）を確認済み。
+- 参照構造の基準値（`mdgraph.py`）: 循環 91%、最大の深さ 5、辺/ファイル 7.4。`na_apply` の漏れなしは 11-04 の review 消化で漏れが見つかり 0/3 に戻した。単体テストは `python -I -m unittest discover -s workflow-kit/tools/tests`。`exmem-index.md` は 1 ノート 1 行。フィードバックは、ユーザーが「フィードバック」と言うと 1 行が出て、`docs/inbox.md` へ手で運ぶ。承認スクリーニングの費用は `usage_report.py` の「うちサブエージェント」行。最初の対象は承認プロセスのみで、works の実務のレビューへの拡充は見直しの後。
+
 ### 2026-11-06（トピック room-type-consolidation を閉じた）
 - ユーザーの依頼で閉じた。手順は `topics/close-procedure.md`。マウント残りの様子見（期日 11-13）は、移したはずの直下の `due.md` に無かった。ユーザーが「完了で消えている。反映もれ」と確認したので、項目は立てない。
 - 経緯の要約: 10-24 type を `dev` と `inv` に集約。10-31 deploy key・cwd 案 A・works の再定義。11-01〜02 Vault の 2 分割（保留→正式化→実装）、`target:`。11-04 `inv` を工程別にし、Quarto と Marp 既定を部屋の道具に。11-05 eg2 と組み合わせ試験。11-06 分割して進める試験（6 回）と、清書の形式を明示した追試。
