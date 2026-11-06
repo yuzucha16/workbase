@@ -21,13 +21,12 @@
 - 索引（triggers）: dotfiles のフックが依頼ごとに出す（`guides/explain/triggers-knowledge-index.md`）。参照構造の点検は `review` の入力 9（`mdgraph.py`。基準値は循環 91%、最大の深さ 5、辺/ファイル 7.4）。積み残しは `due.md` の 11-03・11-08。単体テストは `python -I -m unittest discover -s workflow-kit/tools/tests`。`exmem-index.md` は 1 ノート 1 行。
 
 - 論点出しの型: `exmem/lessons/issue-extraction-output.md`（v4、試用中。合図は「論点出し」「論点抽出」）。フィードバックは、ユーザーが「フィードバック」と言うと 1 行が出て、`docs/inbox.md` へ手で運ぶ。
-- kit・規則の変更案（11-06 決定）: `wrap` の報告には出さず、直下の Open Questions に置き（トピックで出たものも）、`review 消化` が直下を読んで承認にかける。過去分は移さない。置き場の全体整理は NA 6。
+- kit・規則の変更案（11-06 決定）: `wrap` の報告には出さず、直下の Open Questions に置き（トピックで出たものも）、`review 消化` が直下を読んで承認にかける。過去分は移さない。置き場の全体の表は `topics/AGENTS.md` の「データの置き場」（11-06 に NA 6 を閉じた）。
 - 承認のスクリーニング（サブエージェント）の効果と費用の測定（11-03 開始）: 結果は 1 行で `decisions.md` に残す（`approval-screening.md` の「結果の記録」）。費用は `usage_report.py` の「うちサブエージェント」行。見直しは `due.md` の 11-30。最初の対象は承認プロセスのみで、works の実務のレビューへの拡充は見直しの後。
 
 ## Next Actions
 
 5. **`guides/howto/` を triggers 索引の対象にするか、ライフサイクルの繋がりを明示する大局案を決める（起票 11-04）**: `ai-room-lifecycle.md` の前半の順（6R → 論点出し）は、`find_knowledge.py --triggers` に出ず、`brief` との紐づけも無かったため、文書の修正が横展開で漏れた。案: ① `guides/howto/` を索引の走査対象にする、② 前半の順の正本を 1 か所（`hooks.md` の連鎖）に置き、howto は指すだけにする、③ 新しいフックを足すときの点検（`hook-common.md` の「フックを足す・消すとき」）に、howto と triggers の確認を足す。別セッションで扱う（ユーザー）。
-6. **`workbase/docs/` と `topics/` の関係を整理し、データ（記録・待ち行列・期日）の流れの漏れをなくす（起票 11-06）**: 関係が曖昧なため、置き場や読み先の漏れが続けて出た（11-06: `wrap` の kit・規則の案がトピック側に置かれて `review 消化` に届かない、トピック固有の期日が直下の `due.md` に混ざる）。同日の「トピックは `topics/` の中で閉じる」方針と、kit・規則の案を直下に集める扱い（`decisions.md` 11-06）の整合も要る。やること: ① 項目の種類（Next Actions、Open Questions、期日、decisions、log-history、kit・規則の案、知識への昇格）ごとに、置き場（直下 / トピック）と、`wrap`・`review 消化` が読む範囲を表にする、② 抜けている経路を洗い出す、③ 正本を 1 か所（`topics/AGENTS.md` か `docs-rules.md`）に決める。決定は承認プロセス（Open Questions → `review 消化`）に載せる。【11-06 進み】①②③のうち、構造（`topics/kit-growth/` 廃止、置き場の表を `topics/AGENTS.md` に）と【汎用】の書き先（直下に直接）は決定・反映済み。残りは、閉じるトピックの期日の扱い（3.1）と、トピックをまたぐ期日の割り付け（3.4）。
 
 期日のある項目は `due.md`。
 
