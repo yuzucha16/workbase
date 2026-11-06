@@ -4,6 +4,18 @@
 
 ## Decisions
 
+### 【汎用】トピック ooxml-clean を閉じ、この件の決定を 1 項にまとめて移す（2026-11-06）
+- 根拠: ユーザー「ooxml-clean をトピッククローズしたい」。NA 1 は「b」（root に移して閉じる）、仕分けの案は「すべてよいです」。
+- 決めたこと（元は `topics/ooxml-clean/docs/decisions.md` の【この件】。日付とユーザーの発言は要約）:
+  - 方式は A（点検と、別ファイルを出す掃除の 2 段。元ファイルは変えない。作り直しは見送り）。点検を先に作り、実ファイルの結果で掃除の既定を決めた（10-26）。
+  - 外部リンクは切る。非表示の行・列の値を空にするのは既定にせず `--also`（10-27）。出力と報告をこのリポジトリの中に書かない（`cleankit.py` が止まる。10-27）。
+  - 掃除は `raw` → 掃除 → `ai/in` の前段。既定は strict。語のマスクは必須にしない。入口は明示の `room clean`（10-30、11-03）。報告は `_noai/raw/tmp/`（`--path` は Area の `_noai/source/tmp/`）に置く（11-03）。
+  - pptx・xlsx は読ませる用途に割り切り、取り出し（`pptxtext.py`、`exceltext.py`）にする。どちらも単体のスクリプトで、room には組み込まない。cleankit の pptx の手直しは需要が見えるまでしない（11-02、11-03）。
+  - 本文の個人名など「書いていない語」は、掃除では消えない制約として受け入れ、`check` の検出と `--terms` で補う（11-04）。
+  - `room clean`（Project 内、strict 固定）と `cleankit`（単体、調整オプションあり）の一本化は見送る。再検討するなら、`check` の抜粋の扱いと調整オプションの扱いを先に決める（11-05）。
+- 未実現の案（Open Question として直下の `log.md` に 1 行残した）: 出力側の点検（AI の出力に実名や金額の形が無いか）。
+- 仕組みは `guides/explain/ooxml-residue.md`、手順は `guides/howto/ooxml-clean.md`、仕様は `workflow-kit/room/README.md` の「クリーン化」。
+
 ### 【汎用】`room mask` / `room restore` を削除する。`_noai/final/` も廃止（2026-11-06）
 - 根拠: ユーザー「ooxml-clean の続き due: mask/restore。mask/restore を削除します。それともない、不要になるディレクトリ削除もここで行います」。2026-11-03 の「`room mask` と `restore` の削除は使ってから決める」の期日（11-30）を前倒しで消化した。
 - 決めたこと: ① `room mask` `room restore`、`maskkit.py`、`mask-spec.md`、`test_maskkit.py`、手順書 `ai-room-mask-summary.md` を削除。② `_noai/final/` を作らない（`final/_prev/` の退避も、`--force` の経路ごと無くした）。③ 成果物（`ai/out/<Project 名>/`）の Area への引き渡しは `room close` だけが持ち、そのまま渡す（語の置き換えなし。人が変えた Area 側は上書きせず止まる）。④ `_noai/map/` は残す（成果物の書き出しの記録 `deliverable-manifest.json` を置くため。名前は旧対応表の名残）。⑤ `_noai/mask.toml` は残す（`cleankit` の点検用の語の表。`clean` と `stock --dst area` が使う。名前は変えない: 既存の Project を壊さないため）。

@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-06（トピック ooxml-clean を閉じた）
+- ユーザーの依頼で閉じた。手順は `topics/close-procedure.md`。NA 1（mask/restore 削除で書き換えた文書の第三者確認、期日 11-13）は直下の `log.md` に移した。
+- 経緯の要約: 10-26 消したシートが xlsx に残り AI に見えた → 残り方の整理と方式 A（点検と掃除）。10-27 PC1 の実 xlsx で残り 20 件 → 0 件。10-28 Excel で警告なし（共有文字列の番号の範囲外を修正）、`check` に `unseen-text`。10-29 プロファイル standard / strict。11-02 pptx は読ませる用途に割り切り `pptxtext.py`。11-03 `exceltext.py`、`room clean`（strict）、`pull` 廃止、語のマスクを必須から外す。11-04 テナント ID・ラベル ID の掃除、Project の決定を Area へ上げる経路。11-05 実機確認、一本化の見送り。11-06 `mask` / `restore` と `_noai/final/` の削除。
+- 移したもの: 決定は `decisions.md` の同日の項。残り方の一覧と確度は `guides/explain/ooxml-residue.md` に統合（pptx の 2 行と確度の節を足し、「草稿」の表記を外した）。`records/` の 2 本と詳細な経緯は削除（git に残る）。
+- 外の言及を直した: `topics-index.md` の行を削除、`office-output-types` の窓口の関連をガイドに。
+
 ### 2026-11-06（論点出しの型 v4 を本採用にし、合言葉 frame を足す）
 - ユーザーが PC1 で v4 を複数回使い、本採用にした（`due.md` 11-13 の「実作業での確認」を閉じた）。毎回の貼り付けをやめるため、英単語の合言葉 `frame`（別名「論点出し」「課題設定」）を `workflow-kit/frame-hook.md` に足した。プロンプトの正本は lesson のまま。権限は全領域 r。連鎖は `plan → frame → brief → wrap`（ユーザーの運用）。決定は `decisions.md` 同日。点検（`check-hook-outline`、`--check-triggers`）は通った。実機（PC1）で `frame` が読めるかは未確認。
 

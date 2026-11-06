@@ -2,7 +2,7 @@
 
 AI 作業部屋の操作（`mkworks` / `init` / `open` / `start` / `close` / `umount` ほか）。人が Windows で実行する。**AI には実行させない**（原本と、掃除の報告の実データを読むため）。設計の理由は `guides/explain/ai-room-why.md`、手作業の手順は `guides/howto/ai-room-setup.md`。
 
-状態: v0（2026-10-12）。語のマスク・復元（`mask` `restore`、`maskkit.py`、`mask-spec.md`）は 2026-11-06 に削除した（理由は `topics/ooxml-clean/docs/decisions.md`、中身は git の履歴）。成果物の Area への引き渡しは `close` が持つ。
+状態: v0（2026-10-12）。語のマスク・復元（`mask` `restore`、`maskkit.py`、`mask-spec.md`）は 2026-11-06 に削除した（理由は root の `docs/decisions.md` の 2026-11-06 の項、中身は git の履歴）。成果物の Area への引き渡しは `close` が持つ。
 
 ## 使い方
 

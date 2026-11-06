@@ -24,4 +24,4 @@
 
 ## リポジトリに無いローカルの状態
 
-PC1 の実ファイル・実パス・マクロは `projects/` の `_noai/` 側（AI に見せない）。関連: `topics/ooxml-clean/`（AI に渡す前の掃除。目的が別）、`topics/token-cap/`。
+PC1 の実ファイル・実パス・マクロは `projects/` の `_noai/` 側（AI に見せない）。関連: `guides/howto/ooxml-clean.md`（AI に渡す前の掃除。目的が別。トピックは 2026-11-06 に閉じた）、`topics/token-cap/`。
