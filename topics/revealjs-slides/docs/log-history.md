@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06 型の棚卸し P3 の実装（NA 1 件を一部済み）
+- 経緯: `LAYOUTS` の値を「名前, 使いどころ」の組にし、12 型すべてに使いどころの 1 行を書いた（ユーザーが文言を確認、OK）。`--list` で番号・名前・使いどころを出せる。AI は提案のとき番号と理由を一緒に言う。確認: `--list` の出力と、組み込みの見本の生成が通ること。render は未実施（出力の qmd は変わらない）。根拠: `records/gen_layouts.py`（`LAYOUTS`、`--list`）。
+- 一部済: 「型の棚卸しの実装」は P3 が済み、P2（需要待ち）と共通化の検討が残り。
+
 ### 2026-11-06 型の棚卸し P1 の実装（NA 1 件を一部済み）
 - 経緯: A〜G の箱の型を 1 つの `box_slide` にし、並びを `PRESETS`（grid-template-areas）にした。新しい並びは `PRESETS` に 1 行足すだけで作れる。scss の型ごとの grid 規則を外した。つまずき: areas 名を二重引用符で囲むと、Pandoc の div 属性の解析が壊れて B が崩れた（単一引用符で解決）。確認: 変更前後の見本 A・B・D・E・F・G を Edge の headless で並べて目視し、同一（違いは進捗バーのみ）。`height` 指定の描画は未確認。根拠: `records/gen_layouts.py`（`PRESETS`、`box_slide`）、`records/revealjs-diagram-theme.scss`。
 - 一部済: 「型の棚卸しの実装」は P1 が済み、P3（次のセッション）と P2（需要待ち）が残り。
