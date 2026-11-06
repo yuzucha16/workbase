@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06（token-cap NA 4 土台の整理を見送りで閉じる）
+- omit（NA4）: ee の決定: 見送りで閉じる。100k 運用の結果（PC2・PC1 とも、ピークは約 −33〜41%）を見たうえで、動かせる土台は約 2.4〜3.0k（10 月の量で 3〜4%）と小さく、優先度は低いまま。根拠は records/2026-11-01-base-breakdown.md と records/2026-11-06-pc1-room-effect.md。
+  - 元の項目: 【期日 11-08】土台の整理（`AGENTS.md` など）は、100k 運用の結果を見てから再判断する（`records/2026-10-26-base-trim.md`。ee の決定 10-27。再判断の前に、動かせる土台の内訳を測る。room の土台は 17.9k で、優先度は低い）。【11-01 測定】`records/2026-11-01-base-breakdown.md`。土台 26.9k（10-26 から −1.0k）、動かせる上限は約 2.4〜3.0k（10 月の量で 3〜4%）。差の中身は NA 7 で確定（ハーネスの注記が主因で、動かせる量は増えない。`records/2026-11-01-first-response-breakdown.md`）。残りは、100k 運用の効果を見てからの ee の再判断（期日 11-08）。
+
 - 2026-11-05（continue の増加の原因）: 「期日つきの測定以外のものをお願いします」。NA 5 の期日なしの手段はすべて PC1 待ちか着手済みで、代わりに continue の応答増加（4.9 → 7.8）を調べた。長い 3 件（応答 20〜27）は範囲を書いた依頼で、中身は実装と WSL での実機試験。ee: 「continue がきっかけで、単に重い処理だった（Quarto や複数回の試験）」。範囲を強制する仕組みは作らない。NA 5 (b) の優先を下げる候補とした（ee 承認）。`records/2026-11-05-continue-growth-cause.md`。wrap。
 
 - 2026-11-05（効果確認: PC2 Windows 側）: 「そろそろ効果確認に入りましょう」。進め方を示し、ee が 2 点を決めた（主戦場だけを測る、`--since` を 10-27 と 10-30 の 2 通りにする）。`repeat_reads.py` と `requests_by_kind.py` を実行し、CSV を区間別に集計して `records/2026-11-05-pc2-windows-effect.md` に記録した。結果: 1 件あたり 574k → 323〜384k、ピーク 89k → 55〜65k。縮小は log・commit-push-rules・docs-rules で有効、wrap-hook は増量（5,960 → 8,267 バイト、`git log`）で 1 回あたりが上がった。AGENTS.md の 2 行と integrate は保留、continue の応答が増加。`log.md` の状態と `due.md` の更新は PC1 の後（ee）。wrap。
