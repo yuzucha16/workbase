@@ -15,6 +15,8 @@ revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所
   H 行ラベル x 列（行・列は文言の数で決まる）
   I 工程 x 行（シェブロンの列見出し。行ラベルは任意）
   J 表（濃紺ヘッダー + 薄グレー行）
+  T 図解なし（見出し + 段落 + 箇条書き。入れ子はリストの中のリスト。まとめ・前置き・補足用）
+  箱の型 A〜G は "height"（例 "500px"）で下の空きを埋める。
 """
 import argparse
 import html
@@ -104,7 +106,8 @@ def box_slide(s):
     cells = s["cells"]
     if len(cells) != BOX_COUNT[t]:
         raise SystemExit(f"型 {t} の cells は {BOX_COUNT[t]} 個（{len(cells)} 個ありました）")
-    out = f"::: {{.lay .lay-{t.lower()}}}\n"
+    attr = f' style="--lh:{s["height"]}"' if s.get("height") else ""
+    out = f"::: {{.lay .lay-{t.lower()}{attr}}}\n"
     if t == "B":
         out += cell(cells[0]) + f"::: {{.link}}\n{esc(s.get('link', '▶'))}\n:::\n" + cell(cells[1]) + cell(cells[2], "wide")
     elif t == "D":

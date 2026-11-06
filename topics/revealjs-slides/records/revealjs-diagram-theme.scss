@@ -55,6 +55,9 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .lay-f .cell { padding-top: 0.6em; padding-bottom: 0.4em; }
 .lay-g { grid-template-columns: 1fr 1fr; }
 .lay-g .wide { grid-column: 1 / -1; }
+/* 箱の型の高さ（spec の "height"）。行を等分してスライドの下を空けない。図が無い箱は文字を大きくする */
+.lay[style*="--lh"] { height: var(--lh); grid-auto-rows: 1fr; }
+.cell:not(:has(.fig)) .txt { font-size: 0.9em; line-height: 1.5; }
 
 /* H/I/J（行ラベル x 列 / 工程 x 行 / 表）。行・列の数は生成スクリプトが決める。
    余白は --gap（セル間）と --pad（セルの内側）の 2 つに集約する。高さ --h を等分して、スライドの下を空けない。 */

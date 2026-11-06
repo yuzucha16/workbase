@@ -1,6 +1,6 @@
 ---
 type: knowledge
-title: Quarto/revealjs スライドの出力の型（図解レイアウト）: 箱・札・9 型で、勉強会・LT 向けの簡易スライドを同じ型で返す
+title: Quarto/revealjs スライドの出力の型（図解レイアウト）: 箱・札・10 型で、勉強会・LT 向けの簡易スライドを同じ型で返す
 status: active
 tags:
   - tool/quarto
@@ -19,7 +19,7 @@ sources:
 
 # Quarto/revealjs スライドの出力の型（図解レイアウト）
 
-状態: 土台（確定ではない。拡張していく。2026-11-06 ユーザーの決定）。社内の勉強会・LT 向けの簡易スライド用。正式な pptx は別（`topics/office-output-types`）。部品は、トピックの `records/`（`topics/revealjs-slides/records/`）に置く: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す。`python -I gen_layouts.py -o out.qmd`）、`revealjs-diagram-layouts.qmd`（9 型の見本。スクリプトの出力で、手で直さず作り直す）、`revealjs-diagram-theme.scss`（CSS）、`revealjs-diagram-icons.html`（アイコン定義）。作業の状態は [[revealjs-slides-start-here]]。
+状態: 土台（確定ではない。拡張していく。2026-11-06 ユーザーの決定）。社内の勉強会・LT 向けの簡易スライド用。正式な pptx は別（`topics/office-output-types`）。部品は、トピックの `records/`（`topics/revealjs-slides/records/`）に置く: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す。`python -I gen_layouts.py -o out.qmd`）、`revealjs-diagram-layouts.qmd`（10 型の見本。スクリプトの出力で、手で直さず作り直す）、`revealjs-diagram-theme.scss`（CSS）、`revealjs-diagram-icons.html`（アイコン定義）。作業の状態は [[revealjs-slides-start-here]]。
 
 ## Goal
 
@@ -49,6 +49,10 @@ Markdown（Quarto）から revealjs のスライドを作るとき、図解を�
   - ユーザーの発言: 「ここでのポイントは表現方法として、行列を増やすとか余白をきれいに使うとかそういう点を抑えてほしいです。」
   - 根拠: pptx のレイアウト例 33 枚（棚卸しは `topics/revealjs-slides/records/2026-11-06-pptx-layout-inventory.md`）の多くが、行ラベルと工程見出しを軸にした格子だった。H=行ラベル × 列、I=工程（シェブロン）× 行、J=表。行・列の数は文言の数で決まり、余白は `--gap` `--pad`、高さは `--h` で統一する。
   - 却下案: 階段・3 要素・ガント・グラフ・関係図は型にしない（H・I で足りるか見る。作図は SVG を .fig に置く）。
+- **図解なしの型 T（見出し + 段落 + 箇条書き）を型に含め、全体で 10 型にする**（2026-11-06）
+  - ユーザーの発言: 「全部レイアウトはむりがあるので、p13 まとめ のような質素だけど、文字が箇条書きで並ぶものもレイアウトに含めます。」
+  - 根拠: 実スライド（room 導入の LT。12 枚）で、まとめ・前置きは図解にしづらく、T で足りた。T は `gen_layouts.py` の `"type": "T"`（`blocks` に `h`・`p`・`items`。入れ子はリストの中のリスト）。
+  - 実スライドで A〜G を使うときは、spec の `"height"`（例 `"500px"`）で下の空きを埋める。図が無い箱は文字が 0.9em になる（2026-11-06）。
 - **文章化全体のルール: フォントは Noto Sans JP、階層ごとにインデントを入れる**（2026-11-06）
   - ユーザーの発言: 「フォントはNoto Sans JPにする。…インデントを追加する。2 shift相当で、スライドタイトルから見出し、箇条書きとインデントを入れて見やすさを追加してください。」「微修正は今後していきます。」
   - 内容: `revealjs-diagram-theme.scss` の `$font-family-sans-serif` を Noto Sans JP にした（BIZ UDPゴシックは pptx の棚卸しの値で、revealjs の指定ではなかった）。インデントは `--ind`（1em = 全角 2 字ぶん）を 1 段とし、h2（タイトル）を 0、h3/h4 と本文段落を 1 段、箇条書きを 2 段、入れ子の箇条書きを +1 段にした。

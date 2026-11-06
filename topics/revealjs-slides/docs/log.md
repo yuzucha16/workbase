@@ -5,7 +5,7 @@
 ## 状態
 
 - 部品（`records/`）: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す）、`revealjs-diagram-layouts.qmd`（9 型。スクリプトの出力。手で直さず作り直す）、`revealjs-diagram-theme.scss`、`revealjs-diagram-icons.html`（アイコン定義。`include-before-body` で読む）、`2026-11-06-pptx-layout-inventory.md`（pptx 33 枚の棚卸し）。
-- 型は 9 つ: A・B・D・E・F・G に、pptx の例から H（行ラベル × 列）、I（工程 × 行。シェブロン）、J（表）を足した。表現の方針は「行・列の数が自由」と「余白の統一」（`--gap` `--pad`、高さ `--h`。11-06 ユーザーの決定）。
+- 型は 10 つ: A・B・D・E・F・G に、pptx の例から H（行ラベル × 列）、I（工程 × 行。シェブロン）、J（表）を足し、図解なしの T（見出し + 段落 + 箇条書き。11-06 ユーザーの決定）を型に含めた。A〜G は spec の `"height"` で下の空きを埋められる。表現の方針は「行・列の数が自由」と「余白の統一」（`--gap` `--pad`、高さ `--h`。11-06 ユーザーの決定）。
 - 検証（11-06）: 15 枚（表紙 + 14）を Windows（Quarto 1.11.9、Edge）で確認。room（`room-myenv`、Quarto 1.11.9、headless Chromium）でも 15 枚が render でき、I・J（3 枚）は Windows と同じ見え方（余白・右寄せ・ヘッダ色）。H は未目視、PC1 は未確認。
 - 基本形を確定（11-06 ユーザーの決定）: 見本（`records/` の 3 ファイル。コミット `44799e1`）をそのまま基本形にする。フォントは Noto Sans JP、基準の文字サイズは 28px（`$presentation-font-size-root`。Quarto の `-main` は効かない）、インデントは `--ind: 40px` の固定値（見出し 1 段、箇条書き 2.5 段、入れ子は 1 段ずつ）、タイトルの下は 0.8em の空き。H・I・J の高さ `--h` は 560px（px。em は文字サイズに引きずられる）。H・J の行は 3 行までを見本にした（J の p17 は 4 行のまま。構造化は 3 要素以上で再分割するので、実用の上限は 3 程度）。見本に型 T の「文章・文字列・箇条書き」を足した（`gen_layouts.py` の `"p"`）。Windows（Edge、1280×720）で目視済み。
 - 保留: 型 A〜G は下 4 割が空く（H・I・J は `--h` で埋めた。ユーザーは「一旦これでよい」）。- 実スライドは PC1 で作る（題材は PC1 側にある。11-06 ユーザーの発言）。PC1 は、このリポジトリを pull して `records/` の部品を使う。
