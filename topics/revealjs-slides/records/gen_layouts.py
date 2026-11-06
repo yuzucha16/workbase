@@ -12,6 +12,7 @@ revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所
 
 型:
   箱の型  A 左右 / B 上左右+下全幅 / D 左一本+右2 / E 1ブロック / F 2x2 / G 上全幅+下左右
+  （A〜G は PRESETS の preset 名。並びは grid-template-areas で決まり、新しい並びは PRESETS に 1 行足すだけ）
   C 目次（番号 + 章名 + ひとこと + 小項目。current で表示中の章を強調）
   H 行ラベル x 列（行・列は文言の数で決まる）
   I 工程 x 行（シェブロンの列見出し。行ラベルは任意）
@@ -124,9 +125,10 @@ def _block(x, y, w, h, label, on):
 
 
 # ---- 箱の型 ----
-def cell(c, extra=""):
+def cell(c, extra="", area=None):
     cls = " ".join(x for x in ["cell", c.get("tone"), extra] if x)
-    out = f"::: {{.{cls.replace(' ', ' .')}}}\n"
+    style = f' style="grid-area:{area}"' if area else ""
+    out = f"::: {{.{cls.replace(' ', ' .')}{style}}}\n"
     if c.get("tab"):
         icon = f'<svg viewBox="0 0 24 24"><use href="#i-{c["icon"]}"/></svg>' if c.get("icon") else ""
         out += raw(f'<div class="tab">{icon}{esc(c["tab"])}</div>') + "\n"
@@ -139,24 +141,41 @@ def cell(c, extra=""):
     return out + ":::\n"
 
 
-BOX_COUNT = {"A": 2, "B": 3, "D": 3, "E": 1, "F": 4, "G": 3}
+# 箱の並び（preset）。A〜G は preset 名。新しい並びは、ここに 1 行足すだけで作れる（CSS は触らない）。
+#   areas: grid-template-areas の各行（cells の順に a, b, c… を割り当てる。"l" は B の矢印）
+#   cols / rows: grid-template-columns / rows
+#   wide: 幅広のセル（図を少し大きく）の番号 / link: 矢印を置く領域（areas の "l"）
+PRESETS = {
+    "A": {"areas": ["a b"], "cols": "1fr 1fr"},
+    "B": {"areas": ["a l b", "c c c"], "cols": "1fr 4.2em 1fr", "wide": [2], "link": True},
+    "D": {"areas": ["a b", "a c"], "cols": "1fr 1fr", "rows": "1fr 1fr"},
+    "E": {"areas": ["a"], "cols": "1fr"},
+    "F": {"areas": ["a b", "c d"], "cols": "1fr 1fr"},
+    "G": {"areas": ["a a", "b c"], "cols": "1fr 1fr", "wide": [0]},
+}
+
+
+def preset_cells(p):
+    """preset の areas に出てくるセル用の領域名（"l" を除く）の数。"""
+    return len({ch for row in p["areas"] for ch in row.split()} - {"l"})
 
 
 def box_slide(s):
     t = s["type"]
     cells = s["cells"]
-    if len(cells) != BOX_COUNT[t]:
-        raise SystemExit(f"型 {t} の cells は {BOX_COUNT[t]} 個（{len(cells)} 個ありました）")
-    attr = f' style="--lh:{s["height"]}"' if s.get("height") else ""
-    out = f"::: {{.lay .lay-{t.lower()}{attr}}}\n"
-    if t == "B":
-        out += cell(cells[0]) + f"::: {{.link}}\n{esc(s.get('link', '▶'))}\n:::\n" + cell(cells[1]) + cell(cells[2], "wide")
-    elif t == "D":
-        out += cell(cells[0], "tall") + cell(cells[1]) + cell(cells[2])
-    elif t == "G":
-        out += cell(cells[0], "wide") + cell(cells[1]) + cell(cells[2])
-    else:
-        out += "".join(cell(c) for c in cells)
+    p = PRESETS[t]
+    n = preset_cells(p)
+    if len(cells) != n:
+        raise SystemExit(f"型 {t} の cells は {n} 個（{len(cells)} 個ありました）")
+    style = f"grid-template-columns:{p['cols']};" + (f"grid-template-rows:{p['rows']};" if p.get("rows") else "")
+    style += "grid-template-areas:" + " ".join(f"'{r}'" for r in p["areas"])  # 属性が "…" で囲まれるので、中は単一引用符 + ";"
+    if s.get("height"):
+        style += f"--lh:{s['height']};"
+    out = f'::: {{.lay .lay-{t.lower()} style="{style}"}}\n'
+    for i, c in enumerate(cells):
+        out += cell(c, "wide" if i in p.get("wide", []) else "", "abcdefgh"[i])
+        if p.get("link") and i == 0:
+            out += f"::: {{.link style=\"grid-area:l\"}}\n{esc(s.get('link', '▶'))}\n:::\n"
     return out + ":::\n"
 
 

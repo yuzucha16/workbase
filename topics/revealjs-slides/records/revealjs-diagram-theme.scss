@@ -24,9 +24,6 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 
 /* 図解レイアウト: 箱の中は左に図・右に文字。A=左右二分割、B=上が左右(間に矢印)・下が全幅 */
 .lay { display: grid; gap: 0.5em; margin-top: 0.3em; }
-.lay-a { grid-template-columns: 1fr 1fr; }
-.lay-b { grid-template-columns: 1fr 4.2em 1fr; }
-.lay-b .wide, .lay-g .wide { grid-column: 1 / -1; }
 .cell { display: flex; align-items: center; gap: 0.5em; padding: 0.45em 0.55em; border: 2px solid #0017c1; border-radius: 8px; background: #fff; }
 .cell.dark { border-color: #333; }
 .cell.blue { border-color: #0017c1; background: #e8f1fe; }
@@ -48,15 +45,9 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .cell.dark .tab { color: #333; }
 .cell.gray .tab { color: #4d4d4d; }
 
-/* 追加レイアウト: D=左一本・右2ブロック / E=1ブロック大 / F=2x2 / G=上全幅・下左右 */
-.lay-d { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-.lay-d .tall { grid-row: 1 / span 2; }
-.lay-e { grid-template-columns: 1fr; }
+/* 箱の並びは gen_layouts.py の PRESETS（インラインの grid-template-areas）。ここは型ごとの見た目の調整だけ */
 .lay-e .cell .fig { flex-basis: 74%; }
-.lay-f { grid-template-columns: 1fr 1fr; }
 .lay-f .cell { padding-top: 0.6em; padding-bottom: 0.4em; }
-.lay-g { grid-template-columns: 1fr 1fr; }
-.lay-g .wide { grid-column: 1 / -1; }
 /* 箱の型の高さ（spec の "height"）。行を等分してスライドの下を空けない。図が無い箱は文字を大きくする */
 .lay[style*="--lh"] { height: var(--lh); grid-auto-rows: 1fr; }
 .cell:not(:has(.fig)) .txt { font-size: 0.9em; line-height: 1.5; }

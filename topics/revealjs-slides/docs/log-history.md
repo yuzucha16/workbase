@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06 型の棚卸し P1 の実装（NA 1 件を一部済み）
+- 経緯: A〜G の箱の型を 1 つの `box_slide` にし、並びを `PRESETS`（grid-template-areas）にした。新しい並びは `PRESETS` に 1 行足すだけで作れる。scss の型ごとの grid 規則を外した。つまずき: areas 名を二重引用符で囲むと、Pandoc の div 属性の解析が壊れて B が崩れた（単一引用符で解決）。確認: 変更前後の見本 A・B・D・E・F・G を Edge の headless で並べて目視し、同一（違いは進捗バーのみ）。`height` 指定の描画は未確認。根拠: `records/gen_layouts.py`（`PRESETS`、`box_slide`）、`records/revealjs-diagram-theme.scss`。
+- 一部済: 「型の棚卸しの実装」は P1 が済み、P3（次のセッション）と P2（需要待ち）が残り。
+
 ### 2026-11-06 型の棚卸しの整理とレイアウト番号の表示（NA 1 件を omit、1 件を一部済み）
 - 経緯: pptx の残り（階段・3 要素）は、ユーザーが「H・I で足りる」として omit。型の棚卸しは、重なり・管理・拡充の観点で 12 個を整理し、案 P1〜P3 を出した（実装は別セッション）。ユーザーの決定で、型は AI が提案・ユーザーが最終判断とし、スライドの右上にレイアウト番号（`H+notes` など）を出す。無い形は `want` に書いて逐次作る。`gen_layouts.py` の docstring の誤った `\n` も直した。確認: Edge の headless で G と split の 2 枚。根拠: `records/gen_layouts.py`（`LAYOUTS`、`layout_id`）、`records/2026-11-06-layout-inventory.md`、`decisions.md`。
 - close した NA: 「pptx レイアウトの残り（階段・3 要素の判断、ほかの pptx の棚卸し）」（omit）。一部済: 「型の棚卸し」は整理と番号表示が済み、P1〜P3 の実装が残り。
