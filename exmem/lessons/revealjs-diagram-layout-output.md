@@ -89,7 +89,7 @@ Markdown（Quarto）から revealjs のスライドを作るとき、図解を�
 - 状況: 先頭の見出しの前に、非表示 SVG の raw HTML ブロックを置いた
   - 原因: 内容が 1 つの空のスライドになり、枚数が 1 枚増えた
   - 解決: 定義のブロックは、最初の見出しのスライドの内側（notes の前）に置く。見本はこの形で 7 枚になる（確認: 2026-11-06）
-  - 別案（確認: 2026-11-06。Windows の Quarto 1.11.9）: 定義を HTML ファイルに出し、`format.revealjs.include-before-body` で読む。先頭スライドを消してもアイコンは残り、空スライドも増えない。先頭スライドに依存しないので、スライドの並べ替えに強い。未採用（採否は `topics/revealjs-slides` で決める）
+  - 別案（確認: 2026-11-06。Windows の Quarto 1.11.9）: 定義を HTML ファイルに出し、`format.revealjs.include-before-body` で読む。先頭スライドを消してもアイコンは残り、空スライドも増えない。先頭スライドに依存しないので、スライドの並べ替えに強い。採用の方針（優先。2026-11-06 ユーザーの決定。作業は `topics/revealjs-slides`）
 - 状況: 行の枠（`stroke-width` 3〜4）を、`viewBox` の端いっぱいに描いた
   - 原因: 線の太さの半分が `viewBox` の外に出て、右端の枠が削れて見える
   - 解決: 未対応。`viewBox` を左右に数 px 広げる、または `.fig svg` に `overflow: visible` を付ける案がある（未確認）
@@ -105,6 +105,9 @@ Markdown（Quarto）から revealjs のスライドを作るとき、図解を�
 
 - 枠の削れの対処を実測して、Gotchas の「解決」を確定する。
 - 型 D・E・F・G を 1 枚ずつ実スライドに適用して、文字量とはみ出しを確かめる（トピック `revealjs-slides` の Next Actions と同じ。作業はトピック側で行う）。
+
+- pptx ベースのレイアウト例（ユーザーが多数持つ。渡される予定）を、現在の 6 型への当てはめと、足す型の材料にして、revealjs でも使い回せるようにする（トピック evealjs-slides の Next Actions と同じ。起票 2026-11-06）。
+- 生成スクリプト（Python）で、型と文言から qmd を出す形にする（PC1 では実績あり。同上）。
 
 ## Related
 
