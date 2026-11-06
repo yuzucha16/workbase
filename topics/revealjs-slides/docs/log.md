@@ -7,9 +7,9 @@
 - 部品（`records/`）: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す）、`revealjs-diagram-layouts.qmd`（9 型。スクリプトの出力。手で直さず作り直す）、`revealjs-diagram-theme.scss`、`revealjs-diagram-icons.html`（アイコン定義。`include-before-body` で読む）、`2026-11-06-pptx-layout-inventory.md`（pptx 33 枚の棚卸し）。
 - 型は 9 つ: A・B・D・E・F・G に、pptx の例から H（行ラベル × 列）、I（工程 × 行。シェブロン）、J（表）を足した。表現の方針は「行・列の数が自由」と「余白の統一」（`--gap` `--pad`、高さ `--h`。11-06 ユーザーの決定）。
 - 検証（11-06）: 15 枚（表紙 + 14）を Windows（Quarto 1.11.9、Edge）で確認。room（`room-myenv`、Quarto 1.11.9、headless Chromium）でも 15 枚が render でき、I・J（3 枚）は Windows と同じ見え方（余白・右寄せ・ヘッダ色）。H は未目視、PC1 は未確認。
-- 文章化全体のルール（11-06 ユーザーの決定）: フォントは Noto Sans JP、階層ごとのインデント（`--ind`）。theme.scss に入れた。room では Noto Sans CJK JP で表示される（Noto Sans JP が無いための代替）。追加（11-06）: タイトルの下に半行の空き、図解・格子・表も 1 段右から始める。見本に型 T（見出し + 箇条書き。16 枚）を足し、room で目視した。実スライドは「下・右に余白を作らず、四方が等分」に作る（lesson に記載）。room に Noto Sans JP（variable TTF、`~/.local/share/fonts`）を入れた。`font-family` を Noto Sans JP だけにした render と Noto Sans CJK JP だけの render で画像が一致しないので、Noto Sans JP で描画されている（字形の差はごく小さい）。H（3行 × 2列）も room で崩れなし。
-- 実スライドは PC1 で作る（題材は PC1 側にある。11-06 ユーザーの発言）。PC1 は、このリポジトリを pull して `records/` の部品を使う。
-- 細部（フォント、手順書）は、ユーザーが見始めたら直す（11-06 決定）。
+- 基本形を確定（11-06 ユーザーの決定）: 見本（`records/` の 3 ファイル。コミット `44799e1`）をそのまま基本形にする。フォントは Noto Sans JP、基準の文字サイズは 28px（`$presentation-font-size-root`。Quarto の `-main` は効かない）、インデントは `--ind: 40px` の固定値（見出し 1 段、箇条書き 2.5 段、入れ子は 1 段ずつ）、タイトルの下は 0.8em の空き。H・I・J の高さ `--h` は 560px（px。em は文字サイズに引きずられる）。H・J の行は 3 行までを見本にした（J の p17 は 4 行のまま。構造化は 3 要素以上で再分割するので、実用の上限は 3 程度）。見本に型 T の「文章・文字列・箇条書き」を足した（`gen_layouts.py` の `"p"`）。Windows（Edge、1280×720）で目視済み。
+- 保留: 型 A〜G は下 4 割が空く（H・I・J は `--h` で埋めた。ユーザーは「一旦これでよい」）。- 実スライドは PC1 で作る（題材は PC1 側にある。11-06 ユーザーの発言）。PC1 は、このリポジトリを pull して `records/` の部品を使う。
+- 細部は、ユーザーが見始めたら直す（11-06 決定）。フォントと文字サイズは 11-06 に確定した。
 
 ## Next Actions
 
