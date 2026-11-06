@@ -172,8 +172,20 @@ def table_slide(s):
     return raw("".join(out))
 
 
+def text_slide(s):
+    """T: 見出し + 箇条書き（入れ子はリストの中のリスト）。インデントの確認用。"""
+    def bullets(items, depth=0):
+        out = ""
+        for x in items:
+            out += ("  " * depth + "- " + x + "\n") if isinstance(x, str) else bullets(x, depth + 1)
+        return out
+    return "".join(f"### {b['h']}\n\n{bullets(b['items'])}\n" for b in s["blocks"])
+
+
 def slide(s):
     t = s["type"]
+    if t == "T":
+        return f"## {s['title']}\n\n{text_slide(s)}"
     body = {"H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t) or (lambda: box_slide(s))
     return f"## {s['title']}\n\n{body()}\n"
 
@@ -190,6 +202,9 @@ def _c(tone, icon, tab, fig=None, text="文字は短く\n2〜3行"):
 SAMPLE = {
     "title": "レイアウト見本",
     "slides": [
+        {"title": "T 見出しと箇条書き（インデント確認）", "type": "T", "blocks": [
+            {"h": "見出し 1", "items": ["箇条書きは 1 行で言い切る", ["入れ子は 1 段ずつ深くする"]]},
+            {"h": "見出し 2", "items": ["項目 A", "項目 B"]}]},
         {"title": "A 左右二分割（比較）", "type": "A", "cells": [_c("red", "ban", "左"), _c("green", "check", "右")]},
         {"title": "B 上は左右・下は全幅", "type": "B", "cells": [
             _c("gray", "pc", "左"), _c("green", "room", "右"),

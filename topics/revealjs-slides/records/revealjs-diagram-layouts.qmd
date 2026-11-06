@@ -12,6 +12,19 @@ format:
     include-before-body: revealjs-diagram-icons.html
 ---
 
+## T 見出しと箇条書き（インデント確認）
+
+### 見出し 1
+
+- 箇条書きは 1 行で言い切る
+  - 入れ子は 1 段ずつ深くする
+
+### 見出し 2
+
+- 項目 A
+- 項目 B
+
+
 ## A 左右二分割（比較）
 
 ::: {.lay .lay-a}

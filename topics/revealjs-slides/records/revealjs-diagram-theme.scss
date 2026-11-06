@@ -1,6 +1,22 @@
 /*-- scss:defaults --*/
+/* 文章化全体のルール（2026-11-06 ユーザーの決定）: フォントは Noto Sans JP、インデントは階層ごとに 1 段（--ind） */
+$font-family-sans-serif: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Meiryo, sans-serif;
+$presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Meiryo, sans-serif;
 
 /*-- scss:rules --*/
+
+/* インデント: スライドタイトル(h2) → 見出し(h3) → 箇条書き(ul/ol) → 入れ子。1 段 = 2 字ぶん(--ind: 1em) */
+.reveal { --ind: 1em; }
+.reveal .slides section h3, .reveal .slides section h4 { margin-left: var(--ind); text-align: left; }
+.reveal .slides section > p { margin-left: var(--ind); text-align: left; }
+.reveal .slides section > ul, .reveal .slides section > ol { margin-left: calc(var(--ind) * 2); text-align: left; }
+/* タイトル(h2)と次の行の間は半行ぶん空ける */
+.reveal .slides section h2 { margin-bottom: 0.5em; }
+/* レイアウト（図解・格子・表）も、本文と同じ 1 段ぶん右から始める。.mx と .tb は font-size 0.72em なので em を割り戻す */
+.lay { margin-left: var(--ind); }
+.mx { margin-left: calc(var(--ind) / 0.72); }
+.reveal .tb { margin-left: calc(var(--ind) / 0.72); width: calc(100% - var(--ind) / 0.72); }
+.reveal .slides section ul ul, .reveal .slides section ol ol, .reveal .slides section ul ol, .reveal .slides section ol ul { margin-left: var(--ind); }
 
 /* 図解レイアウト: 箱の中は左に図・右に文字。A=左右二分割、B=上が左右(間に矢印)・下が全幅 */
 .lay { display: grid; gap: 0.5em; margin-top: 0.3em; }
