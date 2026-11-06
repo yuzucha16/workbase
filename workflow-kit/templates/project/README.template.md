@@ -11,7 +11,7 @@ updated: <YYYY-MM-DD>
 
 <目的を1〜2文。所属 Area: [[areas/<Area 名>/README|<Area 名>]]>
 
-計画: `ai/work/plan/`（`plan` の出力。先頭の `status: 仮 | 正式` と `approved:` で承認を示す。無ければ未作成）。完了条件・範囲外・未決は、ここ（6R）に書く。README には写さない
+計画: [[projects/<Project 名>/ai/work/plan/6r|6R]]（`ai/work/plan/`。`plan` の出力。先頭の `status: 仮 | 正式` と `approved:` で承認を示す。6R が未作成の間は、リンクは未解決（Obsidian で薄く表示される。`plan` で作られると繋がる）。リンクは vault（works）の根からのパスで書く。`6r.md` は Project ごとにあり、短い名前だと別の Project に解決されるため）。完了条件・範囲外・未決は、ここ（6R）に書く。README には写さない
 
 開発リポジトリ（`dev` で git のコードを扱うとき）: 上の frontmatter に `repos:`（url、where、branch。書式は `workflow-kit/project-structure.md`）を足す。無ければこの行を消す。
 

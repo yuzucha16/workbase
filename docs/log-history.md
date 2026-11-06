@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06（plan を本採用にし、README ひな形から 6R へリンク）
+- ユーザー: PC1 で `plan` を実務で3回使い終えたので、試験運用を閉じて本採用にする。README から `work/plan/` の 6R へ、未作成の状態でもリンクを張りたい。
+- 変更: `workflow-kit/templates/project/README.template.md` の「計画」行を vault 根からのパスの wikilink に（既存 Project の README は直さない。ユーザー）。`methods.md`、`exmem/lessons/planning-method.md` の「試験運用」を本採用に。`docs/due.md` の 11-29 の行（plan の試験運用の確認）を削除。`docs/decisions.md` に同日の項目。
+- Obsidian 上の表示（未解決リンクが薄く出ること）は未確認。
+
 ### 2026-11-06（旧 logbook-design の NA 1・NA 5 を閉じる）
 - NA 5（追記の型 (b)＝OQ・NA を本体に 1 つ、が守られているか）: 10-30 以降の `exmem/lessons/` の追記コミットを調べ、OQ・NA の節を新しく足したものは無かった（`git-subdirectory-split` の `## Next Actions` は 10-29 で決定より前）。守られていたので取り下げた。
 - NA 1（実機での畳み候補。room の確認 4 項、obsidian-vault-backup の NA 2 項）: ユーザー「どちらも畳んでコミット。終わっています」。確認は済みとして畳んだ。

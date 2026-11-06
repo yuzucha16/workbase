@@ -15,7 +15,7 @@ aliases:
   - plan
 triggers: [計画のやり方, 成果物, ゴール, 要求, スケジュール, 目的]
 created: 2026-10-20
-updated: 2026-10-28
+updated: 2026-11-06
 sources:
   - Claude Code conversation "計画のやり方の試行のフィードバックと反映" (2026-10-21)
   - 芝本秀徳『誰も教えてくれない計画スキル』の型（ユーザーが図表と本文の一部をキャプチャで共有。本全体は未読）
@@ -26,7 +26,7 @@ sources:
 
 ## Purpose
 
-ユーザーと AI が、作業の前に目的とゴールを共有する型。手段の目的化を防ぐ（憲章の役目）。`methods.md` の「計画」の区分（計画1）の背景と注意点。手順と欄の定義は `workflow-kit/plan-fields.md`、応答の形は [[planning-method-output]] が、依頼の言葉（「計画」など）で受ける（`brief` の引数は 2026-10-28 に廃止）。作り方は [[method-creation]] に従った。試験運用で、**Must だけ守る**。
+ユーザーと AI が、作業の前に目的とゴールを共有する型。手段の目的化を防ぐ（憲章の役目）。`methods.md` の「計画」の区分（計画1）の背景と注意点。手順と欄の定義は `workflow-kit/plan-fields.md`、応答の形は [[planning-method-output]] が、依頼の言葉（「計画」など）で受ける（`brief` の引数は 2026-10-28 に廃止）。作り方は [[method-creation]] に従った。本採用（2026-11-06）。**Must だけ守る**。
 
 ## Principles
 
@@ -79,7 +79,8 @@ sources:
 
 ## Next Actions
 
-- （済 2026-10-25）品質チェック3回。2・3回目（2週間・4週間）は PC1 で実施したが、結果は記録なし。試験運用の継続か正式化かは root の `docs/log.md` の Open Questions で判断する。
+- （済 2026-10-25）品質チェック3回。2・3回目（2週間・4週間）は PC1 で実施したが、結果は記録なし。
+- （済 2026-11-06）`plan` は PC1 の実務で3回使い、試験運用を終えて本採用にした（ユーザー。`docs/decisions.md` の同日）。
 
 ## Related
 

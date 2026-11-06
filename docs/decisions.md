@@ -4,6 +4,11 @@
 
 ## Decisions
 
+### 【汎用】`plan` を本採用にする。README から 6R へ vault 根のパスでリンクする（2026-11-06）
+- 根拠: ユーザー「plan は実務で3回使うまで試験運用を pc1 でやりました」「試験運用は終わり、本採用にします」。2026-10-25 の「3回実施まで試験運用」の条件を満たした。
+- 決めたこと: ① `plan` の試験運用を閉じる。② Project の README ひな形の「計画」行を `[[projects/<Project 名>/ai/work/plan/6r|6R]]` にした。6R 未作成の間は未解決リンクになる（Obsidian で薄く表示。`plan` で 6R ができると繋がる）。`6r.md` は Project ごとにあるため、短い名前では別の Project に解決される。vault（works）の根からのパスで書く。
+- 反映先: `workflow-kit/templates/project/README.template.md`、`workflow-kit/methods.md`、`docs/due.md`（11-29 の行を削除）。
+
 ### 【汎用】`umount` が残るのは Zed のエージェントが握るため。止めず、案内だけ出す（2026-11-06）
 - 根拠: ユーザー「bにします」「zedがプロセスを離す手順がわからないので再起動するしかないのかも。不便だ。仕方ない」。写真のつかむプロセスは全部 cwd（`claude-agent-acp` の連鎖）で、Zed 終了後に `umount` が通った。
 - 決めたこと: `room` はプロセスを止めない（作業中のスレッドを壊さないため）。`umount` が残ったら「Zed を終了（再起動）してから再実行」と案内する。却下案: TERM/KILL で止める（案 a。再発が続くなら `[y/N]` 付きで再検討）。
