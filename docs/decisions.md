@@ -41,6 +41,7 @@
 - 却下案: `map/` と `mask.toml` の改名（既存 Project の manifest と運用に影響し、見返りが小さい）。
 - 反映先: `workflow-kit/room/{room.py,README.md,cleankit.py,tests/}`、`workflow-kit/{hooks.md,room-context.md,project-structure.md}` とテンプレート 2 件、`guides/howto/{ai-room-setup,ai-room-setup-script,ai-room-lifecycle,ooxml-clean}.md`、`guides/explain/{ai-room-why,ooxml-residue,cross-area-shared-knowledge}.md`、`guides/guides-index.md`、`topics/ooxml-clean/docs/due.md`。
 - 履歴として残した古い記述: `exmem/lessons/` の一部、`docs/log-history.md`、`docs/records/` は書き換えていない。
+- 第三者確認の後（2026-11-06）: 別のセッションの目で取りこぼしを洗い、対象外だった文書も直した（下の `log-history.md` の同日の項）。`mask.toml` の改名は、ユーザーが「このまま」と再確認した（候補は `terms.toml`。見送り）。`masked_from`（manifest のキー名）も残す。
 
 ### 【汎用】論点出しの型 v4 を本採用にし、合言葉 `frame` を足す（2026-11-06）
 - 根拠: ユーザー「pc1で複数回使いました。これは本採用にします」「プロンプトをコピペしているのは面倒」「brief/stock と同じように英単語版もほしい」。

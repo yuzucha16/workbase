@@ -351,5 +351,4 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 - workflow-kit の手順書（`start` `wrap`。`open` `close` は 2026-10-24 までに `room` のコマンドに移った）が、`docs/` を Project 直下と想定している。`ai/docs/` への読み替えと、部屋の中の AI が行う部分・人が行う部分の分担を、手順書に書く
 - workflow-kit の works の雛形（`gitignore.template`、`AGENTS.md`）への反映（2.1 の `.gitignore`、AI は部屋で使うこと、Zed は WSL リモートで使うこと、AI が書くスクリプトに標準ライブラリと同名を付けないこと）
 - 部屋の会話履歴の片付け（reap）の手順と、期限の設定の置き場
-- 対応表の保護（works が漏れた場合の対策）は、運用しながら決める
 - ネットワークの絞り込みは、未検証。Bedrock 経由の接続は、Zed の Agent で通した（2026-10-19、PC1）。手順は [[ai-room-setup-script]] の 2.1。`aws-key` の実機確認は未了

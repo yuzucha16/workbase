@@ -248,7 +248,7 @@
 1. `verify-result.json` が全部 OK で、そのハッシュが今の成果物と一致しなければ、止まる（古い版を出さない）。
 2. 版を振り、`verify-result.json` を添えて、README の状況表に記録する。版は `YYYY-MM-DD.N`（日付と、その日の連番。N は 1 から。kit が使っていた版と同じ書式）。束ねる先（Project の成果物の置き場）は未決。
 
-Project の成果物は、`ai/out/`（マスクした Project は復元後の `_noai/final/`）の1本（ユーザー、2026-10-25。人の成果物を別の置き場から混ぜる案は取り下げ）。人が `ai/out/` を直接直すのは、マスクに関係しない箇所だけ。`release` の入力はこの成果物で、束ね先は未決。
+Project の成果物は、`ai/out/` の1本（ユーザー、2026-10-25。人の成果物を別の置き場から混ぜる案は取り下げ。語のマスク・復元と `_noai/final/` は 2026-11-06 に廃止）。`release` の入力はこの成果物で、束ね先は未決。
 
 型（`verify.py` は上の束ねる役の型。`release.py` は下。部屋の Linux の Python 3.13 と、`uv` の代わりの偽物で、非対話（目視が未確認になり NG）、対話（y で OK）、`release` の各 STOP と版の連番を確認した。**Windows の Python 3.13 と uv では未確認**）:
 
@@ -413,7 +413,7 @@ Project の成果物は、`ai/out/`（マスクした Project は復元後の `_
 
 1. **人が失敗を伝えたら**（「verify が失敗した」など）、部屋の AI はまず `ai/work/<名前>-result.json`（`verify-result.json` か `run-result.json`）を読む。`env` と `failure`（型と `ファイル名:行`）から当たりを付ける。それで足りないときだけ、`--log`（ps1 は `-Log`）での再実行を頼む。
 2. **直す前に台帳を引く**: Area の台帳は、`start` が置く `ctx/area/knowledge/windows-run-causes.md`（読み取り専用の写し）にある。あれば読む。一般の原因は `python3 ~/shared/workflow-kit/tools/find_knowledge.py <失敗の型や語>` で `exmem/lessons/` を探す。
-3. **原因が分かったら台帳に書く**: `ai/out/stock/windows-run-causes.md`（`scope: area`、`dest: knowledge`、title は `Windows 実行の原因の台帳`）に書く。`ctx/area/` に前の版があれば、それを写して足す（`stock --dst area` が、前回運んだ版から人が変えていなければ、Area の同じ名前のファイルを更新する）。形は `room-context.md` の `stock` の `area`（`kind: lesson`、`stock-hook.md` の7見出し）。原因は Gotchas に、3行セットで1件ずつ書く。`状況:` の行の末尾に `（回数 N、最終 YYYY-MM-DD）` を付け、同じ原因がまた出たら新しく足さずに回数を増やす。マスクのまま書き、業務の値は書かない。人が `room stock <名> --dst area` で Area に運ぶ。
+3. **原因が分かったら台帳に書く**: `ai/out/stock/windows-run-causes.md`（`scope: area`、`dest: knowledge`、title は `Windows 実行の原因の台帳`）に書く。`ctx/area/` に前の版があれば、それを写して足す（`stock --dst area` が、前回運んだ版から人が変えていなければ、Area の同じ名前のファイルを更新する）。形は `room-context.md` の `stock` の `area`（`kind: lesson`、`stock-hook.md` の7見出し）。原因は Gotchas に、3行セットで1件ずつ書く。`状況:` の行の末尾に `（回数 N、最終 YYYY-MM-DD）` を付け、同じ原因がまた出たら新しく足さずに回数を増やす。実名なしで書き、業務の値は書かない。人が `room stock <名> --dst area` で Area に運ぶ。
 4. **一般の原因**（実名や社内の事情を剥がしても成り立つ。例: cp932 の bat、`PYTHONUTF8` が無い）は、`scope: public` の `stock` の下書き（`ai/out/stock/`）にも書く。人が `room stock` で `exmem/inbox/` に運び、`exmem/lessons/` に統合する。
 5. **3 回で点検に昇格する**: 同じ原因の回数が 3 になったら、`check_py.py`（ps1 なら `check-ps1.ps1`）の規則の候補として、`public` の下書きの Open Questions に「提案」と書く。規則を足すかは workbase 側で決める。
 
@@ -476,7 +476,7 @@ Project の成果物は、`ai/out/`（マスクした Project は復元後の `_
   exit $exitCode
   ```
 
-  **`-Log` のログは `ai/` の中に出るので、部屋の AI から読める**（マスクを通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（マスクして復元する Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/user/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
+  **`-Log` のログは `ai/` の中に出るので、部屋の AI から読める**（掃除を通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（原本を `_noai/raw/` に置く Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/user/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
 - **人が叩く名前（`run` / `verify` / `release`）は ps1 でも同じ**。`verify.ps1` と `release.ps1` の型を下に置く（2026-10-25）。手順・結果ファイル・止まる条件は、上の「人が叩くスクリプトの名前」と同じ。`verify-result.json` の `env` は Python 版と項目が違う（`pwsh`、`culture`、`ansi_codepage`〔日本語の Windows なら 932〕、`console_encoding`、`output_encoding`）。成果物のハッシュは Python 版と同じ値になる（隠しファイルも含める）ので、`verify.ps1` の結果を `release.py` が読んでもよい。`run.ps1` は、`verify.ps1` から目視とハッシュを除き、結果ファイルの名前を `run-result.json`、`-Log` の既定の置き場を Project の `_noai/user/` に変えて作る。部屋の Linux の pwsh 7.4 で、非対話（目視が未確認になり NG）、対話の y と n、前提が無いとき、工程の失敗と `-Log`、Project の外、`release` の各 STOP と版の連番、Python 版とのハッシュの一致を確認した。対話の日本語のひとことは、部屋の pwsh（globalization が invariant）では文字化けした（Python 版は化けない）。**Windows の pwsh では未確認**（日本語の入力を含めて PC2 で 1 回確かめる）。
 
   `verify.ps1`（上の束ねる ps1 の型に、プリフライト・目視・結果ファイルを足したもの。`release.ps1` から関数だけを読み込めるよう、関数の後で止まる）:

@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06（`mask` / `restore` 削除の第三者確認 NA 1 を消化して閉じた）
+- 別のセッションの目で確認（`review 消化` NA 1）。リンク切れは無し（削除した 4 ファイルを指す現行のリンクなし。履歴の言及だけ残る）。room のテスト 210 件 OK（3 スキップ）。取りこぼしは、due の対象リストの中（`ai-room-why.md`、`cross-area-shared-knowledge.md`、`room-context.md` の「internal は語が空だと止まる」はコードと不一致）と、リストの外（`ai-room-data-layout-explain.md`、`ai-room-convert-tools-explain.md`、`methods.md`、`script-guide.md`、`ai-room-setup-manual.md`）にあった。
+- ユーザーの指示で全部直した。`ai-room-data-layout-explain.md` と `cross-area-shared-knowledge.md` は現行の姿に書き直し、`ai-room-why.md` は図・節・表を直して廃止前の検証は「経緯」と明記。`ooxml-residue.md`、`ai-room-setup.md`（「対応表の保護」を削除）、`project-structure.md`、`plan-fields.md`、`dev-deliverable-guide.md` の「マスク」表現も直した（「実名を伏せた」「掃除済み」に）。
+- `mask.toml` は改名しない（ユーザー）。候補は `terms.toml`、`check-terms.toml`、`sensitive-terms.toml`。`masked_from` も残す。due.md の 11-13 の行と NA を閉じた。実機の通し（`clean` → `close`）は未確認のまま、各文書の要確認に書いてある。探索は subagent に任せていない。
+
 ### 2026-11-06（log.md を 6.7KB → 3.3KB に畳んだ）
 - ユーザーの依頼（予算 4KB 超過）。案 B で、完了済みの room 項目を `decisions.md` の【room】の項と `room/README.md` へのポインタに畳み、未確認の旗だけ残した。第三者確認の対象一覧は `due.md` の 11-13 の行へ移した（NA には 1 行だけ残す）。
 - 畳んだ状態の要点（原文の数値）: 閉じた room の確認は 11-03〜11-06。11-02 の room 変更（boundary の 2 値、start の自動マスク・復元の廃止、stock --dst）の既存 works への適用は 11-03 に ee が実機で通した（既存の Area は internal の 1 つ）。`room mv`（旧 `rename-area`。11-02 作り直し。`wsl --export`/`--import`、履歴は追わない）は実機確認済み。`room open --from`（11-04 実装。11-05: 写すものが無くても止めず来歴だけ付けて開く。11-06 PC1 で確認済み）。close が Area へ渡す成果物は `ai/out/<Project 名>/`（11-05。旧 `deliverable/` も可。11-06 確認済み）。Area は log・decisions・inbox を持たない（11-05）。`room trace --area`・`room close --area` は 11-06 に確認済み。11-04 PC1 で `room restore` / `close` の成果物の書き出しと計画の承認の検知（`status: 正式` → 変更で `仮` に戻る）を確認済み。

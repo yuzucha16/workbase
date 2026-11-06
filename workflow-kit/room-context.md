@@ -51,7 +51,7 @@ Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入
 - `base_commit: <~/shared/ROOM.md の基準コミット>`
 - `observed: YYYY-MM-DD`（観測した日。並べる順は到着順でなく、この日付）
 
-**`area`（external・internal 共通。internal も 2026-11-02 に同じ道にした）**: `ai/out/stock/YYYY-MM-DD-<topic>.md` に、frontmatter `scope: area` を付けて書く（`base_commit` と `observed` は付けない）。行き先の区分は `dest: knowledge`（知識。既定）か `dest: docs`（決定・経緯）。実名を含めずに書く。人が `room stock <名> --dst area` で、`cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）を通して `areas/<Area>/ai/<dest>/` に運ぶ（internal は `mask.toml` の語が空だと止まる。人が通した業務データが部屋にあるため）。点検に当たると何も運ばれないので、当たった形を書き換える。次の Project 以降は、`start` が `areas/<Area>/ai/{knowledge,docs}/` の写しを `ctx/area/` に読み取り専用で置く。**過去の決定や経緯から今の判断をするときは、先に `ctx/area/` を読む**。
+**`area`（external・internal 共通。internal も 2026-11-02 に同じ道にした）**: `ai/out/stock/YYYY-MM-DD-<topic>.md` に、frontmatter `scope: area` を付けて書く（`base_commit` と `observed` は付けない）。行き先の区分は `dest: knowledge`（知識。既定）か `dest: docs`（決定・経緯）。実名を含めずに書く。人が `room stock <名> --dst area` で、`cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）を通して `areas/<Area>/ai/<dest>/` に運ぶ（`mask.toml` の語は任意。無ければ形の検出だけ。2026-11-03 に必須を外した）。点検に当たると何も運ばれないので、当たった形を書き換える。次の Project 以降は、`start` が `areas/<Area>/ai/{knowledge,docs}/` の写しを `ctx/area/` に読み取り専用で置く。**過去の決定や経緯から今の判断をするときは、先に `ctx/area/` を読む**。
 
 `area` は internal も上の道（`ai/out/stock/` → `--dst area` → `ctx/area/`）を使う（2026-11-03 に `restore` / `pull` の知識用の経路を外し、2026-11-06 に `restore` を削除した）。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
 
