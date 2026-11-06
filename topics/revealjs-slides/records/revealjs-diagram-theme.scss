@@ -94,6 +94,18 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .reveal .tb th { border-bottom: 2px solid #1a1a1a !important; }
 .reveal .tb td { border-bottom: 1px solid #b3b3b3 !important; }
 
+/* C 目次: 罫線だけの番号付き一覧。章の間は灰の細線、現在の章だけ薄青の地・太字。小項目は章名の下に 1 段 */
+.reveal .slides section ol.toc { list-style: none; width: 100%; box-sizing: border-box; margin: 0.4em 0 0; padding: 0; font-size: 0.85em; line-height: 1.5; text-align: left; color: #1a1a1a; }
+.toc > li { display: grid; grid-template-columns: 2.2em 12em 1fr; column-gap: 0.4em; align-items: baseline; margin: 0; padding: 0.55em 0.6em; border-bottom: 1px solid #b3b3b3; }
+.toc > li:first-child { border-top: 2px solid #1a1a1a; }
+.toc .n { font-weight: 700; color: #0017c1; font-variant-numeric: tabular-nums; }
+.toc .t { font-weight: 700; }
+.toc .d { color: #4d4d4d; font-size: 0.85em; }
+.toc .sub { grid-column: 2 / 4; margin: 0.2em 0 0; padding-left: 1.1em; font-size: 0.85em; color: #4d4d4d; }
+.toc .sub li { margin: 0.05em 0; }
+.toc > li.cur { background: #e8f1fe; }
+.toc > li.cur .t { color: #00118f; }
+
 /* まとめ・総評（表・図の上 lead／下 notes）。本文と同じ 1 段ぶん右から、箇条書き */
 .sum { margin-left: var(--ind); margin-top: 1.4em; font-size: 0.8em; line-height: 1.5; text-align: left; color: #1a1a1a; }
 .sum.lead { margin-top: 0; margin-bottom: 0.6em; color: #4d4d4d; }

@@ -12,6 +12,7 @@ revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所
 
 型:
   箱の型  A 左右 / B 上左右+下全幅 / D 左一本+右2 / E 1ブロック / F 2x2 / G 上全幅+下左右
+  C 目次（番号 + 章名 + ひとこと + 小項目。current で表示中の章を強調）
   H 行ラベル x 列（行・列は文言の数で決まる）
   I 工程 x 行（シェブロンの列見出し。行ラベルは任意）
   J 表（背景なし・罫線だけの表。emphasize で強調列、rowhead で先頭列を太字）
@@ -206,6 +207,22 @@ def text_slide(s):
     return f"::: {{.tside}}\n::: {{.tmain}}\n{NOSEC}{main}:::\n::: {{.tright}}\n{right}:::\n:::\n"
 
 
+def toc_slide(s):
+    """C: 目次。items は文字列か {"t": 章名, "d": ひとこと(任意), "sub": [小項目](任意)}。
+    current（1 始まり）を指すと、その章だけ薄青の地・太字（章の区切りで再掲する目次用）。
+    DADS の目次は web ページ内ナビ（点線の箱 + 入れ子の箇条書き）なので、スライドでは罫線だけの番号付き一覧に置き換えた。"""
+    cur = s.get("current")
+    out = ['<ol class="toc">']
+    for n, it in enumerate(s["items"], 1):
+        it = {"t": it} if isinstance(it, str) else it
+        sub = "".join(f"<li>{esc(x)}</li>" for x in it.get("sub", []))
+        out.append(f'<li{" class=cur" if n == cur else ""}><span class="n">{n}</span><span class="t">{esc(it["t"])}</span>'
+                   + (f'<span class="d">{esc(it["d"])}</span>' if it.get("d") else "")
+                   + (f'<ul class="sub">{sub}</ul>' if sub else "") + "</li>")
+    out.append("</ol>")
+    return raw("".join(out))
+
+
 def summary(v, cls):
     """lead（図表の上のひとこと）/ notes（下のまとめ・総評）。文字列は 1 段落、リストは箇条書き。"""
     if not v:
@@ -218,7 +235,7 @@ def body(s):
     t = s["type"]
     if t == "T":
         return text_slide(s)
-    return {"H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t, lambda: box_slide(s))()
+    return {"C": lambda: toc_slide(s), "H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t, lambda: box_slide(s))()
 
 
 def slide(s):
@@ -249,6 +266,13 @@ SAMPLE = {
         {"title": "T 見出しと箇条書き（インデント確認）", "type": "T", "blocks": [
             {"h": "見出し 1", "items": ["箇条書きは 1 行で言い切る", ["入れ子は 1 段ずつ深くする"]]},
             {"h": "見出し 2", "items": ["項目 A", "項目 B"]}]},
+        {"title": "目次", "type": "C", "items": [
+            {"t": "背景と目的", "d": "なぜ今やるのか"},
+            {"t": "現状の整理", "d": "数字で見る", "sub": ["指標 A", "指標 B"]},
+            {"t": "進め方", "d": "3 つの工程"},
+            "まとめと次の一手"]},
+        {"title": "目次（2 章を表示中）", "type": "C", "current": 2, "items": [
+            {"t": "背景と目的"}, {"t": "現状の整理", "sub": ["指標 A", "指標 B"]}, {"t": "進め方"}, {"t": "まとめと次の一手"}]},
         {"title": "T 右にコード（サンプル）", "type": "T", "blocks": [{"h": "手順", "items": ["設定を置く", "起動する"]}], "side": {"lang": "bash", "code": "room init Area --resume\nfc-list | grep 'Noto Sans JP,'"}},
         {"title": "組み合わせ 表 + 箇条書き（サンプル）", "type": "split", "cols": "1.4fr 1fr",
          "lead": "表と箇条書きを左右に並べる例",

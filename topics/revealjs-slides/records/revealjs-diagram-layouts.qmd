@@ -25,6 +25,77 @@ format:
 - 項目 B
 
 
+## 目次
+
+```{=html}
+<ol class="toc"><li><span class="n">1</span><span class="t">背景と目的</span><span class="d">なぜ今やるのか</span></li><li><span class="n">2</span><span class="t">現状の整理</span><span class="d">数字で見る</span><ul class="sub"><li>指標 A</li><li>指標 B</li></ul></li><li><span class="n">3</span><span class="t">進め方</span><span class="d">3 つの工程</span></li><li><span class="n">4</span><span class="t">まとめと次の一手</span></li></ol>
+```
+
+
+
+## 目次（2 章を表示中）
+
+```{=html}
+<ol class="toc"><li><span class="n">1</span><span class="t">背景と目的</span></li><li class=cur><span class="n">2</span><span class="t">現状の整理</span><ul class="sub"><li>指標 A</li><li>指標 B</li></ul></li><li><span class="n">3</span><span class="t">進め方</span></li><li><span class="n">4</span><span class="t">まとめと次の一手</span></li></ol>
+```
+
+
+
+## T 右にコード（サンプル）
+
+::: {.tside}
+::: {.tmain}
+```{=html}
+<span hidden></span>
+```
+### 手順
+
+- 設定を置く
+- 起動する
+
+:::
+::: {.tright}
+```{=html}
+<pre class="plain"><code>room init Area --resume
+fc-list | grep 'Noto Sans JP,'</code></pre>
+```
+:::
+:::
+
+## 組み合わせ 表 + 箇条書き（サンプル）
+
+```{=html}
+<div class="sum lead">表と箇条書きを左右に並べる例</div>
+```
+::: {.split style="--cols:1.4fr 1fr"}
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+```{=html}
+<table class="tb"><thead><tr><th class="l">項目</th><th class="r">現在</th><th class="r">目標</th></tr></thead><tbody><tr><td class="l">指標 A</td><td class="r">4,000</td><td class="r">4,400</td></tr><tr><td class="l">指標 B</td><td class="r">3,200</td><td class="r">3,500</td></tr></tbody></table>
+```
+
+:::
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+### ポイント
+
+- A は目標まで 10%
+  - B は季節要因を除く
+- 確認は月 1 回
+
+
+:::
+:::
+
+```{=html}
+<div class="sum "><ul><li>まとめは下に箇条書きで置ける</li></ul></div>
+```
+
+
 ## T 文章・文字列・箇条書き（サンプル）
 
 ### はじめに
@@ -38,7 +109,6 @@ format:
 
 - 最初に目的を 1 文で決める
   - 背景は短く、数字があれば添える
-    - 3 段目の例: 補足は最小限にする
 - 次に作業を 3 つ以内に分ける
 - 最後に確認する項目を並べる
 
