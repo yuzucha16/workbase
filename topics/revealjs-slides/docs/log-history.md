@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06 アイコン素材の出典の 1 行を、スライドごとに自動で入れた（NA を閉じた）
+- ユーザーの指示: 「デジタル庁と lucide の 2 件をお願いします。layout.html にサンプルを出してください」→ 確認後「あってます。正しく記載されていました／良いです／重なりはないです。これで本件 close」。
+- 反映: `records/gen_layouts.py` に `credit_div`（本文の `#i-<id>` から素材を判定。自作 9 種は出さない）、`records/revealjs-diagram-theme.scss` に `.src`（左下、14px）、組み込みの見本に「アイコン出典の見本」を追加。`revealjs-diagram-layouts.qmd`・`.html` を作り直した。文言: デジタル庁は「…を元に、色を変更して使用」+ URL、Lucide は「Lucide（ISC License）」+ URL。「末尾」はスライドごとの下（左下）と解釈し、ユーザーが確認した。
+- NA と `due.md` の行を閉じた。
 ### 2026-11-06 Devicon の利用をやめ、ストックを削除した（組み込みの NA を omit）
 - ユーザーの指示: 「組み込みは omit。devicon 自体も利用をやめるので、ストックのアイコンファイルを削除して。理由はアイコンが固有すぎて使うイメージが湧かないことと、ライセンスの縛り（提携に関する記載）が面倒なこと」。
 - 反映: `git rm` で `records/build_devicon_icons.py`・`devicon-LICENSE.txt`・`revealjs-diagram-icons-devicon.html`・`…-devicon-preview.html` を削除（素材は MIT で、取得元から再取得できる）。NA（組み込み）と `due.md` の行を閉じ、出典の自動表記の NA から Devicon を外した。Open Questions の Devicon の項も削除。ecords/build_devicon_icons.py・devicon-LICENSE.txt・evealjs-diagram-icons-devicon.html・…-devicon-preview.html を削除（素材は MIT で、取得元から再取得できる）。NA（組み込み）と due.md の行を閉じ、出典の自動表記の NA から Devicon を外した。Open Questions の Devicon の項も削除。

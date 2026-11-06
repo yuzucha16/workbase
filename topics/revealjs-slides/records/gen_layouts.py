@@ -103,6 +103,24 @@ def layout_id(s):
     return label
 
 
+# ---- アイコン素材の出典（スライドごとに、使った素材の 1 行を下に出す。自作は出さない） ----
+OWN_ICONS = {"folder", "actor", "ban", "check", "pc", "room", "shield", "eyeoff", "lock"}  # revealjs-diagram-icons.html（自作）
+CREDITS = {
+    "dads": "アイコン: 「イラストレーション・アイコン素材」（デジタル庁）を元に、色を変更して使用 https://www.digital.go.jp/policies/servicedesign/designsystem/Illustration_Icons",
+    "lucide": "アイコン: Lucide（ISC License） https://lucide.dev",
+}
+
+
+def credit_div(text):
+    """本文（生成済みの qmd 断片）が参照する symbol から、素材ごとの出典行を作る。DADS → Lucide の順。"""
+    ids = set(re.findall(r'href="#i-([^"]+)"', text))
+    kinds = {("lucide" if i.startswith("lc-") else "dads") for i in ids if i not in OWN_ICONS}
+    lines_ = [CREDITS[k] for k in ("dads", "lucide") if k in kinds]
+    if not lines_:
+        return ""
+    return raw('<div class="src">' + "<br>".join(esc(x) for x in lines_) + "</div>")
+
+
 def lid_div(s, show):
     return raw(f'<div class="lid">{esc(layout_id(s))}</div>') if show else ""
 
@@ -470,6 +488,11 @@ def body(s):
 
 def slide(s, show_id=True):
     """単独の型、または "split"（"parts" の 2 つを左右に置く組み合わせ。"cols" 例 "1fr 1fr"）。lead/notes は T 以外の全型で使える。"""
+    out = _slide(s, show_id)
+    return out + credit_div(out) if s.get("credit", True) else out
+
+
+def _slide(s, show_id):
     if s["type"] == "split":
         parts = s["parts"]
         if len(parts) != 2:
@@ -572,6 +595,9 @@ SAMPLE = {
             {"style": "blue", "text": "必要な資料は申請の前にそろえておく"},
             {"style": "gray", "title": "入力例", "text": ["姓：山田", "名：太郎"]},
             {"style": "bar", "title": "補足", "text": "読まなくても手続きは進められる補足情報"}]},
+        {"title": "アイコン出典の見本（デジタル庁 + Lucide）", "type": "A", "cells": [
+            _c("dark", "search", "デジタル庁の素材", {}, "search（検索）\nauthentication（認証）"),
+            _c("blue", "lc-database", "Lucide", {}, "lc-database\nlc-folder-tree")]},
         {"title": "K ディレクトリ構造", "type": "K", "tab": "ディレクトリ構造", "tree": """project/
   src/
     components/

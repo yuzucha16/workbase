@@ -196,3 +196,6 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .tr .rw.hl { background: #e8f1fe; }
 .tr .nt { margin-left: 1.2em; font-size: 0.82em; font-weight: 400; color: #4d4d4d; }
 .tree-box .cap { margin-top: 0.6em; padding-top: 0.5em; border-top: 1px solid #949494; font-size: 0.55em; line-height: 1.5; color: #4d4d4d; text-align: left; }
+
+/* アイコン素材の出典（gen_layouts.py が使った素材ごとに 1 行。スライドの左下） */
+.reveal .slides section .src { position: absolute; left: 12px; bottom: 6px; font-size: 14px; line-height: 1.4; color: #595959; letter-spacing: 0; z-index: 5; }
