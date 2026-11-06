@@ -2,13 +2,19 @@
 
 ## Log
 
+### 2026-11-06 K を横幅 1/3〜1/4 の列に置けるようにした（NA を閉じた）
+- ユーザーの指示: 「K を、横幅 1/3〜1/4 の列に置けるように。layout.html にサンプルを出して。字間を詰めた版も比較できるように」→ 確認後「1/4 が使えます。0% が使えます。K だけ。英字列は 0% でないとスカスカ。全体は日本語が入るので 2%。補足の下に回る見た目は良い。インデントを揃えて」→「良いです」。
+- 反映: `records/revealjs-diagram-theme.scss`（split 内の K は幅 100%・`min-width` と左余白を外す、補足は `nowrap` で入らなければ名前の字の開始位置にそろえて下の行へ、K の箱は字間 0、比較用クラス `tight`）、`records/gen_layouts.py`（spec の `cls`、見本に split(K+T) 1/3 と split(K+L) 1/4 を標準・詰めで 4 枚）。`revealjs-diagram-layouts.qmd`・`.html` を作り直した。`cols` だけでは足りず（`.tree-box` の `min-width: 55%` が邪魔）、split 内の K 用の CSS を足した。
+- NA と `due.md` の行を閉じた。
 ### 2026-11-06 アイコン素材の出典の 1 行を、スライドごとに自動で入れた（NA を閉じた）
 - ユーザーの指示: 「デジタル庁と lucide の 2 件をお願いします。layout.html にサンプルを出してください」→ 確認後「あってます。正しく記載されていました／良いです／重なりはないです。これで本件 close」。
 - 反映: `records/gen_layouts.py` に `credit_div`（本文の `#i-<id>` から素材を判定。自作 9 種は出さない）、`records/revealjs-diagram-theme.scss` に `.src`（左下、14px）、組み込みの見本に「アイコン出典の見本」を追加。`revealjs-diagram-layouts.qmd`・`.html` を作り直した。文言: デジタル庁は「…を元に、色を変更して使用」+ URL、Lucide は「Lucide（ISC License）」+ URL。「末尾」はスライドごとの下（左下）と解釈し、ユーザーが確認した。
 - NA と `due.md` の行を閉じた。
 ### 2026-11-06 Devicon の利用をやめ、ストックを削除した（組み込みの NA を omit）
 - ユーザーの指示: 「組み込みは omit。devicon 自体も利用をやめるので、ストックのアイコンファイルを削除して。理由はアイコンが固有すぎて使うイメージが湧かないことと、ライセンスの縛り（提携に関する記載）が面倒なこと」。
-- 反映: `git rm` で `records/build_devicon_icons.py`・`devicon-LICENSE.txt`・`revealjs-diagram-icons-devicon.html`・`…-devicon-preview.html` を削除（素材は MIT で、取得元から再取得できる）。NA（組み込み）と `due.md` の行を閉じ、出典の自動表記の NA から Devicon を外した。Open Questions の Devicon の項も削除。ecords/build_devicon_icons.py・devicon-LICENSE.txt・evealjs-diagram-icons-devicon.html・…-devicon-preview.html を削除（素材は MIT で、取得元から再取得できる）。NA（組み込み）と due.md の行を閉じ、出典の自動表記の NA から Devicon を外した。Open Questions の Devicon の項も削除。
+- 反映: `git rm` で `records/build_devicon_icons.py`・`devicon-LICENSE.txt`・`revealjs-diagram-icons-devicon.html`・`…-devicon-preview.html` を削除（素材は MIT で、取得元から再取得できる）。NA（組み込み）と `due.md` の行を閉じ、出典の自動表記の NA から Devicon を外した。Open Questions の Devicon の項も削除。
+ecords/build_devicon_icons.py・devicon-LICENSE.txt・
+evealjs-diagram-icons-devicon.html・…-devicon-preview.html を削除（素材は MIT で、取得元から再取得できる）。NA（組み込み）と due.md の行を閉じ、出典の自動表記の NA から Devicon を外した。Open Questions の Devicon の項も削除。
 - 決定: `decisions.md` に記録。
 
 ### 2026-11-06 Excalidraw の方式 B（公式リモート MCP）を試して外した（NA1 を閉じた）

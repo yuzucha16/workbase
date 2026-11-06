@@ -182,12 +182,15 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 /* 字間: DADS は 16〜26px で 2%、28px 以上で 1%（11-06）。本文・表・箱は 2%、h2・h3 は 1%、コードと 14px の番号札は 0 */
 .reveal .slides section { letter-spacing: 0.02em; }
 .reveal .slides section pre, .reveal .slides section code, .reveal .slides section .lid { letter-spacing: 0; }
+/* 字間を詰める版（クラス tight。比較用。スライドの見出しに {.tight}。spec では "cls": "tight"） */
+.reveal .slides section.tight, .reveal .slides section.tight h2, .reveal .slides section.tight h3 { letter-spacing: 0; }
 
 /* K ディレクトリ構造: 入れ子の ul + Lucide アイコン（フォルダは青、ファイルは灰）。字は 0.7em、段は 1.4em ずつ字下げ */
 .reveal .slides section .tree-box { display: block; margin-left: var(--ind); width: fit-content; min-width: 55%; padding: 22px 28px 14px; margin-top: 1em; }
 .reveal .slides section ul.tr, .reveal .slides section ul.tr ul.tr { list-style: none; margin: 0; padding: 0; }
 .reveal .slides section ul.tr ul.tr { margin-left: 1.5em; }
 .tr li { margin: 0; padding: 0; }
+.reveal .slides section .tree-box { letter-spacing: 0; } /* K は英字中心なので字間 0（ユーザー決定 11-06）。全体は 2% のまま */
 .tr .rw { display: flex; align-items: center; gap: 0.5em; font-size: 0.7em; line-height: 1.5; padding: 0.15em 0.4em; }
 .tr .rw svg { width: 1.25em; height: 1.25em; flex: none; }
 .tr .rw.fo { font-weight: 700; color: #1a1a1a; }
@@ -196,6 +199,14 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .tr .rw.hl { background: #e8f1fe; }
 .tr .nt { margin-left: 1.2em; font-size: 0.82em; font-weight: 400; color: #4d4d4d; }
 .tree-box .cap { margin-top: 0.6em; padding-top: 0.5em; border-top: 1px solid #949494; font-size: 0.55em; line-height: 1.5; color: #4d4d4d; text-align: left; }
+
+/* K を split の細い列に置く: 幅いっぱい（min-width 55% と左余白を外す）、上端を列の先頭にそろえる */
+.reveal .slides section .split .sp .tree-box { width: 100%; min-width: 0; margin-left: 0; margin-top: 0; padding: 18px 16px 12px; }
+
+/* 細い列では、補足（nt）を字の途中で折らず、入らなければ名前の下の行にまとめて送る */
+.tr .nt { white-space: nowrap; }
+.split .sp .tr .rw { flex-wrap: wrap; }
+.split .sp .tr .nt { margin-left: 0; padding-left: 2.134em; flex-basis: 100%; margin-top: -0.2em; }
 
 /* アイコン素材の出典（gen_layouts.py が使った素材ごとに 1 行。スライドの左下） */
 .reveal .slides section .src { position: absolute; left: 12px; bottom: 6px; font-size: 14px; line-height: 1.4; color: #595959; letter-spacing: 0; z-index: 5; }

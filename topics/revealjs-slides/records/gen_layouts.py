@@ -489,6 +489,8 @@ def body(s):
 def slide(s, show_id=True):
     """単独の型、または "split"（"parts" の 2 つを左右に置く組み合わせ。"cols" 例 "1fr 1fr"）。lead/notes は T 以外の全型で使える。"""
     out = _slide(s, show_id)
+    if s.get("cls"):  # スライドにクラスを付ける（例 "tight" = 字間を詰める版）
+        out = out.replace(f"## {s['title']}\n", f"## {s['title']} {{.{s['cls']}}}\n", 1)
     return out + credit_div(out) if s.get("credit", True) else out
 
 
@@ -514,6 +516,20 @@ def build(spec, show_id=None):
 def _c(tone, icon, tab, fig=None, text="文字は短く\n2〜3行"):
     return {"tone": tone, "icon": icon, "tab": tab, "fig": fig if fig is not None else {}, "text": text}
 
+
+K_SAMPLE = """project/
+  src/
+    components/
+    App.tsx  # 画面の入口
+    index.ts
+  tests/
+  *README.md  # まず読む
+  package.json
+  .env"""
+RIGHT = {
+    "T": {"type": "T", "blocks": [{"h": "構成のポイント", "items": ["src に画面の部品をまとめる", ["components は再利用する部品"], "tests は src と同じ構造にする", "README を最初に読む"]}]},
+    "L": {"type": "L", "wide": True, "items": [{"t": "src/", "d": "画面と処理のコード。入口は App.tsx"}, {"t": "tests/", "d": "テスト。src と同じ構造にそろえる"}, {"t": "README.md", "d": "最初に読む説明書"}, {"t": ".env", "d": "環境ごとの設定（公開しない）"}]},
+}
 
 SAMPLE = {
     "title": "レイアウト見本",
@@ -607,6 +623,9 @@ SAMPLE = {
   *README.md  # まず読む
   package.json
   .env""", "caption": "フォルダ・ファイルのアイコンと名前を組み合わせて作る"},
+        *[{"title": f"K 横幅 {w} の列 + {r}（字間: {lab}）", "type": "split", "cols": cols, "cls": cls, "parts": [
+            {"type": "K", "tab": "構成", "tree": K_SAMPLE},
+            RIGHT[r]]} for w, cols, r in (("1/3", "1fr 2fr", "T"), ("1/4", "1fr 3fr", "L")) for lab, cls in (("標準 2%", ""), ("詰め 0%", "tight"))],
         {"title": "組み合わせ 手順 + 注釈", "type": "split", "cols": "1.6fr 1fr",
          "parts": [{"type": "S", "dir": "v", "current": 1, "steps": ["書く", "確かめる", "出す"]},
                    {"type": "N", "blocks": [{"style": "gray", "title": "ポイント", "text": "提出前に必ず見直す"}]}]},

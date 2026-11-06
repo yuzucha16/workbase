@@ -723,6 +723,162 @@ lc-database<br>lc-folder-tree
 <div class="src">アイコン: Lucide（ISC License） https://lucide.dev</div>
 ```
 
+## K 横幅 1/3 の列 + T（字間: 標準 2%）
+
+::: {.split style="--cols:1fr 2fr"}
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+::: {.cell .dark .tree-box}
+```{=html}
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-lc-folder-tree"/></svg>構成</div>
+```
+
+```{=html}
+<ul class="tr root"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">project/</span></div><ul class="tr"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">src/</span></div><ul class="tr"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">components/</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-code"/></svg><span class="nm">App.tsx</span><span class="nt">画面の入口</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-code"/></svg><span class="nm">index.ts</span></div></li></ul></li><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">tests/</span></div></li><li><div class="rw fi hl"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-text"/></svg><span class="nm">README.md</span><span class="nt">まず読む</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-braces"/></svg><span class="nm">package.json</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-lock"/></svg><span class="nm">.env</span></div></li></ul></li></ul>
+```
+:::
+
+:::
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+### 構成のポイント
+
+- src に画面の部品をまとめる
+  - components は再利用する部品
+- tests は src と同じ構造にする
+- README を最初に読む
+
+
+:::
+:::
+
+```{=html}
+<div class="lid">split(K+T)</div>
+```
+
+```{=html}
+<div class="src">アイコン: Lucide（ISC License） https://lucide.dev</div>
+```
+
+## K 横幅 1/3 の列 + T（字間: 詰め 0%） {.tight}
+
+::: {.split style="--cols:1fr 2fr"}
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+::: {.cell .dark .tree-box}
+```{=html}
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-lc-folder-tree"/></svg>構成</div>
+```
+
+```{=html}
+<ul class="tr root"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">project/</span></div><ul class="tr"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">src/</span></div><ul class="tr"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">components/</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-code"/></svg><span class="nm">App.tsx</span><span class="nt">画面の入口</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-code"/></svg><span class="nm">index.ts</span></div></li></ul></li><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">tests/</span></div></li><li><div class="rw fi hl"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-text"/></svg><span class="nm">README.md</span><span class="nt">まず読む</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-braces"/></svg><span class="nm">package.json</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-lock"/></svg><span class="nm">.env</span></div></li></ul></li></ul>
+```
+:::
+
+:::
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+### 構成のポイント
+
+- src に画面の部品をまとめる
+  - components は再利用する部品
+- tests は src と同じ構造にする
+- README を最初に読む
+
+
+:::
+:::
+
+```{=html}
+<div class="lid">split(K+T)</div>
+```
+
+```{=html}
+<div class="src">アイコン: Lucide（ISC License） https://lucide.dev</div>
+```
+
+## K 横幅 1/4 の列 + L（字間: 標準 2%）
+
+::: {.split style="--cols:1fr 3fr"}
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+::: {.cell .dark .tree-box}
+```{=html}
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-lc-folder-tree"/></svg>構成</div>
+```
+
+```{=html}
+<ul class="tr root"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">project/</span></div><ul class="tr"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">src/</span></div><ul class="tr"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">components/</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-code"/></svg><span class="nm">App.tsx</span><span class="nt">画面の入口</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-code"/></svg><span class="nm">index.ts</span></div></li></ul></li><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">tests/</span></div></li><li><div class="rw fi hl"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-text"/></svg><span class="nm">README.md</span><span class="nt">まず読む</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-braces"/></svg><span class="nm">package.json</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-lock"/></svg><span class="nm">.env</span></div></li></ul></li></ul>
+```
+:::
+
+:::
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+```{=html}
+<dl class="dl wide"><dt>src/</dt><dd>画面と処理のコード。入口は App.tsx</dd><dt>tests/</dt><dd>テスト。src と同じ構造にそろえる</dd><dt>README.md</dt><dd>最初に読む説明書</dd><dt>.env</dt><dd>環境ごとの設定（公開しない）</dd></dl>
+```
+
+:::
+:::
+
+```{=html}
+<div class="lid">split(K+L)</div>
+```
+
+```{=html}
+<div class="src">アイコン: Lucide（ISC License） https://lucide.dev</div>
+```
+
+## K 横幅 1/4 の列 + L（字間: 詰め 0%） {.tight}
+
+::: {.split style="--cols:1fr 3fr"}
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+::: {.cell .dark .tree-box}
+```{=html}
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-lc-folder-tree"/></svg>構成</div>
+```
+
+```{=html}
+<ul class="tr root"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">project/</span></div><ul class="tr"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">src/</span></div><ul class="tr"><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">components/</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-code"/></svg><span class="nm">App.tsx</span><span class="nt">画面の入口</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-code"/></svg><span class="nm">index.ts</span></div></li></ul></li><li><div class="rw fo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-folder"/></svg><span class="nm">tests/</span></div></li><li><div class="rw fi hl"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-text"/></svg><span class="nm">README.md</span><span class="nt">まず読む</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-braces"/></svg><span class="nm">package.json</span></div></li><li><div class="rw fi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lc-file-lock"/></svg><span class="nm">.env</span></div></li></ul></li></ul>
+```
+:::
+
+:::
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+```{=html}
+<dl class="dl wide"><dt>src/</dt><dd>画面と処理のコード。入口は App.tsx</dd><dt>tests/</dt><dd>テスト。src と同じ構造にそろえる</dd><dt>README.md</dt><dd>最初に読む説明書</dd><dt>.env</dt><dd>環境ごとの設定（公開しない）</dd></dl>
+```
+
+:::
+:::
+
+```{=html}
+<div class="lid">split(K+L)</div>
+```
+
+```{=html}
+<div class="src">アイコン: Lucide（ISC License） https://lucide.dev</div>
+```
+
 ## 組み合わせ 手順 + 注釈
 
 ::: {.split style="--cols:1.6fr 1fr"}
