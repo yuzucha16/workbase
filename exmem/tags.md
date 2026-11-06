@@ -53,6 +53,8 @@ updated: 2026-10-21
 | `tool/ssh` | SSH（`ssh`、鍵、`~/.ssh/config`） |
 | `tool/libreoffice` | LibreOffice（headless での変換・再計算） |
 | `tool/chromium` | Chromium（headless での PDF 化・画像化。Playwright 版を含む） |
+| `tool/quarto` | Quarto（Markdown から revealjs・pptx などを作る） |
+| `tool/revealjs` | reveal.js（Quarto の revealjs 形式の HTML スライド） |
 
 ### `ai/` — AIサービス・エージェント
 
@@ -108,3 +110,5 @@ updated: 2026-10-21
 | `prompt-design` | AI への指示文・案内文・規則の置き場の設計 |
 | `concurrency` | 並行利用・排他・競合の設計 |
 | `python` | Python の実装・テスト |
+| `slides` | スライド資料（revealjs・pptx）の作り方・型 |
+| `diagram` | 図解・構造図の描き方・レイアウト |

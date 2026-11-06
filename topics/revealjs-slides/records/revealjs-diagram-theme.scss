@@ -1,0 +1,39 @@
+/*-- scss:defaults --*/
+
+/*-- scss:rules --*/
+
+/* 図解レイアウト: 箱の中は左に図・右に文字。A=左右二分割、B=上が左右(間に矢印)・下が全幅 */
+.lay { display: grid; gap: 0.5em; margin-top: 0.3em; }
+.lay-a { grid-template-columns: 1fr 1fr; }
+.lay-b { grid-template-columns: 1fr 4.2em 1fr; }
+.lay-b .wide, .lay-g .wide { grid-column: 1 / -1; }
+.cell { display: flex; align-items: center; gap: 0.5em; padding: 0.45em 0.55em; border: 3px solid #1f5fd1; border-radius: 10px; background: #eaf1fd; }
+.cell.red { border-color: #374151; background: #f3f4f6; }
+.cell.green { border-color: #1f5fd1; background: #eaf1fd; }
+.cell.gray { border-color: #9aa5b1; background: #f5f7fa; }
+.cell .fig { flex: 0 0 58%; }
+.cell.wide .fig { flex-basis: 62%; }
+.cell .fig svg { width: 100%; height: auto; display: block; }
+.cell .txt { flex: 1; font-size: 0.66em; line-height: 1.4; text-align: left; }
+.cell .txt p { margin: 0 0 0.45em; }
+.link { align-self: center; text-align: center; color: #1f5fd1; font-size: 1.8em; line-height: 1.1; }
+.link span { display: block; font-size: 0.42em; font-weight: 700; }
+
+/* 箱の見出し札: 枠の上辺に貼る。アイコン+短い名前（色だけに頼らない） */
+.lay { row-gap: 1.1em; margin-top: 1em; }
+.cell { position: relative; }
+.cell .tab { position: absolute; top: -0.95em; left: 0.7em; display: flex; align-items: center; gap: 0.3em; padding: 0.05em 0.6em 0.05em 0.4em; border-radius: 999px; background: #1f5fd1; color: #fff; font-size: 0.62em; font-weight: 700; line-height: 1.5; }
+.cell .tab svg { width: 1.1em; height: 1.1em; flex: none; }
+.cell.red .tab { background: #374151; }
+.cell.green .tab { background: #1f5fd1; }
+.cell.gray .tab { background: #52606d; }
+
+/* 追加レイアウト: D=左一本・右2ブロック / E=1ブロック大 / F=2x2 / G=上全幅・下左右 */
+.lay-d { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.lay-d .tall { grid-row: 1 / span 2; }
+.lay-e { grid-template-columns: 1fr; }
+.lay-e .cell .fig { flex-basis: 74%; }
+.lay-f { grid-template-columns: 1fr 1fr; }
+.lay-f .cell { padding-top: 0.6em; padding-bottom: 0.4em; }
+.lay-g { grid-template-columns: 1fr 1fr; }
+.lay-g .wide { grid-column: 1 / -1; }
