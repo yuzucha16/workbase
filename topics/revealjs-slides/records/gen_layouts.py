@@ -16,7 +16,12 @@ revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所
   H 行ラベル x 列（行・列は文言の数で決まる）
   I 工程 x 行（シェブロンの列見出し。行ラベルは任意）
   J 表（背景なし・罫線だけの表。emphasize で強調列、rowhead で先頭列を太字）
-  T 図解なし（見出し + 段落 + 箇条書き。入れ子はリストの中のリスト。まとめ・前置き・補足用）。\n    "side" で右側にコード（{"code","lang"}）か画像（{"img","alt"}）を置ける。\n  split 2 つの型（"parts" を左右に置く組み合わせ。例: 表 + 箇条書き(T)、図 + コード）。\n  全型（A〜J）が "lead"（上）と "notes"（下）の箇条書きを持てる。
+  T 図解なし（見出し + 段落 + 箇条書き。入れ子はリストの中のリスト。まとめ・前置き・補足用）。
+    "side" で右側にコード（{"code","lang"}）か画像（{"img","alt"}）を置ける。
+  split 2 つの型（"parts" を左右に置く組み合わせ。例: 表 + 箇条書き(T)、図 + コード）。
+  レイアウト番号: 各スライドの右下に型の記号（例 H+notes、split(J+T)）を出す。台帳は LAYOUTS。
+    無い型が欲しいときは近い型で作り、slide に "want": "欲しい形" を書く（番号に ※要新設 が付き、stderr に一覧が出る）。
+  全型（A〜J）が "lead"（上）と "notes"（下）の箇条書きを持てる。
   箱の型 A〜G は "height"（例 "500px"）で下の空きを埋める。
 """
 import argparse
@@ -54,7 +59,38 @@ def raw(s):
 NOSEC = raw("<span hidden></span>")
 
 
-# 見出しで始まる div を Pandoc が <section> にすると、reveal の縦スライドになって後続が見えなくなる。空の印を先頭に置いて防ぐ\nNOSEC = raw("<span hidden></span>")\n\n\n# ---- 図（ダミーの n ブロックの流れ。実スライドでは fig に SVG 文字列を渡す） ----
+# ---- レイアウトの台帳（番号・名前・使いどころの正。ここに足すと、番号表示と一覧に出る） ----
+# 番号 = 型の記号（A〜J、T）。組み合わせは「split(J+T)」のように部品の番号をつなぐ。付属は +lead +notes +side。
+LAYOUTS = {
+    "A": "左右二分割（比較）", "B": "上は左右・下は全幅（共通・結論を下に）", "C": "目次（番号 + 章名 + ひとこと）",
+    "D": "左は一本・右は 2 ブロック（1 つの元から分岐）", "E": "1 ブロックの大きな図", "F": "2×2（2 軸の比較）",
+    "G": "上は全幅・下は左右（全体→内訳）", "H": "行ラベル × 列", "I": "工程（シェブロン）× 行",
+    "J": "表（罫線だけ）", "T": "図解なし（見出し + 段落 + 箇条書き）", "split": "2 つの型を左右に組み合わせ",
+}
+WANTS = []  # 作成中に「無いレイアウト」として申告されたもの（spec の "want"）。build の最後に報告する
+
+
+def layout_id(s):
+    """スライドに表示するレイアウト番号。例: H+notes / split(J+T)+lead / T+side"""
+    t = s["type"]
+    base = f"split({'+'.join(p['type'] for p in s.get('parts', []))})" if t == "split" else t
+    extra = "".join(f"+{k}" for k in ("lead", "notes") if s.get(k)) + ("+side" if s.get("side") else "")
+    label = base + extra
+    if s.get("want"):  # 近い型で代用したが、本当は別のレイアウトが欲しい（逐次作る対象）
+        WANTS.append((s.get("title", ""), label, s["want"]))
+        label += f" ※要新設: {s['want']}"
+    return label
+
+
+def lid_div(s, show):
+    return raw(f'<div class="lid">{esc(layout_id(s))}</div>') if show else ""
+
+
+# 見出しで始まる div を Pandoc が <section> にすると、reveal の縦スライドになって後続が見えなくなる。空の印を先頭に置いて防ぐ
+NOSEC = raw("<span hidden></span>")
+
+
+# ---- 図（ダミーの n ブロックの流れ。実スライドでは fig に SVG 文字列を渡す） ----
 def flow_svg(n=3, hl=1, w=280, h=100, vertical=False):
     if vertical:
         bw, bh, gap = w - 4, (h - 4 - 28 * (n - 1)) / n, 28
@@ -238,7 +274,7 @@ def body(s):
     return {"C": lambda: toc_slide(s), "H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t, lambda: box_slide(s))()
 
 
-def slide(s):
+def slide(s, show_id=True):
     """単独の型、または "split"（"parts" の 2 つを左右に置く組み合わせ。"cols" 例 "1fr 1fr"）。lead/notes は T 以外の全型で使える。"""
     if s["type"] == "split":
         parts = s["parts"]
@@ -246,13 +282,15 @@ def slide(s):
             raise SystemExit("split の parts は 2 つ")
         inner = "".join(f"::: {{.sp}}\n{NOSEC}{body(p)}\n:::\n" for p in parts)
         inner = f'::: {{.split style="--cols:{s.get("cols", "1fr 1fr")}"}}\n{inner}:::\n'
-        return f"## {s['title']}\n\n{summary(s.get('lead'), 'lead')}{inner}\n{summary(s.get('notes'), '')}\n"
+        return f"## {s['title']}\n\n{summary(s.get('lead'), 'lead')}{inner}\n{summary(s.get('notes'), '')}{lid_div(s, show_id)}\n"
     if s["type"] == "T":
-        return f"## {s['title']}\n\n{body(s)}"
-    return f"## {s['title']}\n\n{summary(s.get('lead'), 'lead')}{body(s)}\n{summary(s.get('notes'), '')}\n"
+        return f"## {s['title']}\n\n{body(s)}{lid_div(s, show_id)}"
+    return f"## {s['title']}\n\n{summary(s.get('lead'), 'lead')}{body(s)}\n{summary(s.get('notes'), '')}{lid_div(s, show_id)}\n"
 
-def build(spec):
-    return HEADER.format(title=spec.get("title", "レイアウト見本")) + "\n" + "\n".join(slide(s) for s in spec["slides"])
+def build(spec, show_id=None):
+    if show_id is None:
+        show_id = spec.get("show_id", True)  # 作成中は番号を出す（最終判断はユーザー）。完成版は --no-id か "show_id": false
+    return HEADER.format(title=spec.get("title", "レイアウト見本")) + "\n" + "\n".join(slide(s, show_id) for s in spec["slides"])
 
 
 # ---- 組み込みの見本（ダミーの文言。行・列の数を変えた例を並べる） ----
@@ -334,12 +372,15 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--spec", help="JSON の仕様（省略時は組み込みの見本）")
     ap.add_argument("-o", "--out", help="出力先（省略時は標準出力）")
+    ap.add_argument("--no-id", action="store_true", help="レイアウト番号を表示しない（完成版）")
     a = ap.parse_args()
     spec = SAMPLE
     if a.spec:
         with open(a.spec, encoding="utf-8") as f:
             spec = json.load(f)
-    text = build(spec)
+    text = build(spec, False if a.no_id else None)
+    for title, label, want in WANTS:
+        print(f"[要新設] {title} ({label}): {want}", file=sys.stderr)
     if a.out:
         with open(a.out, "w", encoding="utf-8", newline="\n") as f:
             f.write(text)

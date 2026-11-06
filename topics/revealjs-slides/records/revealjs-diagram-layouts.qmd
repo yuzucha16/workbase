@@ -24,6 +24,9 @@ format:
 - 項目 A
 - 項目 B
 
+```{=html}
+<div class="lid">T</div>
+```
 
 ## 目次
 
@@ -31,6 +34,9 @@ format:
 <ol class="toc"><li><span class="n">1</span><span class="t">背景と目的</span><span class="d">なぜ今やるのか</span></li><li><span class="n">2</span><span class="t">現状の整理</span><span class="d">数字で見る</span><ul class="sub"><li>指標 A</li><li>指標 B</li></ul></li><li><span class="n">3</span><span class="t">進め方</span><span class="d">3 つの工程</span></li><li><span class="n">4</span><span class="t">まとめと次の一手</span></li></ol>
 ```
 
+```{=html}
+<div class="lid">C</div>
+```
 
 
 ## 目次（2 章を表示中）
@@ -39,6 +45,9 @@ format:
 <ol class="toc"><li><span class="n">1</span><span class="t">背景と目的</span></li><li class=cur><span class="n">2</span><span class="t">現状の整理</span><ul class="sub"><li>指標 A</li><li>指標 B</li></ul></li><li><span class="n">3</span><span class="t">進め方</span></li><li><span class="n">4</span><span class="t">まとめと次の一手</span></li></ol>
 ```
 
+```{=html}
+<div class="lid">C</div>
+```
 
 
 ## T 右にコード（サンプル）
@@ -61,6 +70,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ```
 :::
 :::
+```{=html}
+<div class="lid">T+side</div>
+```
 
 ## 組み合わせ 表 + 箇条書き（サンプル）
 
@@ -94,6 +106,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ```{=html}
 <div class="sum "><ul><li>まとめは下に箇条書きで置ける</li></ul></div>
 ```
+```{=html}
+<div class="lid">split(J+T)+lead+notes</div>
+```
 
 
 ## T 文章・文字列・箇条書き（サンプル）
@@ -117,6 +132,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 文字列の例: ABC-123 / 2026-11-06 / 12,345 円 / v1.2.3
 
 
+```{=html}
+<div class="lid">T</div>
+```
 
 ## A 左右二分割（比較）
 
@@ -151,6 +169,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 :::
 
+```{=html}
+<div class="lid">A</div>
+```
 
 
 ## B 上は左右・下は全幅
@@ -203,6 +224,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 :::
 
+```{=html}
+<div class="lid">B</div>
+```
 
 
 ## D 左は一本・右は2ブロック
@@ -252,6 +276,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 :::
 
+```{=html}
+<div class="lid">D</div>
+```
 
 
 ## E 1スライド1ブロック（大きな図）
@@ -273,6 +300,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 :::
 
+```{=html}
+<div class="lid">E</div>
+```
 
 
 ## F 2×2（Z に読む）
@@ -336,6 +366,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 :::
 
+```{=html}
+<div class="lid">F</div>
+```
 
 
 ## G 上は全幅・下は左右（全体→内訳）
@@ -385,6 +418,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 :::
 
+```{=html}
+<div class="lid">G</div>
+```
 
 
 ## H 行ラベル × 列（3行 × 2列）
@@ -409,6 +445,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ```{=html}
 <div class="sum "><ul><li>行の高さは内容なり。表の下に、まとめ・総評を箇条書きで置く</li><li>上に置くなら lead（ひとこと）。どちらも省略できる</li></ul></div>
 ```
+```{=html}
+<div class="lid">H+notes</div>
+```
 
 
 ## H 行ラベル × 列（3行 × 1列）
@@ -424,6 +463,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 </div>
 ```
 
+```{=html}
+<div class="lid">H</div>
+```
 
 
 ## H 行ラベル × 列（3行 × 3列）
@@ -452,6 +494,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 </div>
 ```
 
+```{=html}
+<div class="lid">H+lead</div>
+```
 
 
 ## I 工程 × 行（4工程 × 2行）
@@ -476,6 +521,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 </div>
 ```
 
+```{=html}
+<div class="lid">I</div>
+```
 
 
 ## I 工程 × 行（3工程 × 3行）
@@ -501,6 +549,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 </div>
 ```
 
+```{=html}
+<div class="lid">I</div>
+```
 
 
 ## I 工程の流れだけ（5工程、ラベルなし）
@@ -520,6 +571,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 </div>
 ```
 
+```{=html}
+<div class="lid">I</div>
+```
 
 
 ## J 表（3行 × 3列 + 番号）
@@ -528,6 +582,9 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 <table class="tb"><thead><tr><th class="l">項目</th><th class="l">完了条件</th><th class="l em">出力</th></tr></thead><tbody><tr><td class="l rl">項目 1</td><td class="l">条件を 1 行で</td><td class="l em">成果物の名前</td></tr><tr><td class="l rl">項目 2</td><td class="l">条件を 1 行で</td><td class="l em">成果物の名前</td></tr><tr><td class="l rl">項目 3</td><td class="l">条件を 1 行で</td><td class="l em">成果物の名前</td></tr></tbody></table>
 ```
 
+```{=html}
+<div class="lid">J</div>
+```
 
 
 ## J 表（4行 × 4列、数値は右寄せ）
@@ -536,4 +593,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 <table class="tb"><thead><tr><th class="l">指標</th><th class="r">今期</th><th class="r">前期</th><th class="r">増減</th></tr></thead><tbody><tr><td class="l">指標 A</td><td class="r">4,000</td><td class="r">4,000</td><td class="r">▲0.2%</td></tr><tr><td class="l">指標 B</td><td class="r">3,200</td><td class="r">3,100</td><td class="r">+3.2%</td></tr><tr><td class="l">指標 C</td><td class="r">1,800</td><td class="r">1,950</td><td class="r">▲7.7%</td></tr><tr><td class="l">指標 D</td><td class="r">920</td><td class="r">900</td><td class="r">+2.2%</td></tr></tbody></table>
 ```
 
+```{=html}
+<div class="lid">J</div>
+```
 

@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06 型の棚卸しの整理とレイアウト番号の表示（NA 1 件を omit、1 件を一部済み）
+- 経緯: pptx の残り（階段・3 要素）は、ユーザーが「H・I で足りる」として omit。型の棚卸しは、重なり・管理・拡充の観点で 12 個を整理し、案 P1〜P3 を出した（実装は別セッション）。ユーザーの決定で、型は AI が提案・ユーザーが最終判断とし、スライドの右上にレイアウト番号（`H+notes` など）を出す。無い形は `want` に書いて逐次作る。`gen_layouts.py` の docstring の誤った `\n` も直した。確認: Edge の headless で G と split の 2 枚。根拠: `records/gen_layouts.py`（`LAYOUTS`、`layout_id`）、`records/2026-11-06-layout-inventory.md`、`decisions.md`。
+- close した NA: 「pptx レイアウトの残り（階段・3 要素の判断、ほかの pptx の棚卸し）」（omit）。一部済: 「型の棚卸し」は整理と番号表示が済み、P1〜P3 の実装が残り。
+
 ### 2026-11-06 目次の型 C を作る（NA 1 件を close）
 - 経緯: DADS に「目次」コンポーネントがあることをサイトで確認した（web ページ内ナビ。点線の箱 + 入れ子の箇条書き。見出し「このページの目次」を消さない、見出し文言をそのまま使う）。スライド向けに、罫線だけの番号付き一覧（番号・章名・ひとこと・小項目、`current` で表示中の章を薄青の地）として型 C にした。Edge の headless で 2 枚を目視。根拠: `records/gen_layouts.py`（`toc_slide`）、`records/revealjs-diagram-theme.scss`（`.toc`）、`decisions.md`。
 - close した NA: 「目次の型（DADS の見本確認 → 型化）」。見た目はユーザーが確定（11-06）。

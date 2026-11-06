@@ -140,3 +140,5 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .reveal .split .tb { margin-left: 0; width: 100%; }
 .reveal .slides section .split .sp h3, .reveal .slides section .split .sp > p { margin-left: 0; }
 .reveal .slides section .split .sp > ul, .reveal .slides section .split .sp > ol { margin-left: 0; padding-left: 1.1em; }
+/* レイアウト番号（作成中だけ表示。ユーザーが型を判断するための目印） */
+.reveal .slides section .lid { position: absolute; right: 12px; top: 8px; font-size: 14px; color: #767676; border: 1px solid #b3b3b3; padding: 0 8px; background: #fff; z-index: 5; }
