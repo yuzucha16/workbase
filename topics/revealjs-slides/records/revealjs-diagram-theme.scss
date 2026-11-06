@@ -21,7 +21,11 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .lay { margin-left: var(--ind); }
 .mx { margin-left: var(--ind); }
 .reveal .tb { margin-left: var(--ind); width: calc(100% - var(--ind)); }
-.reveal .slides section ul ul, .reveal .slides section ol ol, .reveal .slides section ul ol, .reveal .slides section ol ul { margin-left: var(--ind); }
+.reveal .slides section ol ol, .reveal .slides section ul ol, .reveal .slides section ol ul { margin-left: var(--ind); }
+/* 2 段目の箇条書き: 本文の開始位置を 1 字ぶん（1em）だけ右にして、1 段目と日本語の字の並びをそろえる。行頭記号は白丸（circle。DADS に 2 段目の記号の指定は無い。「-」は存在感が無く、■ は ● と形が違うため、11-07 に白丸を試す） */
+.reveal .slides section ul ul { margin-left: 0; padding-left: 1em; list-style-type: circle; }
+/* 表紙: サブタイトルも中央（タイトル・著者と同じ） */
+.reveal .slides section.quarto-title-block p.subtitle { margin-left: 0; text-align: center; }
 
 /* 図解レイアウト: 箱の中は左に図・右に文字。A=左右二分割、B=上が左右(間に矢印)・下が全幅 */
 .lay { display: grid; gap: 0.5em; margin-top: 0.3em; }

@@ -6,7 +6,7 @@
 
 1. **作業ディレクトリを作る**: 空の一時ディレクトリ（コミットしない。成果物は `ai/out/` など）。
 2. **型を選ぶ**: `python -I gen_layouts.py --list` で台帳（番号・名前・使いどころ）を見る。AI は番号と使いどころを理由に提案し、最終判断はユーザー。無い形は近い型で作り、slide に `"want": "欲しい形"` を書く。
-3. **spec を書く**: JSON。先頭に `title`、任意で `subtitle` `author` `date`（表紙に出る）。`slides` に 1 枚ずつ `{"title", "type", ...}`。各型の形は `gen_layouts.py` の docstring と、組み込み見本 `SAMPLE`（同ファイル末尾）をコピーして直す。
+3. **spec を書く**: JSON。先頭に `title`、任意で `subtitle` `author` `date`（表紙に出る）。`slides` に 1 枚ずつ `{"title", "type", ...}`。各型の形は `gen_layouts.py` の docstring と、組み込み見本 `SAMPLE`（同ファイル末尾）をコピーして直す。spec は JSON なので、`true`・`false` は小文字（Python 風の `True` は読み込みで止まる）。`split` の `cols` は、左の K を 1/4 にするなら `1fr 3fr`、1/3 なら `1fr 2fr`。
 4. **qmd を出し、部品を複製する**:
    `python -I gen_layouts.py --spec spec.json -o <dir>/slides.qmd --copy-assets`
    （`--copy-assets` が scss とアイコン 3 種を `<dir>` へ複製する。完成版は `--no-id` を足してレイアウト番号を消す。）
