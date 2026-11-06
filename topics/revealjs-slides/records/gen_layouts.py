@@ -19,6 +19,8 @@ revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所
   J 表（背景なし・罫線だけの表。emphasize で強調列、rowhead で先頭列を太字）
   T 図解なし（見出し + 段落 + 箇条書き。入れ子はリストの中のリスト。まとめ・前置き・補足用）。
     "side" で右側にコード（{"code","lang"}）か画像（{"img","alt"}）を置ける。
+  DADS コンポーネント S ステップナビゲーション / L 説明リスト / N 注釈ブロック
+    （spec の形は steps_slide / dlist_slide / notice_slide の docstring。split の部品にも使える）
   split 2 つの型（"parts" を左右に置く組み合わせ。例: 表 + 箇条書き(T)、図 + コード）。
   レイアウト番号: 各スライドの右下に型の記号（例 H+notes、split(J+T)）を出す。台帳は LAYOUTS。
     無い型が欲しいときは近い型で作り、slide に "want": "欲しい形" を書く（番号に ※要新設 が付き、stderr に一覧が出る）。
@@ -76,6 +78,9 @@ LAYOUTS = {
     "I": ("工程（シェブロン）× 行", "段階・手順・時間の流れが列で、行ごとに内容が違うとき"),
     "J": ("表（罫線だけ）", "数値・仕様など、格子で正確に読ませたい一覧"),
     "T": ("図解なし（見出し + 段落 + 箇条書き）", "図にしにくい説明、まとめ、コードや画像を横に添える話（side）"),
+    "S": ("ステップナビゲーション（手順 + 現在位置）", "手順の全体と今どこかを見せるとき。横（既定）か縦（dir）。完了・現在・未を丸の形で区別"),
+    "L": ("説明リスト（項目名 + 説明）", "用語と説明、名前と値の組（設定項目・仕様・申請内容）。比較は表（J）にする"),
+    "N": ("注釈ブロック（補足・例）", "手続きに必要な補足、入力例、選択肢の違いの例。強調や飾りには使わない"),
     "split": ("2 つの型を左右に組み合わせ", "表 + 箇条書き、図 + コードなど、性質の違う 2 つを同じ画面に置くとき"),
 }
 WANTS = []  # 作成中に「無いレイアウト」として申告されたもの（spec の "want"）。build の最後に報告する
@@ -309,6 +314,56 @@ def toc_slide(s):
     return raw("".join(out))
 
 
+CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+
+
+def steps_slide(s):
+    """S: ステップナビゲーション（DADS）。steps は文字列か {"t","d"(任意)}。current（1 始まり）で現在の手順。
+    完了=灰の丸に✓、現在=黒の二重丸、未=白い丸。"dir": "h"（横。既定）か "v"（縦）。"""
+    items = s["steps"]
+    cur = s.get("current", 1)
+    vertical = s.get("dir", "h") == "v"
+    if not 1 <= cur <= len(items):
+        raise SystemExit(f"S の current は 1〜{len(items)}")
+    out = [f'<ol class="stp{" v" if vertical else ""}">']
+    for n, it in enumerate(items, 1):
+        it = {"t": it} if isinstance(it, str) else it
+        st, word = ("done", "完了") if n < cur else (("now", "現在") if n == cur else ("todo", "未"))
+        mk = CHECK_SVG if st == "done" else ""
+        cur_attr = ' aria-current="step"' if st == "now" else ""
+        out.append(f'<li class="{st}"{cur_attr}><span class="mk">{mk}</span><span class="tx"><span class="t"><span class="vh">{word}：</span>{esc(it["t"])}</span>'
+                   + (f'<span class="d">{lines(it["d"])}</span>' if it.get("d") else "") + "</span></li>")
+    out.append("</ol>")
+    return raw("".join(out))
+
+
+def dlist_slide(s):
+    """L: 説明リスト（DADS）。items は {"t": 項目名, "d": 説明（文字列かリスト）}。
+    "bullet": true で項目名の頭に黒丸。"wide": true で項目名を左・説明を右の 2 列にする。"""
+    cls = "dl" + (" bul" if s.get("bullet") else "") + (" wide" if s.get("wide") else "")
+    out = [f'<dl class="{cls}">']
+    for it in s["items"]:
+        out.append(f'<dt>{esc(it["t"])}</dt><dd>{lines(it["d"])}</dd>')
+    out.append("</dl>")
+    return raw("".join(out))
+
+
+NOTICE_STYLES = ("blue", "gray", "bar")  # DADS 注釈ブロックの 3 パターン: 青の角丸枠 / 灰の角丸枠 + 薄灰の地 + タイトル / 直角の灰枠で左だけ太い
+
+
+def notice_slide(s):
+    """N: 注釈ブロック（DADS）。blocks は {"style": blue|gray|bar, "title"(任意), "text": 文字列かリスト}。
+    手続きに必要な補足・例に使う。本文の強調・飾りには使わない。折りたたみ（ディスクロージャー）は静的なスライドでは使わない。"""
+    out = []
+    for b in s["blocks"]:
+        st = b.get("style", "blue")
+        if st not in NOTICE_STYLES:
+            raise SystemExit(f"N の style は {NOTICE_STYLES} のどれか")
+        title = f'<div class="nt">{esc(b["title"])}</div>' if b.get("title") else ""
+        out.append(f'<div class="nb {st}" role="note">{title}<div class="nx">{lines(b["text"])}</div></div>')
+    return raw("".join(out))
+
+
 def summary(v, cls):
     """lead（図表の上のひとこと）/ notes（下のまとめ・総評）。文字列は 1 段落、リストは箇条書き。"""
     if not v:
@@ -321,7 +376,7 @@ def body(s):
     t = s["type"]
     if t == "T":
         return text_slide(s)
-    return {"C": lambda: toc_slide(s), "H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t, lambda: box_slide(s))()
+    return {"C": lambda: toc_slide(s), "S": lambda: steps_slide(s), "L": lambda: dlist_slide(s), "N": lambda: notice_slide(s), "H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t, lambda: box_slide(s))()
 
 
 def slide(s, show_id=True):
@@ -414,6 +469,23 @@ SAMPLE = {
         {"title": "J 表（4行 × 4列、数値は右寄せ）", "type": "J", "head": ["指標", "今期", "前期", "増減"],
          "align": ["l", "r", "r", "r"], "rows": [["指標 A", "4,000", "4,000", "▲0.2%"], ["指標 B", "3,200", "3,100", "+3.2%"],
                                               ["指標 C", "1,800", "1,950", "▲7.7%"], ["指標 D", "920", "900", "+2.2%"]]},
+        # DADS コンポーネント（S 手順 / L 説明リスト / N 注釈ブロック）
+        {"title": "S ステップナビゲーション（横）", "type": "S", "current": 3,
+         "steps": [{"t": "申請", "d": "書類を準備"}, {"t": "確認", "d": "内容を見直す"}, {"t": "審査", "d": "結果を待つ"}, {"t": "完了", "d": "通知を受け取る"}],
+         "notes": ["完了は灰の丸に ✓、現在は黒の二重丸、未は白い丸"]},
+        {"title": "S ステップナビゲーション（縦）", "type": "S", "dir": "v", "current": 2,
+         "steps": [{"t": "準備", "d": "必要なものをそろえる"}, {"t": "実行", "d": "手順どおりに進める"}, {"t": "確認", "d": "結果を見る"}]},
+        {"title": "L 説明リスト", "type": "L", "items": [
+            {"t": "対象", "d": "社内の勉強会・LT"}, {"t": "形式", "d": "自己完結の HTML スライド"}, {"t": "期間", "d": ["準備 1 週間", "本番 30 分"]}]},
+        {"title": "L 説明リスト（黒丸 + 2 列）", "type": "L", "bullet": True, "wide": True, "items": [
+            {"t": "名前", "d": "値を 1 行で"}, {"t": "場所", "d": "会議室 A"}, {"t": "持ち物", "d": "PC と電源"}]},
+        {"title": "N 注釈ブロック", "type": "N", "blocks": [
+            {"style": "blue", "text": "必要な資料は申請の前にそろえておく"},
+            {"style": "gray", "title": "入力例", "text": ["姓：山田", "名：太郎"]},
+            {"style": "bar", "title": "補足", "text": "読まなくても手続きは進められる補足情報"}]},
+        {"title": "組み合わせ 手順 + 注釈", "type": "split", "cols": "1.6fr 1fr",
+         "parts": [{"type": "S", "dir": "v", "current": 1, "steps": ["書く", "確かめる", "出す"]},
+                   {"type": "N", "blocks": [{"style": "gray", "title": "ポイント", "text": "提出前に必ず見直す"}]}]},
     ],
 }
 

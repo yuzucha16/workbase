@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06 DADS コンポーネント 3 件を型にした（S ステップナビゲーション・L 説明リスト・N 注釈ブロック。スイッチは不採用）
+- ユーザーの指示: 「ステップナビゲーション・説明リスト・スイッチ・注釈ブロックも dads 準拠で使えるように」。見本を見て「スイッチは使えないか。omit してください。他の 3 つは採用」「既存レイアウトに組み込む形で、拡充の幅を広げる位置づけ」。
+- 反映: `gen_layouts.py`（型 S・L・N、`body()` に登録。`split` の部品にも使える。台帳 `LAYOUTS` と見本スライドを追加）、`revealjs-diagram-theme.scss`、`revealjs-diagram-layouts.qmd`・`.html`（再生成）、lessons の DADS 節（ステップナビ・説明リスト・注釈ブロックの状態、スイッチは不採用）。
+- 確認: DADS の 4 ページ（概要）を取得。数値・マークアップの記載は無く、サイズは自前（丸 32px、線 2px、3:1 以上）。Edge で見本を目視（横・縦の手順、説明リスト 2 種、注釈 3 パターン、split(S+N)）。スイッチ（型 W）は試作後に撤去した。
+- 一部済: NA 1 は未取得ページ（`table/usage`・`card/usage` など）の取得だけに縮めた。
 ### 2026-11-06 DADS 準拠の残り 3 件を反映（`ol` 止め・SVG の aria-label・画像キャプション。NA 1 件を一部済み）
 - ユーザーの指示: 「3 つのアイテムやります。推奨とともに情報ください。特に害がなければ dads に寄せます」。見本を見て「キャプションばっちりです」。
 - 反映: `gen_layouts.py`（`no_ol`: T の `items`・`p` の行頭 `1.` で生成を止める。図の SVG に `role="img"` と `aria-label`〔箱の `alt`、無ければ `tab`、無ければ `aria-hidden`〕。`side` の `caption` で `figure` + `figcaption`）、`revealjs-diagram-theme.scss`（`.tright figcaption` 0.6em・行高 1.5）、`revealjs-diagram-layouts.qmd`（再生成）、lessons の状態の記述。

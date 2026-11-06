@@ -597,3 +597,89 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 <div class="lid">J</div>
 ```
 
+
+## S ステップナビゲーション（横）
+
+```{=html}
+<ol class="stp"><li class="done"><span class="mk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tx"><span class="t"><span class="vh">完了：</span>申請</span><span class="d">書類を準備</span></span></li><li class="done"><span class="mk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tx"><span class="t"><span class="vh">完了：</span>確認</span><span class="d">内容を見直す</span></span></li><li class="now" aria-current="step"><span class="mk"></span><span class="tx"><span class="t"><span class="vh">現在：</span>審査</span><span class="d">結果を待つ</span></span></li><li class="todo"><span class="mk"></span><span class="tx"><span class="t"><span class="vh">未：</span>完了</span><span class="d">通知を受け取る</span></span></li></ol>
+```
+
+```{=html}
+<div class="sum "><ul><li>完了は灰の丸に ✓、現在は黒の二重丸、未は白い丸</li></ul></div>
+```
+```{=html}
+<div class="lid">S+notes</div>
+```
+
+
+## S ステップナビゲーション（縦）
+
+```{=html}
+<ol class="stp v"><li class="done"><span class="mk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tx"><span class="t"><span class="vh">完了：</span>準備</span><span class="d">必要なものをそろえる</span></span></li><li class="now" aria-current="step"><span class="mk"></span><span class="tx"><span class="t"><span class="vh">現在：</span>実行</span><span class="d">手順どおりに進める</span></span></li><li class="todo"><span class="mk"></span><span class="tx"><span class="t"><span class="vh">未：</span>確認</span><span class="d">結果を見る</span></span></li></ol>
+```
+
+```{=html}
+<div class="lid">S</div>
+```
+
+
+## L 説明リスト
+
+```{=html}
+<dl class="dl"><dt>対象</dt><dd>社内の勉強会・LT</dd><dt>形式</dt><dd>自己完結の HTML スライド</dd><dt>期間</dt><dd><ul><li>準備 1 週間</li><li>本番 30 分</li></ul></dd></dl>
+```
+
+```{=html}
+<div class="lid">L</div>
+```
+
+
+## L 説明リスト（黒丸 + 2 列）
+
+```{=html}
+<dl class="dl bul wide"><dt>名前</dt><dd>値を 1 行で</dd><dt>場所</dt><dd>会議室 A</dd><dt>持ち物</dt><dd>PC と電源</dd></dl>
+```
+
+```{=html}
+<div class="lid">L</div>
+```
+
+
+## N 注釈ブロック
+
+```{=html}
+<div class="nb blue" role="note"><div class="nx">必要な資料は申請の前にそろえておく</div></div><div class="nb gray" role="note"><div class="nt">入力例</div><div class="nx"><ul><li>姓：山田</li><li>名：太郎</li></ul></div></div><div class="nb bar" role="note"><div class="nt">補足</div><div class="nx">読まなくても手続きは進められる補足情報</div></div>
+```
+
+```{=html}
+<div class="lid">N</div>
+```
+
+
+## 組み合わせ 手順 + 注釈
+
+::: {.split style="--cols:1.6fr 1fr"}
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+```{=html}
+<ol class="stp v"><li class="now" aria-current="step"><span class="mk"></span><span class="tx"><span class="t"><span class="vh">現在：</span>書く</span></span></li><li class="todo"><span class="mk"></span><span class="tx"><span class="t"><span class="vh">未：</span>確かめる</span></span></li><li class="todo"><span class="mk"></span><span class="tx"><span class="t"><span class="vh">未：</span>出す</span></span></li></ol>
+```
+
+:::
+::: {.sp}
+```{=html}
+<span hidden></span>
+```
+```{=html}
+<div class="nb gray" role="note"><div class="nt">ポイント</div><div class="nx">提出前に必ず見直す</div></div>
+```
+
+:::
+:::
+
+```{=html}
+<div class="lid">split(S+N)</div>
+```
+

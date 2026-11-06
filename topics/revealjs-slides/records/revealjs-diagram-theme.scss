@@ -98,6 +98,49 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .toc > li.cur { background: #e8f1fe; }
 .toc > li.cur .t { color: #00118f; }
 
+/* DADS コンポーネント S/L/N（ステップナビゲーション・説明リスト・注釈ブロック）。
+   DADS の概要ページに数値は無いので、形（状態の区別・パターン）だけ合わせ、サイズは 8px 基準・3:1 以上で決めた。 */
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* S ステップナビゲーション: 完了=灰の丸に✓、現在=黒の二重丸、未=白い丸。横（既定）と縦（.v） */
+.reveal .slides section ol.stp { list-style: none; display: flex; margin: 0.8em 0 0 var(--ind); padding: 0; font-size: 0.8em; line-height: 1.5; text-align: left; color: #1a1a1a; }
+.reveal .slides section .split .sp ol.stp { margin-left: 0; }
+.stp > li { position: relative; flex: 1; margin: 0; padding-right: 8px; }
+.stp .mk { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 32px; height: 32px; border: 2px solid #767676; border-radius: 50%; background: #fff; }
+.stp .mk svg { width: 20px; height: 20px; }
+.stp .done .mk { background: #767676; }
+.stp .now .mk { border-color: #1a1a1a; }
+.stp .now .mk::after { content: ""; width: 16px; height: 16px; border-radius: 50%; background: #1a1a1a; }
+.stp .tx { display: block; margin-top: 8px; }
+.stp .t { display: block; font-weight: 700; }
+.stp .d { display: block; color: #4d4d4d; font-size: 0.85em; }
+.stp .now .t { color: #1a1a1a; }
+.stp > li:not(:last-child)::before { content: ""; position: absolute; left: 40px; right: 8px; top: 15px; height: 2px; background: #949494; }
+.reveal .slides section ol.stp.v { flex-direction: column; }
+.stp.v > li { min-height: 48px; display: grid; grid-template-columns: 32px 1fr; column-gap: 16px; padding: 0 0 16px; }
+.stp.v .tx { margin-top: 0; }
+.stp.v > li:not(:last-child)::before { left: 15px; right: auto; top: 36px; bottom: 4px; width: 2px; height: auto; }
+
+/* L 説明リスト: 項目名は太字、説明は通常。bul=項目名の頭に黒丸、wide=項目名を左・説明を右の 2 列 */
+.reveal .slides section dl.dl { margin: 0.4em 0 0 var(--ind); font-size: 0.9em; line-height: 1.5; text-align: left; color: #1a1a1a; }
+.reveal .slides section .split .sp dl.dl { margin-left: 0; }
+.dl dt { margin: 0.6em 0 0; font-weight: 700; }
+.dl dd { margin: 0; }
+.dl dd ul { margin: 0; padding-left: 1.1em; }
+.dl.bul dt::before { content: ""; display: inline-block; width: 0.4em; height: 0.4em; margin-right: 0.5em; border-radius: 50%; background: #1a1a1a; vertical-align: 0.15em; }
+.dl.bul dd { margin-left: 0.9em; }
+.dl.wide { display: grid; grid-template-columns: 9em 1fr; column-gap: 24px; }
+.dl.wide dt, .dl.wide dd { margin-top: 0.6em; }
+
+/* N 注釈ブロック: blue=青の角丸枠、gray=灰の角丸枠 + 薄灰の地 + タイトル、bar=直角の灰枠で左だけ太い */
+.nb { box-sizing: border-box; width: calc(100% - var(--ind)); margin: 0.6em 0 0 var(--ind); padding: 12px 16px; font-size: 0.8em; line-height: 1.5; text-align: left; color: #1a1a1a; background: #fff; }
+.split .sp .nb { width: 100%; margin-left: 0; }
+.nb .nt { font-weight: 700; margin-bottom: 4px; }
+.nb ul { margin: 0; padding-left: 1.1em; }
+.nb.blue { border: 2px solid #0017c1; border-radius: 8px; }
+.nb.gray { border: 2px solid #767676; border-radius: 8px; background: #f2f2f2; }
+.nb.bar { border: 1px solid #767676; border-left: 8px solid #767676; border-radius: 0; }
+
 /* まとめ・総評（表・図の上 lead／下 notes）。本文と同じ 1 段ぶん右から、箇条書き */
 .sum { margin-left: var(--ind); margin-top: 1.4em; font-size: 0.8em; line-height: 1.5; text-align: left; color: #1a1a1a; }
 .sum.lead { margin-top: 0; margin-bottom: 0.6em; color: #4d4d4d; }
