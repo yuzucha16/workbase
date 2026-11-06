@@ -19,6 +19,7 @@ revealjs-diagram-icons.html と revealjs-diagram-icons-dads.html（デジタル�
   J 表（背景なし・罫線だけの表。emphasize で強調列、rowhead で先頭列を太字）
   T 図解なし（見出し + 段落 + 箇条書き。入れ子はリストの中のリスト。まとめ・前置き・補足用）。
     "side" で右側にコード（{"code","lang"}）か画像（{"img","alt"}）を置ける。
+  K ディレクトリ構造（"tree" に 2 桁インデントの文字列。書き方は tree_rows の docstring。アイコンは Lucide。lc-<名前> で札や tree の [..] にも使える）
   DADS コンポーネント S ステップナビゲーション / L 説明リスト / N 注釈ブロック
     （spec の形は steps_slide / dlist_slide / notice_slide の docstring。split の部品にも使える）
   split 2 つの型（"parts" を左右に置く組み合わせ。例: 表 + 箇条書き(T)、図 + コード）。
@@ -49,6 +50,7 @@ format:
     include-before-body:
       - revealjs-diagram-icons.html
       - revealjs-diagram-icons-dads.html
+      - revealjs-diagram-icons-lucide.html
 ---
 """
 
@@ -83,6 +85,7 @@ LAYOUTS = {
     "S": ("ステップナビゲーション（手順 + 現在位置）", "手順の全体と今どこかを見せるとき。横（既定）か縦（dir）。完了・現在・未を丸の形で区別"),
     "L": ("説明リスト（項目名 + 説明）", "用語と説明、名前と値の組（設定項目・仕様・申請内容）。比較は表（J）にする"),
     "N": ("注釈ブロック（補足・例）", "手続きに必要な補足、入力例、選択肢の違いの例。強調や飾りには使わない"),
+    "K": ("ディレクトリ構造（ツリー + アイコン）", "フォルダ・ファイルの階層を見せるとき（プロジェクト構成、配置、マウント）。行ごとに補足・強調ができる"),
     "split": ("2 つの型を左右に組み合わせ", "表 + 箇条書き、図 + コードなど、性質の違う 2 つを同じ画面に置くとき"),
 }
 WANTS = []  # 作成中に「無いレイアウト」として申告されたもの（spec の "want"）。build の最後に報告する
@@ -366,6 +369,90 @@ def notice_slide(s):
     return raw("".join(out))
 
 
+# K: ディレクトリ構造。拡張子 → Lucide のアイコン（素材は revealjs-diagram-icons-lucide.html。意味は資料全体で固定）
+TREE_ICONS = {
+    "folder": "lc-folder", "folder_open": "lc-folder-open",
+    ".ts": "lc-file-code", ".tsx": "lc-file-code", ".js": "lc-file-code", ".jsx": "lc-file-code", ".py": "lc-file-code",
+    ".sh": "lc-file-terminal", ".ps1": "lc-file-terminal", ".html": "lc-file-code", ".css": "lc-file-code", ".scss": "lc-file-code", ".qmd": "lc-file-code",
+    ".json": "lc-file-braces", ".md": "lc-file-text", ".txt": "lc-file-text",
+    ".yml": "lc-file-cog", ".yaml": "lc-file-cog", ".toml": "lc-file-cog", ".ini": "lc-file-cog", ".conf": "lc-file-cog",
+    ".png": "lc-file-image", ".jpg": "lc-file-image", ".svg": "lc-file-image",
+    ".csv": "lc-file-spreadsheet", ".xlsx": "lc-file-spreadsheet", ".zip": "lc-file-archive",
+    ".lock": "lc-file-lock", ".env": "lc-file-lock", ".key": "lc-file-key", ".pem": "lc-file-key",
+}
+
+
+def tree_rows(text):
+    """行の書き方: インデント 2 桁で 1 段深く。名前が `/` で終わるとフォルダ。
+    `  # 注` で右に補足、先頭の `*` でその行を強調（薄青の地）、`name  [icon]` で icon を指定（例 `[lc-database]`）。"""
+    rows = []
+    for raw_line in text.strip("\n").split("\n"):
+        if not raw_line.strip():
+            continue
+        indent = len(raw_line) - len(raw_line.lstrip(" "))
+        if indent % 2:
+            raise SystemExit(f"K のインデントは 2 桁単位（{raw_line!r}）")
+        t = raw_line.strip()
+        hl = t.startswith("*")
+        t = t.lstrip("*").strip()
+        note = ""
+        if "  #" in t:
+            t, note = t.split("  #", 1)
+            note = note.strip()
+        icon = None
+        m = re.search(r"\s+\[([a-z0-9-]+)\]$", t)
+        if m:
+            icon, t = m.group(1), t[:m.start()]
+        rows.append({"d": indent // 2, "name": t.strip(), "note": note, "hl": hl, "icon": icon})
+    for i, r in enumerate(rows):
+        r["dir"] = r["name"].endswith("/") or (i + 1 < len(rows) and rows[i + 1]["d"] > r["d"])
+    return rows
+
+
+def _tree_icon(r):
+    if r["icon"]:
+        return r["icon"], "fo" if r["dir"] else "fi"
+    if r["dir"]:
+        return TREE_ICONS["folder"], "fo"
+    name = r["name"].lower()
+    ext = "." + name.rsplit(".", 1)[1] if "." in name else ""
+    return TREE_ICONS.get(ext, "lc-file"), "fi"
+
+
+def _tree_html(rows):
+    """rows（d = 深さ）から入れ子の ul を作る。"""
+    out, i = [], 0
+    while i < len(rows):
+        r = rows[i]
+        j = i + 1
+        while j < len(rows) and rows[j]["d"] > r["d"]:
+            j += 1
+        kids = rows[i + 1:j]
+        icon, kind = _tree_icon(r)
+        note = f'<span class="nt">{esc(r["note"])}</span>' if r["note"] else ""
+        row = (f'<div class="rw {kind}{" hl" if r["hl"] else ""}"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-{icon}"/></svg>'
+               f'<span class="nm">{esc(r["name"])}</span>{note}</div>')
+        sub = f'<ul class="tr">{_tree_html(kids)}</ul>' if kids else ""
+        out.append(f"<li>{row}{sub}</li>")
+        i = j
+    return "".join(out)
+
+
+def tree_slide(s):
+    """K: ディレクトリ構造（ツリー）。"tree" は tree_rows の書き方の文字列。"tab"（箱の見出し）と "caption"（下の一言）は任意。
+    アイコンは Lucide（フォルダは青、ファイルは灰）。入れ子の ul で表すので、読み上げでも階層が分かる。"""
+    rows = tree_rows(s["tree"])
+    base = rows[0]["d"] if rows else 0
+    for r in rows:
+        r["d"] -= base
+    out = "::: {.cell .dark .tree-box}\n"
+    if s.get("tab"):
+        out += raw(f'<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-lc-folder-tree"/></svg>{esc(s["tab"])}</div>') + "\n"
+    out += raw(f'<ul class="tr root">{_tree_html(rows)}</ul>')
+    if s.get("caption"):
+        out += "::: {.cap}\n" + esc(s["caption"]) + "\n:::\n"
+    return out + ":::\n"
+
 def summary(v, cls):
     """lead（図表の上のひとこと）/ notes（下のまとめ・総評）。文字列は 1 段落、リストは箇条書き。"""
     if not v:
@@ -378,7 +465,7 @@ def body(s):
     t = s["type"]
     if t == "T":
         return text_slide(s)
-    return {"C": lambda: toc_slide(s), "S": lambda: steps_slide(s), "L": lambda: dlist_slide(s), "N": lambda: notice_slide(s), "H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t, lambda: box_slide(s))()
+    return {"C": lambda: toc_slide(s), "S": lambda: steps_slide(s), "L": lambda: dlist_slide(s), "N": lambda: notice_slide(s), "K": lambda: tree_slide(s), "H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t, lambda: box_slide(s))()
 
 
 def slide(s, show_id=True):
@@ -485,6 +572,15 @@ SAMPLE = {
             {"style": "blue", "text": "必要な資料は申請の前にそろえておく"},
             {"style": "gray", "title": "入力例", "text": ["姓：山田", "名：太郎"]},
             {"style": "bar", "title": "補足", "text": "読まなくても手続きは進められる補足情報"}]},
+        {"title": "K ディレクトリ構造", "type": "K", "tab": "ディレクトリ構造", "tree": """project/
+  src/
+    components/
+    App.tsx  # 画面の入口
+    index.ts
+  tests/
+  *README.md  # まず読む
+  package.json
+  .env""", "caption": "フォルダ・ファイルのアイコンと名前を組み合わせて作る"},
         {"title": "組み合わせ 手順 + 注釈", "type": "split", "cols": "1.6fr 1fr",
          "parts": [{"type": "S", "dir": "v", "current": 1, "steps": ["書く", "確かめる", "出す"]},
                    {"type": "N", "blocks": [{"style": "gray", "title": "ポイント", "text": "提出前に必ず見直す"}]}]},
