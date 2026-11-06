@@ -59,10 +59,10 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .mx, .tb { --gap: 8px; --pad: 16px 24px; --lw: 7.5em; --navy: #0017c1; --ink: #1a1a1a; --rule: #949494; --em: #e8f1fe; }
 .mx { display: grid; gap: 0; height: var(--h, auto); margin-top: 0.4em; font-size: 0.72em; line-height: 1.5; text-align: left; color: var(--ink); }
 .mx > div { min-width: 0; border-bottom: 1px solid var(--rule); }
-.mx .h, .mx .rl { display: flex; align-items: center; padding: var(--pad); font-weight: 700; }
+.mx .h, .mx .rl { display: flex; align-items: flex-start; padding: var(--pad); font-weight: 700; }
 .mx .h { justify-content: flex-start; border-bottom: 2px solid var(--ink); }
 .mx .corner { border-bottom: 2px solid var(--ink); }
-.mx .c { padding: var(--pad); display: flex; flex-direction: column; justify-content: center; }
+.mx .c { padding: var(--pad); display: flex; flex-direction: column; justify-content: flex-start; }
 .mx .h.em, .mx .c.em { background: var(--em); }
 .mx .c.em { font-weight: 700; }
 .mx ul { margin: 0; padding-left: 1.1em; }
@@ -70,12 +70,12 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 /* 工程の流れ（I）だけは、見出しを右向きの帯（シェブロン）にして順序を見せる */
 .mx.chev { gap: 0 8px; }
 .mx.chev .corner { border-bottom: 0; }
-.mx.chev .h { background: var(--em); color: #00118f; border-bottom: 0; clip-path: polygon(0 0, calc(100% - 1.1em) 0, 100% 50%, calc(100% - 1.1em) 100%, 0 100%); padding-right: 1.6em; }
+.mx.chev .h { align-items: center; background: var(--em); color: #00118f; border-bottom: 0; clip-path: polygon(0 0, calc(100% - 1.1em) 0, 100% 50%, calc(100% - 1.1em) 100%, 0 100%); padding-right: 1.6em; }
 .mx.chev .h.em { background: var(--navy); color: #fff; }
 
 .tb { width: 100%; height: var(--h, auto); border-collapse: collapse; margin-top: 0; font-size: 0.72em; line-height: 1.5; text-align: left; }
-.tb th { padding: var(--pad); font-weight: 700; color: var(--ink); background: none; border-bottom: 2px solid var(--ink); vertical-align: middle; }
-.tb td { padding: var(--pad); color: var(--ink); background: none; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.tb th { padding: var(--pad); font-weight: 700; color: var(--ink); background: none; border-bottom: 2px solid var(--ink); vertical-align: top; }
+.tb td { padding: var(--pad); color: var(--ink); background: none; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .tb .r { text-align: right; font-variant-numeric: tabular-nums; }
 .tb .no { width: 2.6em; text-align: center; }
 .tb .rl { font-weight: 700; }

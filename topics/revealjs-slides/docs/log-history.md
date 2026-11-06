@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06 DADS の table/usage・card/usage を取得し、表のセルを上揃えにした（NA 1 を閉じた）
+- ユーザーの指示: 「table/usage, card/usage を取得するところがゴール」。取得後、表のセルの縦位置の変更を「変えます」と採用。Edge で H・J を目視し「ばっちり。上揃えの方がみやすいかもしれない」「これで NA1 も close」。
+- 取得: 両ページとも数値（罫線の太さ・余白）は無く、規則だけ。表: 見出し下は黒のボーダー・太字、セルは上揃え・左揃え（数値は右も可）、結合は最小限、縞・ホバーは 3:1 以上。カード: 最大 4 パーツ、コンテナは外周と背景必須で外周 3:1 以上（影だけは不可）、クリッカブルなエリアにリンク・ボタンを置かない。ノートの「テーブル」「カード」の節に反映した。
+- 反映: `revealjs-diagram-theme.scss`（`.tb th/td` を `vertical-align: top`、`.mx .h/.rl` を `align-items: flex-start`、`.mx .c` を `justify-content: flex-start`。`.mx.chev .h` だけ `align-items: center`）、`revealjs-diagram-layouts.html`（再生成）、lessons の状態。探索は subagent に任せず自分で取得した。
+- 済: NA 1（DADS 準拠の残り）。完了条件の「未取得ページの取得」が満たされ、`due.md` の 11-13 の行も消した。
 ### 2026-11-06 DADS コンポーネント 3 件を型にした（S ステップナビゲーション・L 説明リスト・N 注釈ブロック。スイッチは不採用）
 - ユーザーの指示: 「ステップナビゲーション・説明リスト・スイッチ・注釈ブロックも dads 準拠で使えるように」。見本を見て「スイッチは使えないか。omit してください。他の 3 つは採用」「既存レイアウトに組み込む形で、拡充の幅を広げる位置づけ」。
 - 反映: `gen_layouts.py`（型 S・L・N、`body()` に登録。`split` の部品にも使える。台帳 `LAYOUTS` と見本スライドを追加）、`revealjs-diagram-theme.scss`、`revealjs-diagram-layouts.qmd`・`.html`（再生成）、lessons の DADS 節（ステップナビ・説明リスト・注釈ブロックの状態、スイッチは不採用）。
