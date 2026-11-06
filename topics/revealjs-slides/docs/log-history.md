@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06 Devicon の利用をやめ、ストックを削除した（組み込みの NA を omit）
+- ユーザーの指示: 「組み込みは omit。devicon 自体も利用をやめるので、ストックのアイコンファイルを削除して。理由はアイコンが固有すぎて使うイメージが湧かないことと、ライセンスの縛り（提携に関する記載）が面倒なこと」。
+- 反映: `git rm` で `records/build_devicon_icons.py`・`devicon-LICENSE.txt`・`revealjs-diagram-icons-devicon.html`・`…-devicon-preview.html` を削除（素材は MIT で、取得元から再取得できる）。NA（組み込み）と `due.md` の行を閉じ、出典の自動表記の NA から Devicon を外した。Open Questions の Devicon の項も削除。ecords/build_devicon_icons.py・devicon-LICENSE.txt・evealjs-diagram-icons-devicon.html・…-devicon-preview.html を削除（素材は MIT で、取得元から再取得できる）。NA（組み込み）と due.md の行を閉じ、出典の自動表記の NA から Devicon を外した。Open Questions の Devicon の項も削除。
+- 決定: `decisions.md` に記録。
+
 ### 2026-11-06 Excalidraw の方式 B（公式リモート MCP）を試して外した（NA1 を閉じた）
 - 根拠: `records/excalidraw-trial/README.md` の「方式 B の結果」。同じ room 図を `read_me` 1 回 + `create_view` 1 回で描けたが、戻り値は `checkpointId` のみで、画像・`.excalidraw`・SVG は手元に出ない。revealjs には使えない。
 - 数字: `/context` で `create_view` 221、`read_me` 100 の計 321 トークン（ユーザーの計測）。`read_me` の返答は約 9KB（呼んだときだけ）。
