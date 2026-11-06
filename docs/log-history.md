@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-06（承認プロセスが動かない件の調査と、kit・規則の案の経路）
+- 依頼: 「review 消化で承認プロセスが動かない。ルール追加で omit されたのか」。調べた結果、規則は残っており、待ち行列（Open Questions）が空だった。原因の見立て: `wrap` の報告で kit・規則の昇格の案の承認を求めており、待ち行列を通っていなかった。
+- ユーザーの決定: kit・規則の案は `wrap` の報告に出さず、直下の Open Questions に置いて `review 消化` で承認する。トピックで出たものも直下に置く。過去分は移さない。`wrap-hook.md`・`review-hook.md`・`decisions.md` を直した（`8cf83ea`、`f04b823`）。
+- 追加: NA 6（`workbase/docs/` と `topics/` の関係の整理）。ユーザーの依頼。
+- wrap: 閉じる項目なし（NA 5 は未）。
+
 ### 2026-11-06（token-cap NA 8 の道具と規則）
 - 変更: `workflow-kit/tools/long_request_shape.py` に Bash の先頭語・書込風の集計を追加（`29c78d2`）。`AGENTS.md` の「読み込みの量を抑える」に「読みの Bash は 1 回のコマンドに連結する」を追加（`52c20be`。ユーザーの承認）。経緯と結果は `topics/token-cap/` の `docs/log-history.md` と `records/2026-11-06-pc1-room-effect.md` の 8。
 - wrap: 閉じる項目なし。
