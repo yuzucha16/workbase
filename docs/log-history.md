@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06（トピック固有の期日をトピック内で管理）
+- ユーザーの決定: 「workbase/docs/log は due に置きたい。workbase/topics/ はこの中で閉じたい」。直下の `due.md` は kit 全体の項目だけ。トピック固有の 8 行（token-cap 2、office-output-types 4、ooxml-clean 1、room-type-consolidation 1）を各トピックの `docs/due.md` へ移した。直下に残る旧 `logbook-design` 等の行と、所属不明の論点出しの型 v4 の行は動かさない（ユーザー）。
+- 反映: `topics/AGENTS.md`、`workflow-kit/wrap-hook.md`、`decisions.md`（同日）。コミット 6212aa6。
+- wrap: 閉じる項目なし（NA 5 は未）。
+
 ### 2026-11-06（PC1 実機確認のまとめ close。ee）
 - 済（due 行のみ・log に項目なし）: ① `room open --from` の実機確認（①〜⑥、全パターン問題なし）、② eg2 の room 版（myenv・internal・`sample_inveg2`）、③ `inv` の工程の組み合わせ試験。いずれも ee が PC1 で実施し「close」。due.md から行を消した。
 - 維持: マウント残り（11-13、再発なし）、office-output-types NA 2・3、論点出しの型 v4 の確認（11-13）。logbook-design NA 1（11-15）は次のセッションで実施。
