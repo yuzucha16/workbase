@@ -35,3 +35,4 @@
 ## Open Questions
 
 - 出力側の点検（AI の出力に実名や金額の形が無いか）を `cleankit` に足すか。未実現の案で、必要が見えるまで保留（ooxml-clean 由来、11-06）。
+- revealjs-slides の実スライド作成（11-06）で出た kit への改善案。場所: `topics/revealjs-slides/records/` / 問題: 実スライド用の SVG 雛形が無い、表紙にサブタイトル・日付を置けない、render に scss・icons を毎回手で複製する、複製 → 型を選ぶ → render → 撮影の手順書が無い / 案: `gen_layouts.py` に `--copy-assets` とサブタイトルの指定を足し、手順書を 1 本書く（ユーザーが kit へフィードバックする予定）。

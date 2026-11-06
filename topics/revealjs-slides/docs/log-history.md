@@ -34,3 +34,10 @@
 
 ### 2026-11-06 NA1 room init の Noto Sans JP 段の準備
 - `notosansjp` 段が `room.py` の `INIT_STEPS` にあることを確認し、`init` 関連の単体テスト 17 件（2 件スキップ）が通ることを確かめた。実機の確認（`room init <Area> --resume` か `--only notosansjp`、`fc-list` で確認）は、ユーザーが別セッション・別 PC で行う。NA1 は未完了のまま `log.md` に残した。
+
+### 2026-11-06 NA2 実スライドを 1 本作る（PC2。題材: room 導入の LT）
+- 済（根拠: `records/ai-room-lt/` に spec.json・qmd・html。13 枚を Edge の headless 撮影で全枚目視、はみ出しなし。ユーザー「本件は完了」）。題材は `guides/explain/ai-room-why.md` と `guides/howto/ai-room-setup.md`。部署 30 名・20 分の想定。PC1 でなく PC2 で作った。
+- 使った型: A・B・E・F・H・I・J・T（D・G は未使用）。E の図は手書き SVG。
+- 出た不足と対処（コミット `29da2df`）: ①A〜G の下が空く → spec の `"height"`（`--lh`）を追加。②図が無い箱の文字が小さい → 0.9em。③型 T を型に登録（10 型）。④I 型のセルにリストを渡すと改行が箇条書きになる（改行は文字列の `\n`）。
+- 未対応の不足: 実スライド用の SVG 雛形、表紙のサブタイトル・日付、render 用に scss・icons を複製する手間（`--copy-assets` 案）、使い方の手順書、アイコンが 9 種のみ。kit へのフィードバックはユーザーが行う。
+- 成果物（html 3.5MB を含む）はユーザーの指示で一時扱い（コミットしない）。
