@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06（token-cap NA 8 の道具と規則）
+- 変更: `workflow-kit/tools/long_request_shape.py` に Bash の先頭語・書込風の集計を追加（`29c78d2`）。`AGENTS.md` の「読み込みの量を抑える」に「読みの Bash は 1 回のコマンドに連結する」を追加（`52c20be`。ユーザーの承認）。経緯と結果は `topics/token-cap/` の `docs/log-history.md` と `records/2026-11-06-pc1-room-effect.md` の 8。
+- wrap: 閉じる項目なし。
+
 ### 2026-11-06（トピック固有の期日をトピック内で管理）
 - ユーザーの決定: 「workbase/docs/log は due に置きたい。workbase/topics/ はこの中で閉じたい」。直下の `due.md` は kit 全体の項目だけ。トピック固有の 8 行（token-cap 2、office-output-types 4、ooxml-clean 1、room-type-consolidation 1）を各トピックの `docs/due.md` へ移した。直下に残る旧 `logbook-design` 等の行と、所属不明の論点出しの型 v4 の行は動かさない（ユーザー）。
 - 反映: `topics/AGENTS.md`、`workflow-kit/wrap-hook.md`、`decisions.md`（同日）。コミット 6212aa6。
