@@ -6,6 +6,8 @@
   python -I gen_layouts.py                      # 組み込みの見本から qmd を出す（標準出力）
   python -I gen_layouts.py -o out.qmd           # ファイルへ
   python -I gen_layouts.py --spec spec.json -o out.qmd
+  python -I gen_layouts.py --spec spec.json -o <dir>/out.qmd --copy-assets   # render に要る scss・アイコンも <dir> へ複製
+  spec の先頭に "subtitle" "author" "date"（任意）を書くと、表紙に出る。
 
 出力の qmd は、同じディレクトリの revealjs-diagram-theme.scss と
 revealjs-diagram-icons-myself.html と revealjs-diagram-icons-dads.html（デジタル庁の素材。build_dads_icons.py で作る）を読む（render は両ファイルを同じ場所に置いて行う）。
@@ -508,7 +510,11 @@ def _slide(s, show_id):
 def build(spec, show_id=None):
     if show_id is None:
         show_id = spec.get("show_id", True)  # 作成中は番号を出す（最終判断はユーザー）。完成版は --no-id か "show_id": false
-    return HEADER.format(title=spec.get("title", "レイアウト見本")) + "\n" + "\n".join(slide(s, show_id) for s in spec["slides"])
+    head = HEADER.format(title=spec.get("title", "レイアウト見本").replace('"', '\\"'))
+    extra = "".join(f'{k}: "{str(spec[k]).replace(chr(34), chr(92) + chr(34))}"\n' for k in ("subtitle", "author", "date") if spec.get(k))
+    if extra:  # 表紙のサブタイトル・発表者・日付（Quarto の YAML。title の直後に入れる）
+        head = head.replace("format:\n", extra + "format:\n", 1)
+    return head + "\n" + "\n".join(slide(s, show_id) for s in spec["slides"])
 
 
 # ---- 組み込みの見本（ダミーの文言。行・列の数を変えた例を並べる） ----
@@ -638,7 +644,18 @@ def main():
     ap.add_argument("-o", "--out", help="出力先（省略時は標準出力）")
     ap.add_argument("--no-id", action="store_true", help="レイアウト番号を表示しない（完成版）")
     ap.add_argument("--list", action="store_true", help="レイアウトの台帳（番号・名前・使いどころ）を出して終わる")
+    ap.add_argument("--copy-assets", action="store_true", help="render に要る scss とアイコン html を、-o の出力先ディレクトリへ複製する")
     a = ap.parse_args()
+    if a.copy_assets:
+        if not a.out:
+            ap.error("--copy-assets には -o が要る")
+        import os
+        import shutil
+        here = os.path.dirname(os.path.abspath(__file__))
+        dest = os.path.dirname(os.path.abspath(a.out))
+        for n in ("revealjs-diagram-theme.scss", "revealjs-diagram-icons-myself.html", "revealjs-diagram-icons-dads.html", "revealjs-diagram-icons-lucide.html"):
+            if os.path.abspath(os.path.join(here, n)) != os.path.join(dest, n):
+                shutil.copyfile(os.path.join(here, n), os.path.join(dest, n))
     if a.list:
         sys.stdout.reconfigure(encoding="utf-8")
         for k, (name, use) in LAYOUTS.items():

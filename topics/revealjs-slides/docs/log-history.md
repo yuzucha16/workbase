@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-07 手順書と --copy-assets を足し、room で見本を render した（NA を閉じた）
+- ユーザーの指示: 「revealjs-slides の続き NA1」→「room-myenv を使って render。H/I/J はこちらで見る」→「目視 OK です。NA1 を close。コミット・push も」。
+- 結果: `gen_layouts.py` に `--copy-assets` と spec の `subtitle`/`author`/`date`（表紙）を追加。手順書 `records/revealjs-slides-howto.md` を新規作成（SVG 雛形は「無い・都度作る」）。一時ディレクトリで生成・複製・quarto render が通った。room-myenv（Quarto 1.11.9、Python 3.14.4）の `/tmp/rjs` に複製して render し、qmd は Windows とバイト一致。HTML をユーザーが目視して OK。閉じた NA: 起票 11-06、期日 11-13（根拠: 本コミット）。決定は無し。
+- 後始末: room の `/tmp/rjs` と Windows の `%TEMP%\rjs-room`・`rjs-test` は残した（削除の指示待ち）。
+
 ### 2026-11-07 records/ の整理とアイコンの命名・id の統一
 - ユーザーの指示: 「dads-sample/ と excalidraw-trial を削除。自作・DADS・Lucide のアイコンの命名規則を揃え、プレビューも作る」「`build_dads_sample.py` も削除」「id は Lucide ベースで `i-<素材>-<名前>`。自作は `i-myself-*`、DADS は `i-dads-*`」「Lucide は `i-lc-*` でよい」「Quarto で render し直してパスつきでコミット」。
 - 結果: `excalidraw-trial/`（追跡 7 ファイル）・`dads-sample/`（未追跡）・`build_dads_sample.py` を削除。ファイル名を `revealjs-diagram-icons-{myself,dads,lucide}.html` と `-preview.html` の 3 組に統一（`-myself-preview.html` は `build_myself_preview.py` で新規。`-dads-preview.html` は旧合体版から DADS だけに変更）。symbol の id を `i-myself-*`（9）・`i-dads-*`（32）・`i-lc-*`（99、変更なし）に振りなおし、`gen_layouts.py`（`OWN_ICONS` を廃止し接頭辞で出典を判定）・qmd・html・build スクリプト・lessons を追随。qmd は `gen_layouts.py` で作り直し、html は `quarto render` で作り直した。決定の追記は無し（ユーザーの指示のみ）。

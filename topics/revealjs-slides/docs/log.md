@@ -11,12 +11,12 @@
 - 行の高さは内容なりが既定（`height` 指定のときだけ下まで等分）。図表の上下に `lead`（上）と `notes`（下）でまとめ・総評を置ける。型と位置は AI が提案し、最終判断はユーザー。スライドの右上に**レイアウト番号**（例 `H+notes`）を出す（`--no-id` で消す）。無い形は近い型で代用して spec に `want` を書き、逐次作る（11-06 ユーザーの決定。`decisions.md`、台帳は `gen_layouts.py` の `LAYOUTS`）。
 - 基準の版: DADS v2.18.2（11-06）。`lessons/revealjs-diagram-layout-output.md` に DADS の章立て（基本デザイン・コンポーネント）で現行ルールと状態を記録済み。章立てはユーザー確認済み。版が上がったら突き合わせる。
 - 検証: Edge（Windows）で H・I・J・B を目視済み。H・I・J は Windows の Edge 以外（PC1 のブラウザ）でも問題なし（11-06）。room init の Noto Sans JP 段は実機で通した（11-06）。PC1 の生成スクリプトは `gen_layouts.py` に取り込み済み。room での新スタイルの描画も確認済み（11-06 ユーザー）。見出し・T の軽量化、h3 の 1 段インデント、箇条書き 2 段まで、タイトルの濃青の縦棒は反映・目視済み（11-06）。C は Edge で目視し、ユーザーが確定（11-06）。`side` の画像はキャプションつきを目視済み（11-06 ユーザー。`1.` 止め・SVG の `aria-label` も反映済み）。`split` に A〜G を半幅で置く場合、コードの色分けは未検証。表（H・J）のセルは上揃え（DADS の table/usage に合わせた。11-06 ユーザーが目視して確定。工程の帯 I の見出しだけ中央）。`table/usage`・`card/usage` は取得・反映済み（DADS の未取得は `accessibility` など）。
+- 作り方（11-07）: 手順書は `records/revealjs-slides-howto.md`。`gen_layouts.py` は `--copy-assets`（`-o` の出力先へ scss・アイコンを複製）と spec の `subtitle`/`author`/`date`（表紙）に対応。room-myenv で見本を render し、qmd は Windows とバイト一致、H・I・J の見え方はユーザーが目視して OK（11-07）。SVG の汎用雛形は無い（題材ごとに作る）。
 
 - Excalidraw 試験（`records/excalidraw-trial/` は 11-06 に削除済み。以下は当時の記録。経緯は log-history・decisions と lessons。11-06 開始。方式 A = MCP なし）: `build_room_diagram.py` が仕様から `.excalidraw` と SVG を出す（SVG は自前の描画）。`.excalidraw` は Excalidraw で開いて崩れないことをユーザーが確認。SVG は T の `side.img`（alt・caption つき）で入れるのを標準にし、Edge で目視済み（ユーザー確認）。E の `fig`（インライン）は横長の図に不向き。方式 B（公式リモート MCP）は試して外した（11-06。ターミナルでは画像・ファイルが出ず成果物に使えない。MCP の常時分は 321 トークン。`decisions.md`）。半幅用の版（`room-structure-half.*`、幅 700・補足と注記 20px。`build_room_diagram.py` が全幅と同時に出す）を T の `side` に入れて、ユーザーが目視して確定（11-06）。room（`room-myenv`。Python 3.13・Quarto 1.11.9）でも通った: 必要なファイルを room へ複製し、`build_room_diagram.py` と `build_slide.py` を room 内で実行。出た SVG・`.excalidraw` は Windows のものとバイト一致、HTML は Edge で目視してズレなし（11-06 ユーザー確認。一時ディレクトリは削除済み）。PC1 の room 実機は未確認。経緯は同ディレクトリの `README.md`。
 
 ## Next Actions
 
-- 【起票 11-06、期日 11-13】実スライド作成で出た改善（`records/`）: `gen_layouts.py` に `--copy-assets`（render 用の scss・icons を複製）と表紙のサブタイトル・日付の指定を足す。あわせて、使い方の手順書を 1 本書く（複製 → 型を選ぶ → 文言と図を置換 → render → 目視）。実スライド用の SVG 雛形が無い件も、この手順書で扱う。担当: AI。
 - 【起票 11-06、期日 11-20】型の棚卸し（`records/2026-11-06-layout-inventory.md`。重なり・管理・拡充の整理は済み）の残りの実装。P2（split を 3 部品まで）は需要が出てから（`want` に溜める）。`topics/office-output-types` と共通にできる構成を分ける。担当: AI、ユーザー（選択・目視）。
 
 ## Open Questions
