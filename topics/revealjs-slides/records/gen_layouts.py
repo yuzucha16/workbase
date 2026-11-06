@@ -265,7 +265,9 @@ def text_slide(s):
     if "code" in side:
         right = raw(f'<pre class="plain"><code>{esc(side["code"].rstrip())}</code></pre>')
     elif "img" in side:
-        right = f"![{side.get('alt', '')}]({side['img']})\n"
+        if not side.get("alt"):
+            raise SystemExit("T の side の画像には alt（代替テキスト）が要る（DADS 準拠）")
+        right = f"![{side['alt']}]({side['img']})\n"
     else:
         raise SystemExit("T の side は code か img を持つ")
     return f"::: {{.tside}}\n::: {{.tmain}}\n{NOSEC}{main}:::\n::: {{.tright}}\n{right}:::\n:::\n"

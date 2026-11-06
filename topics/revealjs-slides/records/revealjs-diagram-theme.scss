@@ -25,14 +25,14 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 
 /* 図解レイアウト: 箱の中は左に図・右に文字。A=左右二分割、B=上が左右(間に矢印)・下が全幅 */
 .lay { display: grid; gap: 0.5em; margin-top: 0.3em; }
-.cell { display: flex; align-items: center; gap: 0.5em; padding: 0.45em 0.55em; border: 2px solid #0017c1; border-radius: 8px; background: #fff; }
+.cell { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border: 2px solid #0017c1; border-radius: 8px; background: #fff; }
 .cell.dark { border-color: #333; }
 .cell.blue { border-color: #0017c1; background: #e8f1fe; }
 .cell.gray { border-color: #767676; }
 .cell .fig { flex: 0 0 58%; }
 .cell.wide .fig { flex-basis: 62%; }
 .cell .fig svg { width: 100%; height: auto; display: block; }
-.cell .txt { flex: 1; font-size: 0.66em; line-height: 1.4; text-align: left; }
+.cell .txt { flex: 1; font-size: 0.66em; line-height: 1.5; text-align: left; }
 .cell .txt p { margin: 0 0 0.45em; }
 .link { align-self: center; text-align: center; color: #0017c1; font-size: 1.8em; line-height: 1.1; }
 .link span { display: block; font-size: 0.42em; font-weight: 700; }
@@ -48,7 +48,7 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 
 /* 箱の並びは gen_layouts.py の PRESETS（インラインの grid-template-areas）。ここは型ごとの見た目の調整だけ */
 .lay-e .cell .fig { flex-basis: 74%; }
-.lay-f .cell { padding-top: 0.6em; padding-bottom: 0.4em; }
+.lay-f .cell { padding-top: 16px; padding-bottom: 12px; }
 /* 箱の型の高さ（spec の "height"）。行を等分してスライドの下を空けない。図が無い箱は文字を大きくする */
 .lay[style*="--lh"] { height: var(--lh); grid-auto-rows: 1fr; }
 .cell:not(:has(.fig)) .txt { font-size: 0.9em; line-height: 1.5; }
@@ -56,7 +56,7 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 /* H/I/J（行ラベル x 列 / 工程 x 行 / 表）。DADS の表の流用: 背景なし・罫線だけ。
    見出しの下は黒の太線、行の間は灰の細線。強調する列だけ薄い青の地と太字。行ラベルは太字。
    行・列の数は生成スクリプトが決める。余白は --gap（セル間。H・I は 0）と --pad（セルの内側）。 */
-.mx, .tb { --gap: 8px; --pad: 16px 24px; --lw: 7.5em; --navy: #0017c1; --ink: #1a1a1a; --rule: #b3b3b3; --em: #e8f1fe; }
+.mx, .tb { --gap: 8px; --pad: 16px 24px; --lw: 7.5em; --navy: #0017c1; --ink: #1a1a1a; --rule: #949494; --em: #e8f1fe; }
 .mx { display: grid; gap: 0; height: var(--h, auto); margin-top: 0.4em; font-size: 0.72em; line-height: 1.5; text-align: left; color: var(--ink); }
 .mx > div { min-width: 0; border-bottom: 1px solid var(--rule); }
 .mx .h, .mx .rl { display: flex; align-items: center; padding: var(--pad); font-weight: 700; }
@@ -84,11 +84,11 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 /* Quarto(reveal) の既定の罫線・影を消す */
 .reveal .tb tr, .reveal .tb th, .reveal .tb td { border-left: 0 !important; border-right: 0 !important; border-top: 0 !important; }
 .reveal .tb th { border-bottom: 2px solid #1a1a1a !important; }
-.reveal .tb td { border-bottom: 1px solid #b3b3b3 !important; }
+.reveal .tb td { border-bottom: 1px solid #949494 !important; }
 
 /* C 目次: 罫線だけの番号付き一覧。章の間は灰の細線、現在の章だけ薄青の地・太字。小項目は章名の下に 1 段 */
 .reveal .slides section ol.toc { list-style: none; width: 100%; box-sizing: border-box; margin: 0.4em 0 0; padding: 0; font-size: 0.85em; line-height: 1.5; text-align: left; color: #1a1a1a; }
-.toc > li { display: grid; grid-template-columns: 2.2em 12em 1fr; column-gap: 0.4em; align-items: baseline; margin: 0; padding: 0.55em 0.6em; border-bottom: 1px solid #b3b3b3; }
+.toc > li { display: grid; grid-template-columns: 2.2em 12em 1fr; column-gap: 0.4em; align-items: baseline; margin: 0; padding: 0.55em 0.6em; border-bottom: 1px solid #949494; }
 .toc > li:first-child { border-top: 2px solid #1a1a1a; }
 .toc .n { font-weight: 700; color: #0017c1; font-variant-numeric: tabular-nums; }
 .toc .t { font-weight: 700; }
@@ -106,8 +106,8 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .sum li { margin: 0.15em 0; }
 
 /* 見出しと T の軽量化（DADS 流: 装飾なし・墨色・階層で大きさを下げる。行高は見出し 1.4、本文 1.5） */
-.reveal .slides section h2 { border-left: 6px solid #0017c1; padding-left: 0.4em; font-size: 1.5em; font-weight: 700; line-height: 1.4; color: #1a1a1a; text-transform: none; letter-spacing: 0; }
-.reveal .slides section h3 { font-size: 1.1em; font-weight: 700; line-height: 1.4; color: #1a1a1a; margin-top: 0.8em; margin-bottom: 0.3em; margin-left: var(--ind); }
+.reveal .slides section h2 { border-left: 6px solid #0017c1; padding-left: 0.4em; font-size: 1.5em; font-weight: 700; line-height: 1.4; color: #1a1a1a; text-transform: none; letter-spacing: 0.01em; }
+.reveal .slides section h3 { letter-spacing: 0.01em; font-size: 1.1em; font-weight: 700; line-height: 1.4; color: #1a1a1a; margin-top: 0.8em; margin-bottom: 0.3em; margin-left: var(--ind); }
 .reveal .slides section > p, .reveal .slides section > ul, .reveal .slides section > ol { font-size: 0.9em; line-height: 1.5; color: #1a1a1a; }
 .reveal .slides section > ul li, .reveal .slides section > ol li { margin: 0.15em 0; }
 
@@ -121,7 +121,7 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .reveal .slides section .tmain > ul, .reveal .slides section .tmain > ol { margin-left: var(--ind); padding-left: 1.1em; }
 .tright { min-width: 0; margin-top: 0.8em; }
 .tright div.sourceCode, .tright pre { margin: 0; width: 100%; box-shadow: none; }
-.tright pre { border: 1px solid #b3b3b3; background: #f5f5f5; font-size: 0.6em; line-height: 1.6; margin: 0; width: 100%; box-shadow: none; }
+.tright pre { border: 1px solid #949494; background: #f5f5f5; font-size: 0.6em; line-height: 1.6; margin: 0; width: 100%; box-shadow: none; }
 .tright pre code { max-height: none; padding: 0.7em 0.9em; }
 .tright code.sourceCode > span > a:first-child::before { content: none; display: none; } /* 行番号を出さない */
 .tright img { max-width: 100%; max-height: 480px; display: block; }
@@ -133,4 +133,7 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .reveal .slides section .split .sp h3, .reveal .slides section .split .sp > p { margin-left: 0; }
 .reveal .slides section .split .sp > ul, .reveal .slides section .split .sp > ol { margin-left: 0; padding-left: 1.1em; }
 /* レイアウト番号（作成中だけ表示。ユーザーが型を判断するための目印） */
-.reveal .slides section .lid { position: absolute; right: 12px; top: 8px; font-size: 14px; color: #767676; border: 1px solid #b3b3b3; padding: 0 8px; background: #fff; z-index: 5; }
+.reveal .slides section .lid { position: absolute; right: 12px; top: 8px; font-size: 14px; color: #767676; border: 1px solid #949494; padding: 0 8px; background: #fff; z-index: 5; }
+/* 字間: DADS は 16〜26px で 2%、28px 以上で 1%（11-06）。本文・表・箱は 2%、h2・h3 は 1%、コードと 14px の番号札は 0 */
+.reveal .slides section { letter-spacing: 0.02em; }
+.reveal .slides section pre, .reveal .slides section code, .reveal .slides section .lid { letter-spacing: 0; }
