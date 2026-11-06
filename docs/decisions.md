@@ -4,6 +4,10 @@
 
 ## Decisions
 
+### 【汎用】トピックで出た【汎用】の決定は、直下の `docs/decisions.md` に直接書く（2026-11-06）
+- 根拠: NA 6 の 3.3。ユーザー「そうね、直下に直接かきましょう。承認します」。背景: 直下からトピックの `decisions.md` へリンクを張る案は、閉じたときにパスが切れ、本文（根拠のユーザー発言）も消える（`decisions.md` は役割名で重複可のため、名前でなくパスで指すことになる）。
+- 決めたこと: トピックの `decisions.md` は【この件】だけ。【汎用】は書いた時点で直下に書く。閉じるときに運ぶのは【この件】だけになる（`close-procedure.md` の手順 1・1a）。2026-11-06 より前にトピックに残る【汎用】は、従来どおり閉じるときに手順 1 で振り分ける。
+- 反映先: `workflow-kit/wrap-hook.md`、`topics/AGENTS.md`、`topics/close-procedure.md`。
 ### 【汎用】`topics/kit-growth/` を廃止し、`records/` と `inbox.md` を直下の `docs/` へ移した（2026-11-06）
 - 根拠: NA 6（`docs/` と `topics/` の関係の整理）。ユーザー「案Bが一貫性あるのでこちらにしたい」「recordsにしましょう」「inboxにしましょう」「承認します」。
 - 決めたこと: `topics/` は Project 型のトピックだけにする。`topics/kit-growth/records/` → `docs/records/`、`topics/kit-growth/inbox.md` → `docs/inbox.md`（名前は変えない）。kit 全体の記録は、状態・決定・経緯・期日・測ったこと・印象のすべてが直下の `docs/` に揃う。
