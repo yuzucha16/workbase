@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-11-06（PC1 実機確認のまとめ close。ee）
+- 済（due 行のみ・log に項目なし）: ① `room open --from` の実機確認（①〜⑥、全パターン問題なし）、② eg2 の room 版（myenv・internal・`sample_inveg2`）、③ `inv` の工程の組み合わせ試験。いずれも ee が PC1 で実施し「close」。due.md から行を消した。
+- 維持: マウント残り（11-13、再発なし）、office-output-types NA 2・3、論点出しの型 v4 の確認（11-13）。logbook-design NA 1（11-15）は次のセッションで実施。
+- 重複の整理（ee 承認）: due 11-15（旧 logbook-design NA 1）の「room の OQ 4 項」を、置き場がこの行だけだと分かる書き方に直した。token-cap の OQ「Zed の System tools の増加」は、due 11-14 と重複していたため OQ 側を消した（due を残す）。NA 6（今日期日）は ee がこのあと扱う。
+### 2026-11-06（room: close --area の実機確認）
+- 済（NA4）: PC1 の実機で確認済み（ee 11-06: 止まる条件・移った後の room trace --area とも問題なし。「close」）。成果物を archives/ に残す案の判断は、ee が試した結果「問題なし」として閉じた（現状の渡し方のまま）。
+  - 元の項目: **`room close --area` の実機確認と、成果物を `archives/` に残す案の判断（起票 11-04、11-05 に実装）**: `room close --area <Area>` は実装済み（単体テスト済み。条件は Project 0 件・`stock` の scope: area の未処理 0 件・y/N の宣言。`areas/<Area>` → `archives/areas/<Area>`。部屋は消さず、`wsl --unregister` は人）。残り: ① PC1 の実機で、Project を全部閉じた Area に試す（止まる条件と、移った後の `room trace --area` が引けること）、② 成果物を Area に渡さず Project の状態として `archives/` に残す案は、実機で試してから決める（ee が 11-05 に「もう少し試してから決める」）。`room open --from` の案 C は見送り（11-05）。調査は `notes/area-ops/2026-11-05-archive-salvage.md`。
+
 ### 2026-11-05（room: close の警告）
 - 済（NA9）: 案 2 を採用（ee: 「na9: 2にします」）。`room close` は `ai/out/` 直下に Project 名・`deliverable/`・`stock/` 以外のフォルダがあると警告して `[y/N]`（`stray_out_dirs`、`close_warnings`。非対話では止まる）。単体テスト 2 件追加。実機は未確認。案 1・3 は採らない。
   - 元の項目: **成果物を `ai/out/<Project 名>/` 以外に置かれると、`room close` で Area に渡らない（起票 11-05）**: 部屋の AI が成果物を Project 名以外のフォルダに置くことが約 5 回に 1 回ある（ユーザーの実測）。11-05 の変更で Area へ渡すのは `ai/out/<Project 名>/` の下だけになったため、踏むと何も渡らず、`close` は黙って進む。案: ① 渡るのは Project 名のフォルダだけだと部屋の案内で強く言う、② `close` が `ai/out/` の直下に Project 名以外のフォルダ（`stock/` を除く）を見つけたら警告して `[y/N]`、③ 塊が 1 つだけなら名前を問わずに渡す。決めるのは ee。決定は `decisions.md` の 11-05。 期日のある項目は `due.md`。

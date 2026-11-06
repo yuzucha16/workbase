@@ -14,7 +14,6 @@
 
 2. 【期日 11-13】PC1 で、入力 2〜3 種類の見出し・列名だけ（実データなし）で、定義表の行を書く。足りない項目を雛形に戻す。
 3. 【期日 11-14】雛形を `exmem/lessons/` に昇格するか、1 回回した後に決める（提案: 昇格は 1 回回してから）。
-5. 【期日 11-18】PC1 の PowerPoint で `records/2026-11-04-quarto-trial-biz-udpgothic.pptx` を開き、フォントが BIZ UDPゴシックで出るか見る（雛形は `records/reference-biz-udpgothic.pptx`。`.qmd` は試験の元）。Quarto の `init` への追加は実装・試験済み（11-04、`room.py` の `quarto` 段）。次: 実機の `init --only quarto` で新しい部屋に入ることの確認と、`init` に足したことのレビュー。
 
 7. 【期日 11-18】Quarto の見た目を社内の雛形に合わせる 7 段の手順（`records/2026-11-04-quarto-reference-doc-steps-design.md`）を試験し、確定する。雛形は部屋に渡せない（固有名詞）ので、匿名化した複製で手順 1〜6 を行う。必須はスライド番号・フッター・ヘッダー・ロゴ、フォントと色は一致、余白は許容。
 

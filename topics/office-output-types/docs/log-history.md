@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06（NA 5 PC1 実機確認）
+- 済（NA5）: PC1 で試験 pptx のフォント（BIZ UDPゴシック）と init --only quarto を確認、問題なし（ee 11-06「close」）。
+  - 元の項目: 【期日 11-18】PC1 の PowerPoint で `records/2026-11-04-quarto-trial-biz-udpgothic.pptx` を開き、フォントが BIZ UDPゴシックで出るか見る（雛形は `records/reference-biz-udpgothic.pptx`。`.qmd` は試験の元）。Quarto の `init` への追加は実装・試験済み（11-04、`room.py` の `quarto` 段）。次: 実機の `init --only quarto` で新しい部屋に入ることの確認と、`init` に足したことのレビュー。
+
 ### 2026-11-04（reference-doc の手順を room-type-consolidation から移管した）
 - 経緯: ユーザー「関係が強いので office-output-types に移管。7 段は ここで管理」。叩き台を `records/` に移し、NA 7 に起票した。
 - 回答: 雛形は固有名詞があり部屋に渡せない。必須はスライド番号・フッター・ヘッダー・ロゴ。フォントと色は一致、余白は許容。
