@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-06（token-cap NA 10 を閉じた）
+- done（NA10）: ツールの理解ガイドを xmem/inbox/2026-11-06-claude-code-tools-explain.md（kind: explain、未追跡のまま。ee の指示で別セッションが integrate する）に作った。Read・Grep・Glob・Edit・Write・Bash・Agent の役割、専用ツールと Bash の違い（本体の関数か、シェルか）、token-cap の経緯と今後の見通しを含む。ee が「理解できた」と言い、close。
+
 ### 2026-11-06（token-cap NA 8 を閉じた）
 - done（NA8）: ee の承認で close。`long_request_shape.py`（Bash の先頭語・書込風の集計を追加。`29c78d2`）を PC1 で 2 回実行。応答 21 以上の 7 件は Edit・Write が 0 回で、応答の 87% が Bash（読みの `head`・`cat`・`grep`・`ls` が書込風を上回る）。探索型でも試行錯誤型でもなく、1 応答 1 Bash の直列が尾を作る。新しい対策は足さない（既存の「まとめて呼ぶ」規則が当たる。効果は次回の `requests_by_kind.py`）。根拠: `records/2026-11-06-pc1-room-effect.md` の 8、`decisions.md` の同日の項。
 
