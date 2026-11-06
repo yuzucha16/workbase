@@ -105,5 +105,6 @@ updated: 2026-10-21
 | `oidc` | OIDC（OpenID Connect）のサインイン・トークン |
 | `llm-gateway` | 組織の LLM ゲートウェイ経由での AI クライアントの接続 |
 | `ai-room` | AI 作業部屋（専用 WSL の `room`）の設計・運用 |
+| `prompt-design` | AI への指示文・案内文・規則の置き場の設計 |
 | `concurrency` | 並行利用・排他・競合の設計 |
 | `python` | Python の実装・テスト |

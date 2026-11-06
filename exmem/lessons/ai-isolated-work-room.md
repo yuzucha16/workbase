@@ -13,14 +13,16 @@ tags:
   - testing
   - ai-room
   - concurrency
+  - prompt-design
 aliases:
   - AI 作業部屋
   - AI スコープの分離
   - 許可リスト方式の隔離
-triggers: [作業部屋, 隔離, 許可リスト, WSL, 領域, マスク, room, スコープ, セキュリティ, 機密, AIに見せない, マウント]
+triggers: [作業部屋, 隔離, 許可リスト, WSL, 領域, マスク, room, スコープ, セキュリティ, 機密, AIに見せない, マウント, claude -p, 非対話, room start --cmd, 手順書, 読まない, 規則が効かない, 案内文, POINTER_TEXT, 試験, 再試]
 created: 2026-10-13
-updated: 2026-11-05
+updated: 2026-11-06
 sources:
+  - Claude Code conversation "room の quarto 追試と規則の調整" (2026-11-06)
   - Claude Code conversation "room の並行 start" (2026-10-21)
   - Claude Code conversation "Area を跨ぐ共有知の設計と実装" (2026-10-21)
   - Claude Code conversation "room の data 型と Area の置き場の設計" (2026-10-21)
@@ -70,6 +72,10 @@ sources:
 - Windows のストア全体を入れない。理由: 数百枚が AI から見える領域に入り、信頼先が不必要に広がる。
 - 部屋へ入る `wsl.exe` には、Windows の `WSLENV` を渡さない。理由: `/p` 付きのパスが `/mnt/c` の無い部屋で変換できず、壊れた `SSL_CERT_FILE` などが残って curl が失敗する。環境変数の漏れは、分離の面でも望ましくない。
 - 新しい PC では、障害を1つずつ踏む前に、関所を順に確かめる（Facts の「関所の一覧」）。理由: TLS 検査のある PC では、証明書、環境変数の漏れ、Node、環境変数の引き継ぎ、資格情報の5つを順に踏み、検査のない PC では1つも出なかった。
+
+- `claude -p` で非対話に動かすエージェントに守らせたい規則は、常に読み込まれる文脈（`~/.claude/CLAUDE.md` に入れる案内文）に直接書く。「手順書を読む」と指すだけの規則は、読まれない前提で扱う。理由: 非対話で 1 回の依頼を処理するエージェントは、案内文が指す手順書へ自分から Read しに行かなかった。
+- 規則を直したら、直した場所が読まれる経路にあるかを、同じ依頼の再試で確かめる。理由: 手順書だけを直した 2 回の再試は、結果が変わらなかった。
+- 規則は、基準を数や有無で書く（「3 件以上なら必ず `sources/`、直下に `sources.md` を置かない」のように、してよい場合とだめな場合の両方を書く）。理由: 「1〜2 件なら 1 本でよい」だけだと、6 件でも 1 本にした回があった。
 
 ## Decisions
 
@@ -163,6 +169,11 @@ sources:
 - Node の公式 tarball（`latest-v24.x` の `SHASUMS256.txt` と照合）の展開と、`node -v` の確認は、Linux のサンドボックスで動いた（確認: 2026-10-19、根拠: スクリプトを実行して v24 を得た）。
 - `--ca-cert`（5枚まで、秘密鍵の混入で止まる）、`aws-key`、`shell`（`WSLENV` を外して入る）、`WSLENV` を外す処理は、`room.py` にある（確認: 2026-10-19、根拠: `room.py` を読んだ）。部屋のベースは、現在 `ROOM_BASE = "Ubuntu-26.04"`（コミット `bdb2576`。実機で確認済み: 2026-10-19、`room init` とマスク・復元の通し。確認したのはユーザー）。
 
+- 案内文（`~/.claude/CLAUDE.md`）が `~/shared/ROOM.md` を読むよう指していても、`claude -p` の会話の記録には、`~/shared` の手順書を読んだ形跡が無かった。記録にあるのは、案内文の文面だけだった（確認: 2026-11-06、根拠: 部屋の `~/.claude/projects/.../*.jsonl` を grep し、`ROOM.md` が案内文の文面にしか出ないことを見た）。
+- 手順書（`project-structure.md`）に清書の置き場の規則を足しても、`ROOM.md` 側（`room-context.md`）にも足しても、成果物の置き場は変わらなかった。案内文に足した回から変わった（確認: 2026-11-06、根拠: 同じ依頼を 5 回再試して成果物の一覧を比べた）。
+- 対話の部屋では、案内に従って `ROOM.md` などを順に読んだ記録がある（確認: 2026-10-14、根拠: ユーザーが貼った Read の表示）。非対話（`-p`）では読まれない。対話と非対話で違う可能性が高い（仮説）。
+- 作業の言葉の索引（UserPromptSubmit フックが `find_knowledge.py --triggers` の結果を依頼文の前に出す）は、`claude -p` でも効いた。振り返り・計画・論点出し・調べてまとめの 4 件で、型のノートを読んで章立てに従った（確認: 2026-11-06、根拠: PC2 Windows で 4 件を実行し、返答の章立てと `cap_meter --latest` を見た。`topics/token-cap/records/2026-11-06-output-types-trial-pc2.md`）。案内文が指す手順書を自分から読みに行かないのとは別の経路で、フックが出した「このノートを読め」は守られる（仮説）。
+
 関所の一覧（先回り用）:
 1. curl の証明書（終了コード 60）→ 検査用のルート証明書を部屋へ
 2. `WSLENV` の漏れ（failed to translate）→ `WSLENV` を外す
@@ -206,6 +217,11 @@ sources:
   - 原因: `-p` は承認を聞けない。`--allowedTools` は可変長の引数で、後ろのプロンプトを吸う
   - 解決: `--permission-mode acceptEdits --allowedTools 'Bash WebFetch WebSearch Read Write Edit Glob Grep'` を付け、プロンプトは引数でなく stdin（`< /mnt/room/<名>/work/prompt.txt`）で渡す。cwd は `/mnt/room/<名>`（`ai/` そのもの）。`$(cat …)` は絶対パスで。終わったら `room umount --area <Area>`（2026-11-05、`inv` の組み合わせ試験で確認。`topics/room-type-consolidation/records/2026-11-05-inv-combo-test-result.md`）
 
+- 状況: 「pptx で」と書くと `publish/` に出るのに、「quarto/revealjs で」では出力が `out/` の直下に出た
+  - 原因: 規則が手順書にしか無く、エージェントが読まなかった。pptx のときに `publish/` に出たのは、規則でなく依頼の言葉からの推測だったと思われる（仮説）
+  - 解決: 規則を案内文（`room.py` の `POINTER_TEXT`）に書いた
+
+
 ## Open Questions
 
 - Area の README に、共通ルールをどう書くか（節の分け方、書いてよい内容）。指針が無い。
@@ -219,10 +235,12 @@ sources:
 - Area 共通のマスク表をコピーで使うと、番号のずれや過去ログの検索で実害が出るか。出たら、Area 共通の対応表を仕様にするか。
 - 実機の PowerPoint で、マスク後の pptx が警告なしで開くか。
 - 部屋を Area ごとでなく works 単位にすると、証明書と Bedrock の認証を渡す手間が減るか（ユーザーは様子見）。
+- 非対話でも手順書を読ませたい場合の方法はあるか（依頼文に「先に読む」と書く、`--append-system-prompt` を使うなど）。
 
 ## Next Actions
 
 - なし。2026-10-14〜19 時点の実機確認 9 項は、すべて済み・問題なし（ユーザー、2026-10-27）。
+- 部屋の規則を足すときは、手順書と案内文の両方に書き、同じ依頼の再試で確かめる。
 
 ## Related
 
