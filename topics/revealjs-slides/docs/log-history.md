@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-06 Excalidraw を Claude 経由で使う試験を始めた（方式 A: MCP なし）
+- ユーザーの指示: 「excalidraw を claude 経由で操作したい。最終的にはスライドに挿入したり図解の道具にする。MCP 周りの追加トークンが分からないのでお試しで。revealjs とは別々に使いこなし、draw.io のような別の道具にもナレッジを使えるようにしたい」。選択は A（MCP なし）から、次に B（公式リモート MCP）、出力は SVG。お題は room の構造図（Windows と WSL の関係、マウント）。
+- 調べたこと: 公式 `excalidraw/excalidraw-mcp` はリモート `https://mcp.excalidraw.com` を勧め、チャット内の描画（MCP Apps）向け。ツール名・数、ファイル保存・書き出しの記載は README に無かった。コミュニティの作成系は 26〜42 ツールで `.excalidraw` 保存と SVG・PNG 書き出しがある（数は一覧ごとに違い、未確認）。
+- 反映: `records/excalidraw-trial/`（`build_room_diagram.py`、`room-structure.excalidraw`・`.svg`、`build_slide.py`、`README.md`）。
+- 確認: `.excalidraw` は Excalidraw で開いて崩れない（ユーザー）。SVG は Edge で描画して、はみ出しを直した（箱の幅 360 → 300、注記の分割）。revealjs では、T の `side.img` が良好（ユーザー確認）、E の `fig`（インライン）は縮んで読めない。
+- 未確認: Excalidraw 本体からの書き出し（手描き風 SVG とフォント埋め込み）、方式 B のトークン。
+
 ### 2026-11-06 Devicon の開発系アイコン 49 種をストックした（未組み込み）
 - ユーザーの指示: 「Lucide と同じく、Devicon（言語寄りのアイコン）もストックしたい。ソフトウェア開発系を選択・抽出して」。見本を見て「使わなそうなものがあるので半分くらい落としてよい。判断は任せる。Web・クラウド・ビルドは上位 2〜3 割を残す」「使ったものだけ（埋め込み）でよい」「line 版は外して」。
 - 素材: devicons/devicon（MIT。Copyright (c) 2015 konpa）、コミット 32fe1d3 の `icons/<名前>/<名前>-plain.svg`（空の一時ディレクトリへ取得。`git` の外）。塗りの色を捨てて `currentColor` に統一（形は変えていない）。`original` は多色で単色にすると崩れ、`line` は線が細く薄いので使わない。
