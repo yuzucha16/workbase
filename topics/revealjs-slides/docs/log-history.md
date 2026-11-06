@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06 room 図の半幅用の版を作った（NA を閉じた）
+- ユーザーの指示: 「room 図の半幅用の版: 文字を大きくした版をやります。ナレッジは別セッションでやったのでここでは不要」→ 確認後「目視は問題ないです。これでいけます。これも close」。
+- 反映: `records/excalidraw-trial/build_room_diagram.py` に `SPEC_HALF`（幅 700×560。見出し 22・補足と注記 20px、補足は改行可、矢印ラベルは複数行）を足し、全幅と半幅を同時に出す（`room-structure-half.excalidraw` / `.svg`）。`build_slide.py` は E インライン（全幅）・T の `side`（半幅用）・T の `side`（全幅を半幅に置く比較）の 3 枚を出す。`README.md` の「次」を更新。
+- NA と `due.md` の行を閉じた。NA の後半（図解の型と Excalidraw 固有の手順のナレッジ化）は、ユーザーが別セッションで済ませたので、ここでは扱わず閉じた。
 ### 2026-11-06 K を横幅 1/3〜1/4 の列に置けるようにした（NA を閉じた）
 - ユーザーの指示: 「K を、横幅 1/3〜1/4 の列に置けるように。layout.html にサンプルを出して。字間を詰めた版も比較できるように」→ 確認後「1/4 が使えます。0% が使えます。K だけ。英字列は 0% でないとスカスカ。全体は日本語が入るので 2%。補足の下に回る見た目は良い。インデントを揃えて」→「良いです」。
 - 反映: `records/revealjs-diagram-theme.scss`（split 内の K は幅 100%・`min-width` と左余白を外す、補足は `nowrap` で入らなければ名前の字の開始位置にそろえて下の行へ、K の箱は字間 0、比較用クラス `tight`）、`records/gen_layouts.py`（spec の `cls`、見本に split(K+T) 1/3 と split(K+L) 1/4 を標準・詰めで 4 枚）。`revealjs-diagram-layouts.qmd`・`.html` を作り直した。`cols` だけでは足りず（`.tree-box` の `min-width: 55%` が邪魔）、split 内の K 用の CSS を足した。

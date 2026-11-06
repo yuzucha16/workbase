@@ -10,11 +10,10 @@
 - 基準の版: DADS v2.18.2（11-06）。`lessons/revealjs-diagram-layout-output.md` に DADS の章立て（基本デザイン・コンポーネント）で現行ルールと状態を記録済み。章立てはユーザー確認済み。版が上がったら突き合わせる。
 - 検証: Edge（Windows）で H・I・J・B を目視済み。H・I・J は Windows の Edge 以外（PC1 のブラウザ）でも問題なし（11-06）。room init の Noto Sans JP 段は実機で通した（11-06）。PC1 の生成スクリプトは `gen_layouts.py` に取り込み済み。room での新スタイルの描画も確認済み（11-06 ユーザー）。見出し・T の軽量化、h3 の 1 段インデント、箇条書き 2 段まで、タイトルの濃青の縦棒は反映・目視済み（11-06）。C は Edge で目視し、ユーザーが確定（11-06）。`side` の画像はキャプションつきを目視済み（11-06 ユーザー。`1.` 止め・SVG の `aria-label` も反映済み）。`split` に A〜G を半幅で置く場合、コードの色分けは未検証。表（H・J）のセルは上揃え（DADS の table/usage に合わせた。11-06 ユーザーが目視して確定。工程の帯 I の見出しだけ中央）。`table/usage`・`card/usage` は取得・反映済み（DADS の未取得は `accessibility` など）。
 
-- Excalidraw 試験（`records/excalidraw-trial/`。11-06 開始。方式 A = MCP なし）: `build_room_diagram.py` が仕様から `.excalidraw` と SVG を出す（SVG は自前の描画）。`.excalidraw` は Excalidraw で開いて崩れないことをユーザーが確認。SVG は T の `side.img`（alt・caption つき）で入れるのを標準にし、Edge で目視済み（ユーザー確認）。E の `fig`（インライン）は横長の図に不向き。方式 B（公式リモート MCP）は試して外した（11-06。ターミナルでは画像・ファイルが出ず成果物に使えない。MCP の常時分は 321 トークン。`decisions.md`）。経緯と次は同ディレクトリの `README.md`。
+- Excalidraw 試験（`records/excalidraw-trial/`。11-06 開始。方式 A = MCP なし）: `build_room_diagram.py` が仕様から `.excalidraw` と SVG を出す（SVG は自前の描画）。`.excalidraw` は Excalidraw で開いて崩れないことをユーザーが確認。SVG は T の `side.img`（alt・caption つき）で入れるのを標準にし、Edge で目視済み（ユーザー確認）。E の `fig`（インライン）は横長の図に不向き。方式 B（公式リモート MCP）は試して外した（11-06。ターミナルでは画像・ファイルが出ず成果物に使えない。MCP の常時分は 321 トークン。`decisions.md`）。半幅用の版（`room-structure-half.*`、幅 700・補足と注記 20px。`build_room_diagram.py` が全幅と同時に出す）を T の `side` に入れて、ユーザーが目視して確定（11-06）。確認用の出力は `records/excalidraw-trial-preview/`（一時。`build_slide.py <dir>` で作り直せる）。経緯は同ディレクトリの `README.md`。
 
 ## Next Actions
 
-- 【起票 11-06、期日 11-13】room 図の半幅用の版: 文字を大きくした版（幅 680 ほど）を `build_room_diagram.py` の仕様から作れるようにし、実スライドに入れる。あわせて、道具に依存しない図解の型と Excalidraw 固有の手順を分けてナレッジ化する案（draw.io へ差し替えられる形。`stock` はユーザーが言ったとき）。担当: AI、ユーザー（目視）。
 
 - 【起票 11-06、期日 11-20】型の棚卸し（`records/2026-11-06-layout-inventory.md`。重なり・管理・拡充の整理は済み）の残りの実装。P2（split を 3 部品まで）は需要が出てから（`want` に溜める）。`topics/office-output-types` と共通にできる構成を分ける。担当: AI、ユーザー（選択・目視）。
 

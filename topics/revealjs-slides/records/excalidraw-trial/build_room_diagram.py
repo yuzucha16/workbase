@@ -1,6 +1,7 @@
 """room の構造図を、1 つの仕様から .excalidraw(JSON)と SVG に出す。MCP なしの試験(方式 A)。
 
 使い方: python -I build_room_diagram.py <出力ディレクトリ>
+- 2 つの版を出す: 全幅(room-structure.*。980x520)と半幅用(room-structure-half.*。幅 700 で文字を大きくした版。表示 1/2 幅でも 20px 前後になる)。
 - .excalidraw は excalidraw.com か Obsidian の Excalidraw で開いて手直しできる。
 - SVG は自前の描画(Excalidraw の書き出しではない)。revealjs に埋め込む用。
 - 図の仕様は SPEC だけを直す。座標は左上起点の px。
@@ -32,6 +33,27 @@ SPEC = [
 ]
 
 
+# 半幅用。幅 700。文字は箱の見出し 22、補足 20、注記 20(全幅版は 22/18/18)。補足と注記は "\n" で改行。
+SPEC_HALF = [
+    dict(kind="box", x=5, y=10, w=280, h=540, stroke=GRAY, fill=LIGHT, label="Windows(works)", size=24, top=True),
+    dict(kind="box", x=20, y=65, w=250, h=115, stroke=GRAY, fill="#ffffff", label="_noai/", sub="原本・対応表\n(AI に見せない)", size=22, ssize=20),
+    dict(kind="box", x=20, y=200, w=250, h=115, stroke=BLUE, fill=PALE, label="ai/", sub="作業フォルダ(渡す)", size=22, ssize=20, bold=True),
+    dict(kind="box", x=20, y=335, w=250, h=115, stroke=GRAY, fill="#ffffff", label="areas/ projects/ …", sub="そのほかの works", size=22, ssize=20),
+    dict(kind="box", x=415, y=10, w=280, h=540, stroke=BLUE, fill=PALE, label="部屋(専用の WSL)", size=24, top=True, bold=True),
+    dict(kind="box", x=430, y=65, w=250, h=115, stroke=GRAY, fill=None, dash=True, label="/mnt/c は空", sub="automount を切る", size=22, ssize=20),
+    dict(kind="box", x=430, y=200, w=250, h=115, stroke=BLUE, fill="#ffffff", label="/mnt/room/<Project>", sub="ai/ の中身だけが見える", size=22, ssize=20, bold=True),
+    dict(kind="box", x=430, y=335, w=250, h=115, stroke=BLUE, fill="#ffffff", label="Claude Code", sub="一般ユーザー(ai)で動く", size=22, ssize=20),
+    dict(kind="arrow", x1=287, y1=257, x2=413, y2=257, color=BLUE, label="room start\nがマウント", size=20, bold=True),
+    dict(kind="text", cx=350, cy=295, text="成果物は", size=20, color=SUB),
+    dict(kind="text", cx=350, cy=320, text="room close", size=20, color=SUB),
+    dict(kind="text", cx=350, cy=345, text="で戻す", size=20, color=SUB),
+    dict(kind="text", cx=555, cy=478, text="interop を切る", size=20, color=SUB),
+    dict(kind="text", cx=555, cy=502, text="Windows のプログラムを", size=20, color=SUB),
+    dict(kind="text", cx=555, cy=526, text="起動できない", size=20, color=SUB),
+]
+HALF_W, HALF_H = 700, 560
+
+
 def tw(s, size):
     """文字列の幅の概算。全角は size、半角は 0.55 size。"""
     return sum(size if ord(c) > 0x2E80 else size * 0.55 for c in s)
@@ -42,14 +64,26 @@ def box_texts(e):
     cx = e["x"] + e["w"] / 2
     if e.get("top"):
         return [(e["label"], cx, e["y"] + 30, e["size"], INK)]
-    out = [(e["label"], cx, e["y"] + e["h"] * 0.36, e["size"], INK)]
-    if e.get("sub"):
-        out.append((e["sub"], cx, e["y"] + e["h"] * 0.70, 18, SUB))
+    if not e.get("ssize"):
+        out = [(e["label"], cx, e["y"] + e["h"] * 0.36, e["size"], INK)]
+        if e.get("sub"):
+            out.append((e["sub"], cx, e["y"] + e["h"] * 0.70, 18, SUB))
+        return out
+    # 補足が大きい版: 見出し + 補足(複数行可)を箱の中央にまとめる
+    ss, lines = e["ssize"], e.get("sub", "").split("\n")
+    total = e["size"] * 1.25 + len(lines) * ss * 1.3
+    top = e["y"] + (e["h"] - total) / 2
+    out = [(e["label"], cx, top + e["size"] * 0.625, e["size"], INK)]
+    for i, ln in enumerate(lines):
+        out.append((ln, cx, top + e["size"] * 1.25 + (i + 0.5) * ss * 1.3, ss, SUB))
     return out
 
 
-def arrow_text(e):
-    return (e["label"], (e["x1"] + e["x2"]) / 2, e["y1"] - 22, e["size"], e["color"])
+def arrow_texts(e):
+    """矢印の上に、ラベルを行ごとに積む(最後の行が矢印の直上)。"""
+    lines = e["label"].split("\n")
+    cx, n = (e["x1"] + e["x2"]) / 2, len(lines)
+    return [(ln, cx, e["y1"] - 22 - (n - 1 - i) * e["size"] * 1.2, e["size"], e["color"]) for i, ln in enumerate(lines)]
 
 
 _n = [0]
@@ -75,6 +109,7 @@ def text_el(t, cx, cy, size, color):
 
 
 def build_excalidraw():
+    _n[0] = 0
     els = []
     for e in SPEC:
         if e["kind"] == "box":
@@ -90,7 +125,7 @@ def build_excalidraw():
                             strokeWidth=3, points=[[0, 0], [dx, dy]], lastCommittedPoint=None,
                             startBinding=None, endBinding=None, startArrowhead=None,
                             endArrowhead="arrow", elbowed=False))
-            els.append(text_el(*arrow_text(e)))
+            els += [text_el(*t) for t in arrow_texts(e)]
         else:
             els.append(text_el(e["text"], e["cx"], e["cy"], e["size"], e["color"]))
     return {"type": "excalidraw", "version": 2, "source": "build_room_diagram.py",
@@ -119,7 +154,7 @@ def build_svg():
         elif e["kind"] == "arrow":
             p.append(f'<line x1="{e["x1"]}" y1="{e["y1"]}" x2="{e["x2"] - 4}" y2="{e["y2"]}" '
                      f'stroke="{e["color"]}" stroke-width="3.5" marker-end="url(#ah)"/>')
-            p.append(svg_text(*arrow_text(e), bold=True))
+            p += [svg_text(*t, bold=True) for t in arrow_texts(e)]
         else:
             p.append(svg_text(e["text"], e["cx"], e["cy"], e["size"], e["color"]))
     p.append("</svg>")
@@ -129,6 +164,8 @@ def build_svg():
 if __name__ == "__main__":
     out = Path(sys.argv[1])
     out.mkdir(parents=True, exist_ok=True)
-    (out / "room-structure.excalidraw").write_text(json.dumps(build_excalidraw(), ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
-    (out / "room-structure.svg").write_text(build_svg(), encoding="utf-8", newline="\n")
+    full = (W, H, SPEC)
+    for suffix, (W, H, SPEC) in (("", full), ("-half", (HALF_W, HALF_H, SPEC_HALF))):
+        (out / f"room-structure{suffix}.excalidraw").write_text(json.dumps(build_excalidraw(), ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
+        (out / f"room-structure{suffix}.svg").write_text(build_svg(), encoding="utf-8", newline="\n")
     print("wrote", out)
