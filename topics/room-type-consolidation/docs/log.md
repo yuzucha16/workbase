@@ -4,7 +4,7 @@ type 集約（`dev` と `inv`）は済み（2026-10-24）。10-31 に room の G
 
 ## Next Actions
 
-- （なし。マウントが残る件は 11-06 に `docs/due.md` へ移した。期日 11-13。再発すれば調査、しなければ close）
+- （なし。マウントが残る件は 11-06 に直下の `docs/due.md` へ移した。期日 11-13）
 
 ## Open Questions
 

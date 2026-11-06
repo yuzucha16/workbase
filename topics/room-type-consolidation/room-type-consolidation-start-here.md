@@ -13,7 +13,7 @@ type の集約は反映済み（2026-10-24）。10-31 に、room の GitHub 認�
 
 ## 次の一手
 
-Next Actions は空。残りは `docs/due.md` の room-type-consolidation の行（11-11 `inv` の組み合わせ試験、11-12 eg2 の room 版、11-13 マウント残りの様子見）。
+Next Actions と `docs/due.md` は空。マウント残りの様子見（期日 11-13）は、このトピックに関係しないため 11-06 に直下の `docs/due.md` へ移した。close できる状態。
 
 ## 読む順
 
