@@ -27,7 +27,6 @@
 
 ## Next Actions
 
-- PC1 で `frame` が読めて動くか確かめる（ユーザーが次に使うとき。読めなければ貼る方法に戻る。起票 11-06）。
 - 【起票 11-06、期日 11-13】`mask` / `restore` 削除で書き換えた文書類の第三者確認（`/code-review` などで別の目に通す。ooxml-clean を閉じたので、ここへ移した）。対象: `workflow-kit/room/README.md`、`room-context.md`、`hooks.md`、`project-structure.md`、`guides/howto/{ai-room-setup,ai-room-setup-script,ai-room-lifecycle,ooxml-clean}.md`、`guides/explain/{ai-room-why,ooxml-residue,cross-area-shared-knowledge}.md`。見る点: 削除済みの `mask` `restore` `final/` `mask-spec.md` への言及の取りこぼし、リンク切れ、手順の飛び。履歴の `exmem/lessons/` は対象外。担当: ユーザー。
 
 期日のある項目は `due.md`。
@@ -35,4 +34,3 @@
 ## Open Questions
 
 - 出力側の点検（AI の出力に実名や金額の形が無いか）を `cleankit` に足すか。未実現の案で、必要が見えるまで保留（ooxml-clean 由来、11-06）。
-- revealjs-slides の実スライド作成（11-06）で出た kit への改善案。場所: `topics/revealjs-slides/records/` / 問題: 実スライド用の SVG 雛形が無い、表紙にサブタイトル・日付を置けない、render に scss・icons を毎回手で複製する、複製 → 型を選ぶ → render → 撮影の手順書が無い / 案: `gen_layouts.py` に `--copy-assets` とサブタイトルの指定を足し、手順書を 1 本書く（ユーザーが kit へフィードバックする予定）。

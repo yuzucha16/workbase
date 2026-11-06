@@ -5,6 +5,7 @@
 ## 状態
 
 - 部品（`records/`）: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す）、`revealjs-diagram-layouts.qmd`（スクリプトの出力。手で直さず作り直す）、`revealjs-diagram-theme.scss`（DADS 反映済み）、`revealjs-diagram-icons.html`、`2026-11-06-pptx-layout-inventory.md`、`2026-11-06-layout-inventory.md`（型の棚卸しと提案 P1〜P3）、`2026-11-06-dads-summary.md`、`2026-11-06-dads-selection-table.md`、`build_dads_sample.py`（DADS 反映前後の見本を並べる。役目はほぼ終わり）、`build_lucide_icons.py`・`revealjs-diagram-icons-lucide.html`・`…-lucide-preview.html`・`lucide-LICENSE.txt`（Lucide 1.70.0 の 99 種。id は `lc-<名前>`。ISC）。Devicon は使わないと決めて削除した（11-06）。`dads-sample/` と `ai-room-lt/` は一時扱いで未コミット（`ai-room-lt` は旧スタイルのまま。追わない）。
+- アイコン: 自作 9 種に、デジタル庁の素材（line 版・24px）32 種（`records/revealjs-diagram-icons-dads.html`、作り直しは `build_dads_icons.py`、割り当ては `PICK`。出典の明示は利用規約 1-2）と Lucide 99 種（`lc-<名前>`）を足した（11-06。Edge で目視済み）。札の `icon` と K の `[..]` で使う。Lucide 1.70.0 には `github`・`triangle-alert`・`trash-2`・`history` が無い（別名 `trash`・`undo-2`・`octagon-x`。警告の三角形は無し）。実スライドで足りるかは次の題材で見る。K の行間は広めだが、一旦このまま使う（ユーザー）。
 - アイコン素材の出典: `gen_layouts.py` が、スライドごとに使った素材（デジタル庁、`lc-` は Lucide。自作は出さない）の 1 行を左下に出す（`.src`。`"credit": false` で消せる。11-06 に文言・位置・重なりをユーザーが目視して確定）。
 - 型は 15 つ（A・B・C 目次・D・E・F・G・H・I・J・T、K ディレクトリ構造（細い列（`split` の `cols` が `1fr 3fr` = 1/4、`1fr 2fr` = 1/3）に置ける。補足は入らなければ名前の下にそろえて送る。字間は K の箱だけ 0%。11-06 に Edge で目視、ユーザー確定。`tree` の文字列 + Lucide のアイコン。フォルダは青・ファイルは灰。11-06 に Edge で目視、ユーザー確定）、DADS 部品の S 手順・L 説明リスト・N 注釈ブロック）に、組み合わせ `split`（2 つの型を左右に。表 + 箇条書き、図 + コードなど）。T は `side` で右にコード・画像を置ける。全型が `lead`/`notes` を持てる。仕様の正は `gen_layouts.py` の docstring。見た目は DADS 流の「背景なし・罫線だけ」（表・工程・箱。11-06 に図表の見た目は確定。`decisions.md`）。強調は薄青の地・太字・濃青の帯だけ。罫線は `#949494`（3:1）、箱の余白は px、箱の行高 1.5、字間は本文 2%・見出し 1%（11-06 反映。見本は目視済み）。比較用に字間 0% の版（クラス `tight`、spec の `"cls": "tight"`）もある。
 - 行の高さは内容なりが既定（`height` 指定のときだけ下まで等分）。図表の上下に `lead`（上）と `notes`（下）でまとめ・総評を置ける。型と位置は AI が提案し、最終判断はユーザー。スライドの右上に**レイアウト番号**（例 `H+notes`）を出す（`--no-id` で消す）。無い形は近い型で代用して spec に `want` を書き、逐次作る（11-06 ユーザーの決定。`decisions.md`、台帳は `gen_layouts.py` の `LAYOUTS`）。
@@ -15,11 +16,9 @@
 
 ## Next Actions
 
-
+- 【起票 11-06、期日 11-13】実スライド作成で出た改善（`records/`）: `gen_layouts.py` に `--copy-assets`（render 用の scss・icons を複製）と表紙のサブタイトル・日付の指定を足す。あわせて、使い方の手順書を 1 本書く（複製 → 型を選ぶ → 文言と図を置換 → render → 目視）。実スライド用の SVG 雛形が無い件も、この手順書で扱う。担当: AI。
 - 【起票 11-06、期日 11-20】型の棚卸し（`records/2026-11-06-layout-inventory.md`。重なり・管理・拡充の整理は済み）の残りの実装。P2（split を 3 部品まで）は需要が出てから（`want` に溜める）。`topics/office-output-types` と共通にできる構成を分ける。担当: AI、ユーザー（選択・目視）。
 
 ## Open Questions
 
-- Lucide（開発系 99 種。`lc-<名前>`、札の `icon` と K の `[..]` で使う）を足した（11-06）。1.70.0 には `github`・`triangle-alert`・`trash-2`・`history` が無い（警告の三角形は無し。別名 `trash`・`undo-2`・`octagon-x`）。K の行間は広めだが、一旦このまま使う（ユーザー）。
-- アイコンは自作 9 種に、デジタル庁の素材（line 版・24px）から 32 種を足した（11-06。`records/revealjs-diagram-icons-dads.html`、作り直しは `build_dads_icons.py`。一覧を Edge で目視済み。意味の割り当てはスクリプトの `PICK`）。札の `icon` に素材名（例 `search`）を書けば使える。実スライドで足りるかは次の題材で見る。出典の明示は利用規約 1-2（加工した場合）。
-- 保留（ユーザーが細部を見始めたら）: ①閲覧側の PC でフォントが違っても崩れないか、②使い方の手順書（複製 → 型を選ぶ → 文言と図を置換 → render → 目視）。
+- 保留（ユーザーが細部を見始めたら）: 閲覧側の PC でフォントが違っても崩れないか。
