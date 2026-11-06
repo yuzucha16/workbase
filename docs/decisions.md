@@ -4,6 +4,13 @@
 
 ## Decisions
 
+### 【汎用】`room mask` / `room restore` を削除する。`_noai/final/` も廃止（2026-11-06）
+- 根拠: ユーザー「ooxml-clean の続き due: mask/restore。mask/restore を削除します。それともない、不要になるディレクトリ削除もここで行います」。2026-11-03 の「`room mask` と `restore` の削除は使ってから決める」の期日（11-30）を前倒しで消化した。
+- 決めたこと: ① `room mask` `room restore`、`maskkit.py`、`mask-spec.md`、`test_maskkit.py`、手順書 `ai-room-mask-summary.md` を削除。② `_noai/final/` を作らない（`final/_prev/` の退避も、`--force` の経路ごと無くした）。③ 成果物（`ai/out/<Project 名>/`）の Area への引き渡しは `room close` だけが持ち、そのまま渡す（語の置き換えなし。人が変えた Area 側は上書きせず止まる）。④ `_noai/map/` は残す（成果物の書き出しの記録 `deliverable-manifest.json` を置くため。名前は旧対応表の名残）。⑤ `_noai/mask.toml` は残す（`cleankit` の点検用の語の表。`clean` と `stock --dst area` が使う。名前は変えない: 既存の Project を壊さないため）。
+- 却下案: `map/` と `mask.toml` の改名（既存 Project の manifest と運用に影響し、見返りが小さい）。
+- 反映先: `workflow-kit/room/{room.py,README.md,cleankit.py,tests/}`、`workflow-kit/{hooks.md,room-context.md,project-structure.md}` とテンプレート 2 件、`guides/howto/{ai-room-setup,ai-room-setup-script,ai-room-lifecycle,ooxml-clean}.md`、`guides/explain/{ai-room-why,ooxml-residue,cross-area-shared-knowledge}.md`、`guides/guides-index.md`、`topics/ooxml-clean/docs/due.md`。
+- 履歴として残した古い記述: `exmem/lessons/` の一部、`docs/log-history.md`、`docs/records/` は書き換えていない。
+
 ### 【汎用】論点出しの型 v4 を本採用にし、合言葉 `frame` を足す（2026-11-06）
 - 根拠: ユーザー「pc1で複数回使いました。これは本採用にします」「プロンプトをコピペしているのは面倒」「brief/stock と同じように英単語版もほしい」。
 - 決めたこと: ① 型の試用を閉じる。② `frame`（別名「論点出し」「課題設定」）を `hooks.md` に足し、`frame-hook.md` が型のノートの「貼り付け用プロンプト」を読んで実行する（プロンプトの正本は lesson のまま。移さない）。③ 「論点出し」「課題設定」の別名を `plan` から `frame` へ移した（`plan` の手順 B は同じ型を使う）。④ 権限は全領域 r（ファイルを書かない）。

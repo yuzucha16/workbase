@@ -971,14 +971,6 @@ class BoundaryGuardTest(unittest.TestCase):
                 room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["x"], yes=True))
             self.assertIn("internal", str(cm.exception))
 
-    def test_mask_with_raw_is_refused_for_external_area(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p = self.external_project(tmp)
-            (p / "_noai/raw").mkdir(parents=True, exist_ok=True)
-            (p / "_noai/raw/a.md").write_text("x\n", encoding="utf-8")
-            with self.assertRaises(room.RoomError):
-                room.mask_project(c, room.Project.load(c, "proj-a"))
-
 
 class StartTest(unittest.TestCase):
     def args(self, **kw):
@@ -1299,138 +1291,6 @@ class AllowlistGitignoreTest(unittest.TestCase):
             self.assertFalse(room.is_allowlist_vault(ctx_for(make_vault(tmp))))
 
 
-class MaskIntegrationTest(unittest.TestCase):
-    MASK = '[terms.CUST]\nacme = ["アクメ商事株式会社", "アクメ商事"]\n'
-
-    def args(self, **kw):
-        d = dict(name="proj-a", cmd="claude", no_launch=False, adopt=False, commit=False, yes=True)
-        d.update(kw)
-        return argparse.Namespace(**d)
-
-    def run_flow(self, c, **kw):
-        """2026-11-02: start は自動でマスク・復元しない。mask → （人が確認して）start --adopt → restore の順に手で行う。"""
-        room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
-        room.cmd_start(c, self.args(adopt=True, **kw))
-        room.cmd_restore(c, argparse.Namespace(name="proj-a", force=False))
-
-    def setup_project(self, tmp, wsl):
-        v, c = opened(tmp, wsl)
-        p = v / "projects/proj-a"
-        (p / "_noai/mask.toml").write_text(self.MASK, encoding="utf-8", newline="\n")
-        (p / "_noai/raw/売上.csv").write_text("顧客,額\nアクメ商事株式会社,100\n", encoding="utf-8", newline="\n")
-        return v, c, p
-
-    def test_start_masks_runs_and_restores(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p = self.setup_project(tmp, wsl)
-            seen = {}
-
-            def ai():
-                seen["in"] = (p / "ai/in/売上.csv").read_text(encoding="utf-8-sig")
-                (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は増加\n", encoding="utf-8", newline="\n")
-            wsl.on_interactive = ai
-            self.run_flow(c)
-            self.assertNotIn("アクメ", seen["in"])
-            self.assertIn("⟦CUST_001⟧", seen["in"])
-            self.assertIn("アクメ商事株式会社 の売上は増加", (p / "_noai/final/report.md").read_text(encoding="utf-8"))
-            self.assertIn("⟦CUST_001⟧", (p / "ai/out/report.md").read_text(encoding="utf-8"))
-            man = json.loads((p / "ai/records/manifest.json").read_text(encoding="utf-8"))
-            e = man["files"]["in/売上.csv"]
-            self.assertTrue(e["raw_sha256"] and e["mask_sha256"] and e["mapping_version"] == 1)
-            mapping = (p / "_noai/map/mapping.json").read_text(encoding="utf-8")
-            self.assertNotIn("アクメ", (p / "ai/records/manifest.json").read_text(encoding="utf-8"))
-            self.assertIn("アクメ商事株式会社", mapping)
-
-    def test_start_refuses_unapproved_mask_output(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p = self.setup_project(tmp, wsl)
-            room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
-            with self.assertRaises(room.RoomError) as cm:
-                room.cmd_start(c, self.args())
-            self.assertIn("確認していない", str(cm.exception))
-            self.assertEqual(wsl.interactive_calls, [])
-            room.cmd_start(c, self.args(adopt=True))  # 人が読んで通した
-            man = json.loads((p / "ai/records/manifest.json").read_text(encoding="utf-8"))
-            e = man["files"]["in/売上.csv"]
-            self.assertTrue(e["approved"] and "pending" not in e and e["raw_sha256"])
-
-    def test_start_does_not_mask_or_restore_by_itself(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p = self.setup_project(tmp, wsl)
-            wsl.on_interactive = lambda: (p / "ai/out/r.md").write_text("x\n", encoding="utf-8", newline="\n")
-            room.cmd_start(c, self.args())
-            self.assertFalse((p / "ai/in/売上.csv").exists())
-            self.assertFalse((p / "_noai/final/r.md").exists())
-
-    def test_restore_stops_when_final_was_edited_by_human(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p = self.setup_project(tmp, wsl)
-            write = lambda: (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は増加\n", encoding="utf-8", newline="\n")
-            wsl.on_interactive = write
-            self.run_flow(c)
-            final = p / "_noai/final/report.md"
-            final.write_text("人が直した\n", encoding="utf-8", newline="\n")
-            (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は減少\n", encoding="utf-8", newline="\n")
-            k, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
-            self.assertEqual(k, 0)
-            self.assertIn("report.md", problems[0])
-            self.assertEqual(final.read_text(encoding="utf-8"), "人が直した\n")
-            k, problems = room.restore_project(c, room.Project.load(c, "proj-a"), force=True)
-            self.assertEqual((k, problems), (1, []))
-            self.assertIn("減少", final.read_text(encoding="utf-8"))
-            # AI だけが変えたときは止まらない
-            (p / "ai/out/report.md").write_text("⟦CUST_001⟧ の売上は横ばい\n", encoding="utf-8", newline="\n")
-            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a"))[1], [])
-
-    def test_unchanged_raw_is_not_remasked_and_changed_toml_asks(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p = self.setup_project(tmp, wsl)
-            self.run_flow(c)
-            mt = (p / "ai/in/売上.csv").stat().st_mtime_ns
-            self.run_flow(c)
-            self.assertEqual(mt, (p / "ai/in/売上.csv").stat().st_mtime_ns)
-            (p / "_noai/mask.toml").write_text(self.MASK + '[terms.PERSON]\nt = ["田中太郎"]\n', encoding="utf-8", newline="\n")
-            (p / "_noai/raw/売上.csv").write_text("顧客,額\nアクメ商事株式会社,100\n田中太郎,1\n", encoding="utf-8", newline="\n")
-            self.run_flow(c)
-            self.assertIn("⟦PERSON_001⟧", (p / "ai/in/売上.csv").read_text(encoding="utf-8-sig"))
-
-    def test_raw_without_mask_toml_stops_before_mount(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p = self.setup_project(tmp, wsl)
-            (p / "_noai/mask.toml").unlink()
-            with self.assertRaises(room.RoomError):
-                room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
-            self.assertEqual(wsl.interactive_calls, [])
-
-    def test_unresolved_placeholder_stops_and_writes_no_final(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p = self.setup_project(tmp, wsl)
-            wsl.on_interactive = lambda: (p / "ai/out/r.md").write_text("⟦CUST_099⟧\n", encoding="utf-8", newline="\n")
-            with self.assertRaises(room.RoomError) as cm:
-                self.run_flow(c)
-            self.assertIn("CUST_099", str(cm.exception))
-            self.assertFalse((p / "_noai/final/r.md").exists())
-            self.assertFalse(wsl.mounted)
-
-    def test_broken_bracket_in_explanation_stops_with_hint(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p = self.setup_project(tmp, wsl)
-            wsl.on_interactive = lambda: (p / "ai/out/r.md").write_text("形は ⟦CUST_nnn⟧ です\n", encoding="utf-8", newline="\n")
-            with self.assertRaises(room.RoomError) as cm:
-                self.run_flow(c)
-            self.assertIn("括弧を外す", str(cm.exception))
-            self.assertFalse((p / "_noai/final/r.md").exists())
-            self.assertFalse(wsl.mounted)
-
-
 class PullSourceTest(unittest.TestCase):
     MASK = '[terms.CUST]\nacme = ["アクメ商事株式会社", "アクメ商事"]\n'
 
@@ -1456,112 +1316,47 @@ class PullSourceTest(unittest.TestCase):
                 with self.assertRaises(room.RoomError):
                     room.cmd_clean(c, argparse.Namespace(name="proj-a", path=bad, yes=True)) if bad else room.pick_source_files(v / "areas/area-x/_noai/source", bad)
 
-    def test_raw_original_is_masked_and_hides_names_and_knowledge_out_is_not_restored_to_area(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            v, c, p, k = self.setup_area(tmp, wsl)
-            self.place_raw(p, v)
-            seen = {}
+    def deliver(self, c, p):
+        """close が Area へ渡す処理（点検 → 書き出し）。問題があれば何も書かず一覧を返す。"""
+        pr = room.Project.load(c, p)
+        items, problems = room.deliverable_items(pr)
+        plans, errors, conflicts = room.deliver_plan(pr, items)
+        problems = problems + errors + conflicts
+        if not problems:
+            room.deliver_write(c, pr, plans)
+        return len(items), problems
 
-            def ai():
-                f = p / "ai/in/議事録.md"
-                seen["in"] = f.read_text(encoding="utf-8")
-                seen["name"] = f.name
-                (p / "ai/out/knowledge").mkdir(parents=True)
-                (p / "ai/out/knowledge/topic-cutover.md").write_text("⟦CUST_001⟧ の切替は11月\n", encoding="utf-8", newline="\n")
-            wsl.on_interactive = ai
-            room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
-            room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=False, adopt=True, commit=False, yes=True))
-            room.cmd_restore(c, argparse.Namespace(name="proj-a", force=False))
-            self.assertNotIn("アクメ", seen["in"])
-            self.assertNotIn("アクメ", seen["name"])
-            self.assertIn("⟦CUST_001⟧", seen["in"])
-            self.assertFalse(k.exists())  # 知識の経路は外した。Area の知識置き場には書かれない
-            man = (p / "ai/records/manifest.json").read_text(encoding="utf-8")
-            self.assertNotIn("アクメ", man)
-
-    def test_deliverable_returns_under_project_name_and_keeps_final_copy(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
-            self.place_raw(p, v)
-            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
-            d = p / "ai/out/deliverable"
-            d.mkdir(parents=True)
-            (d / "report.md").write_text("⟦CUST_001⟧ の報告\n", encoding="utf-8", newline="\n")
-            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a")), (1, []))
-            dest = v / "areas/area-x/_noai/deliverable/proj-a/report.md"
-            self.assertIn("アクメ商事株式会社 の報告", dest.read_text(encoding="utf-8"))
-            self.assertTrue((p / "_noai/final/deliverable/report.md").exists())
-            self.assertFalse((k / "report.md").exists())
-
-    def test_deliverable_goes_to_area_without_masking(self):
+    def test_deliverable_goes_to_area_as_is(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p, _k = self.setup_area(tmp)
-            self.assertFalse((p / "_noai/map/mapping.json").exists())
             d = p / "ai/out/deliverable"
             d.mkdir(parents=True)
             (d / "report.md").write_text("報告\n", encoding="utf-8", newline="\n")
             (p / "ai/out/tool.py").write_text("print(1)\n", encoding="utf-8", newline="\n")
-            pr = room.Project.load(c, "proj-a")
-            self.assertEqual(room.restore_project(c, pr), (1, []))
+            self.assertEqual(self.deliver(c, "proj-a"), (1, []))
             self.assertEqual((v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"), "報告\n")
-            self.assertFalse((p / "_noai/final/tool.py").exists())
             (d / "report.md").write_text("改訂\n", encoding="utf-8", newline="\n")
-            self.assertEqual(room.restore_project(c, pr), (1, []))
+            self.assertEqual(self.deliver(c, "proj-a"), (1, []))
             (v / "areas/area-x/_noai/deliverable/proj-a/report.md").write_text("人の変更\n", encoding="utf-8", newline="\n")
             (d / "report.md").write_text("再改訂\n", encoding="utf-8", newline="\n")
-            k, problems = room.restore_project(c, pr)
-            self.assertEqual(k, 0)
+            n, problems = self.deliver(c, "proj-a")
             self.assertTrue(problems)
-
-    def test_deliverable_changed_by_human_stops_restore_unless_force(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
-            self.place_raw(p, v)
-            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
-            d = p / "ai/out/deliverable"
-            d.mkdir(parents=True)
-            (d / "report.md").write_text("⟦CUST_001⟧ v1\n", encoding="utf-8", newline="\n")
-            room.restore_project(c, room.Project.load(c, "proj-a"))
-            dest = v / "areas/area-x/_noai/deliverable/proj-a/report.md"
-            dest.write_text("人が直した\n", encoding="utf-8", newline="\n")
-            (d / "report.md").write_text("⟦CUST_001⟧ v2\n", encoding="utf-8", newline="\n")
-            n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
-            self.assertEqual(n, 0)
-            self.assertIn("deliverable/report.md", problems[0])
-            self.assertEqual(dest.read_text(encoding="utf-8"), "人が直した\n")
-            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a"), force=True)[0], 1)
-            self.assertEqual((p / "_noai/final/_prev/deliverable/report.md").read_text(encoding="utf-8"), "人が直した\n")
+            self.assertEqual((v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"), "人の変更\n")
 
     def test_deliverable_without_area_dir_stops_and_writes_nothing(self):
         with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
+            v, c, p, _k = self.setup_area(tmp)
             (v / "areas/area-x/_noai/deliverable").rmdir()
-            self.place_raw(p, v)
-            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
             d = p / "ai/out/deliverable"
             d.mkdir(parents=True)
-            (d / "report.md").write_text("⟦CUST_001⟧ x\n", encoding="utf-8", newline="\n")
-            n, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
-            self.assertEqual(n, 0)
+            (d / "report.md").write_text("x\n", encoding="utf-8", newline="\n")
+            n, problems = self.deliver(c, "proj-a")
             self.assertIn("成果物の置き場が無い", problems[0])
-            self.assertFalse((p / "_noai/final/deliverable").exists())
-
-    def test_deliverable_with_placeholder_name_is_refused(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
-            self.place_raw(p, v)
-            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)  # 対応表を作る（マスクしたことが無いと復元しない）
-            out = p / "ai/out/deliverable"
-            out.mkdir(parents=True)
-            (out / "⟦CUST_001⟧.md").write_text("x\n", encoding="utf-8", newline="\n")
-            k_, problems = room.restore_project(c, room.Project.load(c, "proj-a"))
-            self.assertEqual(k_, 0)
-            self.assertIn("プレースホルダー", problems[0])
+            self.assertFalse((v / "areas/area-x/_noai/deliverable").exists())
 
 
 class NoDataModeTest(unittest.TestCase):
-    """マスクは _noai/raw の原本で、復元は対応表（mapping.json）で決まる。"""
+    """open が作るディレクトリと README。"""
 
     def open_with(self, tmp, wsl=None, **kw):
         v = make_vault(tmp)
@@ -1580,17 +1375,17 @@ class NoDataModeTest(unittest.TestCase):
         for t in ("dev", "inv"):
             with tempfile.TemporaryDirectory() as tmp:
                 _v, c, p = self.open_with(tmp, type=t)
-                for d in ("raw", "map", "final", "user"):
+                for d in ("raw", "map", "user"):
                     self.assertTrue((p / "_noai" / d).is_dir(), (t, d))
+                self.assertFalse((p / "_noai/final").exists())
                 self.assertIn(f"type: {t}\n", (p / "README.md").read_text(encoding="utf-8"))
                 self.assertFalse(any("警告" in m for m in c.msgs))
 
-    def test_open_writes_a_valid_mask_toml_template(self):
+    def test_open_writes_a_valid_terms_template(self):
         with tempfile.TemporaryDirectory() as tmp:
             _v, _c, p = self.open_with(tmp)
             self.assertEqual((p / "_noai/mask.toml").read_text(encoding="utf-8"), room.MASK_TOML_TEMPLATE)
-            cfg = room.maskkit.load_config(p / "_noai/mask.toml")
-            self.assertEqual(cfg.terms, {})
+            self.assertEqual(room.cleankit.load_terms(p / "_noai/mask.toml"), [])
 
     def test_type_is_dev_or_inv_and_defaults_to_dev(self):
         parse = room.build_parser().parse_args
@@ -1599,37 +1394,6 @@ class NoDataModeTest(unittest.TestCase):
         for old in ("doc", "dev-env", "dev-test", "research"):
             with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
                 parse(["open", "x", "--area", "a", "--type", old])
-
-    def test_unmasked_project_does_not_restore_ai_out(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            _v, c, p = self.open_with(tmp, wsl, type="dev")
-
-            def ai():
-                (p / "ai/out/tool.py").write_text("print(1)\n", encoding="utf-8", newline="\n")  # 復元できない形式でも止まらない
-            wsl.on_interactive = ai
-            room.cmd_start(c, self.args())
-            self.assertFalse(wsl.mounted)
-            self.assertEqual(room.restore_project(c, room.Project.load(c, "proj-a")), (0, []))
-            self.assertEqual(list((p / "_noai/final").iterdir()), [])
-
-    def test_masked_project_masks_and_restores(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            wsl = FakeWsl()
-            _v, c, p = self.open_with(tmp, wsl)
-            (p / "_noai/mask.toml").write_text('[terms.CUST]\nacme = ["アクメ商事"]\n', encoding="utf-8", newline="\n")
-            (p / "_noai/raw/議事録.md").write_text("アクメ商事との定例\n", encoding="utf-8", newline="\n")
-            seen = {}
-
-            def ai():
-                seen["in"] = (p / "ai/in/議事録.md").read_text(encoding="utf-8")
-                (p / "ai/out/要点.md").write_text("⟦CUST_001⟧ の要点\n", encoding="utf-8", newline="\n")
-            wsl.on_interactive = ai
-            room.cmd_mask(c, argparse.Namespace(name="proj-a", yes=True))
-            room.cmd_start(c, self.args(adopt=True))
-            room.cmd_restore(c, argparse.Namespace(name="proj-a", force=False))
-            self.assertNotIn("アクメ", seen["in"])
-            self.assertIn("アクメ商事 の要点", (p / "_noai/final/要点.md").read_text(encoding="utf-8"))
 
 class SharedPushTest(unittest.TestCase):
     def test_push_records_base_commit_and_sends_tar(self):
@@ -2005,21 +1769,15 @@ class StockTest(unittest.TestCase):
             room.cmd_stock(c, self.ns())
             self.assertEqual(list((r / "exmem/inbox").glob("*.md")), [])
 
-    def test_refuses_missing_header_and_masked_terms(self):
+    def test_refuses_missing_header(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, r, base = self.setup(tmp)
             p = v / "projects/proj-a"
             (p / "ai/out/stock").mkdir(parents=True)
             (p / "ai/out/stock/no-header.md").write_text("---\ntype: inbox\ntitle: x\n---\nx\n", encoding="utf-8")
-            leak = self.DRAFT.format(base=base).replace("テスト知識", "アクメ商事の知識")
-            (p / "ai/out/stock/leak.md").write_text(leak, encoding="utf-8")
-            (p / "_noai/mask.toml").write_text('[terms.CUST]\nacme = ["アクメ商事"]\n', encoding="utf-8")
-            (p / "_noai/raw/a.csv").write_text("x\nアクメ商事\n", encoding="utf-8")
-            room.mask_project(c, room.Project.load(c, "proj-a"), yes=True)
             room.cmd_stock(c, self.ns())
             self.assertEqual(list((r / "exmem/inbox").glob("*.md")), [])
             self.assertTrue((p / "ai/out/stock/no-header.md").exists())  # 運ばなかったものは残る
-            self.assertTrue((p / "ai/out/stock/leak.md").exists())
 
 
 class SharedPermissionTest(unittest.TestCase):
@@ -2393,28 +2151,6 @@ class CloseTest(unittest.TestCase):
             self.assertFalse((base / "other.md").exists())
             self.assertFalse((base / "proj-a").exists())
 
-    def test_close_restores_names_in_project_name_dir_when_masked(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
-            m = room.maskkit.Mapping.load(p / "_noai/map/mapping.json")
-            m.ensure("CUST", "company1", ["アクメ商事株式会社"])
-            m.save(p / "_noai/map/mapping.json")
-            (p / "ai/out/proj-a").mkdir(parents=True)
-            (p / "ai/out/proj-a/report.md").write_text("⟦CUST_001⟧ の報告\n", encoding="utf-8", newline="\n")
-            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-            self.assertIn("アクメ商事株式会社", (v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"))
-
-    def test_close_restores_names_in_deliverable_when_masked(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
-            m = room.maskkit.Mapping.load(p / "_noai/map/mapping.json")
-            m.ensure("CUST", "company1", ["アクメ商事株式会社"])
-            m.save(p / "_noai/map/mapping.json")
-            (p / "ai/out/deliverable").mkdir(parents=True)
-            (p / "ai/out/deliverable/report.md").write_text("⟦CUST_001⟧ の報告\n", encoding="utf-8", newline="\n")
-            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-            self.assertIn("アクメ商事株式会社", (v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"))
-
     def test_close_stops_before_any_change_when_area_deliverable_was_edited(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self._decision_project(tmp, "- 【案件】x\n")
@@ -2557,14 +2293,13 @@ class ShareTarTest(unittest.TestCase):
             kit = root / "workflow-kit"
             (kit / "room" / "tests").mkdir(parents=True)
             (kit / "hooks.md").write_text("h", encoding="utf-8")
-            for rel in ("room/README.md", "room/room.py", "room/maskkit.py", "room/pyproject.toml", "room/tests/test_x.py"):
+            for rel in ("room/README.md", "room/room.py", "room/pyproject.toml", "room/tests/test_x.py"):
                 (kit / rel).write_text("x", encoding="utf-8")
             with tarfile.open(fileobj=io.BytesIO(__import__("gzip").decompress(room.build_share_tar(root))), mode="r") as tf:
                 names = set(tf.getnames())
         self.assertIn("workflow-kit/hooks.md", names)
         self.assertIn("workflow-kit/room/README.md", names)
         self.assertNotIn("workflow-kit/room/room.py", names)
-        self.assertNotIn("workflow-kit/room/maskkit.py", names)
         self.assertNotIn("workflow-kit/room/pyproject.toml", names)
         self.assertNotIn("workflow-kit/room/tests", names)
         self.assertNotIn("workflow-kit/room/tests/test_x.py", names)

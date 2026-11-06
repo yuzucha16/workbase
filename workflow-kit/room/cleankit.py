@@ -6,7 +6,7 @@
 
 人が実行する。AI には実行させない（原本と、残っていた実データを読むため）。
 元ファイルは読むだけで、掃除の結果は別のファイルに書く。報告（実データの抜粋が載る）は AI に見せない場所に置く。
-考え方と残り方の一覧は mask-spec.md の「クリーン化」。
+考え方と残り方の一覧は README.md の「クリーン化」と guides/explain/ooxml-residue.md。
 
   python cleankit.py check <ファイル> [--report <md>]
   python cleankit.py clean <ファイル> [<出力>] [--profile standard|strict] [--allow <種類,...>] [--keep <動作,...>] [--also <動作,...>] [--report <md>] [--force]

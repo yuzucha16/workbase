@@ -28,7 +28,7 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 
 ```
 [Area を作る] → [Project を立てる] → [前半: 目的と計画をそろえる] → [作業] → [回収・運ぶ] → [閉じる] → [片付ける]
-   人 init        人 open               部屋の AI ＋ 人                 部屋の AI    人 stock/restore   AI close.md→人 close   人 reap
+   人 init        人 open               部屋の AI ＋ 人                 部屋の AI    人 stock           AI close.md→人 close   人 reap
 ```
 
 `start` から `wrap` までは**セッション**の単位で、作業は何度でも `start` し直す。下の 3〜6 は 1 回きりでなく、行き来する。
@@ -41,12 +41,12 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 | 1 | Area と部屋 | `room init <Area> [--boundary]`、ログイン | － | 部屋がすでにある（`--resume`） | `areas/<Area>/`、部屋 `room-<Area>`、成果物置き場 |
 | 2 | 立てる前の判断 | 完了条件 1 文、成果物 1 つ、type（`dev`／`inv`）を決める（下の「判断基準」） | － | － | 名前と type |
 | 3 | Project を立てる | `room open <P> --area <A> --type …`（閉じた Project の再作業は `--from <前>`。13 節） | － | `.gitignore`、`boundary:` | `projects/<P>/`（README はひな形。目的と成果物だけ） |
-| 4 | 入力（任意。internal の Area だけ） | 原本を `_noai/raw/` へ → `room clean`（または `mask`）→ `ai/in/` を読む | － | external では止まる | `ai/in/`（未確認の印） |
+| 4 | 入力（任意。internal の Area だけ） | 原本を `_noai/raw/` へ → `room clean` → `ai/in/` を読む | － | external では止まる | `ai/in/`（未確認の印） |
 | 5 | 起動 | `room start <P> [--adopt]` | （起動される） | マウント残り、未確認の `ai/in/`、来歴の不一致 | `ai/ctx/`（README の写し）、`~/shared`（kit の写し） |
 | 6 | 前半のお作法（4 節） | 合言葉を言う、承認する | 計画・論点の下書きを作る | － | 6R、論点、計画 |
 | 7 | 作業 | 指示、承認 | 成果物を `ai/out/<成果物名>/` に作る。`wrap` で `ai/docs/` を更新 | － | 成果物、記録 |
 | 8 | 終わり（セッションごと） | 部屋を閉じる（Enter） | `wrap` | － | 回収（`ai/docs/` が works にコミットされる） |
-| 9 | 運ぶ（随時） | `room stock [--dst kit\|area]`（省くと各下書きの `scope:` に従う。確認なし。運んだ元は消え、結果は表で出る）、`room restore` | `stock` で下書き（`ai/out/stock/`） | 点検（cleankit）に当たる、`scope:` が無い、人が Area 側を変えている | 共有知、Area の成果物 |
+| 9 | 運ぶ（随時） | `room stock [--dst kit\|area]`（省くと各下書きの `scope:` に従う。確認なし。運んだ元は消え、結果は表で出る） | `stock` で下書き（`ai/out/stock/`） | 点検（cleankit）に当たる、`scope:` が無い、人が Area 側を変えている | 共有知、Area の成果物 |
 | 10 | 閉じる判断 | 「閉じよう」と言う | `ai/out/close.md`（完了条件の実測、決定の見直し、【案件】の振り分け） | 完了条件が未達なら書かず Next Actions に残す | `close.md` |
 | 11 | 閉じる | `room close <P>` | － | マウント残り、未 push の clone、決定の根拠が不明。**README がひな形のまま・`close.md` 無しは警告（y/N。非対話では止まる）** | `archives/<P>/`、成果物が Area へ |
 | 12 | 片付ける | `room reap`（close の 14 日後。早めるなら `--force`） | － | － | 会話履歴が消える（写しは Windows 側に残る） |
@@ -79,10 +79,10 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 | README | `room open`（ひな形） | 人が埋める（AI の 6R の下書きを参照） | Area の一覧に 1 行（open で進行中、close で完了） | `archives/<P>/README.md`（`status: done`） |
 | 計画（6R ほか） | `plan` → `ai/work/plan/` | 人が正式にする | 運ばない | `archives/` に残る。再作業では `--from` が正式の計画を引き継ぐ |
 | 作業の記録（`ai/docs/`） | `room open` | AI が `wrap` で更新 | 運ばない（記録ごと `archives/` へ） | `archives/` に残る。`room trace` の引き先 |
-| 成果物 | AI が `ai/out/<成果物名>/` | － | `ai/out/<Project 名>/` の下だけ、`restore` か `close` で渡る | `archives/` に残る（許可リスト方式では git 追跡外） |
+| 成果物 | AI が `ai/out/<成果物名>/` | － | `ai/out/<Project 名>/` の下だけ、`close` で渡る | `archives/` に残る（許可リスト方式では git 追跡外） |
 | 知見 | AI の `stock` → `ai/out/stock/` | － | `room stock --dst area`（Area の `ai/`）、`--dst kit`（workbase の `exmem/inbox/`） | － |
 
-README の置き換え方、`stock` の点検、`restore` の止まり方の詳細は [[ai-room-setup-script]] の 6 章と `workflow-kit/room/README.md`。
+README の置き換え方、`stock` の点検、`close` の止まり方の詳細は [[ai-room-setup-script]] の 6 章と `workflow-kit/room/README.md`。
 
 ## 6. うまくいかないとき
 

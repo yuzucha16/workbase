@@ -1,4 +1,4 @@
-"""room: AI 作業部屋の操作（mkworks / open / start / close / umount / mask / restore / readme / stock）。
+"""room: AI 作業部屋の操作（mkworks / open / start / close / umount / readme / stock）。
 
 人が Windows で実行する。AI には実行させない（原本と対応表を読む工程を含むため）。
 設計は guides/explain/ai-room-why.md、手作業の手順は guides/howto/ai-room-setup.md。
@@ -27,16 +27,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cleankit  # noqa: E402
-import maskkit  # noqa: E402
 
 MOUNT_ROOT = "/mnt/room"
 ROOM_UID = 1000
 REAP_DAYS_DEFAULT = 14
 GITIGNORE_REQUIRED = ("**/_noai/",)  # 2026-10-29: 許可リスト方式にしたので `!**/ai/out/` は必須でない（旧方式の works にあっても通る）
 AI_DIRS = ("ai/docs", "ai/in", "ai/work", "ai/out", "ai/records")
-# マスクと復元は、人が `room mask` / `room restore` で行う（start は自動でしない）。復元は mapping.json があれば語を戻し、無ければ ai/out/deliverable/ だけそのまま Area へ渡す。
+# 語のマスク・復元は廃止した（2026-11-06）。成果物は `room close` が、ai/out/<Project 名>/ をそのまま Area へ渡す。
 # user/ は、人だけが使う仮置き（予約名。room は触らない）。
-NOAI_DIRS = ("_noai/raw", "_noai/map", "_noai/final", "_noai/user")
+NOAI_DIRS = ("_noai/raw", "_noai/map", "_noai/user")
 AI_KEEP = ("ai/in", "ai/work", "ai/records")
 
 
@@ -310,7 +309,7 @@ def check_boundary_arg(value):
 
 
 def require_internal(p, what):
-    """業務データを AI の入力にする経路（clean・マスク・adopt）は、boundary: internal の Area だけ。"""
+    """業務データを AI の入力にする経路（clean・adopt）は、boundary: internal の Area だけ。"""
     if normalize_boundary(read_frontmatter(p.area_dir / "README.md").get("boundary", "")) != "internal":
         raise RoomError(f"{what}は boundary: internal の Area だけ（{p.area} は external 扱い。業務データは AI に入れない。"
                         f"社内向けなら Area の README.md に boundary: internal を付ける）")
@@ -384,7 +383,7 @@ def check_provenance(p):
         elif (e.get("area"), e.get("project")) != (p.area, p.name):
             problems.append(f"{rel}: 由来が違う（{e.get('area')}/{e.get('project')}）")
         elif e.get("pending"):
-            problems.append(f"{rel}: マスクの出力を、人がまだ確認していない（読んで --adopt で通す）")
+            problems.append(f"{rel}: 掃除の出力を、人がまだ確認していない（読んで --adopt で通す）")
         elif e.get("sha256") != sha256(f):
             problems.append(f"{rel}: 記録のあとで変更されている（ハッシュが違う）")
     return problems
@@ -396,7 +395,7 @@ def adopt_in(ctx, p):
     for f in in_files(p):
         rel = f.relative_to(p.ai).as_posix()
         old = man["files"].get(rel, {})
-        e = {k: v for k, v in old.items() if k != "pending"}  # マスクの記録（raw_sha256 など）は残す
+        e = {k: v for k, v in old.items() if k != "pending"}  # 掃除の記録（raw_sha256 など）は残す
         e.update({"sha256": sha256(f), "area": p.area, "project": p.name, "added": old.get("added", ctx.now()), "approved": ctx.now()})
         man["files"][rel] = e
     manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
@@ -1215,7 +1214,7 @@ updated: {today}
 
 
 def scaffold_area(ctx, area):
-    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（clean --path、restore、close）は、無ければ作らず、何も変えずに止まる。"""
+    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（clean --path、close）は、無ければ作らず、何も変えずに止まる。"""
     root = ctx.vault / "areas" / area
     old = root / "knowledge"  # 2026-10-21 までの置き場（_noai の外で、守られていなかった）。自動では動かさない
     if old.is_dir():
@@ -1223,7 +1222,7 @@ def scaffold_area(ctx, area):
     dd = root / DELIVERABLE_DEFAULT
     if not dd.is_dir():
         dd.mkdir(parents=True)
-        ctx.say(f"作った: areas/{area}/{DELIVERABLE_DEFAULT}/（成果物置き場。restore の書き出し先。<Project 名>/ の下に置く）")
+        ctx.say(f"作った: areas/{area}/{DELIVERABLE_DEFAULT}/（成果物置き場。close の書き出し先。<Project 名>/ の下に置く）")
     sd = root / SOURCE_DEFAULT
     if not sd.is_dir():
         sd.mkdir(parents=True)
@@ -1601,15 +1600,14 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 - `area`（この Area の業務に固有。非公開）: これも `ai/out/stock/` に下書きを書く（`public` と同じ置き場）。frontmatter に `scope: area` と、運び先 `dest: knowledge`（既定。過去の決定・経緯なら `docs`）を足す。stock の7見出しの型で、`kind: lesson` か `explain`、`status: active`、`org` は元のまま、`observed`。`base_commit` は付けない。実名・金額・連絡先は書かない（人が `room stock --dst area` で点検を通して Area の `ai/` へ運ぶ。点検に当たると止まる）。
 - 人が `room stock` で運んだ下書きは、`ai/out/stock/` から消える（運び先へ移る）。消えた下書きを書き直さない。残っている下書きは、まだ運んでいないもの。
 
-Area に戻すもの（人が `restore` で実名に戻して Area に置く）:
+Area に戻すもの（`room close` が Area に置く）:
 
-- Project の成果物（固まった単位の最終成果物は 1 つ）は `ai/out/<成果物名>/` に置く。`<成果物名>` は Project 名と同じにする。`room close` が、この下を実名に戻して Area の成果物置き場（`<Project 名>/` の下）へ渡す。旧名の `ai/out/deliverable/` も同じ扱い。外部に出す名前が違うときだけ、その名前にしてよい（その場合は Area へ渡らない。置き場と構成は `workflow-kit/project-structure.md`）。
+- Project の成果物（固まった単位の最終成果物は 1 つ）は `ai/out/<成果物名>/` に置く。`<成果物名>` は Project 名と同じにする。`room close` が、この下を Area の成果物置き場（`<Project 名>/` の下）へ渡す。旧名の `ai/out/deliverable/` も同じ扱い。外部に出す名前が違うときだけ、その名前にしてよい（その場合は Area へ渡らない。置き場と構成は `workflow-kit/project-structure.md`）。
 
 部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git add` `git commit` `git log`）。リポジトリは `room start` が用意済みなので、許可を取らずに使ってよい。自分で `git init` や `git config` をしない（`.git` を作ると works に回収される。`git status` が失敗したときは、作らずに人に伝える）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。人に言われなくても、作業の区切りと wrap のたびにコミットする（push はしない）。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
 
 開発リポジトリ（`dev` の Project）: git で管理するコードは、部屋の `~/src/<repo>` にある clone で扱う（`room start` が追加ディレクトリとして渡す。`CLAUDE.md` も読まれる）。cwd は `/mnt/room/<名>` のまま。git は `git -C ~/src/<repo> ...` で使うのが望ましい（`cd` 後の git も、cwd が変わらず実害がなければ許容する）。push はできない（読み取り専用の deploy key）。コミットまでにとどめ、push は人が部屋の外から行う。git で管理しない試作や一時のコードは `ai/out/<成果物名>/src/` に置く。
 
-`ai/out/` の文書に、`⟦` と `⟧` を、マスクの記号以外の用途で書かない。説明文でプレースホルダーの形を示すときは、「CUST_001 の形」のように括弧なしで書く（`⟦CUST_nnn⟧` のような書き方は、復元が壊れた記号として止まる）。
 """
 
 
@@ -1795,9 +1793,9 @@ def cmd_start(ctx, a):
     gateway = getattr(a, "gateway", False)
     first = gateway_check(ctx) if gateway else None  # 設定とトークンを、マウントの前に確かめる（取れなければここで止める）
     boundary = preflight(ctx, p)
-    # 2026-11-02: start は自動でマスクしない（マスクは `room mask`。internal の Area だけ）。ai/in は人が確認して --adopt で通す
+    # 2026-11-02: start は自動で掃除しない（掃除は `room clean`。internal の Area だけ）。ai/in は人が確認して --adopt で通す
     if raw_files(p):
-        ctx.say("注意: _noai/raw に原本がある。start は自動でマスクしない。必要なら `room mask` を先に実行し、ai/in を読んで --adopt で通す")
+        ctx.say("注意: _noai/raw に原本がある。start は自動で掃除しない。必要なら `room clean` を先に実行し、ai/in を読んで --adopt で通す")
     if a.adopt:
         require_internal(p, "--adopt（人が通した入力の記録）")
         n = adopt_in(ctx, p)
@@ -1852,9 +1850,8 @@ def cmd_start(ctx, a):
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**（つかんでいるプロセス: " + (p.holders or "なし") + "）")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
-    if any(is_deliverable_key(p, k) for k in maskkit.list_files(p.ai / "out")) or (
-            maskkit.list_files(p.ai / "out") and (noai_dir(p) / "map" / "mapping.json").exists()):
-        ctx.say(f"注意: ai/out に戻していない出力がある。start は自動で戻さない。必要なら `room restore {p.name}` を実行する（成果物は Area へ渡る）")
+    if any(is_deliverable_key(p, k) for k in list_files(p.ai / "out")):
+        ctx.say(f"注意: ai/out に Area へ渡していない成果物がある。start は自動で渡さない。`room close {p.name}` で Area へ渡る")
     ignored = unexpected_ignored(ctx, p)
     status = [l for l in git(ctx.vault, "status", "--porcelain", "-uall", "--", f"projects/{p.name}").splitlines() if l]
     log_room(ctx, p, "start", checks, f"{result}、変更 {len(status)} 件")
@@ -1873,11 +1870,25 @@ def cmd_start(ctx, a):
                      trailers=room_trailers("start", p.area, p.name))
 
 
-# ---------- マスクと復元（maskkit。仕様は mask-spec.md） ----------
+# ---------- 原本と成果物の扱い ----------
+
+
+def list_files(base):
+    """base の下のファイルを {相対パス: bytes} で返す（.gitkeep と Office の一時ファイルは除く）。"""
+    base = Path(base)
+    if not base.exists():
+        return {}
+    return {f.relative_to(base).as_posix(): f.read_bytes()
+            for f in sorted(base.rglob("*")) if f.is_file() and f.name != ".gitkeep" and not f.name.startswith("~$")}
+
+
+def sha256_bytes(b):
+    return hashlib.sha256(b).hexdigest()
+
 
 def raw_files(p):
     """_noai/raw の原本。raw/tmp/ は room の出力（掃除の報告）の置き場なので原本に数えない。"""
-    return {k: v for k, v in maskkit.list_files(noai_dir(p) / "raw").items() if not k.startswith("tmp/")}
+    return {k: v for k, v in list_files(noai_dir(p) / "raw").items() if not k.startswith("tmp/")}
 
 
 def noai_dir(p):
@@ -1919,59 +1930,6 @@ def source_dir(p):
     return p.area_dir / SOURCE_DEFAULT
 
 
-def mask_project(ctx, p, yes=False):
-    """_noai/raw の新しい・変わった原本を、マスクして ai/in へ。点検に通らなければ止める。作った件数を返す。"""
-    n = noai_dir(p)
-    raw = raw_files(p)
-    if not raw:
-        return 0
-    require_internal(p, "原本のマスク（業務データを AI の入力にすること）")
-    conf_path = n / "mask.toml"
-    if not conf_path.exists():
-        raise RoomError(f"_noai/raw に原本があるが、{conf_path} が無い（マスクの指定を人が書く）")
-    try:
-        config = maskkit.load_config(conf_path)
-        mapping = maskkit.Mapping.load(n / "map" / "mapping.json")
-        conf_hash = maskkit.sha256_bytes(conf_path.read_bytes())
-        man = load_manifest(p)
-        todo, rebuild = set(), False
-        for rel, data in raw.items():
-            e = man["files"].get(f"in/{rel}")
-            if e is None or e.get("raw_sha256") != maskkit.sha256_bytes(data) or not (p.ai / "in" / rel).exists():
-                todo.add(rel)
-            elif e.get("mask_sha256") != conf_hash:
-                rebuild = True
-        if rebuild:
-            ctx.say("mask.toml が変わった。ai/in の全ファイルを作り直す")
-            if not yes and input("作り直してよいか [y/N]: ").strip().lower() != "y":
-                raise RoomError("作り直しを中止した")
-            todo = set(raw)
-        if not todo:
-            return 0
-        res = maskkit.mask_files(raw, config, mapping, only=todo)
-    except maskkit.MaskError as e:
-        raise RoomError(f"マスクを止めた（ai/in は変更していない）:\n{e}")
-    version = sum(mapping.data["counters"].values())
-    for rel, data in res["outputs"].items():
-        write_bytes(p.ai / "in" / rel, data)
-        man["files"][f"in/{rel}"] = {
-            "sha256": maskkit.sha256_bytes(data), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,  # 人が読んで --adopt するまで start は通さない
-            "raw_sha256": maskkit.sha256_bytes(raw[rel]), "mask_sha256": conf_hash, "mapping_version": version,
-            "masked_from": f"_noai/raw/{rel}",
-        }
-    mapping.save(n / "map" / "mapping.json")
-    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
-    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
-    ctx.say(f"マスクした: {len(res['outputs'])} ファイル → ai/in（対応表の版 {version}）")
-    for w in res["warnings"]:
-        ctx.say("  注意: " + w)
-    if res["hints"]:
-        ctx.say("  対応表に無い固有名詞の候補（必要なら mask.toml に足す。止めない）:")
-        for h in res["hints"]:
-            ctx.say("    " + h)
-    return len(res["outputs"])
-
-
 def clean_project(ctx, p, items=None):
     """_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（2026-11-03: 語のマスクの代わりの入口）。報告は _noai/raw/tmp/（AI に見せない）。作った件数を返す。
     items（{ai/in での相対パス: bytes}）を渡すと、raw を経由せず、それを掃除する（clean --path。Area の source/ を直接読む）。"""
@@ -1984,7 +1942,7 @@ def clean_project(ctx, p, items=None):
     man, done, rep_where = load_manifest(p), 0, "_noai/raw/tmp/"
     for rel, data in sorted(raw.items()):
         ext = Path(rel).suffix.lower()
-        digest = maskkit.sha256_bytes(data)
+        digest = sha256_bytes(data)
         e = man["files"].get(f"in/{rel}")
         if e is not None and e.get("raw_sha256") == digest and (p.ai / "in" / rel).exists():
             continue
@@ -2010,7 +1968,7 @@ def clean_project(ctx, p, items=None):
             continue
         write_bytes(p.ai / "in" / rel, cleaned)
         man["files"][f"in/{rel}"] = {
-            "sha256": maskkit.sha256_bytes(cleaned), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,
+            "sha256": sha256_bytes(cleaned), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,
             "raw_sha256": digest, "cleaned": "strict",
             "masked_from": f"areas/{p.area}/_noai/source/{rel[len(PULL_PREFIX):]}" if items is not None else f"_noai/raw/{rel}",
         }
@@ -2023,61 +1981,13 @@ def clean_project(ctx, p, items=None):
     return done
 
 
-def restore_project(ctx, p, force=False):
-    """ai/out を復元して _noai/final へ。戻らないもの、または人が変えた final があれば（force 以外は）何も書かずに問題の一覧を返す。"""
-    n = noai_dir(p)
-    out = maskkit.list_files(p.ai / "out")
-    if not out:
-        return 0, []
-    if (n / "map" / "mapping.json").exists():
-        mapping = maskkit.Mapping.load(n / "map" / "mapping.json")
-        try:
-            restored, problems = maskkit.restore_files(out, mapping)
-        except maskkit.MaskError as e:
-            return 0, [str(e)]
-        if problems:
-            return 0, problems
-    else:  # マスクしたことが無い Project（clean だけ）: 戻す語は無い。成果物（ai/out/deliverable/）だけ、そのまま Area へ渡す。ほかの ai/out は触らない
-        restored = {rel: data for rel, data in out.items() if is_deliverable_key(p, rel)}
-        if not restored:
-            return 0, []
-    plans, errors, conflicts = deliver_plan(p, restored)  # 成果物を Area へ渡す処理は close と共有（restore を畳んでも close に残る）
-    if errors:
-        return 0, errors
-    mf = n / "map" / "final-manifest.json"
-    written = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
-    if not force:
-        changed = list(conflicts)
-        for rel, data in restored.items():
-            dest = n / "final" / rel
-            if dest.exists():
-                cur = dest.read_bytes()
-                if cur != data and written.get(rel) != maskkit.sha256_bytes(cur):
-                    changed.append(f"{rel}: _noai/final が、前回の復元から変わっている（人の変更を上書きしてしまう）")
-        if changed:
-            return 0, changed + ["（確認して、上書きしてよければ `room restore " + p.name + " --force`。人の変更は先に退避する）"]
-    for rel, data in restored.items():
-        write_bytes(n / "final" / rel, data)
-        written[rel] = maskkit.sha256_bytes(data)
-    write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
-    deliver_write(ctx, p, plans)
-    return len(restored), []
-
-
-# ---------- 成果物を Area へ渡す（close が持つ。restore も同じ関数を使う） ----------
+# ---------- 成果物を Area へ渡す（close が持つ） ----------
 
 def deliverable_items(p):
     """ai/out/<Project 名>/（旧名 ai/out/deliverable/）の下を、Area に渡す形で返す: ({ai/out からの相対パス: bytes}, 問題)。
-    マスクした Project（対応表がある）は実名に戻し、マスクしていない Project（clean だけ）はそのまま。ほかの ai/out は見ない。"""
-    out = {k: v for k, v in maskkit.list_files(p.ai / "out").items() if is_deliverable_key(p, k)}
-    mp = noai_dir(p) / "map" / "mapping.json"
-    if not out or not mp.exists():
-        return out, []
-    try:
-        items, problems = maskkit.restore_files(out, maskkit.Mapping.load(mp))
-    except maskkit.MaskError as e:
-        return {}, [str(e)]
-    return (items, []) if not problems else ({}, problems)
+    そのまま渡す（語の置き換えはしない）。ほかの ai/out は見ない。"""
+    out = {k: v for k, v in list_files(p.ai / "out").items() if is_deliverable_key(p, k)}
+    return out, []
 
 
 def deliver_plan(p, items):
@@ -2120,13 +2030,11 @@ def routes(p):
 
 
 def plan_publish(route, restored):
-    """復元した ai/out/<prefix> の下を、Area への書き出し先に対応づける（何も書かない）。{書き出し先: bytes}。"""
+    """ai/out/<prefix> の下を、Area への書き出し先に対応づける（何も書かない）。{書き出し先: bytes}。"""
     items = {rel[len(route.prefix):]: data for rel, data in restored.items() if rel.startswith(route.prefix)}
     plan = {}
     base = route.base.resolve()
     for rel, data in items.items():
-        if "⟦" in rel or "⟧" in rel:
-            raise RoomError(f"{route.prefix}{rel}: ファイル名にプレースホルダーが残っている（AI に、英数字のファイル名を付けさせる）")
         dest = (base / rel).resolve()
         if base not in dest.parents:
             raise RoomError(f"{route.prefix}{rel}: Area の{route.label}の置き場の外を指している")
@@ -2148,36 +2056,23 @@ def publish_conflicts(p, route, plan):
         if dest.exists():
             cur = dest.read_bytes()
             key = dest.relative_to(base).as_posix()
-            if cur != data and written.get(key) != maskkit.sha256_bytes(cur):
+            if cur != data and written.get(key) != sha256_bytes(cur):
                 out.append(f"{route.prefix}{key}: Area の{route.label}が、前回の書き出しから変わっている（人の変更を上書きしてしまう）")
     return out
 
 
 def publish(ctx, p, route, plan):
-    """Area へ書く。前回の書き出しから変わっている既存ファイルは、ここに来るのは --force のときだけ。直前の版は _noai/final/_prev/ に退避する。"""
+    """Area へ書く。前回の書き出しから人が変えた既存ファイルは、呼ぶ前に deliver_plan が止めている（上書きする経路は無い）。"""
     if not plan:
         return
     mf, written = read_written(p, route)
     base = route.base.resolve()
     for dest, data in plan.items():
         key = dest.relative_to(base).as_posix()
-        if dest.exists():
-            cur = dest.read_bytes()
-            if cur != data and written.get(key) != maskkit.sha256_bytes(cur):
-                write_bytes(noai_dir(p) / "final" / "_prev" / route.prefix / key, cur)
-                ctx.say(f"注意: Area の {key} は前回の書き出しから変わっていた。--force で上書きした（直前の版は _noai/final/_prev/{route.prefix}{key}）")
         write_bytes(dest, data)
-        written[key] = maskkit.sha256_bytes(data)
+        written[key] = sha256_bytes(data)
     write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
     ctx.say(f"Area に書いた: {len(plan)} ファイル → {base.relative_to(Path(ctx.vault).resolve()).as_posix()}")  # resolve: Windows の 8.3 短縮名と長い名前の違いを吸収
-
-def cmd_mask(ctx, a):
-    p = Project.load(ctx, a.name)
-    preflight(ctx, p)
-    k = mask_project(ctx, p, yes=a.yes)
-    if k == 0:
-        ctx.say("マスクするものは無い（原本が無いか、変更が無い）")
-
 
 def cmd_clean(ctx, a):
     p = Project.load(ctx, a.name)
@@ -2209,14 +2104,6 @@ def cmd_clean(ctx, a):
             raise RoomError("ファイル名に実名や機密らしい語がある。何も掃除していない（source/ の名前を直す）:\n  " + "\n  ".join(bad))
     if clean_project(ctx, p, items) == 0:
         ctx.say("掃除するものは無い（原本が無いか、変更が無い）")
-
-
-def cmd_restore(ctx, a):
-    p = Project.load(ctx, a.name)
-    k, problems = restore_project(ctx, p, force=a.force)
-    if problems:
-        raise RoomError("復元を止めた（_noai/final は変更していない）:\n  " + "\n  ".join(problems))
-    ctx.say(f"復元した: {k} ファイル → _noai/final")
 
 
 def pick_source_files(src, patterns):
@@ -2390,8 +2277,6 @@ def stock_to_kit(ctx, a, quiet=False):
     inbox = share_root(ctx) / "exmem" / "inbox"
     if not inbox.is_dir():
         raise RoomError(f"運び先が無い: {inbox}")
-    n = p.dir / "_noai" / "map" / "mapping.json"
-    table = maskkit.Table(maskkit.Mapping.load(n)) if n.exists() else None
     man = load_manifest(p)
     sent = man.setdefault("stock", {})
     delivered = 0
@@ -2416,9 +2301,6 @@ def stock_to_kit(ctx, a, quiet=False):
         base, observed = meta.get("base_commit", ""), meta.get("observed", "")
         if not base or not observed:
             ctx.say(f"  運ばない（frontmatter に base_commit と observed が要る）: {f.name}")
-            continue
-        if table is not None and table.search(text):
-            ctx.say(f"  運ばない（対応表の語が含まれている。公開されうる workbase に入れない）: {f.name}: {table.search(text).group(0)}")
             continue
         valid, changed = stock_staleness(ctx, base)
         # kind: explain は guides/explain/ への新規作成だけなので、lessons の変更で古くならない
@@ -2638,7 +2520,7 @@ def cmd_close(ctx, a):
                         + ("\n（Area 側の人の変更を退避してから、close をやり直す）" if conflicts else ""))
     today = ctx.today()
     reap = (datetime.date.fromisoformat(today) + datetime.timedelta(days=ctx.reap_days)).isoformat()
-    # 0. 成果物を Area へ（点検は上で済み。マスクした Project は実名に戻して）
+    # 0. 成果物を Area へ（点検は上で済み）
     if any(plan for _route, plan in plans):
         deliver_write(ctx, p, plans)
     # 2. README の状態
@@ -3383,14 +3265,10 @@ def build_parser():
     s.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない）")
     s.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
     s.add_argument("--no-commit", dest="commit", action="store_false", help="回収をコミットしない（既定はコミットする）")
-    m = sub.add_parser("mask", help="_noai/raw の原本をマスクして ai/in へ（人が実行する。start は自動でマスクしない）")
-    m.add_argument("name"); m.add_argument("--yes", action="store_true")
-    cl = sub.add_parser("clean", help="_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（語のマスクは任意。通すのは start --adopt）")
+    cl = sub.add_parser("clean", help="_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（通すのは start --adopt）")
     cl.add_argument("name")
     cl.add_argument("--path", action="append", metavar="パス", help="Area の原本置き場(_noai/source/)からの相対パスか glob。指定すると raw を経由せず直接掃除する(共通の xlsx・pptx 用)")
     cl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
-    r = sub.add_parser("restore", help="ai/out を復元して _noai/final へ。ai/out/deliverable/ は Area の成果物置き場へも渡す（マスクしていない Project でもそのまま渡す。start は自動で行わない）")
-    r.add_argument("name"); r.add_argument("--force", action="store_true", help="人が変えた _noai/final も上書きする")
     st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst を省くと各下書きの scope: に従って両方へ運ぶ。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
     st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと各下書きの scope: に従って両方へ運ぶ。scope: が無い・不明なら止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない。2026-11-04 に1件ごとの確認を廃止した）")
@@ -3426,7 +3304,7 @@ def main(argv=None):
     ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
         {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "mv": cmd_mv,
-         "mask": cmd_mask, "clean": cmd_clean, "restore": cmd_restore, "stock": cmd_stock, "trace": cmd_trace}[a.command](ctx, a)
+         "clean": cmd_clean, "stock": cmd_stock, "trace": cmd_trace}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2

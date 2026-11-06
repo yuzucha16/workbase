@@ -7,7 +7,7 @@ AI 作業部屋（`workflow-kit/room/`）の中で、合言葉のフックを使
 | | 運用コマンド（`room …`） | 合言葉のフック |
 |---|---|---|
 | 呼ぶ人・場所 | 人が Windows の端末で打つ | 人が言い、AI が手順書を読んで実行 |
-| 性質 | 決まった手順の副作用（マウント、写しの送付、マスク、移動、コミット） | 判断（聞き取り、確認、振り分け、下書き） |
+| 性質 | 決まった手順の副作用（マウント、写しの送付、移動、コミット） | 判断（聞き取り、確認、振り分け、下書き） |
 | 実行者 | スクリプト。**AI は実行しない** | AI |
 
 運用コマンドには必ず `room` を前置し、合言葉は日本語の別名で呼ぶ。2つをつなぐのは**ファイルの受け渡しだけ**。
@@ -53,9 +53,9 @@ Project の README の本文が雛形のまま（`ai/ctx/README.md` に未記入
 
 **`area`（external・internal 共通。internal も 2026-11-02 に同じ道にした）**: `ai/out/stock/YYYY-MM-DD-<topic>.md` に、frontmatter `scope: area` を付けて書く（`base_commit` と `observed` は付けない）。行き先の区分は `dest: knowledge`（知識。既定）か `dest: docs`（決定・経緯）。実名を含めずに書く。人が `room stock <名> --dst area` で、`cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）を通して `areas/<Area>/ai/<dest>/` に運ぶ（internal は `mask.toml` の語が空だと止まる。人が通した業務データが部屋にあるため）。点検に当たると何も運ばれないので、当たった形を書き換える。次の Project 以降は、`start` が `areas/<Area>/ai/{knowledge,docs}/` の写しを `ctx/area/` に読み取り専用で置く。**過去の決定や経緯から今の判断をするときは、先に `ctx/area/` を読む**。
 
-`area` は internal も上の道（`ai/out/stock/` → `--dst area` → `ctx/area/`）を使う（2026-11-03 に `restore` / `pull` の知識用の経路を外した）。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
+`area` は internal も上の道（`ai/out/stock/` → `--dst area` → `ctx/area/`）を使う（2026-11-03 に `restore` / `pull` の知識用の経路を外し、2026-11-06 に `restore` を削除した）。公開側に出せる一般則が育ったら、別ファイルで `public` の下書きを書く。
 
-`stock 理解` の下書き（`kind: explain`）も同じ場所に書く。形は `stock-explain.md`（部屋の中では、マスク後の語だけで書く。対応表の語を含む下書きは、`room stock` が運ばない）。
+`stock 理解` の下書き（`kind: explain`）も同じ場所に書く。形は `stock-explain.md`（部屋の中では、実名を書かない）。
 
 `public` は、人が `room stock <名> --dst kit` で確認して `exmem/inbox/` に運ぶ。運ばれた下書きは `ai/out/stock/` から消える（move。2026-11-04）。消えた下書きを書き直さない。残っている下書きは、まだ運ばれていないもの（`area` も同じ）。`kind` はそのまま運ばれる。`scope: area` の下書きが `ai/out/stock/` にあっても、`room stock` は運ばない。基準以降に統合先の `lessons/` が変わっていると、`base_stale` が付く。`integrate` は、印が付いたメモを、基準の版・下書き・最新の版の3点で照らして統合する（食い違いは Open Questions）。
 
@@ -65,10 +65,10 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 
 ## 知識の統合と成果物の置き場（部屋の中）
 
-2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。マスクのまま書く。知識は人が `room stock --dst area` で、最終版は `room restore` か `room close` で Area に置く（`start` は自動で行わない）。
+2026-10-21 ユーザーの決定（`topics/private-knowledge/` の決定の移し先は `docs/decisions.md` の同日の項）。部屋の AI は実名を見ない。実名を書かない。知識は人が `room stock --dst area` で、最終版は `room close` で Area に置く（`start` は自動で行わない）。
 
 - **統合した知識**: `ctx/area/`（`start` が置く Area の `ai/{knowledge,docs}/` の読み取り専用の写し）を読み、統合したノートを `ai/out/stock/<英数字の名前>.md` に書く（`scope: area`、`dest: knowledge`）。実名を含めない。人が `room stock <名> --dst area` で運ぶ。同じ名前のファイルが Area にあり、前回運んだ後に人が変えていると、`stock` は運ばずに止まる（人が確認して消すか、名前を変える）。
-- **最終成果物（Area に実名で戻す）**: `ai/out/<Project 名>/` の下に置く（成果物の塊は 1 つ。旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。人が `room restore` を実行するか、`room close` すると、Area の成果物置き場（Project 名の下）に書く（マスクした Project は実名に戻して、マスクしていない Project はそのまま）。置き場と構成は `project-structure.md`。成果物を作る前に、`project-structure.md` の type の節（`inv` なら「`inv` の補足」）を読む。依頼が清書の形式（pptx・quarto/revealjs など）を指定したときは、形式によらず、`report.md` を本体に作り、清書物は `ai/out/<Project 名>/publish/` に置く（出力だけを直下に置かない）。それ以外の `ai/out/` 直下（`close.md` など）は Area へ渡らず、`restore` では Project の `_noai/final/` に戻る。
+- **最終成果物（Area に実名で戻す）**: `ai/out/<Project 名>/` の下に置く（成果物の塊は 1 つ。旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。人が `room close` すると、Area の成果物置き場（Project 名の下）にそのまま書く。置き場と構成は `project-structure.md`。成果物を作る前に、`project-structure.md` の type の節（`inv` なら「`inv` の補足」）を読む。依頼が清書の形式（pptx・quarto/revealjs など）を指定したときは、形式によらず、`report.md` を本体に作り、清書物は `ai/out/<Project 名>/publish/` に置く（出力だけを直下に置かない）。それ以外の `ai/out/` 直下（`close.md` など）は Area へ渡らず。
 - **残したい知見**（`stock`）は、行き先を `scope:` で決める（下の `stock` の節）。Area の業務に固有なら `scope: area`、公開できる一般則なら `scope: public`（どちらも `ai/out/stock/`）。
 
 ## 分担と受け渡し
@@ -76,10 +76,10 @@ Project の目的・完了時期・マイルストーンは、README に写さ�
 | 場面 | AI（部屋の中）が行う | 人（`room`）が行う | 受け渡しのファイル |
 |---|---|---|---|
 | `plan` | 目的・完了条件の聞き取りと 6R の下書き（下の節）、論点出し、憲章以降（任意） | `room open <名>`（ひな形）。README の目的・成果物は人が埋める | `ai/work/plan/6r.md`（`status: 仮`） |
-| `brief` | 開始インタビュー | `room start <名>`（チェック、写しの送付、マウント、起動。マスクは人が先に `room mask`） | `ai/ctx/`、`ai/in/` |
-| `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（works へのコミット。復元は人が `room restore`） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
+| `brief` | 開始インタビュー | `room start <名>`（チェック、写しの送付、マウント、起動） | `ai/ctx/`、`ai/in/` |
+| `wrap` | `ai/docs/` の更新、昇格の案、部屋の git へのコミット | 回収（works へのコミット。成果物は `close` で Area へ） | `ai/docs/log.md`、`ai/docs/decisions.md`（Area へ渡す項目に【案件】ラベル） |
 | `close`（合言葉なし） | `ai/out/close.md` を書く（下の節） | `room close <名>`（`ai/out/<Project 名>/` を Area の成果物置き場へ、Area へ転記、状態の更新、`archives/` へ移動） | `ai/out/close.md` |
 | `stock`（`public`） | 下書きまで | `room stock <名> --dst kit`（確認なしで `exmem/inbox/` へ運び、運んだ後に表を出す） | `ai/out/stock/`（先頭に基準コミットと観測日） |
-| `stock`（`area`。external・internal 共通） | `ai/out/stock/` に `scope: area` で書く（実名なし） | `room stock <名> --dst area`（cleankit の点検を通して `areas/<Area>/ai/` へ。internal は `mask.toml` の語が要る）。次の Project の `ctx/area/` に写る | `ai/out/stock/` |
+| `stock`（`area`。external・internal 共通） | `ai/out/stock/` に `scope: area` で書く（実名なし） | `room stock <名> --dst area`（cleankit の点検を通して `areas/<Area>/ai/` へ。`mask.toml` の語は任意）。次の Project の `ctx/area/` に写る | `ai/out/stock/` |
 
 `integrate` `review` は、部屋では行わない（`hooks.md` の r/w 表で －。works 側の workbase の作業）。works の作成と雛形の反映は `room mkworks`、部屋の作成は `room init`（どちらも人が打つ）。

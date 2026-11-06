@@ -16,7 +16,7 @@
 /repos/
 # Obsidian の設定は dotfiles からのジャンクション（実体は dotfiles が持つ）
 /.obsidian
-# AI に見せない領域（原本・対応表・復元済みの成果物）
+# AI に見せない領域（原本・room の記録）
 **/_noai/
 # AI 作業部屋の ai/: docs/ 以外は追跡しない（in・work・out・records・ctx）
 **/ai/*

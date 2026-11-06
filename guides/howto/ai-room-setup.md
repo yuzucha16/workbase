@@ -17,8 +17,8 @@ tags:
 > **状態: 草稿（未レビュー）。別のセッションでレビューする予定。** 手順は、2026-10-12 に実機で通した内容（手作業）。レビュー前の記述は、確認と見直しの対象。
 
 - **ゴール（完了の目安）**: 部屋の中の Claude Code が、Project の `ai/` の中のファイルだけを読み書きでき、`/mnt/c` や works の他の場所が見えないこと。作業の成果物が、works（Windows 側）にそのまま現れること
-- 範囲: 部屋の作成から、Project の作業、`close`、片付けまで。マスク・復元の操作（`room.py`）は範囲外（未実装。付録）
-- **スクリプトとの関係**: 操作を自動化する `room.py`（`open` / `start` / `close` / `umount`。置き場は `workflow-kit/room/`）は、**v0 を実装して、使い捨ての works で通した**（2026-10-12）。ただし**マスク・復元は未実装**で、実運用はこれから。このため、5・7 章の手作業を残している（`room.py` の動作の説明も兼ねる）。スクリプトの実運用が安定したら、スクリプトが正になり、この手順書はスクリプトの前後（手動の作業）と注意点だけにする
+- 範囲: 部屋の作成から、Project の作業、`close`、片付けまで。語のマスク・復元は 2026-11-06 に廃止した
+- **スクリプトとの関係**: 操作を自動化する `room.py`（`open` / `start` / `close` / `umount`。置き場は `workflow-kit/room/`）は、**v0 を実装して、使い捨ての works で通した**（2026-10-12）。実運用はこれから。このため、5・7 章の手作業を残している（`room.py` の動作の説明も兼ねる）。スクリプトの実運用が安定したら、スクリプトが正になり、この手順書はスクリプトの前後（手動の作業）と注意点だけにする
 - 固有情報（勤務先名、顧客名、ユーザー名）は書かない。パスは `$HOME` と `<Area>` `<Project>` で書く
 
 ## 対応バージョン表
@@ -97,7 +97,7 @@ boundary: internal   # 例: internal（顧客データなし）、顧客を表�
 
 ```powershell
 $p = "$HOME\works\projects\<Project>"
-foreach ($d in 'ai\docs','ai\in','ai\work','ai\out','ai\records','_noai\raw','_noai\map','_noai\final') {
+foreach ($d in 'ai\docs','ai\in','ai\work','ai\out','ai\records','_noai\raw','_noai\map') {
   New-Item -ItemType Directory -Force "$p\$d" | Out-Null
 }
 foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitkeep" -Force | Out-Null }
@@ -106,14 +106,14 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 | フォルダ | 役割 | 部屋から |
 |---|---|---|
 | `ai/docs/` | 作業ログ・決定（AI が書く） | 読み書き |
-| `ai/in/` | マスク済みの入力 | 読み取り専用にする |
+| `ai/in/` | 掃除済みの入力 | 読み取り専用にする |
 | `ai/work/` | AI のスクリプト（再現に要るので追跡する） | 読み書き |
-| `ai/out/` | 成果物（マスク済み） | 読み書き |
+| `ai/out/` | 成果物 | 読み書き |
 | `ai/records/` | 実行記録、AI への指示の記録 | 読み書き |
-| `_noai/raw` `map` `final` | 原本、対応表、実データ入りの成果物 | **見えない** |
+| `_noai/raw` `map` | 原本、room の記録 | **見えない** |
 | `_noai/user/` | 人だけの仮置き（予約名。`room` は触らない） | **見えない** |
 
-- **`_noai/` は `type` に関係なく `raw/` `map/` `final/` `user/` を作る**（`room.py` を使うなら自動。上の `mkdir` の一覧）。マスクと復元は状態で決まる（原本が `raw/` にあればマスクし、対応表ができたら終了時に復元する）。仕様の正本は `workflow-kit/room/README.md` の「マスクと復元は状態で決まる」。マスクした資料を要約させる手順は [[ai-room-mask-summary]]
+- **`_noai/` は `type` に関係なく `raw/` `map/` `user/` を作る**（`room.py` を使うなら自動。上の `mkdir` の一覧）。仕様の正本は `workflow-kit/room/README.md` の「`_noai/` の中身」
 - 既存の Project がある場合は、`docs/` の中身を `ai/docs/` に、成果物を `ai/out/` に、ファイル単位の `git mv` で移す（ディレクトリごとだと `Permission denied` で失敗することがある）。README の中の旧パスは、`grep` で探して直す。過去の作業記録の中の旧パスは、当時の事実なので直さない
 - 完了の目安: `_noai/` が `git status` に出ない
 
@@ -347,10 +347,9 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 
 ## 付録: 課題（未了・要確認）
 
-- **`room.py` の残り**: マスク・復元、【汎用】の下書きの回収、reap、部屋の作成の自動化（`workflow-kit/room/README.md` の「未実装」）。実運用で安定したら、5・7 章を、スクリプトの呼び出しに差し替える
+- **`room.py` の残り**: 【汎用】の下書きの回収、reap、部屋の作成の自動化（`workflow-kit/room/README.md` の「未実装」）。実運用で安定したら、5・7 章を、スクリプトの呼び出しに差し替える
 - workflow-kit の手順書（`start` `wrap`。`open` `close` は 2026-10-24 までに `room` のコマンドに移った）が、`docs/` を Project 直下と想定している。`ai/docs/` への読み替えと、部屋の中の AI が行う部分・人が行う部分の分担を、手順書に書く
 - workflow-kit の works の雛形（`gitignore.template`、`AGENTS.md`）への反映（2.1 の `.gitignore`、AI は部屋で使うこと、Zed は WSL リモートで使うこと、AI が書くスクリプトに標準ライブラリと同名を付けないこと）
-- マスク・復元（`mask.toml`、zip レベルの置換、置換後の点検）は、ダミーデータでの試験が未了
 - 部屋の会話履歴の片付け（reap）の手順と、期限の設定の置き場
 - 対応表の保護（works が漏れた場合の対策）は、運用しながら決める
-- docx・pptx のマスク、ネットワークの絞り込みは、未検証。Bedrock 経由の接続は、Zed の Agent で通した（2026-10-19、PC1）。手順は [[ai-room-setup-script]] の 2.1。`aws-key` の実機確認は未了
+- ネットワークの絞り込みは、未検証。Bedrock 経由の接続は、Zed の Agent で通した（2026-10-19、PC1）。手順は [[ai-room-setup-script]] の 2.1。`aws-key` の実機確認は未了

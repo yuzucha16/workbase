@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06（due 11-30: `mask` / `restore` の削除が済）
+- 済（due 11-30）: ユーザーの指示で `room mask` / `room restore`、`maskkit.py`、`mask-spec.md`、手順書 `ai-room-mask-summary.md` を削除し、`_noai/final/` を廃止。成果物の引き渡しは `close` だけ。`map/` と `mask.toml`（点検用の語の表）は残した。単体テスト 210 件を通した（スキップ 3）。決定は root の `docs/decisions.md`。
+  - 元の項目: 2026-11-30 単発 `room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー。単体スクリプト化はしない)。
+- 依頼: 空の `_noai/final/` 22 個を works から削除（ユーザー承認）。中身のある 2 個（`archives/pilot2-2`、`archives/sample_inveg2`）はユーザーが削除した。
+- 新規の Next Actions: 書き換えた文書類の第三者確認（起票 11-06、期日 11-13）。
 ### 2026-11-05（NA 1: 最新の cleankit / room clean の実機確認が済）
 - 済（NA1）: ユーザーが PC1 の実 xlsx・pptx を最新の cleankit / room clean に通し、問題なしと報告（11-05）。ラベル ID・テナント ID の残り方と、Excel・PowerPoint で警告なしに開くことを含む。
   - 元の項目: 【起票 11-04】実機確認: PC1 の実 xlsx・pptx を最新の `cleankit` / `room clean` に通し、(a) `LabelInfo.xml` とテナント ID（site id）が出力に残らないこと、(b) 報告の `tenant-id` が残る場合はセルや図形の表示文字だけであること、(c) Excel・PowerPoint が警告なしに開くこと（ラベル・customXml・共同編集の履歴を外した出力）を見る。残りがあれば部品の種類を足す。

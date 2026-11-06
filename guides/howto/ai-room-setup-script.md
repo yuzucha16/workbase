@@ -29,9 +29,9 @@ tags:
 | 1 | 前提を確認する | 手動 | `.gitignore`、`uv`、WSL2 がそろう |
 | 2 | 部屋を作る（`init`） | スクリプト + ログインは人 | 部屋が `claude -p` に `ok` を返す |
 | 3 | Project を作る（`open`） | スクリプト + README は人 | `projects/pilot2-1/` ができ、README を書いた |
-| 4 | マスクする（`mask`。任意）。4.1: Area の知識を部屋で使う（`stock --dst area`） | スクリプト | `ai/in/` にマスク済みのファイルが入る（4.1: `ctx/area/` に Area の知識の写し） |
+| 4 | 原本を掃除する（`clean`。任意）。4.1: Area の知識を部屋で使う（`stock --dst area`） | スクリプト | `ai/in/` に掃除済みのファイルが入る（4.1: `ctx/area/` に Area の知識の写し） |
 | 5 | 部屋で使う（`start`） | スクリプト | 成果物が `ai/out/` に現れ、マウントが残らない |
-| 6 | 回収する（`restore` `readme` `stock`）。6.1: Area に戻すもの | スクリプト | 実名に戻った成果物が `_noai/final/` にある（6.1: Area の成果物置き場にも） |
+| 6 | 回収する（`readme` `stock`）。6.1: Area に戻すもの | スクリプト | `stock` の下書きが運ばれた（6.1: 成果物は 7 章の `close` で Area の成果物置き場へ） |
 | 7 | 閉じる（`close`） | スクリプト + `close.md` は部屋の AI | `archives/pilot2-1/` に移った |
 | 8 | 片付ける（`reap`、部屋の削除） | スクリプト | 会話履歴が消え、README に `reaped:` が付く |
 | 9 | うまくいかないとき | | |
@@ -117,8 +117,8 @@ wsl -d room-pilot2 -- sh -c "id -un; ls /mnt/c | wc -l; command -v cmd.exe || ec
 uv run room.py open pilot2-1 --area pilot2
 ```
 
-- `--type dev|inv`（省略は `dev`）で、成果物の種類を決める。`dev` は作って保守する成果物、`inv` は調べて結論を出す成果物（`project-structure.md`）。`_noai/` の中身は `type` に関係なく同じ（`raw/` `map/` `final/` `user/`）。マスクと復元は状態で決まる（原本が `raw/` にあればマスクし、対応表ができたら終了時に復元する。`workflow-kit/room/README.md`）。`user/` は人だけの仮置き（予約名）。マスクした資料の要約を出すときは [[ai-room-mask-summary]]
-- `projects/pilot2-1/` に、`README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,final,user}` ができ、Area の README の「進行中の Project」に1行足される。`ai/ctx/` は `start` が作る
+- `--type dev|inv`（省略は `dev`）で、成果物の種類を決める。`dev` は作って保守する成果物、`inv` は調べて結論を出す成果物（`project-structure.md`）。`_noai/` の中身は `type` に関係なく同じ（`raw/` `map/` `user/`。`workflow-kit/room/README.md`）。`user/` は人だけの仮置き（予約名）。語のマスク・復元は 2026-11-06 に廃止した（掃除は 4 章の `clean`）
+- `projects/pilot2-1/` に、`README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,user}` ができ、Area の README の「進行中の Project」に1行足される。`ai/ctx/` は `start` が作る
 - 初期状態を、既定でコミットする（`--no-commit` で省く）。コミットされるのは、Project のひな形と、Area の README だけ（Area のほかのファイルは含めない）
 - **README の本文を書く**（目的、成果物。完了条件・範囲外・未決は `ai/work/plan/` の 6R）。ひな形のままだと、`close` が警告して `[y/N]` で確かめる（動作確認や小さな作業なら y で進めてよい）
 
@@ -129,20 +129,20 @@ git -C $HOME\works status --short      # _noai/ が出ない
 
 - **よく忘れる点**: ステージ済みの別の変更（前の `close` の取り残しなど）があっても、`init` `open` は止まらず、対象のパスだけをコミットする。取り残しはステージに残るので、あとで別にコミットする（「注意: 対象外のステージ済みの変更は、コミットに含めない」と出る）。`start` `readme` `close` の `--commit` は、対象外のステージがあると止まる
 
-## 4. マスクする（`mask`。任意）
+## 4. 原本を掃除する（`clean`。任意）
 
-原本（Excel、CSV、md、txt、pptx）を AI に見せず、置き換えた写しだけを渡すとき（原本を `_noai/raw/` に置いた Project）。ここでは、試験用の `pilot2-2` を使う。
+原本（Excel、pptx）を AI に見せず、`cleankit` の `strict` で掃除した写しだけを渡すとき（原本を `_noai/raw/` に置いた Project。internal の Area だけ）。手順の詳細は [[ooxml-clean]]。語のマスク（`mask`）は 2026-11-06 に廃止した。
 
 ```powershell
 uv run room.py open pilot2-2 --area pilot2
 python tests/dummy_fixture.py $HOME\works\projects\pilot2-2     # _noai/raw/ にダミーの xlsx と csv、_noai/mask.toml
-uv run room.py mask pilot2-2
-Get-ChildItem $HOME\works\projects\pilot2-2\ai\in               # マスク済みの xlsx と csv
+uv run room.py clean pilot2-2
+Get-ChildItem $HOME\works\projects\pilot2-2\ai\in               # 掃除済みの xlsx（csv は掃除の対象外なので、注意だけ出る）
 ```
 
-- 実際の運用では、`_noai/raw/` に原本を置き、`_noai/mask.toml` に語の表（`[terms.<種類>] キー = ["正式名", "表記ゆれ"]`、`[columns] "シート!列名" = "種類"`）を書く
-- **辞書にない名前は、置き換わらない**。ダミーの CSV の担当「山田」が実例で、部屋の AI が気づいて報告した。列で指定する仕組みは `[columns]`
-- 語が残っていれば止まる。`start` は自動でマスクしない（人が先に実行する。2026-11-02）
+- 実際の運用では、`_noai/raw/` に原本を置く。報告（実データの抜粋入り）は `_noai/raw/tmp/` に出る。AI に見せない
+- `_noai/mask.toml` は点検用の語の表（任意）。`clean` と `stock --dst area` の点検が、この語と金額・メール・電話などの形を報告に載せる。置き換えはしない
+- 掃除の出力は「未確認」で、人が読んで `start --adopt` で通すまで `start` は止まる。`start` は自動で掃除しない
 
 ### 4.1 Area の知識を部屋で使う（`stock --dst area` と `ctx/area/`。2026-11-03 に `pull` から置き換え）
 
@@ -157,7 +157,7 @@ uv run room.py stock pilot2-3 [--dst area]   # --dst を省くと scope: に従�
 Get-ChildItem $HOME\works\areas\pilot2\ai\knowledge
 ```
 
-- 運ぶ前に `cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）が全ファイルに掛かる。1つでも当たれば何も運ばず止まる。直してからやり直す。internal の Project は、`mask.toml` の語が空だと止まる
+- 運ぶ前に `cleankit` の点検（金額・メール・電話などの形、`mask.toml` の語）が全ファイルに掛かる。1つでも当たれば何も運ばず止まる。直してからやり直す。`mask.toml` の語は任意（無ければ形の検出だけ）
 - 同じ名前のファイルが Area にあり、前回運んだ後に人が変えていたら、運ばない（人が確認して消すか、名前を変える）。変えていなければ更新する
 
 **手順3. 次の部屋で読む**:
@@ -182,7 +182,7 @@ uv run room.py start pilot2-1
 1. チェック（Project と Area の `area:`、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴）→ README の写しを `ai/ctx/` に置く → 共有知を部屋の `~/shared` に送る
 2. `ai/` を `/mnt/room/pilot2-1` にマウントし（`in/` は読み取り専用）、部屋で `claude` を起動する
 3. 部屋の `claude` に作業を頼む（例: 「`ai/out/hello.md` を作って」）。`/exit` で戻る
-4. 自動で、アンマウント、マウント点の削除、変更の一覧が出る（復元は自動でしない。`ai/out` があれば案内が出るので、人が `restore` を実行する）
+4. 自動で、アンマウント、マウント点の削除、変更の一覧が出る（成果物の Area への引き渡しは自動でしない。`ai/out/<Project 名>/` があれば案内が出る。渡すのは 7 章の `close`）
 
 - 目安: 「回収: 変更 N 件」の下に、`ai/out/` の新しいファイルが `??` で出る
 - 信頼の確認（`Quick safety check: Is this a project you trust?`）が、新しい Project の最初に出る。内容を確認して進める
@@ -199,31 +199,25 @@ uv run room.py start pilot2-1 --no-launch
 4. 部屋の側で動いていることを確認する
    - ウィンドウに `WSL: room-pilot2` と出る。ターミナルのプロンプトが `ai@...:/mnt/room/pilot2-1$`
    - Agent に `uname -a; pwd; echo $SHELL` を実行させる → `Linux`、`/mnt/room/pilot2-1`、`/bin/bash`
-5. 作業が終わったら、**Zed のウィンドウを閉じてから**、`start` の端末で Enter を押す（アンマウント、復元、回収に進む）
+5. 作業が終わったら、**Zed のウィンドウを閉じてから**、`start` の端末で Enter を押す（アンマウント、回収に進む）
 
 - **やってはいけないこと**: Windows のフォルダを、ローカルのプロジェクトとして Zed で開かない。Agent が Windows 側で動き（パスが `C:\...`、シェルが PowerShell になる）、works 全体が見える状態に戻る。手元の Windows 側の `claude-acp` が `projects\pilot2-1\ai` を掴むと、`close` のあとの削除が `being used` で失敗する
 - **よく忘れる点**: Enter で戻らないときは、別の PowerShell で `wsl --terminate room-pilot2` を実行すると進む（2026-10-18 に `room.py` を直した。再発したら記録する）
 
-## 6. 回収する（`restore` `readme` `stock`）
+## 6. 回収する（`readme` `stock`）
 
-`restore` は人が実行する（`start` は自動で行わず、案内だけ出す。2026-11-02）。マスクして対応表ができた Project は、語を実名に戻す。マスクしていない Project（`clean` だけ）は、`ai/out/deliverable/` の下だけをそのまま Area の成果物置き場へ渡し、ほかの `ai/out/` は触らない（2026-11-04）。
-
-- 成果物の中のプレースホルダー（`⟦CUST_001⟧` など）を、対応表で実名に戻し、`_noai/final/` に書く（実名入りなので、works のコミットの対象外）
-- **止まる場合**: 戻らないプレースホルダー、未知の形式があると、何も書かずに一覧を出して止まる。AI が本文に `⟦CUST_nnn⟧` のような**書式の説明**を書いたときも止まる（番号が無いため）。直して、`uv run room.py restore pilot2-2` を再実行する
-- `_noai/final/` を人が直したあとは、次の復元が止まる（`--force` で上書き。前回の書き出しのハッシュで判定。**この動作は未確認**）
+成果物の Area への引き渡しは `close`（7 章）が行う。`start` は自動で渡さず、`ai/out/<Project 名>/` があれば案内だけ出す。
 
 ```powershell
-uv run room.py restore pilot2-2
 uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書きを、確認なしで（運んだ後に表を出す）resources/exmem/inbox/ に運ぶ
 ```
 
-- `stock` の運び先は `resources/exmem/inbox/`（**公開リポジトリ**）。対応表の語を含む下書きは運ばれない。運んだメモは、未追跡のまま残る（コミットしない方針）。運んだ下書きは `ai/out/stock/` から消える（move。2026-11-04）。残っているのは、まだ運んでいないものだけ
-- Excel の成果物は、`_noai/final/` のファイルを Excel で開き、ピボットは「すべて更新」を押す。シート名・値・コメントが実名に戻っているか確認する
+- `stock` の運び先は `resources/exmem/inbox/`（**公開リポジトリ**）。運んだメモは、未追跡のまま残る（コミットしない方針）。運んだ下書きは `ai/out/stock/` から消える（move。2026-11-04）。残っているのは、まだ運んでいないものだけ
 
 ### 6.1 Area に戻すもの（2026-11-03 に整理）
 
-- 知識・決定・経緯は、`ai/out/knowledge/` と `restore` の経路を外した。4.1 の `stock --dst area` で運ぶ。
-- Area に実名で戻す最終成果物は `ai/out/<Project 名>/` に置く（旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。`room restore`（マスクしていない Project でもそのまま）か、`room close` が Area の `_noai/deliverable/<Project>/` に書く。Area 側を人が変えていると何も書かずに止まる（`restore --force` で上書き。直前の版は `_noai/final/_prev/deliverable/`）。
+- 知識・決定・経緯は、`ai/out/knowledge/` の経路を外した（`restore` は 2026-11-06 に削除）。4.1 の `stock --dst area` で運ぶ。
+- Area に実名で戻す最終成果物は `ai/out/<Project 名>/` に置く（旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。`room close` が、そのまま Area の `_noai/deliverable/<Project>/` に書く（語の置き換えはしない）。Area 側を人が変えていると何も書かずに止まる（Area 側の変更を退避してから、`close` をやり直す）。
 
 ## 7. 閉じる（`close`）
 
@@ -276,10 +270,7 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 | `Area が無い: areas/...` | `init` の引数が Area 名でない（部屋の名前 `room-...` を渡した）、または Area が無い | 引数は Area 名（`pilot2`）。`room-` は付けない。Area が無ければ `--boundary` を付ける |
 | `部屋がすでにある` | 同じ名前の部屋がある | 作りかけなら `--resume`。作り直すなら `wsl --unregister` |
 | `start --no-launch` で Enter で戻らない | 待ちの `input()` に Enter が届かない（コンソールの共有。`d6c97d8` で直した） | `wsl --terminate room-pilot2`。再発したら記録する |
-| `復元を止めた … 壊れたプレースホルダー` | AI が `⟦CUST_nnn⟧` のような説明を本文に書いた | `ai/out/` のその文を、記号を含まない表現に直し、`restore` を再実行する |
 | `reap` が `消せなかった（）` | 古い `room.py` のバグ（`086381c` で直した） | 最新の `room.py` を使う |
 | `Remove-Item` が `being used` | Windows 側の Zed の Agent などが、`projects\<名>\ai` を掴んでいる | Zed のウィンドウを閉じ、`claude-acp` のプロセスを終了する |
 | `close --commit` / `start --commit` が「対象外のファイルがステージされている」で止まる | ステージ済みの別の変更がある | 先にそれをコミットするか、`git restore --staged <パス>` で戻す（`init` `open` は止まらない。3 章） |
-| `restore` が「Area の知識が、前回の書き出しから変わっている」 | 人が Area 側の統合ノートを直したあとに、同じ Project が書き出そうとした | Area 側の変更を残したいなら、先に退避するか、ノートに取り込んでから `--force`。上書きしてよければ `restore --force`（直前の版は `_noai\final\_prev\knowledge\`） |
-| `restore` が「ファイル名にプレースホルダーが残っている」 | AI が `ai/out/knowledge/` に `⟦…⟧` を含む名前を付けた | ファイル名を英数字に直し、`restore` を再実行する（6.1） |
 | マウントが残る | `start` が途中で止まった | `uv run room.py umount --area pilot2`。残れば `wsl --terminate room-pilot2` |

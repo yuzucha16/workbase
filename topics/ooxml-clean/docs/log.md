@@ -21,9 +21,13 @@
 - 確認済み（2026-11-05、PC1、ユーザー）: `exceltext.py` を実 xlsx に通して問題なし。
 - 見送り（2026-11-05）: `room clean` と `cleankit` の一本化（`cleankit check` を `room clean --check` に寄せる案、`cleankit clean` を `room clean` に寄せる案とも）。影響範囲が広く、確認の手間に見合わない（`decisions.md`）。cleankit と room clean は今のまま並べて使う。
 
+- 実装済み（2026-11-06）: `room mask` / `room restore`、`maskkit.py`、`mask-spec.md`、手順書 `ai-room-mask-summary.md` を削除。`_noai/final/` を廃止（成果物の引き渡しは `close` だけ）。`map/` と `mask.toml`（点検用の語の表）は残す。単体テスト 210 件を通した（スキップ 3）。決定は root の `docs/decisions.md`。
+
 ## Next Actions
 
-なし。残りは `docs/due.md` の 11-30（`mask` / `restore` の削除。使ってみてから決める）。
+1. 【起票 11-06、期日 11-13】`mask` / `restore` 削除で書き換えた文書類の第三者確認（`/code-review` などで別の目に通す）。対象: `workflow-kit/room/README.md`、`room-context.md`、`hooks.md`、`project-structure.md`、`guides/howto/{ai-room-setup,ai-room-setup-script,ai-room-lifecycle,ooxml-clean}.md`、`guides/explain/{ai-room-why,ooxml-residue,cross-area-shared-knowledge}.md`。見る点: 削除済みの `mask` `restore` `final/` `mask-spec.md` への言及の取りこぼし、リンク切れ、手順の飛び。履歴の `exmem/lessons/` は対象外。担当: ユーザー。
+
+トピックを終わらせるかはユーザーが決める。
 
 ## Open Questions
 
