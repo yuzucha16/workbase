@@ -28,6 +28,7 @@ revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所
 import argparse
 import html
 import json
+import re
 import sys
 
 BLUE, GRAY, TEXT = "#0017c1", "#767676", "#1a1a1a"
@@ -100,6 +101,12 @@ def lid_div(s, show):
 NOSEC = raw("<span hidden></span>")
 
 
+def no_ol(t):
+    """DADS: ol を使わない。行頭の「1.」は Markdown が ol にするので止める（番号は「1」と文字で書く）。"""
+    if re.match(r"\s*\d+[.)]\s", t):
+        raise SystemExit(f"行頭の番号付き（{t[:20]!r}）は ol になる。番号は「1」と文字で書く（DADS 準拠）")
+
+
 # ---- 図（ダミーの n ブロックの流れ。実スライドでは fig に SVG 文字列を渡す） ----
 def flow_svg(n=3, hl=1, w=280, h=100, vertical=False):
     if vertical:
@@ -144,7 +151,11 @@ def cell(c, extra="", area=None):
     fig = c.get("fig")
     if fig is not None:
         svg = fig if isinstance(fig, str) else flow_svg(**fig)
-        out += "::: {.fig}\n" + raw(svg) + ":::\n"
+        # DADS: 画像は代替テキストを持つ。alt が無ければ tab の文言で代え、それも無ければ装飾（読み上げない）にする
+        alt = c.get("alt") or c.get("tab")
+        label = f'role="img" aria-label="{esc(alt)}"' if alt else 'aria-hidden="true"'
+        svg = svg.replace("<svg ", f"<svg {label} ", 1)
+        out +="::: {.fig}\n" + raw(svg) + ":::\n"
     if c.get("text"):
         out += "::: {.txt}\n" + "<br>".join(esc(t) for t in c["text"].split("\n")) + "\n:::\n"
     return out + ":::\n"
@@ -255,8 +266,15 @@ def text_slide(s):
             raise ValueError("箇条書きは 2 段（入れ子 1 回）まで")
         out = ""
         for x in items:
-            out += ("  " * depth + "- " + x + "\n") if isinstance(x, str) else bullets(x, depth + 1)
+            if isinstance(x, str):
+                no_ol(x)
+                out += "  " * depth + "- " + x + "\n"
+            else:
+                out += bullets(x, depth + 1)
         return out
+    for b in s["blocks"]:
+        for p in b.get("p", []):
+            no_ol(p)
     main = "".join(f"### {b['h']}\n\n" + "".join(p + "\n\n" for p in b.get("p", [])) + f"{bullets(b.get('items', []))}\n" for b in s["blocks"])
     side = s.get("side")
     if not side:
@@ -267,7 +285,9 @@ def text_slide(s):
     elif "img" in side:
         if not side.get("alt"):
             raise SystemExit("T の side の画像には alt（代替テキスト）が要る（DADS 準拠）")
-        right = f"![{side['alt']}]({side['img']})\n"
+        img = f'<img src="{esc(side["img"])}" alt="{esc(side["alt"])}">'
+        cap = f'<figcaption>{esc(side["caption"])}</figcaption>' if side.get("caption") else ""
+        right = raw(f"<figure>{img}{cap}</figure>") + "\n"
     else:
         raise SystemExit("T の side は code か img を持つ")
     return f"::: {{.tside}}\n::: {{.tmain}}\n{NOSEC}{main}:::\n::: {{.tright}}\n{right}:::\n:::\n"

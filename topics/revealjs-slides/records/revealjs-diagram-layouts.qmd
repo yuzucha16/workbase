@@ -138,29 +138,29 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 
 ## A 左右二分割（比較）
 
-::: {.lay .lay-a}
-::: {.cell .dark}
+::: {.lay .lay-a style="grid-template-columns:1fr 1fr;grid-template-areas:'a b'"}
+::: {.cell .dark style="grid-area:a"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-ban"/></svg>左</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="左" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.cell .blue}
+::: {.cell .blue style="grid-area:b"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>右</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="右" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -176,46 +176,46 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 
 ## B 上は左右・下は全幅
 
-::: {.lay .lay-b}
-::: {.cell .gray}
+::: {.lay .lay-b style="grid-template-columns:1fr 4.2em 1fr;grid-template-areas:'a l b' 'c c c'"}
+::: {.cell .gray style="grid-area:a"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-pc"/></svg>左</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="左" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.link}
+::: {.link style="grid-area:l"}
 ▶
 :::
-::: {.cell .blue}
+::: {.cell .blue style="grid-area:b"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-room"/></svg>右</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="右" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.cell .wide}
+::: {.cell .wide style="grid-area:c"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg>共通</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 570 92" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="47.4" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="96.8" y1="46.0" x2="104.8" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="116.8,46.0 104.8,39.0 104.8,53.0" fill="#0017c1"/><rect x="120.8" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="166.2" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="215.6" y1="46.0" x2="223.6" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="235.6,46.0 223.6,39.0 223.6,53.0" fill="#0017c1"/><rect x="239.6" y="10.0" width="90.8" height="72.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="285.0" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text><line x1="334.4" y1="46.0" x2="342.4" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="354.4,46.0 342.4,39.0 342.4,53.0" fill="#0017c1"/><rect x="358.4" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="403.8" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">4</text><line x1="453.2" y1="46.0" x2="461.2" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="473.2,46.0 461.2,39.0 461.2,53.0" fill="#0017c1"/><rect x="477.2" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="522.6" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">5</text></svg>
+<svg role="img" aria-label="共通" viewBox="0 0 570 92" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="47.4" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="96.8" y1="46.0" x2="104.8" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="116.8,46.0 104.8,39.0 104.8,53.0" fill="#0017c1"/><rect x="120.8" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="166.2" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="215.6" y1="46.0" x2="223.6" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="235.6,46.0 223.6,39.0 223.6,53.0" fill="#0017c1"/><rect x="239.6" y="10.0" width="90.8" height="72.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="285.0" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text><line x1="334.4" y1="46.0" x2="342.4" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="354.4,46.0 342.4,39.0 342.4,53.0" fill="#0017c1"/><rect x="358.4" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="403.8" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">4</text><line x1="453.2" y1="46.0" x2="461.2" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="473.2,46.0 461.2,39.0 461.2,53.0" fill="#0017c1"/><rect x="477.2" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="522.6" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">5</text></svg>
 ```
 :::
 ::: {.txt}
@@ -231,43 +231,43 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 
 ## D 左は一本・右は2ブロック
 
-::: {.lay .lay-d}
-::: {.cell .gray .tall}
+::: {.lay .lay-d style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;grid-template-areas:'a b' 'a c'"}
+::: {.cell .gray style="grid-area:a"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-pc"/></svg>元</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 400" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="2.0" width="276.0" height="113.3" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="140.0" y="65.7" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="140.0" y1="119.33333333333333" x2="140.0" y2="127.33333333333333" stroke="#0017c1" stroke-width="3.5"/><polygon points="140.0,139.33333333333331 133.0,127.33333333333333 147.0,127.33333333333333" fill="#0017c1"/><rect x="2.0" y="143.3" width="276.0" height="113.3" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="207.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="140.0" y1="260.66666666666663" x2="140.0" y2="268.66666666666663" stroke="#0017c1" stroke-width="3.5"/><polygon points="140.0,280.66666666666663 133.0,268.66666666666663 147.0,268.66666666666663" fill="#0017c1"/><rect x="2.0" y="284.7" width="276.0" height="113.3" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="140.0" y="348.3" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="元" viewBox="0 0 280 400" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="2.0" width="276.0" height="113.3" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="140.0" y="65.7" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="140.0" y1="119.33333333333333" x2="140.0" y2="127.33333333333333" stroke="#0017c1" stroke-width="3.5"/><polygon points="140.0,139.33333333333331 133.0,127.33333333333333 147.0,127.33333333333333" fill="#0017c1"/><rect x="2.0" y="143.3" width="276.0" height="113.3" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="207.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="140.0" y1="260.66666666666663" x2="140.0" y2="268.66666666666663" stroke="#0017c1" stroke-width="3.5"/><polygon points="140.0,280.66666666666663 133.0,268.66666666666663 147.0,268.66666666666663" fill="#0017c1"/><rect x="2.0" y="284.7" width="276.0" height="113.3" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="140.0" y="348.3" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.cell .blue}
+::: {.cell .blue style="grid-area:b"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-room"/></svg>分岐 1</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="分岐 1" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.cell .dark}
+::: {.cell .dark style="grid-area:c"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-ban"/></svg>分岐 2</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="分岐 2" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -283,15 +283,15 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 
 ## E 1スライド1ブロック（大きな図）
 
-::: {.lay .lay-e}
-::: {.cell}
+::: {.lay .lay-e style="grid-template-columns:1fr;grid-template-areas:'a'"}
+::: {.cell style="grid-area:a"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg>全体像</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="86.0" y="172.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="174.0" y1="165.0" x2="182.0" y2="165.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="194.0,165.0 182.0,158.0 182.0,172.0" fill="#0017c1"/><rect x="198.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="282.0" y="172.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="370.0" y1="165.0" x2="378.0" y2="165.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="390.0,165.0 378.0,158.0 378.0,172.0" fill="#0017c1"/><rect x="394.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="478.0" y="172.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text><line x1="566.0" y1="165.0" x2="574.0" y2="165.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="586.0,165.0 574.0,158.0 574.0,172.0" fill="#0017c1"/><rect x="590.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="674.0" y="172.0" font-size="20" text-anchor="middle" fill="#1a1a1a">4</text></svg>
+<svg role="img" aria-label="全体像" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="86.0" y="172.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="174.0" y1="165.0" x2="182.0" y2="165.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="194.0,165.0 182.0,158.0 182.0,172.0" fill="#0017c1"/><rect x="198.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="282.0" y="172.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="370.0" y1="165.0" x2="378.0" y2="165.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="390.0,165.0 378.0,158.0 378.0,172.0" fill="#0017c1"/><rect x="394.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="478.0" y="172.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text><line x1="566.0" y1="165.0" x2="574.0" y2="165.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="586.0,165.0 574.0,158.0 574.0,172.0" fill="#0017c1"/><rect x="590.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="674.0" y="172.0" font-size="20" text-anchor="middle" fill="#1a1a1a">4</text></svg>
 ```
 :::
 ::: {.txt}
@@ -307,57 +307,57 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 
 ## F 2×2（Z に読む）
 
-::: {.lay .lay-f}
-::: {.cell .dark}
+::: {.lay .lay-f style="grid-template-columns:1fr 1fr;grid-template-areas:'a b' 'c d'"}
+::: {.cell .dark style="grid-area:a"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-ban"/></svg>左上</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="左上" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.cell .blue}
+::: {.cell .blue style="grid-area:b"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>右上</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="右上" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.cell .dark}
+::: {.cell .dark style="grid-area:c"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-ban"/></svg>左下</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="左下" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.cell .blue}
+::: {.cell .blue style="grid-area:d"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>右下</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="右下" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -373,43 +373,43 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 
 ## G 上は全幅・下は左右（全体→内訳）
 
-::: {.lay .lay-g}
-::: {.cell .wide}
+::: {.lay .lay-g style="grid-template-columns:1fr 1fr;grid-template-areas:'a a' 'b c'"}
+::: {.cell .wide style="grid-area:a"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg>全体</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 570 92" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="47.4" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="96.8" y1="46.0" x2="104.8" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="116.8,46.0 104.8,39.0 104.8,53.0" fill="#0017c1"/><rect x="120.8" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="166.2" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="215.6" y1="46.0" x2="223.6" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="235.6,46.0 223.6,39.0 223.6,53.0" fill="#0017c1"/><rect x="239.6" y="10.0" width="90.8" height="72.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="285.0" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text><line x1="334.4" y1="46.0" x2="342.4" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="354.4,46.0 342.4,39.0 342.4,53.0" fill="#0017c1"/><rect x="358.4" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="403.8" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">4</text><line x1="453.2" y1="46.0" x2="461.2" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="473.2,46.0 461.2,39.0 461.2,53.0" fill="#0017c1"/><rect x="477.2" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="522.6" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">5</text></svg>
+<svg role="img" aria-label="全体" viewBox="0 0 570 92" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="47.4" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="96.8" y1="46.0" x2="104.8" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="116.8,46.0 104.8,39.0 104.8,53.0" fill="#0017c1"/><rect x="120.8" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="166.2" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="215.6" y1="46.0" x2="223.6" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="235.6,46.0 223.6,39.0 223.6,53.0" fill="#0017c1"/><rect x="239.6" y="10.0" width="90.8" height="72.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="285.0" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text><line x1="334.4" y1="46.0" x2="342.4" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="354.4,46.0 342.4,39.0 342.4,53.0" fill="#0017c1"/><rect x="358.4" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="403.8" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">4</text><line x1="453.2" y1="46.0" x2="461.2" y2="46.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="473.2,46.0 461.2,39.0 461.2,53.0" fill="#0017c1"/><rect x="477.2" y="10.0" width="90.8" height="72.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="522.6" y="53.0" font-size="20" text-anchor="middle" fill="#1a1a1a">5</text></svg>
 ```
 :::
 ::: {.txt}
 全体の流れ<br>1〜2行
 :::
 :::
-::: {.cell .gray}
+::: {.cell .gray style="grid-area:b"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-pc"/></svg>内訳 1</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="70.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="45.0" x2="87.33333333333333" y2="45.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,45.0 87.33333333333333,38.0 87.33333333333333,52.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="70.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="45.0" x2="188.66666666666666" y2="45.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,45.0 188.66666666666666,38.0 188.66666666666666,52.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="70.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="内訳 1" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="70.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="45.0" x2="87.33333333333333" y2="45.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,45.0 87.33333333333333,38.0 87.33333333333333,52.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="70.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="45.0" x2="188.66666666666666" y2="45.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,45.0 188.66666666666666,38.0 188.66666666666666,52.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="70.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}
 文字は短く<br>2〜3行
 :::
 :::
-::: {.cell .blue}
+::: {.cell .blue style="grid-area:c"}
 ```{=html}
 <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-room"/></svg>内訳 2</div>
 ```
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="70.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="45.0" x2="87.33333333333333" y2="45.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,45.0 87.33333333333333,38.0 87.33333333333333,52.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="70.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="45.0" x2="188.66666666666666" y2="45.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,45.0 188.66666666666666,38.0 188.66666666666666,52.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="70.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
+<svg role="img" aria-label="内訳 2" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="70.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="38.7" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">1</text><line x1="79.33333333333333" y1="45.0" x2="87.33333333333333" y2="45.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="99.33333333333333,45.0 87.33333333333333,38.0 87.33333333333333,52.0" fill="#0017c1"/><rect x="103.3" y="10.0" width="73.3" height="70.0" rx="9" fill="#e8f1fe" stroke="#0017c1" stroke-width="3"/><text x="140.0" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">2</text><line x1="180.66666666666666" y1="45.0" x2="188.66666666666666" y2="45.0" stroke="#0017c1" stroke-width="3.5"/><polygon points="200.66666666666666,45.0 188.66666666666666,38.0 188.66666666666666,52.0" fill="#0017c1"/><rect x="204.7" y="10.0" width="73.3" height="70.0" rx="9" fill="#f2f2f2" stroke="#767676" stroke-width="2"/><text x="241.3" y="52.0" font-size="20" text-anchor="middle" fill="#1a1a1a">3</text></svg>
 ```
 :::
 ::: {.txt}

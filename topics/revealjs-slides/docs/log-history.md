@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-06 DADS 準拠の残り 3 件を反映（`ol` 止め・SVG の aria-label・画像キャプション。NA 1 件を一部済み）
+- ユーザーの指示: 「3 つのアイテムやります。推奨とともに情報ください。特に害がなければ dads に寄せます」。見本を見て「キャプションばっちりです」。
+- 反映: `gen_layouts.py`（`no_ol`: T の `items`・`p` の行頭 `1.` で生成を止める。図の SVG に `role="img"` と `aria-label`〔箱の `alt`、無ければ `tab`、無ければ `aria-hidden`〕。`side` の `caption` で `figure` + `figcaption`）、`revealjs-diagram-theme.scss`（`.tright figcaption` 0.6em・行高 1.5）、`revealjs-diagram-layouts.qmd`（再生成）、lessons の状態の記述。
+- 確認: `1.` で停止、`caption` で `figure` が出ることを確認。Edge で `caption-sample` を目視し、ユーザーが確定。`caption` なしの見た目は未目視。
+- 一部済: NA は未取得ページ（`table/usage`・`card/usage` など）の取得だけに縮めた。
 ### 2026-11-06 DADS 準拠の差を解消（罫線・余白・行高・字間・alt。NA 1 件を一部済み）
 - ユーザーの指示: 罫線 2.1:1 と 3:1 の違いを聞き、見本（`#b3b3b3` / `#949494` / `#767676` を表・目次で並べた）を見て案 2（`#949494`）を採用。続けて余白・行高・字間の見本を見て「全部採用。字間は広げた方が見やすい」。
 - 反映: `revealjs-diagram-theme.scss`（罫線 5 か所、`.cell` の余白 px、`.txt` の行高 1.5、字間 2%・h2/h3 1%・コード 0）、`gen_layouts.py`（`side` 画像の `alt` 必須。組み込みの見本の生成は通る）、lessons の状態の記述。格子・表の角丸 4px は SCSS に無く、記述が誤りだった。
