@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-07 records/ の整理とアイコンの命名・id の統一
+- ユーザーの指示: 「dads-sample/ と excalidraw-trial を削除。自作・DADS・Lucide のアイコンの命名規則を揃え、プレビューも作る」「`build_dads_sample.py` も削除」「id は Lucide ベースで `i-<素材>-<名前>`。自作は `i-myself-*`、DADS は `i-dads-*`」「Lucide は `i-lc-*` でよい」「Quarto で render し直してパスつきでコミット」。
+- 結果: `excalidraw-trial/`（追跡 7 ファイル）・`dads-sample/`（未追跡）・`build_dads_sample.py` を削除。ファイル名を `revealjs-diagram-icons-{myself,dads,lucide}.html` と `-preview.html` の 3 組に統一（`-myself-preview.html` は `build_myself_preview.py` で新規。`-dads-preview.html` は旧合体版から DADS だけに変更）。symbol の id を `i-myself-*`（9）・`i-dads-*`（32）・`i-lc-*`（99、変更なし）に振りなおし、`gen_layouts.py`（`OWN_ICONS` を廃止し接頭辞で出典を判定）・qmd・html・build スクリプト・lessons を追随。qmd は `gen_layouts.py` で作り直し、html は `quarto render` で作り直した。決定の追記は無し（ユーザーの指示のみ）。
+
 ### 2026-11-06 Excalidraw の図作成から revealjs の HTML 化までを room で通した
 - ユーザーの指示: 「excalidraw を room で動かせるか確認。room-myenv を使ってよい。room の図解を作り、SVG を revealjs に組み込んでスライド化。ゴールは room 作成の HTML を Windows で目視してズレがないこと」→ 確認後「問題なく、win で作ったものと同等です。一時ディレクトリは削除してください」。
 - 結果: `room-myenv` は C: が空なので、`gen_layouts.py`・scss・アイコン html・`build_*.py` を `\\wsl.localhost\...\tmp\exc` へ複製し、room 内で `build_room_diagram.py` → `build_slide.py`（`quarto render`）を実行。SVG 2 つと `.excalidraw` は Windows 版とバイト一致。HTML を Windows に取り出し Edge ヘッドレスで 4 枚を撮影（画像方式の半幅用・全幅版は崩れなし。インラインは既知どおり不向き）。

@@ -8,7 +8,7 @@
   python -I gen_layouts.py --spec spec.json -o out.qmd
 
 出力の qmd は、同じディレクトリの revealjs-diagram-theme.scss と
-revealjs-diagram-icons.html と revealjs-diagram-icons-dads.html（デジタル庁の素材。build_dads_icons.py で作る）を読む（render は両ファイルを同じ場所に置いて行う）。
+revealjs-diagram-icons-myself.html と revealjs-diagram-icons-dads.html（デジタル庁の素材。build_dads_icons.py で作る）を読む（render は両ファイルを同じ場所に置いて行う）。
 
 型:
   箱の型  A 左右 / B 上左右+下全幅 / D 左一本+右2 / E 1ブロック / F 2x2 / G 上全幅+下左右
@@ -48,7 +48,7 @@ format:
     transition: none
     embed-resources: true
     include-before-body:
-      - revealjs-diagram-icons.html
+      - revealjs-diagram-icons-myself.html
       - revealjs-diagram-icons-dads.html
       - revealjs-diagram-icons-lucide.html
 ---
@@ -104,7 +104,6 @@ def layout_id(s):
 
 
 # ---- アイコン素材の出典（スライドごとに、使った素材の 1 行を下に出す。自作は出さない） ----
-OWN_ICONS = {"folder", "actor", "ban", "check", "pc", "room", "shield", "eyeoff", "lock"}  # revealjs-diagram-icons.html（自作）
 CREDITS = {
     "dads": "アイコン: 「イラストレーション・アイコン素材」（デジタル庁）を元に、色を変更して使用 https://www.digital.go.jp/policies/servicedesign/designsystem/Illustration_Icons",
     "lucide": "アイコン: Lucide（ISC License） https://lucide.dev",
@@ -114,7 +113,7 @@ CREDITS = {
 def credit_div(text):
     """本文（生成済みの qmd 断片）が参照する symbol から、素材ごとの出典行を作る。DADS → Lucide の順。"""
     ids = set(re.findall(r'href="#i-([^"]+)"', text))
-    kinds = {("lucide" if i.startswith("lc-") else "dads") for i in ids if i not in OWN_ICONS}
+    kinds = {"lucide" if i.startswith("lc-") else "dads" for i in ids if i.startswith(("lc-", "dads-"))}
     lines_ = [CREDITS[k] for k in ("dads", "lucide") if k in kinds]
     if not lines_:
         return ""
@@ -553,20 +552,20 @@ SAMPLE = {
         {"title": "T 文章・文字列・箇条書き（サンプル）", "type": "T", "blocks": [
             {"h": "はじめに", "p": ["この見本は、段落と箇条書きが混ざったときの並びを確かめるためのダミーです。", "文の長さは、1 行に収まる程度から 2 行に折り返す程度まで混ぜています。"]},
             {"h": "進め方", "items": ["最初に目的を 1 文で決める", ["背景は短く、数字があれば添える"], "次に作業を 3 つ以内に分ける", "最後に確認する項目を並べる"]},
-            {"h": "メモ", "p": ["文字列の例: ABC-123 / 2026-11-06 / 12,345 円 / v1.2.3"]}]},        {"title": "A 左右二分割（比較）", "type": "A", "cells": [_c("dark", "ban", "左"), _c("blue", "check", "右")]},
+            {"h": "メモ", "p": ["文字列の例: ABC-123 / 2026-11-06 / 12,345 円 / v1.2.3"]}]},        {"title": "A 左右二分割（比較）", "type": "A", "cells": [_c("dark", "myself-ban", "左"), _c("blue", "myself-check", "右")]},
         {"title": "B 上は左右・下は全幅", "type": "B", "cells": [
-            _c("gray", "pc", "左"), _c("blue", "room", "右"),
-            _c("", "shield", "共通", {"n": 5, "hl": 2, "w": 570, "h": 92}, "共通の前提\n1〜2行")]},
+            _c("gray", "myself-pc", "左"), _c("blue", "myself-room", "右"),
+            _c("", "myself-shield", "共通", {"n": 5, "hl": 2, "w": 570, "h": 92}, "共通の前提\n1〜2行")]},
         {"title": "D 左は一本・右は2ブロック", "type": "D", "cells": [
-            _c("gray", "pc", "元", {"n": 3, "hl": 1, "w": 280, "h": 400, "vertical": True}),
-            _c("blue", "room", "分岐 1"), _c("dark", "ban", "分岐 2")]},
+            _c("gray", "myself-pc", "元", {"n": 3, "hl": 1, "w": 280, "h": 400, "vertical": True}),
+            _c("blue", "myself-room", "分岐 1"), _c("dark", "myself-ban", "分岐 2")]},
         {"title": "E 1スライド1ブロック（大きな図）", "type": "E", "cells": [
-            _c("", "shield", "全体像", {"n": 4, "hl": 1, "w": 760, "h": 330}, "要点を\n2〜3行")]},
+            _c("", "myself-shield", "全体像", {"n": 4, "hl": 1, "w": 760, "h": 330}, "要点を\n2〜3行")]},
         {"title": "F 2×2（Z に読む）", "type": "F", "cells": [
-            _c("dark", "ban", "左上"), _c("blue", "check", "右上"), _c("dark", "ban", "左下"), _c("blue", "check", "右下")]},
+            _c("dark", "myself-ban", "左上"), _c("blue", "myself-check", "右上"), _c("dark", "myself-ban", "左下"), _c("blue", "myself-check", "右下")]},
         {"title": "G 上は全幅・下は左右（全体→内訳）", "type": "G", "cells": [
-            _c("", "shield", "全体", {"n": 5, "hl": 2, "w": 570, "h": 92}, "全体の流れ\n1〜2行"),
-            _c("gray", "pc", "内訳 1", {"w": 280, "h": 90}), _c("blue", "room", "内訳 2", {"w": 280, "h": 90})]},
+            _c("", "myself-shield", "全体", {"n": 5, "hl": 2, "w": 570, "h": 92}, "全体の流れ\n1〜2行"),
+            _c("gray", "myself-pc", "内訳 1", {"w": 280, "h": 90}), _c("blue", "myself-room", "内訳 2", {"w": 280, "h": 90})]},
         # H: 行ラベル x 列。行・列は文言の数で決まる。
         {"title": "H 行ラベル × 列（3行 × 2列）", "type": "H",
          "notes": ["行の高さは内容なり。表の下に、まとめ・総評を箇条書きで置く", "上に置くなら lead（ひとこと）。どちらも省略できる"], "cols": ["見出し A", "見出し B"], "rows": [
@@ -612,7 +611,7 @@ SAMPLE = {
             {"style": "gray", "title": "入力例", "text": ["姓：山田", "名：太郎"]},
             {"style": "bar", "title": "補足", "text": "読まなくても手続きは進められる補足情報"}]},
         {"title": "アイコン出典の見本（デジタル庁 + Lucide）", "type": "A", "cells": [
-            _c("dark", "search", "デジタル庁の素材", {}, "search（検索）\nauthentication（認証）"),
+            _c("dark", "dads-search", "デジタル庁の素材", {}, "dads-search（検索）\ndads-authentication（認証）"),
             _c("blue", "lc-database", "Lucide", {}, "lc-database\nlc-folder-tree")]},
         {"title": "K ディレクトリ構造", "type": "K", "tab": "ディレクトリ構造", "tree": """project/
   src/

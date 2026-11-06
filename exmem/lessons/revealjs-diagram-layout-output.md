@@ -21,7 +21,7 @@ sources:
 
 # Quarto/revealjs スライドの出力の型（図解レイアウト）
 
-状態: 土台（確定ではない。拡張していく。2026-11-06 ユーザーの決定）。社内の勉強会・LT 向けの簡易スライド用。正式な pptx は別（`topics/office-output-types`）。部品は、トピックの `records/`（`topics/revealjs-slides/records/`）に置く: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す。`python -I gen_layouts.py -o out.qmd`）、`revealjs-diagram-layouts.qmd`（10 型の見本。スクリプトの出力で、手で直さず作り直す）、`revealjs-diagram-theme.scss`（CSS）、`revealjs-diagram-icons.html`（アイコン定義）。作業の状態は [[revealjs-slides-start-here]]。
+状態: 土台（確定ではない。拡張していく。2026-11-06 ユーザーの決定）。社内の勉強会・LT 向けの簡易スライド用。正式な pptx は別（`topics/office-output-types`）。部品は、トピックの `records/`（`topics/revealjs-slides/records/`）に置く: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す。`python -I gen_layouts.py -o out.qmd`）、`revealjs-diagram-layouts.qmd`（10 型の見本。スクリプトの出力で、手で直さず作り直す）、`revealjs-diagram-theme.scss`（CSS）、`revealjs-diagram-icons-myself.html`（アイコン定義）。作業の状態は [[revealjs-slides-start-here]]。
 
 ## Goal
 
@@ -74,7 +74,7 @@ Markdown（Quarto）から revealjs のスライドを作るとき、図解を�
 #### アイコン（/foundations/icon/）
 
 - DADS: 配置は 4 種（フロント、リード、テール、エンド）。
-- 現行: 自作 SVG 9 種を `revealjs-diagram-icons.html` に、デジタル庁の素材（line 版）32 種を `revealjs-diagram-icons-dads.html` に定義（`build_dads_icons.py` で生成。色は currentColor に置換。出典は html の先頭コメント）。札の左に置く（リード相当の 1 種だけ）。意味は資料全体で固定（Principles）。
+- 現行: 自作 SVG 9 種を `revealjs-diagram-icons-myself.html` に、デジタル庁の素材（line 版）32 種を `revealjs-diagram-icons-dads.html` に定義（id は `i-myself-*`・`i-dads-*`・`i-lc-*` で揃える。2026-11-07）（`build_dads_icons.py` で生成。色は currentColor に置換。出典は html の先頭コメント）。札の左に置く（リード相当の 1 種だけ）。意味は資料全体で固定（Principles）。
 - 状態: △ 配置は 1 種。─ DADS 素材（Material Symbols など）は、素材規約が未確認のため使わない。
 
 ### コンポーネント（DADS: /dads/components/。49 件）
@@ -203,7 +203,7 @@ Markdown（Quarto）から revealjs のスライドを作るとき、図解を�
   ::: {.lay .lay-a}
   ::: {.cell .gray}
   ```{=html}
-  <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-pc"/></svg>普段の PC</div>
+  <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-pc"/></svg>普段の PC</div>
   ```
 
   ::: {.fig}

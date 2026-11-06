@@ -10,7 +10,7 @@ format:
     transition: none
     embed-resources: true
     include-before-body:
-      - revealjs-diagram-icons.html
+      - revealjs-diagram-icons-myself.html
       - revealjs-diagram-icons-dads.html
       - revealjs-diagram-icons-lucide.html
 ---
@@ -144,7 +144,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ::: {.lay .lay-a style="grid-template-columns:1fr 1fr;grid-template-areas:'a b'"}
 ::: {.cell .dark style="grid-area:a"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-ban"/></svg>左</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-ban"/></svg>左</div>
 ```
 
 ::: {.fig}
@@ -158,7 +158,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .blue style="grid-area:b"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>右</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-check"/></svg>右</div>
 ```
 
 ::: {.fig}
@@ -182,7 +182,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ::: {.lay .lay-b style="grid-template-columns:1fr 4.2em 1fr;grid-template-areas:'a l b' 'c c c'"}
 ::: {.cell .gray style="grid-area:a"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-pc"/></svg>左</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-pc"/></svg>左</div>
 ```
 
 ::: {.fig}
@@ -199,7 +199,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .blue style="grid-area:b"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-room"/></svg>右</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-room"/></svg>右</div>
 ```
 
 ::: {.fig}
@@ -213,7 +213,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .wide style="grid-area:c"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg>共通</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-shield"/></svg>共通</div>
 ```
 
 ::: {.fig}
@@ -237,7 +237,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ::: {.lay .lay-d style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;grid-template-areas:'a b' 'a c'"}
 ::: {.cell .gray style="grid-area:a"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-pc"/></svg>元</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-pc"/></svg>元</div>
 ```
 
 ::: {.fig}
@@ -251,7 +251,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .blue style="grid-area:b"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-room"/></svg>分岐 1</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-room"/></svg>分岐 1</div>
 ```
 
 ::: {.fig}
@@ -265,7 +265,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .dark style="grid-area:c"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-ban"/></svg>分岐 2</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-ban"/></svg>分岐 2</div>
 ```
 
 ::: {.fig}
@@ -289,7 +289,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ::: {.lay .lay-e style="grid-template-columns:1fr;grid-template-areas:'a'"}
 ::: {.cell style="grid-area:a"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg>全体像</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-shield"/></svg>全体像</div>
 ```
 
 ::: {.fig}
@@ -313,7 +313,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ::: {.lay .lay-f style="grid-template-columns:1fr 1fr;grid-template-areas:'a b' 'c d'"}
 ::: {.cell .dark style="grid-area:a"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-ban"/></svg>左上</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-ban"/></svg>左上</div>
 ```
 
 ::: {.fig}
@@ -327,7 +327,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .blue style="grid-area:b"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>右上</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-check"/></svg>右上</div>
 ```
 
 ::: {.fig}
@@ -341,7 +341,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .dark style="grid-area:c"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-ban"/></svg>左下</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-ban"/></svg>左下</div>
 ```
 
 ::: {.fig}
@@ -355,7 +355,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .blue style="grid-area:d"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>右下</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-check"/></svg>右下</div>
 ```
 
 ::: {.fig}
@@ -379,7 +379,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ::: {.lay .lay-g style="grid-template-columns:1fr 1fr;grid-template-areas:'a a' 'b c'"}
 ::: {.cell .wide style="grid-area:a"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg>全体</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-shield"/></svg>全体</div>
 ```
 
 ::: {.fig}
@@ -393,7 +393,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .gray style="grid-area:b"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-pc"/></svg>内訳 1</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-pc"/></svg>内訳 1</div>
 ```
 
 ::: {.fig}
@@ -407,7 +407,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 :::
 ::: {.cell .blue style="grid-area:c"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-room"/></svg>内訳 2</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-myself-room"/></svg>内訳 2</div>
 ```
 
 ::: {.fig}
@@ -664,7 +664,7 @@ fc-list | grep 'Noto Sans JP,'</code></pre>
 ::: {.lay .lay-a style="grid-template-columns:1fr 1fr;grid-template-areas:'a b'"}
 ::: {.cell .dark style="grid-area:a"}
 ```{=html}
-<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg>デジタル庁の素材</div>
+<div class="tab"><svg viewBox="0 0 24 24"><use href="#i-dads-search"/></svg>デジタル庁の素材</div>
 ```
 
 ::: {.fig}

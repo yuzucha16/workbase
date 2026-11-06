@@ -3,13 +3,13 @@
 使い方: python -I build_dads_icons.py <designsystem-assets/icon/svg のパス>   # 素材から作り直す
         python -I build_dads_icons.py                                           # プレビューだけ作り直す
 出力:   revealjs-diagram-icons-dads.html（同じディレクトリ。手で直さず作り直す）
-        revealjs-diagram-icons-preview.html（ブラウザで開いて見る一覧。自作 + 素材の全アイコンと id）
+        revealjs-diagram-icons-dads-preview.html（ブラウザで開いて見る一覧。素材の全アイコンと id）
 
 素材: 「イラストレーション・アイコン素材」（デジタル庁）
       https://www.digital.go.jp/policies/servicedesign/designsystem/Illustration_Icons
       商用利用可。編集・加工して使うときは出典と加工内容を明示する（利用規約 1-2）。
 加工: 塗りの色 #1A1A1C を currentColor に置換し、clip-path を除いた（形は変えていない）。
-      サイズは 24px の viewBox のみ使う。symbol の id は i-<素材名>（_line を除く）。
+      サイズは 24px の viewBox のみ使う。symbol の id は i-dads-<素材名>（_line を除く）。
 """
 import re
 import sys
@@ -62,7 +62,6 @@ def symbol(name, svg):
 
 def preview():
     here = Path(__file__).parent
-    mine = (here / "revealjs-diagram-icons.html").read_text(encoding="utf-8")
     dads = (here / "revealjs-diagram-icons-dads.html").read_text(encoding="utf-8")
 
     def section(title, text):
@@ -72,15 +71,15 @@ def preview():
             for i in ids)
         return f"<h2>{title}（{len(ids)}）</h2><div class=\"g\">{cells}</div>"
 
-    page = ("<!doctype html><meta charset=\"utf-8\"><title>アイコン一覧</title>"
+    page = ("<!doctype html><meta charset=\"utf-8\"><title>DADS アイコン一覧</title>"
             "<style>body{font-family:sans-serif;margin:24px;color:#1a1a1a}"
             ".g{display:grid;grid-template-columns:repeat(auto-fill,120px);gap:12px}"
             ".c{text-align:center;font-size:12px;border:1px solid #ddd;padding:10px 4px;border-radius:6px}"
             "svg{color:#0017c1}</style>"
-            + mine + dads
-            + "<h1>アイコン一覧（札の icon に id を書く）</h1>"
-            + section("自作", mine) + section("デジタル庁の素材（line 版）", dads))
-    (here / "revealjs-diagram-icons-preview.html").write_text(page, encoding="utf-8", newline="\n")
+            + dads
+            + "<h1>デジタル庁のアイコン（札の icon に id を書く）</h1>"
+            + section("デジタル庁の素材（line 版）", dads))
+    (here / "revealjs-diagram-icons-dads-preview.html").write_text(page, encoding="utf-8", newline="\n")
 
 
 def main(src):

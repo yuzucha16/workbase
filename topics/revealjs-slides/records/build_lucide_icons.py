@@ -8,7 +8,7 @@
 素材: Lucide https://lucide.dev （ISC License。Feather 由来の一部は MIT。lucide-LICENSE.txt）
       版: 1.70.0（2026-11-06 に取得。GitHub の lucide-icons/lucide、タグ 1.70.0 の icons/*.svg）
 加工: svg の外枠を除き、線の属性（fill=none, stroke=currentColor, 太さ 2, 丸い端）を <g> に移した（形は変えていない）。
-      symbol の id は i-lc-<素材名>（自作・DADS の id と衝突しない）。線の太さは CSS 側で変えられる（.cell .tab svg など）。
+      symbol の id は i-lc-<素材名>（i-myself-*、i-dads-* と衝突しない。形式は i-<素材>-<名前>）。線の太さは CSS 側で変えられる（.cell .tab svg など）。
 取得: 素材は新しい空のディレクトリへ置く（信頼できない入力として扱う）。名前が無い素材は取得時に 404 になる
       （1.70.0 では github・triangle-alert・trash-2・history は無い。別名: trash・undo-2・octagon-x）。
 """
