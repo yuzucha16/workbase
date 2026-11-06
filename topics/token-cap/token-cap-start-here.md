@@ -13,7 +13,7 @@ PC1 の 10-21 以降は room（WSL）側にあり、合算 約 170.7M（85%）�
 
 ## 次の一手
 
-効果確認は PC2（11-05）と PC1（11-06）を測り終えた。出力の型の試験（NA 6）は 11-06 に閉じた（誤爆を直し、4 件を測定。`issue-extraction-output` は NA 9 で 16.5KB → 11.8KB に縮小済み）。次は NA 8: 応答 21 以上の依頼の分析（PC1 で `python3 -I workflow-kit/tools/long_request_shape.py --since 2026-10-27` を実行して貼る）。結果を受けて「token-cap の続き」。
+効果確認は PC2（11-05）と PC1（11-06）を測り終えた。出力の型の試験（NA 6）は 11-06 に閉じた（誤爆を直し、4 件を測定。`issue-extraction-output` は NA 9 で 16.5KB → 11.8KB に縮小済み）。応答 21 以上の依頼の分析（NA 8）は 11-06 に閉じた（尾は Bash の直列で、新しい対策は足さない）。残りの Next Actions は `docs/log.md`。
 
 ## スクリプト
 

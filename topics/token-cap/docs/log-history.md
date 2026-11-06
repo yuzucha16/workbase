@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-06（token-cap NA 8 を閉じた）
+- done（NA8）: ee の承認で close。`long_request_shape.py`（Bash の先頭語・書込風の集計を追加。`29c78d2`）を PC1 で 2 回実行。応答 21 以上の 7 件は Edit・Write が 0 回で、応答の 87% が Bash（読みの `head`・`cat`・`grep`・`ls` が書込風を上回る）。探索型でも試行錯誤型でもなく、1 応答 1 Bash の直列が尾を作る。新しい対策は足さない（既存の「まとめて呼ぶ」規則が当たる。効果は次回の `requests_by_kind.py`）。根拠: `records/2026-11-06-pc1-room-effect.md` の 8、`decisions.md` の同日の項。
+
 ### 2026-11-06（token-cap NA 9 を閉じた）
 - done（NA9）: ee の承認で close。`issue-extraction-output.md` を 16.5KB → 11.8KB に縮めた（試用記録・設計の判断・エクセル用の追加の観点を `logbook/issue-extraction-output-log.md` へ移し、重複の 1 節を削除。プロンプト本体は不変）。`claude -p` 1 件の `cap_meter --latest`: 41,136 → 39,836（−1.3k、標本 1 件）。
   - 元の項目: 9. 【起票 11-06、期日 11-13】`exmem/lessons/issue-extraction-output.md`（16KB。ほかの型は 2〜7KB）を縮める。論点出しの試用で、開始時の大きさは調査 32k・振り返り 36k・計画 38k に対し 41k（約 +4〜9k）。節ごとに必要な分だけ読めるか、使う節を絞れるか、`logbook/` へ降格できる節があるかを見て決める。縮める前後で `cap_meter --latest` を比べる。論点出し v4 の実作業の確認（`due.md` の 11-13）を壊さないこと。【11-06 実施】16.5KB → 11.8KB（試用記録・設計の判断・エクセル用の追加の観点を `logbook/issue-extraction-output-log.md` に移し、重複の 1 節を削除。プロンプト本体は不変）。`claude -p` 1 件の `cap_meter --latest`: いまの大きさ 41,136 → 39,836（−1.3k。土台 23.9k → 23.6k。1 件の標本）。close は ee の承認待ち。根拠: `records/2026-11-06-output-types-trial-pc2.md`。
