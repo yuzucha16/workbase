@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06（token-cap NA 9 を閉じた）
+- done（NA9）: ee の承認で close。`issue-extraction-output.md` を 16.5KB → 11.8KB に縮めた（試用記録・設計の判断・エクセル用の追加の観点を `logbook/issue-extraction-output-log.md` へ移し、重複の 1 節を削除。プロンプト本体は不変）。`claude -p` 1 件の `cap_meter --latest`: 41,136 → 39,836（−1.3k、標本 1 件）。
+  - 元の項目: 9. 【起票 11-06、期日 11-13】`exmem/lessons/issue-extraction-output.md`（16KB。ほかの型は 2〜7KB）を縮める。論点出しの試用で、開始時の大きさは調査 32k・振り返り 36k・計画 38k に対し 41k（約 +4〜9k）。節ごとに必要な分だけ読めるか、使う節を絞れるか、`logbook/` へ降格できる節があるかを見て決める。縮める前後で `cap_meter --latest` を比べる。論点出し v4 の実作業の確認（`due.md` の 11-13）を壊さないこと。【11-06 実施】16.5KB → 11.8KB（試用記録・設計の判断・エクセル用の追加の観点を `logbook/issue-extraction-output-log.md` に移し、重複の 1 節を削除。プロンプト本体は不変）。`claude -p` 1 件の `cap_meter --latest`: いまの大きさ 41,136 → 39,836（−1.3k。土台 23.9k → 23.6k。1 件の標本）。close は ee の承認待ち。根拠: `records/2026-11-06-output-types-trial-pc2.md`。
+
 ### 2026-11-06（token-cap PC1 room の効果確認）
 - PC1 の `repeat_reads.py` と `requests_by_kind.py` の出力（写真）を分析し、`records/2026-11-06-pc1-room-effect.md` に記録した。ピークは 86k → 51〜58k、1 件のトークンは −4〜15%（応答が増えたため）。応答 21 以上の 6 件（7.5%）がトークンの 42%、すべて 11-05 の 1 日。ee の決定: (b)(g)(h) と縮小の優先は上げない、NA 4 は見送りで閉じる、測定の期日 4 項目を閉じた（`decisions.md`）。NA 8 を起票（探索型か試行錯誤型かは、ツール名の内訳が要る）。`f561704`。
 
