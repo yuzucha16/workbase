@@ -13,7 +13,7 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .reveal .slides section h3, .reveal .slides section h4 { margin-left: var(--ind); text-align: left; }
 .reveal .slides section > p { margin-left: var(--ind); text-align: left; }
 /* 箇条書きは、行頭記号（本文の左に約 1 字ぶんはみ出す）が見出しの文字より右に来るよう 3 段ぶん */
-.reveal .slides section > ul, .reveal .slides section > ol { margin-left: calc(var(--ind) * 2.5); text-align: left; }
+.reveal .slides section > ul, .reveal .slides section > ol { margin-left: var(--ind); padding-left: 1.1em; text-align: left; }
 /* タイトル(h2)と次の行の間は半行ぶん空ける */
 .reveal .slides section h2 { margin-bottom: 0.8em; }
 /* レイアウト（図解・格子・表）も、本文と同じ 1 段ぶん右から始める。--ind は px 固定なので割り戻し不要 */
@@ -100,3 +100,31 @@ $presentation-heading-font: "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", Mei
 .sum p { margin: 0 0 0.3em; }
 .sum ul { margin: 0; padding-left: 1.1em; display: block; }
 .sum li { margin: 0.15em 0; }
+
+/* 見出しと T の軽量化（DADS 流: 装飾なし・墨色・階層で大きさを下げる。行高は見出し 1.4、本文 1.5） */
+.reveal .slides section h2 { border-left: 6px solid #0017c1; padding-left: 0.4em; font-size: 1.5em; font-weight: 700; line-height: 1.4; color: #1a1a1a; text-transform: none; letter-spacing: 0; }
+.reveal .slides section h3 { font-size: 1.1em; font-weight: 700; line-height: 1.4; color: #1a1a1a; margin-top: 0.8em; margin-bottom: 0.3em; margin-left: var(--ind); }
+.reveal .slides section > p, .reveal .slides section > ul, .reveal .slides section > ol { font-size: 0.9em; line-height: 1.5; color: #1a1a1a; }
+.reveal .slides section > ul li, .reveal .slides section > ol li { margin: 0.15em 0; }
+
+/* T の右側（コード・画像）と組み合わせ（split）。入れ子の div の中でも、本文と同じ文字の大きさ・開始位置にする。
+   tmain は本文と同じ 1 段（--ind）から。split は外側が 1 段ぶん右なので、中の左余白は 0。 */
+.reveal .slides section .tside { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; align-items: start; }
+.reveal .slides section .tmain h3 { margin-left: var(--ind); }
+.reveal .slides section .tmain > p, .reveal .slides section .tmain > ul, .reveal .slides section .tmain > ol,
+.reveal .slides section .sp > p, .reveal .slides section .sp > ul, .reveal .slides section .sp > ol { font-size: 0.9em; line-height: 1.5; color: #1a1a1a; text-align: left; }
+.reveal .slides section .tmain > p { margin-left: var(--ind); }
+.reveal .slides section .tmain > ul, .reveal .slides section .tmain > ol { margin-left: var(--ind); padding-left: 1.1em; }
+.tright { min-width: 0; margin-top: 0.8em; }
+.tright div.sourceCode, .tright pre { margin: 0; width: 100%; box-shadow: none; }
+.tright pre { border: 1px solid #b3b3b3; background: #f5f5f5; font-size: 0.6em; line-height: 1.6; margin: 0; width: 100%; box-shadow: none; }
+.tright pre code { max-height: none; padding: 0.7em 0.9em; }
+.tright code.sourceCode > span > a:first-child::before { content: none; display: none; } /* 行番号を出さない */
+.tright img { max-width: 100%; max-height: 480px; display: block; }
+
+.reveal .slides section .split { display: grid; grid-template-columns: var(--cols, 1fr 1fr); gap: 2em; margin-left: var(--ind); align-items: start; }
+.split .sp { min-width: 0; }
+.split .lay, .split .mx { margin-left: 0; }
+.reveal .split .tb { margin-left: 0; width: 100%; }
+.reveal .slides section .split .sp h3, .reveal .slides section .split .sp > p { margin-left: 0; }
+.reveal .slides section .split .sp > ul, .reveal .slides section .split .sp > ol { margin-left: 0; padding-left: 1.1em; }

@@ -15,7 +15,7 @@ revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所
   H 行ラベル x 列（行・列は文言の数で決まる）
   I 工程 x 行（シェブロンの列見出し。行ラベルは任意）
   J 表（背景なし・罫線だけの表。emphasize で強調列、rowhead で先頭列を太字）
-  T 図解なし（見出し + 段落 + 箇条書き。入れ子はリストの中のリスト。まとめ・前置き・補足用）
+  T 図解なし（見出し + 段落 + 箇条書き。入れ子はリストの中のリスト。まとめ・前置き・補足用）。\n    "side" で右側にコード（{"code","lang"}）か画像（{"img","alt"}）を置ける。\n  split 2 つの型（"parts" を左右に置く組み合わせ。例: 表 + 箇条書き(T)、図 + コード）。\n  全型（A〜J）が "lead"（上）と "notes"（下）の箇条書きを持てる。
   箱の型 A〜G は "height"（例 "500px"）で下の空きを埋める。
 """
 import argparse
@@ -49,7 +49,11 @@ def raw(s):
     return "```{=html}\n" + s + "\n```\n"
 
 
-# ---- 図（ダミーの n ブロックの流れ。実スライドでは fig に SVG 文字列を渡す） ----
+# 見出しで始まる div を Pandoc が <section> にすると、reveal の縦スライドになって後続が見えなくなる。空の印を先頭に置いて防ぐ
+NOSEC = raw("<span hidden></span>")
+
+
+# 見出しで始まる div を Pandoc が <section> にすると、reveal の縦スライドになって後続が見えなくなる。空の印を先頭に置いて防ぐ\nNOSEC = raw("<span hidden></span>")\n\n\n# ---- 図（ダミーの n ブロックの流れ。実スライドでは fig に SVG 文字列を渡す） ----
 def flow_svg(n=3, hl=1, w=280, h=100, vertical=False):
     if vertical:
         bw, bh, gap = w - 4, (h - 4 - 28 * (n - 1)) / n, 28
@@ -182,11 +186,24 @@ def table_slide(s):
 def text_slide(s):
     """T: 見出し + 箇条書き（入れ子はリストの中のリスト）。インデントの確認用。"""
     def bullets(items, depth=0):
+        if depth > 1:
+            raise ValueError("箇条書きは 2 段（入れ子 1 回）まで")
         out = ""
         for x in items:
             out += ("  " * depth + "- " + x + "\n") if isinstance(x, str) else bullets(x, depth + 1)
         return out
-    return "".join(f"### {b['h']}\n\n" + "".join(p + "\n\n" for p in b.get("p", [])) + f"{bullets(b.get('items', []))}\n" for b in s["blocks"])
+    main = "".join(f"### {b['h']}\n\n" + "".join(p + "\n\n" for p in b.get("p", [])) + f"{bullets(b.get('items', []))}\n" for b in s["blocks"])
+    side = s.get("side")
+    if not side:
+        return main
+    # 右側: {"code": "...", "lang": "bash"} か {"img": "path", "alt": "..."}。左 = 文章、右 = コード・画像
+    if "code" in side:
+        right = raw(f'<pre class="plain"><code>{esc(side["code"].rstrip())}</code></pre>')
+    elif "img" in side:
+        right = f"![{side.get('alt', '')}]({side['img']})\n"
+    else:
+        raise SystemExit("T の side は code か img を持つ")
+    return f"::: {{.tside}}\n::: {{.tmain}}\n{NOSEC}{main}:::\n::: {{.tright}}\n{right}:::\n:::\n"
 
 
 def summary(v, cls):
@@ -196,13 +213,26 @@ def summary(v, cls):
     return raw(f'<div class="sum {cls}">{lines(v)}</div>')
 
 
-def slide(s):
+def body(s):
+    """型ごとの本体（タイトル・lead・notes を除く）。"""
     t = s["type"]
     if t == "T":
-        return f"## {s['title']}\n\n{text_slide(s)}"
-    body = {"H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t) or (lambda: box_slide(s))
-    return f"## {s['title']}\n\n{summary(s.get('lead'), 'lead')}{body()}\n{summary(s.get('notes'), '')}\n"
+        return text_slide(s)
+    return {"H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t, lambda: box_slide(s))()
 
+
+def slide(s):
+    """単独の型、または "split"（"parts" の 2 つを左右に置く組み合わせ。"cols" 例 "1fr 1fr"）。lead/notes は T 以外の全型で使える。"""
+    if s["type"] == "split":
+        parts = s["parts"]
+        if len(parts) != 2:
+            raise SystemExit("split の parts は 2 つ")
+        inner = "".join(f"::: {{.sp}}\n{NOSEC}{body(p)}\n:::\n" for p in parts)
+        inner = f'::: {{.split style="--cols:{s.get("cols", "1fr 1fr")}"}}\n{inner}:::\n'
+        return f"## {s['title']}\n\n{summary(s.get('lead'), 'lead')}{inner}\n{summary(s.get('notes'), '')}\n"
+    if s["type"] == "T":
+        return f"## {s['title']}\n\n{body(s)}"
+    return f"## {s['title']}\n\n{summary(s.get('lead'), 'lead')}{body(s)}\n{summary(s.get('notes'), '')}\n"
 
 def build(spec):
     return HEADER.format(title=spec.get("title", "レイアウト見本")) + "\n" + "\n".join(slide(s) for s in spec["slides"])
@@ -219,9 +249,15 @@ SAMPLE = {
         {"title": "T 見出しと箇条書き（インデント確認）", "type": "T", "blocks": [
             {"h": "見出し 1", "items": ["箇条書きは 1 行で言い切る", ["入れ子は 1 段ずつ深くする"]]},
             {"h": "見出し 2", "items": ["項目 A", "項目 B"]}]},
+        {"title": "T 右にコード（サンプル）", "type": "T", "blocks": [{"h": "手順", "items": ["設定を置く", "起動する"]}], "side": {"lang": "bash", "code": "room init Area --resume\nfc-list | grep 'Noto Sans JP,'"}},
+        {"title": "組み合わせ 表 + 箇条書き（サンプル）", "type": "split", "cols": "1.4fr 1fr",
+         "lead": "表と箇条書きを左右に並べる例",
+         "parts": [{"type": "J", "head": ["項目", "現在", "目標"], "rows": [["指標 A", "4,000", "4,400"], ["指標 B", "3,200", "3,500"]], "align": ["l", "r", "r"]},
+                   {"type": "T", "blocks": [{"h": "ポイント", "items": ["A は目標まで 10%", ["B は季節要因を除く"], "確認は月 1 回"]}]}],
+         "notes": ["まとめは下に箇条書きで置ける"]},
         {"title": "T 文章・文字列・箇条書き（サンプル）", "type": "T", "blocks": [
             {"h": "はじめに", "p": ["この見本は、段落と箇条書きが混ざったときの並びを確かめるためのダミーです。", "文の長さは、1 行に収まる程度から 2 行に折り返す程度まで混ぜています。"]},
-            {"h": "進め方", "items": ["最初に目的を 1 文で決める", ["背景は短く、数字があれば添える", ["3 段目の例: 補足は最小限にする"]], "次に作業を 3 つ以内に分ける", "最後に確認する項目を並べる"]},
+            {"h": "進め方", "items": ["最初に目的を 1 文で決める", ["背景は短く、数字があれば添える"], "次に作業を 3 つ以内に分ける", "最後に確認する項目を並べる"]},
             {"h": "メモ", "p": ["文字列の例: ABC-123 / 2026-11-06 / 12,345 円 / v1.2.3"]}]},        {"title": "A 左右二分割（比較）", "type": "A", "cells": [_c("dark", "ban", "左"), _c("blue", "check", "右")]},
         {"title": "B 上は左右・下は全幅", "type": "B", "cells": [
             _c("gray", "pc", "左"), _c("blue", "room", "右"),

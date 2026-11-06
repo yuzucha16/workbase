@@ -2,6 +2,14 @@
 
 ## Log
 
+### 2026-11-06 土台更新（見出し・T の軽量化、T の右側、split）と NA 2 件の close
+
+- 経緯: 見出し・T の軽量化（h2 1.5em、h3 1.1em、本文 0.9em・行高 1.5）、h3 のインデント修正（軽量化の margin 指定が左余白を消していた）、T と箇条書きの開始位置を揃える、箇条書き 2 段まで、h2 の先頭に濃青の縦棒（6px）。T の `side`（右にコード・画像）、全型の `lead`/`notes`（実装は既存）、`split`（2 型を左右に）を追加した。
+- 原因と対処: 見出しで始まる `:::` の div を Pandoc が `<section>` にし、reveal の縦スライドになって後続が見えなくなった。先頭に空の印（`NOSEC`）を置いて防いだ。Quarto のコードブロックは行番号の位置ずれで左が欠けたため、素の `<pre>` にした。確認: Edge の headless のスクリーンショットで、T 右コードと split の 2 枚。根拠: `records/gen_layouts.py`、`records/revealjs-diagram-theme.scss`、`decisions.md`。
+- close した NA: 「新しい部屋で room init を 1 回通し Noto Sans JP が入ることを確かめる」（実機で通した。ユーザーが完了と確認、11-06）。「土台の更新の残り」のうち見出し・T の軽量化（済）。
+### 2026-11-06 NA 3 件を close
+- ユーザー報告: 新しい部屋で `room init`（または `--only notosansjp`）を通し、問題なし。PC1 の生成スクリプトは workbase のものを取り込み済み。H・I・J は Windows の Edge 以外でも問題なし。3 件とも close（`log.md` の Next Actions と `due.md` から外した）。
+
 ### 2026-11-06 トピックを作成し、PC1 の写真から書き起こす
 - PC1 の room stock の内容（ノート 3 枚、`layouts.qmd` 8 枚）が写真で `exmem/inbox/` に来た（フォルダ 2 つ、約 5MB × 11）。
 - 写真を読んで、ノートは `records/2026-11-05-revealjs-diagram-layout-note.md`、CSS は `records/revealjs-diagram-theme.scss`、見本は `records/revealjs-diagram-layouts.qmd` に書き起こした（見本の繰り返しは生成スクリプトで作った）。
