@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-06 Excalidraw の図作成から revealjs の HTML 化までを room で通した
+- ユーザーの指示: 「excalidraw を room で動かせるか確認。room-myenv を使ってよい。room の図解を作り、SVG を revealjs に組み込んでスライド化。ゴールは room 作成の HTML を Windows で目視してズレがないこと」→ 確認後「問題なく、win で作ったものと同等です。一時ディレクトリは削除してください」。
+- 結果: `room-myenv` は C: が空なので、`gen_layouts.py`・scss・アイコン html・`build_*.py` を `\\wsl.localhost\...\tmp\exc` へ複製し、room 内で `build_room_diagram.py` → `build_slide.py`（`quarto render`）を実行。SVG 2 つと `.excalidraw` は Windows 版とバイト一致。HTML を Windows に取り出し Edge ヘッドレスで 4 枚を撮影（画像方式の半幅用・全幅版は崩れなし。インラインは既知どおり不向き）。
+- 後始末: `records/excalidraw-room-check/`（Windows 側）と room の `~/tmp/exc` を削除。決定は無し。
 ### 2026-11-06 room 図の半幅用の版を作った（NA を閉じた）
 - ユーザーの指示: 「room 図の半幅用の版: 文字を大きくした版をやります。ナレッジは別セッションでやったのでここでは不要」→ 確認後「目視は問題ないです。これでいけます。これも close」。
 - 反映: `records/excalidraw-trial/build_room_diagram.py` に `SPEC_HALF`（幅 700×560。見出し 22・補足と注記 20px、補足は改行可、矢印ラベルは複数行）を足し、全幅と半幅を同時に出す（`room-structure-half.excalidraw` / `.svg`）。`build_slide.py` は E インライン（全幅）・T の `side`（半幅用）・T の `side`（全幅を半幅に置く比較）の 3 枚を出す。`README.md` の「次」を更新。
