@@ -94,3 +94,4 @@ PY
 - 重くなる構造: 1 応答に Bash を 1 つだけ呼び、それが 22〜36 回続く。毎回の文脈が積み上がり、ピークが 89〜196k。
 - 分かっていないこと: PC1 の room で Edit・Write が使えないのか、使えるのに使っていないのか。読みの Bash が互いに独立でまとめられたか。`sed` の読みと書きの内訳。
 - 対策: 新しく足さない。`AGENTS.md` の「依存のない呼び出しを 1 応答にまとめる」（10-29）が、読みの Bash の連続に当たる。効果は `requests_by_kind.py` の次回の測定で見る。
+- 追記（11-06、PC1 で確認）: 会話記録の全期間で、ツール別の実呼び出し（id の重複を除く）は Bash 1555（89%）、Read 140、Edit 16、Write 13。Edit・Write は使える状態（一覧に載る）だが、ほとんど使われていない。`~/.claude/settings.json` と `.claude/settings.json` の `permissions` には `deny` が無く、`allow` の行に Bash・Edit・Write の語も無い。設定は原因でない（許可の偏りは無い）。起動時の引数（permission mode など）は kit の外（dotfiles 側）にあり、未確認。応答数に効くかの根拠が無いので、「書き込みは Edit・Write で」の規則は足さない。
