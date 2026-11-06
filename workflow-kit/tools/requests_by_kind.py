@@ -162,6 +162,14 @@ def na_report(rows):
         print(f"{label} | {len(qs)} | {statistics.mean(rr):.1f} | {statistics.median(rr):.0f} | {tl:.1f} | {st:.1f}M")
 
 
+def watch_notes():
+    """確認中の施策の目印。測定を実行した人（AI）が、見直しの時期だと気づくための注記。確認が済んだら消す。"""
+    print()
+    print("確認中の施策（この出力を見たら、下の基準と比べて token-cap の docs/log.md に結果を書く）:")
+    print("- 52c20be 読みの Bash を 1 回のコマンドに連結する（AGENTS.md。11-06）。基準 = PC1 room 11-06: 応答 21 以上が依頼の 7.5%・トークンの 42%、"
+          "尾は Bash が応答の 87%。--since 2026-11-07 で上の「応答数の分布」の 21+ 行と比べる（Bash の割合は long_request_shape.py）。")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("roots", nargs="*")
@@ -211,6 +219,7 @@ def main():
             print(f"{lo}-{hi} | {len(qs)} | {statistics.mean(q['responses'] for q in qs):.1f} | "
                   f"{statistics.mean(q['tools'] for q in qs):.1f} | {sum(q['tokens'] for q in qs)/1e6:.1f}M")
     na_report(rows)
+    watch_notes()
     if a.detail:
         detail(rows, tot_r, tot_t)
     if a.csv:

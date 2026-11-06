@@ -7,6 +7,7 @@
 - close（5f）: 完了条件を依頼に書く。10-29 の A/B（調べて答える題材 2 回、作業型 1 回）で応答数が下限に張り付き、差が出ず打ち切り済み（`docs/decisions.md` 10-29）。ee は依頼を細かく書いており余地も小さい。
 - omit（5i）: 聞き返しを減らす。ee の指示（具体案がなかった）。
 - 5g: `requests_by_kind.py` に「まとめ返答」の群別表（na_apply あり / なし）を足した。5h: 方針を決めた（`docs/decisions.md` 同日）。`subagent_cost.py` を新設。
+- 追加（同日・後）: 5h の試用を「AI が重そうと判断したら subagent を使う」方式に変更し、`AGENTS.md` の「読み込みの量を抑える」に 1 行足した（ee 承認）。52c20be（読みの Bash を連結）の見直しを気づける仕組みとして、`requests_by_kind.py` の出力末尾に「確認中の施策」の注記（`watch_notes()`。基準つき）を足した。コミットは d53bf79 の次。wrap。
 - 移行: log.md の「状態」欄の旧文面（下）を移し、log.md は要点に縮めた。NA 5 の元の文面は `records/2026-11-06-na5-original-text.md`。
 
 #### 移した旧文面（状態欄、2026-11-06 時点）
