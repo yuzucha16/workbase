@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-06（旧 logbook-design の NA 1・NA 5 を閉じる）
+- NA 5（追記の型 (b)＝OQ・NA を本体に 1 つ、が守られているか）: 10-30 以降の `exmem/lessons/` の追記コミットを調べ、OQ・NA の節を新しく足したものは無かった（`git-subdirectory-split` の `## Next Actions` は 10-29 で決定より前）。守られていたので取り下げた。
+- NA 1（実機での畳み候補。room の確認 4 項、obsidian-vault-backup の NA 2 項）: ユーザー「どちらも畳んでコミット。終わっています」。確認は済みとして畳んだ。
+- 反映: `due.md` から 2 行を削除、`log.md` の `logbook/` の行を 11-08・11-29 に直した。
+- wrap: NA 2 件（済）を閉じた。
+
 ### 2026-11-06（review 消化: NA 5 を閉じる）
 - NA 5（howto を triggers 索引の対象にする大局案）を閉じた。ユーザー「2は閉じる。3はここで確認。1は実施したい」。② は 36ae508 と hooks.md の連鎖で済み。① `find_knowledge.py` の走査対象に `guides/howto` を足し、howto 10 本に `triggers:` を付けた（`--triggers` で `ai-room-lifecycle.md` が出る。`--check-triggers` fail=0、単体テスト 33 件 OK）。③ `hook-common.md` の「フックを足す・消すとき」に手順 7 を足した。
 

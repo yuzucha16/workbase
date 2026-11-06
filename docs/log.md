@@ -14,7 +14,7 @@
 - Area の log・decisions・inbox は持たない（11-05 決定）。`room close` は【案件】【決定】を Area へ運ばず、記録は `archives/` に残る。引くのは `room trace --area <Area> <語>`（横断検索。実機確認済み 11-06）。Area は `room close --area` で終える（11-05 実装。実機確認済み 11-06）。
 - 実機確認済み（11-04、PC1）: `room restore` / `close` の成果物の Area への書き出し、計画の承認の検知（`status: 正式` → 変更で `仮` に戻る）。
 - Python の版: uv 管理が正本（`script-guide.md` の「Python の版と呼び方」）。
-- `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-15・11-29。
+- `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-29。
 - ファイル名: `workflow-kit/naming-rules.md`（10-29 決定）。一括改名はしない。
 - 人が叩くスクリプトは `run` / `verify` / `release`（`script-guide.md`）。Windows は未確認。
 - 項目の移し替え・期日の持ち上げ: `workflow-kit/tools/na_apply.py`（close / due-up。呼び方は `docs-write-rules.md`）。実行は AI（人は介在しない）。当面は、処理の漏れがあるものとして読み、見つけたら報告する。漏れなし 3 回連続で外す（11-04 の review 消化で漏れが見つかり 0/3 に戻した）。

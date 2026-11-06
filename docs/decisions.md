@@ -1163,3 +1163,7 @@
 - 未決（別のタイミングで見直す、ユーザー）: `docs/drafts/` と `docs/metrics/` は、サンプルと動作確認の結果なので、workbase へ移管して works から消す。
 - 範囲外: 各 PC の works の `.gitignore` への反映と、追跡済みの `ai/` の取り外し（PC ごとに `mkworks --update` か手で）。works の remote の有無は、ユーザーが各 PC で確認する。
 - 【汎用】許可リスト方式の雛形（`48e6fc3`）は、`!**/docs/**` などで戻した場所の中の `~$*`（Office のオーナーファイル。Windows のユーザー名が入る）・`Thumbs.db`・`desktop.ini` を無視しなかった（旧雛形は無視していた）。`docs/~$a.xlsx` が `??` で出ることを模擬の works で確認（2026-10-29）。雛形の末尾（`!` の行より後）に 3 行を足し、単体テストに 4 例を足した。既存の works への取り込みの手順は `guides/howto/works-gitignore-allowlist-migration.md`（外す対象は手で書かず `git ls-files -ci --exclude-standard` に出させる。`projects/*/ai` のような手書きのパスは、`*` が `/` をまたぎ `ai/docs/` まで外すため）。
+
+### 【この件】旧 `logbook-design` の NA 1・NA 5 を閉じた（2026-11-06）
+- 根拠: ユーザー「どちらも畳んでコミットしてください。終わっています」。NA 5 は AI が 10-30 以降の lessons 追記を調べ、(b) は守られていた。
+- 決めたこと: NA 1（実機での畳み候補。room の確認 4 項、obsidian-vault-backup の NA 2 項）は確認済みとして畳み、NA 5 は取り下げた。`due.md` の該当 2 行を削除した。`logbook/` の残りの期日は 11-08 と 11-29。
