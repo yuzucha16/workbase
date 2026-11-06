@@ -2466,6 +2466,8 @@ def cmd_umount(ctx, a):
     left = room_mounts(ctx, distro)
     ctx.say("マウントは残っていない" if not left else "残っている:\n  " + "\n  ".join(left))
     if left:
+        ctx.say("Zed のエージェント（claude-agent-acp）が部屋の中でマウント点を cwd にして残っていることが多い。"
+                "Zed を終了（再起動）してから、もう一度 `room umount` する")
         raise RoomError("アンマウントできなかった")
 
 

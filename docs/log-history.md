@@ -8,6 +8,12 @@
 - 反映: `due.md` から 2 行を削除、`log.md` の `logbook/` の行を 11-08・11-29 に直した。
 - wrap: NA 2 件（済）を閉じた。
 
+### 2026-11-06（マウントが残る件の再発と原因の確定）
+- 旧 room-type-consolidation の様子見（due 11-13）が、同日に再現した。ユーザーが due から NA へ移すよう指示し、`room umount --area myenv` の「残っている」の写真を添えた。`sample_inv` `sample_inveg1` のマウントを外す項目は、ユーザーが外して完了としたので、due から削除した。
+- 原因: 写真の「つかんでいるプロセス」は全部 cwd で、2 組あった（`bash -l` → `npm exec @agentclientprotocol/claude-agent-acp` → `sh -c` → `node` → `claude-agent-sdk-linux-x64/claude`）。Zed の外部エージェントが部屋の中でマウント点を cwd にして残っていた。Zed を終了すると `umount` が通った（ユーザーが確認）。
+- ユーザーの決定: 案 b（止めず、案内だけ）。Zed から手放させる手順は無く、再起動するしかない（「不便だが仕方ない」）。反映: `room.py` の `cmd_umount` に案内を足した、`guides/howto/ai-room-lifecycle.md` と `workflow-kit/room/README.md` に書いた。スレッドのアーカイブで止まるかは未確認。2 組になった理由は未調査（閉じた）。
+- wrap: NA 1 件（済）を閉じた。
+
 ### 2026-11-06（review 消化: NA 5 を閉じる）
 - NA 5（howto を triggers 索引の対象にする大局案）を閉じた。ユーザー「2は閉じる。3はここで確認。1は実施したい」。② は 36ae508 と hooks.md の連鎖で済み。① `find_knowledge.py` の走査対象に `guides/howto` を足し、howto 10 本に `triggers:` を付けた（`--triggers` で `ai-room-lifecycle.md` が出る。`--check-triggers` fail=0、単体テスト 33 件 OK）。③ `hook-common.md` の「フックを足す・消すとき」に手順 7 を足した。
 

@@ -86,7 +86,7 @@ README の置き換え方、`stock` の点検、`restore` の止まり方の詳�
 
 ## 6. うまくいかないとき
 
-- `start` が止まる: マウントが残っている（`room umount --area <A>`）、`ai/in/` が未確認（internal なら読んで `start --adopt`。external では入力を置けない）。
+- `start` が止まる: マウントが残っている（`room umount --area <A>`。外れないときは、Zed のエージェント〔claude-agent-acp〕が部屋の中でマウント点を cwd にして残っている。Zed を終了〔再起動〕してから再実行する。11-06 に実機で確認）、`ai/in/` が未確認（internal なら読んで `start --adopt`。external では入力を置けない）。
 - `close` が止まる: メッセージの条件を直してやり直す（何も変えずに止まる）。
 - 計画に警告が出た: 内容を確認して、正式に戻すなら `approved:` の日付を書き換える。
 
