@@ -7,6 +7,7 @@
 - 経路: 受け皿 = トピック、入力 = `inbox.md`、見直し = `review`（記録 `docs/metrics/reviews.csv`、基準 `docs/alignment-baseline.md`、星取り `workflow-kit/token-matrix.md` は 11-01 に 110 点）。仕組みの決定は `review 消化` の3段で承認。仮決めは `【仮 〜日付】`。
 - やり方は `methods.md`。`plan` は本採用（11-06 決定）。`plan`（11-04 新設。`room open` 直後の 6R → 論点出し → 憲章以降）と `brief`（`room start` 直後）に分けた。実機は未確認。1 セッション 2〜3 依頼のときの `brief` の書き方は `guides/quickref/ai-work-prompts.md` の「brief 即」。
 - room: type は `dev` と `inv`。検証用の works は `mkworks --sub`（実機で確認済み）。11-02 の room 変更（boundary の 2 値、start の自動マスク・復元の廃止、stock --dst）の既存 works への適用は、11-03 に ee が実機で通した（既存の Area は internal の 1 つ。手順と止まった所は `log-history.md` の 11-03）。
+- room の通し試験（11-06、トピック room-type-consolidation を閉じた）: 分割して進める 6 回の手順は `workflow-kit/room/room-split-test-procedure.md`（結果は `logbook/room-split-test-log.md`）。room の手順書・案内文を直したときに回す。手順は未実行（前回のスクリプトから起こしただけ）。
 - works の git 追跡は許可リスト方式（10-29 決定。`decisions.md`）。
 - Area の改名は `room mv <旧> <新>`（旧 `rename-area`。11-02 作り直し。部屋は `wsl --export`/`--import` で改名、履歴は追わない。ee が実機で動作確認済み）。
 - room open --from（11-04 実装。閉じた Project の成果物・close.md・正式な計画を、新しい Project の `ai/in/from-<前>/` に引き継ぐ。11-05: 写すものが無くても止めず、来歴だけ付けて開く。実機確認済み 11-06、PC1）。

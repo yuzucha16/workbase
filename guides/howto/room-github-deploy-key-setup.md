@@ -17,7 +17,7 @@ AI 作業部屋（room）の中から、GitHub の非公開リポジトリを `g
 - **ゴール（完了の目安）**: room の中で `git clone git@<別名>:<owner>/<repo>.git` が通り、同じ clone からの `git push` が `marked as read only` で拒否される
 - **確認状況**: 2026-10-31 に、AI が実機で通した。同日、ユーザーが章4（指紋の一致）と章5（`read_only` の確認）を手で確かめた。章6 以降を手でやり直した結果は未反映（やってみて直した点は、この手順書に足す）
 - **範囲**: 鍵の作成、`~/.ssh/config`、known_hosts、GitHub への登録、clone と push の確認、片付け。room の作成は範囲外
-- **push を許さない理由**: room の AI にリポジトリを書き換えさせない。個人開発で push が要る場面が出たら、書き込み可の deploy key をリポジトリごとに足す（決定の根拠は `topics/room-type-consolidation/docs/decisions.md`）
+- **push を許さない理由**: room の AI にリポジトリを書き換えさせない。個人開発で push が要る場面が出たら、書き込み可の deploy key をリポジトリごとに足す（決定の根拠は `docs/decisions.md` の「room-type-consolidation の決定」の項（2026-11-06））
 - 名前は `<Area>`（部屋は `room-<Area>`）、`<owner>`、`<repo>`、`<別名>` のプレースホルダーで書く。自分の値に置き換えて読む
 
 ## 対応バージョン表

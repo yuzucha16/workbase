@@ -4,6 +4,19 @@
 
 ## Decisions
 
+### 【汎用】トピック room-type-consolidation を閉じ、この件の決定を 1 項にまとめて移す（2026-11-06）
+- 根拠: ユーザー「room-type-consolidation をトピッククローズしたい」。マウント残りの件は「完了で消えています。反映もれです」。`records/` の仕分けは「logbook/に残します。作ります。削除してよいです」「進めてください」。「分割手順は良い作業でした。今後もこのような実施ができると助かる」。
+- 決めたこと（元は `topics/room-type-consolidation/docs/decisions.md` の【この件】。日付とユーザーの発言は要約）:
+  - **type**: `dev` と `inv` の 2 つ（10-24。正本は同日の項）。`room open` が `ai/docs/` に `log.md` `decisions.md` `log-history.md` を置く（10-25）。`inv` の基準文書「問い＋完了条件の 1 行」は仮決めのまま据え置き（11-04）。`docs/` だけの `dev` は測らない。最初の実利用で見つけた置き場の取り違えの原因は、`ROOM.md` の「人が読む最終版は `ai/out/deliverable/`」が手順書と食い違っていたこと。
+  - **成果物名**: 1 Project = 1 成果物で、既定は Project 名と同じ（11-01 案 1。階層は残す: `ai/out/` 直下の予約物と混ざらず、`room close` の配布の単位になるため）。手順書だけでは効かず、`ROOM.md` に足しても 5 回中 1 回だった（11-04、測定は打ち切り）。後に案内文 `POINTER_TEXT` に書いて効いた（11-06）。表通りでない置き場は、専用サブディレクトリ＋README の 1 行ずつで記録する。`git -C` は望ましいにとどめ `cd` も許容。
+  - **GitHub と開発リポジトリ**（10-31）: room の認証は、リポジトリ単位の読み取り専用 deploy key（SSH）。push は許さない（個人開発で要る場面は、書き込み可の key をリポジトリごとに足す）。cwd は案 A（`/mnt/room/<Project>` のまま、`~/src/<repo>` は追加ディレクトリ）。`ROOM_GIT_WRAPPER` は cwd に `-C` を順に当てた対象で判定。works と workbase は 1:1（workbase は works の中の `resources/`）、works と projects は 1:N の PC ローカルの台帳。clone は `~/src/<repo>`、試作は `ai/out/<成果物名>/src/`。room から開発サーバーへ SSH しない（サーバー上は人が実行し、結果を `ai/in/target/` に戻す。README の `target:` は `name` `via: ssh|wsl` `os` `note`。11-01）。`repos:` と `room close` の push 済み検査は見送り。サーバー側で AI を動かす形は対象外。サブエージェントで実測のループを回す案も見送り（トークン節約）。
+  - **Obsidian の Vault**（11-01 仮決め、11-02 正式化）: `resources/`（workbase。md のみ）と `works/` の 2 つ。2 つの `.obsidian` の実体は dotfiles に置き、resources 用が正本、works 用は派生分を反映のたびに生成（追跡しない）。除外は `userIgnoreFilters`、エクスプローラーからは CSS で隠す。実装と動作確認は 11-02 に済み（詳細は `exmem/lessons/obsidian-vault-structure.md` と `app-config-placement.md`）。
+  - **`inv` の構造**（11-04〜05）: 工程別 `question.md` `sources/` `findings/` `checks/` `report.md` `publish/`（清書。頼まれたときだけ）。台帳に種別「実測」、findings に行 ID、checks は 1 ファイル。表データでは取り込みの落とし穴を集計の前に調べる。スクリプトは `ai/work/scripts/`。依頼は構成の名前でなく**重さの言葉**で頼む。清書は形式（「pptx で」など）を明示する。未確認が数項目なら `checks/` を作らず `report.md` に書いてよい。マスクの差分の試験は行わない。
+  - **スライドの道具**（11-04）: 部屋の道具は Quarto（主）と Marp 既定（副）。Slidev は入れない。Marp は `init` の段 `marp`（`marp-cli@4.5.1`）。部屋での npx は許可せず、導入は root が行う。
+  - **分割して進める基本形**（11-06）: 6 回の新しいセッションを「続きです。次は <工程> まで。」だけで進める形を `project-structure.md` に反映した（成果物名は Project 名、6R は承認後に書き換えない、並行しない）。`dev` が `env/` を使わず uv プロジェクトを直下に置くのは許容。再実行の手順は `workflow-kit/room/room-split-test-procedure.md`、結果は `logbook/room-split-test-log.md`。
+- 移したもの: 測定・観測は `logbook/`（`room-split-test-log` `room-inv-combo-test-log` `room-inv-eg2-log` `room-inv-publish-explicit-log` `slide-tools-live-compare-log`）。検討の過程（叩き台 `notes`、`guide-review`、比較の依頼文、試験の設計と依頼文）、分割試験のスクリプト（`_noai/` に出す作りで古い）は削除（git に残る）。
+- 外の言及を直した: `project-structure.md`、`ai-isolated-work-room.md`、`ai-work-prompts.md`、`office-output-types` の決定、`obsidian-vault-structure.md`、`app-config-placement.md`、`room-github-deploy-key-setup.md`、`topics-index.md` の行。
+
 ### 【汎用】トピック ooxml-clean を閉じ、この件の決定を 1 項にまとめて移す（2026-11-06）
 - 根拠: ユーザー「ooxml-clean をトピッククローズしたい」。NA 1 は「b」（root に移して閉じる）、仕分けの案は「すべてよいです」。
 - 決めたこと（元は `topics/ooxml-clean/docs/decisions.md` の【この件】。日付とユーザーの発言は要約）:

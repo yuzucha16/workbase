@@ -85,7 +85,7 @@ sources:
 
 ## Decisions
 
-### Vault の 2 分割で `.obsidian` の置き場が 2 つになった（2026-11-02。根拠は `topics/room-type-consolidation/docs/decisions.md`）
+### Vault の 2 分割で `.obsidian` の置き場が 2 つになった（2026-11-02。根拠は `docs/decisions.md` の「room-type-consolidation の決定」の項（2026-11-06））
 
 - 決めたこと（ユーザー）: Vault を `resources/`（workbase）と works の 2 つにし、2 つの `.obsidian` の実体はどちらも dotfiles に置いて、それぞれへジャンクションで張る。resources 用が正本。共通の設定（外観・スニペット・テーマ・コア設定）は works 用へ一方向に自動で反映し、works だけ違う項目（`userIgnoreFilters`）は `app.override.json` で重ねる。プラグインは Vault ごとに別。workbase は dotfiles を知らず、`.obsidian` を追跡しない。依存の向き（dotfiles → workbase）は変わらない。仕組みの詳細は dotfiles 側。
 - 止まる条件は増えない: `30_link.bat` が止まるのは、リンク先に実ディレクトリが先にあるときだけ（Vault ごとに同じ）。ジャンクションが既にあれば上書きする。

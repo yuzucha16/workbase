@@ -52,7 +52,7 @@ tags:
 
 ## 調査の重さを言葉で伝える（`inv`）
 
-構成要素の名前（`question.md` `sources/` など）は書かない。**重さの言葉**だけで頼むと、AI が `project-structure.md` の `inv` の節を見て、必要な分だけ作る（2026-11-05 の試験で、軽い→`report.md` 1 本、根拠つき→＋`sources/` `findings/`、確認できない点も明記→＋`checks/`、と段階的に増えた。聞き返しは 0 回。`topics/room-type-consolidation/records/2026-11-05-inv-combo-test-result.md`）。
+構成要素の名前（`question.md` `sources/` など）は書かない。**重さの言葉**だけで頼むと、AI が `project-structure.md` の `inv` の節を見て、必要な分だけ作る（2026-11-05 の試験で、軽い→`report.md` 1 本、根拠つき→＋`sources/` `findings/`、確認できない点も明記→＋`checks/`、と段階的に増えた。聞き返しは 0 回。[[room-inv-combo-test-log]]）。
 
 ```
 これは inv(調査)です。

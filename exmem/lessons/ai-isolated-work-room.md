@@ -215,7 +215,7 @@ sources:
   - 解決: `--ca-cert` で検査用のルート証明書を入れた。通った
 - 状況: 部屋で `claude -p` を `room start --cmd` から起動して試験すると、書き込みの許可で止まり何も作られない。`--allowedTools` の後ろにプロンプトを引数で置くと「prompt が無い」エラーになる
   - 原因: `-p` は承認を聞けない。`--allowedTools` は可変長の引数で、後ろのプロンプトを吸う
-  - 解決: `--permission-mode acceptEdits --allowedTools 'Bash WebFetch WebSearch Read Write Edit Glob Grep'` を付け、プロンプトは引数でなく stdin（`< /mnt/room/<名>/work/prompt.txt`）で渡す。cwd は `/mnt/room/<名>`（`ai/` そのもの）。`$(cat …)` は絶対パスで。終わったら `room umount --area <Area>`（2026-11-05、`inv` の組み合わせ試験で確認。`topics/room-type-consolidation/records/2026-11-05-inv-combo-test-result.md`）
+  - 解決: `--permission-mode acceptEdits --allowedTools 'Bash WebFetch WebSearch Read Write Edit Glob Grep'` を付け、プロンプトは引数でなく stdin（`< /mnt/room/<名>/work/prompt.txt`）で渡す。cwd は `/mnt/room/<名>`（`ai/` そのもの）。`$(cat …)` は絶対パスで。終わったら `room umount --area <Area>`（2026-11-05、`inv` の組み合わせ試験で確認。[[room-inv-combo-test-log]]）
 
 - 状況: 「pptx で」と書くと `publish/` に出るのに、「quarto/revealjs で」では出力が `out/` の直下に出た
   - 原因: 規則が手順書にしか無く、エージェントが読まなかった。pptx のときに `publish/` に出たのは、規則でなく依頼の言葉からの推測だったと思われる（仮説）

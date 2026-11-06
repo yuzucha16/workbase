@@ -86,7 +86,7 @@ Project は、問題解決の単位で、1 つの部屋で行う。問題解決�
 
 ## 複数回に分けて進める（2026-11-06 分割試験。ユーザーの承認済み）
 
-実際の Project は、1 回のプロンプトで終わらず、新しいセッションで分けて進める。試験（`topics/room-type-consolidation/records/2026-11-06-split-test-result.md`）では、`dev` `inv` とも、6 回の新しいセッション（6R → 論点出し → 判断と承認 → 工程 → 工程 → 終える）を、依頼「続きです。次は <工程> まで。」だけで、同じ観点（置き場、範囲、記録、裏取り）で進められた。引き継ぎの正本は `ai/docs/log.md`（現在状態と次）・`ai/docs/decisions.md`（判断）・`ai/work/plan/`（6R、論点）の 3 つで、会話の記憶には頼らない。守ること:
+実際の Project は、1 回のプロンプトで終わらず、新しいセッションで分けて進める。試験（[[room-split-test-log]]。再実行は [[room-split-test-procedure]]）では、`dev` `inv` とも、6 回の新しいセッション（6R → 論点出し → 判断と承認 → 工程 → 工程 → 終える）を、依頼「続きです。次は <工程> まで。」だけで、同じ観点（置き場、範囲、記録、裏取り）で進められた。引き継ぎの正本は `ai/docs/log.md`（現在状態と次）・`ai/docs/decisions.md`（判断）・`ai/work/plan/`（6R、論点）の 3 つで、会話の記憶には頼らない。守ること:
 
 - 成果物名は 6R の時点で **Project 名と同じ**に決める（`ai/out/<Project 名>/`。`csvinfo` のような別名にしない。`room close` が渡すのはこの名前の下だけ）。6R の「変更先の洗い出し」も、type の構成要素（上の表）の名前で書く（`inv` に `src/` は無い。試験用のスクリプトは `ai/work/scripts/`、根拠の出力は `findings/`）。`report.md` は `ai/out/<Project 名>/` の下に置く（`ai/out/` 直下に置かない）。
 - 6R を承認（`status: 正式`）したあとは、6R を書き換えない（書き換えると次の `room start` が `仮` に戻す）。進捗は `ai/docs/log.md`、判断は `decisions.md` に書く。
@@ -140,7 +140,7 @@ README 本文（目的、成果物、計画へのリンク。雛形は `template
 - Area が無い題材のときの、Area の作り方（基準: 終わりのない責任領域か）。
 - 上限（Project 3件、Area 5件）の見直し。
 - Project の構造（type は2種 `dev` `inv`、`ai/work/` の下書きの分離）の実測。`inv` と、`dev` の構成要素（`env/`、`tests/` だけ）は叩き台で、実測が無い。
-- `target:` の書式と、`ai/in/target/` に置くものの一覧(`room-type-consolidation` の `docs/log.md` の Open Questions)。
+- `target:` の書式と、`ai/in/target/` に置くものの一覧(決定は `docs/decisions.md` の「room-type-consolidation の決定」の項（2026-11-06）)。
 
 ## 閉じた Project の引き継ぎ（機能追加・改訂など、過去の資産を使う再作業）
 

@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-06（トピック room-type-consolidation を閉じた）
+- ユーザーの依頼で閉じた。手順は `topics/close-procedure.md`。マウント残りの様子見（期日 11-13）は、移したはずの直下の `due.md` に無かった。ユーザーが「完了で消えている。反映もれ」と確認したので、項目は立てない。
+- 経緯の要約: 10-24 type を `dev` と `inv` に集約。10-31 deploy key・cwd 案 A・works の再定義。11-01〜02 Vault の 2 分割（保留→正式化→実装）、`target:`。11-04 `inv` を工程別にし、Quarto と Marp 既定を部屋の道具に。11-05 eg2 と組み合わせ試験。11-06 分割して進める試験（6 回）と、清書の形式を明示した追試。
+- 移したもの: 決定は `decisions.md` の同日の項。測定は `logbook/` の 5 本、再実行の手順は `workflow-kit/room/room-split-test-procedure.md`（ユーザー「今後もこのような実施ができると助かる」）。検討の過程、依頼文、古い試験スクリプトは削除（git に残る）。外の言及（`project-structure.md`、lessons、guides、`office-output-types` の決定、`topics-index.md`）を直した。
+- 点検: `--check-aging` の失敗 1 件（`user-thinking-habits.md` が budget 超過 32.1KB > 32KB）は、この作業の前からある。
+
 ### 2026-11-06（トピック ooxml-clean を閉じた）
 - ユーザーの依頼で閉じた。手順は `topics/close-procedure.md`。NA 1（mask/restore 削除で書き換えた文書の第三者確認、期日 11-13）は直下の `log.md` に移した。
 - 経緯の要約: 10-26 消したシートが xlsx に残り AI に見えた → 残り方の整理と方式 A（点検と掃除）。10-27 PC1 の実 xlsx で残り 20 件 → 0 件。10-28 Excel で警告なし（共有文字列の番号の範囲外を修正）、`check` に `unseen-text`。10-29 プロファイル standard / strict。11-02 pptx は読ませる用途に割り切り `pptxtext.py`。11-03 `exceltext.py`、`room clean`（strict）、`pull` 廃止、語のマスクを必須から外す。11-04 テナント ID・ラベル ID の掃除、Project の決定を Area へ上げる経路。11-05 実機確認、一本化の見送り。11-06 `mask` / `restore` と `_noai/final/` の削除。

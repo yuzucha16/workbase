@@ -14,7 +14,6 @@ updated: 2026-10-30
 
 | トピック | 型 | 窓口 | あなた待ち |
 |---|---|---|---|
-| `room-type-consolidation/` | Project（room の type を `dev` と `inv` に集約。type の考え方を記載済み。実測待ち） | [[room-type-consolidation-start-here]] | 0 |
 | `office-output-types/` | Project（Excel・PowerPoint になる成果物の出力の境界線とルール。基準文書の雛形あり。PC1 の実物との突き合わせ待ち） | [[office-output-types-start-here]] | 0 |
 | `revealjs-slides/` | Project（社内の勉強会・LT 向け簡易スライド。Quarto → revealjs の図解レイアウトを出力の型にして育てる。立ち上げ中） | [[revealjs-slides-start-here]] | 0 |
 | `token-cap/` | Project（職場の月次上限 2億トークンに向けたトークン削減の見直し。最優先。PC1 の集計待ち） | [[token-cap-start-here]] | 3 |
