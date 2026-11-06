@@ -4,22 +4,14 @@
 
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
-| 2026-11-13 | 単発 | token-cap NA 8（起票 11-06）: 応答 21 以上の依頼の分析。依頼ごとのツール名の内訳を出すスクリプトを作り、7 件の session（`topics/token-cap/records/2026-11-06-pc1-room-effect.md` の 7）で PC1 に実行してもらう。探索型か試行錯誤型かを仕分け、対策を決める | ユーザー（PC1） |
 | 2026-11-08 | 定例 | weekly の振り返り（7日周期、日曜。材料は `topics/kit-growth/records/`）。仮決めの期限切れを数える | ユーザー |
 | 2026-11-08 | 単発 | 索引（triggers）の引き当て率の初回: `python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。語の足し方か出し方を決める。あわせて部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）への備え（短い札の禁止、完全一致の書き方、現状維持）を決める。現状（誤爆する）は単体テスト `test_substring_match_false_positive_is_current_behavior` で固定してあり、方針を変えるときはこのテストも直す。あわせて、旧 `md-link-graph` の積み残し 2 件: ① 上限 30 語で誤爆が増えていないか、取りこぼしは `triggers:` に語を足す案にする、② S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は付けない方針のまま届かなければ見直す。`logbook/` を `--triggers` の対象にするかの判断もこの結果の後（旧 `logbook-design` NA 3）。構造の点検（循環・階層・複雑度）は `review` の入力 9 | ユーザー（AI が実行） |
 | 2026-11-09 | 単発 | log の Next Actions 2（11-03 から延期。room-type-consolidation などで成果物の周辺を整えてから。11-01 ユーザー）: PC2 で `verify.bat` と `verify.ps1` を 1 回ずつ（`docs/alignment-baseline.md`。未決は `release` の束ね先。起票 10-25）。旧 `hook-room-alignment` の同じ項目はここに統合。見るもの: uv の取得、文字コード、y/n と日本語のひとこと。最初の失敗が原因の台帳（`script-guide.md`）の初めての使用になる | ユーザー（実機） |
 | 2026-11-11 | 単発 | 振り返り（改善4）に計画を入力として足す案の判断 | ユーザー |
 | 2026-11-13 | 単発 | log の NA 3（11-04 に due へ移した。ユーザー）: 論点出しの型 v4 の実作業での確認（起票 11-03）: 決定メモを貼った作業セッションで、手戻りが減ったかを見る。作業セッション側のフィードバック（inbox の「未選別」）が届いたら、型に反映するか `review` で選別する。実機・実案件でしか確かめられない。 | ユーザー |
-| 2026-11-30 | 単発 | ooxml-clean: `room mask` / `restore` の削除は、使ってみてから決める(2026-11-03、ユーザー。単体スクリプト化はしない) | ユーザー |
-| 2026-11-13 | 単発 | office-output-types NA 2: PC1 で入力 2〜3 種類の見出し・列名だけで定義表の行を書く（実機） | ユーザー（PC1） |
-| 2026-11-13 | 単発 | room-type-consolidation: `room start` の後にマウントが残る件の様子見(1 週間。起票 11-06、ユーザー)。期日までに再発したら、`room-log.md` に記録されたつかむプロセスで原因を決める(Zed が原因なら `room/README.md` か `ai-room-lifecycle.md` に「止まったら Zed を再起動」と書く。`umount` の案内文に足すかも決める)。再発しなければ、`unmount()` の再試行(1 秒おき 10 回)と記録の追加で close。残っている `sample_inv` `sample_inveg1` のマウントは `room umount --area myenv` で外す | ユーザー |
-| 2026-11-14 | 単発 | office-output-types NA 3: 雛形を `exmem/lessons/` に昇格するか（11-13 の実機の後） | ユーザー |
-| 2026-11-14 | 単発 | token-cap OQ: Zed の System tools が 9.0k → 9.9k に増えた原因（実機の Zed） | ユーザー（実機） |
 | 2026-11-15 | 単発 | 旧 `logbook-design` NA 1: 実機でしか確かめられない畳み候補。room の確認 4 項（マウントの可視性、プリンタ設定、マスクから復元までの通し、pptx。元は room の OQ だが、トピック側では 11-06 時点で OQ なし。この行が唯一の置き場）と、obsidian-vault-backup の NA 2 項（WSL の張り直し〔`GHQ_ROOT` は WSL の中で確認〕、`vault-backup.bat`）。実機の機会がなければ、項ごとに「畳む（OQ/NA を閉じる）」か「延期」かを決める | ユーザー |
 | 2026-11-15 | 単発 | 旧 `logbook-design` NA 5: 追記の型 (b)（OQ・NA を本体に 1 つ）が、その後の lessons 追記で守られているか確かめる。既存ファイルの直しは `review 消化` で。守られていれば取り下げ | AI（`review 消化` で） |
 | 2026-11-16 | 単発 | `mdrank.py` の値が下がった理由（元は直下 log の OQ。11-01 は 1 位 24/40、上位 5 件 35/40。10-30 は 25/40、35/40。場面の一覧か `triggers:` の変更の影響と見ているが未調査。引当率は母数が 42 件から 1383 件に変わり、単純には比べられない）。次の `review` の入力 9 で前回と比べる | AI（`review` で） |
-| 2026-11-17 | 単発 | office-output-types OQ: 型を足す順とテキストを共通の受け渡しにする案の当否、取得層の切り出し | ユーザー |
-| 2026-11-18 | 単発 | office-output-types NA 7: Quarto の見た目を社内の雛形に合わせる 7 段の手順を、匿名化した雛形で試験し確定する | AI（ユーザーが実物で確認） |
 | 2026-11-29 | 単発 | `plan` は実務で3回使うまで試験運用（`decisions.md` の 2026-10-25）。使った回数: 0（10-29 時点）。3回に達していれば試験運用を閉じる判断、未達なら続ける（monthly で確認） | ユーザー |
 | 2026-11-29 | 定例 | monthly の振り返り（28日周期、日曜）。R-2026-10-25-02 の検証もここで | ユーザー |
 | 2026-11-29 | 単発 | 旧 `logbook-design` NA 2・4: (a) `--check-aging` の FAIL 1 件（`logbook/user-thinking-habits.md` が budget 32KB を 40 バイト超過）を圧縮か budget の付け直しで決める。(b) 週次の記録（`kit-growth/records/`）を 1 回手で畳む試行（置き場は変えない）。月次の振り返りと同時 | ユーザー |

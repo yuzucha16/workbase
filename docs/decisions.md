@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】トピック固有の期日は、直下の `docs/due.md` に置かず、トピックの `docs/due.md` に置く（2026-11-06）
+- 根拠: ユーザー「topics/ 配下の期限付き next action が due に行くと結構見づらくなるし、二重管理にもなっていて煩雑」「topics は topics/ の中で管理する形にしたい」。
+- 決めたこと: 直下の `due.md` は kit 全体の項目だけにする。トピック固有の行は `topics/<名>/docs/due.md` へ移した（token-cap 2、office-output-types 4、ooxml-clean 1、room-type-consolidation 1）。`review 消化` は元々、対象の単位の `due.md` を読むので、手順の変更は不要。2026-10-29（置き場）と 2026-11-01（期日の既定）のうち、置き場の部分を置き換える。起票から 1 週間の既定は残る。
+- 影響: 2026-11-01 の割り付けの規則（1 日あたりの上限など）は、トピックをまたいで見渡せなくなる。必要なら `review 消化` で各トピックの `due.md` を見て調整する。
+- 反映先: `topics/AGENTS.md`、`workflow-kit/wrap-hook.md`。
+
 ### 【room】`close` は、成果物が Project 名のフォルダ以外にあると警告する（2026-11-05）
 - 決めたこと（ユーザー）: NA 9 の案 2。`ai/out/` 直下に Project 名・`deliverable/`・`stock/` 以外のフォルダがあれば、`close` が警告して `[y/N]`（非対話では止まる）。
 - 却下案: 案 1（案内で強く言うだけ。約 5 回に 1 回の取りこぼしを防げない）、案 3（塊が 1 つなら名前を問わず渡す。意図しないものを Area に渡しうる）。
