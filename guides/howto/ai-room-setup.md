@@ -1,6 +1,7 @@
 ---
 type: howto
 title: AI 作業部屋 導入手順
+triggers: [作業部屋, 導入, セットアップ, WSL, room mkworks, 隔離]
 tags:
   - setup
   - security

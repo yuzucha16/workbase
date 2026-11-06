@@ -1,6 +1,7 @@
 ---
 type: howto
 title: マスクした資料の要約を出す（復元しない）
+triggers: [マスク, 要約, 復元しない, room, mask]
 tags:
   - security
   - tool/wsl

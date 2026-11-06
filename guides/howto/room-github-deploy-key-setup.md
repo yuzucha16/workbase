@@ -1,6 +1,7 @@
 ---
 type: howto
 title: room から非公開リポジトリを読む（読み取り専用 deploy key）
+triggers: [deploy key, 非公開リポジトリ, ssh, GitHub, room, 読み取り専用]
 tags:
   - setup
   - security

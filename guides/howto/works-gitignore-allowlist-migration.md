@@ -1,6 +1,7 @@
 ---
 type: howto
 title: 既存の works を許可リスト方式の .gitignore に移す（Python の版の変更とまとめて取り込む）
+triggers: [許可リスト, .gitignore, allowlist, works 移行, git rm --cached, Python の版]
 tags:
   - setup
   - windows

@@ -1,6 +1,7 @@
 ---
 type: howto
 title: Area の中の Project の一生（room とフックの全体像）
+triggers: [room, ライフサイクル, Project の一生, 6R, 論点出し, plan, brief, wrap, room open, room close, 合言葉, フック, 全体像]
 tags:
   - workflow
   - tool/wsl

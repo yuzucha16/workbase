@@ -1,6 +1,7 @@
 ---
 type: howto
 title: AWS Bedrock 開通手順（個人アカウントから「こんにちは」まで）
+triggers: [Bedrock, AWS, 開通, こんにちは, モデルアクセス]
 tags:
   - setup
   - tool/aws

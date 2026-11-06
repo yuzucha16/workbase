@@ -105,4 +105,5 @@ H2 の見出しは名前だけにする（括弧の注記を付けない）。�
 4. 上の「記録」の表に行を足す・消す。
 5. `hook-matrix.md` の列（フック名）と、各行の値、字数を更新する。章や方針を変えたときも同じ。
 6. 改善の受け皿（`docs/decisions.md`）に1行足す（`improvements.md` は凍結）。
-7. `pwsh -NoProfile -File tools/check-hook-outline.ps1`（`pwsh` が無い環境は `python tools/check_hook_outline.py`）を実行する。1〜4 のうち、表の過不足、章立て、冒頭の定型、記録の表の行、`hook-matrix.md` の列は、ここで漏れが分かる。
+7. フックの順や使い方を書いた howto（`guides/howto/`）に、足す・消すフックの反映と `triggers:` の語を足す（howto は triggers 索引の対象。`python -I workflow-kit/tools/find_knowledge.py --check-triggers` で欠けを見る）。
+8. `pwsh -NoProfile -File tools/check-hook-outline.ps1`（`pwsh` が無い環境は `python tools/check_hook_outline.py`）を実行する。1〜4 のうち、表の過不足、章立て、冒頭の定型、記録の表の行、`hook-matrix.md` の列は、ここで漏れが分かる。

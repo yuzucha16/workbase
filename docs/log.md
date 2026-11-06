@@ -26,7 +26,7 @@
 
 ## Next Actions
 
-5. **`guides/howto/` を triggers 索引の対象にするか、ライフサイクルの繋がりを明示する大局案を決める（起票 11-04）**: `ai-room-lifecycle.md` の前半の順（6R → 論点出し）は、`find_knowledge.py --triggers` に出ず、`brief` との紐づけも無かったため、文書の修正が横展開で漏れた。案: ① `guides/howto/` を索引の走査対象にする、② 前半の順の正本を 1 か所（`hooks.md` の連鎖）に置き、howto は指すだけにする、③ 新しいフックを足すときの点検（`hook-common.md` の「フックを足す・消すとき」）に、howto と triggers の確認を足す。別セッションで扱う（ユーザー）。
+なし。
 
 期日のある項目は `due.md`。
 

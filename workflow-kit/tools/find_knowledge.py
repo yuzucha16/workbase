@@ -112,7 +112,7 @@ TRIGGERS_MAX = 30
 
 def trigger_sources(repo):
     """(ラベル, ディレクトリ) の一覧。inbox は未統合のメモ（README を除く）。"""
-    return [("lessons", repo / "exmem" / "lessons"), ("explain", repo / "guides" / "explain"), ("inbox", repo / "exmem" / "inbox")]
+    return [("lessons", repo / "exmem" / "lessons"), ("explain", repo / "guides" / "explain"), ("howto", repo / "guides" / "howto"), ("inbox", repo / "exmem" / "inbox")]
 
 
 def read_triggers(path):

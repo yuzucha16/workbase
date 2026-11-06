@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-06（review 消化: NA 5 を閉じる）
+- NA 5（howto を triggers 索引の対象にする大局案）を閉じた。ユーザー「2は閉じる。3はここで確認。1は実施したい」。② は 36ae508 と hooks.md の連鎖で済み。① `find_knowledge.py` の走査対象に `guides/howto` を足し、howto 10 本に `triggers:` を付けた（`--triggers` で `ai-room-lifecycle.md` が出る。`--check-triggers` fail=0、単体テスト 33 件 OK）。③ `hook-common.md` の「フックを足す・消すとき」に手順 7 を足した。
+
 ### 2026-11-06（承認プロセスが動かない件の調査と、kit・規則の案の経路）
 - 依頼: 「review 消化で承認プロセスが動かない。ルール追加で omit されたのか」。調べた結果、規則は残っており、待ち行列（Open Questions）が空だった。原因の見立て: `wrap` の報告で kit・規則の昇格の案の承認を求めており、待ち行列を通っていなかった。
 - ユーザーの決定: kit・規則の案は `wrap` の報告に出さず、直下の Open Questions に置いて `review 消化` で承認する。トピックで出たものも直下に置く。過去分は移さない。`wrap-hook.md`・`review-hook.md`・`decisions.md` を直した（`8cf83ea`、`f04b823`）。

@@ -1,6 +1,7 @@
 ---
 type: howto
 title: AI 作業部屋 実例（手作業版）
+triggers: [作業部屋, 手作業, wsl --import, room 手作業, 実例]
 tags:
   - setup
   - security

@@ -1,6 +1,7 @@
 ---
 type: howto
 title: xlsx・pptx を AI に渡す前に点検・掃除する（cleankit の手順書）
+triggers: [cleankit, xlsx, pptx, ooxml, 掃除, 点検, Excel, PowerPoint, 渡す前]
 tags:
   - security
   - office

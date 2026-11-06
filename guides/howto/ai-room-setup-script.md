@@ -1,6 +1,7 @@
 ---
 type: howto
 title: AI 作業部屋 実例（スクリプト版 room.py）
+triggers: [作業部屋, room.py, room mkworks, room open, room start, スクリプト版, 実例]
 tags:
   - setup
   - security

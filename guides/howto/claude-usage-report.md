@@ -1,6 +1,7 @@
 ---
 type: howto
 title: Claude Code の使用量を週次・月次で振り返る（usage_report）
+triggers: [usage_report, 使用量, 週次, 月次, トークン, 振り返り]
 tags:
   - ai/claude
   - windows
