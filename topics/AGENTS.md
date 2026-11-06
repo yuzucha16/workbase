@@ -6,6 +6,21 @@
 
 `workflow-kit/docs-rules.md` の「上の階層で起動して…」の節（24 行付近の 3 行。`offset` 24・`limit` 5 で読む。Grep と全文読みはしない）に従う。トピックでの差分は、窓口が `*-start-here.md`（無ければ `*-handover.md`）であることと、`notes/` は必要なときだけ読むこと。
 
+## データの置き場（正本。2026-11-06 ユーザーの承認）
+
+`topics/` は Project 型のトピックだけを置く。kit 全体のものは直下の `docs/`、トピック固有のものはトピックの `docs/` に置く。`wrap` は作業した単位に書き、`review 消化` は作業した単位と直下を読む。
+
+| 種類 | 置き場 | `wrap` の書き先 | `review 消化` の読み先 |
+|---|---|---|---|
+| トピック固有の Next Actions、Open Questions、期日 | `topics/<名>/docs/log.md`、`due.md` | 作業した単位 | 作業した単位 |
+| トピック固有の decisions、経緯 | `topics/<名>/docs/decisions.md`、`log-history.md` | 作業した単位 | 検索のみ |
+| kit 全体の Next Actions、期日 | 直下の `docs/log.md`、`due.md` | 直下 | 直下 |
+| kit・規則の変更案（トピックで出たものも） | 直下の `docs/log.md` の Open Questions | 直下 | 直下 |
+| kit に効く決定（`【汎用】`） | 直下の `docs/decisions.md` | 直下（トピックの決定を運ぶかは未決） | 検索のみ |
+| 測ったこと、kit の改善の印象 | 直下の `docs/records/`、`docs/inbox.md` | 直下 | `review` の入力 1 |
+| 知識への昇格の案 | 報告に 1 行 | 報告 | なし |
+
+未決（NA 6）: 閉じるトピックに残った期日の扱い、トピックの `【汎用】` 決定を直下へ運ぶか、トピックをまたぐ期日の割り付け。
 ## 書くとき
 
 - 窓口は `workflow-kit/templates/topic/start-here.template.md` から作る。
