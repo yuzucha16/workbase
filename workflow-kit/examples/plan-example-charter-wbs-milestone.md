@@ -45,7 +45,7 @@ updated: 2026-10-28
   1.3.2 works 側の雛形（Area の会議録の置き場、org の項目）（条件付き）     置き場: works 側（このリポジトリの外）。人が反映する
   1.3.3 整合（索引、hook-matrix、methods.md など。1.3.1 に応じて）         置き場: 各ファイル
  1.4 動作確認
-  1.4.1 通し試験（実例1件 → 下書き → 承認 → Area。マスクして ai/in に渡す写しも） 置き場: 結果の数字は topics/private-knowledge/records/private-knowledge-checks.md に足す（実データは works 側）。やり方の品質チェックにあたる場合だけ topics/kit-growth/records/ に足す
+  1.4.1 通し試験（実例1件 → 下書き → 承認 → Area。マスクして ai/in に渡す写しも） 置き場: 結果の数字は topics/private-knowledge/records/private-knowledge-checks.md に足す（実データは works 側）。やり方の品質チェックにあたる場合だけ docs/records/ に足す
   1.4.2 check-hook-outline の実行結果（1.3.1 を変えたときだけ。1.4.1 の親にまとめる）
 2 プロジェクトマネジメント
  2.1 憲章

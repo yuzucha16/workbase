@@ -144,7 +144,7 @@ sources:
 
 ### 改善の受け皿は `improvements.md` 1つ（2026-10-04。撤回・置換済み）
 
-- `improvements.md` は 2026-10-15 に凍結し、受け皿は `topics/kit-growth/` に移った。
+- `improvements.md` は 2026-10-15 に凍結し、受け皿は `topics/kit-growth/` に移った（2026-11-06 に `docs/records/` と `docs/inbox.md` へ移して `topics/kit-growth/` は無くなった）。
 
 ### 校正の3原則を、共通機能の README に常設する（2026-10-04。ユーザーの指示）
 
