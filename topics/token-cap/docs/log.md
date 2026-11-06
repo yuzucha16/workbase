@@ -4,26 +4,22 @@
 
 ## 状態
 
-- 上限は月 2億トークン。勤務先の表示は 26 日で 90%。キャッシュ読みを含む数かは確認しない（ee の決定 10-27）。切る目安は「作業の区切り、または 100k」。
-- PC1 room の日ごと: 10-26 23.7M → 10-27 以降 約 7M。【仮 〜11-29】仕組みの効果とみなす（ee の見立て 10-29。作業量の裏づけなし）。土台 17.9k（Windows 側 27.8k）。60k 超はトークンの 74%（`records/2026-10-29-pc1-room-effect-and-requests.md`）。
-- 依頼別の応答数: 平均 6.3、中央値 5。room では wrap 4.6、continue 10.8（トークンの 13%）、other の 101 文字以上が 74 件・41.3M。トークンの 76% は会話の途中の依頼（最初の依頼は応答 2 倍だが 24%）。Windows 側は `records/2026-10-28-requests-by-kind.md`。
-- 傾向分析の骨子は `records/2026-10-27-trend-skeleton.md`（伸びの要因: Read 45%、書き込み 23%、Grep 10%）。room の 107k は判定済み（`records/2026-10-29-room-107k-judgment.md`）。
-- 用語（ee と合意 10-28）: セッション = 会話、依頼 = テキスト入力から出力まで、応答 = モデルへの 1 回の呼び出し（並列は 1）。
-- Zed の Context 表示は直近の応答 1 回の入力の大きさ（10-29 確定）。費用の内訳（Sonnet 5.5 の定価で計算、この会話 13 応答）は、キャッシュ書き込みが 64%、読みが 23%、出力が 14%。大きなファイル・スキルを 1 回読む書き込みが 1 応答で会話の費用の約 4 割になった。Zed の Cost とは 20% 以内で合う（`records/2026-10-29-zed-cost-check.md`）。勤務先の上限がキャッシュ読みを数えるかは未確認のまま（ee の決定 10-27）。
-- 全文読みの縮小（NA 5 の (d)）: 上位 3 本、`docs-rules.md`、`stock-hook.md` は縮小・分割済み（10-29。大きさは `records/2026-10-29-repeat-reads-2.md`）。効果の再測定は 11-05 で、`docs/due.md` に移した（ee の決定 10-29）。次に多い全文読み（`token-cap-start-here.md` 22 回、各トピックの `docs/log.md`）は小さく、優先度は低い。
-- 相談の型の費用（10-29 測定）: 型の有無で事実集めの量は同じ。同じ 12 応答で型ありが +16.9%（差の大半は `decisions.md` を探す読みと、記録・push の規則書。`records/2026-10-29-consultation-pattern-cost.md`）。本文は `exmem/lessons/consultation-pattern.md` に移した。応答ごとの表は `decompose_session.py --steps --upto N`。
-- 測定スクリプト 3 本（`requests_by_kind.py`、`repeat_reads.py`、`decompose_session.py`）は `workflow-kit/tools/` に移した（ee の決定 10-29。`topics/` は room にコピーされないため）。今後の token-cap のスクリプトも `workflow-kit/tools/` に作る。
-- 効果確認（11-05）: PC2 Windows 側を測った（`records/2026-11-05-pc2-windows-effect.md`）。1 件あたりのトークンは 574k → 323〜384k、ピーク平均 89k → 55〜65k（100k 運用の効果）。全文読みは log・commit-push-rules・docs-rules で縮小、stock-hook・hook-common は変わらず、wrap-hook は 5.9KB → 8.3KB に増えて 1 回あたりが上がった。wrap の応答 8.2 → 6.7。AGENTS.md の 2 行と integrate は判定保留。continue の応答が 4.9 → 7.8 に増加。方針（ee 11-05）: 測るのは主戦場のみ（PC1 = room、PC2 = Windows。反対側は除外）。`--since` は 10-27（100k 運用）と 10-30（10-29 の縮小）の 2 通り。PC1 は 11-06。due.md の更新と次の縮小候補の判断は、PC1 の後（ee の決定）。
-- continue の増加の原因（11-05）: 範囲の曖昧さではなく、11-03 以降に実装＋実機試験（Quarto、WSL での複数回の試験）の重い作業が continue で増えたため。長い 3 件は最初の依頼に範囲を書いており、ピークも 50〜77k（`records/2026-11-05-continue-growth-cause.md`）。
-- 効果確認 PC1 room（11-06。`records/2026-11-06-pc1-room-effect.md`）: ピーク 86k → 51〜58k（100k 運用の効果）だが、1 件のトークンは 436k → 371k〜420k（−4〜15%）。応答が 5.8 → 6.8〜7.8 に増えたため。応答の中央値は 5 で不変、21 以上の 6 件（7.5%）がトークンの 42%。トークンの 63〜66% は会話の最初の依頼（10-29 の記録では途中が 76%。100k 運用で途中の文脈が抑えられたと推定）。全文読みの縮小は PC1 では読みが小さく判定不能（Read の大半が 0 文字。画像の可能性は未確認）。応答数を減らす施策の優先は上げない（ee 11-06）。測定の期日項目（全文読み・wrap-hook・AGENTS.md 2 行・integrate）は閉じた。`due.md` から外した。
-- 応答 21 以上の尾（11-06 NA 8 close。`records/2026-11-06-pc1-room-effect.md` の 8）: 7 件は Bash が応答の 87%。PC1 の全期間でも Bash 89%、Edit・Write は計 29 回（使える設定だが使われない）。1 応答 1 Bash の直列が原因で、`AGENTS.md` に「読みの Bash は連結する」を足した（11-06 ee）。効果は次回の `requests_by_kind.py`（PC1 に期日は足さない）。
-- ツールの理解ガイド（11-06 NA 10 close）: `exmem/inbox/2026-11-06-claude-code-tools-explain.md`（未追跡。別セッションで integrate する。ee の指示）。専用ツールは本体の関数で、Bash はシェル。トークンには直列の回数が効く。
-- 解説は `guides/explain/claude-code-cost-session-size.md`。
+- 上限は月 2億トークン。勤務先の表示は 26 日で 90%。キャッシュ読みを含む数かは確認しない（ee 10-27）。切る目安は「作業の区切り、または 100k」（100k 維持。ee 11-01）。
+- 用語（ee 10-28）: セッション = 会話、依頼 = テキスト入力から出力まで、応答 = モデルへの 1 回の呼び出し（並列は 1）。
+- 効果確認（`records/2026-11-05-pc2-windows-effect.md`、`records/2026-11-06-pc1-room-effect.md`）: PC2 は 1 件 574k → 323〜384k、ピーク 89k → 55〜65k。PC1 room はピーク 86k → 51〜58k、1 件 436k → 371〜420k（−4〜15%。応答が 5.8 → 6.8〜7.8 に増えた）。応答の中央値は 5 で不変、21 以上の 6 件（7.5%）がトークンの 42%。測定の期日項目は閉じた。測るのは主戦場のみ（PC1 = room、PC2 = Windows。ee 11-05）。
+- 応答 21 以上の尾（NA 8）: Bash の直列が原因で、`AGENTS.md` に「読みの Bash は連結する」を足した（11-06）。効果は次回の `requests_by_kind.py`（PC1 に期日は足さない）。
+- continue の増加は重い作業が原因（`records/2026-11-05-continue-growth-cause.md`）。全文読みの縮小は 10-29 に済み（`records/2026-10-29-repeat-reads-2.md`）。
+- 費用の内訳（`records/2026-10-29-zed-cost-check.md`）: キャッシュ書き込み 64%、読み 23%、出力 14%。大きなファイル・スキルを 1 回読む書き込みで 1 応答が会話の費用の約 4 割。解説は `guides/explain/claude-code-cost-session-size.md`。
+- そのほかの記録: 傾向 `records/2026-10-27-trend-skeleton.md`、room の 107k `records/2026-10-29-room-107k-judgment.md`、相談の型の費用（+16.9%）`exmem/lessons/consultation-pattern.md`。
+- 測定スクリプトは `workflow-kit/tools/`（`requests_by_kind.py`、`repeat_reads.py`、`decompose_session.py`、`subagent_cost.py`）。今後のスクリプトもここに作る。
+- ツールの理解ガイド（NA 10 close）: `exmem/inbox/2026-11-06-claude-code-tools-explain.md`（未追跡。別セッションで integrate する。ee の指示）。
 
 ## Next Actions
 
-期日つきの測定（11-10: 全文読みの縮小、wrap-hook の見直し、AGENTS.md の 2 行。11-11: integrate の上限の効果）は `docs/due.md` に移した（ee 10-30）。優先度（ee 承認 10-30）: 高 = 5 の (c)(d)(e)（反映済み）の効果・wrap-hook の効果（いずれも期日か次の会話待ち）。中 = 6・integrate の効果。低 = 4・5 の (b)(g)(h)（(b) は 10-30 の測定で下げた。ee の決定）。
-5. 【11-06 ee 決定: (b)(g)(h) の優先は上げない】**応答数を減らす（第一の角度。`docs/decisions.md`）**。手段（効く順の案）: (b) 【11-05 優先を下げる候補】continue の増加は重い作業が原因で、範囲を強制する仕組みは効かない。PC1 の結果で最終判断（ee）。出力の型を応答数の多い依頼へ広げる（room は wrap が 4.6 と小さく、continue と other が先）。既存の 8 本は、文書を作る依頼（調査・計画・改善・振り返り）の章立て。重い other は、マクロ作業の途中の 101-300 文字・コードブロックなしの依頼で、型の対象が違う。continue は最初の依頼でトークン 13% と小さい。ee の回答（10-29）: (1) 依頼は細かく書いている（入力・出力ファイルの場所・構成・使い方、目的、チェックしたい項目）ので、(f) の余地は小さい。(2) 探索の読みは効いている（入力ミスの補正、追加提案）。いつかはマクロ作成作業を型にしたい。文字コード・スクリプトのナレッジは `exmem/lessons/excel-vba-ai-development.md` に揃っており、今後も使える。【10-30 方向決定】マクロ作業の型は `topics/office-output-types/` に引き継いだ（Excel 集約の基準文書の雛形と、人・AI・コードの分担。弱い点は同トピックの Open Questions に積んだ）。効果は PC1 で 1 回回した後に、応答数と 1 件のトークンで測る。この (b) には continue と other の一般の型だけを残す。【11-02 着手】優先は (g) 項目の移し替えのスクリプト化 → 書き込み先を探す読みの削減 → (h) → (b) → (f) → (i)。`workflow-kit/tools/na_apply.py`（close / due-up）と `docs-write-rules.md` を入れた（`docs/decisions.md` の同日の項）。効果は、承認・close・omit のまとめ返答の応答数（15.1）と読み（約 13 回）を、11-05 の測定で見る。【10-30 測定】Windows 側の other 長い依頼は、マクロでなく kit 保守。応答 10 以上の 25 件（32.0M）の 15 件は「承認・close・omit の複数項目をまとめた返答」で、これが型の対象の候補（`records/2026-10-30-other-long-requests-breakdown.md`）。応答は読み 43%・書き 35%。項目あたりのトークンは、まとめるほど下がる（4 項目以上は 1 項目の約半分）ので、まとめ依頼は続けてよく、型の優先は下がる。減らす手は書き込み先の整理（二重管理の解消）。 (f) 場所・ゴール・完了条件を依頼に書く（`guides/quickref/ai-work-prompts.md`）。 (g) 機械的な処理はスクリプトで 1 回にする（型の設計と重なる）。 (h) 探索を別エージェントに任せる効果を実測する（(c)(e) の結果を見てから）。 (i) 聞き返しを減らす。注意: 1 応答で大量に読むと逆効果。「応答数 × 文脈の大きさ」の積で見る。
+期日つきの測定（11-10: 全文読みの縮小、wrap-hook の見直し、AGENTS.md の 2 行。11-11: integrate の上限の効果）は `docs/due.md` に移した（ee 10-30）。優先度（ee 承認 10-30）: 高 = 5 の (c)(d)(e)（反映済み）の効果・wrap-hook の効果（いずれも期日か次の会話待ち）。中 = 6・integrate の効果。低 = 4。5 は手段ごとに分解済み（g > h > b > i。下の 5 に優先を書いた）。
+5. **応答数を減らす（第一の角度。`docs/decisions.md`）**。元の長文は `records/2026-11-06-na5-original-text.md`。11-06 に手段ごとに分解し、5f を close、5i を omit した（`docs/log-history.md`）。残りの優先は g > h。注意: 1 応答で大量に読むと逆効果。「応答数 × 文脈の大きさ」の積で見る。
+   - 5g 【優先: 高。仕込み済み・効果測定待ち。期日 11-13】機械的な処理（承認・close・omit のまとめ返答）を `workflow-kit/tools/na_apply.py` で 1 回にする（11-02 導入。`docs-write-rules.md`）。測定の仕込みは 11-06 に `requests_by_kind.py` へ足した（出力の末尾に「まとめ返答」の群別表: na_apply あり / なし。CSV に `bulk` `na` 列）。見る数字: 応答数（基準 15.1）、ツール数、トークン。11-06 時点: あり 13 件・応答 13.1・ツール 17.8、なし 47 件・応答 7.6・ツール 10.2（11-02 以降）。ただし「あり」は close を行う会話に偏るので単純比較できない。11-13 に `--since 2026-11-07` で再実行し、あり・なしの差でなく「あり」の応答数が 15.1 から下がったかで判断する。
+   - 5h 【優先: 中。方針決定済み・試用待ち。期日 11-13】探索を別エージェントに任せる効果。方針（ee 11-06）: 既存の subagent は screening 用の 10 会話だけで探索の例がない（`subagent_cost.py`: 本体 32.4M に対し subagent 1.9M = 6%）。通常運用の規則は変えない。ee が探索の重い依頼（調査・決定の検索など）の依頼文に「探索は subagent に任せてよい」と書いた日を試用とし、`subagent_cost.py` で本体と subagent の合計、`requests_by_kind.py` で本体の応答数・トークンを見る。比べる相手は同じ種類の subagent なしの依頼。試用の機会が来るまで待つ（足すものはない）。
 
 ## Open Questions
 

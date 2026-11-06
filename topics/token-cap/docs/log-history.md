@@ -2,6 +2,31 @@
 
 ## Log
 
+### 2026-11-06（token-cap NA 5 の分解と log.md の整理）
+- 依頼: 「na5 が長文なので解体する」「5g は効果測定の手段を仕込む」「5h は方針決めまで」「5i は omit」「5f は close」「log-history への移行もこのセッションで」。
+- close（5f）: 完了条件を依頼に書く。10-29 の A/B（調べて答える題材 2 回、作業型 1 回）で応答数が下限に張り付き、差が出ず打ち切り済み（`docs/decisions.md` 10-29）。ee は依頼を細かく書いており余地も小さい。
+- omit（5i）: 聞き返しを減らす。ee の指示（具体案がなかった）。
+- 5g: `requests_by_kind.py` に「まとめ返答」の群別表（na_apply あり / なし）を足した。5h: 方針を決めた（`docs/decisions.md` 同日）。`subagent_cost.py` を新設。
+- 移行: log.md の「状態」欄の旧文面（下）を移し、log.md は要点に縮めた。NA 5 の元の文面は `records/2026-11-06-na5-original-text.md`。
+
+#### 移した旧文面（状態欄、2026-11-06 時点）
+
+- 上限は月 2億トークン。勤務先の表示は 26 日で 90%。キャッシュ読みを含む数かは確認しない（ee の決定 10-27）。切る目安は「作業の区切り、または 100k」。
+- PC1 room の日ごと: 10-26 23.7M → 10-27 以降 約 7M。【仮 〜11-29】仕組みの効果とみなす（ee の見立て 10-29。作業量の裏づけなし）。土台 17.9k（Windows 側 27.8k）。60k 超はトークンの 74%（`records/2026-10-29-pc1-room-effect-and-requests.md`）。
+- 依頼別の応答数: 平均 6.3、中央値 5。room では wrap 4.6、continue 10.8（トークンの 13%）、other の 101 文字以上が 74 件・41.3M。トークンの 76% は会話の途中の依頼（最初の依頼は応答 2 倍だが 24%）。Windows 側は `records/2026-10-28-requests-by-kind.md`。
+- 傾向分析の骨子は `records/2026-10-27-trend-skeleton.md`（伸びの要因: Read 45%、書き込み 23%、Grep 10%）。room の 107k は判定済み（`records/2026-10-29-room-107k-judgment.md`）。
+- 用語（ee と合意 10-28）: セッション = 会話、依頼 = テキスト入力から出力まで、応答 = モデルへの 1 回の呼び出し（並列は 1）。
+- Zed の Context 表示は直近の応答 1 回の入力の大きさ（10-29 確定）。費用の内訳（Sonnet 5.5 の定価で計算、この会話 13 応答）は、キャッシュ書き込みが 64%、読みが 23%、出力が 14%。大きなファイル・スキルを 1 回読む書き込みが 1 応答で会話の費用の約 4 割になった。Zed の Cost とは 20% 以内で合う（`records/2026-10-29-zed-cost-check.md`）。勤務先の上限がキャッシュ読みを数えるかは未確認のまま（ee の決定 10-27）。
+- 全文読みの縮小（NA 5 の (d)）: 上位 3 本、`docs-rules.md`、`stock-hook.md` は縮小・分割済み（10-29。大きさは `records/2026-10-29-repeat-reads-2.md`）。効果の再測定は 11-05 で、`docs/due.md` に移した（ee の決定 10-29）。次に多い全文読み（`token-cap-start-here.md` 22 回、各トピックの `docs/log.md`）は小さく、優先度は低い。
+- 相談の型の費用（10-29 測定）: 型の有無で事実集めの量は同じ。同じ 12 応答で型ありが +16.9%（差の大半は `decisions.md` を探す読みと、記録・push の規則書。`records/2026-10-29-consultation-pattern-cost.md`）。本文は `exmem/lessons/consultation-pattern.md` に移した。応答ごとの表は `decompose_session.py --steps --upto N`。
+- 測定スクリプト 3 本（`requests_by_kind.py`、`repeat_reads.py`、`decompose_session.py`）は `workflow-kit/tools/` に移した（ee の決定 10-29。`topics/` は room にコピーされないため）。今後の token-cap のスクリプトも `workflow-kit/tools/` に作る。
+- 効果確認（11-05）: PC2 Windows 側を測った（`records/2026-11-05-pc2-windows-effect.md`）。1 件あたりのトークンは 574k → 323〜384k、ピーク平均 89k → 55〜65k（100k 運用の効果）。全文読みは log・commit-push-rules・docs-rules で縮小、stock-hook・hook-common は変わらず、wrap-hook は 5.9KB → 8.3KB に増えて 1 回あたりが上がった。wrap の応答 8.2 → 6.7。AGENTS.md の 2 行と integrate は判定保留。continue の応答が 4.9 → 7.8 に増加。方針（ee 11-05）: 測るのは主戦場のみ（PC1 = room、PC2 = Windows。反対側は除外）。`--since` は 10-27（100k 運用）と 10-30（10-29 の縮小）の 2 通り。PC1 は 11-06。due.md の更新と次の縮小候補の判断は、PC1 の後（ee の決定）。
+- continue の増加の原因（11-05）: 範囲の曖昧さではなく、11-03 以降に実装＋実機試験（Quarto、WSL での複数回の試験）の重い作業が continue で増えたため。長い 3 件は最初の依頼に範囲を書いており、ピークも 50〜77k（`records/2026-11-05-continue-growth-cause.md`）。
+- 効果確認 PC1 room（11-06。`records/2026-11-06-pc1-room-effect.md`）: ピーク 86k → 51〜58k（100k 運用の効果）だが、1 件のトークンは 436k → 371k〜420k（−4〜15%）。応答が 5.8 → 6.8〜7.8 に増えたため。応答の中央値は 5 で不変、21 以上の 6 件（7.5%）がトークンの 42%。トークンの 63〜66% は会話の最初の依頼（10-29 の記録では途中が 76%。100k 運用で途中の文脈が抑えられたと推定）。全文読みの縮小は PC1 では読みが小さく判定不能（Read の大半が 0 文字。画像の可能性は未確認）。応答数を減らす施策の優先は上げない（ee 11-06）。測定の期日項目（全文読み・wrap-hook・AGENTS.md 2 行・integrate）は閉じた。`due.md` から外した。
+- 応答 21 以上の尾（11-06 NA 8 close。`records/2026-11-06-pc1-room-effect.md` の 8）: 7 件は Bash が応答の 87%。PC1 の全期間でも Bash 89%、Edit・Write は計 29 回（使える設定だが使われない）。1 応答 1 Bash の直列が原因で、`AGENTS.md` に「読みの Bash は連結する」を足した（11-06 ee）。効果は次回の `requests_by_kind.py`（PC1 に期日は足さない）。
+- ツールの理解ガイド（11-06 NA 10 close）: `exmem/inbox/2026-11-06-claude-code-tools-explain.md`（未追跡。別セッションで integrate する。ee の指示）。専用ツールは本体の関数で、Bash はシェル。トークンには直列の回数が効く。
+- 解説は `guides/explain/claude-code-cost-session-size.md`。
+
 ### 2026-11-06（token-cap NA 10 を閉じた）
 - done（NA10）: ツールの理解ガイドを xmem/inbox/2026-11-06-claude-code-tools-explain.md（kind: explain、未追跡のまま。ee の指示で別セッションが integrate する）に作った。Read・Grep・Glob・Edit・Write・Bash・Agent の役割、専用ツールと Bash の違い（本体の関数か、シェルか）、token-cap の経緯と今後の見通しを含む。ee が「理解できた」と言い、close。
 
@@ -130,4 +155,4 @@
 - 2026-10-28（brief の引数を絞るか）: Next Actions 6 の机上の部分を進めた。引数つき `brief` の開始時の読み込みは 約 7k でなく 17〜24k（`methods.md` 全文とやり方のノートまで読むため）と測り、出力の型だけなら 1 型 0.5〜2k と分かった（`691c5a4`、`records/2026-10-28-brief-mode-load.md`）。ee は「振り返りだけで試す」を選び、`retrospective-method-output` と `-2-output` に切り出して、依頼の語を型のノートへ移した（`a9a6c5c`。`decisions.md` に記録）。索引の部分一致は「振り返って」に当たらないため、語は語幹（`振り返`）にした。
 
 - 2026-10-29（全文読みの縮小・応答数の規則）: ee の承認で、`stock-hook.md` から例外の扱いを `stock-exceptions.md` に分けた（19.2KB → 17.8KB。小さめ）。NA 1 の再測定を `docs/due.md` の 11-05 に移し、NA 3（マクロ側の常駐文書）は月変わりでリセットされるため省いた。NA 5 の (b) は、重い other がマクロ作業の途中の細かい依頼（入力・出力・目的を明示）で、探索の読みも効いていると ee が回答。型にするのは token-cap の方向が出てから（手戻り防止）。(c)(e) を `AGENTS.md` に 2 行で入れた。後回しの項目に「優先度低」を付けた。wrap。
-- 2026-11-06（NA 6: 出力の型の試用）: 「型を最新の 10 本に」「直す案は 1 採用、2 外す、3 OK、4 10 本に揃える」「PC1 は不要、PC2 の試験だけで十分」「数件、cap_meter まで」。誤爆 3 件（調べて・週次・CA）を直して解消し、claude -p で 4 件（振り返り・計画・論点出し・調べてまとめ）を実行して測った。全件が型どおりの章立てで、開始時の大きさは 32〜41k（土台 24k）。論点出し（16KB）が最大のため NA 9 を起票。NA 6 を close。ecords/2026-11-06-output-types-trial-pc2.md。
+- 2026-11-06（NA 6: 出力の型の試用）: 「型を最新の 10 本に」「直す案は 1 採用、2 外す、3 OK、4 10 本に揃える」「PC1 は不要、PC2 の試験だけで十分」「数件、cap_meter まで」。誤爆 3 件（調べて・週次・CA）を直して解消し、claude -p で 4 件（振り返り・計画・論点出し・調べてまとめ）を実行して測った。全件が型どおりの章立てで、開始時の大きさは 32〜41k（土台 24k）。論点出し（16KB）が最大のため NA 9 を起票。NA 6 を close。ecords/2026-11-06-output-types-trial-pc2.md。

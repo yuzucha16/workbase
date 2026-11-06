@@ -13,6 +13,7 @@
     既定のディレクトリ = ~/.claude/projects/ の下のすべて。
 """
 import argparse
+import re
 import csv
 import json
 import statistics
@@ -33,6 +34,10 @@ KINDS = [
     ("plan", ("計画", "プラン")),
     ("continue", ("の続き", "続き")),
 ]
+
+
+# NA 5g の効果測定用: まとめ返答（承認・close・omit・NA 番号を含む依頼）の目印
+BULK = re.compile(r"close|omit|承認|\bna ?\d", re.I)
 
 
 def user_text(d):
@@ -78,7 +83,8 @@ def requests(path):
             cwd = (d.get("cwd") or "").replace("\\", "/").rstrip("/").rsplit("/", 1)[-1] or "?"
             cur = {"kind": kind_of(t), "chars": len(t), "ts": d.get("timestamp", ""),
                    "responses": 0, "tokens": 0, "peak": 0, "tools": 0,
-                   "cwd": cwd, "first": first, "code": "```" in t}
+                   "cwd": cwd, "first": first, "code": "```" in t,
+                   "bulk": bool(BULK.search(t)), "na": False}
             first = False
             continue
         if cur is None or d.get("isSidechain") or d.get("type") != "assistant":
@@ -91,6 +97,8 @@ def requests(path):
                 if bid not in seen:
                     seen.add(bid)
                     cur["tools"] += 1
+                    if "na_apply" in json.dumps(b.get("input") or {}, ensure_ascii=False):
+                        cur["na"] = True
         if key in seen:
             continue
         seen.add(key)
@@ -137,6 +145,21 @@ def detail(rows, tot_r, tot_t):
     print(f"== --detail: continue {len(cont)} 件")
     group_table("⑤ 会話の最初の依頼か（最初なら「続き」の起動の読みが入る）", cont, lambda q: "最初" if q["first"] else "途中", tot_r, tot_t)
     group_table("⑥ 全体: 会話の最初の依頼か（種類別でなく全依頼）", rows, lambda q: "最初" if q["first"] else "途中", tot_r, tot_t)
+
+
+def na_report(rows):
+    """NA 5g の効果測定: まとめ返答の依頼を、na_apply.py を使った群と使わない群に分けて比べる。"""
+    print()
+    print("まとめ返答（承認・close・omit・NA 番号を含む依頼）: 群 | 件数 | 応答 平均 | 中央値 | ツール平均 | トークンの合計")
+    for label, qs in (("na_apply あり", [q for q in rows if q["bulk"] and q["na"]]),
+                      ("na_apply なし", [q for q in rows if q["bulk"] and not q["na"]])):
+        if not qs:
+            print(f"{label} | 0")
+            continue
+        rr = [q["responses"] for q in qs]
+        tl = statistics.mean(q["tools"] for q in qs)
+        st = sum(q["tokens"] for q in qs) / 1e6
+        print(f"{label} | {len(qs)} | {statistics.mean(rr):.1f} | {statistics.median(rr):.0f} | {tl:.1f} | {st:.1f}M")
 
 
 def main():
@@ -187,14 +210,15 @@ def main():
         if qs:
             print(f"{lo}-{hi} | {len(qs)} | {statistics.mean(q['responses'] for q in qs):.1f} | "
                   f"{statistics.mean(q['tools'] for q in qs):.1f} | {sum(q['tokens'] for q in qs)/1e6:.1f}M")
+    na_report(rows)
     if a.detail:
         detail(rows, tot_r, tot_t)
     if a.csv:
         with open(a.csv, "w", newline="\n", encoding="utf-8") as f:
             w = csv.writer(f, lineterminator="\n")
-            w.writerow(["session", "ts", "kind", "chars", "responses", "tools", "peak", "tokens"])
+            w.writerow(["session", "ts", "kind", "chars", "responses", "tools", "peak", "tokens", "bulk", "na"])
             for q in rows:
-                w.writerow([q["session"], q["ts"], q["kind"], q["chars"], q["responses"], q["tools"], q["peak"], q["tokens"]])
+                w.writerow([q["session"], q["ts"], q["kind"], q["chars"], q["responses"], q["tools"], q["peak"], q["tokens"], int(q["bulk"]), int(q["na"])])
 
 
 if __name__ == "__main__":
