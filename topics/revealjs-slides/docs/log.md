@@ -13,7 +13,7 @@
 
 ## Next Actions
 
-- 【起票 11-06、期日 11-13】新しい部屋で `room init`（または `--only notosansjp`）を 1 回通し、Noto Sans JP が入ることを確かめる（11-06 は既存の room-myenv に root で手入れして確認済み）。担当: ユーザー（部屋の作り直し時）、AI。
+- 【起票 11-06、期日 11-13】新しい部屋で `room init`（または `--only notosansjp`）を 1 回通し、Noto Sans JP が入ることを確かめる（11-06 は既存の room-myenv に root で手入れして確認済み）。担当: ユーザー（部屋の作り直し時）、AI。11-06 AI 側は済み（`notosansjp` 段は `room.py` の `INIT_STEPS` にあり、`init` 関連の単体テスト 17 件が通る）。実機の確認は、ユーザーが別 PC で `room init <Area> --resume`（または `--only notosansjp`）を実行し、`fc-list | grep 'Noto Sans JP,'` で確かめる。
 - 【起票 11-06、期日 11-13】PC1 で実スライドを 1 本作る（題材は PC1 側。`gen_layouts.py` に JSON の仕様を渡す。型 D・E・F・G・H・I・J の適用、文字量、枠の削れの対処）。ここまで通れば完了条件。担当: ユーザー（PC1 で実行）、AI（PC1 のセッション）。作る中で出た型の不足は、このトピックに戻す。
 - 【起票 11-06、期日 11-13】PC1 の生成スクリプトがあれば、`gen_layouts.py` と見比べて足りない点を取り込む。担当: ユーザー（`room stock` で運ぶかを決める）、AI（見比べ）。
 - 【起票 11-06、期日 11-13】pptx レイアウトの残り: 階段（pptx の 9）と 3 要素（28）が H・I で足りるかを判断する。ほかの pptx が渡されたら、同じ手順で棚卸しする。担当: AI、ユーザー（pptx）。
