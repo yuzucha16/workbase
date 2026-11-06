@@ -70,7 +70,7 @@ Markdown（Quarto）から revealjs のスライドを作るとき、図解を�
 #### アイコン（/foundations/icon/）
 
 - DADS: 配置は 4 種（フロント、リード、テール、エンド）。
-- 現行: 自作 SVG 9 種を `revealjs-diagram-icons.html` に定義。札の左に置く（リード相当の 1 種だけ）。意味は資料全体で固定（Principles）。
+- 現行: 自作 SVG 9 種を `revealjs-diagram-icons.html` に、デジタル庁の素材（line 版）32 種を `revealjs-diagram-icons-dads.html` に定義（`build_dads_icons.py` で生成。色は currentColor に置換。出典は html の先頭コメント）。札の左に置く（リード相当の 1 種だけ）。意味は資料全体で固定（Principles）。
 - 状態: △ 配置は 1 種。─ DADS 素材（Material Symbols など）は、素材規約が未確認のため使わない。
 
 ### コンポーネント（DADS: /dads/components/。49 件）

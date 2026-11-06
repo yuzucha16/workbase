@@ -8,7 +8,7 @@
   python -I gen_layouts.py --spec spec.json -o out.qmd
 
 出力の qmd は、同じディレクトリの revealjs-diagram-theme.scss と
-revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所に置いて行う）。
+revealjs-diagram-icons.html と revealjs-diagram-icons-dads.html（デジタル庁の素材。build_dads_icons.py で作る）を読む（render は両ファイルを同じ場所に置いて行う）。
 
 型:
   箱の型  A 左右 / B 上左右+下全幅 / D 左一本+右2 / E 1ブロック / F 2x2 / G 上全幅+下左右
@@ -46,7 +46,9 @@ format:
     slide-number: true
     transition: none
     embed-resources: true
-    include-before-body: revealjs-diagram-icons.html
+    include-before-body:
+      - revealjs-diagram-icons.html
+      - revealjs-diagram-icons-dads.html
 ---
 """
 
