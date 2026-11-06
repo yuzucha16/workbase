@@ -7,13 +7,13 @@
 - 部品（`records/`）: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す）、`revealjs-diagram-layouts.qmd`（9 型。スクリプトの出力。手で直さず作り直す）、`revealjs-diagram-theme.scss`、`revealjs-diagram-icons.html`（アイコン定義。`include-before-body` で読む）、`2026-11-06-pptx-layout-inventory.md`（pptx 33 枚の棚卸し）。
 - 型は 9 つ: A・B・D・E・F・G に、pptx の例から H（行ラベル × 列）、I（工程 × 行。シェブロン）、J（表）を足した。表現の方針は「行・列の数が自由」と「余白の統一」（`--gap` `--pad`、高さ `--h`。11-06 ユーザーの決定）。
 - 検証（11-06）: 15 枚（表紙 + 14）を Windows（Quarto 1.11.9、Edge）で確認。room（`room-myenv`、Quarto 1.11.9、headless Chromium）でも 15 枚が render でき、I・J（3 枚）は Windows と同じ見え方（余白・右寄せ・ヘッダ色）。H は未目視、PC1 は未確認。
-- 文章化全体のルール（11-06 ユーザーの決定）: フォントは Noto Sans JP、階層ごとのインデント（`--ind`）。theme.scss に入れた。room では Noto Sans CJK JP で表示される（Noto Sans JP が無いための代替）。追加（11-06）: タイトルの下に半行の空き、図解・格子・表も 1 段右から始める。見本に型 T（見出し + 箇条書き。16 枚）を足し、room で目視した。実スライドは「下・右に余白を作らず、四方が等分」に作る（lesson に記載）。room に Noto Sans JP（variable TTF、`~/.local/share/fonts`）を入れた。fc-list には出るが、描画が Noto Sans JP に変わったかは未確認。
+- 文章化全体のルール（11-06 ユーザーの決定）: フォントは Noto Sans JP、階層ごとのインデント（`--ind`）。theme.scss に入れた。room では Noto Sans CJK JP で表示される（Noto Sans JP が無いための代替）。追加（11-06）: タイトルの下に半行の空き、図解・格子・表も 1 段右から始める。見本に型 T（見出し + 箇条書き。16 枚）を足し、room で目視した。実スライドは「下・右に余白を作らず、四方が等分」に作る（lesson に記載）。room に Noto Sans JP（variable TTF、`~/.local/share/fonts`）を入れた。`font-family` を Noto Sans JP だけにした render と Noto Sans CJK JP だけの render で画像が一致しないので、Noto Sans JP で描画されている（字形の差はごく小さい）。H（3行 × 2列）も room で崩れなし。
 - 実スライドは PC1 で作る（題材は PC1 側にある。11-06 ユーザーの発言）。PC1 は、このリポジトリを pull して `records/` の部品を使う。
 - 細部（フォント、手順書）は、ユーザーが見始めたら直す（11-06 決定）。
 
 ## Next Actions
 
-- 【起票 11-06、期日 11-13】room で H（s12 付近）を目視する。Noto Sans JP に描画が変わったかを確かめ、変わったなら `room init` への組み込み案を出す（取得元は google/fonts の `ofl/notosansjp`。kit の変更なので承認後）。担当: AI、ユーザー（承認）。
+- 【起票 11-06、期日 11-13】Noto Sans JP の `room init` への組み込み案を出す（room では動作確認済み）（取得元は google/fonts の `ofl/notosansjp`。kit の変更なので承認後）。担当: AI、ユーザー（承認）。
 - 【起票 11-06、期日 11-13】PC1 で実スライドを 1 本作る（題材は PC1 側。`gen_layouts.py` に JSON の仕様を渡す。型 D・E・F・G・H・I・J の適用、文字量、枠の削れの対処）。ここまで通れば完了条件。担当: ユーザー（PC1 で実行）、AI（PC1 のセッション）。作る中で出た型の不足は、このトピックに戻す。
 - 【起票 11-06、期日 11-13】PC1 の生成スクリプトがあれば、`gen_layouts.py` と見比べて足りない点を取り込む。担当: ユーザー（`room stock` で運ぶかを決める）、AI（見比べ）。
 - 【起票 11-06、期日 11-13】pptx レイアウトの残り: 階段（pptx の 9）と 3 要素（28）が H・I で足りるかを判断する。ほかの pptx が渡されたら、同じ手順で棚卸しする。担当: AI、ユーザー（pptx）。
