@@ -10,11 +10,9 @@
 - 基準の版: DADS v2.18.2（11-06）。`lessons/revealjs-diagram-layout-output.md` に DADS の章立て（基本デザイン・コンポーネント）で現行ルールと状態を記録済み。章立てはユーザー確認済み。版が上がったら突き合わせる。
 - 検証: Edge（Windows）で H・I・J・B を目視済み。H・I・J は Windows の Edge 以外（PC1 のブラウザ）でも問題なし（11-06）。room init の Noto Sans JP 段は実機で通した（11-06）。PC1 の生成スクリプトは `gen_layouts.py` に取り込み済み。room での新スタイルの描画も確認済み（11-06 ユーザー）。見出し・T の軽量化、h3 の 1 段インデント、箇条書き 2 段まで、タイトルの濃青の縦棒は反映・目視済み（11-06）。C は Edge で目視し、ユーザーが確定（11-06）。`side` の画像はキャプションつきを目視済み（11-06 ユーザー。`1.` 止め・SVG の `aria-label` も反映済み）。`split` に A〜G を半幅で置く場合、コードの色分けは未検証。表（H・J）のセルは上揃え（DADS の table/usage に合わせた。11-06 ユーザーが目視して確定。工程の帯 I の見出しだけ中央）。`table/usage`・`card/usage` は取得・反映済み（DADS の未取得は `accessibility` など）。
 
-- Excalidraw 試験（`records/excalidraw-trial/`。11-06 開始。方式 A = MCP なし）: `build_room_diagram.py` が仕様から `.excalidraw` と SVG を出す（SVG は自前の描画）。`.excalidraw` は Excalidraw で開いて崩れないことをユーザーが確認。SVG は T の `side.img`（alt・caption つき）で入れるのを標準にし、Edge で目視済み（ユーザー確認）。E の `fig`（インライン）は横長の図に不向き。経緯と次は同ディレクトリの `README.md`。
+- Excalidraw 試験（`records/excalidraw-trial/`。11-06 開始。方式 A = MCP なし）: `build_room_diagram.py` が仕様から `.excalidraw` と SVG を出す（SVG は自前の描画）。`.excalidraw` は Excalidraw で開いて崩れないことをユーザーが確認。SVG は T の `side.img`（alt・caption つき）で入れるのを標準にし、Edge で目視済み（ユーザー確認）。E の `fig`（インライン）は横長の図に不向き。方式 B（公式リモート MCP）は試して外した（11-06。ターミナルでは画像・ファイルが出ず成果物に使えない。MCP の常時分は 321 トークン。`decisions.md`）。経緯と次は同ディレクトリの `README.md`。
 
 ## Next Actions
-
-- 【起票 11-06、期日 11-13】Excalidraw の方式 B（公式リモート MCP `https://mcp.excalidraw.com`）を `claude mcp add --scope local` で試し、A と比べる。見る数字: `/context` の MCP 常時分の差、同じ図の依頼の応答数・トークン（`workflow-kit/tools/requests_by_kind.py`）、Claude Code（ターミナル）で図が使えるか（保存・書き出しの有無）。比べたら、入れたままにするか `claude mcp remove` で外すかを決める。担当: AI（実施）、ユーザー（試す・判断）。
 
 - 【起票 11-06、期日 11-13】room 図の半幅用の版: 文字を大きくした版（幅 680 ほど）を `build_room_diagram.py` の仕様から作れるようにし、実スライドに入れる。あわせて、道具に依存しない図解の型と Excalidraw 固有の手順を分けてナレッジ化する案（draw.io へ差し替えられる形。`stock` はユーザーが言ったとき）。担当: AI、ユーザー（目視）。
 

@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-06 Excalidraw の方式 B（公式リモート MCP）を試して外した（NA1 を閉じた）
+- 根拠: `records/excalidraw-trial/README.md` の「方式 B の結果」。同じ room 図を `read_me` 1 回 + `create_view` 1 回で描けたが、戻り値は `checkpointId` のみで、画像・`.excalidraw`・SVG は手元に出ない。revealjs には使えない。
+- 数字: `/context` で `create_view` 221、`read_me` 100 の計 321 トークン（ユーザーの計測）。`read_me` の返答は約 9KB（呼んだときだけ）。
+- 決定: ユーザーが外すと決め、`claude mcp remove excalidraw` を実行した（`claude mcp list` で消えたことを確認）。`decisions.md` に記録。
+- 残り: 応答数・トークンの `requests_by_kind.py` での比較は取らなかった（外すと決めたため不要）。
+
 ### 2026-11-06 Excalidraw を Claude 経由で使う試験を始めた（方式 A: MCP なし）
 - ユーザーの指示: 「excalidraw を claude 経由で操作したい。最終的にはスライドに挿入したり図解の道具にする。MCP 周りの追加トークンが分からないのでお試しで。revealjs とは別々に使いこなし、draw.io のような別の道具にもナレッジを使えるようにしたい」。選択は A（MCP なし）から、次に B（公式リモート MCP）、出力は SVG。お題は room の構造図（Windows と WSL の関係、マウント）。
 - 調べたこと: 公式 `excalidraw/excalidraw-mcp` はリモート `https://mcp.excalidraw.com` を勧め、チャット内の描画（MCP Apps）向け。ツール名・数、ファイル保存・書き出しの記載は README に無かった。コミュニティの作成系は 26〜42 ツールで `.excalidraw` 保存と SVG・PNG 書き出しがある（数は一覧ごとに違い、未確認）。
