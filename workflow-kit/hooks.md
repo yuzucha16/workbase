@@ -4,7 +4,8 @@
 
 | 合言葉 | 別名（日本語） | 読むファイル | 寿命・時機 | 要点 |
 |---|---|---|---|---|
-| `plan` | 「計画を立てて」<br>「論点出し」「課題設定」＝論点出しだけ | `plan-hook.md`（手順と欄は `plan-fields.md`） | Project の方向性を決めるとき（`room open` の直後。計画が無い・`仮`） | 6R → 論点出し → 憲章・WBS・マイルストーン（任意）を `ai/work/plan/` に作る。承認は人。`brief` が一度だけ勧める。小規模では使わなくてよい（2026-11-04） |
+| `plan` | 「計画を立てて」 | `plan-hook.md`（手順と欄は `plan-fields.md`） | Project の方向性を決めるとき（`room open` の直後。計画が無い・`仮`） | 6R → 論点出し → 憲章・WBS・マイルストーン（任意）を `ai/work/plan/` に作る。承認は人。`brief` が一度だけ勧める。小規模では使わなくてよい（2026-11-04） |
+| `frame` | 「論点出し」「課題設定」 | `frame-hook.md`（型は `exmem/lessons/issue-extraction-output.md`） | 作業の依頼の前（随時） | 論点だけを表にし、判断（決・任・後・確・聞）で決定メモにする。作業はしない。ファイルは書かない。合言葉の後ろの文が「私の入力」になる（2026-11-06 ユーザーの決定。プロンプトの貼り付けをやめるため） |
 | `brief` | 「作業を始めて」 | `brief-hook.md` | セッションの開始 | 開始インタビュー。引数は持たない（2026-10-28）。出力の型は依頼の言葉で引く |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push（許可リストにあれば）を、AI が順序を固定して行う。部屋では、部屋の git へのコミットまで（push はしない） |
 | `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。部屋では下書きまで（`ai/out/stock/`）で、人が `room stock` で運ぶ。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
@@ -40,6 +41,7 @@
 | フック | works | workbase | dotfiles | room |
 |---|---|---|---|---|
 | `plan` | rw | rw | rw | rw |
+| `frame` | r | r | r | r |
 | `brief` | rw | rw | rw | rw |
 | `wrap` | rw | rw | rw | rw（部屋の git にコミット。works へのコミットは人の `room start` の回収） |
 | `stock` | w | rw | w | w |

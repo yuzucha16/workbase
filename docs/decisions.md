@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】論点出しの型 v4 を本採用にし、合言葉 `frame` を足す（2026-11-06）
+- 根拠: ユーザー「pc1で複数回使いました。これは本採用にします」「プロンプトをコピペしているのは面倒」「brief/stock と同じように英単語版もほしい」。
+- 決めたこと: ① 型の試用を閉じる。② `frame`（別名「論点出し」「課題設定」）を `hooks.md` に足し、`frame-hook.md` が型のノートの「貼り付け用プロンプト」を読んで実行する（プロンプトの正本は lesson のまま。移さない）。③ 「論点出し」「課題設定」の別名を `plan` から `frame` へ移した（`plan` の手順 B は同じ型を使う）。④ 権限は全領域 r（ファイルを書かない）。
+- 却下案: プロンプトを別ファイルへ移す（正本が二つになる。読む量は `offset` で抑える）。クリップボード用スクリプト（dotfiles 側の物で、PC1 に制約を足す）。名前は `frame`（課題設定＝framing）。変えたければ改名できる。
+- 反映先: `workflow-kit/frame-hook.md` `hooks.md` `hook-common.md` `hook-matrix.md` `README.md` `plan-hook.md`、`guides/howto/ai-room-lifecycle.md`、`exmem/lessons/issue-extraction-output.md`、`docs/due.md`（11-13 の行を削除）。
+
 ### 【汎用】`plan` を本採用にする。README から 6R へ vault 根のパスでリンクする（2026-11-06）
 - 根拠: ユーザー「plan は実務で3回使うまで試験運用を pc1 でやりました」「試験運用は終わり、本採用にします」。2026-10-25 の「3回実施まで試験運用」の条件を満たした。
 - 決めたこと: ① `plan` の試験運用を閉じる。② Project の README ひな形の「計画」行を `[[projects/<Project 名>/ai/work/plan/6r|6R]]` にした。6R 未作成の間は未解決リンクになる（Obsidian で薄く表示。`plan` で 6R ができると繋がる）。`6r.md` は Project ごとにあるため、短い名前では別の Project に解決される。vault（works）の根からのパスで書く。

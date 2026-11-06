@@ -2,6 +2,9 @@
 
 ## Log
 
+### 2026-11-06（論点出しの型 v4 を本採用にし、合言葉 frame を足す）
+- ユーザーが PC1 で v4 を複数回使い、本採用にした（`due.md` 11-13 の「実作業での確認」を閉じた）。毎回の貼り付けをやめるため、英単語の合言葉 `frame`（別名「論点出し」「課題設定」）を `workflow-kit/frame-hook.md` に足した。プロンプトの正本は lesson のまま。権限は全領域 r。連鎖は `plan → frame → brief → wrap`（ユーザーの運用）。決定は `decisions.md` 同日。点検（`check-hook-outline`、`--check-triggers`）は通った。実機（PC1）で `frame` が読めるかは未確認。
+
 ### 2026-11-06（plan を本採用にし、README ひな形から 6R へリンク）
 - ユーザー: PC1 で `plan` を実務で3回使い終えたので、試験運用を閉じて本採用にする。README から `work/plan/` の 6R へ、未作成の状態でもリンクを張りたい。
 - 変更: `workflow-kit/templates/project/README.template.md` の「計画」行を vault 根からのパスの wikilink に（既存 Project の README は直さない。ユーザー）。`methods.md`、`exmem/lessons/planning-method.md` の「試験運用」を本採用に。`docs/due.md` の 11-29 の行（plan の試験運用の確認）を削除。`docs/decisions.md` に同日の項目。
