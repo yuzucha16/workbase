@@ -14,11 +14,17 @@
   先頭W前 = 最初の書き込みの前にあった応答の数（長い = 書く前の探索が長い）。
   型: 書込なし = W が 1 回も無い（実行・読みだけ）/ 探索 =先頭W前が応答の 40% 以上 / 試行錯誤 = W→X→W の往復（WX の切替）が 4 回以上 / 混合 = どちらでもない。
 
+各依頼の次の行に、Bash の集計を出す（2026-11-06 追加。書込なしの中身を見るため）。
+  bash先頭語 = 既知のコマンド名（git, python3, sed など）の回数。未知の語は other にまとめ、引数・本文は出さない。
+  書込風 = 書き込みらしい Bash の回数（リダイレクト、ヒアドキュメント、tee、sed -i）。
+  O = 種別 O のツール名と回数（mcp は R 扱いなので出ない）。
+
 使い方:
   python3 -I long_request_shape.py [--since 2026-10-27] [--min 21] [ディレクトリ...]
 """
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -48,7 +54,7 @@ def shape(path):
         if t is not None:
             if cur:
                 yield cur
-            cur = {"ts": d.get("timestamp", ""), "resp": []}
+            cur = {"ts": d.get("timestamp", ""), "resp": [], "words": {}, "writes": [0], "others": {}}
             order = {}
             first = False
             continue
@@ -67,8 +73,35 @@ def shape(path):
                 name = b.get("name", "")
                 s = SYM.get(name) or ("R" if name.startswith("mcp__") else "O")
                 order[key]["syms"].add(s)
+                if name in ("Bash", "PowerShell"):
+                    bash_words((b.get("input") or {}).get("command") or "", cur["words"], cur["writes"])
+                elif s == "O":
+                    cur["others"][name] = cur["others"].get(name, 0) + 1
     if cur:
         yield cur
+
+
+KNOWN = {
+    "git", "python", "python3", "uv", "sed", "awk", "cat", "echo", "printf", "grep", "rg", "find", "ls", "cd",
+    "head", "tail", "wc", "sort", "uniq", "cp", "mv", "rm", "mkdir", "touch", "tee", "diff", "curl", "jq",
+    "node", "npm", "bash", "sh", "test", "chmod", "date", "pwd", "cut", "tr", "xargs", "room", "gh",
+}
+WRITE_RE = re.compile(r"<<|\btee\b|\bsed\s+-[a-zA-Z]*i|(?<![0-9&>])>>?(?![&>])\s*(?!/dev/null)\S")
+
+
+def bash_words(cmd, words, writes):
+    """Bash 1 回分のコマンドから、既知コマンド名だけを数える（引数・本文は読み捨て。未知の語は other）。"""
+    if WRITE_RE.search(cmd):
+        writes[0] += 1
+    cmd = cmd.split("<<", 1)[0]
+    for seg in re.split(r"&&|\|\||[;|\n]", cmd):
+        toks = seg.split()
+        while toks and "=" in toks[0] and not toks[0].startswith(("-", "/")):
+            toks.pop(0)
+        if not toks:
+            continue
+        w = toks[0].rsplit("/", 1)[-1]
+        words[w if w in KNOWN else "other"] = words.get(w if w in KNOWN else "other", 0) + 1
 
 
 def letter(r):
@@ -100,6 +133,10 @@ def main():
                 cnt = " ".join(str(seq.count(c)) for c in "RWXAO.")
                 peak = max(x["n"] for x in q["resp"]) // 1000
                 print(f"{p.stem[:8]} {q['ts'][:10]} {n} {peak}k {before} | {cnt} | {kind} | {seq}")
+                top = sorted(q["words"].items(), key=lambda kv: -kv[1])
+                oth = " ".join(f"{k}={v}" for k, v in sorted(q["others"].items()))
+                print("  bash先頭語: " + (" ".join(f"{k}={v}" for k, v in top) or "なし")
+                      + f" | 書込風={q['writes'][0]}" + (f" | O={oth}" if oth else ""))
 
 
 if __name__ == "__main__":
