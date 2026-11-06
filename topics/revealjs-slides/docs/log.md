@@ -4,7 +4,7 @@
 
 ## 状態
 
-- 部品（`records/`）: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す）、`revealjs-diagram-layouts.qmd`（スクリプトの出力。手で直さず作り直す）、`revealjs-diagram-theme.scss`（DADS 反映済み）、`revealjs-diagram-icons.html`、`2026-11-06-pptx-layout-inventory.md`、`2026-11-06-layout-inventory.md`（型の棚卸しと提案 P1〜P3）、`2026-11-06-dads-summary.md`、`2026-11-06-dads-selection-table.md`、`build_dads_sample.py`（DADS 反映前後の見本を並べる。役目はほぼ終わり）、`build_lucide_icons.py`・`revealjs-diagram-icons-lucide.html`・`…-lucide-preview.html`・`lucide-LICENSE.txt`（Lucide 1.70.0 の 99 種。id は `lc-<名前>`。ISC）。`dads-sample/` と `ai-room-lt/` は一時扱いで未コミット（`ai-room-lt` は旧スタイルのまま。追わない）。
+- 部品（`records/`）: `gen_layouts.py`（生成スクリプト。型と文言から qmd を出す）、`revealjs-diagram-layouts.qmd`（スクリプトの出力。手で直さず作り直す）、`revealjs-diagram-theme.scss`（DADS 反映済み）、`revealjs-diagram-icons.html`、`2026-11-06-pptx-layout-inventory.md`、`2026-11-06-layout-inventory.md`（型の棚卸しと提案 P1〜P3）、`2026-11-06-dads-summary.md`、`2026-11-06-dads-selection-table.md`、`build_dads_sample.py`（DADS 反映前後の見本を並べる。役目はほぼ終わり）、`build_lucide_icons.py`・`revealjs-diagram-icons-lucide.html`・`…-lucide-preview.html`・`lucide-LICENSE.txt`（Lucide 1.70.0 の 99 種。id は `lc-<名前>`。ISC）、`build_devicon_icons.py`・`…-devicon.html`・`…-devicon-preview.html`・`devicon-LICENSE.txt`（Devicon の 49 種。単色の plain のみ。id は `dv-<名前>`。MIT。未組み込み）。`dads-sample/` と `ai-room-lt/` は一時扱いで未コミット（`ai-room-lt` は旧スタイルのまま。追わない）。
 - 型は 15 つ（A・B・C 目次・D・E・F・G・H・I・J・T、K ディレクトリ構造（`tree` の文字列 + Lucide のアイコン。フォルダは青・ファイルは灰。11-06 に Edge で目視、ユーザー確定）、DADS 部品の S 手順・L 説明リスト・N 注釈ブロック）に、組み合わせ `split`（2 つの型を左右に。表 + 箇条書き、図 + コードなど）。T は `side` で右にコード・画像を置ける。全型が `lead`/`notes` を持てる。仕様の正は `gen_layouts.py` の docstring。見た目は DADS 流の「背景なし・罫線だけ」（表・工程・箱。11-06 に図表の見た目は確定。`decisions.md`）。強調は薄青の地・太字・濃青の帯だけ。罫線は `#949494`（3:1）、箱の余白は px、箱の行高 1.5、字間は本文 2%・見出し 1%（11-06 反映。見本は目視済み）。
 - 行の高さは内容なりが既定（`height` 指定のときだけ下まで等分）。図表の上下に `lead`（上）と `notes`（下）でまとめ・総評を置ける。型と位置は AI が提案し、最終判断はユーザー。スライドの右上に**レイアウト番号**（例 `H+notes`）を出す（`--no-id` で消す）。無い形は近い型で代用して spec に `want` を書き、逐次作る（11-06 ユーザーの決定。`decisions.md`、台帳は `gen_layouts.py` の `LAYOUTS`）。
 - 基準の版: DADS v2.18.2（11-06）。`lessons/revealjs-diagram-layout-output.md` に DADS の章立て（基本デザイン・コンポーネント）で現行ルールと状態を記録済み。章立てはユーザー確認済み。版が上がったら突き合わせる。
@@ -14,11 +14,15 @@
 
 - 【起票 11-06、期日 11-20】型の棚卸し（`records/2026-11-06-layout-inventory.md`。重なり・管理・拡充の整理は済み）の残りの実装。P2（split を 3 部品まで）は需要が出てから（`want` に溜める）。`topics/office-output-types` と共通にできる構成を分ける。担当: AI、ユーザー（選択・目視）。
 
-- 【起票 11-06、期日 11-13】アイコン素材の出典の 1 行を、スライドの末尾に自動で入れる（11-06 ユーザーが「入れます」と決定）。デジタル庁の素材（利用規約 1-2: 加工して公表・利用するときは出典と加工内容を明示し、国が作ったかのように見せない）と Lucide（ISC: 著作権表示と許諾文を同梱。同梱は済み）の両方が対象。`gen_layouts.py` が、使ったアイコンの素材（`lc-` は Lucide、デジタル庁の素材名、自作は出さない）ごとに、末尾へ 1 行（例: 「アイコン: 『イラストレーション・アイコン素材』（デジタル庁）を元に色を変更して使用」「アイコン: Lucide（ISC License）」と URL）。担当: AI（実装）、ユーザー（文言と位置の目視）。
+- 【起票 11-06、期日 11-13】アイコン素材の出典の 1 行を、スライドの末尾に自動で入れる（11-06 ユーザーが「入れます」と決定）。デジタル庁の素材（利用規約 1-2: 加工して公表・利用するときは出典と加工内容を明示し、国が作ったかのように見せない）と Lucide（ISC）・Devicon（MIT。どちらも著作権表示と許諾文の同梱は済み。Devicon のロゴは各社の商標で、提携を示さない旨も添える）が対象。`gen_layouts.py` が、使ったアイコンの素材（`lc-` は Lucide、`dv-` は Devicon、デジタル庁の素材名、自作は出さない）ごとに、末尾へ 1 行（例: 「アイコン: 『イラストレーション・アイコン素材』（デジタル庁）を元に色を変更して使用」「アイコン: Lucide（ISC License）」と URL）。担当: AI（実装）、ユーザー（文言と位置の目視）。
 
 - 【起票 11-06、期日 11-13】K を、横幅 1/3〜1/4 の列に置けるようにする（ユーザーの予定: ディレクトリ構造は左右二分割だと余白が広くなる）。`split` の `cols`（例 `1fr 3fr`）で足りるか、`.tree-box` の `min-width: 55%` が邪魔しないか、右に説明（T・L・N）を置いた見え方を Edge で確かめ、必要なら K 用の `cols` の既定を足す。担当: AI、ユーザー（目視）。
 
+- 【起票 11-06、期日 11-13】Devicon（`dv-<名前>`）を `gen_layouts.py` に組み込む。ユーザーの決定: 使ったアイコンだけをデッキに埋め込む（全部入りは 73KB で重い）。札の `icon`・K の `[..]` で `dv-` を解決し、使った素材の symbol だけを `include-before-body` に入れる（Lucide・デジタル庁の素材も同じ方式にするかは実装時に決める）。担当: AI（実装）、ユーザー（目視）。
+
 ## Open Questions
+
+- Devicon（開発系 49 種、11-06）を足した。半分ほどに絞り、`line` 版（`c`・`rust` など）と、`plain` が無い `windows11`・`mysql`・`mariadb`・`pytorch`・`markdown` は入れていない。足すときは `build_devicon_icons.py` の `GROUPS` に名前を足して作り直す。
 
 - Lucide（開発系 99 種。`lc-<名前>`、札の `icon` と K の `[..]` で使う）を足した（11-06）。1.70.0 には `github`・`triangle-alert`・`trash-2`・`history` が無い（警告の三角形は無し。別名 `trash`・`undo-2`・`octagon-x`）。K の行間は広めだが、一旦このまま使う（ユーザー）。
 - アイコンは自作 9 種に、デジタル庁の素材（line 版・24px）から 32 種を足した（11-06。`records/revealjs-diagram-icons-dads.html`、作り直しは `build_dads_icons.py`。一覧を Edge で目視済み。意味の割り当てはスクリプトの `PICK`）。札の `icon` に素材名（例 `search`）を書けば使える。実スライドで足りるかは次の題材で見る。出典の明示は利用規約 1-2（加工した場合）。
