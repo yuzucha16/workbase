@@ -9,13 +9,10 @@ format:
     slide-number: true
     transition: none
     embed-resources: true
+    include-before-body: revealjs-diagram-icons.html
 ---
 
 ## A 左右二分割（比較）
-
-```{=html}
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-folder" viewBox="0 0 24 24"><path fill="currentColor" d="M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/></symbol><symbol id="i-actor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.5" fill="currentColor"/><path fill="currentColor" d="M3.5 22c0-5 3.8-8 8.5-8s8.5 3 8.5 8z"/></symbol><symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="3"/><path d="M5.6 18.4 18.4 5.6" stroke="currentColor" stroke-width="3"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="3"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="i-pc" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M8 21h8M12 16.5V21" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol><symbol id="i-room" viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v10H3z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><rect x="9.5" y="13" width="5" height="8" fill="currentColor"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></symbol><symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M3.5 21 20.5 3" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="11" rx="2" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.6"/></symbol></defs></svg>
-```
 
 ::: {.lay .lay-a}
 ::: {.cell .red}
@@ -25,7 +22,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="50" x2="88" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,50 88,43 88,57" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="80" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="50" x2="190" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,50 190,43 190,57" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -39,7 +36,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="50" x2="88" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,50 88,43 88,57" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="80" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="50" x2="190" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,50 190,43 190,57" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -47,6 +44,7 @@ format:
 :::
 :::
 :::
+
 
 ## B 上は左右・下は全幅
 
@@ -58,7 +56,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="50" x2="88" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,50 88,43 88,57" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="80" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="50" x2="190" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,50 190,43 190,57" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -75,7 +73,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="50" x2="88" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,50 88,43 88,57" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="80" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="50" x2="190" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,50 190,43 190,57" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -89,7 +87,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 570 92" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="178" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="91.0" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">項目 1</text><rect x="196" y="6" width="178" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="285.0" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">項目 2</text><rect x="390" y="6" width="178" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="479.0" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">項目 3</text></svg>
+<svg viewBox="0 0 570 92" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="90.8" height="72.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="47.4" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="96.8" y1="46.0" x2="104.8" y2="46.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="116.8,46.0 104.8,39.0 104.8,53.0" fill="#1f5fd1"/><rect x="120.8" y="10.0" width="90.8" height="72.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="166.2" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="215.6" y1="46.0" x2="223.6" y2="46.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="235.6,46.0 223.6,39.0 223.6,53.0" fill="#1f5fd1"/><rect x="239.6" y="10.0" width="90.8" height="72.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="285.0" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text><line x1="334.4" y1="46.0" x2="342.4" y2="46.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="354.4,46.0 342.4,39.0 342.4,53.0" fill="#1f5fd1"/><rect x="358.4" y="10.0" width="90.8" height="72.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="403.8" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">4</text><line x1="453.2" y1="46.0" x2="461.2" y2="46.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="473.2,46.0 461.2,39.0 461.2,53.0" fill="#1f5fd1"/><rect x="477.2" y="10.0" width="90.8" height="72.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="522.6" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">5</text></svg>
 ```
 :::
 ::: {.txt}
@@ -97,6 +95,7 @@ format:
 :::
 :::
 :::
+
 
 ## D 左は一本・右は2ブロック
 
@@ -108,7 +107,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 400" xmlns="http://www.w3.org/2000/svg"><rect x="40" y="10" width="200" height="90" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="140.0" y="62.0" font-size="20" text-anchor="middle" fill="#1f2933">入力</text><line x1="140" y1="104" x2="140" y2="136" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="140,148 133,136 147,136" fill="#1f5fd1"/><rect x="40" y="152" width="200" height="100" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="209.0" font-size="20" text-anchor="middle" fill="#1f2933">処理</text><line x1="140" y1="256" x2="140" y2="288" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="140,300 133,288 147,288" fill="#1f5fd1"/><rect x="40" y="304" width="200" height="90" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="140.0" y="356.0" font-size="20" text-anchor="middle" fill="#1f2933">出力</text></svg>
+<svg viewBox="0 0 280 400" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="2.0" width="276.0" height="113.3" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="140.0" y="65.7" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="140.0" y1="119.33333333333333" x2="140.0" y2="127.33333333333333" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="140.0,139.33333333333331 133.0,127.33333333333333 147.0,127.33333333333333" fill="#1f5fd1"/><rect x="2.0" y="143.3" width="276.0" height="113.3" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="207.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="140.0" y1="260.66666666666663" x2="140.0" y2="268.66666666666663" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="140.0,280.66666666666663 133.0,268.66666666666663 147.0,268.66666666666663" fill="#1f5fd1"/><rect x="2.0" y="284.7" width="276.0" height="113.3" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="140.0" y="348.3" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -122,7 +121,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="50" x2="88" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,50 88,43 88,57" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="80" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="50" x2="190" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,50 190,43 190,57" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -136,7 +135,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="50" x2="88" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,50 88,43 88,57" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="80" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="50" x2="190" y2="50" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,50 190,43 190,57" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="57" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -144,6 +143,7 @@ format:
 :::
 :::
 :::
+
 
 ## E 1スライド1ブロック（大きな図）
 
@@ -155,7 +155,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="20" width="200" height="100" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="110.0" y="77.0" font-size="26" text-anchor="middle" fill="#1f2933">ブロック 1</text><line x1="214" y1="70" x2="254" y2="70" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="266,70 254,63 254,77" fill="#1f5fd1"/><rect x="270" y="20" width="200" height="100" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="370.0" y="77.0" font-size="26" text-anchor="middle" fill="#1f2933">ブロック 2</text><line x1="474" y1="70" x2="514" y2="70" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="526,70 514,63 514,77" fill="#1f5fd1"/><rect x="530" y="20" width="210" height="100" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="635.0" y="77.0" font-size="26" text-anchor="middle" fill="#1f2933">ブロック 3</text><line x1="640" y1="124" x2="640" y2="184" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="640,196 633,184 647,184" fill="#1f5fd1"/><rect x="470" y="200" width="270" height="110" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="605.0" y="262.0" font-size="26" text-anchor="middle" fill="#1f2933">ブロック 4</text><line x1="466" y1="255" x2="312" y2="255" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="300,255 312,248 312,262" fill="#1f5fd1"/><rect x="10" y="200" width="285" height="110" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="152.5" y="262.0" font-size="26" text-anchor="middle" fill="#1f2933">ブロック 5</text></svg>
+<svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="86.0" y="172.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="174.0" y1="165.0" x2="182.0" y2="165.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="194.0,165.0 182.0,158.0 182.0,172.0" fill="#1f5fd1"/><rect x="198.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="282.0" y="172.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="370.0" y1="165.0" x2="378.0" y2="165.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="390.0,165.0 378.0,158.0 378.0,172.0" fill="#1f5fd1"/><rect x="394.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="478.0" y="172.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text><line x1="566.0" y1="165.0" x2="574.0" y2="165.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="586.0,165.0 574.0,158.0 574.0,172.0" fill="#1f5fd1"/><rect x="590.0" y="10.0" width="168.0" height="310.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="674.0" y="172.0" font-size="20" text-anchor="middle" fill="#1f2933">4</text></svg>
 ```
 :::
 ::: {.txt}
@@ -163,6 +163,7 @@ format:
 :::
 :::
 :::
+
 
 ## F 2×2（Z に読む）
 
@@ -174,7 +175,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="60" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="40" x2="88" y2="40" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,40 88,33 88,47" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="60" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="40" x2="190" y2="40" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,40 190,33 190,47" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="60" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -188,7 +189,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="60" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="40" x2="88" y2="40" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,40 88,33 88,47" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="60" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="40" x2="190" y2="40" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,40 190,33 190,47" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="60" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -202,7 +203,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="60" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="40" x2="88" y2="40" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,40 88,33 88,47" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="60" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="40" x2="190" y2="40" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,40 190,33 190,47" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="60" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -216,7 +217,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="60" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="40" x2="88" y2="40" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,40 88,33 88,47" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="60" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="40" x2="190" y2="40" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,40 190,33 190,47" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="60" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="47" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="50.0" x2="87.33333333333333" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,50.0 87.33333333333333,43.0 87.33333333333333,57.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="80.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="50.0" x2="188.66666666666666" y2="50.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,50.0 188.66666666666666,43.0 188.66666666666666,57.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="80.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="57.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -224,6 +225,7 @@ format:
 :::
 :::
 :::
+
 
 ## G 上は全幅・下は左右（全体→内訳）
 
@@ -235,7 +237,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 570 92" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="178" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="91.0" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">項目 1</text><line x1="184" y1="46" x2="182" y2="46" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="194,46 182,39 182,53" fill="#1f5fd1"/><rect x="196" y="6" width="178" height="80" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="285.0" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">項目 2</text><line x1="378" y1="46" x2="376" y2="46" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="388,46 376,39 376,53" fill="#1f5fd1"/><rect x="390" y="6" width="178" height="80" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="479.0" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">項目 3</text></svg>
+<svg viewBox="0 0 570 92" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="90.8" height="72.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="47.4" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="96.8" y1="46.0" x2="104.8" y2="46.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="116.8,46.0 104.8,39.0 104.8,53.0" fill="#1f5fd1"/><rect x="120.8" y="10.0" width="90.8" height="72.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="166.2" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="215.6" y1="46.0" x2="223.6" y2="46.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="235.6,46.0 223.6,39.0 223.6,53.0" fill="#1f5fd1"/><rect x="239.6" y="10.0" width="90.8" height="72.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="285.0" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text><line x1="334.4" y1="46.0" x2="342.4" y2="46.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="354.4,46.0 342.4,39.0 342.4,53.0" fill="#1f5fd1"/><rect x="358.4" y="10.0" width="90.8" height="72.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="403.8" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">4</text><line x1="453.2" y1="46.0" x2="461.2" y2="46.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="473.2,46.0 461.2,39.0 461.2,53.0" fill="#1f5fd1"/><rect x="477.2" y="10.0" width="90.8" height="72.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="522.6" y="53.0" font-size="20" text-anchor="middle" fill="#1f2933">5</text></svg>
 ```
 :::
 ::: {.txt}
@@ -249,7 +251,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="70" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="52" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="45" x2="88" y2="45" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,45 88,38 88,52" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="70" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="52" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="45" x2="190" y2="45" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,45 190,38 190,52" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="70" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="52" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="70.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="52.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="45.0" x2="87.33333333333333" y2="45.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,45.0 87.33333333333333,38.0 87.33333333333333,52.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="70.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="52.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="45.0" x2="188.66666666666666" y2="45.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,45.0 188.66666666666666,38.0 188.66666666666666,52.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="70.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="52.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -263,7 +265,7 @@ format:
 
 ::: {.fig}
 ```{=html}
-<svg viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="10" width="74" height="70" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="39.0" y="52" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="80" y1="45" x2="88" y2="45" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="100,45 88,38 88,52" fill="#1f5fd1"/><rect x="104" y="10" width="74" height="70" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="141.0" y="52" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="182" y1="45" x2="190" y2="45" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="202,45 190,38 190,52" fill="#1f5fd1"/><rect x="206" y="10" width="72" height="70" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="242.0" y="52" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
+<svg viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg"><rect x="2.0" y="10.0" width="73.3" height="70.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="38.7" y="52.0" font-size="20" text-anchor="middle" fill="#1f2933">1</text><line x1="79.33333333333333" y1="45.0" x2="87.33333333333333" y2="45.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="99.33333333333333,45.0 87.33333333333333,38.0 87.33333333333333,52.0" fill="#1f5fd1"/><rect x="103.3" y="10.0" width="73.3" height="70.0" rx="9" fill="#eaf1fd" stroke="#1f5fd1" stroke-width="3"/><text x="140.0" y="52.0" font-size="20" text-anchor="middle" fill="#1f2933">2</text><line x1="180.66666666666666" y1="45.0" x2="188.66666666666666" y2="45.0" stroke="#1f5fd1" stroke-width="3.5"/><polygon points="200.66666666666666,45.0 188.66666666666666,38.0 188.66666666666666,52.0" fill="#1f5fd1"/><rect x="204.7" y="10.0" width="73.3" height="70.0" rx="9" fill="#f3f4f6" stroke="#9aa5b1" stroke-width="2"/><text x="241.3" y="52.0" font-size="20" text-anchor="middle" fill="#1f2933">3</text></svg>
 ```
 :::
 ::: {.txt}
@@ -271,3 +273,149 @@ format:
 :::
 :::
 :::
+
+
+## H 行ラベル × 列（3行 × 2列）
+
+```{=html}
+<div class="mx has-label" style="grid-template-columns:var(--lw) 1fr 1fr;grid-template-rows:auto repeat(3,1fr);">
+<div class="corner"></div>
+<div class="h"><span>見出し A</span></div>
+<div class="h"><span>見出し B</span></div>
+<div class="rl"><span>行ラベル 1</span></div>
+<div class="c">本文は 1〜2 行で言い切る</div>
+<div class="c">本文は 1〜2 行で言い切る</div>
+<div class="rl"><span>行ラベル 2</span></div>
+<div class="c"><ul><li>項目を 3 つまで</li><li>短い名詞で</li><li>揃える</li></ul></div>
+<div class="c">本文は 1〜2 行で言い切る</div>
+<div class="rl"><span>行ラベル 3</span></div>
+<div class="c">本文は 1〜2 行で言い切る</div>
+<div class="c">本文は 1〜2 行で言い切る</div>
+</div>
+```
+
+
+## H 行ラベル × 列（5行 × 1列）
+
+```{=html}
+<div class="mx has-label" style="grid-template-columns:var(--lw) 1fr;grid-template-rows:repeat(5,1fr);">
+<div class="rl"><span>行ラベル 1</span></div>
+<div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
+<div class="rl"><span>行ラベル 2</span></div>
+<div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
+<div class="rl"><span>行ラベル 3</span></div>
+<div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
+<div class="rl"><span>行ラベル 4</span></div>
+<div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
+<div class="rl"><span>行ラベル 5</span></div>
+<div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
+</div>
+```
+
+
+## H 行ラベル × 列（4行 × 3列）
+
+```{=html}
+<div class="mx has-label" style="grid-template-columns:var(--lw) 1fr 1fr 1fr;grid-template-rows:auto repeat(4,1fr);">
+<div class="corner"></div>
+<div class="h"><span>列 1</span></div>
+<div class="h"><span>列 2</span></div>
+<div class="h"><span>列 3</span></div>
+<div class="rl"><span>行 1</span></div>
+<div class="c">短い文言</div>
+<div class="c">短い文言</div>
+<div class="c">短い文言</div>
+<div class="rl"><span>行 2</span></div>
+<div class="c">短い文言</div>
+<div class="c">短い文言</div>
+<div class="c">短い文言</div>
+<div class="rl"><span>行 3</span></div>
+<div class="c">短い文言</div>
+<div class="c">短い文言</div>
+<div class="c">短い文言</div>
+<div class="rl"><span>行 4</span></div>
+<div class="c">短い文言</div>
+<div class="c">短い文言</div>
+<div class="c">短い文言</div>
+</div>
+```
+
+
+## I 工程 × 行（4工程 × 2行）
+
+```{=html}
+<div class="mx chev has-label" style="grid-template-columns:var(--lw) 1fr 1fr 1fr 1fr;grid-template-rows:auto repeat(2,1fr);">
+<div class="corner"></div>
+<div class="h"><span>工程 1</span></div>
+<div class="h"><span>工程 2</span></div>
+<div class="h"><span>工程 3</span></div>
+<div class="h em"><span>工程 4</span></div>
+<div class="rl"><span>内容</span></div>
+<div class="c"><ul><li>入力 1</li><li>入力 2</li></ul></div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+<div class="c em">本文</div>
+<div class="rl"><span>ポイント</span></div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+<div class="c em"><ul><li>最後の工程</li><li>を強調する</li></ul></div>
+</div>
+```
+
+
+## I 工程 × 行（3工程 × 3行）
+
+```{=html}
+<div class="mx chev has-label" style="grid-template-columns:var(--lw) 1fr 1fr 1fr;grid-template-rows:auto repeat(3,1fr);">
+<div class="corner"></div>
+<div class="h"><span>入力</span></div>
+<div class="h"><span>処理</span></div>
+<div class="h"><span>出力</span></div>
+<div class="rl"><span>目的</span></div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+<div class="rl"><span>内容</span></div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+<div class="rl"><span>成果</span></div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+<div class="c">本文</div>
+</div>
+```
+
+
+## I 工程の流れだけ（5工程、ラベルなし）
+
+```{=html}
+<div class="mx chev" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr;grid-template-rows:auto repeat(1,1fr);--h:10em;">
+<div class="h"><span>工程 1</span></div>
+<div class="h"><span>工程 2</span></div>
+<div class="h"><span>工程 3</span></div>
+<div class="h"><span>工程 4</span></div>
+<div class="h"><span>工程 5</span></div>
+<div class="c">説明</div>
+<div class="c">説明</div>
+<div class="c">説明</div>
+<div class="c">説明</div>
+<div class="c">説明</div>
+</div>
+```
+
+
+## J 表（5行 × 3列 + 番号）
+
+```{=html}
+<table class="tb"><thead><tr><th class="no">#</th><th class="l">項目</th><th class="l">完了条件</th><th class="l">出力</th></tr></thead><tbody><tr><td class="no">1</td><td class="l">項目 1</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">2</td><td class="l">項目 2</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">3</td><td class="l">項目 3</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">4</td><td class="l">項目 4</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">5</td><td class="l">項目 5</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr></tbody></table>
+```
+
+
+## J 表（4行 × 4列、数値は右寄せ）
+
+```{=html}
+<table class="tb"><thead><tr><th class="l">指標</th><th class="r">今期</th><th class="r">前期</th><th class="r">増減</th></tr></thead><tbody><tr><td class="l">指標 A</td><td class="r">4,000</td><td class="r">4,000</td><td class="r">▲0.2%</td></tr><tr><td class="l">指標 B</td><td class="r">3,200</td><td class="r">3,100</td><td class="r">+3.2%</td></tr><tr><td class="l">指標 C</td><td class="r">1,800</td><td class="r">1,950</td><td class="r">▲7.7%</td></tr><tr><td class="l">指標 D</td><td class="r">920</td><td class="r">900</td><td class="r">+2.2%</td></tr></tbody></table>
+```
+

@@ -37,3 +37,33 @@
 .lay-f .cell { padding-top: 0.6em; padding-bottom: 0.4em; }
 .lay-g { grid-template-columns: 1fr 1fr; }
 .lay-g .wide { grid-column: 1 / -1; }
+
+/* H/I/J（行ラベル x 列 / 工程 x 行 / 表）。行・列の数は生成スクリプトが決める。
+   余白は --gap（セル間）と --pad（セルの内側）の 2 つに集約する。高さ --h を等分して、スライドの下を空けない。 */
+.mx, .tb { --gap: 0.5em; --pad: 0.7em 0.9em; --lw: 7.5em; --h: 18em; --navy: #1f5fd1; --ink: #1f2933; --mid: #52606d; --face: #f3f4f6; }
+.mx { display: grid; gap: var(--gap); height: var(--h); margin-top: 0.4em; font-size: 0.72em; line-height: 1.45; text-align: left; color: var(--ink); }
+.mx > div { min-width: 0; }
+.mx .h, .mx .rl { display: flex; align-items: center; padding: var(--pad); background: var(--navy); color: #fff; font-weight: 700; }
+.mx .rl { background: var(--mid); }
+.mx .c { padding: var(--pad); background: var(--face); border-radius: 4px; display: flex; flex-direction: column; justify-content: center; }
+.mx .c.em { background: #eaf1fd; box-shadow: inset 0 0 0 3px var(--navy); }
+.mx .h.em { background: #174aa3; }
+.mx .h { justify-content: center; text-align: center; }
+.mx ul { margin: 0; padding-left: 1.1em; }
+.mx li { margin: 0.1em 0; }
+/* 工程の見出しはシェブロン（右向きの帯）。列の間は --gap のまま詰めすぎない */
+.mx.chev .h { clip-path: polygon(0 0, calc(100% - 1.1em) 0, 100% 50%, calc(100% - 1.1em) 100%, 0 100%); padding-right: 1.6em; }
+.mx.chev .h.em { background: #174aa3; }
+
+.tb { width: 100%; height: var(--h); border-collapse: separate; border-spacing: 0 var(--gap); margin-top: 0; font-size: 0.72em; line-height: 1.45; text-align: left; }
+.tb th, .tb td { border: 0; vertical-align: middle; }
+.tb th { background: var(--navy); color: #fff; padding: var(--pad); font-weight: 700; }
+.tb td { background: var(--face); padding: var(--pad); color: var(--ink); }
+.tb th:first-child, .tb td:first-child { border-radius: 4px 0 0 4px; }
+.tb th:last-child, .tb td:last-child { border-radius: 0 4px 4px 0; }
+.tb .r { text-align: right; font-variant-numeric: tabular-nums; }
+.tb .no { width: 2.6em; text-align: center; background: #d9dee3; color: var(--ink); }
+.tb th.no { background: var(--mid); color: #fff; }
+.tb td + td, .tb th + th { border-left: 0.5em solid #fff; }.reveal .tb tr, .reveal .tb th, .reveal .tb td { border: 0 !important; }
+.reveal .tb td + td, .reveal .tb th + th { border-left: 0.5em solid #fff !important; }
+.reveal .tb td { border-bottom: 0.4em solid #fff !important; }
