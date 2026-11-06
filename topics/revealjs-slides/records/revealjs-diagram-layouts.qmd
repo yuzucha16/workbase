@@ -25,6 +25,29 @@ format:
 - 項目 B
 
 
+## T 文章・文字列・箇条書き（サンプル）
+
+### はじめに
+
+この見本は、段落と箇条書きが混ざったときの並びを確かめるためのダミーです。
+
+文の長さは、1 行に収まる程度から 2 行に折り返す程度まで混ぜています。
+
+
+### 進め方
+
+- 最初に目的を 1 文で決める
+  - 背景は短く、数字があれば添える
+    - 3 段目の例: 補足は最小限にする
+- 次に作業を 3 つ以内に分ける
+- 最後に確認する項目を並べる
+
+### メモ
+
+文字列の例: ABC-123 / 2026-11-06 / 12,345 円 / v1.2.3
+
+
+
 ## A 左右二分割（比較）
 
 ::: {.lay .lay-a}
@@ -308,28 +331,24 @@ format:
 ```
 
 
-## H 行ラベル × 列（5行 × 1列）
+## H 行ラベル × 列（3行 × 1列）
 
 ```{=html}
-<div class="mx has-label" style="grid-template-columns:var(--lw) 1fr;grid-template-rows:repeat(5,1fr);">
+<div class="mx has-label" style="grid-template-columns:var(--lw) 1fr;grid-template-rows:repeat(3,1fr);">
 <div class="rl"><span>行ラベル 1</span></div>
 <div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
 <div class="rl"><span>行ラベル 2</span></div>
 <div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
 <div class="rl"><span>行ラベル 3</span></div>
 <div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
-<div class="rl"><span>行ラベル 4</span></div>
-<div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
-<div class="rl"><span>行ラベル 5</span></div>
-<div class="c">帯の本文。行を増やすと、高さが等分に縮む</div>
 </div>
 ```
 
 
-## H 行ラベル × 列（4行 × 3列）
+## H 行ラベル × 列（3行 × 3列）
 
 ```{=html}
-<div class="mx has-label" style="grid-template-columns:var(--lw) 1fr 1fr 1fr;grid-template-rows:auto repeat(4,1fr);">
+<div class="mx has-label" style="grid-template-columns:var(--lw) 1fr 1fr 1fr;grid-template-rows:auto repeat(3,1fr);">
 <div class="corner"></div>
 <div class="h"><span>列 1</span></div>
 <div class="h"><span>列 2</span></div>
@@ -343,10 +362,6 @@ format:
 <div class="c">短い文言</div>
 <div class="c">短い文言</div>
 <div class="rl"><span>行 3</span></div>
-<div class="c">短い文言</div>
-<div class="c">短い文言</div>
-<div class="c">短い文言</div>
-<div class="rl"><span>行 4</span></div>
 <div class="c">短い文言</div>
 <div class="c">短い文言</div>
 <div class="c">短い文言</div>
@@ -419,10 +434,10 @@ format:
 ```
 
 
-## J 表（5行 × 3列 + 番号）
+## J 表（3行 × 3列 + 番号）
 
 ```{=html}
-<table class="tb"><thead><tr><th class="no">#</th><th class="l">項目</th><th class="l">完了条件</th><th class="l">出力</th></tr></thead><tbody><tr><td class="no">1</td><td class="l">項目 1</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">2</td><td class="l">項目 2</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">3</td><td class="l">項目 3</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">4</td><td class="l">項目 4</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">5</td><td class="l">項目 5</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr></tbody></table>
+<table class="tb"><thead><tr><th class="no">#</th><th class="l">項目</th><th class="l">完了条件</th><th class="l">出力</th></tr></thead><tbody><tr><td class="no">1</td><td class="l">項目 1</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">2</td><td class="l">項目 2</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr><tr><td class="no">3</td><td class="l">項目 3</td><td class="l">条件を 1 行で</td><td class="l">成果物の名前</td></tr></tbody></table>
 ```
 
 
