@@ -55,6 +55,7 @@ updated: 2026-10-21
 | `tool/chromium` | Chromium（headless での PDF 化・画像化。Playwright 版を含む） |
 | `tool/quarto` | Quarto（Markdown から revealjs・pptx などを作る） |
 | `tool/revealjs` | reveal.js（Quarto の revealjs 形式の HTML スライド） |
+| `tool/excalidraw` | Excalidraw（手描き風の作図。`.excalidraw` は JSON） |
 
 ### `ai/` — AIサービス・エージェント
 
@@ -112,3 +113,5 @@ updated: 2026-10-21
 | `python` | Python の実装・テスト |
 | `slides` | スライド資料（revealjs・pptx）の作り方・型 |
 | `diagram` | 図解・構造図の描き方・レイアウト |
+| `mcp` | MCP サーバー（接続・常時トークン・成果物の出方） |
+| `design-system` | デザインシステム（デジタル庁 DADS など）に沿った見た目の規則 |

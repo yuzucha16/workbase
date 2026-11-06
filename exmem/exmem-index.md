@@ -76,6 +76,8 @@ updated: 2026-10-16
 - [[research-procedure-output]]: 調査の出力の型2（手順書）: 実行できる手順書の章立てと作り方の Must。同上
 - [[planning-method-output]]: 計画の出力の型: 6R・憲章・成果物 WBS・マイルストーンの形と作り方の Must。同上
 - [[revealjs-diagram-layout-output]]: Quarto/revealjs スライドの出力の型（図解レイアウト）: 箱・札・6 型で、勉強会・LT 向けの簡易スライドを同じ型で返す（2026-11-06、土台）
+- [[ai-diagram-generation]]: AI に図を作らせる型（道具に依存しない原則）: 仕様を正本に、成果物が出るかで道具を選び、描画して目視する（2026-11-06）
+- [[excalidraw-ai-workflow]]: Excalidraw の図を AI に作らせる手順と MCP の試験結果: `.excalidraw` を直接書く方式を標準にし、公式 MCP は成果物が出ず外した（2026-11-06）
 - [[issue-extraction-output]]: 論点出しの出力の型: 作業の前に論点だけを洗い出し、判断（決・任・後・確・聞）を付けて決定メモにする。貼り付け用プロンプトとフィードバックの手順つき（2026-11-02、試用中）
 - [[improvement-quantified-options-output]]: 改善の出力の型1（数値）: 現状の数値と 10・20・30% の選択肢表。同上
 - [[improvement-expectation-gap-output]]: 改善の出力の型2（ズレ）: 想定と実際の横並び表と原因の照合。同上
