@@ -9,7 +9,7 @@ aliases:
   - 振り返りの出力の型
   - 振り返って
   - 改善4の出力
-triggers: [振り返, daily, weekly, monthly, 日次, 週次, 月次, 定期, 改善4]
+triggers: [振り返, daily, weekly, monthly, 定期, 改善4]
 created: 2026-10-28
 updated: 2026-11-02
 sources:

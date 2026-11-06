@@ -136,13 +136,23 @@ def trigger_files(repo):
                 yield label, f
 
 
+def _word_in(w, q):
+    """w が q に含まれるか。w の両端が英数字のときは、q の前後が英数字でない場合だけ一致とする（`CA` が `token-cap` に当たらないように。日本語の語は従来どおり部分一致）。"""
+    pat = re.escape(w)
+    if re.match(r"[a-z0-9]", w):
+        pat = r"(?<![a-z0-9])" + pat
+    if re.search(r"[a-z0-9]$", w):
+        pat = pat + r"(?![a-z0-9])"
+    return re.search(pat, q) is not None
+
+
 def lookup_triggers(repo, query, top):
     """依頼文 query に、triggers の語が（大文字小文字を区別せず）含まれるノートを、一致した語の数が多い順に示す。"""
     q = query.lower()
     found = []
     for label, f in trigger_files(repo):
         words = read_triggers(f) or []
-        hit = [w for w in words if len(w) >= 2 and w.lower() in q]
+        hit = [w for w in words if len(w) >= 2 and _word_in(w.lower(), q)]
         if hit:
             found.append((len(hit), max(len(w) for w in hit), label, f, hit))
     if not found:

@@ -4,7 +4,7 @@
 
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
-| 2026-11-06 | 単発 | token-cap NA 6: 出力の型（8 本）の試用の結果を見る（誤爆、型の品質、開始時の大きさ。11-05 から延期） | ユーザー |
+| 2026-11-13 | 単発 | token-cap NA 9（起票 11-06）: `issue-extraction-output`（16KB）を縮める。前後を `cap_meter --latest` で比べる。論点出し v4 の実作業の確認を壊さない | ユーザー（AI が実行） |
 | 2026-11-13 | 単発 | token-cap NA 8（起票 11-06）: 応答 21 以上の依頼の分析。依頼ごとのツール名の内訳を出すスクリプトを作り、7 件の session（`topics/token-cap/records/2026-11-06-pc1-room-effect.md` の 7）で PC1 に実行してもらう。探索型か試行錯誤型かを仕分け、対策を決める | ユーザー（PC1） |
 | 2026-11-08 | 定例 | weekly の振り返り（7日周期、日曜。材料は `topics/kit-growth/records/`）。仮決めの期限切れを数える | ユーザー |
 | 2026-11-08 | 単発 | 索引（triggers）の引き当て率の初回: `python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。語の足し方か出し方を決める。あわせて部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）への備え（短い札の禁止、完全一致の書き方、現状維持）を決める。現状（誤爆する）は単体テスト `test_substring_match_false_positive_is_current_behavior` で固定してあり、方針を変えるときはこのテストも直す。あわせて、旧 `md-link-graph` の積み残し 2 件: ① 上限 30 語で誤爆が増えていないか、取りこぼしは `triggers:` に語を足す案にする、② S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は付けない方針のまま届かなければ見直す。`logbook/` を `--triggers` の対象にするかの判断もこの結果の後（旧 `logbook-design` NA 3）。構造の点検（循環・階層・複雑度）は `review` の入力 9 | ユーザー（AI が実行） |
