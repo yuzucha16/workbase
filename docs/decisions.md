@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【汎用】`wrap` の昇格の案のうち、kit・規則の変更案は報告に出さず、Open Questions に置いて `review 消化` で承認する（2026-11-06）
+- 根拠: ユーザー「kitや規則変更です。であれば、wrapの報告に含めないでください。私の目に入らないようにして、review 消化でプロセスに載せるようにしましょう。」背景: `review 消化` の待ち行列が空で承認プロセスが動いていなかった。`wrap` の報告で kit・規則の案の承認を求めており、`hook-common.md`「承認」の「作業中に承認を求めない」を素通りしていた。
+- 決めたこと: kit・規則（`AGENTS.md` を含む）の案は、`docs/log.md` の Open Questions に `場所 / 問題 / 案` で置く。報告には載せない。知識への昇格の案は従来どおり報告に1行出す。
+- 影響: 承認が `review 消化` まで遅れる。`review 消化` を回さないと案がたまる（`review` の勧める条件で拾う）。
+- 反映先: `workflow-kit/wrap-hook.md` の手順「昇格の案を出す」と報告の型。
+
 ### 【汎用】トピック固有の期日は、直下の `docs/due.md` に置かず、トピックの `docs/due.md` に置く（2026-11-06）
 - 根拠: ユーザー「topics/ 配下の期限付き next action が due に行くと結構見づらくなるし、二重管理にもなっていて煩雑」「topics は topics/ の中で管理する形にしたい」。
 - 決めたこと: 直下の `due.md` は kit 全体の項目だけにする。トピック固有の行は `topics/<名>/docs/due.md` へ移した（token-cap 2、office-output-types 4、ooxml-clean 1、room-type-consolidation 1）。`review 消化` は元々、対象の単位の `due.md` を読むので、手順の変更は不要。2026-10-29（置き場）と 2026-11-01（期日の既定）のうち、置き場の部分を置き換える。起票から 1 週間の既定は残る。
