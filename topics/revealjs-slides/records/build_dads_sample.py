@@ -44,7 +44,7 @@ def make_scss(src: str, spacing: bool) -> str:
     if spacing:
         for old, new in SPACING:
             if old not in src:
-                sys.exit(f"SPACING の置換元が見つからない: {old}")
+                continue  # 土台に反映済み
             src = src.replace(old, new)
     return src
 

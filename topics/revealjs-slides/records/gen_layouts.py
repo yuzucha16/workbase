@@ -14,7 +14,7 @@ revealjs-diagram-icons.html を読む（render は両ファイルを同じ場所
   箱の型  A 左右 / B 上左右+下全幅 / D 左一本+右2 / E 1ブロック / F 2x2 / G 上全幅+下左右
   H 行ラベル x 列（行・列は文言の数で決まる）
   I 工程 x 行（シェブロンの列見出し。行ラベルは任意）
-  J 表（濃紺ヘッダー + 薄グレー行）
+  J 表（背景なし・罫線だけの表。emphasize で強調列、rowhead で先頭列を太字）
   T 図解なし（見出し + 段落 + 箇条書き。入れ子はリストの中のリスト。まとめ・前置き・補足用）
   箱の型 A〜G は "height"（例 "500px"）で下の空きを埋める。
 """
@@ -23,7 +23,7 @@ import html
 import json
 import sys
 
-BLUE, GRAY, TEXT = "#1f5fd1", "#9aa5b1", "#1f2933"
+BLUE, GRAY, TEXT = "#0017c1", "#767676", "#1a1a1a"
 
 HEADER = """---
 title: "{title}"
@@ -77,7 +77,7 @@ def flow_svg(n=3, hl=1, w=280, h=100, vertical=False):
 
 
 def _block(x, y, w, h, label, on):
-    fill, stroke, sw = ("#eaf1fd", BLUE, 3) if on else ("#f3f4f6", GRAY, 2)
+    fill, stroke, sw = ("#e8f1fe", BLUE, 3) if on else ("#f2f2f2", GRAY, 2)
     return (f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="9" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>'
             f'<text x="{x+w/2:.1f}" y="{y+h/2+7:.1f}" font-size="20" text-anchor="middle" fill="{TEXT}">{esc(label)}</text>')
 
@@ -138,7 +138,7 @@ def grid(s, chevron):
         r["cells"] = list(r["cells"]) + [""] * (ncol - len(r["cells"]))
     tracks = (["var(--lw)"] if has_label else []) + ["1fr"] * ncol
     nrow = len(rows)
-    style = f"grid-template-columns:{' '.join(tracks)};grid-template-rows:{'auto ' if cols else ''}repeat({nrow},1fr);"
+    style = f"grid-template-columns:{' '.join(tracks)};grid-template-rows:{'auto ' if cols else ''}repeat({nrow},{'1fr' if s.get('height') else 'auto'});"
     if s.get("height"):
         style += f"--h:{s['height']};"
     emph = s.get("emphasize")  # 強調する列番号（0 始まり。負の数は後ろから）
@@ -162,14 +162,18 @@ def table_slide(s):
     head = s["head"]
     align = s.get("align") or ["l"] * len(head)
     index = s.get("index", False)
+    emph = s.get("emphasize")  # 強調する列番号（0 始まり。負の数は後ろから）
+    if emph is not None and emph < 0:
+        emph += len(head)
+    rowhead = s.get("rowhead", False)  # 先頭列を太字の行ラベルにする
     out = ['<table class="tb"' + (f' style="--h:{s["height"]}"' if s.get("height") else "") + ">", "<thead><tr>"]
     if index:
         out.append('<th class="no">#</th>')
-    out += [f'<th class="{a}">{lines(h)}</th>' for h, a in zip(head, align)]
+    out += [f'<th class="{a}{" em" if i == emph else ""}">{lines(h)}</th>' for i, (h, a) in enumerate(zip(head, align))]
     out.append("</tr></thead><tbody>")
     for n, row in enumerate(s["rows"], 1):
         out.append("<tr>" + (f'<td class="no">{n}</td>' if index else "")
-                   + "".join(f'<td class="{a}">{lines(v)}</td>' for v, a in zip(list(row) + [""] * (len(head) - len(row)), align))
+                   + "".join(f'<td class="{a}{" em" if i == emph else ""}{" rl" if rowhead and i == 0 else ""}">{lines(v)}</td>' for i, (v, a) in enumerate(zip(list(row) + [""] * (len(head) - len(row)), align)))
                    + "</tr>")
     out.append("</tbody></table>")
     return raw("".join(out))
@@ -185,12 +189,19 @@ def text_slide(s):
     return "".join(f"### {b['h']}\n\n" + "".join(p + "\n\n" for p in b.get("p", [])) + f"{bullets(b.get('items', []))}\n" for b in s["blocks"])
 
 
+def summary(v, cls):
+    """lead（図表の上のひとこと）/ notes（下のまとめ・総評）。文字列は 1 段落、リストは箇条書き。"""
+    if not v:
+        return ""
+    return raw(f'<div class="sum {cls}">{lines(v)}</div>')
+
+
 def slide(s):
     t = s["type"]
     if t == "T":
         return f"## {s['title']}\n\n{text_slide(s)}"
     body = {"H": lambda: grid(s, False), "I": lambda: grid(s, True), "J": lambda: table_slide(s)}.get(t) or (lambda: box_slide(s))
-    return f"## {s['title']}\n\n{body()}\n"
+    return f"## {s['title']}\n\n{summary(s.get('lead'), 'lead')}{body()}\n{summary(s.get('notes'), '')}\n"
 
 
 def build(spec):
@@ -211,28 +222,30 @@ SAMPLE = {
         {"title": "T 文章・文字列・箇条書き（サンプル）", "type": "T", "blocks": [
             {"h": "はじめに", "p": ["この見本は、段落と箇条書きが混ざったときの並びを確かめるためのダミーです。", "文の長さは、1 行に収まる程度から 2 行に折り返す程度まで混ぜています。"]},
             {"h": "進め方", "items": ["最初に目的を 1 文で決める", ["背景は短く、数字があれば添える", ["3 段目の例: 補足は最小限にする"]], "次に作業を 3 つ以内に分ける", "最後に確認する項目を並べる"]},
-            {"h": "メモ", "p": ["文字列の例: ABC-123 / 2026-11-06 / 12,345 円 / v1.2.3"]}]},        {"title": "A 左右二分割（比較）", "type": "A", "cells": [_c("red", "ban", "左"), _c("green", "check", "右")]},
+            {"h": "メモ", "p": ["文字列の例: ABC-123 / 2026-11-06 / 12,345 円 / v1.2.3"]}]},        {"title": "A 左右二分割（比較）", "type": "A", "cells": [_c("dark", "ban", "左"), _c("blue", "check", "右")]},
         {"title": "B 上は左右・下は全幅", "type": "B", "cells": [
-            _c("gray", "pc", "左"), _c("green", "room", "右"),
+            _c("gray", "pc", "左"), _c("blue", "room", "右"),
             _c("", "shield", "共通", {"n": 5, "hl": 2, "w": 570, "h": 92}, "共通の前提\n1〜2行")]},
         {"title": "D 左は一本・右は2ブロック", "type": "D", "cells": [
             _c("gray", "pc", "元", {"n": 3, "hl": 1, "w": 280, "h": 400, "vertical": True}),
-            _c("green", "room", "分岐 1"), _c("red", "ban", "分岐 2")]},
+            _c("blue", "room", "分岐 1"), _c("dark", "ban", "分岐 2")]},
         {"title": "E 1スライド1ブロック（大きな図）", "type": "E", "cells": [
             _c("", "shield", "全体像", {"n": 4, "hl": 1, "w": 760, "h": 330}, "要点を\n2〜3行")]},
         {"title": "F 2×2（Z に読む）", "type": "F", "cells": [
-            _c("red", "ban", "左上"), _c("green", "check", "右上"), _c("red", "ban", "左下"), _c("green", "check", "右下")]},
+            _c("dark", "ban", "左上"), _c("blue", "check", "右上"), _c("dark", "ban", "左下"), _c("blue", "check", "右下")]},
         {"title": "G 上は全幅・下は左右（全体→内訳）", "type": "G", "cells": [
             _c("", "shield", "全体", {"n": 5, "hl": 2, "w": 570, "h": 92}, "全体の流れ\n1〜2行"),
-            _c("gray", "pc", "内訳 1", {"w": 280, "h": 90}), _c("green", "room", "内訳 2", {"w": 280, "h": 90})]},
+            _c("gray", "pc", "内訳 1", {"w": 280, "h": 90}), _c("blue", "room", "内訳 2", {"w": 280, "h": 90})]},
         # H: 行ラベル x 列。行・列は文言の数で決まる。
-        {"title": "H 行ラベル × 列（3行 × 2列）", "type": "H", "cols": ["見出し A", "見出し B"], "rows": [
+        {"title": "H 行ラベル × 列（3行 × 2列）", "type": "H",
+         "notes": ["行の高さは内容なり。表の下に、まとめ・総評を箇条書きで置く", "上に置くなら lead（ひとこと）。どちらも省略できる"], "cols": ["見出し A", "見出し B"], "rows": [
             {"label": "行ラベル 1", "cells": ["本文は 1〜2 行で言い切る", "本文は 1〜2 行で言い切る"]},
             {"label": "行ラベル 2", "cells": [["項目を 3 つまで", "短い名詞で", "揃える"], "本文は 1〜2 行で言い切る"]},
             {"label": "行ラベル 3", "cells": ["本文は 1〜2 行で言い切る", "本文は 1〜2 行で言い切る"]}]},
         {"title": "H 行ラベル × 列（3行 × 1列）", "type": "H", "rows": [
             {"label": f"行ラベル {i}", "cells": ["帯の本文。行を増やすと、高さが等分に縮む"]} for i in range(1, 4)]},
-        {"title": "H 行ラベル × 列（3行 × 3列）", "type": "H", "cols": ["列 1", "列 2", "列 3"], "rows": [
+        {"title": "H 行ラベル × 列（3行 × 3列）", "type": "H",
+         "lead": ["上に置くときは、結論や前提を 1〜2 点の箇条書きで", "どちらに置くかは、AI が内容で選ぶ"], "cols": ["列 1", "列 2", "列 3"], "rows": [
             {"label": f"行 {i}", "cells": ["短い文言", "短い文言", "短い文言"]} for i in range(1, 4)]},
         # I: 工程 x 行（シェブロンの列見出し）
         {"title": "I 工程 × 行（4工程 × 2行）", "type": "I",
@@ -245,10 +258,10 @@ SAMPLE = {
              {"label": "内容", "cells": ["本文", "本文", "本文"]},
              {"label": "成果", "cells": ["本文", "本文", "本文"]}]},
         {"title": "I 工程の流れだけ（5工程、ラベルなし）", "type": "I",
-         "cols": [f"工程 {i}" for i in range(1, 6)], "height": "10em", "rows": [
+         "cols": [f"工程 {i}" for i in range(1, 6)], "rows": [
              {"cells": ["説明", "説明", "説明", "説明", "説明"]}]},
         # J: 表
-        {"title": "J 表（3行 × 3列 + 番号）", "type": "J", "head": ["項目", "完了条件", "出力"], "index": True,
+        {"title": "J 表（3行 × 3列 + 番号）", "type": "J", "head": ["項目", "完了条件", "出力"], "rowhead": True, "emphasize": 2,
          "rows": [["項目 " + str(i), "条件を 1 行で", "成果物の名前"] for i in range(1, 4)]},
         {"title": "J 表（4行 × 4列、数値は右寄せ）", "type": "J", "head": ["指標", "今期", "前期", "増減"],
          "align": ["l", "r", "r", "r"], "rows": [["指標 A", "4,000", "4,000", "▲0.2%"], ["指標 B", "3,200", "3,100", "+3.2%"],
