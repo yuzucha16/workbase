@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-07（`review 消化` NA1: `room rm` を手順書と README に反映した）
+- `guides/howto/ai-room-lifecycle.md` に 15 段（`room rm <P>…` / `--area`）の行を足し、ゴールの節と 7 章から指した。`workflow-kit/room/README.md` の表に `rm` とダミー Project（`myinv*` / `mydev*`）の行を足した。根拠は `room.py` の `cmd_rm_projects` / `cmd_rm_area`。ユーザーが閉じるのを承認。
+- 同時に、`ai-room-lifecycle.md` の `close` の成果物の引き渡しの記述（11 段、5 章、7 章）を廃止に合わせて直した（`room clean` の記述は無かった）。
+- 残り（人が行う）: 旧 `_noai/raw/` `_noai/map/`、Area の `_noai/source/` `_noai/deliverable/` の中身の移し替え。`log.md` の Next Actions に残してある。
+
 ### 2026-11-07（room 廃止の第三者確認と、oom-completion.ps1 の後始末を終えた）
 - 第三者確認（別のセッション）: 削除した名前と周辺語で全体を検索し、現行の本文とコードの旧仕様を 9 件直した（oom/README.md の使い方・open 行・external の説明、oom.py の close のヘルプと docstring、project-structure.md、README.template.md、i-room-setup-script.md、	est_cleankit.py のコメント）。廃止前の記述が残る xmem/lessons/ の 5 ノート 10 行には「【廃止前の記録】」の注記を付けた（ユーザーの決定: 注記にする）。コミット 6a4c973。テスト 204 件通過（3 スキップ）。リンク切れ（削除したファイルを指す wikilink）は無し。手順は xmem/inbox/2026-11-07-deletion-audit-beyond-listed-scope.md。mdgraph.py は未実行。xmem/lessons/ai-room-data-layout.md の 58・59 行（既知の残り）にも注記を付けた。
 - 後始末②: dotfiles の windows/powershell/profile.ps1 から oom-completion.ps1 の読み込み 6 行を外し、workflow-kit/room/room-completion.ps1 と oom/README.md の「Tab 補完（廃止）」の節を削除した。

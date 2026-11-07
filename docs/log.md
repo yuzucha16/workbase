@@ -20,8 +20,6 @@
 
 ## Next Actions
 
-- `guides/howto/ai-room-lifecycle.md` に `room rm`（テスト用の Project・Area を跡ごと消す。11-07 新設、`room/README.md` の表にも未記載）を反映する。完了条件: 両方に `rm` の行（Project・`--area`・止まる条件）があり、ゴールの「reap で会話履歴が消える」の節から指されている。`room/README.md` にはダミー Project（`myinv*` / `mydev*`、11-07）の 1 行も足す（`ai-room-lifecycle.md` の 7 章は書き済み）。
-
 - 【起票 11-07】room 廃止（`767273f`）の後始末を人が行う。既存 Project の `_noai/raw/` `_noai/map/` と、Area の `_noai/source/` `_noai/deliverable/` の中身を、必要なら手で移す（`room` はもう読まない。`_noai/` 直下に置き直すか、掃除済みなら `ai/in/` に置いて `start --adopt`）。完了条件: 旧置き場に実データが残っていない。
 
 期日のある項目は `due.md`。
