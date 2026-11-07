@@ -18,10 +18,7 @@
 
 ## Next Actions
 
-- 【起票 11-07、期日 11-14】Excalidraw 作図ループの仕上げ: 手順書 `workflow-kit/draw-hook.md`（合言葉 `draw`＝「作図」）は書いた（11-07。実機の通しは別セッションで確認する。スクリプトの部屋での置き場（`tools/` へ移すか）は未決）。入力は説明・キャプチャ・用途（理解用 / slide / pptx）、手順は用途でプロファイルを決める → `.excalidraw` を書く → `--export [--font <名前>]` → PNG を目視して直す（最大 2 回）→ `ai/work/parts/` に置く → 報告。プロファイル（用途 → 既定フォント）は revealjs = Noto Sans JP、pptx = BIZ UDPゴシックの想定で、手順書で決める。`--font` は SVG の `font-family` を書き換え、PNG は書き出す端末にそのフォントが要る（端末に無ければ警告）。room（WSL）への Noto Sans JP は room init の段で入る（11-06 通し済み）。置き場は決定済み（直下 `docs/decisions.md` 11-07: `ai/work/parts/<日付>-<部品>-<題>/`、残す図は成果物の中）。担当: AI。
-  - 11-07 追記: room 通しを 1 回やった（図は出た）。フィードバックを取り込んだ（固定パス `~/shared/workflow-kit/tools/excalidraw-viewer/` へスクリプトを移した、読み替え、文字座標、生成スクリプトの扱い。直下 `docs/decisions.md`）。残りは次項。
-
-- 【起票 11-07、期日 11-14】`draw` の複数パターン試験: room とサブエージェントで、用途（理解用 / slide / pptx）、入力（文のみ / キャプチャあり）、フォント有無などを変えて通し、改善・フィードバックを集めて手順書を直す。最初に、部屋の `~/shared` にスクリプトが入っていること（`room start` 後）を確かめる。担当: AI。
+- 【起票 11-07、期日 11-14】`draw` の pptx プロファイル（BIZ UDPゴシック の PNG）が部屋では成立しない: 部屋に BIZ UD が無く、PNG は代替の字形になる（11-07 の NA2 で確認。警告は出る）。対処を決める: ① 部屋にフォントを入れる（room init の段）、② pptx 用の PNG だけ Windows で書き出す（手順書に書く）、③ pptx は SVG 画像でよいか（`records/2026-11-07-common-structure-with-office-output-proposal.md` の確認事項と同じ論点）。あわせて、T の `side.img` に入れて render するところまでを 1 回見る。担当: AI、ユーザー（選択）。
 
 - 【起票 11-06、期日 11-20】`topics/office-output-types` との共通化: 案を出した（11-07。`records/2026-11-07-common-structure-with-office-output-proposal.md`。推奨は A = 値と規則だけ文書で分ける。コードは変えていない）。ユーザーの確認待ち（文章の規則を pptx にも使うか、pptx の図は SVG 画像でよいか、置き場）。P2（split を 3 部品まで）は需要が出てから（実スライド 1 本では `want` は溜まらなかった）。担当: AI、ユーザー（選択）。
 

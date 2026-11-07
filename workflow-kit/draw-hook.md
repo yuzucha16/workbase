@@ -40,9 +40,10 @@
    - 要素は `rectangle` `ellipse` `arrow` `text`。共通の欄（`id` `x` `y` `width` `height` `angle` `strokeColor` `backgroundColor` `fillStyle` `strokeWidth` `roughness` `opacity` `seed` `version` `versionNonce` `isDeleted` `groupIds` `boundElements` `updated` `link` `locked`）を省かない。見本は `topics/revealjs-slides/excalidraw-viewer/samples/sample-jp-font.excalidraw`。
    - 文字は `text` と `originalText` を同じにし、`fontSize` `fontFamily: 2` `textAlign` `verticalAlign` `containerId: null` `lineHeight: 1.25` を付ける。箱の中の文字は、箱とは別の `text` 要素として箱の上に置く: 中央揃えは `textAlign: center` で、文字の `x` = 箱の `x`、`width` = 箱の `width`。複数行の高さは 行数 × `fontSize` × 1.25、`y` = 箱の `y` + (箱の高さ − その高さ) / 2。矢印は `points`（始点からの相対）を持つ。
    - 幅の見積もり: 全角 1 字 ≒ `fontSize`、半角 1 字 ≒ `fontSize` の 0.55 倍。箱の幅は文字の幅 + 左右 16 以上。日本語の図は `roughness: 0` を既定にする（手描き風は、ユーザーが求めたときだけ）。
+   - キャプチャ（PNG）を図に入れるときは、`image` 要素（`fileId` `status: "saved"` `scale: [1, 1]`）を置き、トップの `files` に `{<fileId>: {"mimeType":"image/png","id":<fileId>,"dataURL":"data:image/png;base64,…","created":1,"lastRetrieved":1}}` を足す（2026-11-07 の試験で、room の書き出しが SVG・PNG とも通った）。画像は縦横比を保つ寸法で置く。
    - 半幅（slide の `side`）に入れる図は、横幅 700 前後、文字 20px 以上にする。
 4. **書き出す**: `python3 -I <スクリプト> <.excalidraw> --export svg,png -o <同じディレクトリの絶対パス> [--font "<名前>"]`。`-o` はディレクトリ（ファイルを渡すと、その名前のディレクトリができる）。結果が空になることがあるが、スクリプトが 6 回までやり直す。それでも PNG が出なければ、出力を添えて止まる。
-5. **目視して直す**: PNG を Read で開いて見る。見る点は、文字が箱からはみ出していない、文字が重なっていない、矢印が箱に繋がっている、読む順が左から右・上から下、用途の幅に収まっている。直す点があれば、手順「`.excalidraw` を書く」に戻って直し、書き出す。**直すのは最大 2 回**。2 回で直らなければ、残った点を報告に挙げて止める（無限に直さない）。フォントを替えたときは字幅が変わるので、替えた後の PNG で見る。
+5. **目視して直す**: PNG を Read で開いて見る。見る点は、文字が箱からはみ出していない、文字が重なっていない、矢印が箱に繋がっている、読む順が左から右・上から下、用途の幅に収まっている。文字があふれたとき、箱を広げると用途の幅（半幅なら 700 前後）を超えるなら、広げずに `\n` で行を折る、箱を縦に積む、`fontSize` を下げる（半幅では 20 未満を避ける）のどれかにする（2026-11-07 のあふれ試験）。直す点があれば、手順「`.excalidraw` を書く」に戻って直し、書き出す。**直すのは最大 2 回**。2 回で直らなければ、残った点を報告に挙げて止める（無限に直さない）。フォントを替えたときは字幅が変わるので、替えた後の PNG で見る。
 6. **用途のメモを書く**: 同じディレクトリに `diagram-<題>.md` を置く。1 行目に用途、次にプロファイル（`--font`）、使う先（例: T の `side.img`）、元の説明、直した回数、生成スクリプトを残したか。
 7. **報告する**: 次の「報告の型」。
 

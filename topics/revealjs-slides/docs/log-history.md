@@ -226,3 +226,9 @@ evealjs-diagram-icons-devicon.html・…-devicon-preview.html を削除（素材
 - ユーザーの質問: 初回の `npm install` は WSL で Excalidraw を見るためか。答え: いいえ。Windows で人がブラウザで見るための閲覧用 JS（Excalidraw・React・esbuild）をキャッシュに作る。WSL では人が見ないので不要。ターミナルの AI にはブラウザの描画が出ないので、AI 用の利点も無い。PC1 の確認（NA）は残す（ユーザー）。
 - 依頼を受けて、`stock 理解` で `exmem/inbox/2026-11-07-excalidraw-viewer-js-npm-explain.md` を作った（未追跡のまま。点検スクリプトは PASS 24・FAIL 0）。中身は JS・Node.js・npm・バンドル・React と、`excalidraw_view.py` ・`viewer_entry.jsx`・`build_viewer.mjs` の関係。`guides/explain/` への統合は `integrate` で行う。
 - 見つけた食い違い: `excalidraw_view.py` の冒頭は「約 40MB」、`log.md` は「約 210MB」。PC で実測して直す（NA に足した）。
+
+### 2026-11-07 NA2 draw の複数パターン試験（NA1・NA2 を閉じた）
+- room-myenv の dummy Project（`myinv-draw-na2`。試験後に `room rm` で削除）で、`workflow-kit/draw-hook.md` を 4 パターン通した: 理解用（フォントなし・PNG）、slide（Noto Sans JP・SVG）、pptx（BIZ UDPゴシック・PNG。部屋にフォントが無く警告、代替字形）、キャプチャ入り（`image` 要素 + `files`）。すべて書き出せ、目視で崩れなし。
+- あふれ試験（ユーザー指定の必須）: 幅 150 の箱に 12〜14 字を入れ、PNG で重なりを検出でき、幅を広げて 1 回で直った。ただし広げると半幅に収まらないので、手順書に直し方（行を折る・縦に積む・fontSize を下げる）を足した。キャプチャの書き方も足した（ユーザー承認）。
+- フィードバック（`records/2026-11-07-draw-na2-trial.md`）: `room start --no-launch` が標準入力 EOF で落ちる、`wsl -- bash -c` で `$?` が wsl 側で展開される、PowerShell の標準入力渡しは CRLF で壊れる、Project の実体は `works/projects/`。サブエージェントは不要（ユーザー判断）。
+- NA1（作図ループの仕上げ）: 手順書・room 通し・フィードバック取り込み・置き場の移動は 11-07 に済み、残りの NA2 も済んだので閉じた。根拠: `workflow-kit/draw-hook.md`、上の記録。残った pptx のフォントは新しい NA に切り出した。
