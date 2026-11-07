@@ -993,6 +993,25 @@ fc-cache -f
 fc-list | grep -q 'Noto Sans JP,'
 """ % {"sha": NOTOSANSJP_SHA256}
 
+# BIZ UDPGothic（pptx 向けの図 PNG の字形。Windows 標準のフォントで、pptx にはフォント名だけが入る。draw の pptx プロファイルが部屋で代替字形にならないようにする。2026-11-07 ユーザー承認）: google/fonts の ofl/bizudpgothic（SIL OFL）の Regular・Bold（計約 9.3 MB）を SHA-256 で固定し、root が /usr/local/share/fonts に置く。上流が変わるとチェックサムが合わず止まる（そのときは値を更新する）。
+BIZUDPGOTHIC_SHA256 = {
+    "Regular": "258d7156c165f2ff774b6efee637c22c3b950de0d8a10e501137061bc8085d01",
+    "Bold": "30eba52fc837e8b62c97d4b82e6706583149fb7294e3712dd71a655eaea80a90",
+}
+BIZUDPGOTHIC_INSTALL = r"""set -e
+fc-list | grep -q 'BIZ UDPGothic' && { echo "BIZ UDPGothic: 入っている"; exit 0; }
+T=$(mktemp -d); cd "$T"
+for W in Regular Bold; do
+  curl -fsSL -o BIZUDPGothic-$W.ttf "https://raw.githubusercontent.com/google/fonts/main/ofl/bizudpgothic/BIZUDPGothic-$W.ttf"
+done
+echo "%(reg)s  BIZUDPGothic-Regular.ttf" | sha256sum -c -
+echo "%(bold)s  BIZUDPGothic-Bold.ttf" | sha256sum -c -
+mkdir -p /usr/local/share/fonts
+install -m 644 BIZUDPGothic-Regular.ttf BIZUDPGothic-Bold.ttf /usr/local/share/fonts/
+fc-cache -f
+fc-list | grep -q 'BIZ UDPGothic'
+""" % {"reg": BIZUDPGOTHIC_SHA256["Regular"], "bold": BIZUDPGOTHIC_SHA256["Bold"]}
+
 # Quarto（Markdown → pptx。2026-11-04 に部屋で実機試験: 1.11.9 の tarball が通った）: 公式の tarball を版と SHA-256 で固定し、root が /opt に置く（ai は書き換えられない）。x64 だけ。
 # Quarto は部屋の Playwright の Chromium を自動では見つけない（「Chrome not found」）ので、/usr/local/bin/quarto の薄い包みで QUARTO_CHROMIUM を指す。mermaid を含む文書は .qmd にする。
 # pptx の日本語フォントの雛形は topics/office-output-types/records/reference-biz-udpgothic.pptx（テーマのフォントが BIZ UDPGothic。Windows 標準。pptx にはフォント名だけが入り、実体は表示する PC のもの）
@@ -1250,7 +1269,7 @@ def scaffold_area(ctx, area):
 
 
 # init の段（--only で選ぶ名前）。base は一般ユーザー・wsl.conf・分離の確認（部屋を terminate する）
-INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "notosansjp", "chromium", "quarto", "marp", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
+INIT_STEPS = ("base", "apt", "cacert", "node", "convert", "notosansjp", "bizudpgothic", "chromium", "quarto", "marp", "pwsh", "npm", "uv", "python", "claude", "stophook", "path")
 
 # Python の版の正本（uv 管理。docs/decisions.md 2026-10-29）。部屋の python3 もこの版にそろえる
 PYTHON_VERSION_FILE = Path(__file__).resolve().parent / ".python-version"
@@ -1348,6 +1367,8 @@ def cmd_init(ctx, a):
     # step_script(ctx, distro, "等幅フォント PlemolJP（版と SHA-256 を固定。約 220 MB の取得）", PLEMOLJP_INSTALL, root=True)
     if want("notosansjp"):
         step_script(ctx, distro, "Noto Sans JP（revealjs の本文フォント。SHA-256 確認つき）", NOTOSANSJP_INSTALL, root=True)
+    if want("bizudpgothic"):
+        step_script(ctx, distro, "BIZ UDPGothic（pptx 向けの図のフォント。SHA-256 確認つき。約 9 MB）", BIZUDPGOTHIC_INSTALL, root=True)
     if want("chromium"):
         step_script(ctx, distro, "Chromium（Playwright）と mermaid-cli（版を固定。数百 MB の取得）", CHROMIUM_INSTALL, root=True)
     if want("quarto"):
