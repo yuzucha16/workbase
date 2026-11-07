@@ -1514,10 +1514,18 @@ def preflight(ctx, p):
 
 
 def rmtree_force(path):
-    """Windows の読み取り専用ファイルも消す。"""
+    """Windows の読み取り専用ファイルも消す。WSL が作ったリンク（.venv/lib64 など。WinError 1920 で辿れない）は、中を辿らずリンクそのものを消す。"""
     def onerror(func, p, _exc):
-        os.chmod(p, stat.S_IWRITE)
-        func(p)
+        if not os.path.lexists(p):  # 先に消えた
+            return
+        try:
+            os.chmod(p, stat.S_IWRITE)
+            func(p)
+        except OSError:
+            try:
+                os.unlink(p)
+            except OSError:
+                os.rmdir(p)
     shutil.rmtree(path, onerror=onerror) if Path(path).exists() else None
 
 
@@ -2657,6 +2665,22 @@ def backup_history(ctx, distro, hist):
     ctx.say(f"  会話履歴を退避した: {dest / hist}（集計は cap_meter.py --root {ctx.history_backup}）")
 
 
+def purge_room_traces(ctx, name, distro):
+    """部屋（存在する前提）の、その Project の会話履歴と ~/tmp/<名> を、退避してから消す。reap と rm が使う。"""
+    hist, tmp = f"-mnt-room-{name}", name
+    backup_history(ctx, distro, hist)
+    # Zed などで /home/ai を開くと、履歴は Project に紐づかない -home-ai に残る。どの Project のものか分からないので消さず、知らせる
+    _rc, left, _err = ctx.wsl.script(distro, f'test -d "$HOME/.claude/projects/{HOME_HISTORY}" && echo remain || true\n')
+    if left.strip():
+        ctx.say(f"  警告: 部屋に {HOME_HISTORY}（/home/ai を開いたときの会話履歴）が残っている。Project に紐づかないので消さない。"
+                "内容を確認して、手で消す")
+    script = (f'rm -rf -- "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}"\n'
+              f'ls -d "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}" 2>/dev/null || true\n')
+    rc, out, err = ctx.wsl.script(distro, script)
+    if rc != 0 or out.strip():
+        raise RoomError(f"{name}: 消せなかった（{(err or out).strip()[-300:]}）")
+
+
 def reap_project(ctx, name, area):
     """部屋の中の、その Project の会話履歴と ~/tmp/<名> を消し、archives の README に reaped を付ける。消した、または対象が無ければ True。"""
     readme = ctx.vault / "archives" / name / "README.md"
@@ -2668,18 +2692,7 @@ def reap_project(ctx, name, area):
     if distro not in ctx.wsl.distros():
         ctx.say(f"  {name}: 部屋 {distro} が無い。消すものは無いとして、reaped を付ける")
     else:
-        hist, tmp = f"-mnt-room-{name}", name
-        backup_history(ctx, distro, hist)
-        # Zed などで /home/ai を開くと、履歴は Project に紐づかない -home-ai に残る。どの Project のものか分からないので消さず、知らせる
-        _rc, left, _err = ctx.wsl.script(distro, f'test -d "$HOME/.claude/projects/{HOME_HISTORY}" && echo remain || true\n')
-        if left.strip():
-            ctx.say(f"  警告: 部屋に {HOME_HISTORY}（/home/ai を開いたときの会話履歴）が残っている。Project に紐づかないので消さない。"
-                    "内容を確認して、手で消す")
-        script = (f'rm -rf -- "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}"\n'
-                  f'ls -d "$HOME/.claude/projects/{hist}" "$HOME/tmp/{tmp}" 2>/dev/null || true\n')
-        rc, out, err = ctx.wsl.script(distro, script)
-        if rc != 0 or out.strip():
-            raise RoomError(f"{name}: 消せなかった（{(err or out).strip()[-300:]}）")
+        purge_room_traces(ctx, name, distro)
     readme.write_text(update_frontmatter(readme.read_text(encoding="utf-8"), {"reaped": ctx.today()}),
                       encoding="utf-8", newline="\n")
     return True
@@ -2727,6 +2740,134 @@ def cmd_reap(ctx, a):
         return
     if offer_reap(ctx, yes=a.yes) == 0:
         ctx.say("期限が来ていて、まだ消していない Project は無い")
+
+
+# ---------- rm（テスト用などの Project・Area を、跡ごと消す。close のような引き渡しはしない） ----------
+
+def remove_area_entries(text, name):
+    """Area の README の一覧から、projects/<名>・archives/<名> へのリンクの行を外す。一覧が空になった節は「なし。」に戻す。"""
+    markers = (f"[[projects/{name}/README", f"[[archives/{name}/README")
+    lines = [l for l in text.split("\n") if not (l.lstrip().startswith("- ") and any(m in l for m in markers))]
+    for heading in ("## 進行中の Project", "## 完了した Project"):
+        s, e = section_bounds(lines, heading)
+        if s is not None and not any(l.strip().startswith("- ") for l in lines[s + 1:e]) \
+                and not any(l.strip() == "なし。" for l in lines[s + 1:e]):
+            lines[s + 1:e] = ["", "なし。", ""]
+    return "\n".join(lines)
+
+
+def confirm_rm(ctx, what, yes):
+    if yes:
+        return
+    if not sys.stdin.isatty():
+        raise RoomError("rm を止めた（非対話では確認できない。何も変えていない。端末から実行するか --yes を付ける）")
+    try:
+        answer = input(f"{what}を消してよいか [y/N]: ").strip().lower()
+    except EOFError:  # Windows では NUL も isatty() が真になる
+        raise RoomError("rm を止めた（入力が得られない。何も変えていない。端末から実行するか --yes を付ける）")
+    if answer != "y":
+        raise RoomError("rm を中止した。何も変えていない")
+
+
+def cmd_rm_projects(ctx, a):
+    """Project を消す（projects/ にあるもの、閉じて archives/ にあるもの）。部屋の会話履歴と ~/tmp/<名> も消す。
+    止める条件: マウントが残っている・部屋の clone に未 push がある。何も変えずに止める。"""
+    targets = []
+    for name in dict.fromkeys(a.names):
+        if not REAP_NAME_RE.match(name):
+            raise RoomError(f"Project 名が不正: {name}（英数字・_・- だけ）")
+        d = next((ctx.vault / top / name for top in ("projects", "archives") if (ctx.vault / top / name / "README.md").is_file()), None)
+        if d is None:
+            raise RoomError(f"Project が無い: projects/{name}, archives/{name}")
+        area = read_frontmatter(d / "README.md").get("area", "")
+        if not area or not AREA_NAME_RE.match(area):
+            raise RoomError(f"{d / 'README.md'} の frontmatter の area: が無いか不正")
+        targets.append((name, d, area))
+    distros = ctx.wsl.distros()
+    problems, mounts_by = [], {}
+    for name, d, area in targets:
+        distro = f"room-{area}"
+        if distro not in distros:
+            continue
+        if distro not in mounts_by:
+            mounts_by[distro] = room_mounts(ctx, distro)
+        if any(mount_name(l) == name for l in mounts_by[distro]):
+            problems.append(f"{name}: マウントが残っている（`room umount --area {area}`）")
+        if d.parent.name == "projects":
+            problems += [f"{name}: {x}" for x in unpushed_repos(ctx, Project.load(ctx, name))]
+    if problems:
+        raise RoomError("消せない。何も変えていない:\n  " + "\n  ".join(problems))
+    ctx.say(f"消す Project（{len(targets)} 件。成果物の Area への引き渡しはしない。戻せない。追跡している分は git の履歴に残る）:")
+    for name, d, area in targets:
+        ctx.say(f"  {d.parent.name}/{name}（Area {area}）")
+    confirm_rm(ctx, f"この {len(targets)} 件", a.yes)
+    paths = []
+    for name, d, area in targets:
+        distro = f"room-{area}"
+        if distro in distros:
+            purge_room_traces(ctx, name, distro)
+        ar = ctx.vault / "areas" / area / "README.md"
+        if ar.is_file():
+            old = ar.read_text(encoding="utf-8")
+            new = remove_area_entries(old, name)
+            if new != old:
+                ar.write_text(new, encoding="utf-8", newline="\n")
+                paths.append(f"areas/{area}/README.md")
+        rel = f"{d.parent.name}/{name}"
+        if git(ctx.vault, "ls-files", "--", rel).strip():
+            paths.append(rel)
+        rmtree_force(d)
+        ctx.say(f"  消した: {rel}")
+    if a.commit:
+        commit_paths(ctx, list(dict.fromkeys(paths)), f"[room] Project {'、'.join(n for n, _, _ in targets)} を rm",
+                     trailers=room_trailers("rm", None, targets[0][0]))
+
+
+def cmd_rm_area(ctx, a):
+    """Area を消す(areas/ のもの、閉じて archives/areas/ にあるもの)。Project が残っていれば止める(先に rm する)。部屋（WSL）は消さない。"""
+    area = a.area
+    if not AREA_NAME_RE.match(area):
+        raise RoomError(f"Area 名が不正: {area}")
+    dirs = [d for d in (ctx.vault / "areas" / area, ctx.vault / "archives" / "areas" / area) if d.is_dir()]
+    if not dirs:
+        raise RoomError(f"Area が無い: areas/{area}, archives/areas/{area}")
+    problems = [f"Project が残っている: {d.parent.name}/{d.name}（先に `room rm {d.name}`）"
+                for top in ("projects", "archives") for d in area_projects(ctx, area, top)]
+    distro = f"room-{area}"
+    if distro in ctx.wsl.distros():
+        mounts = room_mounts(ctx, distro)
+        if mounts:
+            problems.append("マウントが残っている（`room umount --area " + area + "`）:\n    " + "\n    ".join(mounts))
+    if problems:
+        raise RoomError(f"Area {area} を消せない。何も変えていない:\n  " + "\n  ".join(problems))
+    ctx.say(f"消す Area: {', '.join(str(d.relative_to(ctx.vault)).replace(os.sep, '/') for d in dirs)}（戻せない。追跡している分は git の履歴に残る）")
+    refs = [f for f in git(ctx.vault, "grep", "-l", "-F", f"areas/{area}/", "--", "*.md", check=False).splitlines()
+            if not any(f.startswith(x) for x in (f"areas/{area}/", f"archives/areas/{area}/"))]
+    if refs:
+        ctx.say(f"注意: 次のノートに areas/{area}/ へのリンクがある。消した後に直す:\n  " + "\n  ".join(refs[:10])
+                + (f"\n  …ほか {len(refs) - 10} 件" if len(refs) > 10 else ""))
+    confirm_rm(ctx, f"Area {area}", a.yes)
+    paths = []
+    for d in dirs:
+        rel = str(d.relative_to(ctx.vault)).replace(os.sep, "/")
+        if git(ctx.vault, "ls-files", "--", rel).strip():
+            paths.append(rel)
+        rmtree_force(d)
+        ctx.say(f"  消した: {rel}")
+    if distro in ctx.wsl.distros():
+        ctx.say(f"部屋 {distro} は残してある。不要なら人が `wsl --unregister {distro}` で消す")
+    if a.commit:
+        commit_paths(ctx, paths, f"[room] Area {area} を rm", trailers=room_trailers("rm", area))
+
+
+def cmd_rm(ctx, a):
+    if a.area:
+        if a.names:
+            raise RoomError("--area と Project 名は同時に指定できない")
+        return cmd_rm_area(ctx, a)
+    if not a.names:
+        raise RoomError("Project 名か --area <Area> を指定する")
+    return cmd_rm_projects(ctx, a)
 
 
 # ---------- aws-key（部屋の ~/.aws/credentials に、Bedrock 用のキーを入れる） ----------
@@ -3303,6 +3444,11 @@ def build_parser():
     rp = sub.add_parser("reap", help="close から期限が来た Project の、部屋の会話履歴と ~/tmp/<名> を消す")
     rp.add_argument("name", nargs="?"); rp.add_argument("--yes", action="store_true")
     rp.add_argument("--force", action="store_true", help="期限前でも消す（名前を指定したとき）")
+    rm = sub.add_parser("rm", help="テスト用などの Project（複数可）を、部屋の会話履歴・~/tmp と Area の一覧も含めて消す。--area <Area> で Area を消す（Project が残っていれば止まる。部屋は消さない）。戻せない。close のような引き渡しはしない")
+    rm.add_argument("names", nargs="*", help="Project 名")
+    rm.add_argument("--area", help="Project でなく Area を消す")
+    rm.add_argument("--yes", action="store_true", help="一覧の確認を省く")
+    rm.add_argument("--commit", action="store_true", help="消した結果をコミットする")
     tr = sub.add_parser("trace", help="Area の閉じた Project（archives/）の記録を語で横断して探す（閉じた順）")
     tr.add_argument("--area", required=True); tr.add_argument("word")
     ra = sub.add_parser("mv",help="Area を改名する（areas/・Project の area:・来歴・リンク・部屋 room-<Area>。履歴は追わない）")
@@ -3318,7 +3464,7 @@ def main(argv=None):
     sys.stdout.reconfigure(line_buffering=True)  # wsl の出力と、順序が前後しないように
     ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
-        {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "mv": cmd_mv,
+        {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "mv": cmd_mv, "rm": cmd_rm,
          "clean": cmd_clean, "stock": cmd_stock, "trace": cmd_trace}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)

@@ -2018,6 +2018,71 @@ class CloseAreaTest(unittest.TestCase):
             self.assertTrue((v / "archives/areas/area-x/README.md").exists())
 
 
+class RmTest(unittest.TestCase):
+    def args(self, names=(), area=None, yes=True, commit=False):
+        return argparse.Namespace(names=list(names), area=area, yes=yes, commit=commit)
+
+    def test_rm_project_removes_dir_area_entry_and_room_traces(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            readme = v / "areas/area-x/README.md"
+            self.assertIn("projects/proj-a/README", readme.read_text(encoding="utf-8"))
+            room.cmd_rm(c, self.args(["proj-a"], commit=True))
+            self.assertFalse((v / "projects/proj-a").exists())
+            self.assertNotIn("proj-a", readme.read_text(encoding="utf-8"))
+            self.assertTrue(any("rm -rf" in s[1] and "-mnt-room-proj-a" in s[1] for s in wsl.scripts))
+            self.assertEqual(subprocess.run(["git", "-C", str(v), "status", "--porcelain"], capture_output=True, text=True).stdout.strip(), "")
+
+    def test_rm_archived_project(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            (v / "projects/proj-a").rename(v / "archives/proj-a")
+            room.cmd_rm(c, self.args(["proj-a"]))
+            self.assertFalse((v / "archives/proj-a").exists())
+
+    def test_rm_without_distro_still_removes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            c.wsl._distros.clear()
+            room.cmd_rm(c, self.args(["proj-a"]))
+            self.assertFalse((v / "projects/proj-a").exists())
+
+    def test_stops_when_mounted_unknown_or_noninteractive_and_changes_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wsl = FakeWsl()
+            v, c = opened(tmp, wsl)
+            wsl.mounted = True
+            with self.assertRaisesRegex(room.RoomError, "マウントが残っている"):
+                room.cmd_rm(c, self.args(["proj-a"]))
+            wsl.mounted = False
+            with self.assertRaisesRegex(room.RoomError, "Project が無い"):
+                room.cmd_rm(c, self.args(["nope"]))
+            with tty(), self.assertRaisesRegex(room.RoomError, "非対話"):
+                room.cmd_rm(c, self.args(["proj-a"], yes=False))
+            with tty("n"), self.assertRaisesRegex(room.RoomError, "中止"):
+                room.cmd_rm(c, self.args(["proj-a"], yes=False))
+            self.assertTrue((v / "projects/proj-a/README.md").exists())
+
+    def test_rm_area_stops_while_projects_remain_then_removes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            with self.assertRaisesRegex(room.RoomError, "Project が残っている"):
+                room.cmd_rm(c, self.args(area="area-x"))
+            room.cmd_rm(c, self.args(["proj-a"]))
+            room.cmd_rm(c, self.args(area="area-x", commit=True))
+            self.assertFalse((v / "areas/area-x").exists())
+            self.assertTrue(any("wsl --unregister room-area-x" in m for m in c.msgs))
+
+    def test_rm_rejects_area_with_names(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp, FakeWsl())
+            with self.assertRaisesRegex(room.RoomError, "同時"):
+                room.cmd_rm(c, self.args(["proj-a"], area="area-x"))
+            with self.assertRaisesRegex(room.RoomError, "指定する"):
+                room.cmd_rm(c, self.args())
+
+
 class CloseTest(unittest.TestCase):
     def test_close_warns_and_proceeds_on_y_with_template_readme_and_no_close_md(self):
         with tempfile.TemporaryDirectory() as tmp:
