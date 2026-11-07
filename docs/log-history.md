@@ -7,6 +7,7 @@
 - 実機で、works の `projects/` の 21 件と Area `env-external` を消した。`myenv` は残した。`sample_inv` のマウントが残っていて一度止まり（想定どおり）、`room umount --area myenv` で外して通した。
 - 実行中に 2 つ直した: 確認プロンプトの EOF（Windows は NUL も `isatty()` が真）を非対話のエラーにした。`rmtree_force` が WSL の `.venv/lib64` リンク（WinError 1920）で止まるので、辿れない項目はリンクごと消すようにした。
 - 探索は subagent に任せていない。
+- 別件(WSL): 既定の Ubuntu-24.04 で `node` が `volta: command not found` になる理由を調べた。Windows の PATH が WSL に足され、Volta の bash 用 shim(拡張子なしの `node`)を Ubuntu の bash が実行するため。Ubuntu では node を使わないので、変更せず放置と決めた(ユーザー)。同じ形の shim は Volta 配下と scoop の `scoop` `sudo` にもある。理解ガイドの下書きを `exmem/inbox/2026-11-07-wsl-windows-path-shim-leak.md` に作った(未追跡のまま)。
 
 ### 2026-11-06（`mask` / `restore` 削除の第三者確認 NA 1 を消化して閉じた）
 - 別のセッションの目で確認（`review 消化` NA 1）。リンク切れは無し（削除した 4 ファイルを指す現行のリンクなし。履歴の言及だけ残る）。room のテスト 210 件 OK（3 スキップ）。取りこぼしは、due の対象リストの中（`ai-room-why.md`、`cross-area-shared-knowledge.md`、`room-context.md` の「internal は語が空だと止まる」はコードと不一致）と、リストの外（`ai-room-data-layout-explain.md`、`ai-room-convert-tools-explain.md`、`methods.md`、`script-guide.md`、`ai-room-setup-manual.md`）にあった。
