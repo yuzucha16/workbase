@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-07 日本語が多い Excalidraw 図の `--export` を確認し、pptx・他 PC 向けは PNG 標準と決めた
+- ユーザーの指示: 「1. でお願いします」→「良いです。ただフォントが変わります。BIZ UDPゴシックになると思うけど、スライドの種類によって図中フォントも変わります。quarto の revealjs は noto sans jp に固定できる」「room確認は不要です」→「b」（フォント指定の実装は③の後）。
+- 結果: `sample-jp-font.excalidraw`（`fontFamily: 2`。濁点・小書き・記号・漢字・英数の混在）を Windows で `--export svg,png`。PNG は崩れず（目視）。SVG は `@font-face` も埋め込みも無く、`font-family="Helvetica, Segoe UI Emoji"` のみ。決定は `decisions.md` の同日の項。room の Chromium での確認は不要。
+- 残: ③ユーザーの手動確認、フォント指定の方式（③の後）、手順書 `作図`。NA に残した。
+
 ### 2026-11-07 Excalidraw 作図ループの設計と、`--export`（SVG・PNG の画面なし書き出し）を実装した
 - ユーザーの指示: 「excalidraw で図解の依頼プロンプトを作り、render して共通の置き場に置くループを」→ sheet・text など部品が増えても流用でき、深く・広くしない置き場の検討 → 「A にします」「`ai/work` を想定。仕組みの整合性で選んで」「追跡、賛成」「手順書は workflow-kit」「すすめて」→「部屋に chromium があると思う」→「wrap。残件は NA に。図は AI が作って試す方向でよい」。
 - 結果: 置き場は `ai/work/parts/<日付>-<部品>-<題>/`、残す図は成果物の中（`ai/out/<成果物名>/` の `publish/` か `docs/` の下に平置き）。直下 `docs/decisions.md` に【汎用】で記録。`excalidraw_view.py --export svg,png -o <出力先>`（`viewer_entry.jsx` に書き出しモード）を実装。`file://` のフォント取得は `--allow-file-access-from-files` で通し、空になる不具合は 6 回までやり直しで回避。Windows の Edge と room-myenv の Playwright Chromium で SVG・PNG が出て、PNG を目視（Linux の通常の Chromium は窓の高さから約 85px を引いた領域しか撮らないので、PNG は同梱の headless shell で撮る）。
