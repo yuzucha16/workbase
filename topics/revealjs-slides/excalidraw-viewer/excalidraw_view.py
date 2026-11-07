@@ -110,6 +110,7 @@ def export_files(files, outdir, kinds):
     global LINUX_BROWSER
     browser = find_browser()
     LINUX_BROWSER = browser.startswith("/")  # WSL 内の Linux 版なら、Linux のパスの URI にする
+    outdir = outdir.resolve()  # ブラウザの --screenshot は相対パスだと保存に失敗する
     outdir.mkdir(parents=True, exist_ok=True)
     tmp = Path(tempfile.mkdtemp(prefix="exv-"))
     page = tmp / "export.html"

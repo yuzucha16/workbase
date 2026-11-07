@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-07 Excalidraw の SVG を `side.img` と pptx に入れて確認した（NA ③が済）
+- ユーザーの指示: 「手順 2,3 をやってもらえますか。結果を同フォルダに」→ 手順 4 以降はユーザー。「png が出ました。png も svg も pptx に挿入できました。文字の違和感もありません。次のセッションで `--export` へのフォント指定をやります」。
+- AI: `samples/sample-jp-font.svg`（ユーザーが「SVG を保存」で書き出し）を T の `side.img`（alt・caption つき）にした spec `sample-side-img.spec.json` を書き、`gen_layouts.py` で qmd、`quarto render` で HTML（SVG は `data:image/svg` で埋め込まれる）。変換は不要で、パスを `img` に書くだけ（qmd と同じ階層の相対パス）。
+- 不具合: `--export png -o ./tmp/...` が「PNG を作れませんでした」になった。原因は Edge の `--screenshot` に相対パスを渡していたこと。`export_files` で出力先を `resolve()` して直した（`excalidraw_view.py`。相対・絶対の両方で確認）。`-o` はファイルでなく出力ディレクトリ。
+- 結果（ユーザーの目視）: PNG は出る。SVG・PNG とも pptx に挿入でき、文字に違和感なし（この PC・PowerPoint。別 PC は未確認）。
+- 残: `--export` へのフォント指定（次のセッション）、手順書 `作図`。コミットは spec・qmd・SVG・`excalidraw_view.py` のみ（HTML 約 3.5MB と、ユーザーの出力 `samples/tmp/` は含めない）。
+
 ### 2026-11-07 日本語が多い Excalidraw 図の `--export` を確認し、pptx・他 PC 向けは PNG 標準と決めた
 - ユーザーの指示: 「1. でお願いします」→「良いです。ただフォントが変わります。BIZ UDPゴシックになると思うけど、スライドの種類によって図中フォントも変わります。quarto の revealjs は noto sans jp に固定できる」「room確認は不要です」→「b」（フォント指定の実装は③の後）。
 - 結果: `sample-jp-font.excalidraw`（`fontFamily: 2`。濁点・小書き・記号・漢字・英数の混在）を Windows で `--export svg,png`。PNG は崩れず（目視）。SVG は `@font-face` も埋め込みも無く、`font-family="Helvetica, Segoe UI Emoji"` のみ。決定は `decisions.md` の同日の項。room の Chromium での確認は不要。

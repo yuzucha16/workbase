@@ -1,0 +1,41 @@
+---
+title: "Excalidraw SVG の side.img 試験"
+format:
+  revealjs:
+    theme: [default, revealjs-diagram-theme.scss]
+    width: 1280
+    height: 720
+    margin: 0.06
+    slide-number: true
+    transition: none
+    embed-resources: true
+    include-before-body:
+      - revealjs-diagram-icons-myself.html
+      - revealjs-diagram-icons-dads.html
+      - revealjs-diagram-icons-lucide.html
+---
+
+## 図解スライドの作り方
+
+::: {.tside}
+::: {.tmain}
+```{=html}
+<span hidden></span>
+```
+### 流れ
+
+- 説明・キャプチャ・用途を AI に渡す
+- AI が .excalidraw を書く
+- SVG と PNG を出し、崩れを目視で直す
+
+:::
+::: {.tright}
+```{=html}
+<figure><img src="sample-jp-font.svg" alt="依頼する、図を書く、確認するの 3 工程を左から右へ並べた流れ図。下に濁点・小書き・記号・漢字・英数の混在文字列の見本がある"><figcaption>Excalidraw から保存した SVG（日本語フォント確認用）</figcaption></figure>
+```
+
+:::
+:::
+```{=html}
+<div class="lid">T+side</div>
+```
