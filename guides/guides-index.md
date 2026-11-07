@@ -86,6 +86,8 @@ updated: 2026-10-28
 | `SSL certificate problem` などの証明書エラーが出た（TLS 検査のあるプロキシ環境） | [[ssl-inspection#3. チェックリスト（症状 → 原因 → 対処）]] | 理解ガイド |
 | ブラウザは通るのに git / WSL / docker / pip / npm だけ通らない | [[ssl-inspection]] | 理解ガイド |
 | SSL インスペクションの仕組みを、自分で説明できるようにする | [[ssl-inspection#2. 理解のための基礎知識]] | 理解ガイド |
+| WSL で `node` や `npm` が `volta: command not found` になる。Windows 側の PATH の shim が WSL で動く仕組みを、自分で説明できるようにする | [[wsl-windows-path-shim-explain]] | 理解ガイド |
+| `excalidraw_view.py` が初回だけ `npm install` を走らせる理由（JS・npm・React・esbuild のバンドル）を、自分で説明できるようにする。ビルドが毎回走る、図の字体が化ける、などの症状から原因を切り分ける | [[excalidraw-viewer-build-explain]] | 理解ガイド |
 
 ### コマンド・書き方を思い出す
 
@@ -103,7 +105,7 @@ updated: 2026-10-28
 | 種類 | 読む人の問い | 文書 |
 |---|---|---|
 | 手順書（`howto/`） | どの順で何をやるんだっけ | [[ai-room-setup]]、[[ai-room-lifecycle]]、[[ai-room-setup-script]]、[[ai-room-setup-manual]]、[[room-github-deploy-key-setup]]、[[bedrock-first-hello]]、[[claude-usage-report]]、[[ooxml-clean]]、[[works-gitignore-allowlist-migration]]（PC のセットアップの手順書は dotfiles の `docs/setup/`） |
-| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools-explain]]、[[ai-room-data-layout-explain]]、[[ai-room-concurrent-start-explain]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]]、[[markdown-to-pptx-quarto-explain]] |
+| 理解ガイド（`explain/`） | なぜそうなる？ どう動いている？ | [[python-version-uv]]、[[ssl-inspection]]、[[ai-room-why]]、[[ai-room-convert-tools-explain]]、[[ai-room-data-layout-explain]]、[[ai-room-concurrent-start-explain]]、[[review-hook-why]]、[[llm-gateway-oidc]]、[[cross-area-shared-knowledge]]、[[triggers-knowledge-index]]、[[claude-code-cost-session-size]]、[[ooxml-residue]]、[[token-cap-meter-reading]]、[[markdown-to-pptx-quarto-explain]]、[[wsl-windows-path-shim-explain]]、[[excalidraw-viewer-build-explain]] |
 | クイックリファレンス（`quickref/`） | あのコマンドは何だっけ | [[apt]]、[[git]]、[[docker]]、[[shell]]、[[ssh]]、[[markdown]] |
 
 ## この索引の更新

@@ -56,6 +56,9 @@ updated: 2026-10-21
 | `tool/quarto` | Quarto（Markdown から revealjs・pptx などを作る） |
 | `tool/revealjs` | reveal.js（Quarto の revealjs 形式の HTML スライド） |
 | `tool/excalidraw` | Excalidraw（手描き風の作図。`.excalidraw` は JSON） |
+| `tool/nodejs` | Node.js（`node`。JS をブラウザの外で動かす実行環境） |
+| `tool/npm` | npm（Node.js のパッケージ管理、`package.json`、`node_modules/`） |
+| `tool/volta` | Volta（Node.js の版管理。shim を PATH に置く） |
 
 ### `ai/` — AIサービス・エージェント
 
@@ -115,3 +118,7 @@ updated: 2026-10-21
 | `diagram` | 図解・構造図の描き方・レイアウト |
 | `mcp` | MCP サーバー（接続・常時トークン・成果物の出方） |
 | `design-system` | デザインシステム（デジタル庁 DADS など）に沿った見た目の規則 |
+| `web-basics` | Web の道具立て（JavaScript・React・ブラウザ）の基礎 |
+| `build` | ソースを動く形に束ねる・変換するビルドの仕組み |
+| `path` | 環境変数 PATH と実行ファイルの解決 |
+| `interop` | WSL と Windows の相互運用（exe 呼び出し、PATH 共有） |
