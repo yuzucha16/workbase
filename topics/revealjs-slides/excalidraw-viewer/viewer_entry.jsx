@@ -49,4 +49,31 @@ function App() {
     </div>
   );
 }
-createRoot(document.getElementById("root")).render(<App />);
+// 書き出しモード（excalidraw_view.py --export）: 画面を出さず、全ファイルの SVG を JSON にして <pre id="exv-out"> に入れる。
+async function exportAll() {
+  const out = [];
+  for (const f of files) {
+    const d = f.data || {};
+    try {
+      const svg = await exportToSvg({
+        elements: (d.elements || []).filter((e) => !e.isDeleted),
+        appState: { ...(d.appState || {}), exportBackground: true, viewBackgroundColor: (d.appState || {}).viewBackgroundColor || "#ffffff" },
+        files: d.files || {},
+        exportPadding: 20,
+      });
+      out.push({ name: f.name, svg: svg.outerHTML });
+    } catch (e) {
+      out.push({ name: f.name, error: String(e) });
+    }
+  }
+  const pre = document.createElement("pre");
+  pre.id = "exv-out";
+  pre.textContent = JSON.stringify(out);
+  document.body.appendChild(pre);
+}
+
+if (window.__EXV_EXPORT__) {
+  exportAll();
+} else {
+  createRoot(document.getElementById("root")).render(<App />);
+}

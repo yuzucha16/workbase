@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-07 Excalidraw 作図ループの設計と、`--export`（SVG・PNG の画面なし書き出し）を実装した
+- ユーザーの指示: 「excalidraw で図解の依頼プロンプトを作り、render して共通の置き場に置くループを」→ sheet・text など部品が増えても流用でき、深く・広くしない置き場の検討 → 「A にします」「`ai/work` を想定。仕組みの整合性で選んで」「追跡、賛成」「手順書は workflow-kit」「すすめて」→「部屋に chromium があると思う」→「wrap。残件は NA に。図は AI が作って試す方向でよい」。
+- 結果: 置き場は `ai/work/parts/<日付>-<部品>-<題>/`、残す図は成果物の中（`ai/out/<成果物名>/` の `publish/` か `docs/` の下に平置き）。直下 `docs/decisions.md` に【汎用】で記録。`excalidraw_view.py --export svg,png -o <出力先>`（`viewer_entry.jsx` に書き出しモード）を実装。`file://` のフォント取得は `--allow-file-access-from-files` で通し、空になる不具合は 6 回までやり直しで回避。Windows の Edge と room-myenv の Playwright Chromium で SVG・PNG が出て、PNG を目視（Linux の通常の Chromium は窓の高さから約 85px を引いた領域しか撮らないので、PNG は同梱の headless shell で撮る）。
+- 残: 日本語が多い図での SVG のフォント確認、ユーザーの手動の保存・取り込み（revealjs・pptx）、手順書 `作図`。NA に残した。
+- 後始末: 部屋の `/tmp/exv-*` と Windows の一時ファイルは削除済み。部屋の `~/.cache/excalidraw-viewer`（約 273MB）は残した。
+
 ### 2026-11-07 Excalidraw の閲覧スクリプトを作った（room 非依存）
 - ユーザーの指示: 「excalidraw の viewer 環境を作ろうかと思います（毎回 HTML に render／Windows の npm・docker／WSL の npm・docker）。少ないリソース・無償・PC1 でも使える条件で選択肢に優先順位を」→「Docker Desktop は Enterprise 要件で使えない。用途はあなたやスクリプトが作った excalidraw を見ること」「viewer は room に依存させたくない。Windows でも使えると嬉しい」→「どちらも見れました。Windows 側は sample ごとコミット。--no-open も保存と参照どちらもできた」。
 - 結果: 毎回 HTML に render する案を 1 位にした（MIT・常駐なし）。`excalidraw-viewer/` に `excalidraw_view.py`・`build_viewer.mjs`・`viewer_entry.jsx`・`package.json`・`samples/sample-flow.excalidraw` を作った。Edge のヘッドレスで日本語・手描き風の表示を確認。room の図は Windows 側から UNC パスで読む形にした。決定は `decisions.md`。
