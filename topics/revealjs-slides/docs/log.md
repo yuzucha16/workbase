@@ -18,7 +18,7 @@
 
 ## Next Actions
 
-- 【起票 11-07、期日 11-14】Excalidraw 作図ループの仕上げ: ①`--export` へのフォント指定を決めて実装する（次のセッション。ユーザー 11-07）。図中フォントは出力先で変わる（revealjs の Quarto は Noto Sans JP に固定できる。pptx は BIZ UDPゴシックの想定）。SVG の `font-family` 書き換えと、PNG は書き出す端末にそのフォントが要ること、が論点。②手順書（`workflow-kit/`、合言葉 `作図`。入力は説明・キャプチャ・用途（理解用 / slide / pptx）、手順は用途でプロファイルを決める → `.excalidraw` を書く → `--export` → PNG を目視して直す（最大 2 回）→ `ai/work/parts/` に置く → 報告）を、①の後に書く。置き場は決定済み（直下 `docs/decisions.md` 11-07: `ai/work/parts/<日付>-<部品>-<題>/`、残す図は成果物の中）。③（SVG の保存 → `side.img` → pptx）は済（11-07。SVG・PNG とも pptx に入り、この PC では違和感なし。別 PC は未確認で、Open Questions）。担当: AI。
+- 【起票 11-07、期日 11-14】Excalidraw 作図ループの仕上げ: 手順書（`workflow-kit/`、合言葉 `作図`）を書く（次のセッション）。入力は説明・キャプチャ・用途（理解用 / slide / pptx）、手順は用途でプロファイルを決める → `.excalidraw` を書く → `--export [--font <名前>]` → PNG を目視して直す（最大 2 回）→ `ai/work/parts/` に置く → 報告。プロファイル（用途 → 既定フォント）は revealjs = Noto Sans JP、pptx = BIZ UDPゴシックの想定で、手順書で決める。`--font` は SVG の `font-family` を書き換え、PNG は書き出す端末にそのフォントが要る（端末に無ければ警告）。room（WSL）への Noto Sans JP は room init の段で入る（11-06 通し済み）。置き場は決定済み（直下 `docs/decisions.md` 11-07: `ai/work/parts/<日付>-<部品>-<題>/`、残す図は成果物の中）。担当: AI。
 
 - 【起票 11-06、期日 11-20】`topics/office-output-types` との共通化: 案を出した（11-07。`records/2026-11-07-common-structure-with-office-output-proposal.md`。推奨は A = 値と規則だけ文書で分ける。コードは変えていない）。ユーザーの確認待ち（文章の規則を pptx にも使うか、pptx の図は SVG 画像でよいか、置き場）。P2（split を 3 部品まで）は需要が出てから（実スライド 1 本では `want` は溜まらなかった）。担当: AI、ユーザー（選択）。
 

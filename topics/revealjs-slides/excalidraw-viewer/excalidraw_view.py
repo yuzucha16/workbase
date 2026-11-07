@@ -6,6 +6,7 @@ room に依存しない。Windows でも WSL でも、Python 3 と Node.js (npm)
   python -I excalidraw_view.py a.excalidraw -o view.html --no-open
   python -I excalidraw_view.py --rebuild          # 閲覧用 JS を作り直す
   python -I excalidraw_view.py a.excalidraw --export svg,png -o out_dir   # 画面なしで SVG・PNG（Edge か Chrome が要る）
+  python -I excalidraw_view.py a.excalidraw --export svg,png -o out_dir --font "Noto Sans JP"   # 図中フォントを指定
 
 初回だけ、閲覧用 JS をキャッシュ (~/.cache/excalidraw-viewer) に作る（npm install と esbuild。
 数分・約 40MB）。以後は npm を使わない。Excalidraw 本体・React・esbuild はすべて MIT。
@@ -101,7 +102,35 @@ def find_browser():
     sys.exit("Edge か Chrome が見つかりません（--export に必要）")
 
 
-def export_files(files, outdir, kinds):
+def font_installed(name):
+    """端末にフォントがあるか（見つからなければ False。判定できない環境は True）。"""
+    n = name.lower().replace(" ", "")
+    if os.name == "nt":
+        import winreg
+        for root, sub in ((winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"),
+                          (winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts")):
+            try:
+                with winreg.OpenKey(root, sub) as k:
+                    for i in range(winreg.QueryInfoKey(k)[1]):
+                        if n in winreg.EnumValue(k, i)[0].lower().replace(" ", ""):
+                            return True
+            except OSError:
+                pass
+        return False
+    if shutil.which("fc-list"):
+        out = subprocess.run(["fc-list", ":", "family"], capture_output=True, text=True).stdout
+        return n in out.lower().replace(" ", "")
+    return True
+
+
+def apply_font(svg, font):
+    """SVG の font-family をすべて指定のフォントに書き換える（総称の sans-serif を後ろに足す）。"""
+    import re
+    fam = f"{font}, sans-serif"
+    return re.sub(r'font-family="[^"]*"', f'font-family="{fam}"', svg)
+
+
+def export_files(files, outdir, kinds, font=None):
     """headless のブラウザで SVG を書き出す。png も要るときは、その SVG を撮る。"""
     import html as htmlmod
     import re
@@ -130,6 +159,8 @@ def export_files(files, outdir, kinds):
     if not m:
         sys.exit("書き出しに失敗しました（6 回やり直しても出力なし）。" + r.stderr[-400:])
     results = json.loads(htmlmod.unescape(m.group(1)))
+    if font and not font_installed(font):
+        print(f"警告: この端末にフォント「{font}」が見つかりません。PNG は代替フォントで描かれます。")
     done = []
     for item in results:
         base = Path(item["name"]).stem
@@ -137,6 +168,8 @@ def export_files(files, outdir, kinds):
             print("失敗:", item["name"], item["error"])
             continue
         svg = item["svg"]
+        if font:
+            svg = apply_font(svg, font)
         if not svg.startswith("<?xml"):
             svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + svg
         if "svg" in kinds:
@@ -209,6 +242,7 @@ def main():
     ap.add_argument("--no-open", action="store_true", help="ブラウザで開かない")
     ap.add_argument("--rebuild", action="store_true", help="閲覧用 JS を作り直す")
     ap.add_argument("--export", metavar="KINDS", help="画面を出さず書き出す。svg、png、svg,png。出力先は -o（ディレクトリ。既定は入力と同じ場所）")
+    ap.add_argument("--font", metavar="NAME", help="--export の図中フォント（例: 'Noto Sans JP'）。SVG の font-family を書き換える。PNG は書き出す端末にそのフォントが要る")
     a = ap.parse_args()
     ensure_built(a.rebuild)
     if not a.paths:
@@ -219,9 +253,11 @@ def main():
         kinds = {k.strip() for k in a.export.split(",")}
         if not kinds <= {"svg", "png"}:
             ap.error("--export は svg、png、svg,png のどれか")
+        if a.font and ("," in a.font or '"' in a.font):
+            ap.error("--font は単一のフォント名")
         files = collect(a.paths)
         outdir = Path(a.output) if a.output else files[0].parent
-        for p in export_files(files, outdir, kinds):
+        for p in export_files(files, outdir, kinds, a.font):
             print("出力:", p)
         return
     out = Path(a.output) if a.output else Path(tempfile.gettempdir()) / "excalidraw-view.html"

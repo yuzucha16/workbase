@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-07 `--export` へのフォント指定（`--font`）を実装した（NA ①が済）
+- ユーザーの指示: 「`--export` へのフォント指定(svg,png)を実装します」。確認後「こちらも問題なく、フォントが出力されました。動作確認完了」。
+- AI: `excalidraw_view.py` に `--font NAME` を追加。SVG の `font-family` をすべて `NAME, sans-serif` に書き換える（`apply_font`）。端末にフォントが無ければ警告（`font_installed`。Windows はレジストリ、Linux は `fc-list`）。複数名・引用符つきはエラー。`samples/sample-flow.excalidraw` で SVG の書き換えと PNG（Noto Sans JP）を確認。字幅の変化による箱からのはみ出しは、ユーザーの目視で問題なし。
+- 残: 手順書 `作図`（プロファイル決め込み）。room での `--font` 実行と別 PC・PowerPoint は未確認。
+- コミット: `excalidraw_view.py`、`log.md`、`log-history.md`、`due.md`（`samples/tmp/`・`tmp2/` は含めない）。
+
 ### 2026-11-07 Excalidraw の SVG を `side.img` と pptx に入れて確認した（NA ③が済）
 - ユーザーの指示: 「手順 2,3 をやってもらえますか。結果を同フォルダに」→ 手順 4 以降はユーザー。「png が出ました。png も svg も pptx に挿入できました。文字の違和感もありません。次のセッションで `--export` へのフォント指定をやります」。
 - AI: `samples/sample-jp-font.svg`（ユーザーが「SVG を保存」で書き出し）を T の `side.img`（alt・caption つき）にした spec `sample-side-img.spec.json` を書き、`gen_layouts.py` で qmd、`quarto render` で HTML（SVG は `data:image/svg` で埋め込まれる）。変換は不要で、パスを `img` に書くだけ（qmd と同じ階層の相対パス）。
