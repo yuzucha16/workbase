@@ -309,7 +309,7 @@ class XlsxTest(unittest.TestCase):
             self.assertEqual(rc, 1)  # グラフの写しと非表示の行が残る
             self.assertEqual(src.read_bytes(), self.data)
             self.assertTrue((Path(d) / "out" / "dummy.xlsx").exists())
-            self.assertTrue((Path(d) / "tmp" / "dummy.xlsx-report.md").exists())  # 報告は入力の隣の tmp/（room clean と同じ）
+            self.assertTrue((Path(d) / "tmp" / "dummy.xlsx-report.md").exists())  # 報告は入力の隣の tmp/（旧 room clean と同じ）
             self.assertIn("(clean)", (Path(d) / "tmp" / "dummy.xlsx-report.md").read_text(encoding="utf-8").splitlines()[0])
             self.assertEqual(ck.main(["check", str(src)]), 1)
             self.assertIn("(check)", (Path(d) / "tmp" / "dummy.xlsx-report.md").read_text(encoding="utf-8").splitlines()[0])

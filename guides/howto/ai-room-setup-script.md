@@ -117,7 +117,7 @@ wsl -d room-pilot2 -- sh -c "id -un; ls /mnt/c | wc -l; command -v cmd.exe || ec
 uv run room.py open pilot2-1 --area pilot2
 ```
 
-- `--type dev|inv`（省略は `dev`）で、成果物の種類を決める。`dev` は作って保守する成果物、`inv` は調べて結論を出す成果物（`project-structure.md`）。`_noai/` の中身は `type` に関係なく同じ（`raw/` `map/` `user/`。`workflow-kit/room/README.md`）。`user/` は人だけの仮置き（予約名）。語のマスク・復元は 2026-11-06 に廃止した（掃除は 4 章の `clean`）
+- `--type dev|inv`（省略は `dev`）で、成果物の種類を決める。`dev` は作って保守する成果物、`inv` は調べて結論を出す成果物（`project-structure.md`）。`_noai/` の中身は `type` に関係なく同じ（予約名は `mask.toml` だけ。`raw/` `map/` `user/` は 2026-11-07 に廃止。`workflow-kit/room/README.md`）。語のマスク・復元は 2026-11-06 に廃止した（掃除は 4 章の `cleankit`）
 - `projects/pilot2-1/` に、`README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,user}` ができ、Area の README の「進行中の Project」に1行足される。`ai/ctx/` は `start` が作る
 - 初期状態を、既定でコミットする（`--no-commit` で省く）。コミットされるのは、Project のひな形と、Area の README だけ（Area のほかのファイルは含めない）
 - **README の本文を書く**（目的、成果物。完了条件・範囲外・未決は `ai/work/plan/` の 6R）。ひな形のままだと、`close` が警告して `[y/N]` で確かめる（動作確認や小さな作業なら y で進めてよい）

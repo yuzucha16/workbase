@@ -31,7 +31,7 @@ Project は、問題解決の単位で、1 つの部屋で行う。問題解決�
 | `ai/out/` | 最終成果物 `<成果物名>/`。基準文書と検証を伴う。予約名: `close.md` `stock/`。成果物の塊は 1 つで、名前は Project 名と同じ（`room close` は Area へ渡さない。`archives/<Project>/ai/out/` にそのまま残る。2026-11-07） | 計画する（結論）、作る、確かめる | 読み書き |
 | `ai/docs/` | 作業の記録だけ。`log.md`（現在状態）・`decisions.md`（判断）・`log-history.md`（経緯）の3つ（`room open` が雛形を置く） | 全活動の跡（何を決めたか） | 読み書き |
 | `ai/records/` | 機械が書く実行記録（費用の推定、応答本文、部屋の操作のログ）、AI への指示の記録 | 作るの跡 | 読み書き |
-| `_noai/` | 原本 `raw/`、room の記録 `map/`、点検用の語の表 `mask.toml`、人だけの仮置き `user/`（`room/README.md`）。追跡しない | （AI の外） | 見えない |
+| `_noai/` | 予約名は点検用の語の表 `mask.toml` だけ。それ以外は人が自由に置く（`room` は触らない。`room/README.md`）。追跡しない | （AI の外） | 見えない |
 
 種類別の置き場（type の考え方は上の節）:
 

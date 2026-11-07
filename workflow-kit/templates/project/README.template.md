@@ -21,7 +21,7 @@ updated: <YYYY-MM-DD>
 
 <!--
 構造（project-structure.md）:
-- 固定: README.md、ai/{docs,in,work,out,records}（`room open` が作る）、_noai/（原本・room の記録・人だけの仮置き `user/`。追跡しない）
+- 固定: README.md、ai/{docs,in,work,out,records}（`room open` が作る）、_noai/（AI に見せない領域。予約名は mask.toml だけで、ほかは人が自由に置く。追跡しない）
 - dev（作って保守する成果物）: ai/out/<成果物名>/ に src/、env/、tests/、tools/、docs/ から必要なもの（文書だけなら docs/ だけ。dev-deliverable-guide.md）
 - inv（調べて結論を出す成果物）: ai/in/ に渡された資料、ai/work/ に集めた資料と抜粋、ai/out/<成果物名>/report.md に結論
 - ai/ の下は、空のディレクトリを先に作らない。最初のファイルが来たときに作る。

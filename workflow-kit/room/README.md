@@ -17,7 +17,6 @@ uv run room.py init <Area> [--boundary external|internal] [--resume] [--only <�
 uv run room.py open <Project> --area <Area> [--type dev|inv] [--boundary external|internal] [--no-commit]
 uv run room.py start <Project> [--cmd <部屋で実行するコマンド>] [--no-launch] [--gateway] [--adopt] [--no-commit]
 uv run room.py close <Project> [--commit]
-uv run room.py clean <Project> [--path <glob>]      # internal のみ
 uv run room.py readme <Project> [--yes] [--commit]
 uv run room.py stock <Project> [--dst kit|area] [--yes]
 uv run room.py reap [<Project>] [--yes] [--force]
@@ -48,7 +47,7 @@ uv run room.py mv <旧Area> <新Area> [--no-commit]
 | `aws-key` | `aws-key <Area> --profile <名前>`: 部屋の `~/.aws/credentials` に、Bedrock 用のキーを入れる（同名の節は置き換え、ほかの節は残す。権限 600）。アクセスキー ID は入力、秘密と `AWS_SESSION_TOKEN`（一時キーのときだけ）は画面に出さずに受け取り、標準入力で部屋へ渡す（コマンドラインにも履歴にも残さない）。AI からは読める場所なので、Bedrock の権限だけのユーザーにして、予算アラートを置く。Zed の `agent_servers` の `env` に `AWS_PROFILE=<名前>` を書いて使う（環境変数は Zed 経由では引き継がれないため。実機確認は未了） |
 | `shell <Area>` | 部屋に入る（`wsl -d room-<Area>` の代わり）。`WSLENV` を外して入るので、Windows の `WSLENV` に `/p` 付きのパスがあっても、入るたびに「failed to translate」が出ない（automount を切った部屋では、そのパスを変換できないため） |
 | `reap [名前]` | close から期限（`reap_after`。既定14日）が来て、まだ `reaped` の無い `archives/` の Project について、部屋の会話履歴（`~/.claude/projects/-mnt-room-<名>/`）と `~/tmp/<名>` を消し、README に `reaped: <日付>` を付ける。消す前に、会話履歴を Windows 側の `~/.claude/room-history/<部屋>/` へ写す（リポジトリの外。集計は `cap_meter.py --root ~/.claude/room-history`）。写せなければ消さずに止まる。名前なしは期限切れの一覧を出して承認を求める（`--yes` で省略）。名前ありで期限前なら `--force`。名前が英数字・`_`・`-` 以外なら止まる。`close` の終わりにも一覧を出す（端末のときは承認を求める）。Windows 側の `archives/` は消さない |
-| `open` | works の `.gitignore`（必須は `**/_noai/`。許可リスト方式なら `ai/` の `in` `work` `out` `records` は追跡外）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`、`ai/{docs,in,work,out,records}`、`_noai/{raw,map,user}` と `_noai/mask.toml` のひな形（`clean` と `stock` の点検に使う語の表。名前は旧マスクの名残。`[terms.CUST]` `[terms.PERSON]` の見出しと書式の例だけ。語はコメントアウト。2026-10-21）を作り、Area の一覧に足す。`--from <閉じた Project>`（同じ Area の `archives/`）を付けると、その成果物・`close.md`・正式な計画を `ai/in/from-<名>/` に写して来歴を manifest に記録し、README に `from:` を付ける（external の Area でも使える。写すものが無くても止めず、注意を出して `from:` だけ付ける。2026-11-04、11-05 に緩和。`project-structure.md` の「閉じた Project の引き継ぎ」） |
+| `open` | works の `.gitignore`（必須は `**/_noai/`。許可リスト方式なら `ai/` の `in` `work` `out` `records` は追跡外）と Area の `boundary:` を確認し、`projects/<名>/` に `README.md`、`ai/{docs,in,work,out,records}`、`_noai/mask.toml` のひな形（`cleankit` と `stock` の点検に使う語の表。名前は旧マスクの名残。`[terms.CUST]` `[terms.PERSON]` の見出しと書式の例だけ。語はコメントアウト。2026-10-21）を作り、Area の一覧に足す。`--from <閉じた Project>`（同じ Area の `archives/`）を付けると、その成果物・`close.md`・正式な計画を `ai/in/from-<名>/` に写して来歴を manifest に記録し、README に `from:` を付ける（external の Area でも使える。写すものが無くても止めず、注意を出して `from:` だけ付ける。2026-11-04、11-05 に緩和。`project-structure.md` の「閉じた Project の引き継ぎ」） |
 | `start` | `area:` とディストロ名の一致、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴（manifest）を確認 → Project の README と所属する Area の README の写しを `ai/ctx/`（`README.md`、`area-README.md`）に置く。external の Area は、`areas/<Area>/ai/{knowledge,docs}/**.md`（`docs/inbox.md` を除く）の写しも `ai/ctx/area/` に読み取り専用で置く（2026-11-02。`cleankit` の検出に当たるファイルと、合計 1 MiB を超える分は写さない。止めない）（Area の README が 16 KiB を超えると知らせる）→ 部屋の `~/.claude.json` で `/mnt/room/<名>` を信頼済みにする（信頼の確認を省く。2026-10-19）→ `ai/` を `/mnt/room/<名>` に root でマウントし、`in/` を読み取り専用に → 部屋で AI を起動（一般ユーザー）→ **必ず**アンマウントして、マウント点を消し、残りを確認 → 変更の一覧（許可リスト方式の works では、`ai/` は `docs/` 以外が git に出ないので `ai/out` のファイル数を添え、無視ファイルの警告はしない。旧方式では警告する） |
 | （`start` の中） | 共有知の写し（方式 A）: `<Vault>/resources/` の `AGENTS.md`、`workflow-kit/`（`workflow-kit/room/` は `README.md` だけ。コード・テスト・設定は送らない。2026-10-17）、`exmem/{AGENTS.md,README.md,tags.md,lessons/}`、`guides/` を tar.gz にして、部屋の `~/shared` に読み取り専用で送る（起動のたびに入れ替え。途中では更新しない）。基準コミット（と未コミットの変更の有無）を manifest の `shared` に記録し、`~/shared/ROOM.md` に案内を置く。あわせて、部屋の `~/.claude/CLAUDE.md`（Claude Code が作業ディレクトリによらず読む）に `ROOM.md` への案内を、目印（`room-shared:begin`〜`end`）で囲んだ範囲だけ入れ替えて置く（ほかの内容は変えない）。`resources/` が無ければ送らない。部屋の `~/.claude/CLAUDE.md` に案内を、`~/.claude/settings.json` に `Read(~/shared/**)` の許可（読み取りだけ）を足す |
 | `trace --area <Area> <語>` | Area の `archives/` の閉じた Project の `ai/docs/`（decisions・log-history・log）を語で横断して探し、閉じた順に節の見出しと一致した行を表示する（部屋の AI には出さない。2026-11-05。旧 `trace <Project>#n` は廃止） |
@@ -63,7 +62,7 @@ uv run room.py mv <旧Area> <新Area> [--no-commit]
 
 Area の `README.md` の `boundary:` は `external`（外向け相当。**既定**）か `internal`。無印や、それ以外の値は `external` として扱う（厳しい側に倒す）。
 
-- `external`: 業務データを AI の入力にしない。`clean`、`start --adopt` は止まる。AI に入れるのは、ユーザー自身が作るもの（論点整理、課題設定、プロジェクト管理、治具ツールなど）だけ。
+- `external`: 業務データを AI の入力にしない。`start --adopt` は止まる。AI に入れるのは、ユーザー自身が作るもの（論点整理、課題設定、プロジェクト管理、治具ツールなど）だけ。
 - `internal`: 人が通したファイルだけを入れる（ファイル単位。`ai/in/` に置き、`start --adopt` で manifest にハッシュを記録する）。`cleankit`（`strict` が向く）と `pptxtext`・`exceltext` は、通す前の一次スクリーニング。通すかどうかは人の目で決める。
 - 顧客ごとの違いが要るときは、`boundary:` の値を増やさず、別のキーで足す。
 

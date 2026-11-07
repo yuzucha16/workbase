@@ -1240,7 +1240,7 @@ updated: {today}
 
 
 def scaffold_area(ctx, area):
-    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（clean --path、close）は、無ければ作らず、何も変えずに止まる。"""
+    """Area の置き場を、無ければ作る（あるものは触らない）。後続のコマンド（close など）は、無ければ作らず、何も変えずに止まる。"""
     root = ctx.vault / "areas" / area
     old = root / "knowledge"  # 2026-10-21 までの置き場（_noai の外で、守られていなかった）。自動では動かさない
     if old.is_dir():
@@ -3171,7 +3171,7 @@ def build_parser():
     st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst を省くと各下書きの scope: に従って両方へ運ぶ。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
     st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと各下書きの scope: に従って両方へ運ぶ。scope: が無い・不明なら止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない。2026-11-04 に1件ごとの確認を廃止した）")
-    c = sub.add_parser("close", help="Area へ渡し、archives へ移す（README がひな形のまま・ai/out/close.md が無いときは y/N で確かめる。非対話では止まる）")
+    c = sub.add_parser("close", help="archives へ移す。成果物は Area へ渡さない（README がひな形のまま・ai/out/close.md が無いときは y/N で確かめる。非対話では止まる）")
     c.add_argument("name", nargs="?"); c.add_argument("--commit", action="store_true")
     c.add_argument("--area", help="Project でなく Area を終える（Project 0 件・stock の scope: area の未処理 0 件が条件。y/N で宣言。areas/<Area> → archives/areas/<Area>。部屋は消さない）")
     i = sub.add_parser("init", help="Area の部屋（専用ディストロ）を作り、道具を入れる（ログインは人）")

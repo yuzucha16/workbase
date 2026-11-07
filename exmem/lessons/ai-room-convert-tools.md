@@ -13,7 +13,7 @@ aliases:
   - ai-room-convert-tools
 triggers: [変換, mermaid, Chromium, Playwright, LibreOffice, フォント, PlemolJP, room run, 静的検査, pwsh, dist]
 created: 2026-10-20
-updated: 2026-10-27
+updated: 2026-11-07
 sources:
   - Claude Code conversation "部屋の中で pwsh・pandoc・Excel を使う方法" (2026-10-21)
 ---
@@ -52,7 +52,7 @@ sources:
 - **`room run` のスコープは、1回に1件、Project 内の成果物を名前で指定する。全体実行と Area 単位の実行は作らない**（2026-10-20）
   - 根拠: 全体実行は成果物が変わりうる。
   - 却下案: Project 全体の一括実行、Area 単位の実行（成果物が変わる）。
-- **スクリプトは `ai/work/run/`（使い捨てのスクリプトの置き場）、成果物は `ai/out/<成果物名>/dist/`（実データ由来は `_noai/final/<成果物名>/dist/`）に置く**（2026-10-20）
+- **スクリプトは `ai/work/run/`（使い捨てのスクリプトの置き場）、成果物は `ai/out/<成果物名>/dist/`（実データ由来は `_noai/final/<成果物名>/dist/`）に置く**（2026-10-20）（【廃止前の記録】`_noai/final/` は 2026-11-06 に廃止した。実データ由来の `dist/` の置き場は未決）
   - 根拠: 使い捨てのスクリプトは `ai/work/`、成果物は `ai/out/<成果物名>/` に一式、という既存の置き場の規則に合う。`dist/` は全 type 共通の派生物置き場で、1成果物1フォルダを保てる。
   - 却下案: 予約名のディレクトリ `ai/out/run/`（成果物が2か所に分かれる）、type ごとの構造に従う（AI が毎回判断し、上書きの事故が起きうる）。
 - **v3（実データへの実行）は、静的検査・入力のコピーに実行・書き出しは AI に見えない側・ログも同じ、の条件で許す**（2026-10-20）
