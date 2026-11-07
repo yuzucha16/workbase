@@ -964,13 +964,22 @@ class BoundaryGuardTest(unittest.TestCase):
         readme.write_text(readme.read_text(encoding="utf-8").replace("boundary: internal", "boundary: external"), encoding="utf-8")
         return v, c, v / "projects/proj-a"
 
-    def test_clean_path_is_refused_for_external_area(self):
+    def test_adopt_is_refused_for_external_area(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self.external_project(tmp)
+            (p / "ai/in/x.md").write_text("手で掃除したもの\n", encoding="utf-8")
             with self.assertRaises(room.RoomError) as cm:
-                room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["x"], yes=True))
+                room.cmd_start(c, argparse.Namespace(name="proj-a", cmd="claude", no_launch=True, adopt=True, commit=False, yes=True))
             self.assertIn("internal", str(cm.exception))
 
+    def test_hand_placed_input_needs_adopt_then_passes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            v, c = opened(tmp)
+            pr = room.Project.load(c, "proj-a")
+            (pr.ai / "in/x.md").write_text("手で掃除したもの\n", encoding="utf-8")
+            self.assertTrue(room.check_provenance(pr))
+            room.adopt_in(c, pr)
+            self.assertEqual(room.check_provenance(pr), [])
 
 class StartTest(unittest.TestCase):
     def args(self, **kw):
@@ -1291,70 +1300,6 @@ class AllowlistGitignoreTest(unittest.TestCase):
             self.assertFalse(room.is_allowlist_vault(ctx_for(make_vault(tmp))))
 
 
-class PullSourceTest(unittest.TestCase):
-    MASK = '[terms.CUST]\nacme = ["アクメ商事株式会社", "アクメ商事"]\n'
-
-    def setup_area(self, tmp, wsl=None):
-        v, c = opened(tmp, wsl)
-        p = v / "projects/proj-a"
-        (p / "_noai/mask.toml").write_text(self.MASK, encoding="utf-8", newline="\n")
-        k = v / "areas/area-x/_noai/knowledge"  # 知識の経路は外した（作られない）
-        (v / "areas/area-x/_noai/deliverable").mkdir(parents=True, exist_ok=True)
-        sd = v / "areas/area-x/_noai/source"
-        sd.mkdir(parents=True, exist_ok=True)
-        (sd / "議事録.md").write_text("アクメ商事の件。決定: 切替は11月\n", encoding="utf-8", newline="\n")
-        return v, c, p, k
-
-    def place_raw(self, p, v):
-        """Project 固有の原本として、議事録.md を _noai/raw に直接置く。"""
-        (p / "_noai/raw/議事録.md").write_bytes((v / "areas/area-x/_noai/source/議事録.md").read_bytes())
-
-    def test_clean_path_needs_a_path_inside_source(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, k = self.setup_area(tmp)
-            for bad in (None, ["../knowledge/*.md"], ["/etc/passwd"]):
-                with self.assertRaises(room.RoomError):
-                    room.cmd_clean(c, argparse.Namespace(name="proj-a", path=bad, yes=True)) if bad else room.pick_source_files(v / "areas/area-x/_noai/source", bad)
-
-    def deliver(self, c, p):
-        """close が Area へ渡す処理（点検 → 書き出し）。問題があれば何も書かず一覧を返す。"""
-        pr = room.Project.load(c, p)
-        items, problems = room.deliverable_items(pr)
-        plans, errors, conflicts = room.deliver_plan(pr, items)
-        problems = problems + errors + conflicts
-        if not problems:
-            room.deliver_write(c, pr, plans)
-        return len(items), problems
-
-    def test_deliverable_goes_to_area_as_is(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, _k = self.setup_area(tmp)
-            d = p / "ai/out/deliverable"
-            d.mkdir(parents=True)
-            (d / "report.md").write_text("報告\n", encoding="utf-8", newline="\n")
-            (p / "ai/out/tool.py").write_text("print(1)\n", encoding="utf-8", newline="\n")
-            self.assertEqual(self.deliver(c, "proj-a"), (1, []))
-            self.assertEqual((v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"), "報告\n")
-            (d / "report.md").write_text("改訂\n", encoding="utf-8", newline="\n")
-            self.assertEqual(self.deliver(c, "proj-a"), (1, []))
-            (v / "areas/area-x/_noai/deliverable/proj-a/report.md").write_text("人の変更\n", encoding="utf-8", newline="\n")
-            (d / "report.md").write_text("再改訂\n", encoding="utf-8", newline="\n")
-            n, problems = self.deliver(c, "proj-a")
-            self.assertTrue(problems)
-            self.assertEqual((v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"), "人の変更\n")
-
-    def test_deliverable_without_area_dir_stops_and_writes_nothing(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p, _k = self.setup_area(tmp)
-            (v / "areas/area-x/_noai/deliverable").rmdir()
-            d = p / "ai/out/deliverable"
-            d.mkdir(parents=True)
-            (d / "report.md").write_text("x\n", encoding="utf-8", newline="\n")
-            n, problems = self.deliver(c, "proj-a")
-            self.assertIn("成果物の置き場が無い", problems[0])
-            self.assertFalse((v / "areas/area-x/_noai/deliverable").exists())
-
-
 class NoDataModeTest(unittest.TestCase):
     """open が作るディレクトリと README。"""
 
@@ -1375,8 +1320,9 @@ class NoDataModeTest(unittest.TestCase):
         for t in ("dev", "inv"):
             with tempfile.TemporaryDirectory() as tmp:
                 _v, c, p = self.open_with(tmp, type=t)
-                for d in ("raw", "map"):
-                    self.assertTrue((p / "_noai" / d).is_dir(), (t, d))
+                for d in ("raw", "map", "source", "deliverable"):
+                    self.assertFalse((p / "_noai" / d).exists(), (t, d))
+                self.assertTrue((p / "_noai/mask.toml").is_file())
                 self.assertFalse((p / "_noai/user").exists())
                 self.assertFalse((p / "_noai/final").exists())
                 self.assertIn(f"type: {t}\n", (p / "README.md").read_text(encoding="utf-8"))
@@ -2124,30 +2070,6 @@ class CloseTest(unittest.TestCase):
             with self.assertRaises(room.RoomError):
                 room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
 
-    def test_close_warns_on_stray_out_folder_and_n_changes_nothing(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c = opened(tmp, FakeWsl())
-            p = v / "projects/proj-a"
-            fill_readme(p)
-            (p / "ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
-            (p / "ai/out/stock").mkdir()
-            (p / "ai/out/proj-a").mkdir()
-            (p / "ai/out/final-report").mkdir()
-            with tty("n"), self.assertRaisesRegex(room.RoomError, "中止"):
-                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-            self.assertTrue(p.exists())
-            self.assertEqual(room.stray_out_dirs(room.Project.load(c, "proj-a")), ["final-report"])
-
-    def test_close_no_stray_warning_for_project_name_stock_and_deliverable(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c = opened(tmp, FakeWsl())
-            p = v / "projects/proj-a"
-            fill_readme(p)
-            (p / "ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
-            for d in ("stock", "proj-a", "deliverable"):
-                (p / "ai/out" / d).mkdir()
-            self.assertEqual(room.stray_out_dirs(room.Project.load(c, "proj-a")), [])
-
     def test_close_moves_to_archives_and_hands_over(self):
         with tempfile.TemporaryDirectory() as tmp:
             wsl = FakeWsl()
@@ -2157,8 +2079,7 @@ class CloseTest(unittest.TestCase):
             room.scaffold_area(c, "area-x")
             (p / "ai/out/close.md").write_text("- 【案件】運用で埋める\n- 【案件】表記ゆれを直す\n", encoding="utf-8")
             (p / "ai/out/final.md").write_text("成果物\n", encoding="utf-8")
-            (p / "_noai/raw/orig.csv").write_text("secret\n", encoding="utf-8")
-            (p / "_noai/map").mkdir(exist_ok=True)
+            (p / "_noai/memo").mkdir(); (p / "_noai/memo/orig.csv").write_text("secret\n", encoding="utf-8")
             (p / "ai/ctx").mkdir(exist_ok=True)
             (p / "ai/ctx/README.md").write_text("snapshot", encoding="utf-8")
             room.cmd_close(c, argparse.Namespace(name="proj-a", commit=True))
@@ -2166,8 +2087,9 @@ class CloseTest(unittest.TestCase):
             self.assertFalse(p.exists())
             self.assertTrue((a / "ai/out/final.md").exists())
             self.assertTrue((a / "ai/out/close.md").exists())
-            self.assertEqual((a / "_noai/raw/orig.csv").read_text(encoding="utf-8"), "secret\n", "追跡外も移る")
+            self.assertEqual((a / "_noai/memo/orig.csv").read_text(encoding="utf-8"), "secret\n", "追跡外も移る")
             self.assertFalse((a / "ai/ctx").exists())
+            self.assertFalse((v / "areas/area-x/_noai/deliverable").exists(), "成果物は Area へ渡さない（archives の ai/out/ に残る）")
             fm = room.read_frontmatter(a / "README.md")
             self.assertEqual((fm["status"], fm["closed"], fm["reap_after"]), ("done", "2026-10-12", "2026-10-26"))
             self.assertNotIn("review", fm)
@@ -2194,42 +2116,6 @@ class CloseTest(unittest.TestCase):
         (p / "ai/out/close.md").write_text(close_text, encoding="utf-8")
         return v, c, p
 
-    def test_close_delivers_deliverable_to_area_without_restore(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
-            (p / "ai/out/deliverable").mkdir(parents=True)
-            (p / "ai/out/deliverable/report.md").write_text("報告\n", encoding="utf-8", newline="\n")
-            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-            self.assertEqual((v / "areas/area-x/_noai/deliverable/proj-a/report.md").read_text(encoding="utf-8"), "報告\n")
-            self.assertTrue((v / "archives/proj-a").is_dir())
-
-    def test_close_delivers_out_project_name_dir_as_is_under_project_name(self):
-        with tempfile.TemporaryDirectory() as tmp:  # 成果物の塊は ai/out/<Project 名>/。Area では <Project 名>/ の直下に置く（2026-11-05）
-            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
-            (p / "ai/out/proj-a/sub").mkdir(parents=True)
-            (p / "ai/out/proj-a/report.md").write_text("報告\n", encoding="utf-8", newline="\n")
-            (p / "ai/out/proj-a/sub/x.md").write_text("x\n", encoding="utf-8", newline="\n")
-            (p / "ai/out/other.md").write_text("対象外\n", encoding="utf-8", newline="\n")
-            room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-            base = v / "areas/area-x/_noai/deliverable/proj-a"
-            self.assertEqual((base / "report.md").read_text(encoding="utf-8"), "報告\n")
-            self.assertTrue((base / "sub/x.md").exists())
-            self.assertFalse((base / "other.md").exists())
-            self.assertFalse((base / "proj-a").exists())
-
-    def test_close_stops_before_any_change_when_area_deliverable_was_edited(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c, p = self._decision_project(tmp, "- 【案件】x\n")
-            dst = v / "areas/area-x/_noai/deliverable/proj-a"
-            dst.mkdir(parents=True)
-            (dst / "report.md").write_text("人が書いた\n", encoding="utf-8", newline="\n")
-            (p / "ai/out/deliverable").mkdir(parents=True)
-            (p / "ai/out/deliverable/report.md").write_text("報告\n", encoding="utf-8", newline="\n")
-            with self.assertRaisesRegex(room.RoomError, "Area に渡せない"):
-                room.cmd_close(c, argparse.Namespace(name="proj-a", commit=False))
-            self.assertTrue(p.exists())
-            self.assertEqual((dst / "report.md").read_text(encoding="utf-8"), "人が書いた\n")
-
     def test_close_does_not_write_area_inbox_and_trace_searches_archives(self):
         with tempfile.TemporaryDirectory() as tmp:
             v, c, p = self._decision_project(tmp, "- 【案件】x\n- 【決定】列を固定する（根拠: 列は固定）\n")
@@ -2251,8 +2137,8 @@ class CloseTest(unittest.TestCase):
             v = make_vault(tmp)
             room.cmd_init(ctx_for(v, FakeWsl(distros=())), argparse.Namespace(area="area-y", resume=False, boundary="internal", commit=False))
             self.assertFalse((v / "areas/area-y/_noai/knowledge").exists())
-            self.assertTrue((v / "areas/area-y/_noai/source").is_dir())
-            self.assertTrue((v / "areas/area-y/_noai/deliverable").is_dir())
+            self.assertFalse((v / "areas/area-y/_noai/source").exists())  # 2026-11-07 廃止
+            self.assertFalse((v / "areas/area-y/_noai/deliverable").exists())
             self.assertFalse((v / "areas/area-y/ai/docs/inbox.md").exists())
 
     def test_scaffold_warns_about_old_knowledge_dir_and_does_not_move_it(self):
@@ -2594,71 +2480,6 @@ class MkworksTest(unittest.TestCase):
             sh(v, "add", "-A", "--", ".gitignore", ".ignore", ".gitattributes", "README.md", "AGENTS.md", "CLAUDE.md", "docs")
             sh(v, "commit", "-qm", "init", "--trailer", f"Template-Rev: {base}")
             self.assertEqual((base, "Template-Rev"), room.mkworks_base(ctx_for(v)))
-
-
-class CleanTest(unittest.TestCase):
-    def test_clean_writes_strict_output_pending_and_adopt_passes(self):
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-        import dummy_fixture
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c = opened(tmp)
-            p = v / "projects/proj-a"
-            ar = v / "areas/area-x/README.md"
-            self.assertIn("boundary: internal", ar.read_text(encoding="utf-8"))
-            raw = p / "_noai/raw/area/dummy.xlsx"
-            raw.parent.mkdir(parents=True, exist_ok=True)
-            raw.write_bytes(dummy_fixture.build_xlsx())
-            room.cmd_clean(c, argparse.Namespace(name="proj-a"))
-            self.assertTrue((p / "ai/in/area/dummy.xlsx").exists())
-            self.assertTrue((p / "_noai/raw/tmp/area/dummy.xlsx-report.md").exists())
-            man = room.load_manifest(room.Project.load(c, "proj-a"))
-            self.assertTrue(man["files"]["in/area/dummy.xlsx"]["pending"])
-            self.assertTrue(room.check_provenance(room.Project.load(c, "proj-a")))
-            room.adopt_in(c, room.Project.load(c, "proj-a"))
-            self.assertEqual(room.check_provenance(room.Project.load(c, "proj-a")), [])
-            room.cmd_clean(c, argparse.Namespace(name="proj-a"))  # 変更が無ければ作り直さない
-
-    def test_clean_path_reads_source_directly_keeping_relative_name(self):
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-        import dummy_fixture
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c = opened(tmp)
-            p = v / "projects/proj-a"
-            src = v / "areas/area-x/_noai/source/顧客共通/一覧.xlsx"
-            src.parent.mkdir(parents=True, exist_ok=True)
-            src.write_bytes(dummy_fixture.build_xlsx())
-            room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["顧客共通/*.xlsx"], yes=True))
-            self.assertTrue((p / "ai/in/area/顧客共通/一覧.xlsx").exists())
-            self.assertFalse((p / "_noai/raw/area").exists())  # raw に写さない
-            self.assertTrue((v / "areas/area-x/_noai/source/tmp/顧客共通/一覧.xlsx-report.md").exists())  # 報告は原本の隣
-            self.assertFalse((p / "_noai/raw/tmp").exists())
-            man = room.load_manifest(room.Project.load(c, "proj-a"))
-            e = man["files"]["in/area/顧客共通/一覧.xlsx"]
-            self.assertTrue(e["pending"])
-            self.assertEqual(e["masked_from"], "areas/area-x/_noai/source/顧客共通/一覧.xlsx")
-
-    def test_clean_path_stops_on_sensitive_file_name(self):
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-        import dummy_fixture
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c = opened(tmp)
-            src = v / "areas/area-x/_noai/source/taro@example.com.xlsx"
-            src.parent.mkdir(parents=True, exist_ok=True)
-            src.write_bytes(dummy_fixture.build_xlsx())
-            with self.assertRaises(room.RoomError):
-                room.cmd_clean(c, argparse.Namespace(name="proj-a", path=["*.xlsx"], yes=True))
-            self.assertFalse((v / "projects/proj-a/ai/in/area").exists())
-
-    def test_clean_refuses_external_area(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            v, c = opened(tmp)
-            ar = v / "areas/area-x/README.md"
-            ar.write_text(ar.read_text(encoding="utf-8").replace("boundary: internal", "boundary: external"), encoding="utf-8", newline="\n")
-            raw = v / "projects/proj-a/_noai/raw/area/a.xlsx"
-            raw.parent.mkdir(parents=True, exist_ok=True)
-            raw.write_bytes(b"x")
-            with self.assertRaises(room.RoomError):
-                room.cmd_clean(c, argparse.Namespace(name="proj-a"))
 
 
 class DummyProjectTest(unittest.TestCase):

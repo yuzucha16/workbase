@@ -1250,7 +1250,7 @@ def next_backup(src):
 
 
 def default_report(src, kind):
-    """報告の既定の置き場: 入力（原本）の隣の tmp/。room clean（_noai/raw/tmp/、_noai/source/tmp/）と揃える（2026-11-04 ユーザーの依頼）。"""
+    """報告の既定の置き場: 入力（原本）の隣の tmp/。AI に渡すフォルダに報告が混ざらないようにする（2026-11-04 ユーザーの依頼）。"""
     return src.parent / "tmp" / f"{src.name}-report.md"
 
 
@@ -1269,7 +1269,7 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("check", help="残っている情報を一覧にする（ファイルは変えない）")
     c.add_argument("file")
-    c.add_argument("--report", help="報告の md（既定: 入力の隣の tmp/<名前>-report.md。room clean と同じ置き方）")
+    c.add_argument("--report", help="報告の md（既定: 入力の隣の tmp/<名前>-report.md）")
     c.add_argument("--terms", help="mask.toml のパス。[terms.*] の語が見えている文字にあれば警告する（金額・メール・電話・割合の形は常に警告する）")
     k = sub.add_parser("clean", help="掃除した別ファイルを書く")
     k.add_argument("file")
@@ -1278,7 +1278,7 @@ def main(argv=None):
     k.add_argument("--also", default="", help="既定では行わない動作を足す（カンマ区切り）: " + ", ".join(OPTIONAL_ACTIONS))
     k.add_argument("--profile", default="strict", choices=list(PROFILES), help="掃除の強さ: " + "; ".join(f"{n} = {d}" for n, (d, _x) in PROFILES.items()))
     k.add_argument("--allow", default="", help="プロファイルが外す部品の種類のうち、残すもの（カンマ区切り）: " + ", ".join(STRIP_KINDS))
-    k.add_argument("--report", help="報告の md（既定: 入力の隣の tmp/<名前>-report.md。room clean と同じ置き方）")
+    k.add_argument("--report", help="報告の md（既定: 入力の隣の tmp/<名前>-report.md）")
     k.add_argument("--force", action="store_true", help="出力が既にあれば上書きする")
     sub.add_parser("profiles", help="プロファイルと、部品の種類・動作の一覧を出す")
     a = ap.parse_args(argv)
@@ -1346,7 +1346,7 @@ def main(argv=None):
         after = check(Pkg(cleaned), ext, sensitive=True)
         rep.parent.mkdir(parents=True, exist_ok=True)
         rep.write_text(report_md(src, before, log, after, probs, out), encoding="utf-8")
-        if probs:  # room clean と同じ: 整合の問題がある出力は書かない
+        if probs:  # 整合の問題がある出力は書かない
             print(f"止めた: 掃除の出力に整合の問題 {len(probs)} 件。出力は書いていない。報告: {rep}（実データの抜粋が載る。AI に見せない）", file=sys.stderr)
             return 2
         out.parent.mkdir(parents=True, exist_ok=True)

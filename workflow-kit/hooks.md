@@ -26,7 +26,7 @@
 | コマンド | すること |
 |---|---|
 | `room mkworks` | works のトップの作成（PC に1回）と、雛形の変更の反映（`--update`） |
-| `room open` / `start` / `close` | Project のひな形、起動の準備（写しの送付、マウント）と回収（works へのコミット）、Area への引き渡しと `archives/` への移動 |
+| `room open` / `start` / `close` | Project のひな形、起動の準備（写しの送付、マウント）と回収（works へのコミット）、`archives/` への移動 |
 | `room stock` | 部屋の AI の `stock` の下書きを運ぶ（1 件ごとの確認は無い。運んだ後に表を出す。move: 運んだら `ai/out/stock/` の元を消す。`--dst` を省くと `scope:` に従って両方）。`--dst kit`: `ai/out/stock/` → `exmem/inbox/`。`--dst area`（external・internal 共通）: `scope: area` の下書き → `areas/<Area>/ai/`（cleankit の点検が関門） |
 
 上のほかのコマンド（`init` `umount` `aws-key` `shell` `reap` `mv`）は、フックと対にならない。`room/README.md` を見る（この表に写さない）。

@@ -12,7 +12,7 @@ tags:
 
 Area を作ってから、Project を立て、作業し、閉じ、片付けるまでを、**人が打つ `room` コマンド**と、**部屋の AI に言う合言葉（フック）**を組み合わせて 1 枚で見る手順書。コマンドを 1 手ずつ打つ実例は [[ai-room-setup-script]]、理由は [[ai-room-why]]。ここは「いま何の段で、誰が何を言うか」を見るための地図。
 
-- **ゴール（完了の目安）**: Project の成果物が Area に渡り、`archives/` に移り、`reap` で会話履歴が消える。
+- **ゴール（完了の目安）**: Project が `archives/` に移り（成果物は `ai/out/` に残る）、`reap` で会話履歴が消える。
 - **範囲**: 1 つの Area の中の Project。Area そのものの運営は範囲外。Area の log・decisions は持たず（2026-11-05）、記録は `archives/` から `room trace --area` で引く。Area を終えるのは `room close --area <Area>`（条件は Project 0 件・`stock` の scope: area の未処理 0 件・y/N の宣言。`areas/<Area>` を `archives/areas/<Area>` へ移す。部屋は消さない。2026-11-05）。
 - 基準は 2026-11-04 時点のコード（`room.py`）。確認していない箇所は「未確認」と書く。
 
@@ -38,10 +38,10 @@ Area を作ってから、Project を立て、作業し、閉じ、片付ける�
 | # | 段 | 人 | 部屋の AI | 止まる主な条件 | 結果 |
 |---|---|---|---|---|---|
 | 0 | works を用意（PC に 1 回） | `room mkworks` | － | `resources/` が無い | works の雛形 |
-| 1 | Area と部屋 | `room init <Area> [--boundary]`、ログイン | － | 部屋がすでにある（`--resume`） | `areas/<Area>/`、部屋 `room-<Area>`、成果物置き場 |
+| 1 | Area と部屋 | `room init <Area> [--boundary]`、ログイン | － | 部屋がすでにある（`--resume`） | `areas/<Area>/`、部屋 `room-<Area>` |
 | 2 | 立てる前の判断 | 完了条件 1 文、成果物 1 つ、type（`dev`／`inv`）を決める（下の「判断基準」） | － | － | 名前と type |
 | 3 | Project を立てる | `room open <P> --area <A> --type …`（閉じた Project の再作業は `--from <前>`。13 節） | － | `.gitignore`、`boundary:` | `projects/<P>/`（README はひな形。目的と成果物だけ） |
-| 4 | 入力（任意。internal の Area だけ） | 原本を `_noai/raw/` へ → `room clean` → `ai/in/` を読む | － | external では止まる | `ai/in/`（未確認の印） |
+| 4 | 入力（任意。internal の Area だけ） | 人が cleankit（`check` → `clean` → 目視）で掃除して `ai/in/` に置く → `start --adopt` | － | external では `--adopt` が止まる | `ai/in/`（`--adopt` で記録） |
 | 5 | 起動 | `room start <P> [--adopt]` | （起動される） | マウント残り、未確認の `ai/in/`、来歴の不一致 | `ai/ctx/`（README の写し）、`~/shared`（kit の写し） |
 | 6 | 前半のお作法（4 節） | 合言葉を言う、承認する | 計画・論点の下書きを作る | － | 6R、論点、計画 |
 | 7 | 作業 | 指示、承認 | 成果物を `ai/out/<成果物名>/` に作る。`wrap` で `ai/docs/` を更新 | － | 成果物、記録 |
@@ -98,7 +98,7 @@ README の置き換え方、`stock` の点検、`close` の止まり方の詳細
 - **git 追跡の対象外**: works の `.gitignore` に `/projects/myinv*/` などを入れてある（雛形は `workflow-kit/templates/workspace/gitignore.template`）。
 - `open` / `close` / `start` / `rm` は、コミットしない。Area の README の一覧にも載せず、触らない。`--no-commit` は要らない。
 - `close` は、追跡外のファイルとして `archives/` へ移す。`reap` は本物と同じ（`--force` で期限を飛ばせる）。
-- 注意: `close` は `ai/out/<名前>/` の成果物を Area に渡す。ダミーに成果物を置くと、本番の Area にファイルが入る。
+- `close` は成果物を Area に渡さない（2026-11-07 から）。
 
 ## 未決
 

@@ -70,7 +70,7 @@ works の Area（非公開）に溜める知識を、別の Project の AI 作�
 |---|---|---|
 | 渡し方 | (a) Area の実名の知識を取り出し、加工して `ai/in/` に置く / (b) 知識を常に実名なしで持つ / (c) AI が Area を直接読む | **(b)**。Area の知識を実名なしで書き、`ctx/area/` に写す。(a)（`pull`、マスクして渡す）は廃止。(c) は `areas/` を AI が扱わない決まりに反する |
 | 実名を消す時期 | 書くとき / 渡すとき | **書くとき**。実名を含む会議録などは部屋に渡さない（語の置換は構造の穴を塞がず、書いていない語も残るため） |
-| 戻り | AI の出力を Area に戻す / 戻さない | **知識・決定・経緯は `stock --dst area`**。人が読む成果物は `ai/out/<Project 名>/` に置き、`close` がそのまま Area の `_noai/deliverable/<Project>/` へ渡す。2026-11-05 から、`close` は Area の inbox へ【案件】を運ばない（置き場の分け方は [[ai-room-data-layout-explain]]） |
+| 戻り | AI の出力を Area に戻す / 戻さない | **知識・決定・経緯は `stock --dst area`**。人が読む成果物は `ai/out/<Project 名>/` に置く（2026-11-07 から `close` は Area へ渡さず、archives に残る）。2026-11-05 から、`close` は Area の inbox へ【案件】を運ばない（置き場の分け方は [[ai-room-data-layout-explain]]） |
 | 統合 | 件ごとに溜める / 統合して育てる | **Area に置く**。部屋の AI が下書きを書き、人が運ぶ。works の AI は実名を読まない。`integrate` の権限は変えない |
 | 知識の層 | ① 事実（実名、Area）/ ② 実名なしの知識（Area の `ai/`）/ ③ 一般化した教訓（workbase） | 固有の事実は、仮名にしても workbase に切り出さない。③ は一般化したものだけを、`room stock` で出す。下書きの `scope:` で振り分ける: 剥がしても社外で使える → `public`（`exmem/inbox/`）、剥がすと意味が無い → `area`（Area の `ai/`） |
 

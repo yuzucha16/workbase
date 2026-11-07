@@ -4,6 +4,12 @@
 
 ## Decisions
 
+### 【room】`room clean`（`_noai/raw/`）、`close` の成果物の Area への引き渡し（`_noai/map/`）、Area の `_noai/source/` `_noai/deliverable/` を廃止する（2026-11-07）
+- 根拠: ユーザー「archive に成果物の実態があって、それは残るので不要です。log などの決定記録は room trace で拾います」「source も畳んでください。こちらも手動移管で OK です」「承認します」。`clean` は人が cleankit で `check` → `clean` → 目視 → `ai/in/` に置く二度手間で、目視が要るので自動ループにできない。`map` は引き渡しの記録のためだけにあった。
+- 決めたこと: ① `room clean`（`--path` を含む）を廃止し、掃除は人が cleankit で行って `ai/in/` に置く。`source/` も畳み、手動移管にする。② `start --adopt` の台帳登録は現状のまま（`adopt_in` は台帳に記録が無いファイルを新規に記録する。人が置いたファイルは `--adopt` を通るまで来歴チェックで止まる）。③ `require_internal` は `start --adopt` に残す（external の Area では、人が置いても通せない）。`clean` 側の呼び出しは `clean` と一緒に消えた。④ `close` は成果物を Area へ渡さない（`ai/out/` は `archives/<Project>/` に残る）。決定記録は `room trace` で引く。人が変えた Area 側を上書きしない検査も、引き渡しと一緒に無くなった。⑤ `_noai/` は `mask.toml` だけを作る（`raw/` `map/` は作らない）。`mask.toml` は `cleankit --terms` と `stock --dst area` の点検用に残す。⑥ `init` は Area の `_noai/source/` `_noai/deliverable/` を作らない。
+- 実装: `room.py`（`cmd_clean`・`clean_project`・`pick_source_files`・成果物の経路 `Route`/`publish` ほかを削除、`close` の引き渡しと `start` の注意を削除、`scaffold_area` と `NOAI_DIRS`）、`tests/test_room.py`（211 件通る。clean と引き渡しのテストを削除、`--adopt` の 2 件を追加）、`cleankit.py` の文言、`room/README.md`、関連する手順書・説明（`guides/`、`workflow-kit/`）。
+- 残したもの: 既存の Project の `_noai/raw/` `_noai/map/` と Area の `_noai/source/` `_noai/deliverable/` は消さない（`room` が読まなくなっただけ）。manifest の `pending` の判定は旧い記録のために残した。`room-completion.ps1` は、dotfiles のプロファイルの読み込みの 1 行を外すまで残す。実機の通しは未確認。
+
 ### 【汎用】作図・資料の部品（diagram・sheet・text …）の置き場は、Project の `ai/work/parts/` と成果物にする（2026-11-07）
 - 根拠: ユーザー「Aにします。シンプルで良い」（寿命を先に分け、部品の種類は名前の語にする案）、「`work` は既存の `ai/work` を想定していました。あるいは `ai/out` も OK です。仕組みの整合性に合わせて、一貫性のある置き場を選んでください」「追跡の扱い、賛成」。
 - 決めたこと: ①一過性（scratch）は `ai/work/parts/<日付>-<部品>-<題>/`（例 `2026-11-07-diagram-room-structure/`。中に `.excalidraw` `.svg` `.png` と用途の `.md`）。`ai/work/` は「捨ててよい下書き」の既存の規則なので、新しい最上位は作らない。`plan/` `raw/` `scripts/` と混ざらないよう `parts/` の 1 段を挟む。②残す（keep）図は、使う成果物の中へ移す: `ai/out/<成果物名>/`（`inv` は `publish/`、`dev` は `docs/` の下）。ファイル名は `<部品>-<題>.{excalidraw,svg}` の平置きで、`ai/out/` の深さの規則（2 階層以内）を守る。`ai/out/` に `keep/` は作らない（成果物の塊は 1 つで、名前は Project 名と同じ、という規則と食い違うため）。③部品を足すときは、名前の語を 1 つ増やすだけ（ディレクトリは増やさない）。④追跡: `ai/work/` は成果物ではなく、`close` が Area へ渡すのは `ai/out/` だけ。

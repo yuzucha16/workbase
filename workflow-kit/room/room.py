@@ -42,9 +42,9 @@ def is_dummy(name):
 
 
 AI_DIRS = ("ai/docs", "ai/in", "ai/work", "ai/out", "ai/records")
-# 語のマスク・復元は廃止した（2026-11-06）。成果物は `room close` が、ai/out/<Project 名>/ をそのまま Area へ渡す。
-# 2026-11-07: user/ を廃止した。_noai/ 直下は、room の予約名（raw/ map/ mask.toml）以外、人が自由に使う（room は触らない）。
-NOAI_DIRS = ("_noai/raw", "_noai/map")
+# 語のマスク・復元は廃止した（2026-11-06）。2026-11-07: room clean（_noai/raw）と close の成果物の引き渡し（_noai/map）、Area の source/ を廃止した。
+# _noai/ 直下は、room の予約名（mask.toml）以外、人が自由に使う（room は触らない）。
+NOAI_DIRS = ("_noai",)
 AI_KEEP = ("ai/in", "ai/work", "ai/records")
 
 
@@ -1245,14 +1245,7 @@ def scaffold_area(ctx, area):
     old = root / "knowledge"  # 2026-10-21 までの置き場（_noai の外で、守られていなかった）。自動では動かさない
     if old.is_dir():
         ctx.say(f"警告: areas/{area}/knowledge/ がある。実名を含む中身は、人が確認して移す（追跡に入っていれば、履歴にも実名が残っている）。知識の出口は `room stock --dst area`")
-    dd = root / DELIVERABLE_DEFAULT
-    if not dd.is_dir():
-        dd.mkdir(parents=True)
-        ctx.say(f"作った: areas/{area}/{DELIVERABLE_DEFAULT}/（成果物置き場。close の書き出し先。<Project 名>/ の下に置く）")
-    sd = root / SOURCE_DEFAULT
-    if not sd.is_dir():
-        sd.mkdir(parents=True)
-        ctx.say(f"作った: areas/{area}/{SOURCE_DEFAULT}/（共通の xlsx・pptx の原本置き場。人が置く。clean --path の読み元）")
+    # 2026-11-07: _noai/deliverable/ と _noai/source/ は作らない（close の成果物の引き渡しと clean --path を廃止した）
 
 
 
@@ -1638,7 +1631,7 @@ ROOM_GUIDE = """# 共有知の写し（読み取り専用）
 
 Area に戻すもの（`room close` が Area に置く）:
 
-- Project の成果物（固まった単位の最終成果物は 1 つ）は `ai/out/<成果物名>/` に置く。`<成果物名>` は Project 名と同じにする。`room close` が、この下を Area の成果物置き場（`<Project 名>/` の下）へ渡す。旧名の `ai/out/deliverable/` も同じ扱い。外部に出す名前が違うときだけ、その名前にしてよい（その場合は Area へ渡らない。置き場と構成は `workflow-kit/project-structure.md`）。
+- Project の成果物（固まった単位の最終成果物は 1 つ）は `ai/out/<成果物名>/` に置く。`<成果物名>` は Project 名と同じにする。`room close` は成果物を Area へ渡さない（Project は archives へ移り、`ai/out/` はそこに残る）。外部に出す名前が違うときだけ、その名前にしてよい（置き場と構成は `workflow-kit/project-structure.md`）。
 
 部屋の git: `/mnt/room/<名>` の下では、部屋のローカルの git が使える（`git status` `git diff` `git add` `git commit` `git log`）。リポジトリは `room start` が用意済みなので、許可を取らずに使ってよい。自分で `git init` や `git config` をしない（`.git` を作ると works に回収される。`git status` が失敗したときは、作らずに人に伝える）。基準は、`start` が回収済みの `ai/` を渡した時点で、`git diff` が、回収される変更に当たる。人に言われなくても、作業の区切りと wrap のたびにコミットする（push はしない）。このコミットは部屋の中だけの記録で、セッションの終わりに捨てる。works へのコミットは、人の `room start` の回収が行うので、AI は works のコミットを考えなくてよい。
 
@@ -1829,9 +1822,7 @@ def cmd_start(ctx, a):
     gateway = getattr(a, "gateway", False)
     first = gateway_check(ctx) if gateway else None  # 設定とトークンを、マウントの前に確かめる（取れなければここで止める）
     boundary = preflight(ctx, p)
-    # 2026-11-02: start は自動で掃除しない（掃除は `room clean`。internal の Area だけ）。ai/in は人が確認して --adopt で通す
-    if raw_files(p):
-        ctx.say("注意: _noai/raw に原本がある。start は自動で掃除しない。必要なら `room clean` を先に実行し、ai/in を読んで --adopt で通す")
+    # 2026-11-07: room clean は廃止した。ai/in は、人が cleankit で掃除・確認して置き、--adopt で通す
     if a.adopt:
         require_internal(p, "--adopt（人が通した入力の記録）")
         n = adopt_in(ctx, p)
@@ -1886,8 +1877,6 @@ def cmd_start(ctx, a):
     if not ok:
         log_room(ctx, p, "start", checks, result + "、**マウントが残っている**（つかんでいるプロセス: " + (p.holders or "なし") + "）")
         raise RoomError("アンマウントを確認できなかった。`room umount --area " + p.area + "` で外し、/proc/mounts を確認する")
-    if any(is_deliverable_key(p, k) for k in list_files(p.ai / "out")):
-        ctx.say(f"注意: ai/out に Area へ渡していない成果物がある。start は自動で渡さない。`room close {p.name}` で Area へ渡る")
     ignored = unexpected_ignored(ctx, p)
     status = [l for l in git(ctx.vault, "status", "--porcelain", "-uall", "--", f"projects/{p.name}").splitlines() if l]
     log_room(ctx, p, "start", checks, f"{result}、変更 {len(status)} 件")
@@ -1921,240 +1910,6 @@ def list_files(base):
 def sha256_bytes(b):
     return hashlib.sha256(b).hexdigest()
 
-
-def raw_files(p):
-    """_noai/raw の原本。raw/tmp/ は room の出力（掃除の報告）の置き場なので原本に数えない。"""
-    return {k: v for k, v in list_files(noai_dir(p) / "raw").items() if not k.startswith("tmp/")}
-
-
-def noai_dir(p):
-    return p.dir / "_noai"
-
-
-def write_bytes(path, data):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(data)
-
-
-SOURCE_DEFAULT = "_noai/source"  # Area の原本置き場（areas/<Area>/_noai/source/。人が置く。clean --path の読み元）
-DELIVERABLE_OUT = "deliverable/"  # 内部の正規形の接頭辞。Area の成果物置き場（<Project 名>/ の下）へ戻す対象は ai/out/<Project 名>/（成果物の塊は 1 つ。2026-11-05）。旧名 ai/out/deliverable/ も同じ扱い
-
-
-def is_deliverable_key(p, rel):
-    """ai/out からの相対パスが、Area へ渡す成果物か（ai/out/<Project 名>/ の下、または旧名の ai/out/deliverable/ の下）。"""
-    return rel.startswith(f"{p.name}/") or rel.startswith(DELIVERABLE_OUT)
-
-
-def deliverable_view(p, items):
-    """渡す成果物だけを、正規形（deliverable/ 始まり）のキーにして返す。ai/out/<Project 名>/a.md も deliverable/a.md も、Area では <Project 名>/a.md になる。"""
-    out = {}
-    for rel, data in items.items():
-        if rel.startswith(f"{p.name}/"):
-            out[DELIVERABLE_OUT + rel[len(p.name) + 1:]] = data
-        elif rel.startswith(DELIVERABLE_OUT):
-            out[rel] = data
-    return out
-DELIVERABLE_DEFAULT = "_noai/deliverable"  # Area の成果物置き場（areas/<Area>/_noai/deliverable/<Project>/。人が読む最終版）
-PULL_PREFIX = "area/"  # ai/in の下の、Area の source/ から掃除した共通の原本の置き場（Project 固有の原本は ai/in の直下）
-
-
-def deliverable_dir(p):
-    return p.area_dir / DELIVERABLE_DEFAULT
-
-
-def source_dir(p):
-    return p.area_dir / SOURCE_DEFAULT
-
-
-def clean_project(ctx, p, items=None):
-    """_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（2026-11-03: 語のマスクの代わりの入口）。報告は _noai/raw/tmp/（AI に見せない）。作った件数を返す。
-    items（{ai/in での相対パス: bytes}）を渡すと、raw を経由せず、それを掃除する（clean --path。Area の source/ を直接読む）。"""
-    n = noai_dir(p)
-    raw = raw_files(p) if items is None else items
-    if not raw:
-        return 0
-    require_internal(p, "原本の掃除（業務データを AI の入力にすること）")
-    actions = [x for x in cleankit.CLEAN_ACTIONS] + sorted(set(cleankit.PROFILES["strict"][1]))
-    man, done, rep_where = load_manifest(p), 0, "_noai/raw/tmp/"
-    for rel, data in sorted(raw.items()):
-        ext = Path(rel).suffix.lower()
-        digest = sha256_bytes(data)
-        e = man["files"].get(f"in/{rel}")
-        if e is not None and e.get("raw_sha256") == digest and (p.ai / "in" / rel).exists():
-            continue
-        if ext not in cleankit.SUPPORTED:
-            ctx.say(f"  掃除しない（xlsx・pptx 以外）: ai/in へ渡すかは人が決める: {rel}")
-            continue
-        try:
-            before = cleankit.check(cleankit.Pkg(data), ext)
-            cleaned, log = cleankit.clean(data, ext, actions)
-            probs = cleankit.integrity(cleaned)
-            after = cleankit.check(cleankit.Pkg(cleaned), ext, sensitive=True, terms=area_gate_terms(p))  # 金額等の形と mask.toml の語（置換せず、報告に載せる）
-        except cleankit.CleanError as err:
-            ctx.say(f"  止めた（{rel}）: {err}")
-            continue
-        if items is None:
-            rep, rep_where = n / "raw" / "tmp" / (rel + "-report.md"), "_noai/raw/tmp/"
-        else:  # 2026-11-03 ユーザーの決定: 原本の隣（Area の source/tmp/）に置く。探す場所を増やさない
-            rep, rep_where = source_dir(p) / "tmp" / (rel[len(PULL_PREFIX):] + "-report.md"), "_noai/source/tmp/"
-        rep.parent.mkdir(parents=True, exist_ok=True)
-        rep.write_text(cleankit.report_md(Path(rel), before, log, after, probs, Path(rel)), encoding="utf-8")
-        if probs:
-            ctx.say(f"  止めた（{rel}）: 掃除の出力に整合の問題 {len(probs)} 件。ai/in へは渡さない。報告: {rep_where}")
-            continue
-        write_bytes(p.ai / "in" / rel, cleaned)
-        man["files"][f"in/{rel}"] = {
-            "sha256": sha256_bytes(cleaned), "area": p.area, "project": p.name, "added": ctx.now(), "pending": True,
-            "raw_sha256": digest, "cleaned": "strict",
-            "masked_from": f"areas/{p.area}/_noai/source/{rel[len(PULL_PREFIX):]}" if items is not None else f"_noai/raw/{rel}",
-        }
-        done += 1
-        ctx.say(f"  掃除した: {rel}（{len(log)} 項目、残り {len(after)} 件: {cleankit.summary(after)}）")
-    manifest_path(p).parent.mkdir(parents=True, exist_ok=True)
-    manifest_path(p).write_text(json.dumps(man, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
-    if done:
-        ctx.say(f"掃除した: {done} ファイル → ai/in。報告（実データの抜粋入り）は {rep_where}。読んで `start --adopt` で通す")
-    return done
-
-
-# ---------- 成果物を Area へ渡す（close が持つ） ----------
-
-def deliverable_items(p):
-    """ai/out/<Project 名>/（旧名 ai/out/deliverable/）の下を、Area に渡す形で返す: ({ai/out からの相対パス: bytes}, 問題)。
-    そのまま渡す（語の置き換えはしない）。ほかの ai/out は見ない。"""
-    out = {k: v for k, v in list_files(p.ai / "out").items() if is_deliverable_key(p, k)}
-    return out, []
-
-
-def deliver_plan(p, items):
-    """何も書かずに、Area への書き出しを点検する: (計画, 渡せない理由, 人の変更が前回の書き出しから入っているファイル)。"""
-    plans, errors, conflicts = [], [], []
-    items = deliverable_view(p, items)
-    try:
-        all_routes = routes(p)
-    except RoomError as e:
-        return [], [str(e)], []
-    for route in all_routes:
-        try:
-            plan = plan_publish(route, items)
-        except RoomError as e:
-            return [], [str(e)], []
-        if plan and not route.root.is_dir():
-            return [], [f"Area の{route.label}の置き場が無い: {route.root}（`room init {p.area}` で作ってから、やり直す。何も書いていない）"], []
-        plans.append((route, plan))
-        conflicts += publish_conflicts(p, route, plan)
-    return plans, errors, conflicts
-
-
-def deliver_write(ctx, p, plans):
-    for route, plan in plans:
-        publish(ctx, p, route, plan)
-
-
-class Route:
-    """ai/out のある下位ディレクトリを、Area のどこへ戻すか。prefix: ai/out の下の名前、label: 文中の呼び名、manifest: 前回の書き出しの記録（_noai/map の下）。"""
-
-    def __init__(self, prefix, label, manifest, base, root):
-        self.prefix, self.label, self.manifest, self.base, self.root = prefix, label, manifest, base, root
-
-
-def routes(p):
-    """成果物は Project の名前の下へ戻す（Project どうしで名前が衝突しないように）。知識の経路は 2026-11-03 に外した（出口は stock --dst）。"""
-    return [
-        Route(DELIVERABLE_OUT, "成果物", "deliverable-manifest.json", deliverable_dir(p) / p.name, deliverable_dir(p)),
-    ]
-
-
-def plan_publish(route, restored):
-    """ai/out/<prefix> の下を、Area への書き出し先に対応づける（何も書かない）。{書き出し先: bytes}。"""
-    items = {rel[len(route.prefix):]: data for rel, data in restored.items() if rel.startswith(route.prefix)}
-    plan = {}
-    base = route.base.resolve()
-    for rel, data in items.items():
-        dest = (base / rel).resolve()
-        if base not in dest.parents:
-            raise RoomError(f"{route.prefix}{rel}: Area の{route.label}の置き場の外を指している")
-        plan[dest] = data
-    return plan
-
-
-def read_written(p, route):
-    mf = noai_dir(p) / "map" / route.manifest
-    return mf, (json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {})
-
-
-def publish_conflicts(p, route, plan):
-    """Area の既存ファイルのうち、前回の書き出しから人が変えたもの（上書きすると人の変更が消える）を、問題の文で返す。"""
-    _mf, written = read_written(p, route)
-    base = route.base.resolve()
-    out = []
-    for dest, data in plan.items():
-        if dest.exists():
-            cur = dest.read_bytes()
-            key = dest.relative_to(base).as_posix()
-            if cur != data and written.get(key) != sha256_bytes(cur):
-                out.append(f"{route.prefix}{key}: Area の{route.label}が、前回の書き出しから変わっている（人の変更を上書きしてしまう）")
-    return out
-
-
-def publish(ctx, p, route, plan):
-    """Area へ書く。前回の書き出しから人が変えた既存ファイルは、呼ぶ前に deliver_plan が止めている（上書きする経路は無い）。"""
-    if not plan:
-        return
-    mf, written = read_written(p, route)
-    base = route.base.resolve()
-    for dest, data in plan.items():
-        key = dest.relative_to(base).as_posix()
-        write_bytes(dest, data)
-        written[key] = sha256_bytes(data)
-    write_bytes(mf, json.dumps(written, ensure_ascii=False, indent=1, sort_keys=True).encode("utf-8"))
-    ctx.say(f"Area に書いた: {len(plan)} ファイル → {base.relative_to(Path(ctx.vault).resolve()).as_posix()}")  # resolve: Windows の 8.3 短縮名と長い名前の違いを吸収
-
-def cmd_clean(ctx, a):
-    p = Project.load(ctx, a.name)
-    preflight(ctx, p)
-    items = None
-    if getattr(a, "path", None):
-        require_internal(p, "clean --path（Area の原本の掃除）")
-        src = source_dir(p)
-        if not src.is_dir():
-            raise RoomError(f"Area の原本置き場が無い: {src}（`room init {p.area}` で作る）")
-        picked = pick_source_files(src, a.path)
-        if not picked:
-            ctx.say("条件に合うファイルは無い")
-            return
-        ctx.say(f"掃除する候補（{len(picked)} 件。原本）:")
-        for f in picked:
-            ctx.say("  " + f.relative_to(src).as_posix())
-        if not getattr(a, "yes", False) and ctx.ask("この一覧を掃除してよいか [y/N]: ").strip().lower() != "y":
-            raise RoomError("掃除を中止した")
-        # source/ は実名を置かない運用（2026-11-03 ユーザーの決定）。名前は相対パスのまま ai/in/area/ に出す。万一に備え、名前を点検する
-        terms, items, bad = area_gate_terms(p), {}, []
-        for f in picked:
-            rel_src = f.relative_to(src).as_posix()
-            hits = cleankit.sensitive_hits(rel_src, terms)
-            if hits:
-                bad.append(f"{rel_src}（{'、'.join(label for label, _h in hits)}）")
-            items[f"{PULL_PREFIX}{rel_src}"] = f.read_bytes()
-        if bad:
-            raise RoomError("ファイル名に実名や機密らしい語がある。何も掃除していない（source/ の名前を直す）:\n  " + "\n  ".join(bad))
-    if clean_project(ctx, p, items) == 0:
-        ctx.say("掃除するものは無い（原本が無いか、変更が無い）")
-
-
-def pick_source_files(src, patterns):
-    """Area の原本置き場（source/）から、--path の glob に合うファイルを選ぶ。置き場の外を指す指定は拒否する。"""
-    if not patterns:
-        raise RoomError("--from source には --path <置き場からの相対パス or glob> が要る（例: --path 2026/議事録.xlsx、--path '客先A/*.pptx'）")
-    root = src.resolve()
-    picked = set()
-    for pat in patterns:
-        if Path(pat).is_absolute() or Path(pat).anchor or pat.startswith(("/", chr(92))) or ".." in Path(pat).parts:
-            raise RoomError(f"--path は source/ の中の相対パスで書く: {pat!r}")
-        for f in src.glob(pat):
-            if f.is_file() and root in f.resolve().parents and f.relative_to(src).parts[0] != "tmp":
-                picked.add(f)
-    return sorted(picked)
 
 
 # ---------- 【汎用】の下書きの回収（stock） ----------
@@ -2434,23 +2189,8 @@ def close_warnings(p, close_md):
         out.append("README がひな形のまま（<...> が残っている）:\n    " + "\n    ".join(left))
     if not close_md.exists():
         out.append("ai/out/close.md が無い（再作業の `room open --from` が引き継ぐ close の判断が残らない。書かせるなら、部屋の AI に close の判断を行わせる）")
-    stray = stray_out_dirs(p)
-    if stray:
-        out.append("ai/out/ に、Area へ渡らないフォルダがある（渡るのは ai/out/" + p.name + "/ と旧名 deliverable/ だけ）: "
-                   + "、".join(f"{s}/" for s in stray) + "。渡したいなら、" + p.name + "/ の下へ移してから close する")
     return out
 
-
-OUT_NOT_DELIVERED_OK = ("stock",)  # ai/out/ の直下で、Area へ渡らなくてよいフォルダ（知見の下書き）
-
-
-def stray_out_dirs(p):
-    """ai/out/ の直下のフォルダのうち、Area へ渡らず、渡らなくてよいとも決まっていないもの（NA 9。2026-11-05）。"""
-    out = p.ai / "out"
-    if not out.is_dir():
-        return []
-    ok = {p.name, DELIVERABLE_OUT.rstrip("/"), *OUT_NOT_DELIVERED_OK}
-    return sorted(d.name for d in out.iterdir() if d.is_dir() and d.name not in ok)
 
 
 def confirm_close_warnings(ctx, warned, interactive=None):
@@ -2548,17 +2288,8 @@ def cmd_close(ctx, a):
     problems = check_provenance(p)
     if problems:
         raise RoomError("来歴チェックに失敗した:\n  " + "\n  ".join(problems))
-    items, problems = deliverable_items(p)
-    plans, errors, conflicts = deliver_plan(p, items)
-    problems += errors + conflicts
-    if problems:
-        raise RoomError("成果物（ai/out/<Project 名>/）を Area に渡せない。何も変えていない:\n  " + "\n  ".join(problems)
-                        + ("\n（Area 側の人の変更を退避してから、close をやり直す）" if conflicts else ""))
     today = ctx.today()
     reap = (datetime.date.fromisoformat(today) + datetime.timedelta(days=ctx.reap_days)).isoformat()
-    # 0. 成果物を Area へ（点検は上で済み）
-    if any(plan for _route, plan in plans):
-        deliver_write(ctx, p, plans)
     # 2. README の状態
     p.readme.write_text(
         update_frontmatter(p.readme.read_text(encoding="utf-8"),
@@ -3437,10 +3168,6 @@ def build_parser():
     s.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない）")
     s.add_argument("--commit", action="store_true", default=True, help=argparse.SUPPRESS)  # 既定になったので不要（互換のため残す）
     s.add_argument("--no-commit", dest="commit", action="store_false", help="回収をコミットしない（既定はコミットする）")
-    cl = sub.add_parser("clean", help="_noai/raw の xlsx・pptx を cleankit の strict で掃除して ai/in へ（通すのは start --adopt）")
-    cl.add_argument("name")
-    cl.add_argument("--path", action="append", metavar="パス", help="Area の原本置き場(_noai/source/)からの相対パスか glob。指定すると raw を経由せず直接掃除する(共通の xlsx・pptx 用)")
-    cl.add_argument("--yes", action="store_true", help="一覧の確認を省く")
     st = sub.add_parser("stock", help="知見の下書きを、確認を経て行き先へ移す（運んだら ai/out/stock/ の元を消す。--dst を省くと各下書きの scope: に従って両方へ運ぶ。--dst kit: scope が public の下書き → exmem/inbox/、--dst area: scope: area の下書き → areas/<Area>/ai/）")
     st.add_argument("name"); st.add_argument("--dst", choices=STOCK_DSTS, help="行き先（省くと各下書きの scope: に従って両方へ運ぶ。scope: が無い・不明なら止まる）: kit（公開の共有知）/ area（この Area の知識・経緯。scope: area の下書き。external だけ。cleankit の点検に当たると止まる）")
     st.add_argument("--yes", action="store_true", help="（互換のため残す。何もしない。2026-11-04 に1件ごとの確認を廃止した）")
@@ -3481,7 +3208,7 @@ def main(argv=None):
     ctx = Ctx(a.vault, reap_days=a.reap_days, history_backup=Path.home() / ".claude" / "room-history")
     try:
         {"mkworks": cmd_mkworks, "init": cmd_init, "aws-key": cmd_aws_key, "shell": cmd_shell, "reap": cmd_reap, "open": cmd_open, "start": cmd_start, "close": cmd_close, "umount": cmd_umount, "mv": cmd_mv, "rm": cmd_rm,
-         "clean": cmd_clean, "stock": cmd_stock, "trace": cmd_trace}[a.command](ctx, a)
+         "stock": cmd_stock, "trace": cmd_trace}[a.command](ctx, a)
     except RoomError as e:
         print(f"エラー: {e}", file=sys.stderr)
         return 2

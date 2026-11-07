@@ -57,4 +57,4 @@
 | 調査1 構造化と想定読者 | 主題があり、読者（既定は依頼した本人）が使える形にまとめたい | （型のノートに移した。2026-10-28） | `research-explain-output` |
 | 調査2 手順を調べる | 技術的なインストール・導入や、ルール・仕組み（OS、サービス、規程）に沿ってやることがあり、そのまま実行できる手順書にしたい | （同上） | `research-procedure-output` |
 
-- **置き場**: 下書きはプロジェクトの `notes/`、確定（公開してよく読者が本人）は `guides/explain/<主題>.md`（`checked` つき）、業務・機密は部屋の `ai/out/<成果物名>/report.md`（Area に渡したい最終版は `ai/out/<Project 名>/` の下。`room close` がそのまま Area へ渡す）。調査2の確定版の置き場は未決（`research-method-2` の Open Questions）。下書きと業務・機密は同じ。
+- **置き場**: 下書きはプロジェクトの `notes/`、確定（公開してよく読者が本人）は `guides/explain/<主題>.md`（`checked` つき）、業務・機密は部屋の `ai/out/<成果物名>/report.md`（最終版は `ai/out/<Project 名>/` の下。`close` 後は `archives/` に残る）。調査2の確定版の置き場は未決（`research-method-2` の Open Questions）。下書きと業務・機密は同じ。

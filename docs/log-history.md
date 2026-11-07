@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-07（`room clean`・`close` の成果物の引き渡し・`_noai/raw` `_noai/map` `source` `deliverable` を廃止した）
+- ユーザーが 3 点（`clean --path` は一緒に廃止、`--adopt` の台帳は現状のまま、`require_internal` は `--adopt` に残す）と、`source/` も畳むことを承認。根拠は `decisions.md` の同日の【room】の項。
+- 変更: `room.py`、`tests/test_room.py`（211 件通る）、`cleankit.py` の文言、`room/README.md`、手順書・説明（`guides/`、`workflow-kit/`）。探索は subagent に任せていない。
+- 残り: `room-completion.ps1`（dotfiles のプロファイルの 1 行を外したら削除）。既存の Project の `_noai/raw` `_noai/map`、Area の `source/` `deliverable/` は手で移す。`exmem/lessons/` の古い記述（`ai-room-data-layout.md` の 58・59 行ほか）は、確認日つきの履歴なので直していない。実機の通しは未実施。
+
 ### 2026-11-07（`_noai/user/` を廃止し、`raw` と `map` の存在理由を確かめた）
 - ユーザーの相談（`brief`）。`_noai/raw` と `_noai/map` を使う場面を整理し、Project の階層が深い問題を `_noai/user/*` の展開で解いた。根拠は `decisions.md` の【room】`_noai/user/` の項。変更: `room.py` の `NOAI_DIRS`、`room/README.md`、`ai-room-setup.md`、`ai-room-data-layout-explain.md`、`script-guide.md`（全文ログの出力先 6 か所）、`test_room.py`。テスト 184 件が通った（3 スキップ）。
 - 分かったこと: `raw` は `room clean` と `start` の注意だけ、`map` は `close` の `deliverable-manifest.json` だけのための置き場。どちらも他の用途は無い。

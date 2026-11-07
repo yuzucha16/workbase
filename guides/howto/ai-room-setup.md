@@ -110,10 +110,10 @@ foreach ($d in 'in','work','records') { New-Item -ItemType File "$p\ai\$d\.gitke
 | `ai/work/` | AI のスクリプト（再現に要るので追跡する） | 読み書き |
 | `ai/out/` | 成果物 | 読み書き |
 | `ai/records/` | 実行記録、AI への指示の記録 | 読み書き |
-| `_noai/raw` `map` | 原本、room の記録 | **見えない** |
+| `_noai/` | 人だけの置き場（手で掃除する前の原本など） | **見えない** |
 | `_noai/` 直下のその他 | 人だけの仮置き（予約名は `raw` `map` `mask.toml` だけ。`room` は触らない） | **見えない** |
 
-- **`_noai/` は `type` に関係なく `raw/` `map/` `user/` を作る**（`room.py` を使うなら自動。上の `mkdir` の一覧）。仕様の正本は `workflow-kit/room/README.md` の「`_noai/` の中身」
+- **`_noai/` は `type` に関係なく作る（中身は `mask.toml` だけ。2026-11-07）**（`room.py` を使うなら自動。上の `mkdir` の一覧）。仕様の正本は `workflow-kit/room/README.md` の「`_noai/` の中身」
 - 既存の Project がある場合は、`docs/` の中身を `ai/docs/` に、成果物を `ai/out/` に、ファイル単位の `git mv` で移す（ディレクトリごとだと `Permission denied` で失敗することがある）。README の中の旧パスは、`grep` で探して直す。過去の作業記録の中の旧パスは、当時の事実なので直さない
 - 完了の目安: `_noai/` が `git status` に出ない
 

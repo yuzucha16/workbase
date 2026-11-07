@@ -476,7 +476,7 @@ Project の成果物は、`ai/out/` の1本（ユーザー、2026-10-25。人の
   exit $exitCode
   ```
 
-  **`-Log` のログは `ai/` の中に出るので、部屋の AI から読める**（掃除を通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（原本を `_noai/raw/` に置く Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
+  **`-Log` のログは `ai/` の中に出るので、部屋の AI から読める**（掃除を通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（実データの原本を扱う Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
 - **人が叩く名前（`run` / `verify` / `release`）は ps1 でも同じ**。`verify.ps1` と `release.ps1` の型を下に置く（2026-10-25）。手順・結果ファイル・止まる条件は、上の「人が叩くスクリプトの名前」と同じ。`verify-result.json` の `env` は Python 版と項目が違う（`pwsh`、`culture`、`ansi_codepage`〔日本語の Windows なら 932〕、`console_encoding`、`output_encoding`）。成果物のハッシュは Python 版と同じ値になる（隠しファイルも含める）ので、`verify.ps1` の結果を `release.py` が読んでもよい。`run.ps1` は、`verify.ps1` から目視とハッシュを除き、結果ファイルの名前を `run-result.json`、`-Log` の既定の置き場を Project の `_noai/` に変えて作る。部屋の Linux の pwsh 7.4 で、非対話（目視が未確認になり NG）、対話の y と n、前提が無いとき、工程の失敗と `-Log`、Project の外、`release` の各 STOP と版の連番、Python 版とのハッシュの一致を確認した。対話の日本語のひとことは、部屋の pwsh（globalization が invariant）では文字化けした（Python 版は化けない）。**Windows の pwsh では未確認**（日本語の入力を含めて PC2 で 1 回確かめる）。
 
   `verify.ps1`（上の束ねる ps1 の型に、プリフライト・目視・結果ファイルを足したもの。`release.ps1` から関数だけを読み込めるよう、関数の後で止まる）:

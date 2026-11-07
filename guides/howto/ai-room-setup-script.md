@@ -31,7 +31,7 @@ tags:
 | 3 | Project を作る（`open`） | スクリプト + README は人 | `projects/pilot2-1/` ができ、README を書いた |
 | 4 | 原本を掃除する（`clean`。任意）。4.1: Area の知識を部屋で使う（`stock --dst area`） | スクリプト | `ai/in/` に掃除済みのファイルが入る（4.1: `ctx/area/` に Area の知識の写し） |
 | 5 | 部屋で使う（`start`） | スクリプト | 成果物が `ai/out/` に現れ、マウントが残らない |
-| 6 | 回収する（`readme` `stock`）。6.1: Area に戻すもの | スクリプト | `stock` の下書きが運ばれた（6.1: 成果物は 7 章の `close` で Area の成果物置き場へ） |
+| 6 | 回収する（`readme` `stock`）。6.1: Area に戻すもの | スクリプト | `stock` の下書きが運ばれた（6.1: 成果物は Area へ渡さない。`archives/` の `ai/out/` に残る） |
 | 7 | 閉じる（`close`） | スクリプト + `close.md` は部屋の AI | `archives/pilot2-1/` に移った |
 | 8 | 片付ける（`reap`、部屋の削除） | スクリプト | 会話履歴が消え、README に `reaped:` が付く |
 | 9 | うまくいかないとき | | |
@@ -129,20 +129,19 @@ git -C $HOME\works status --short      # _noai/ が出ない
 
 - **よく忘れる点**: ステージ済みの別の変更（前の `close` の取り残しなど）があっても、`init` `open` は止まらず、対象のパスだけをコミットする。取り残しはステージに残るので、あとで別にコミットする（「注意: 対象外のステージ済みの変更は、コミットに含めない」と出る）。`start` `readme` `close` の `--commit` は、対象外のステージがあると止まる
 
-## 4. 原本を掃除する（`clean`。任意）
+## 4. 原本を掃除する（人が cleankit で行う。任意）
 
-原本（Excel、pptx）を AI に見せず、`cleankit` の `strict` で掃除した写しだけを渡すとき（原本を `_noai/raw/` に置いた Project。internal の Area だけ）。手順の詳細は [[ooxml-clean]]。語のマスク（`mask`）は 2026-11-06 に廃止した。
+原本（Excel、pptx）を AI に見せず、人が `cleankit` の `strict` で掃除した写しだけを渡すとき（internal の Area だけ）。`room clean` は 2026-11-07 に廃止した。手順の詳細は [[ooxml-clean]]。
 
 ```powershell
 uv run room.py open pilot2-2 --area pilot2
-python tests/dummy_fixture.py $HOME\works\projects\pilot2-2     # _noai/raw/ にダミーの xlsx と csv、_noai/mask.toml
-uv run room.py clean pilot2-2
-Get-ChildItem $HOME\works\projects\pilot2-2\ai\in               # 掃除済みの xlsx（csv は掃除の対象外なので、注意だけ出る）
+# 原本は _noai/ の下（例: _noai/memo/）に置く。cleankit check → clean → 目視で確認 → ai/in/ に置く
+uv run room.py start pilot2-2 --adopt                            # 人が確認した ai/in を記録して起動する
 ```
 
-- 実際の運用では、`_noai/raw/` に原本を置く。報告（実データの抜粋入り）は `_noai/raw/tmp/` に出る。AI に見せない
-- `_noai/mask.toml` は点検用の語の表（任意）。`clean` と `stock --dst area` の点検が、この語と金額・メール・電話などの形を報告に載せる。置き換えはしない
-- 掃除の出力は「未確認」で、人が読んで `start --adopt` で通すまで `start` は止まる。`start` は自動で掃除しない
+- 掃除の報告（実データの抜粋入り）は、原本の隣の `tmp/` に出る。AI に見せない
+- `_noai/mask.toml` は点検用の語の表（任意）。`stock --dst area` の点検と `cleankit --terms` が、この語と金額・メール・電話などの形を報告に載せる。置き換えはしない
+- `ai/in/` に置いたファイルは、人が `start --adopt` で通すまで `start` が止まる。external の Area では `--adopt` が止まる
 
 ### 4.1 Area の知識を部屋で使う（`stock --dst area` と `ctx/area/`。2026-11-03 に `pull` から置き換え）
 
@@ -182,7 +181,7 @@ uv run room.py start pilot2-1
 1. チェック（Project と Area の `area:`、`boundary:`、ほかのマウントが無いこと、`ai/in/` の来歴）→ README の写しを `ai/ctx/` に置く → 共有知を部屋の `~/shared` に送る
 2. `ai/` を `/mnt/room/pilot2-1` にマウントし（`in/` は読み取り専用）、部屋で `claude` を起動する
 3. 部屋の `claude` に作業を頼む（例: 「`ai/out/hello.md` を作って」）。`/exit` で戻る
-4. 自動で、アンマウント、マウント点の削除、変更の一覧が出る（成果物の Area への引き渡しは自動でしない。`ai/out/<Project 名>/` があれば案内が出る。渡すのは 7 章の `close`）
+4. 自動で、アンマウント、マウント点の削除、変更の一覧が出る（成果物の Area への引き渡しはしない）
 
 - 目安: 「回収: 変更 N 件」の下に、`ai/out/` の新しいファイルが `??` で出る
 - 信頼の確認（`Quick safety check: Is this a project you trust?`）が、新しい Project の最初に出る。内容を確認して進める
@@ -206,7 +205,7 @@ uv run room.py start pilot2-1 --no-launch
 
 ## 6. 回収する（`readme` `stock`）
 
-成果物の Area への引き渡しは `close`（7 章）が行う。`start` は自動で渡さず、`ai/out/<Project 名>/` があれば案内だけ出す。
+成果物は Area へ渡さない（2026-11-07 に `close` の引き渡しを廃止した）。`ai/out/<Project 名>/` は `archives/` に残る。
 
 ```powershell
 uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書きを、確認なしで（運んだ後に表を出す）resources/exmem/inbox/ に運ぶ
@@ -217,7 +216,7 @@ uv run room.py stock pilot2-2           # ai/out/stock/ の【汎用】の下書
 ### 6.1 Area に戻すもの（2026-11-03 に整理）
 
 - 知識・決定・経緯は、`ai/out/knowledge/` の経路を外した（`restore` は 2026-11-06 に削除）。4.1 の `stock --dst area` で運ぶ。
-- Area に実名で戻す最終成果物は `ai/out/<Project 名>/` に置く（旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。`room close` が、そのまま Area の `_noai/deliverable/<Project>/` に書く（語の置き換えはしない）。Area 側を人が変えていると何も書かずに止まる（Area 側の変更を退避してから、`close` をやり直す）。
+- Area に実名で戻す最終成果物は `ai/out/<Project 名>/` に置く（旧名の `ai/out/deliverable/` も同じ扱い。2026-11-05）。`room close` は Area へ渡さず、`archives/<Project>/ai/out/` に残る。
 
 ## 7. 閉じる（`close`）
 
