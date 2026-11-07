@@ -17,6 +17,7 @@
 - 論点出しの型: `exmem/lessons/issue-extraction-output.md`（v4、本採用 11-06。合言葉 `frame`、`workflow-kit/frame-hook.md`）。
 - kit・規則の変更案（11-06 決定）: `wrap` の報告には出さず、直下の Open Questions に置き、`review 消化` が承認にかける。置き場の表は `topics/AGENTS.md` の「データの置き場」。
 - 承認のスクリーニング（サブエージェント）の測定（11-03 開始）: 結果は `decisions.md` に 1 行（`approval-screening.md`）。見直しは `due.md` の 11-30。
+- kit 変更のコミット前のサブエージェントレビュー案（11-08 保留）: 再判断は `due.md` の 11-15。
 
 ## Next Actions
 
