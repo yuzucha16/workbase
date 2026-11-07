@@ -8,6 +8,7 @@
 - やり方は `methods.md`。`plan`（11-04 新設、11-06 本採用）と `brief` に分けた。実機は未確認。1 セッション 2〜3 依頼のときの書き方は `guides/quickref/ai-work-prompts.md` の「brief 即」。
 - room: type は `dev` と `inv`。検証用の works は `mkworks --sub`。仕様と実機確認の経緯は `decisions.md` の【room】の項（11-02〜11-06）と `workflow-kit/room/README.md`。**実機未確認**: `room close` の「別名フォルダ」警告（11-05 実装）。通し試験 `workflow-kit/room/room-split-test-procedure.md`（結果は `logbook/room-split-test-log.md`）は、手順を起こしただけで未実行。room の手順書・案内文を直したときに回す。
 - works の git 追跡は許可リスト方式（10-29 決定）。
+- room の試験用ダミー Project: 名前が `myinv*` / `mydev*`（11-07 決定）。git 追跡外で、`open` / `close` / `start` / `rm` はコミットも Area の一覧も触らない。AI が room の試験で Project を作るときはこの名前を使う（`AGENTS.md` の共通ルールに 1 行）。手順は `ai-room-lifecycle.md` の 7 章、経緯は `decisions.md`。
 - Python の版: uv 管理が正本（`script-guide.md`）。人が叩くスクリプトは `run` / `verify` / `release`（Windows は未確認）。
 - `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-29。ファイル名は `workflow-kit/naming-rules.md`。
 - 項目の移し替え・期日の持ち上げ: `workflow-kit/tools/na_apply.py`（呼び方は `docs-write-rules.md`）。当面は、処理の漏れがあるものとして読み、見つけたら報告する。漏れなし 3 回連続で外す（現在 0/3）。
@@ -18,7 +19,7 @@
 
 ## Next Actions
 
-- `guides/howto/ai-room-lifecycle.md` に `room rm`（テスト用の Project・Area を跡ごと消す。11-07 新設、`room/README.md` の表にも未記載）を反映する。完了条件: 両方に `rm` の行（Project・`--area`・止まる条件）があり、ゴールの「reap で会話履歴が消える」の節から指されている。
+- `guides/howto/ai-room-lifecycle.md` に `room rm`（テスト用の Project・Area を跡ごと消す。11-07 新設、`room/README.md` の表にも未記載）を反映する。完了条件: 両方に `rm` の行（Project・`--area`・止まる条件）があり、ゴールの「reap で会話履歴が消える」の節から指されている。`room/README.md` にはダミー Project（`myinv*` / `mydev*`、11-07）の 1 行も足す（`ai-room-lifecycle.md` の 7 章は書き済み）。
 
 期日のある項目は `due.md`。
 
