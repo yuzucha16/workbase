@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-07 room 通しのフィードバックを `draw` に取り込み、スクリプトを `workflow-kit/tools/` へ移した（NA1 の一部）
+- ユーザーの指示: room で `draw` を通した AI のフィードバック 6 点を精査して取り込む。次は別セッションで room とサブエージェントによる複数パターン試験。スクリプトの移動は了承（「トピッククローズのときにやろうと思っていた。records/ などのリンクはその時に直す」）。
+- AI: `excalidraw-viewer/` 一式を `workflow-kit/tools/excalidraw-viewer/` へ移した（room の `~/shared/workflow-kit/` に入る固定パス）。`draw-hook.md` に固定パス、ユーザー指定の優先と Windows パスの読み替え、部屋の `work/parts/`、箱内の文字の座標と高さの式、生成スクリプトの扱い（`gen-<題>.py`）を追記。決定は直下 `docs/decisions.md`。
+- 失敗: 移動中に `Remove-Item` が追跡外の `sample-side-img.html` と `samples/tmp2/` を消した（生成物・一時物。html は qmd から再生成できる）。追跡済みは `git restore` で戻した。
+- 残: 旧 `topics/revealjs-slides/excalidraw-viewer/samples` が掴まれて消せない。records などのリンクの直しはトピックのクローズ時。
+
 ### 2026-11-07 `--export` へのフォント指定（`--font`）を実装した（NA ①が済）
 - ユーザーの指示: 「`--export` へのフォント指定(svg,png)を実装します」。確認後「こちらも問題なく、フォントが出力されました。動作確認完了」。
 - AI: `excalidraw_view.py` に `--font NAME` を追加。SVG の `font-family` をすべて `NAME, sans-serif` に書き換える（`apply_font`）。端末にフォントが無ければ警告（`font_installed`。Windows はレジストリ、Linux は `fc-list`）。複数名・引用符つきはエラー。`samples/sample-flow.excalidraw` で SVG の書き換えと PNG（Noto Sans JP）を確認。字幅の変化による箱からのはみ出しは、ユーザーの目視で問題なし。

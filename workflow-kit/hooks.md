@@ -7,6 +7,7 @@
 | `plan` | 「計画を立てて」 | `plan-hook.md`（手順と欄は `plan-fields.md`） | Project の方向性を決めるとき（`room open` の直後。計画が無い・`仮`） | 6R → 論点出し → 憲章・WBS・マイルストーン（任意）を `ai/work/plan/` に作る。承認は人。`brief` が一度だけ勧める。小規模では使わなくてよい（2026-11-04） |
 | `frame` | 「論点出し」「課題設定」 | `frame-hook.md`（型は `exmem/lessons/issue-extraction-output.md`） | 作業の依頼の前（随時） | 論点だけを表にし、判断（決・任・後・確・聞）で決定メモにする。作業はしない。ファイルは書かない。合言葉の後ろの文が「私の入力」になる（2026-11-06 ユーザーの決定。プロンプトの貼り付けをやめるため） |
 | `brief` | 「作業を始めて」 | `brief-hook.md` | セッションの開始 | 開始インタビュー。引数は持たない（2026-10-28）。出力の型は依頼の言葉で引く |
+| `draw` | 「作図」 | `draw-hook.md` | 図が要るとき（随時。部屋） | 説明・用途から `.excalidraw` を書き、`--export` で SVG・PNG にして目視で直す（最大 2 回）。用途でフォントと形式が決まる。置き場は `ai/work/parts/` |
 | `wrap` | 「終了処理して」 | `wrap-hook.md` | セッションの終了 | 現在状態の更新・昇格の案・コミットと push（許可リストにあれば）を、AI が順序を固定して行う。部屋では、部屋の git へのコミットまで（push はしない） |
 | `stock` | 「ナレッジ化して」＝`stock ナレッジ`<br>`stock 理解`＝「理解ガイドにして」 | `stock-hook.md`（`stock 理解` は `stock-explain.md` も） | 随時 | 書き込みは `exmem/inbox/` の新規ファイルだけ（例外は `stock-hook.md`）。部屋では下書きまで（`ai/out/stock/`）で、人が `room stock` で運ぶ。`kind` で AI 用（`lessons/`）と人用（`guides/explain/`）に分かれる。合言葉だけなら1問でモードを選ぶ |
 | `integrate` | 「inboxを整理して」 | `integrate-hook.md` | 随時（exmem 側の作業） | `inbox/` のメモを `lessons/` に統合し、照合を報告する |
@@ -47,6 +48,7 @@
 | `stock` | w | rw | w | w |
 | `integrate` | － | rw | － | － |
 | `review` | rw | rw | rw | － |
+| `draw` | － | － | － | w（`ai/work/parts/` だけ） |
 
 - `stock` の w は、窓口への書き込み（下の型3）。room は `ai/out/stock/` に置くだけで、運ぶのは人（`room stock`）。
 - **跨ぎ**（起動した領域の外）の型は3つだけ。これ以外の跨ぎ書き込みは行わない。

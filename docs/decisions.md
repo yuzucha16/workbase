@@ -4,6 +4,15 @@
 
 ## Decisions
 
+### 【workflow-kit】作図スクリプトを `workflow-kit/tools/excalidraw-viewer/` へ移し、draw に room 読み替えを足した（2026-11-07）
+- 根拠: ユーザー「room からのフィードバックを精査して取り込みまで行います」。room 内の AI から、スクリプトの部屋での固定パスが無い、Windows 形式パスの読み替え、`ai/work/parts/` の読み替え、箱内の文字の座標、生成スクリプトの扱い、の指摘があった。
+- 決めたこと: ①スクリプト一式を `topics/revealjs-slides/` から移した（部屋の `~/shared/workflow-kit/` の写しに入り、固定パスになる: `~/shared/workflow-kit/tools/excalidraw-viewer/excalidraw_view.py`）。②`draw-hook.md` に、固定パス、ユーザー指定の優先、`tmp\X` → `/tmp/X` の読み替え、部屋の `work/parts/`、箱内の文字の座標と高さの式、生成スクリプトの扱い（再編集に要るなら `gen-<題>.py` で残す）を足した。「直すのは最大 2 回」は据え置き。
+- 未確認: 部屋で `~/shared` の写しにスクリプトが入ること（次回の試験で見る）。
+
+### 【workflow-kit】作図の手順書 `draw`（別名「作図」）を足した（2026-11-07）
+- 根拠: ユーザー「手順書をお願いします。ここでは手順書を作るまでがゴールで確認は別セッションにします」（`topics/revealjs-slides` NA1）。
+- 決めたこと: `workflow-kit/draw-hook.md`。入力は説明・用途・題。用途でプロファイルを決める（理解用 = 指定なし・PNG、slide = Noto Sans JP・SVG、pptx = BIZ UDPゴシック・PNG。値は想定）。`.excalidraw` を書く → `--export` → PNG を目視して直す（最大 2 回）→ `ai/work/parts/<日付>-diagram-<題>/` → 報告。領域は room だけ w（置き場は 11-07 の決定）。
+- 未確認: 手順書の実機の通し（別セッション）。`excalidraw_view.py` は `topics/` にあり部屋の `~/shared/` に無い（手順書は「部屋に複製したものを使う」とした。`workflow-kit/tools/` へ移すかは未決）。
 ### 【room】`room clean`（`_noai/raw/`）、`close` の成果物の Area への引き渡し（`_noai/map/`）、Area の `_noai/source/` `_noai/deliverable/` を廃止する（2026-11-07）
 - 根拠: ユーザー「archive に成果物の実態があって、それは残るので不要です。log などの決定記録は room trace で拾います」「source も畳んでください。こちらも手動移管で OK です」「承認します」。`clean` は人が cleankit で `check` → `clean` → 目視 → `ai/in/` に置く二度手間で、目視が要るので自動ループにできない。`map` は引き渡しの記録のためだけにあった。
 - 決めたこと: ① `room clean`（`--path` を含む）を廃止し、掃除は人が cleankit で行って `ai/in/` に置く。`source/` も畳み、手動移管にする。② `start --adopt` の台帳登録は現状のまま（`adopt_in` は台帳に記録が無いファイルを新規に記録する。人が置いたファイルは `--adopt` を通るまで来歴チェックで止まる）。③ `require_internal` は `start --adopt` に残す（external の Area では、人が置いても通せない）。`clean` 側の呼び出しは `clean` と一緒に消えた。④ `close` は成果物を Area へ渡さない（`ai/out/` は `archives/<Project>/` に残る）。決定記録は `room trace` で引く。人が変えた Area 側を上書きしない検査も、引き渡しと一緒に無くなった。⑤ `_noai/` は `mask.toml` だけを作る（`raw/` `map/` は作らない）。`mask.toml` は `cleankit --terms` と `stock --dst area` の点検用に残す。⑥ `init` は Area の `_noai/source/` `_noai/deliverable/` を作らない。
