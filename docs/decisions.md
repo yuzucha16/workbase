@@ -1221,3 +1221,7 @@
 ### 【この件】旧 `logbook-design` の NA 1・NA 5 を閉じた（2026-11-06）
 - 根拠: ユーザー「どちらも畳んでコミットしてください。終わっています」。NA 5 は AI が 10-30 以降の lessons 追記を調べ、(b) は守られていた。
 - 決めたこと: NA 1（実機での畳み候補。room の確認 4 項、obsidian-vault-backup の NA 2 項）は確認済みとして畳み、NA 5 は取り下げた。`due.md` の該当 2 行を削除した。`logbook/` の残りの期日は 11-08 と 11-29。
+
+### 【room】`room rm` を新設した（2026-11-07）
+- 根拠: ユーザー「実装してください」。テスト用の Project 21 件と Area を消す際、フォルダ削除だけでは部屋（WSL）の会話履歴・`~/tmp/<名>` と Area README の一覧が残り、`close` + `reap` は 1 件ずつの確認と引き渡しで重いため。
+- 決めたこと: `room rm <Project>...`（`projects/` と `archives/`。部屋の履歴と `~/tmp` を退避して消し、Area の一覧から行を外す。マウント・未 push の clone があれば何も変えず止まる）と `room rm --area <Area>`（Project が残れば止まる。部屋は消さず `wsl --unregister` は人が行う）。確認は y/N、非対話は `--yes`、`--commit` は任意。成果物の Area への引き渡しはしない。戻せない（追跡分は git の履歴）。コミット `e2d9d46`。

@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-07（`room rm` を新設し、テスト用の Project 21 件と Area 1 件を消した）
+- 根拠のコミット: `e2d9d46`。ユーザー「実装してください」。`room rm <Project>...`（`projects/` と `archives/`）と `room rm --area <Area>` を足し、部屋の履歴と `~/tmp/<名>` の消去は reap と共通の `purge_room_traces` にした。テストは `RmTest` 6 件。
+- 実機で、works の `projects/` の 21 件と Area `env-external` を消した。`myenv` は残した。`sample_inv` のマウントが残っていて一度止まり（想定どおり）、`room umount --area myenv` で外して通した。
+- 実行中に 2 つ直した: 確認プロンプトの EOF（Windows は NUL も `isatty()` が真）を非対話のエラーにした。`rmtree_force` が WSL の `.venv/lib64` リンク（WinError 1920）で止まるので、辿れない項目はリンクごと消すようにした。
+- 探索は subagent に任せていない。
+
 ### 2026-11-06（`mask` / `restore` 削除の第三者確認 NA 1 を消化して閉じた）
 - 別のセッションの目で確認（`review 消化` NA 1）。リンク切れは無し（削除した 4 ファイルを指す現行のリンクなし。履歴の言及だけ残る）。room のテスト 210 件 OK（3 スキップ）。取りこぼしは、due の対象リストの中（`ai-room-why.md`、`cross-area-shared-knowledge.md`、`room-context.md` の「internal は語が空だと止まる」はコードと不一致）と、リストの外（`ai-room-data-layout-explain.md`、`ai-room-convert-tools-explain.md`、`methods.md`、`script-guide.md`、`ai-room-setup-manual.md`）にあった。
 - ユーザーの指示で全部直した。`ai-room-data-layout-explain.md` と `cross-area-shared-knowledge.md` は現行の姿に書き直し、`ai-room-why.md` は図・節・表を直して廃止前の検証は「経緯」と明記。`ooxml-residue.md`、`ai-room-setup.md`（「対応表の保護」を削除）、`project-structure.md`、`plan-fields.md`、`dev-deliverable-guide.md` の「マスク」表現も直した（「実名を伏せた」「掃除済み」に）。

@@ -18,7 +18,7 @@
 
 ## Next Actions
 
-なし。
+- `guides/howto/ai-room-lifecycle.md` に `room rm`（テスト用の Project・Area を跡ごと消す。11-07 新設、`room/README.md` の表にも未記載）を反映する。完了条件: 両方に `rm` の行（Project・`--area`・止まる条件）があり、ゴールの「reap で会話履歴が消える」の節から指されている。
 
 期日のある項目は `due.md`。
 
