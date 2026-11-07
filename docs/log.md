@@ -22,6 +22,8 @@
 
 - `guides/howto/ai-room-lifecycle.md` に `room rm`（テスト用の Project・Area を跡ごと消す。11-07 新設、`room/README.md` の表にも未記載）を反映する。完了条件: 両方に `rm` の行（Project・`--area`・止まる条件）があり、ゴールの「reap で会話履歴が消える」の節から指されている。`room/README.md` にはダミー Project（`myinv*` / `mydev*`、11-07）の 1 行も足す（`ai-room-lifecycle.md` の 7 章は書き済み）。
 
+- 【起票 11-07】room の廃止（`767273f`。`room clean`・`close` の成果物の引き渡し・`_noai/raw` `map` `source` `deliverable`）の第三者確認を、別のセッションで行う（文書修正と削除の取りこぼしの防止）。対象リストを渡さず、削除した名前と周辺語（`room clean`、`clean --path`、`_noai/raw`、`_noai/map`、`_noai/source`、`_noai/deliverable`、`deliverable-manifest`、`pending`、`masked_from`、「Area へ渡す」「引き渡し」「成果物置き場」）で `resources/` 全体を検索する（`log-history.md` と `decisions.md` は除外し、件数から見る）。見るもの: 文書の本文（`room/README.md` の `start` `stock` `mkworks` の行、`exmem/lessons/`）、`room.py` のコメント・ヘルプ・部屋に渡す文書（`ROOM_GUIDE`）、`cleankit.py`、テストの名前。手順は `exmem/inbox/2026-11-07-deletion-audit-beyond-listed-scope.md`。既知の残り: `exmem/lessons/ai-room-data-layout.md` の 58・59 行（確認日つきの履歴なので未修正）、`room-completion.ps1`（dotfiles のプロファイルの 1 行を外すまで残す）。完了条件: 現行の文書とコードに旧仕様が残っていない（残してよいのは、履歴と「廃止前」と明記したものだけ）。
+
 期日のある項目は `due.md`。
 
 ## Open Questions
