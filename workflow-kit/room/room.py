@@ -32,6 +32,15 @@ MOUNT_ROOT = "/mnt/room"
 ROOM_UID = 1000
 REAP_DAYS_DEFAULT = 14
 GITIGNORE_REQUIRED = ("**/_noai/",)  # 2026-10-29: 許可リスト方式にしたので `!**/ai/out/` は必須でない（旧方式の works にあっても通る）
+DUMMY_RE = re.compile(r"^(myinv|mydev)")  # ダミー Project の名前（2026-11-07 ユーザーの決定）
+
+
+def is_dummy(name):
+    """ダミー Project（myinv*・mydev*）か。試験用で、git 追跡の対象外（works の .gitignore）。
+    Area の一覧に載せず、コミットもしない。WSL の扱いは本物と同じ。"""
+    return bool(DUMMY_RE.match(name or ""))
+
+
 AI_DIRS = ("ai/docs", "ai/in", "ai/work", "ai/out", "ai/records")
 # 語のマスク・復元は廃止した（2026-11-06）。成果物は `room close` が、ai/out/<Project 名>/ をそのまま Area へ渡す。
 # user/ は、人だけが使う仮置き（予約名。room は触らない）。
@@ -615,7 +624,7 @@ def is_allowlist_vault(ctx):
 
 def unexpected_ignored(ctx, p):
     """追跡されずに、無視されているファイル（成果物が黙って漏れていないかの点検）。許可リスト方式では、ai/ は無視が既定なので空。"""
-    if is_allowlist_vault(ctx):
+    if is_allowlist_vault(ctx) or is_dummy(p.name):
         return []
     out = git(ctx.vault, "ls-files", "-o", "-i", "--exclude-standard", "-z", "--", f"projects/{p.name}/ai")
     res = []
@@ -865,16 +874,20 @@ def cmd_open(ctx, a):
     if src:
         p.readme.write_text(update_frontmatter(p.readme.read_text(encoding="utf-8"), {"from": src}), encoding="utf-8", newline="\n")
         apply_from(ctx, p, src, items)
+    dummy = is_dummy(a.name)
     entry = f"- [[projects/{a.name}/README|{a.name}]]（{ctx.today()} 開始" + (f"、← [[archives/{src}/README|{src}]]" if src else "") + "）"
-    area_readme.write_text(add_area_entry(area_readme.read_text(encoding="utf-8"), "## 進行中の Project", entry),
-                           encoding="utf-8", newline="\n")
+    if not dummy:  # ダミーは Area の一覧に載せない
+        area_readme.write_text(add_area_entry(area_readme.read_text(encoding="utf-8"), "## 進行中の Project", entry),
+                               encoding="utf-8", newline="\n")
     log_room(ctx, p, "open", "area 一致、boundary あり", "ひな形を作成")
     if p.distro not in ctx.wsl.distros():
         ctx.say(f"注意: 部屋（{p.distro}）がまだ無い。guides/howto/ai-room-setup.md の 3 章で作る")
     ctx.say(f"作った: projects/{a.name}（ai/ と _noai/）。README の <...> を埋める")
     if src and items:
         ctx.say(f"{src} から {len(items)} ファイルを ai/in/from-{src}/ に写した（来歴は manifest。`plan` が close.md と前の計画を読む）")
-    if a.commit:  # 初期状態を、戻る起点としてコミットする（既定。--no-commit で省く）
+    if dummy:
+        ctx.say("ダミー Project: git 追跡の対象外。Area の一覧には載せず、コミットもしない")
+    elif a.commit:  # 初期状態を、戻る起点としてコミットする（既定。--no-commit で省く）
         commit_paths(ctx, [f"projects/{a.name}", f"areas/{a.area}/README.md"], f"[room] {a.name} を open（Area {a.area}）", only=True,
                      trailers=room_trailers("open", a.area, a.name))
 
@@ -1888,7 +1901,7 @@ def cmd_start(ctx, a):
         ctx.say("警告: 追跡されずに無視されているファイル（成果物が漏れている可能性）:")
         for f in ignored:
             ctx.say("  " + f)
-    if a.commit:
+    if a.commit and not is_dummy(p.name):
         commit_paths(ctx, [f"projects/{p.name}"], f"[room] {p.name}: start {ctx.now()}",
                      trailers=room_trailers("start", p.area, p.name))
 
@@ -2553,13 +2566,16 @@ def cmd_close(ctx, a):
                            remove=("review",)),
         encoding="utf-8", newline="\n")
     # 3. Area の一覧
+    dummy = is_dummy(p.name)
     ar = p.area_dir / "README.md"
-    ar.write_text(move_area_entry(ar.read_text(encoding="utf-8"), p.name, today), encoding="utf-8", newline="\n")
+    if not dummy:  # ダミーは Area の一覧に載っていない
+        ar.write_text(move_area_entry(ar.read_text(encoding="utf-8"), p.name, today), encoding="utf-8", newline="\n")
     note = f"、警告を承知で続行（{' / '.join(w.split('（')[0] for w in warned)}）" if warned else ""
     log_room(ctx, p, "close", f"area 一致{note}", f"archives へ移動、reap_after {reap}")
     rmtree_force(p.ai / "ctx")
     # 4. archives へ（追跡するファイルは、ファイル単位の git mv）
-    git(ctx.vault, "add", "-A", "--", f"projects/{p.name}", f"areas/{p.area}")
+    if not dummy:  # ダミーは追跡外（.gitignore）。git add せず、下の shutil.move の経路で archives へ移す
+        git(ctx.vault, "add", "-A", "--", f"projects/{p.name}", f"areas/{p.area}")
     files = [f for f in git(ctx.vault, "ls-files", "-z", "--", f"projects/{p.name}").split("\0") if f]
     for f in files:
         to = "archives/" + f[len("projects/"):]
@@ -2577,7 +2593,7 @@ def cmd_close(ctx, a):
     ctx.say(f"archives/{p.name} へ移した（追跡 {len(files)} ファイル）。reap_after: {reap}")
     ctx.say(f"部屋の会話履歴（{p.distro} の ~/.claude/projects/-mnt-room-{p.name}/）は、reap_after まで残す")
     offer_reap(ctx, interactive=sys.stdin.isatty())
-    if a.commit:
+    if a.commit and not dummy:
         # projects/<名> の削除は、git mv でステージ済み（消えたパスは pathspec にできない）
         commit_paths(ctx, [f"archives/{p.name}", f"areas/{p.area}"], f"[room] {p.name} を close し archives へ移動",
                      extra_allowed=(f"projects/{p.name}",), trailers=room_trailers("close", p.area, p.name))
@@ -2807,7 +2823,7 @@ def cmd_rm_projects(ctx, a):
         if distro in distros:
             purge_room_traces(ctx, name, distro)
         ar = ctx.vault / "areas" / area / "README.md"
-        if ar.is_file():
+        if ar.is_file() and not is_dummy(name):  # ダミーは Area の一覧に載っていない
             old = ar.read_text(encoding="utf-8")
             new = remove_area_entries(old, name)
             if new != old:
@@ -2818,7 +2834,7 @@ def cmd_rm_projects(ctx, a):
             paths.append(rel)
         rmtree_force(d)
         ctx.say(f"  消した: {rel}")
-    if a.commit:
+    if a.commit and paths:  # パスが空（ダミーだけ）のまま commit_paths に渡すと、git add -A が全体に及ぶ
         commit_paths(ctx, list(dict.fromkeys(paths)), f"[room] Project {'、'.join(n for n, _, _ in targets)} を rm",
                      trailers=room_trailers("rm", None, targets[0][0]))
 

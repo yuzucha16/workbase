@@ -1225,3 +1225,9 @@
 ### 【room】`room rm` を新設した（2026-11-07）
 - 根拠: ユーザー「実装してください」。テスト用の Project 21 件と Area を消す際、フォルダ削除だけでは部屋（WSL）の会話履歴・`~/tmp/<名>` と Area README の一覧が残り、`close` + `reap` は 1 件ずつの確認と引き渡しで重いため。
 - 決めたこと: `room rm <Project>...`（`projects/` と `archives/`。部屋の履歴と `~/tmp` を退避して消し、Area の一覧から行を外す。マウント・未 push の clone があれば何も変えず止まる）と `room rm --area <Area>`（Project が残れば止まる。部屋は消さず `wsl --unregister` は人が行う）。確認は y/N、非対話は `--yes`、`--commit` は任意。成果物の Area への引き渡しはしない。戻せない（追跡分は git の履歴）。コミット `e2d9d46`。
+
+### 【room】`myinv*` / `mydev*` をダミー Project として扱う（2026-11-07）
+- 根拠: ユーザー「実装を承認」。`room open` で試験用の Project を作っては消す運用が続き、本物の Project と別の用途なのに、works のログと Area の一覧が伸びていたため。
+- 決めたこと: 名前が `myinv` / `mydev` で始まる Project は、git 追跡の対象外（works の `.gitignore` と雛形 `gitignore.template` に、`/projects|archives/myinv*|mydev*/` を足した）。`open` / `close` / `start` / `rm` は、コミットしない・Area の README の一覧に触れない。WSL は本物と同じ（特別扱いしない）。`reap` は変更なし（Area の README を書かない）。`rm` は、コミット対象のパスが空なら `commit_paths` を呼ばない（空のままだと `git add -A` が全体に及ぶため）。
+- 見送ったこと: 専用コマンド（`room dummy reset`）、ダミー Area（`myarea`）、`_` 始まりの名前（ディストロ名 `room-_myarea` が難しそうなため）、テスト用の別 Vault（二重管理になるため）。
+- 手順: `guides/howto/ai-room-lifecycle.md` の 7 章。

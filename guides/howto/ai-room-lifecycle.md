@@ -90,6 +90,16 @@ README の置き換え方、`stock` の点検、`close` の止まり方の詳細
 - `close` が止まる: メッセージの条件を直してやり直す（何も変えずに止まる）。
 - 計画に警告が出た: 内容を確認して、正式に戻すなら `approved:` の日付を書き換える。
 
+## 7. 試験用のダミー Project（`myinv*` / `mydev*`）
+
+コマンドの動作確認や試験は、名前が `myinv` または `mydev` で始まる Project（`myinv`、`myinv1`、`mydev_aaa` など）で行う（2026-11-07 ユーザーの決定）。
+
+- 作り方は普通の `room open <名前> --area <Area>`。本番の Area に置く。部屋（WSL）も本物と同じ動き（特別扱いしない）。
+- **git 追跡の対象外**: works の `.gitignore` に `/projects/myinv*/` などを入れてある（雛形は `workflow-kit/templates/workspace/gitignore.template`）。
+- `open` / `close` / `start` / `rm` は、コミットしない。Area の README の一覧にも載せず、触らない。`--no-commit` は要らない。
+- `close` は、追跡外のファイルとして `archives/` へ移す。`reap` は本物と同じ（`--force` で期限を飛ばせる）。
+- 注意: `close` は `ai/out/<名前>/` の成果物を Area に渡す。ダミーに成果物を置くと、本番の Area にファイルが入る。
+
 ## 未決
 
 - Area 側の運営（inbox の取り込み）は範囲外。Area の終わり方は `room close --area`（上の「範囲」）。

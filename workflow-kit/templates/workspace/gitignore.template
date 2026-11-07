@@ -40,3 +40,10 @@
 ~$*
 Thumbs.db
 [Dd]esktop.ini
+
+# ダミー Project（試験用。room は myinv*・mydev* をダミーとして扱い、コミットも Area の一覧への記載もしない）
+# ディレクトリごと除外する。上の ! が戻したファイルも、親が除外されていれば追跡されない
+/projects/myinv*/
+/projects/mydev*/
+/archives/myinv*/
+/archives/mydev*/

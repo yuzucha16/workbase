@@ -2660,5 +2660,76 @@ class CleanTest(unittest.TestCase):
                 room.cmd_clean(c, argparse.Namespace(name="proj-a"))
 
 
+class DummyProjectTest(unittest.TestCase):
+    """myinv*・mydev* はダミー Project。git 追跡の対象外で、Area の一覧とコミットに触れない（WSL は本物と同じ）。"""
+    IGNORE = GITIGNORE + "/projects/myinv*/\n/projects/mydev*/\n/archives/myinv*/\n/archives/mydev*/\n"
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.v = make_vault(self.tmp.name, self.IGNORE)
+        self.c = ctx_for(self.v, FakeWsl())
+        self.readme = self.v / "areas/area-x/README.md"
+        self.readme_before = self.readme.read_text(encoding="utf-8")
+        self.head = self.log()
+
+    def log(self):
+        return subprocess.run(["git", "-C", str(self.v), "log", "--oneline"], capture_output=True, text=True, encoding="utf-8").stdout
+
+    def status(self):
+        return subprocess.run(["git", "-C", str(self.v), "status", "--porcelain"], capture_output=True, text=True, encoding="utf-8").stdout.strip()
+
+    def open(self, name):
+        room.cmd_open(self.c, argparse.Namespace(name=name, area="area-x", type="dev", boundary=None, commit=True))
+
+    def test_is_dummy(self):
+        for n in ("myinv", "myinv1", "mydev", "mydev_aaa"):
+            self.assertTrue(room.is_dummy(n), n)
+        for n in ("proj-a", "my-inv", "xmyinv", "", None):
+            self.assertFalse(room.is_dummy(n), n)
+
+    def test_open_leaves_commits_area_readme_and_git_status_untouched(self):
+        self.open("myinv1")
+        self.assertTrue((self.v / "projects/myinv1/README.md").is_file())
+        self.assertEqual(self.readme.read_text(encoding="utf-8"), self.readme_before)
+        self.assertEqual(self.log(), self.head)
+        self.assertEqual(self.status(), "")
+
+    def test_real_project_is_still_committed_and_listed(self):
+        self.open("proj-a")
+        self.assertIn("projects/proj-a/README", self.readme.read_text(encoding="utf-8"))
+        self.assertNotEqual(self.log(), self.head)
+
+    def test_start_does_not_commit(self):
+        self.open("mydev_aaa")
+        room.cmd_start(self.c, argparse.Namespace(name="mydev_aaa", cmd="claude", no_launch=False, adopt=False, commit=True, yes=False))
+        self.assertEqual(self.log(), self.head)
+        self.assertEqual(self.status(), "")
+
+    def test_close_moves_to_archives_without_area_readme_or_commit(self):
+        self.open("myinv")
+        fill_readme(self.v / "projects/myinv")
+        (self.v / "projects/myinv/ai/out/close.md").write_text("- 【案件】x\n", encoding="utf-8")
+        room.cmd_close(self.c, argparse.Namespace(name="myinv", commit=True))
+        self.assertFalse((self.v / "projects/myinv").exists())
+        self.assertTrue((self.v / "archives/myinv/README.md").is_file())
+        self.assertEqual(self.readme.read_text(encoding="utf-8"), self.readme_before)
+        self.assertEqual(self.log(), self.head)
+        self.assertEqual(self.status(), "")
+
+    def test_rm_dummy_removes_without_commit_and_mixed_commits_only_real(self):
+        self.open("myinv2")
+        self.open("proj-a")
+        after_open = self.log()
+        room.cmd_rm(self.c, argparse.Namespace(names=["myinv2"], area=None, yes=True, commit=True))
+        self.assertFalse((self.v / "projects/myinv2").exists())
+        self.assertEqual(self.log(), after_open)
+        self.open("mydev3")
+        room.cmd_rm(self.c, argparse.Namespace(names=["mydev3", "proj-a"], area=None, yes=True, commit=True))
+        self.assertFalse((self.v / "projects/proj-a").exists())
+        self.assertNotEqual(self.log(), after_open)
+        self.assertEqual(self.status(), "")
+
+
 if __name__ == "__main__":
     unittest.main()
