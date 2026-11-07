@@ -9,6 +9,7 @@
 - room: type は `dev` と `inv`。検証用の works は `mkworks --sub`。仕様と実機確認の経緯は `decisions.md` の【room】の項（11-02〜11-06）と `workflow-kit/room/README.md`。**実機未確認**: `room close` の「別名フォルダ」警告（11-05 実装）。通し試験 `workflow-kit/room/room-split-test-procedure.md`（結果は `logbook/room-split-test-log.md`）は、手順を起こしただけで未実行。room の手順書・案内文を直したときに回す。
 - works の git 追跡は許可リスト方式（10-29 決定）。
 - room の試験用ダミー Project: 名前が `myinv*` / `mydev*`（11-07 決定）。git 追跡外で、`open` / `close` / `start` / `rm` はコミットも Area の一覧も触らない。AI が room の試験で Project を作るときはこの名前を使う（`AGENTS.md` の共通ルールに 1 行）。手順は `ai-room-lifecycle.md` の 7 章、経緯は `decisions.md`。
+- `_noai/` 直下の予約名は `raw/` `map/` `mask.toml` だけ（11-07。`user/` は廃止。それ以外は人が自由に置く）。
 - Python の版: uv 管理が正本（`script-guide.md`）。人が叩くスクリプトは `run` / `verify` / `release`（Windows は未確認）。
 - `logbook/`（期限のあるナレッジ）: 型は `logbook/README.md`。残りは `due.md` の 11-08・11-29。ファイル名は `workflow-kit/naming-rules.md`。
 - 項目の移し替え・期日の持ち上げ: `workflow-kit/tools/na_apply.py`（呼び方は `docs-write-rules.md`）。当面は、処理の漏れがあるものとして読み、見つけたら報告する。漏れなし 3 回連続で外す（現在 0/3）。
@@ -20,6 +21,7 @@
 ## Next Actions
 
 - `guides/howto/ai-room-lifecycle.md` に `room rm`（テスト用の Project・Area を跡ごと消す。11-07 新設、`room/README.md` の表にも未記載）を反映する。完了条件: 両方に `rm` の行（Project・`--area`・止まる条件）があり、ゴールの「reap で会話履歴が消える」の節から指されている。`room/README.md` にはダミー Project（`myinv*` / `mydev*`、11-07）の 1 行も足す（`ai-room-lifecycle.md` の 7 章は書き済み）。
+- `room clean`（と `_noai/raw/`）・`room close` の成果物の引き渡し（と `_noai/map/`）を廃止するかを検討する（11-07 相談。`raw` は `clean` のため、`map` は `close` の記録のためだけにある）。人が cleankit で `check` → `clean` して `ai/in/` に置く案。決めること: ① `clean --path`（Area の `_noai/source/` から直接掃除）も廃止するか、② 人が `ai/in/` に直接置くとき、`start --adopt` の台帳（`manifest.json`）の登録を誰が行うか（`adopt_in` が台帳なしのファイルを受けるかは未確認）、③ `require_internal`（external の Area では止める関門）を手動の掃除でも保つか。完了条件: 3 点の方針が `decisions.md` にあり、廃止するなら `room.py`・文書・テストが揃う。あわせて、既存の `_noai/user/` がある Project は手で `_noai/` 直下へ移す。
 
 期日のある項目は `due.md`。
 

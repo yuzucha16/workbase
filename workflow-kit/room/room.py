@@ -43,8 +43,8 @@ def is_dummy(name):
 
 AI_DIRS = ("ai/docs", "ai/in", "ai/work", "ai/out", "ai/records")
 # 語のマスク・復元は廃止した（2026-11-06）。成果物は `room close` が、ai/out/<Project 名>/ をそのまま Area へ渡す。
-# user/ は、人だけが使う仮置き（予約名。room は触らない）。
-NOAI_DIRS = ("_noai/raw", "_noai/map", "_noai/user")
+# 2026-11-07: user/ を廃止した。_noai/ 直下は、room の予約名（raw/ map/ mask.toml）以外、人が自由に使う（room は触らない）。
+NOAI_DIRS = ("_noai/raw", "_noai/map")
 AI_KEEP = ("ai/in", "ai/work", "ai/records")
 
 

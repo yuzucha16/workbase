@@ -1375,8 +1375,9 @@ class NoDataModeTest(unittest.TestCase):
         for t in ("dev", "inv"):
             with tempfile.TemporaryDirectory() as tmp:
                 _v, c, p = self.open_with(tmp, type=t)
-                for d in ("raw", "map", "user"):
+                for d in ("raw", "map"):
                     self.assertTrue((p / "_noai" / d).is_dir(), (t, d))
+                self.assertFalse((p / "_noai/user").exists())
                 self.assertFalse((p / "_noai/final").exists())
                 self.assertIn(f"type: {t}\n", (p / "README.md").read_text(encoding="utf-8"))
                 self.assertFalse(any("警告" in m for m in c.msgs))

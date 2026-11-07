@@ -70,11 +70,11 @@ Area の `README.md` の `boundary:` は `external`（外向け相当。**既定
 
 ## `_noai/` の中身
 
-`type` に関係なく、`_noai/` は常に `raw/` `map/` `user/` を作る（`final/` は 2026-11-06 に廃止）。
+`type` に関係なく、`_noai/` は常に `raw/` `map/` を作る（`final/` は 2026-11-06、`user/` は 2026-11-07 に廃止）。
 
 - `raw/`: Project 固有の原本。人が置く。`clean` が読む。
 - `map/`: `room` の記録（成果物の書き出しの記録 `deliverable-manifest.json`）。名前は旧マスクの対応表の名残。
-- `user/`: 人だけが使う仮置き（予約名。`room` は触らない）。
+- 予約名は `raw/` `map/` `mask.toml` の 3 つだけ。それ以外（人の仮置き、全文ログなど）は `_noai/` 直下に自由に置く（`room` は触らない）。
 - `_noai/` 全体が追跡外で、AI にも見せない。
 - 成果物（`ai/out/<Project 名>/`。旧名 `ai/out/deliverable/`）は、`close` がそのまま Area の成果物置き場へ渡す。語の置き換えはしない。
 

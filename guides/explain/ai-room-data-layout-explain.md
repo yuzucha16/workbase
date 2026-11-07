@@ -38,7 +38,7 @@ Area の ai/{knowledge,docs}/ ◀─ stock --dst area（点検を通す）─ ai
 | Area `ai/{knowledge,docs}/` | 知識・決定・経緯。実名なし | `stock --dst area` | なし |
 | Project `_noai/raw/` | Project 固有の原本（入力） | 人（直接置く） | 実名を含みうる |
 | Project `_noai/map/` | `room` の記録（成果物の書き出しの記録）。名前は旧マスクの対応表の名残 | `close` | なし |
-| Project `_noai/user/` | 人だけの仮置き（予約名） | 人 | 任意 |
+| Project `_noai/` 直下のその他 | 人だけの仮置き・全文ログ（予約名は `raw` `map` `mask.toml` だけ。`room` は触らない） | 人 | 任意 |
 | Project `ai/in/` | 掃除した写し。部屋に渡る | `clean` | 掃除後（語は人が確かめる） |
 | Project `ai/out/` | 部屋の AI の出力 | 部屋の AI | なし |
 

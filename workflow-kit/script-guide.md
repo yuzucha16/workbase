@@ -229,7 +229,7 @@
 
 | 工程 | 名前 | 役目 |
 |---|---|---|
-| 本番実行 | `run.py` / `run.bat` | 実データに対して使う（繰り返し使うツールだけ）。結果ファイルは `ai/work/run-result.json`（業務の値は入れない）、全文ログは `ai/` の外（`_noai/user/`） |
+| 本番実行 | `run.py` / `run.bat` | 実データに対して使う（繰り返し使うツールだけ）。結果ファイルは `ai/work/run-result.json`（業務の値は入れない）、全文ログは `ai/` の外（`_noai/`） |
 | 動作確認 | `verify.py` / `verify.bat` | Windows でしか動かない層の実行、実アプリでの単体テスト、目視の確認 |
 | リリース | `release.py` / `release.bat` | 動作確認の済んだ成果物に版を振り、記録する（束ね先は未決） |
 
@@ -308,7 +308,7 @@ Project の成果物は、`ai/out/` の1本（ユーザー、2026-10-25。人の
 1. プリフライト: 前提のコマンドと、入力のパスがあるかを確かめ、無ければ止まる。
 2. 工程を順に実行する。入力のパス（`run.bat <ファイル>` の引数）は、各工程に渡す。
 3. `ai/work/run-result.json` を**毎回**上書きで出す（`verify-result.json` から `manual` と `out_hash` を除き、入力の件数 `inputs` を足したもの）。実データの名前と業務の値は入れない（失敗の型と `ファイル名:行` だけ）。
-4. 全文ログは `--log` のときだけ、Project の `_noai/user/run.log` に出す（実データの語が出うるので `ai/` の外。AI に見せるのは人が伏せてから）。
+4. 全文ログは `--log` のときだけ、Project の `_noai/run.log` に出す（実データの語が出うるので `ai/` の外。AI に見せるのは人が伏せてから）。
 
 型（`verify.py` の `find_ai` `scrub` `env_facts` `Tee` を使うので、同じ `tools/` に置く。部屋の Linux の Python 3.13 と `uv` の偽物で、成功、工程の失敗と `--log`、入力が無いとき、`uv` が無いときを確認した。結果ファイルに入力の名前が出ないことも確認。**Windows の Python 3.13 と uv では未確認**）:
 
@@ -317,7 +317,7 @@ Project の成果物は、`ai/out/` の1本（ユーザー、2026-10-25。人の
   # requires-python = "==3.13.*"
   # dependencies = []
   # ///
-  """本番実行の束ねる役。実データに対して工程を順に実行し、結果（業務の値は入れない）を ai/work/run-result.json に毎回出す。--log のときだけ全文ログを _noai/user/ に出す。"""
+  """本番実行の束ねる役。実データに対して工程を順に実行し、結果（業務の値は入れない）を ai/work/run-result.json に毎回出す。--log のときだけ全文ログを _noai/ に出す。"""
   import argparse
   import json
   import os
@@ -372,13 +372,13 @@ Project の成果物は、`ai/out/` の1本（ユーザー、2026-10-25。人の
   def main() -> int:
       ap = argparse.ArgumentParser()
       ap.add_argument("inputs", nargs="*", help="実データのパス（各工程に渡す）")
-      ap.add_argument("--log", action="store_true", help="Project の _noai/user/<名前>.log に全文を出す")
+      ap.add_argument("--log", action="store_true", help="Project の _noai/<名前>.log に全文を出す")
       ap.add_argument("--log-dir", type=Path, help="この場所に全文ログを出す（--log は不要）")
       a = ap.parse_args()
       sys.stdout.reconfigure(errors="replace")
       ai = verify.find_ai()
       work = (ai / "work") if ai else HERE / "work"          # Project の外（配布先）で実行したとき
-      noai = (ai.parent / "_noai" / "user") if ai else work  # 実データの語が出うるので、全文ログは ai/ の外
+      noai = (ai.parent / "_noai") if ai else work  # 実データの語が出うるので、全文ログは ai/ の外
       result = {"tool": "run", "env": verify.env_facts(), "inputs": len(a.inputs), "steps": [], "failure": None}
       log, real = None, sys.stdout
       if a.log or a.log_dir:                                  # 既定では全文ログを出さない
@@ -476,8 +476,8 @@ Project の成果物は、`ai/out/` の1本（ユーザー、2026-10-25。人の
   exit $exitCode
   ```
 
-  **`-Log` のログは `ai/` の中に出るので、部屋の AI から読める**（掃除を通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（原本を `_noai/raw/` に置く Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/user/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
-- **人が叩く名前（`run` / `verify` / `release`）は ps1 でも同じ**。`verify.ps1` と `release.ps1` の型を下に置く（2026-10-25）。手順・結果ファイル・止まる条件は、上の「人が叩くスクリプトの名前」と同じ。`verify-result.json` の `env` は Python 版と項目が違う（`pwsh`、`culture`、`ansi_codepage`〔日本語の Windows なら 932〕、`console_encoding`、`output_encoding`）。成果物のハッシュは Python 版と同じ値になる（隠しファイルも含める）ので、`verify.ps1` の結果を `release.py` が読んでもよい。`run.ps1` は、`verify.ps1` から目視とハッシュを除き、結果ファイルの名前を `run-result.json`、`-Log` の既定の置き場を Project の `_noai/user/` に変えて作る。部屋の Linux の pwsh 7.4 で、非対話（目視が未確認になり NG）、対話の y と n、前提が無いとき、工程の失敗と `-Log`、Project の外、`release` の各 STOP と版の連番、Python 版とのハッシュの一致を確認した。対話の日本語のひとことは、部屋の pwsh（globalization が invariant）では文字化けした（Python 版は化けない）。**Windows の pwsh では未確認**（日本語の入力を含めて PC2 で 1 回確かめる）。
+  **`-Log` のログは `ai/` の中に出るので、部屋の AI から読める**（掃除を通らない）。ログの先頭（transcript のヘッダー）に Windows のユーザー名とマシン名が入り、パス（ユーザー名を含みうる）やエラー文も入る。実データを処理する実行（原本を `_noai/raw/` に置く Project の本番）では、実データの語がログに出ないことを確認するか、`-LogDir` で `ai/` の外（例: `_noai/`）に出す。部屋の AI に見せるのは、人が伏せてからにする。
+- **人が叩く名前（`run` / `verify` / `release`）は ps1 でも同じ**。`verify.ps1` と `release.ps1` の型を下に置く（2026-10-25）。手順・結果ファイル・止まる条件は、上の「人が叩くスクリプトの名前」と同じ。`verify-result.json` の `env` は Python 版と項目が違う（`pwsh`、`culture`、`ansi_codepage`〔日本語の Windows なら 932〕、`console_encoding`、`output_encoding`）。成果物のハッシュは Python 版と同じ値になる（隠しファイルも含める）ので、`verify.ps1` の結果を `release.py` が読んでもよい。`run.ps1` は、`verify.ps1` から目視とハッシュを除き、結果ファイルの名前を `run-result.json`、`-Log` の既定の置き場を Project の `_noai/` に変えて作る。部屋の Linux の pwsh 7.4 で、非対話（目視が未確認になり NG）、対話の y と n、前提が無いとき、工程の失敗と `-Log`、Project の外、`release` の各 STOP と版の連番、Python 版とのハッシュの一致を確認した。対話の日本語のひとことは、部屋の pwsh（globalization が invariant）では文字化けした（Python 版は化けない）。**Windows の pwsh では未確認**（日本語の入力を含めて PC2 で 1 回確かめる）。
 
   `verify.ps1`（上の束ねる ps1 の型に、プリフライト・目視・結果ファイルを足したもの。`release.ps1` から関数だけを読み込めるよう、関数の後で止まる）:
 

@@ -1237,3 +1237,9 @@
 - 決めたこと: 名前が `myinv` / `mydev` で始まる Project は、git 追跡の対象外（works の `.gitignore` と雛形 `gitignore.template` に、`/projects|archives/myinv*|mydev*/` を足した）。`open` / `close` / `start` / `rm` は、コミットしない・Area の README の一覧に触れない。WSL は本物と同じ（特別扱いしない）。`reap` は変更なし（Area の README を書かない）。`rm` は、コミット対象のパスが空なら `commit_paths` を呼ばない（空のままだと `git add -A` が全体に及ぶため）。
 - 見送ったこと: 専用コマンド（`room dummy reset`）、ダミー Area（`myarea`）、`_` 始まりの名前（ディストロ名 `room-_myarea` が難しそうなため）、テスト用の別 Vault（二重管理になるため）。
 - 手順: `guides/howto/ai-room-lifecycle.md` の 7 章。
+
+### 【room】`_noai/user/` を廃止し、予約名以外は `_noai/` 直下に自由に置く（2026-11-07）
+- 根拠: ユーザー「userは進めてよい。移行は手動でOK」。Project の階層が深く（`areas/<Area>/projects/<Project>/_noai/user/…`）、`user/` は `room` が触らない予約名なだけで、置く意味が薄かったため。`mask` / `restore` の廃止で `_noai/` の構造に依存する処理が無くなり、外せる状態だった。
+- 決めたこと: `room new` は `_noai/raw/` と `_noai/map/` だけ作る。`_noai/` 直下の予約名は `raw/` `map/` `mask.toml` の 3 つだけで、それ以外（人の仮置き、`script-guide.md` の全文ログなど）は人が自由に置く（`room` は触らない）。守り（`.gitignore` の `**/_noai/`、AI の閲覧拒否）は親の名前に結びついているので変わらない。既存 Project の `_noai/user/` は、人が手で移す（自動移行なし）。
+- 見送ったこと: 自動移行、`map` の `ai/records/` への移行（`ai/records` は AI から見える側で、`close` の手順と既存の記録も直す必要があるため、別件）。
+- 確かめたこと: `raw` を読むのは `room clean` と `start` の注意だけ、`map` を使うのは `close` の `deliverable-manifest.json` だけ（コードを読んだ）。`test_room.py` 184 件が通った（3 スキップ）。

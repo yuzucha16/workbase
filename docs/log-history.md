@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-07（`_noai/user/` を廃止し、`raw` と `map` の存在理由を確かめた）
+- ユーザーの相談（`brief`）。`_noai/raw` と `_noai/map` を使う場面を整理し、Project の階層が深い問題を `_noai/user/*` の展開で解いた。根拠は `decisions.md` の【room】`_noai/user/` の項。変更: `room.py` の `NOAI_DIRS`、`room/README.md`、`ai-room-setup.md`、`ai-room-data-layout-explain.md`、`script-guide.md`（全文ログの出力先 6 か所）、`test_room.py`。テスト 184 件が通った（3 スキップ）。
+- 分かったこと: `raw` は `room clean` と `start` の注意だけ、`map` は `close` の `deliverable-manifest.json` だけのための置き場。どちらも他の用途は無い。
+- 積んだ NA: `room clean`（と `raw`）・`close`（と `map`）の廃止の検討。論点は 3 つ（`clean --path` の扱い、人が `ai/in/` に直接置くときの台帳の登録、internal の Area だけという制限）。実機の通しは未実施。探索は subagent に任せていない。
+
 ### 2026-11-07（`room rm` を新設し、テスト用の Project 21 件と Area 1 件を消した）
 - 根拠のコミット: `e2d9d46`。ユーザー「実装してください」。`room rm <Project>...`（`projects/` と `archives/`）と `room rm --area <Area>` を足し、部屋の履歴と `~/tmp/<名>` の消去は reap と共通の `purge_room_traces` にした。テストは `RmTest` 6 件。
 - 実機で、works の `projects/` の 21 件と Area `env-external` を消した。`myenv` は残した。`sample_inv` のマウントが残っていて一度止まり（想定どおり）、`room umount --area myenv` で外して通した。
