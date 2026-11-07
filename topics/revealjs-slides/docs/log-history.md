@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-07 部屋に BIZ UDPGothic を入れた（NA1 済み）
+- ユーザーの指示: 手段とサイズを見積もる → 「これで行きましょう」（google/fonts から Regular・Bold を取得、`room init` の段）→ 実機は room-myenv で。生成 HTML の目視は「問題ありませんでした」。
+- AI: `room.py` に段 `bizudpgothic`（SHA-256 固定、約 9.3MB、OFL）と README の段名を足した（コミット 45cc2fc）。room-myenv で `--only bizudpgothic`、`fc-list` に日英両名、`--font "BIZ UDPゴシック"` の PNG は警告なし・Noto 指定や代替とバイト違い、T の `side.img` に PNG を入れて quarto render が通った。単体テスト通過。試験ファイルは部屋から削除。
+- 発見: 部屋の `~/shared` に `topics/` は無い（`gen_layouts.py` は都度コピーが要る）。
+
 ### 2026-11-07 room 通しのフィードバックを `draw` に取り込み、スクリプトを `workflow-kit/tools/` へ移した（NA1 の一部）
 - ユーザーの指示: room で `draw` を通した AI のフィードバック 6 点を精査して取り込む。次は別セッションで room とサブエージェントによる複数パターン試験。スクリプトの移動は了承（「トピッククローズのときにやろうと思っていた。records/ などのリンクはその時に直す」）。
 - AI: `excalidraw-viewer/` 一式を `workflow-kit/tools/excalidraw-viewer/` へ移した（room の `~/shared/workflow-kit/` に入る固定パス）。`draw-hook.md` に固定パス、ユーザー指定の優先と Windows パスの読み替え、部屋の `work/parts/`、箱内の文字の座標と高さの式、生成スクリプトの扱い（`gen-<題>.py`）を追記。決定は直下 `docs/decisions.md`。

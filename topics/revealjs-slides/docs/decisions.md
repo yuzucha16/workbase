@@ -2,6 +2,11 @@
 
 ## Decisions
 
+### 【この件】pptx 向けの図のフォント BIZ UDPGothic は、`room init` の段で部屋に入れる（2026-11-07）
+- 根拠: ユーザーが「これで行きましょう」と承認（見積もり: google/fonts の Regular・Bold、約 9.3MB、SHA-256 固定）。
+- 却下案: Windows の `C:\Windows\Fonts` を `/mnt/c` 経由でコピー（`/mnt/c` が見える PC に依存し、版を固定できない）。pptx の図だけ Windows で書き出す（手順が増える）。
+- 実機: room-myenv で確認（`fc-list` 日英両名、PNG に警告なし、render 通過、HTML はユーザーが目視して問題なし）。
+
 ### 【この件】Excalidraw の閲覧は、room に依存しない Windows 側のスクリプト（毎回 HTML に render）にする（2026-11-07）
 - ユーザーの発言: 「Docker Desktop は Enterprise 要件にかかるので有償になるので使えません。用途は、あなたやスクリプトが作った excalidraw の出力を見る、です」「viewer は room に依存させたくない。作るのは room が多いんですがね。Windows でも使えると嬉しい」「2（試作）は良いです」。
 - 決めたこと: ①`excalidraw-viewer/excalidraw_view.py` が `.excalidraw` を自己完結の HTML にして開く（閲覧専用）。②Windows で動かし、room の図は `\\wsl.localhost\<ディストリ>\...` の UNC パスで渡す（room は interop を切っているため、room からブラウザは開けない）。③Docker は使わない。常駐サーバも立てない。
