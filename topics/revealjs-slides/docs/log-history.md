@@ -2,6 +2,11 @@
 
 ## Log
 
+### 2026-11-07 Excalidraw の閲覧スクリプトを作った（room 非依存）
+- ユーザーの指示: 「excalidraw の viewer 環境を作ろうかと思います（毎回 HTML に render／Windows の npm・docker／WSL の npm・docker）。少ないリソース・無償・PC1 でも使える条件で選択肢に優先順位を」→「Docker Desktop は Enterprise 要件で使えない。用途はあなたやスクリプトが作った excalidraw を見ること」「viewer は room に依存させたくない。Windows でも使えると嬉しい」→「どちらも見れました。Windows 側は sample ごとコミット。--no-open も保存と参照どちらもできた」。
+- 結果: 毎回 HTML に render する案を 1 位にした（MIT・常駐なし）。`excalidraw-viewer/` に `excalidraw_view.py`・`build_viewer.mjs`・`viewer_entry.jsx`・`package.json`・`samples/sample-flow.excalidraw` を作った。Edge のヘッドレスで日本語・手描き風の表示を確認。room の図は Windows 側から UNC パスで読む形にした。決定は `decisions.md`。
+- 後始末: 試験用の一時ディレクトリと room の `/tmp/exv` は削除済み。room の `/home/ai/work/figs/sample-flow.excalidraw` はユーザーの確認用に残した。
+
 ### 2026-11-07 手順書と --copy-assets を足し、room で見本を render した（NA を閉じた）
 - ユーザーの指示: 「revealjs-slides の続き NA1」→「room-myenv を使って render。H/I/J はこちらで見る」→「目視 OK です。NA1 を close。コミット・push も」。
 - 結果: `gen_layouts.py` に `--copy-assets` と spec の `subtitle`/`author`/`date`（表紙）を追加。手順書 `records/revealjs-slides-howto.md` を新規作成（SVG 雛形は「無い・都度作る」）。一時ディレクトリで生成・複製・quarto render が通った。room-myenv（Quarto 1.11.9、Python 3.14.4）の `/tmp/rjs` に複製して render し、qmd は Windows とバイト一致。HTML をユーザーが目視して OK。閉じた NA: 起票 11-06、期日 11-13（根拠: 本コミット）。決定は無し。

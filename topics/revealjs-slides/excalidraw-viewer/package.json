@@ -1,0 +1,11 @@
+{
+  "name": "excalidraw-viewer-build",
+  "private": true,
+  "description": "excalidraw_view.py が閲覧用の JS を 1 回だけ作るための依存。すべて MIT。",
+  "dependencies": {
+    "@excalidraw/excalidraw": "0.18.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "esbuild": "0.25.12"
+  }
+}

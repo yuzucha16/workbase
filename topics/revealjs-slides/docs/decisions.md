@@ -2,6 +2,12 @@
 
 ## Decisions
 
+### 【この件】Excalidraw の閲覧は、room に依存しない Windows 側のスクリプト（毎回 HTML に render）にする（2026-11-07）
+- ユーザーの発言: 「Docker Desktop は Enterprise 要件にかかるので有償になるので使えません。用途は、あなたやスクリプトが作った excalidraw の出力を見る、です」「viewer は room に依存させたくない。作るのは room が多いんですがね。Windows でも使えると嬉しい」「2（試作）は良いです」。
+- 決めたこと: ①`excalidraw-viewer/excalidraw_view.py` が `.excalidraw` を自己完結の HTML にして開く（閲覧専用）。②Windows で動かし、room の図は `\\wsl.localhost\<ディストリ>\...` の UNC パスで渡す（room は interop を切っているため、room からブラウザは開けない）。③Docker は使わない。常駐サーバも立てない。
+- 根拠: Excalidraw 本体は MIT で無償。Docker Desktop は Enterprise 要件で有償。閲覧だけなら常駐が要らず、npm は初回のキャッシュ作りだけで済む。却下案: Windows/WSL の Docker、WSL の npm 常駐サーバ（閲覧には過剰）。
+- 最大の弱点: 初回ビルドが PC1 の SSL 検査で `npm install` に失敗しうる（未確認。NA に積んだ）。
+
 ### 【この件】Devicon は使わない。ストックしたアイコンと組み込みの NA を削除する（2026-11-06）
 - ユーザーの発言: 「これは omit します。devicon 自体も利用をやめるので、ストックしているアイコンファイルを削除してください。理由は、アイコンが固有すぎて使うイメージが湧かないことと、ライセンスの縛り（提携に関する記載）が面倒なこと」
 - 決めたこと: ①Devicon の素材・生成スクリプト・LICENSE を削除した。②`gen_layouts.py` への組み込みを omit。③出典の自動表記の対象から外す。以前の「Devicon を単色の plain だけストックする」決定は取り消し。
