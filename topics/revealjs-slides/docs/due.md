@@ -4,5 +4,3 @@
 
 | 期日 | 種別 | 内容 | 担当 |
 |---|---|---|---|
-| 2026-11-14 | 単発 | NA: PC1 で excalidraw_view.py を試す（npm install の SSL 検査も） | ユーザー |
-| 2026-11-20 | 単発 | NA: office-output-types との共通化の検討（別セッション。P2 は需要待ち） | AI |

@@ -2,6 +2,10 @@
 
 ## Log
 
+### 2026-11-07 NA 2 件を移管し、Open Question を omit した（クローズの前準備）
+- ユーザーの指示: NA1（共通化）を `topics/office-output-types/docs/log.md` へ、NA2（PC1 での `excalidraw_view.py` の確認）を直下 `docs/log.md` へ移管。`due.md` の 2 行は削除（移管先に期日の行を足した）。「別 PC のフォントで崩れないか」の Open Question は omit（動作確認は移管した NA で行い、実害があれば起票）。トピックのクローズはまだしない（準備の確認のみ）。
+- AI: 移管先は office-output-types の NA 8（期日 11-20）と直下 NA（期日 11-14）。このトピックの NA・Open Questions・`due.md` は空。残るのは、旧 `excalidraw-viewer` の records などのリンクの直し（クローズ時）と、`exmem/inbox/2026-11-07-excalidraw-viewer-js-npm-explain.md` の統合（ユーザーが後で行う）。
+
 ### 2026-11-07 部屋に BIZ UDPGothic を入れた（NA1 済み）
 - ユーザーの指示: 手段とサイズを見積もる → 「これで行きましょう」（google/fonts から Regular・Bold を取得、`room init` の段）→ 実機は room-myenv で。生成 HTML の目視は「問題ありませんでした」。
 - AI: `room.py` に段 `bizudpgothic`（SHA-256 固定、約 9.3MB、OFL）と README の段名を足した（コミット 45cc2fc）。room-myenv で `--only bizudpgothic`、`fc-list` に日英両名、`--font "BIZ UDPゴシック"` の PNG は警告なし・Noto 指定や代替とバイト違い、T の `side.img` に PNG を入れて quarto render が通った。単体テスト通過。試験ファイルは部屋から削除。

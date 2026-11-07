@@ -17,6 +17,8 @@
 
 7. 【期日 11-18】Quarto の見た目を社内の雛形に合わせる 7 段の手順（`records/2026-11-04-quarto-reference-doc-steps-design.md`）を試験し、確定する。雛形は部屋に渡せない（固有名詞）ので、匿名化した複製で手順 1〜6 を行う。必須はスライド番号・フッター・ヘッダー・ロゴ、フォントと色は一致、余白は許容。
 
+8. 【起票 11-06（revealjs-slides から移管 11-07）、期日 11-20】`topics/revealjs-slides` との共通化: 案を出した（`topics/revealjs-slides/records/2026-11-07-common-structure-with-office-output-proposal.md`。推奨は A = 値と規則だけ文書で分ける。コードは変えていない）。ユーザーの確認待ち（文章の規則を pptx にも使うか、pptx の図は SVG 画像でよいか、置き場）。P2（split を 3 部品まで）は需要が出てから。担当: AI、ユーザー（選択）。
+
 ## Open Questions
 
 - 【期日 11-17】型を足す順と、テキストを共通の受け渡しにする案の当否（提案。案件で確かめる）。

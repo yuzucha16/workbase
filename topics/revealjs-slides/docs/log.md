@@ -18,10 +18,9 @@
 
 ## Next Actions
 
-- 【起票 11-06、期日 11-20】`topics/office-output-types` との共通化: 案を出した（11-07。`records/2026-11-07-common-structure-with-office-output-proposal.md`。推奨は A = 値と規則だけ文書で分ける。コードは変えていない）。ユーザーの確認待ち（文章の規則を pptx にも使うか、pptx の図は SVG 画像でよいか、置き場）。P2（split を 3 部品まで）は需要が出てから（実スライド 1 本では `want` は溜まらなかった）。担当: AI、ユーザー（選択）。
-
-- 【起票 11-07、期日 11-14】PC1 で `python -I excalidraw_view.py <.excalidraw> --no-open` を試す（初回の `npm install` が SSL 検査で通るかも見る。失敗したら出力を貼る。キャッシュの実測も: 冒頭の説明は約 40MB、この log は約 210MB で食い違う）。閲覧ページは Windows で人が見る用（11-07 ユーザー確認）。AI は `--export` を部屋でも使う（PC1 の room でも `npm install` が通る必要がある。同じ確認に含める）。理解ガイドの下書き `exmem/inbox/2026-11-07-excalidraw-viewer-js-npm-explain.md`（JS・npm・React とこのスクリプトの関係。未統合。`inboxを整理して` で `guides/explain/` へ）。担当: ユーザー。
+- なし（11-07 に 2 件を移管: 共通化の検討 → `topics/office-output-types/docs/log.md`、PC1 での `excalidraw_view.py` の確認 → 直下 `docs/log.md`。案は `records/2026-11-07-common-structure-with-office-output-proposal.md`）。
 
 ## Open Questions
 
-- 保留（ユーザーが細部を見始めたら）: 閲覧側の PC でフォントが違っても崩れないか（pptx に入れた SVG・PNG は、この PC・PowerPoint では違和感なし。別 PC は未確認）。
+
+- なし。
