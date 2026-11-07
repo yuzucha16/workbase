@@ -23,6 +23,7 @@
 
 - 【起票 11-07】room 廃止（`767273f`）の後始末を人が行う。既存 Project の `_noai/raw/` `_noai/map/` と、Area の `_noai/source/` `_noai/deliverable/` の中身を、必要なら手で移す（`room` はもう読まない。`_noai/` 直下に置き直すか、掃除済みなら `ai/in/` に置いて `start --adopt`）。完了条件: 旧置き場に実データが残っていない。
 - 【起票 11-07（revealjs-slides から移管）、期日 11-14】PC1 で `python -I workflow-kit/tools/excalidraw-viewer/excalidraw_view.py <.excalidraw> --no-open` を試す（初回の `npm install` が SSL 検査で通るかも見る。失敗したら出力を貼る。キャッシュの実測も: 冒頭の説明は約 40MB、`topics/revealjs-slides/docs/log.md` は約 210MB で食い違う）。閲覧ページは Windows で人が見る用。AI は `--export` を部屋でも使う（PC1 の room でも `npm install` が通る必要がある。同じ確認に含める）。理解ガイドの下書き `exmem/inbox/2026-11-07-excalidraw-viewer-js-npm-explain.md`（未統合。`inboxを整理して` で `guides/explain/` へ）。担当: ユーザー。
+- 【起票 11-08、期日 11-08】索引（triggers）の引き当て率の初回（本日対応予定）: `python -I workflow-kit/tools/triggers_stats.py --since 2026-10-25 --detail`。語の足し方か出し方を決める。あわせて部分一致の誤爆（例: 「ログイン」が札「ログ」に当たる）への備え（短い札の禁止、完全一致の書き方、現状維持）を決める。現状（誤爆する）は単体テスト `test_substring_match_false_positive_is_current_behavior` で固定してあり、方針を変えるときはこのテストも直す。あわせて、旧 `md-link-graph` の積み残し 2 件: ① 上限 30 語で誤爆が増えていないか、取りこぼしは `triggers:` に語を足す案にする、② S11（`AGENTS.md` や kit の規則にも `triggers` を付けるか）は付けない方針のまま届かなければ見直す。`logbook/` を `--triggers` の対象にするかの判断もこの結果の後（旧 `logbook-design` NA 3）。構造の点検（循環・階層・複雑度）は `review` の入力 9。担当: ユーザー（AI が実行）。
 
 期日のある項目は `due.md`。
 
