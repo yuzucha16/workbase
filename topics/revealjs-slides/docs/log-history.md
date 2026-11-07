@@ -191,3 +191,8 @@ evealjs-diagram-icons-devicon.html・…-devicon-preview.html を削除（素材
 - 題材: LT「図解スライドを AI と作る流れ」7 枚（T・S・I・J・split(K+L)・T）。手順書どおりに一時ディレクトリで spec → qmd → render → Edge で目視。ユーザーが「よくできている」と確認。余白（S・I・J の下半分が空く）はこのままでよい（ユーザー）。
 - 直したこと: 表紙のサブタイトルを中央（`.quarto-title-block p.subtitle`）。箇条書き 2 段目は本文を 1 字ぶん（1em）右にして日本語の字の並びをそろえ、行頭記号は白丸。「-」は存在感が無く、■ は ● と形が違うため（ユーザーが ○ で確定）。レイアウト番号は `--no-id` で消した。K の `cols` を `1fr 3fr` にした（最初に `1fr 1.2fr` と書いた私の指定ミス）。S・I の折り返しは文言を短くして解消。spec の `True` は JSON では `true`（手順書に追記）。
 - 一部済: 「型の棚卸しの残り」のうち実スライドの確認が済み、`topics/office-output-types` との共通化の検討（別セッション）と P2（需要待ち）が残り。根拠: `records/revealjs-diagram-theme.scss`、`records/revealjs-slides-howto.md`。
+
+### 2026-11-07 NA 2 npm install の目的の確認と、理解ガイドの下書き
+- ユーザーの質問: 初回の `npm install` は WSL で Excalidraw を見るためか。答え: いいえ。Windows で人がブラウザで見るための閲覧用 JS（Excalidraw・React・esbuild）をキャッシュに作る。WSL では人が見ないので不要。ターミナルの AI にはブラウザの描画が出ないので、AI 用の利点も無い。PC1 の確認（NA）は残す（ユーザー）。
+- 依頼を受けて、`stock 理解` で `exmem/inbox/2026-11-07-excalidraw-viewer-js-npm-explain.md` を作った（未追跡のまま。点検スクリプトは PASS 24・FAIL 0）。中身は JS・Node.js・npm・バンドル・React と、`excalidraw_view.py` ・`viewer_entry.jsx`・`build_viewer.mjs` の関係。`guides/explain/` への統合は `integrate` で行う。
+- 見つけた食い違い: `excalidraw_view.py` の冒頭は「約 40MB」、`log.md` は「約 210MB」。PC で実測して直す（NA に足した）。

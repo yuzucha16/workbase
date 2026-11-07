@@ -20,7 +20,7 @@
 
 - 【起票 11-06、期日 11-20】`topics/office-output-types` との共通化: 案を出した（11-07。`records/2026-11-07-common-structure-with-office-output-proposal.md`。推奨は A = 値と規則だけ文書で分ける。コードは変えていない）。ユーザーの確認待ち（文章の規則を pptx にも使うか、pptx の図は SVG 画像でよいか、置き場）。P2（split を 3 部品まで）は需要が出てから（実スライド 1 本では `want` は溜まらなかった）。担当: AI、ユーザー（選択）。
 
-- 【起票 11-07、期日 11-14】PC1 で `python -I excalidraw_view.py <.excalidraw> --no-open` を試す（初回の `npm install` が SSL 検査で通るかも見る。失敗したら出力を貼る）。担当: ユーザー。
+- 【起票 11-07、期日 11-14】PC1 で `python -I excalidraw_view.py <.excalidraw> --no-open` を試す（初回の `npm install` が SSL 検査で通るかも見る。失敗したら出力を貼る。キャッシュの実測も: 冒頭の説明は約 40MB、この log は約 210MB で食い違う）。ビューアは Windows で人が見る用で、WSL・AI には不要（11-07 ユーザー確認。NA は残す）。理解ガイドの下書き `exmem/inbox/2026-11-07-excalidraw-viewer-js-npm-explain.md`（JS・npm・React とこのスクリプトの関係。未統合。`inboxを整理して` で `guides/explain/` へ）。担当: ユーザー。
 
 ## Open Questions
 
