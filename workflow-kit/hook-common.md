@@ -93,6 +93,7 @@ H2 の見出しは名前だけにする（括弧の注記を付けない）。�
 | `brief` | `events`: 質問ごとの行（`kind=interview`）、探索型でゴールが変わったとき（`kind=goal_change`） | 手順「記録する」 |
 | `plan` | なし | |
 | `frame` | なし | |
+| `draw` | なし | |
 | `wrap` | なし | |
 | `stock` | なし | |
 | `integrate` | なし | |
